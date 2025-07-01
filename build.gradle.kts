@@ -1,4 +1,3 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
@@ -10,13 +9,27 @@ plugins {
     jacoco
 }
 
+jacoco {
+    toolVersion = "0.8.11"
+}
+
 
 /**
  * When you need to exclude specific packages or classes from the Jacoco report,
  * you can add them to this list.
  * */
 val excludedPackagesOrClasses = listOf(
-    "com.example.domain.util",
+    "**/R.class",
+    "**/R$*.class",
+    "**/BuildConfig.*",
+    "**/Manifest*.*",
+    "**/*Test*.*",
+    "**/Hilt*.*",
+    "**/*_Impl*.*",
+    "**/ComposableSingletons*.*",
+    "**/*Kt.class",
+    "**/MainActivity.class",
+    "**/di/**",
 )
 
 val execPaths = listOf(
@@ -24,58 +37,38 @@ val execPaths = listOf(
     "**/build/outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec"
 )
 
-val excludedPatterns = excludedPackagesOrClasses.flatMap { path ->
-    val patternBase = path.replace('.', '/')
-    listOf(
-        "**/$patternBase/**",
-        "**/$patternBase.class",
-        "**/$patternBase\$*.class"
-    )
+val classDirs = subprojects.mapNotNull { subproject ->
+    val path = "${subproject.buildDir}/tmp/kotlin-classes/debug"
+    val dir = file(path)
+    if (dir.exists()) {
+        fileTree(dir) {
+            exclude(excludedPackagesOrClasses)
+        }
+    } else null
 }
 
-val defaultExcludes = listOf(
-    "**/R.class",
-    "**/R$*.class",
-    "**/BuildConfig.*",
-    "**/Manifest*.*",
-    "**/*\$WhenMappings.*",
-    "**/*\$serializer.*",
-    "**/*\$Companion.*"
-)
 
-val sourceDirs = subprojects.flatMap { project ->
+
+val sourceDirs = subprojects.flatMap {
     listOf(
-        "${project.projectDir}/src/main/java",
-        "${project.projectDir}/src/main/kotlin"
+        "${it.projectDir}/src/main/java",
+        "${it.projectDir}/src/main/kotlin"
     )
 }.filter { file(it).exists() }
 
-val allExcludes = defaultExcludes + excludedPatterns
-
-val classDirs = subprojects.flatMap { project ->
-    listOf(
-        fileTree("${project.buildDir}/tmp/kotlin-classes/debug"),
-        fileTree("${project.buildDir}/intermediates/javac/debug/classes"),
-        fileTree("${project.buildDir}/classes/kotlin/debug"),
-        fileTree("${project.buildDir}/intermediates/javac/debug"),
-        fileTree("${project.buildDir}/classes/java/debug")
-    ).filter { it.dir.exists() }
-}.map { dirTree ->
-    dirTree.matching {
-        exclude(allExcludes)
-    }
-}
-
 tasks.register<JacocoReport>("jacocoTestReport") {
-    dependsOn(subprojects.map { "${it.path}:testDebugUnitTest" })
+    dependsOn(subprojects.map { it.path + ":testDebugUnitTest" })
     executionData.setFrom(fileTree(rootDir).matching { include(execPaths) })
-    sourceDirectories.setFrom(sourceDirs)
+
     classDirectories.setFrom(classDirs)
+    sourceDirectories.setFrom(files(sourceDirs))
+
     reports {
-        xml.required.set(true)
         html.required.set(true)
-        xml.outputLocation.set(file("${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"))
-        html.outputLocation.set(file("${buildDir}/reports/jacoco/jacocoTestReport/html"))
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(file("$buildDir/reports/jacoco/jacocoTestReport/html"))
+        xml.outputLocation.set(file("$buildDir/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"))
     }
 }
 
@@ -83,10 +76,11 @@ tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
     dependsOn("jacocoTestReport")
     executionData.setFrom(fileTree(rootDir).matching { include(execPaths) })
     classDirectories.setFrom(classDirs)
+
     violationRules {
         rule {
             limit {
-                minimum = "0.80".toBigDecimal()
+                minimum = "0.95".toBigDecimal()
             }
         }
     }
