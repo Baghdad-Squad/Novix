@@ -1,10 +1,13 @@
+import com.github.javaparser.resolution.types.ResolvedLambdaConstraintType.bound
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.gms.google-services")
+    alias(libs.plugins.google.services)
     id("com.google.firebase.crashlytics")
     id("com.google.firebase.firebase-perf")
+    jacoco
 }
 
 android {
@@ -29,6 +32,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -39,6 +46,11 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
     }
 }
 
@@ -61,6 +73,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -104,5 +118,3 @@ tasks.register("installGitHooks") {
 gradle.projectsEvaluated {
     tasks["build"].dependsOn("installGitHooks")
 }
-
-// TODO: Add Kover tool to verify code coverage
