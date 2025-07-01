@@ -1,6 +1,8 @@
 package com.baghdad.design_system.color.model
 
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import com.baghdad.design_system.color.theme.lightThemeColor
 
 data class NovixColor(
     val primaryColor: Primary,
@@ -39,3 +41,5 @@ data class StatusColor(
     val greenAccent: Color,
     val greenVariant: Color,
 )
+
+val localNovixColor =  staticCompositionLocalOf{ lightThemeColor }
