@@ -70,7 +70,6 @@ val classDirs = subprojects.flatMap { project ->
     }
 }
 
-
 tasks.register<JacocoReport>("jacocoTestReport") {
     dependsOn(subprojects.map { "${it.path}:testDebugUnitTest" })
     executionData.setFrom(fileTree(rootDir).matching { include(execPaths) })
