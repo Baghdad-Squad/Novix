@@ -1,12 +1,10 @@
-import com.github.javaparser.resolution.types.ResolvedLambdaConstraintType.bound
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.services)
-    id("com.google.firebase.crashlytics")
-    id("com.google.firebase.firebase-perf")
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.perf)
     jacoco
 }
 

@@ -5,15 +5,11 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.firebase.perf) apply false
     jacoco
 }
 
-buildscript {
-    dependencies {
-        classpath(libs.firebase.crashlytics.gradle)
-        classpath(libs.firebase.perf.plugin)
-    }
-}
 
 /**
  * When you need to exclude specific packages or classes from the Jacoco report,
