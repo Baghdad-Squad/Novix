@@ -132,7 +132,6 @@ androidx-core = [
 androidx-compose-ui = [
     "androidx-ui",
     "androidx-ui-graphics",
-    "androidx-ui-tooling-preview",
     "androidx-ui-tooling",
     "androidx-runtime-android",
     "androidx-activity-compose",
