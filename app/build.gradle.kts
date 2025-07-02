@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.perf)
+    jacoco
 }
 
 android {
@@ -9,7 +13,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.novix"
+        applicationId = "com.baghdad.novix"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -26,6 +30,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -36,6 +44,11 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
     }
 }
 
@@ -53,6 +66,11 @@ dependencies {
     implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.bundles.koin)
     implementation(libs.navigation.compose)
+    implementation(platform(libs.firebase.bom))
+    // Firebase dependencies
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.perf)
 }
 
 /**
