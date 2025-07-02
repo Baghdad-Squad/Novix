@@ -21,6 +21,7 @@ jacoco {
  * */
 val excludedPackagesOrClasses = listOf(
     "com.baghdad.entity",
+    "com.baghdad.design_system"
 )
 
 val excludedPatterns = excludedPackagesOrClasses.flatMap { path ->
