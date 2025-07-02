@@ -5,19 +5,9 @@ import androidx.compose.ui.graphics.Color
 import com.baghdad.design_system.color.theme.lightThemeColor
 
 data class NovixColor(
-    val primary: Primary,
-    val secondary: Color,
-    val text: TextColor,
-    val surface: SurfaceColor,
-    val status: StatusColor
-)
-
-data class Primary(
     val normal: Color,
     val variant: Color,
-)
-
-data class TextColor(
+    val secondary: Color,
     val title: Color,
     val body: Color,
     val hint: Color,
@@ -27,19 +17,13 @@ data class TextColor(
     val iconBackground: Color,
     val iconBackgroundLow: Color,
     val backgroundLow: Color,
-    val disable: Color
-)
-
-data class SurfaceColor(
+    val disable: Color,
     val surface: Color,
     val surfaceHigh: Color,
-)
-
-data class StatusColor(
     val redAccent: Color,
     val yellowAccent: Color,
     val greenAccent: Color,
     val greenVariant: Color,
 )
 
-val localNovixColor =  staticCompositionLocalOf{ lightThemeColor }
+val localNovixColor = staticCompositionLocalOf { lightThemeColor }
