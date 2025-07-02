@@ -67,10 +67,7 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.navigation.compose)
     implementation(platform(libs.firebase.bom))
-    // Firebase dependencies
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.perf)
+    implementation(libs.bundles.firebase)
 }
 
 /**
