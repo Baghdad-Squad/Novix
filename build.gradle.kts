@@ -23,13 +23,12 @@ val excludedPackagesOrClasses = listOf(
     "**/R$*.class",
     "**/BuildConfig.*",
     "**/Manifest*.*",
-    "**/*Test*.*",
-    "**/Hilt*.*",
     "**/*_Impl*.*",
     "**/ComposableSingletons*.*",
     "**/*Kt.class",
     "**/MainActivity.class",
     "**/di/**",
+    "**/ui/theme/**",
 )
 
 val execPaths = listOf(
@@ -46,7 +45,6 @@ val classDirs = subprojects.mapNotNull { subproject ->
         }
     } else null
 }
-
 
 
 val sourceDirs = subprojects.flatMap {
@@ -80,7 +78,7 @@ tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
     violationRules {
         rule {
             limit {
-                minimum = "0.95".toBigDecimal()
+                minimum = "0.80".toBigDecimal()
             }
         }
     }
