@@ -5,8 +5,8 @@ import androidx.compose.ui.graphics.Color
 import com.baghdad.design_system.color.theme.lightThemeColor
 
 data class NovixColor(
-    val normal: Color,
-    val variant: Color,
+    val primary: Color,
+    val primaryVariant: Color,
     val secondary: Color,
     val title: Color,
     val body: Color,

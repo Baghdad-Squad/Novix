@@ -5,8 +5,8 @@ import com.baghdad.design_system.color.model.NovixColor
 
 val darkThemeColor =
     NovixColor(
-        normal = Color(0xFFC65A42),
-        variant = Color(0xFF1F0E0A),
+        primary = Color(0xFFC65A42),
+        primaryVariant = Color(0xFF1F0E0A),
         secondary = Color(0xFF4B0412),
         title = Color(0xDEFFFFFF),
         body = Color(0x99FFFFFF),
