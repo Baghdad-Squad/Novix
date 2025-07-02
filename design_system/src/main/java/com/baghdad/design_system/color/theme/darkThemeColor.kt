@@ -4,12 +4,12 @@ import androidx.compose.ui.graphics.Color
 import com.baghdad.design_system.color.model.*
 
 val darkThemeColor = NovixColor(
-    primaryColor = Primary(
+    primary = Primary(
         normal = Color(0xFFC65A42),
         variant = Color(0xFF1F0E0A)
     ),
-    secondaryColor = Color(0xFF4B0412),
-    textColor = TextColor(
+    secondary = Color(0xFF4B0412),
+    text = TextColor(
         title = Color(0xDEFFFFFF),
         body = Color(0x99FFFFFF),
         hint = Color(0x61FFFFFF),
@@ -21,7 +21,7 @@ val darkThemeColor = NovixColor(
         backgroundLow = Color(0x08FFFFFF),
         disable = Color(0xFF1F1C1B)
     ),
-    surfaceColor = SurfaceColor(
+    surface = SurfaceColor(
         surface = Color(0xFF0D0608),
         surfaceHigh = Color(0xFF110E0F)
     ),

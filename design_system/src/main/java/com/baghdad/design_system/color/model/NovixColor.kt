@@ -5,10 +5,10 @@ import androidx.compose.ui.graphics.Color
 import com.baghdad.design_system.color.theme.lightThemeColor
 
 data class NovixColor(
-    val primaryColor: Primary,
-    val secondaryColor: Color,
-    val textColor: TextColor,
-    val surfaceColor: SurfaceColor,
+    val primary: Primary,
+    val secondary: Color,
+    val text: TextColor,
+    val surface: SurfaceColor,
     val status: StatusColor
 )
 

@@ -8,12 +8,12 @@ import com.baghdad.design_system.color.model.SurfaceColor
 import com.baghdad.design_system.color.model.TextColor
 
 val lightThemeColor = NovixColor(
-    primaryColor = Primary(
+    primary = Primary(
         normal = Color(0xFFF77053),
         variant = Color(0xFFF9E8E5)
     ),
-    secondaryColor = Color(0xFFF9E8E5),
-    textColor = TextColor(
+    secondary = Color(0xFFF9E8E5),
+    text = TextColor(
         title = Color(0xDE1F1F1F),
         body = Color(0x991F1F1F),
         hint = Color(0x611F1F1F),
@@ -25,7 +25,7 @@ val lightThemeColor = NovixColor(
         backgroundLow = Color(0x08FFFFFF),
         disable = Color(0xFFCCBFBC)
     ),
-    surfaceColor = SurfaceColor(
+    surface = SurfaceColor(
         surface = Color(0xFFFCF9F5),
         surfaceHigh = Color(0xFFFFFFFF)
     ),
