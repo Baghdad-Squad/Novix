@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.firebase.perf) apply false
@@ -19,6 +20,20 @@ jacoco {
  * you can add them to this list.
  * */
 val excludedPackagesOrClasses = listOf(
+    "com.baghdad.entity",
+)
+
+val excludedPatterns = excludedPackagesOrClasses.flatMap { path ->
+    val patternBase = path.replace('.', '/')
+    listOf(
+        "**/$patternBase/**",
+        "**/$patternBase.class",
+        "**/$patternBase\$*.class"
+    )
+}
+
+
+val defaultExcludedPackagesOrClasses = listOf(
     "**/R.class",
     "**/R$*.class",
     "**/BuildConfig.*",
@@ -31,20 +46,22 @@ val excludedPackagesOrClasses = listOf(
     "**/ui/theme/**",
 )
 
-val execPaths = listOf(
-    "**/build/jacoco/testDebugUnitTest.exec",
-    "**/build/outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec"
-)
+val allExcludes = defaultExcludedPackagesOrClasses + excludedPatterns
 
 val classDirs = subprojects.mapNotNull { subproject ->
     val path = "${subproject.buildDir}/tmp/kotlin-classes/debug"
     val dir = file(path)
     if (dir.exists()) {
         fileTree(dir) {
-            exclude(excludedPackagesOrClasses)
+            exclude(allExcludes)
         }
     } else null
 }
+
+val execPaths = listOf(
+    "**/build/jacoco/testDebugUnitTest.exec",
+    "**/build/outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec"
+)
 
 
 val sourceDirs = subprojects.flatMap {
