@@ -82,8 +82,8 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         html.required.set(true)
         xml.required.set(true)
         csv.required.set(false)
-        html.outputLocation.set(file("$buildDir/reports/jacoco/jacocoTestReport/html"))
-        xml.outputLocation.set(file("$buildDir/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"))
+        html.outputLocation.set(file("app/build/reports/jacoco/jacocoTestReport/html"))
+        xml.outputLocation.set(file("app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"))
     }
 }
 
