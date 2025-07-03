@@ -1,10 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+
 }
 
 android {
-    namespace = "com.baghdad.islamic_library"
+    namespace = "com.baghdad.islamic_image_loader"
     compileSdk = 35
 
     defaultConfig {
