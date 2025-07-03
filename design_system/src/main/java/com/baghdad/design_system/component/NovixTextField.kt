@@ -194,7 +194,7 @@ fun NovixTextFieldPreview() {
         onValueChange = {},
         label = "Title",
         hint = "value",
-        leadingIcon = painterResource(R.drawable.user)
+        leadingIcon = painterResource(R.drawable.ic_user)
     )
 }
 
@@ -206,7 +206,7 @@ fun NovixTextFieldPreview2() {
         onValueChange = {},
         label = "Title",
         hint = "value",
-        leadingIcon = painterResource(R.drawable.user)
+        leadingIcon = painterResource(R.drawable.ic_user)
     )
 }
 
