@@ -19,8 +19,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.baghdad.design_system.R
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 
@@ -45,7 +47,7 @@ fun RowScope.CategoryCard(
                 .zIndex(0f),
             contentScale = ContentScale.Crop,
             painter = painterResource(id = image),
-            contentDescription = "category image $title"
+            contentDescription = "category image ${stringResource(R.string.category_image)}"
         )
         Box(
             modifier = Modifier
