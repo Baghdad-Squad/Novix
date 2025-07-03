@@ -21,12 +21,12 @@
   </path>
   <path
       android:pathData="M96.32,96.32C78.82,113.82 50.17,113.53 32.32,95.68C14.47,77.83 14.18,49.18 31.68,31.68C49.18,14.18 77.83,14.47 95.68,32.32C113.53,50.17 113.82,78.82 96.32,96.32Z"
-      android:fillColor="#FDADB2"
-      android:fillAlpha="0.6"/>
+      android:fillColor="#000000"
+      />
   <path
       android:pathData="M90.21,37.79C104.36,51.93 104.03,75.12 89.57,89.57C75.12,104.03 51.93,104.35 37.79,90.21C23.64,76.07 23.97,52.88 38.43,38.43C52.88,23.97 76.07,23.64 90.21,37.79Z"
       android:strokeWidth="2.44758"
-      android:fillColor="#00000000">
+      android:fillColor="#000000">
     <aapt:attr name="android:strokeColor">
       <gradient 
           android:startX="-1.98"
@@ -41,5 +41,5 @@
   </path>
   <path
       android:pathData="M52.48,97.36a11.52,11.02 0,1 0,23.04 0a11.52,11.02 0,1 0,-23.04 0z"
-      android:fillColor="#F75662"/>
+      android:fillColor="#000000"/>
 </vector>

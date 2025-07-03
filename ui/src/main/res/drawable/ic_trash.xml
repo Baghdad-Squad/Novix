@@ -3,7 +3,8 @@
     android:width="100dp"
     android:height="100dp"
     android:viewportWidth="100"
-    android:viewportHeight="100">
+    android:viewportHeight="100"
+    android:autoMirrored="true">
   <group>
     <clip-path
         android:pathData="M0,0h100v100h-100z"/>
@@ -24,8 +25,8 @@
     <path
         android:pathData="M42.58,25.25H56.42C63.52,25.25 68.83,25.25 72.84,25.82C76.84,26.39 79.52,27.52 81.4,29.74C83.29,31.97 83.96,34.79 83.86,38.83C83.77,42.89 82.89,48.12 81.73,55.13L77.86,78.31C77,83.49 76.36,87.34 75.48,90.29C74.6,93.24 73.5,95.25 71.74,96.74C69.98,98.23 67.81,98.99 64.77,99.37C61.71,99.75 57.8,99.75 52.55,99.75H46.45C41.2,99.75 37.29,99.75 34.23,99.37C31.19,98.99 29.02,98.23 27.26,96.74C25.5,95.25 24.4,93.24 23.52,90.29C22.65,87.34 22,83.49 21.14,78.31L17.27,55.13C16.11,48.12 15.24,42.89 15.14,38.83C15.04,34.79 15.71,31.97 17.6,29.74C19.48,27.52 22.16,26.39 26.16,25.82C30.17,25.25 35.48,25.25 42.58,25.25Z"
         android:strokeWidth="0.5"
-        android:fillColor="#FFC4C8"
-        android:fillAlpha="0.6">
+        android:fillColor="#000000"
+        >
       <aapt:attr name="android:strokeColor">
         <gradient 
             android:startX="8.25"
@@ -41,7 +42,7 @@
     <path
         android:pathData="M40.24,81.23L40.24,81.23A2.71,2.71 0,0 1,37.53 78.53L37.53,52.55A2.71,2.71 0,0 1,40.24 49.84L40.24,49.84A2.71,2.71 0,0 1,42.95 52.55L42.95,78.53A2.71,2.71 0,0 1,40.24 81.23z"
         android:strokeWidth="0.489516"
-        android:fillAlpha="0.9">
+        >
       <aapt:attr name="android:fillColor">
         <gradient 
             android:startX="34.88"
@@ -68,7 +69,7 @@
     <path
         android:pathData="M58.54,81.23L58.54,81.23A3.3,3.3 0,0 1,55.25 77.94L55.25,53.14A3.3,3.3 0,0 1,58.54 49.84L58.54,49.84A3.3,3.3 0,0 1,61.84 53.14L61.84,77.94A3.3,3.3 0,0 1,58.54 81.23z"
         android:strokeWidth="0.489516"
-        android:fillAlpha="0.9">
+        >
       <aapt:attr name="android:fillColor">
         <gradient 
             android:startX="49.2"

@@ -7,12 +7,12 @@
     android:autoMirrored="true">
   <path
       android:pathData="M49.5,13.03C72.28,13.03 90.73,31.19 90.73,53.58C90.73,75.96 72.28,94.13 49.5,94.13C26.73,94.13 8.27,75.96 8.27,53.58C8.27,31.19 26.73,13.03 49.5,13.03Z"
-      android:fillColor="#FFA996"
-      android:fillAlpha="0.6"/>
+      android:fillColor="#000000"
+      />
   <path
       android:pathData="M49.5,13.03C72.28,13.03 90.73,31.19 90.73,53.58C90.73,75.96 72.28,94.13 49.5,94.13C26.73,94.13 8.27,75.96 8.27,53.58C8.27,31.19 26.73,13.03 49.5,13.03Z"
       android:strokeWidth="0.6"
-      android:fillColor="#00000000">
+      android:fillColor="#000000">
     <aapt:attr name="android:strokeColor">
       <gradient 
           android:startX="98.83"
@@ -29,7 +29,7 @@
       android:pathData="M49.5,13.03C72.28,13.03 90.73,31.19 90.73,53.58C90.73,75.96 72.28,94.13 49.5,94.13C26.73,94.13 8.27,75.96 8.27,53.58C8.27,31.19 26.73,13.03 49.5,13.03Z"
       android:strokeAlpha="0.2"
       android:strokeWidth="0.6"
-      android:fillColor="#00000000">
+      android:fillColor="#000000">
     <aapt:attr name="android:strokeColor">
       <gradient 
           android:startX="12.96"
