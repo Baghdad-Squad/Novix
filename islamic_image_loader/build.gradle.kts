@@ -37,9 +37,7 @@ dependencies {
     implementation(libs.bundles.androidx.core)
     implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.bundles.coil)
-    implementation(libs.bundles.material)
     implementation(libs.bundles.coroutines)
-    implementation(libs.bundles.coil)
     implementation(libs.bundles.tensorflow)
     implementation(libs.face.detection)
 }
