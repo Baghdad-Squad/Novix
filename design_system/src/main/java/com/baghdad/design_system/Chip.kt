@@ -19,7 +19,7 @@ import com.baghdad.design_system.theme.Theme
 fun Chip(
     title: String,
     isSelected: Boolean,
-    onTap: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backgroundColor by animateColorAsState(
@@ -33,7 +33,7 @@ fun Chip(
         color = if (isSelected) Theme.color.onPrimary else Theme.color.body,
         modifier = modifier
             .noRippleClickable {
-                onTap()
+                onClick()
             }
             .background(backgroundColor, shape = RoundedCornerShape(radius))
             .padding(vertical = 8.dp, horizontal = paddingValue)
@@ -51,7 +51,7 @@ private fun PreviewChip() {
         Chip(
             "All",
             isSelected = true,
-            onTap = { },
+            onClick = { },
         )
     }
 }
