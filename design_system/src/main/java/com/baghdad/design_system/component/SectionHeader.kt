@@ -1,4 +1,4 @@
-package com.baghdad.design_system.components
+package com.baghdad.design_system.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -7,15 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,7 +53,7 @@ fun SectionHeader(
                     contentDescription = stringResource(R.string.arrow_icon),
                     tint = Theme.color.primary,
                     modifier = Modifier
-                        .padding(start = 6.08.dp)
+                        .padding(start = 4.dp)
                         .size(16.dp)
                 )
             }
