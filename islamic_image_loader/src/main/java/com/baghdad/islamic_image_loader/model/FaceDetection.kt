@@ -9,11 +9,7 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 internal fun detectAndCropFace(inputBitmap: Bitmap, onFaceCropped: (Bitmap?) -> Unit) {
     val image = InputImage.fromBitmap(inputBitmap, 0)
 
-    val options = FaceDetectorOptions.Builder()
-        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
-        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
-        .build()
+    val options = buildFaceDetectionOptions()
 
     val detector = FaceDetection.getClient(options)
 
@@ -43,7 +39,14 @@ internal fun detectAndCropFace(inputBitmap: Bitmap, onFaceCropped: (Bitmap?) -> 
             }
         }
         .addOnFailureListener { e ->
-            e.printStackTrace()
             onFaceCropped(null)
         }
+}
+
+private fun buildFaceDetectionOptions(): FaceDetectorOptions {
+    return FaceDetectorOptions.Builder()
+        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
+        .build()
 }
