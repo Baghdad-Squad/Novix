@@ -1,6 +1,7 @@
 package com.baghdad.design_system.component
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
@@ -23,14 +24,25 @@ fun Chip(
     modifier: Modifier = Modifier
 ) {
     val backgroundColor by animateColorAsState(
-        if (isSelected) Theme.color.secondary else Theme.color.surface, label = "background color"
+        if (isSelected) Theme.color.secondary else Theme.color.surface,
+        label = "background color"
     )
-    val paddingValue by animateDpAsState(if (isSelected) 24.dp else 12.dp)
-    val radius by animateDpAsState(if (isSelected) 12.dp else 8.dp)
+    val paddingValue by animateDpAsState(
+        if (isSelected) 24.dp else 12.dp,
+        animationSpec = TweenSpec(durationMillis = 300),
+    )
+    val radius by animateDpAsState(
+        if (isSelected) 12.dp else 8.dp,
+        animationSpec = TweenSpec(durationMillis = 300),
+    )
+    val textColor by animateColorAsState(
+        if (isSelected) Theme.color.onPrimary else Theme.color.body,
+        animationSpec = TweenSpec(durationMillis = 300),
+    )
     Text(
         title,
         style = Theme.typography.label.medium,
-        color = if (isSelected) Theme.color.onPrimary else Theme.color.body,
+        color = textColor,
         modifier = modifier
             .noRippleClickable {
                 onClick()
