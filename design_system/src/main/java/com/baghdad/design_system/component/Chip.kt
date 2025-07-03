@@ -47,7 +47,7 @@ fun Chip(
             .noRippleClickable {
                 onClick()
             }
-            .background(backgroundColor, shape = RoundedCornerShape(radius))
+            .background(color = backgroundColor, shape = RoundedCornerShape(radius))
             .padding(vertical = 8.dp, horizontal = paddingValue)
     )
 
