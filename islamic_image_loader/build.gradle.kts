@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.islamic_library"
+    namespace = "com.baghdad.islamic_library"
     compileSdk = 35
 
     defaultConfig {
