@@ -59,7 +59,6 @@ fun SectionHeader(
             }
         }
     }
-
 }
 
 @Preview(showBackground = true)
