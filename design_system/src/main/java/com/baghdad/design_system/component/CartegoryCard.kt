@@ -45,7 +45,7 @@ fun RowScope.CategoryCard(
                 .zIndex(0f),
             contentScale = ContentScale.Crop,
             painter = painterResource(id = image),
-            contentDescription = "category image"
+            contentDescription = "category image $title"
         )
         Box(
             modifier = Modifier
