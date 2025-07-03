@@ -34,9 +34,9 @@ private fun buildImageProcessor(inputImageSize: Int): ImageProcessor {
 }
 
 private fun convertBitmapToSoftwareBitmap(bitmap: Bitmap): Bitmap {
-    return if (image.config == Bitmap.Config.HARDWARE) {
-        image.copy(Bitmap.Config.ARGB_8888, false)
-    } else image
+    return if (bitmap.config == Bitmap.Config.HARDWARE) {
+        bitmap.copy(Bitmap.Config.ARGB_8888, false)
+    } else bitmap
 }
 
 internal suspend fun predictGender(image: Bitmap, context: Context, modelPath: String): FloatArray =
