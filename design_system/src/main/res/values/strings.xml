@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_icon">Home Icon</string>
+    <string name="novix">Novix</string>
+    <string name="novix_description">Born from Nova, Made for Flix.</string>
+    <string name="app_bar_icon">App Bar Icon</string>
+</resources>
