@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,7 +30,7 @@ import com.baghdad.design_system.theme.Theme
 @Composable
 fun RowScope.CategoryCard(
     title: String,
-    @DrawableRes image: Int,
+    image: Painter,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -46,7 +47,7 @@ fun RowScope.CategoryCard(
                 .fillMaxSize()
                 .zIndex(0f),
             contentScale = ContentScale.Crop,
-            painter = painterResource(id = image),
+            painter = image,
             contentDescription = "category image ${stringResource(R.string.category_image)}"
         )
         Box(
