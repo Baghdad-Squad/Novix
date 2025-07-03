@@ -33,7 +33,6 @@ crashlytics = "3.0.4"
 perf-plugin = "1.4.2"
 tensorflowLite = "2.17.0"
 tensorflowLiteGpu = "2.17.0"
-onnxruntime = "1.15.1"
 
 
 [libraries]
@@ -113,7 +112,6 @@ mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "moc
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 
 # tensorflow
-onnxruntime = { module = "com.microsoft.onnxruntime:onnxruntime", version.ref = "onnxruntime" }
 tensorflow-lite = { module = "org.tensorflow:tensorflow-lite", version.ref = "tensorflowLite" }
 tensorflow-lite-gpu = { module = "org.tensorflow:tensorflow-lite-gpu", version.ref = "tensorflowLiteGpu" }
 tensorflow-lite-support = { module = "org.tensorflow:tensorflow-lite-support", version.ref = "tensorflowLiteSupport" }
@@ -208,7 +206,6 @@ test-ui = [
 ]
 
 tensorflow = [
-    "onnxruntime",
     "tensorflow-lite",
     "tensorflow-lite-gpu",
     "tensorflow-lite-support"
