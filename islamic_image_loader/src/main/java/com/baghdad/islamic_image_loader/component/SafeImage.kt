@@ -15,7 +15,7 @@ import coil3.toBitmap
 import com.baghdad.islamic_image_loader.model.ImageUrlLoader
 import com.baghdad.islamic_image_loader.model.detectAndCropFace
 import com.baghdad.islamic_image_loader.model.predictGender
-import com.baghdad.islamic_library.R
+import com.baghdad.islamic_image_loader.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
