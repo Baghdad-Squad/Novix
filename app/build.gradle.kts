@@ -69,6 +69,9 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
     testImplementation(libs.bundles.test.core)
+
+
+
 }
 
 /**
