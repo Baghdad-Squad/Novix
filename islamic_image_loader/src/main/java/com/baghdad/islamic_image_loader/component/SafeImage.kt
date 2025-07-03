@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SafeImage(
     imageUrl: String,
-    contentDescription: String?
+    contentDescription: String?,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
