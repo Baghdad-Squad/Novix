@@ -26,18 +26,26 @@ private fun loadModelFile(context: Context, modelPath: String): MappedByteBuffer
     }
 }
 
+private fun buildImageProcessor(inputImageSize: Int): ImageProcessor {
+    return ImageProcessor.Builder()
+        .add(ResizeOp(inputImageSize, inputImageSize, ResizeOp.ResizeMethod.BILINEAR))
+        .add(NormalizeOp(0f, 255f))
+        .build()
+}
+
+private fun convertBitmapToSoftwareBitmap(bitmap: Bitmap): Bitmap {
+    return if (image.config == Bitmap.Config.HARDWARE) {
+        image.copy(Bitmap.Config.ARGB_8888, false)
+    } else image
+}
+
 internal suspend fun predictGender(image: Bitmap, context: Context, modelPath: String): FloatArray =
     withContext(Dispatchers.Default) {
         val interpreter = Interpreter(loadModelFile(context, modelPath))
-        val image = if (image.config == Bitmap.Config.HARDWARE) {
-            image.copy(Bitmap.Config.ARGB_8888, false)
-        } else image
-        val inputImageSize = 128
+        val image = convertBitmapToSoftwareBitmap(image)
 
-        val imageProcessor = ImageProcessor.Builder()
-            .add(ResizeOp(inputImageSize, inputImageSize, ResizeOp.ResizeMethod.BILINEAR))
-            .add(NormalizeOp(0f, 255f))
-            .build()
+        val inputImageSize = 128
+        val imageProcessor = buildImageProcessor(inputImageSize)
 
         val tensorImage = TensorImage.fromBitmap(image)
         val processedImage = imageProcessor.process(tensorImage)
