@@ -1,6 +1,5 @@
 package com.baghdad.design_system.component
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -16,11 +15,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,9 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -44,13 +46,15 @@ fun NovixTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    title: String = "",
-    placeholder: String = "",
-    @DrawableRes leadingIcon: Int? = null,
+    label: String? = null,
+    hint: String? = null,
+    leadingIcon: Painter? = null,
+    trailingIcon: Painter? = null,
+    onClickTrailingIcon: (() -> Unit)? = null,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
-    isPassword: Boolean = false,
+    isTextMasked: Boolean = false,
     maxLines: Int = 1,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -67,16 +71,20 @@ fun NovixTextField(
         animationSpec = tween(durationMillis = 400)
     )
 
-    var passwordVisible by remember { mutableStateOf(false) }
+    var trailingVisibility by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-        if (title.isNotEmpty()) {
-            Text(
-                text = title,
-                style = Theme.typography.body.medium,
-                color = Theme.color.body,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+    Column(modifier = modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp)) {
+        if (label != null) {
+            if (label.isNotEmpty()) {
+                Text(
+                    text = label,
+                    style = Theme.typography.body.medium,
+                    color = Theme.color.body,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
         }
 
         Row(
@@ -110,7 +118,7 @@ fun NovixTextField(
                     enabled = enabled && !readOnly,
                     singleLine = singleLine,
                     maxLines = maxLines,
-                    visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+                    visualTransformation = if (isTextMasked && !trailingVisibility) PasswordVisualTransformation() else VisualTransformation.None,
                     textStyle = Theme.typography.body.medium.copy(color = Theme.color.body),
                     cursorBrush = SolidColor(Theme.color.primary),
                     interactionSource = interactionSource,
@@ -122,7 +130,7 @@ fun NovixTextField(
 
                             if (leadingIcon != null) {
                                 Icon(
-                                    painter = painterResource(leadingIcon),
+                                    painter = leadingIcon,
                                     contentDescription = "text input field",
                                     modifier = Modifier.size(24.dp),
                                     tint = iconTint
@@ -131,26 +139,35 @@ fun NovixTextField(
 
                             Box(Modifier.weight(1f)) {
                                 if (value.isEmpty()) {
-                                    PlaceholderTextField(placeholder)
+                                    hint?.let { HintTextField(it) }
                                 }
                                 innerTextField()
                             }
-                            if (isPassword) {
-                                IconButton(
-                                    onClick = { passwordVisible = !passwordVisible }
-                                ) {
+                            if (isTextMasked) {
+                                trailingIcon?.let {
                                     Icon(
-                                        painter = painterResource(
-                                            if (passwordVisible) R.drawable.eye
-                                            else R.drawable.ic_heroicons_outline
-                                        ),
-                                        contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                                        modifier = Modifier.size(24.dp),
+                                        painter = it,
+                                        contentDescription = if (trailingVisibility) "Hide" else "Show",
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clip(CircleShape)
+                                            .clickable(
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                indication = ripple(
+                                                    bounded = true,
+                                                    radius = 100.dp,
+                                                ),
+                                                onClick = {
+                                                    trailingVisibility = !trailingVisibility
+                                                    onClickTrailingIcon?.invoke()
+                                                }
+                                            ),
                                         tint = iconTint
                                     )
                                 }
                             }
                         }
+
                     }
                 )
             }
@@ -159,10 +176,8 @@ fun NovixTextField(
 }
 
 
-
-
 @Composable
-private fun PlaceholderTextField(placeholder: String) {
+private fun HintTextField(placeholder: String) {
     Text(
         text = placeholder,
         style = Theme.typography.body.small,
@@ -177,20 +192,21 @@ fun NovixTextFieldPreview() {
     NovixTextField(
         value = "",
         onValueChange = {},
-        title = "Title",
-        placeholder = "value",
-        leadingIcon = R.drawable.user
+        label = "Title",
+        hint = "value",
+        leadingIcon = painterResource(R.drawable.user)
     )
 }
+
 @Preview
 @Composable
 fun NovixTextFieldPreview2() {
     NovixTextField(
         value = "Value",
         onValueChange = {},
-        title = "Title",
-        placeholder = "value",
-        leadingIcon = R.drawable.user
+        label = "Title",
+        hint = "value",
+        leadingIcon = painterResource(R.drawable.user)
     )
 }
 
