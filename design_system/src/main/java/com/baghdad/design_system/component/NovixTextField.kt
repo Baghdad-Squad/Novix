@@ -23,9 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,6 +53,7 @@ fun NovixTextField(
     readOnly: Boolean = false,
     singleLine: Boolean = true,
     isTextMasked: Boolean = false,
+    trailingVisibility: Boolean = false,
     maxLines: Int = 1,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -71,11 +70,12 @@ fun NovixTextField(
         animationSpec = tween(durationMillis = 400)
     )
 
-    var trailingVisibility by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp)) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
         if (label != null) {
             if (label.isNotEmpty()) {
                 Text(
@@ -156,12 +156,12 @@ fun NovixTextField(
                                                 indication = ripple(
                                                     bounded = true,
                                                     radius = 100.dp,
-                                                ),
-                                                onClick = {
-                                                    trailingVisibility = !trailingVisibility
-                                                    onClickTrailingIcon?.invoke()
-                                                }
-                                            ),
+
+                                                    )
+                                            ) {
+
+                                                onClickTrailingIcon?.invoke()
+                                            },
                                         tint = iconTint
                                     )
                                 }
