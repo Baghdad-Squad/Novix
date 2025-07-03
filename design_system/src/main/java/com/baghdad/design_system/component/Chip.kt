@@ -1,4 +1,4 @@
-package com.baghdad.design_system
+package com.baghdad.design_system.component
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
