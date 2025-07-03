@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":remote_datasource"))
     implementation(project(":domain"))
     implementation(project(":entity"))
+    implementation(project(":islamic_image_loader"))
     implementation(libs.bundles.androidx.core)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.androidx.compose.ui)
