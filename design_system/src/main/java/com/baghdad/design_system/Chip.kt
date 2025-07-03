@@ -23,7 +23,7 @@ fun Chip(title: String, isSelected: Boolean, onTap: () -> Unit, modifier: Modifi
         if (isSelected) Theme.color.secondary else Theme.color.surface, label = "background color"
     )
     val paddingValue by animateDpAsState(if (isSelected) 24.dp else 12.dp)
-    val radius by animateDpAsState(if (isSelected) 12.dp else 0.dp)
+    val radius by animateDpAsState(if (isSelected) 12.dp else 8.dp)
     val interactionSource = remember { MutableInteractionSource() }
 
     Text(
