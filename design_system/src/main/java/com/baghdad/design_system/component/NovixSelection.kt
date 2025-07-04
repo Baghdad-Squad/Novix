@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.shared.Selectable
@@ -55,7 +56,7 @@ fun NovixSelection(
             .border(
                 width = 1.5f.dp,
                 color = animatedBorderColor,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(12.dp)
             )
             .wrapContentHeight()
             .noRippleClickable { onClick() },
@@ -68,4 +69,14 @@ fun NovixSelection(
             style = Theme.typography.label.large
         )
     }
+}
+
+@Preview (showBackground = true, showSystemUi = true)
+@Composable
+private fun asdfd() {
+    NovixSelection(
+        option = Selectable("Option 1", isSelected = true),
+        onClick = { /* Handle click */ },
+        modifier = Modifier.padding(16.dp)
+    )
 }
