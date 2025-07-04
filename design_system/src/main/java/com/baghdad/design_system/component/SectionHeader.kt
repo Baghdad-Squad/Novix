@@ -1,6 +1,5 @@
 package com.baghdad.design_system.component
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -40,18 +39,16 @@ fun SectionHeader(
             color = Theme.color.title
         )
 
-        AnimatedVisibility(showAllLabel != null) {
+        if(showAllLabel != null) {
             Row {
-                showAllLabel?.let {
-                    Text(
-                        text = showAllLabel,
-                        style = Theme.typography.label.medium,
-                        color = Theme.color.primary
-                    )
-                }
+                Text(
+                    text = showAllLabel,
+                    style = Theme.typography.label.medium,
+                    color = Theme.color.primary
+                )
             }
                 Icon(
-                    painter = painterResource(id = R.drawable.arrow),
+                    painter = painterResource(id = R.drawable.arrow_right),
                     contentDescription = stringResource(R.string.arrow_icon),
                     tint = Theme.color.primary,
                     modifier = Modifier
