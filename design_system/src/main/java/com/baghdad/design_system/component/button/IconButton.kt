@@ -1,7 +1,6 @@
 package com.baghdad.design_system.component.button
 
-import android.annotation.SuppressLint
-import androidx.annotation.DrawableRes
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,10 +18,9 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.theme.Theme
 
-@SuppressLint("SupportAnnotationUsage")
 @Composable
 fun IconButton(
-    @DrawableRes icon: Painter,
+    icon: Painter,
     modifier: Modifier = Modifier,
     tintIcon: Color = Theme.color.title,
     onClick: () -> Unit = {},
