@@ -22,7 +22,7 @@ import com.baghdad.design_system.theme.Theme
 fun SectionHeader(
     title: String,
     modifier: Modifier = Modifier,
-    showAllLabel: String? = null,
+    isShowAllVisiable: Boolean,
     onClick: () -> Unit
 ) {
     Row(
@@ -39,10 +39,10 @@ fun SectionHeader(
             color = Theme.color.title
         )
 
-        if (showAllLabel != null) {
+        if (isShowAllVisiable) {
             Row {
                 Text(
-                    text = showAllLabel,
+                    text = stringResource(R.string.all),
                     style = Theme.typography.label.medium,
                     color = Theme.color.primary
                 )
@@ -64,7 +64,7 @@ fun SectionHeader(
 fun SectionHeaderPreview() {
     SectionHeader(
         title = "New arrival",
-        showAllLabel = "All",
+        isShowAllVisiable = true,
         onClick = { }
     )
 }
