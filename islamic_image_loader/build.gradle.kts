@@ -2,10 +2,11 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
 }
 
 android {
-    namespace = "com.baghdad.design_system"
+    namespace = "com.baghdad.islamic_image_loader"
     compileSdk = 35
 
     defaultConfig {
@@ -31,15 +32,18 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    buildFeatures { 
+        compose = true 
+    }
 }
 
 dependencies {
-    api(project(":islamic_image_loader"))
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.bundles.androidx.core)
-
-    implementation(libs.bundles.material)
-    implementation(libs.androidx.ui.graphics.android)
-    implementation(libs.androidx.ui.text.android)
+    implementation(libs.bundles.androidx.compose.ui)
+    implementation(libs.bundles.coil)
+    implementation(libs.bundles.coroutines)
+    implementation(libs.bundles.tensorflow)
+    implementation(libs.face.detection)
 }
