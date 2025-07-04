@@ -34,46 +34,31 @@ fun Chip(
     val backgroundColor by transition.animateColor(
         targetValueByState = { if (it) Theme.color.secondary else Color.Transparent },
         label = stringResource(R.string.background_color_animation),
-        transitionSpec = {
-            TweenSpec(durationMillis = 300)
-        })
+        transitionSpec = { TweenSpec(durationMillis = 300) }
+    )
     val paddingValue by transition.animateDp(
         targetValueByState = { if (it) 24.dp else 12.dp },
         label = stringResource(R.string.padding_value_animation),
-        transitionSpec = {
-            TweenSpec(durationMillis = 300)
-        },
+        transitionSpec = { TweenSpec(durationMillis = 300) },
     )
     val radius by transition.animateDp(
         targetValueByState = { if (it) 12.dp else 8.dp },
         label = stringResource(R.string.radius_animation),
-        transitionSpec = {
-            TweenSpec(durationMillis = 300)
-        },
+        transitionSpec = { TweenSpec(durationMillis = 300) },
     )
     val textColor by transition.animateColor(
         targetValueByState = { if (it) Theme.color.onPrimary else Theme.color.body },
         label = stringResource(R.string.text_color_animation),
-        transitionSpec = {
-            TweenSpec(durationMillis = 300)
-        },
+        transitionSpec = { TweenSpec(durationMillis = 300) },
     )
     Text(
         title,
         style = Theme.typography.label.medium,
         color = textColor,
         modifier = modifier
-            .noRippleClickable {
-                onClick()
-            }
-            .background(
-                color = backgroundColor,
-                shape = RoundedCornerShape(radius)
-            )
-            .padding(
-                vertical = 8.dp,
-                horizontal = paddingValue
-            )
+            .noRippleClickable { onClick() }
+            .background(color = backgroundColor, shape = RoundedCornerShape(radius))
+            .padding(vertical = 8.dp, horizontal = paddingValue)
     )
 
 }
