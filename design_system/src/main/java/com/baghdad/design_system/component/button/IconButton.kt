@@ -1,5 +1,6 @@
-package com.baghdad.design_system.component
+package com.baghdad.design_system.component.button
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,7 +20,7 @@ import com.baghdad.design_system.theme.Theme
 
 @Composable
 fun IconButton(
-    icon: Int,
+    @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
     tintIcon: Color = Theme.color.title,
     onClick: () -> Unit = {},
