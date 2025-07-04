@@ -42,7 +42,7 @@ fun HomeCard(
             isSaved = isSaved,
             onClick = { onSavedClick() },
             modifier = Modifier
-                .padding(14.dp)
+                .padding(8.dp)
                 .align(Alignment.TopStart)
         )
 
