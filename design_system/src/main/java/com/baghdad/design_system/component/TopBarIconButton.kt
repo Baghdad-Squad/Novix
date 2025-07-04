@@ -19,10 +19,10 @@ import com.baghdad.design_system.theme.Theme
 
 @Composable
 fun IconButton(
-    modifier: Modifier = Modifier,
     icon: Int,
+    modifier: Modifier = Modifier,
     tintIcon: Color = Theme.color.title,
-    onClick: () -> Unit,
+    onClick: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
