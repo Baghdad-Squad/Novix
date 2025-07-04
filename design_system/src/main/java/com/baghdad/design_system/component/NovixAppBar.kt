@@ -21,9 +21,7 @@ import com.baghdad.design_system.theme.Theme
 @Composable
 fun NovixAppBar(
     modifier: Modifier = Modifier,
-    showGoBack: Boolean = false,
     onGoBackClick: (() -> Unit)? = null,
-    showScreenTitle: Boolean = false,
     screenTitle: String? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -34,16 +32,15 @@ fun NovixAppBar(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.padding(horizontal = 16.dp)
     ) {
-        if (showGoBack) {
-            IconButton(
-                icon = R.drawable.ic_arrow_left,
-                tintIcon = Theme.color.title,
-                onClick = onGoBackClick,
-                modifier = Modifier.padding(end = 12.dp).rotate(rotation)
-            )
+            if (onGoBackClick != null) {
+                IconButton(
+                    icon = R.drawable.ic_arrow_left,
+                    tintIcon = Theme.color.title,
+                    onClick = onGoBackClick,
+                    modifier = Modifier.padding(end = 12.dp).rotate(rotation)
+                )
         }
 
-        if (showScreenTitle) {
             screenTitle?.let {
                 Text(
                     text = screenTitle,
@@ -52,7 +49,6 @@ fun NovixAppBar(
                     modifier = Modifier.weight(1f)
                 )
             }
-        }
         content()
     }
 }
@@ -67,9 +63,7 @@ private fun NovixAppBarPreview() {
     NovixTheme {
         NovixAppBar(
             modifier = Modifier,
-            showGoBack = true,
             onGoBackClick = { /*TODO*/ },
-            showScreenTitle = true,
             screenTitle = "My account",
             content = {
                 IconButton(
