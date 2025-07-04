@@ -32,6 +32,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,21 +71,18 @@ fun NovixTextField(
         animationSpec = tween(durationMillis = 400)
     )
 
-
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        if (label != null) {
-            if (label.isNotEmpty()) {
+        if (!label.isNullOrEmpty()) {
                 Text(
                     text = label,
                     style = Theme.typography.body.medium,
                     color = Theme.color.body,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-            }
         }
 
         Row(
@@ -147,7 +145,9 @@ fun NovixTextField(
                                 trailingIcon?.let {
                                     Icon(
                                         painter = it,
-                                        contentDescription = if (trailingVisibility) "Hide" else "Show",
+                                        contentDescription = if (trailingVisibility) stringResource(
+                                            R.string.hide
+                                        ) else stringResource(R.string.show),
                                         modifier = Modifier
                                             .size(24.dp)
                                             .clip(CircleShape)
