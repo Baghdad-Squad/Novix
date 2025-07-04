@@ -9,6 +9,7 @@
     <string name="negative_button_border_color">negative button border color</string>
     <string name="text_button_content_color">text button content color</string>
     <string name="striped_circular_progress_indicator_animation_progress">striped circular progress indicator animation progress</string>
+    <string name="rating_star">rating star</string>
     <string name="saved">Saved</string>
     <string name="unsaved">Unsaved</string>
 </resources>
