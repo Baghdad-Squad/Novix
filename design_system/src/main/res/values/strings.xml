@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chip_animation">chip animation</string>
+    <string name="background_color_animation">background color animation</string>
+    <string name="padding_value_animation">padding value animation</string>
+    <string name="radius_animation">radius animation</string>
+    <string name="text_color_animation">text color animation</string>
+</resources>
