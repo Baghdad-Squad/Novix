@@ -23,7 +23,7 @@ fun SectionHeader(
     title: String,
     isShowAllVisiable: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
