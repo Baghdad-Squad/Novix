@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="nav_bar_icon">nav bar icons</string>
+    <string name="arrow_icon">Arrow Icon</string>
+    <string name="all">All</string>
+    <string name="hide">Hide</string>
+    <string name="show">Show</string>
+    <string name="primary_button_icon">primary button icon</string>
+    <string name="floating_action_button_icon">floating action button icon</string>
+    <string name="fab_state">fab state</string>
+    <string name="fab_background_color">fab background color</string>
+    <string name="fab_content_color">fab content color</string>
+    <string name="outlined_button_border_color">outlined button border color</string>
+    <string name="negative_button_border_color">negative button border color</string>
+    <string name="text_button_content_color">text button content color</string>
+    <string name="striped_circular_progress_indicator_animation_progress">striped circular progress indicator animation progress</string>
+    <string name="rating_star">rating star</string>
+    <string name="saved">Saved</string>
+    <string name="unsaved">Unsaved</string>
+    <string name="chip_animation">chip animation</string>
+    <string name="background_color_animation">background color animation</string>
+    <string name="padding_value_animation">padding value animation</string>
+    <string name="radius_animation">radius animation</string>
+    <string name="text_color_animation">text color animation</string>
 </resources>
