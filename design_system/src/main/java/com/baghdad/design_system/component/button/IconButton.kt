@@ -1,5 +1,6 @@
 package com.baghdad.design_system.component.button
 
+import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,15 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.theme.Theme
 
+@SuppressLint("SupportAnnotationUsage")
 @Composable
 fun IconButton(
-    @DrawableRes icon: Int,
+    @DrawableRes icon: Painter,
     modifier: Modifier = Modifier,
     tintIcon: Color = Theme.color.title,
     onClick: () -> Unit = {},
@@ -39,7 +41,7 @@ fun IconButton(
             }
     ) {
         Icon(
-            painter = painterResource(icon),
+            painter = icon,
             contentDescription = stringResource(R.string.app_bar_icon),
             tint = tintIcon,
             modifier = Modifier

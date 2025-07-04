@@ -4,10 +4,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.NovixTheme
@@ -20,19 +18,16 @@ fun TopAppBar(
     screenTitle: String? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
-    val layoutDirection = LocalLayoutDirection.current
-    val rotation = if (layoutDirection == LayoutDirection.Rtl) 180f else 0f
 
     BasicTopAppBar(
         modifier = modifier
     ) {
-        if (onGoBackClick != null) {
+        onGoBackClick?.let {
             IconButton(
-                icon = R.drawable.ic_arrow_left,
+                icon = painterResource(R.drawable.ic_arrow_left),
                 tintIcon = Theme.color.title,
                 onClick = onGoBackClick,
                 modifier = Modifier
-                    .rotate(rotation)
             )
         }
 
@@ -62,12 +57,12 @@ private fun NovixAppBarPreview() {
             screenTitle = "My account",
             content = {
                 IconButton(
-                    icon = R.drawable.ic_pencil_edit,
+                    icon = painterResource(R.drawable.ic_pencil_edit),
                     tintIcon = Theme.color.title,
                     onClick = { }
                 )
                 IconButton(
-                    icon = R.drawable.ic_delete,
+                    icon = painterResource(R.drawable.ic_delete),
                     onClick = { },
                     tintIcon = Theme.color.redAccent,
                 )
