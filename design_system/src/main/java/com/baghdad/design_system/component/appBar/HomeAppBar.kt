@@ -17,7 +17,7 @@ import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
 @Composable
-fun HomeTopBar(
+fun HomeAppBar(
     modifier: Modifier = Modifier
 ) {
     val gradient = Brush.linearGradient(
@@ -65,6 +65,6 @@ fun HomeTopBar(
 @Composable
 private fun HomeTopBarPreview() {
     NovixTheme {
-        HomeTopBar()
+        HomeAppBar()
     }
 }
