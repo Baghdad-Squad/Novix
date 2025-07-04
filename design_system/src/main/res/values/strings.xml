@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="arrow_icon">Arrow Icon</string>
+    <string name="all">All</string>
     <string name="hide">Hide</string>
     <string name="show">Show</string>
     <string name="primary_button_icon">primary button icon</string>
@@ -23,4 +25,5 @@
     <string name="novix">Novix</string>
     <string name="novix_description">Born from Nova, Made for Flix.</string>
     <string name="app_bar_icon">App Bar Icon</string>
+    <string name="category_image">category image</string>
 </resources>
