@@ -3,7 +3,6 @@ package com.baghdad.design_system.component
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -30,6 +29,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
+import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
@@ -38,7 +38,7 @@ import com.baghdad.design_system.theme.Theme
 fun NovixBottomNavigationBar(
     onClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    selectedIcon: Int = 0
+    selectedIconIndex: Int = 0
 ) {
     val horizontalPadding = 25.dp
     val icons = remember {
@@ -59,15 +59,16 @@ fun NovixBottomNavigationBar(
         val iconCount = icons.size
         val availableWidth = maxWidth - (horizontalPadding * 2)
         val slotWidth = availableWidth / iconCount
+        val dotWidth = 2.dp
 
         val dotOffset by animateDpAsState(
-            targetValue = horizontalPadding + (slotWidth * selectedIcon) + (slotWidth / 2) - 2.dp,
+            targetValue = horizontalPadding + (slotWidth * selectedIconIndex) + (slotWidth / 2) - dotWidth,
             animationSpec = spring(dampingRatio = 0.7f, stiffness = 800f),
             label = "dot_offset"
         )
 
         val shadowOffset by animateDpAsState(
-            targetValue = horizontalPadding + (slotWidth * selectedIcon) + (slotWidth / 2) - 35.dp,
+            targetValue = horizontalPadding + (slotWidth * selectedIconIndex) + (slotWidth / 2) - 35.dp,
             animationSpec = spring(dampingRatio = 0.8f, stiffness = 400f),
             label = "box_offset"
         )
@@ -77,7 +78,8 @@ fun NovixBottomNavigationBar(
                 Theme.color.primary.copy(alpha = 0.08f),
                 Theme.color.primary.copy(alpha = 0.05f),
                 Theme.color.surface.copy(alpha = 0.02f),
-            ))
+            )
+        )
 
         Row(
             modifier = Modifier
@@ -88,12 +90,12 @@ fun NovixBottomNavigationBar(
                 Icon(
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { onClick(index) },
+                        .noRippleClickable { onClick(index) },
                     imageVector = ImageVector.vectorResource(
-                        id = if (selectedIcon == index) filled else unfilled
+                        id = if (selectedIconIndex == index) filled else unfilled
                     ),
                     contentDescription = stringResource(R.string.nav_bar_icon) + " $index",
-                    tint = if (selectedIcon == index) Theme.color.primary else Theme.color.hint
+                    tint = if (selectedIconIndex == index) Theme.color.primary else Theme.color.hint
                 )
             }
         }
@@ -132,7 +134,7 @@ fun NovixBottomNavigationBarPreview() {
                 selected = it
             },
             modifier = Modifier,
-            selectedIcon = selected
+            selectedIconIndex = selected
         )
     }
 }
