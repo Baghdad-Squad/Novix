@@ -22,9 +22,8 @@ import com.baghdad.design_system.theme.Theme
 @Composable
 fun SectionHeader(
     title: String,
-    actionText: String,
-    isAllTextVisiable: Boolean,
     modifier: Modifier = Modifier,
+    showAllLabel: String? = null,
     onClick: () -> Unit
 ) {
     Row(
@@ -41,13 +40,16 @@ fun SectionHeader(
             color = Theme.color.title
         )
 
-        AnimatedVisibility(isAllTextVisiable) {
+        AnimatedVisibility(showAllLabel != null) {
             Row {
-                Text(
-                    text = actionText,
-                    style = Theme.typography.label.medium,
-                    color = Theme.color.primary
-                )
+                showAllLabel?.let {
+                    Text(
+                        text = showAllLabel,
+                        style = Theme.typography.label.medium,
+                        color = Theme.color.primary
+                    )
+                }
+            }
                 Icon(
                     painter = painterResource(id = R.drawable.arrow),
                     contentDescription = stringResource(R.string.arrow_icon),
@@ -59,15 +61,13 @@ fun SectionHeader(
             }
         }
     }
-}
 
 @Preview(showBackground = true)
 @Composable
 fun SectionHeaderPreview() {
     SectionHeader(
         title = "New arrival",
-        actionText = "All",
-        isAllTextVisiable = true,
+        showAllLabel = "All",
         onClick = { }
     )
 }
