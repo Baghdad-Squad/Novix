@@ -21,9 +21,8 @@ internal fun BasicTopAppBar(
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        content =
-            {
-                content()
-            }
-    )
+    ) {
+        content()
+    }
+
 }
