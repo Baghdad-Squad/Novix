@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":islamic_image_loader"))
+    api(project(":islamic_image_loader"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.bundles.androidx.core)
