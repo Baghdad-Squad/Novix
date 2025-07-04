@@ -14,4 +14,9 @@
     <string name="rating_star">rating star</string>
     <string name="saved">Saved</string>
     <string name="unsaved">Unsaved</string>
+    <string name="chip_animation">chip animation</string>
+    <string name="background_color_animation">background color animation</string>
+    <string name="padding_value_animation">padding value animation</string>
+    <string name="radius_animation">radius animation</string>
+    <string name="text_color_animation">text color animation</string>
 </resources>
