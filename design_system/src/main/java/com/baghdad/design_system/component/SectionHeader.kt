@@ -21,9 +21,9 @@ import com.baghdad.design_system.theme.Theme
 @Composable
 fun SectionHeader(
     title: String,
-    modifier: Modifier = Modifier,
     isShowAllVisiable: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
