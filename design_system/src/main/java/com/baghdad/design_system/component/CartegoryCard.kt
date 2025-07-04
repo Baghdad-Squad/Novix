@@ -28,7 +28,7 @@ import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 
 @Composable
-fun RowScope.CategoryCard(
+fun CategoryCard(
     title: String,
     image: Painter,
     onClick: () -> Unit,
@@ -37,7 +37,6 @@ fun RowScope.CategoryCard(
 
     Box(
         modifier = modifier
-            .weight(1f)
             .height(height = 68.dp)
             .clip(shape = RoundedCornerShape(12.dp))
             .noRippleClickable(onClick = onClick)
