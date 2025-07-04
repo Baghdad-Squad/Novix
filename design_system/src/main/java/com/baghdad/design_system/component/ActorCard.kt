@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.baghdad.design_system.theme.Theme
 
 private val CardHeight = 55.dp
@@ -51,8 +50,11 @@ fun ActorCard(
         Image(
             painter = actorImage,
             contentScale = ContentScale.Crop,
-            contentDescription = if (characterName.isNullOrBlank()) "Portrait of actor $actorName"
-            else "Actor $actorName as $characterName",
+            contentDescription =
+                if (characterName.isNullOrBlank())
+                    "Portrait of actor $actorName"
+                else
+                    "Actor $actorName as $characterName",
             modifier = Modifier
                 .size(ActorImageSize)
                 .clip(ImageShape)
@@ -75,7 +77,6 @@ fun ActorCard(
         ) {
             Text(
                 text = actorName,
-                fontSize = 18.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = Theme.typography.title.medium.copy(color = Theme.color.body)
@@ -84,10 +85,9 @@ fun ActorCard(
             if (!characterName.isNullOrBlank()) {
                 Text(
                     text = characterName,
-                    fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = Theme.typography.title.medium.copy(color = Theme.color.hint)
+                    style = Theme.typography.title.small.copy(color = Theme.color.hint)
                 )
             }
         }
