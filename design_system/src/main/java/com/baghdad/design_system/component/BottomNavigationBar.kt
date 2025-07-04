@@ -1,0 +1,138 @@
+package com.baghdad.design_system.component
+
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.R
+import com.baghdad.design_system.preview.NovixPreviews
+import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.design_system.theme.Theme
+
+@Composable
+fun NovixBottomNavigationBar(
+    onClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    selectedIcon: Int = 0
+) {
+    val horizontalPadding = 25.dp
+    val icons = remember {
+        listOf(
+            Pair(R.drawable.ic_home_outlined, R.drawable.ic_home_filled),
+            Pair(R.drawable.ic_search_outlined, R.drawable.ic_search_filled),
+            Pair(R.drawable.ic_masks_outlined, R.drawable.ic_masks_filled),
+            Pair(R.drawable.ic_allbookmark_outlined, R.drawable.ic_allbookmark_filled),
+            Pair(R.drawable.ic_user_octagon_outlined, R.drawable.ic_user_octagon_filled),
+        )
+    }
+
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Theme.color.surface)
+    ) {
+        val iconCount = icons.size
+        val availableWidth = maxWidth - (horizontalPadding * 2)
+        val slotWidth = availableWidth / iconCount
+
+        val dotOffset by animateDpAsState(
+            targetValue = horizontalPadding + (slotWidth * selectedIcon) + (slotWidth / 2) - 2.dp,
+            animationSpec = spring(dampingRatio = 0.7f, stiffness = 800f),
+            label = "dot_offset"
+        )
+
+        val shadowOffset by animateDpAsState(
+            targetValue = horizontalPadding + (slotWidth * selectedIcon) + (slotWidth / 2) - 35.dp,
+            animationSpec = spring(dampingRatio = 0.8f, stiffness = 400f),
+            label = "box_offset"
+        )
+
+        val largeRadialGradient = Brush.radialGradient(
+            colors = listOf(
+                Theme.color.primary.copy(alpha = 0.08f),
+                Theme.color.primary.copy(alpha = 0.05f),
+                Theme.color.surface.copy(alpha = 0.02f),
+            ))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = horizontalPadding, vertical = 14.dp),
+        ) {
+            icons.forEachIndexed { index, (unfilled, filled) ->
+                Icon(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onClick(index) },
+                    imageVector = ImageVector.vectorResource(
+                        id = if (selectedIcon == index) filled else unfilled
+                    ),
+                    contentDescription = stringResource(R.string.nav_bar_icon) + " $index",
+                    tint = if (selectedIcon == index) Theme.color.primary else Theme.color.hint
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(x = dotOffset.roundToPx(), y = -16) }
+                .padding(bottom = 6.dp)
+                .size(4.dp)
+                .clip(CircleShape)
+                .background(Theme.color.primary)
+                .blur(50.dp)
+                .align(Alignment.BottomStart)
+        )
+
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(x = shadowOffset.roundToPx(), y = 0) }
+                .size(70.dp)
+                .clip(CircleShape)
+                .scale(scaleX = 1.1f, scaleY = 1.0f)
+                .background(largeRadialGradient)
+                .align(Alignment.CenterStart)
+        )
+    }
+}
+
+
+@NovixPreviews
+@Composable
+fun NovixBottomNavigationBarPreview() {
+    NovixTheme {
+        var selected by remember { mutableIntStateOf(0) }
+        NovixBottomNavigationBar(
+            onClick = {
+                selected = it
+            },
+            modifier = Modifier,
+            selectedIcon = selected
+        )
+    }
+}
