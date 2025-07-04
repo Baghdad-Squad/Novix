@@ -48,7 +48,7 @@ fun RatingChip(
             Icon(
                 painter = painterResource(id = R.drawable.ic_rating_star),
                 contentDescription = null,
-                tint = Color.Unspecified,
+                tint = Color(0xFFCFC657),
                 modifier = Modifier.size(12.dp)
             )
             Text(
