@@ -1,7 +1,8 @@
 package com.baghdad.design_system.component
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,30 +17,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.shared.Selectable
 import com.baghdad.design_system.theme.Theme
 
+
 @Composable
 fun NovixSelection(
-    option: Selectable <String>,
-    onClick: () -> Unit
+    option: Selectable<String>,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val animatedBackgroundColor by animateColorAsState(
-        targetValue = if (option.isSelected) Theme.color.primaryVariant
-        else Color.Transparent,
-        animationSpec = tween(500)
+    val transition = updateTransition(
+        targetState = option.isSelected,
+        label = "SelectionTransition"
     )
 
-    val animatedBorderColor by animateColorAsState(
-        targetValue = if (option.isSelected) Theme.color.primary
-        else Theme.color.stroke,
-        animationSpec = tween(500)
-    )
+    val animatedBackgroundColor by transition.animateColor(
+        transitionSpec = { tween(durationMillis = 500) },
+        label = "BackgroundColorAnimation"
+    ) { isSelected ->
+        if (isSelected) Theme.color.primaryVariant
+        else Theme.color.surface.copy(alpha = 0.0f)
+    }
+
+    val animatedBorderColor by transition.animateColor(
+        transitionSpec = { tween(durationMillis = 500) },
+        label = "BorderColorAnimation"
+    ) { isSelected ->
+        if (isSelected) Theme.color.primary
+        else Theme.color.stroke
+    }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(animatedBackgroundColor, RoundedCornerShape(8.dp))
             .border(
