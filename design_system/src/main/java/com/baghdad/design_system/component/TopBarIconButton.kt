@@ -1,5 +1,6 @@
 package com.baghdad.design_system.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,22 +22,23 @@ fun IconButton(
     modifier: Modifier = Modifier,
     icon: Int,
     tintIcon: Color = Theme.color.title,
-    onClick: (() -> Unit)? = null,
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
             .size(40.dp)
+            .background(color = Theme.color.backgroundLow)
             .border(
                 width = 1.dp,
                 color = Theme.color.stroke,
                 shape = RoundedCornerShape(12.dp)
             )
             .clickable {
-                onClick?.invoke()
+                onClick.invoke()
             }
     ) {
         Icon(
-            painter = painterResource(icon), //arrow left or right icon depending on the language
+            painter = painterResource(icon),
             contentDescription = stringResource(R.string.app_bar_icon),
             tint = tintIcon,
             modifier = Modifier
