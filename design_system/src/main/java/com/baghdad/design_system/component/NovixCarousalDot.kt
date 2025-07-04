@@ -48,8 +48,8 @@ fun CarousalDot(
 @Composable
 private fun Dot(
     isHighLighted: Boolean,
-    highlightedSize: Dp,
-    defaultSize: Dp,
+    highlightedSize: Dp = 7.dp,
+    defaultSize: Dp = 5.dp,
     modifier: Modifier = Modifier
 ) {
     val dotTintColor by animateColorAsState(
@@ -76,6 +76,7 @@ private fun Dot(
             )
     )
 }
+
 
 @PreviewScreenSizes
 @Composable
