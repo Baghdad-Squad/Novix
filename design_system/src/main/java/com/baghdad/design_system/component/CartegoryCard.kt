@@ -71,7 +71,7 @@ fun CategoryCard(
             color = Theme.color.onPrimary,
             modifier = Modifier
                 .zIndex(3f)
-                .widthIn(max = 99.dp)
+                .widthIn(max = 110.dp)
                 .padding(
                     top = 8.5.dp, start = 8.dp
                 )
