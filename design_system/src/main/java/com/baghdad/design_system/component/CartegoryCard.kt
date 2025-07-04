@@ -62,7 +62,7 @@ fun CategoryCard(
                 )
                 .border(
                     width = 1.dp,
-                    color = Color(0x141F1F1F)
+                    color = Theme.color.stroke
                 )
         )
         Text(
@@ -73,7 +73,7 @@ fun CategoryCard(
                 .zIndex(3f)
                 .widthIn(max = 110.dp)
                 .padding(
-                    top = 8.5.dp, start = 8.dp
+                    top = 8.dp, start = 8.dp
                 )
         )
     }
