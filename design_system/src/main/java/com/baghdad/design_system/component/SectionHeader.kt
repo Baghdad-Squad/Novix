@@ -62,7 +62,6 @@ fun SectionHeader(
         }
     }
 
-
 @Preview(showBackground = true)
 @Composable
 fun SectionHeaderPreview() {
