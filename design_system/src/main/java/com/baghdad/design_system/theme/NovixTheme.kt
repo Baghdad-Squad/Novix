@@ -1,5 +1,6 @@
 package com.baghdad.design_system.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import com.baghdad.design_system.color.model.localNovixColor
@@ -10,7 +11,7 @@ import com.baghdad.design_system.textStyle.theme.novixTextStyle
 
 @Composable
 fun NovixTheme(
-    isDarkTheme: Boolean = false,
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
 
