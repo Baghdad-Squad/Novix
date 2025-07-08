@@ -14,5 +14,4 @@ internal interface Media {
     val cast: List<CastMember>
     val posterPictureURL: String
     val backdropPicturesURLs: List<String>
-    val isBookmarked: Boolean
 }

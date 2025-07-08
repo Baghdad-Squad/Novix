@@ -14,6 +14,5 @@ data class Movie(
     override val cast: List<CastMember>,
     override val posterPictureURL: String,
     override val backdropPicturesURLs: List<String>,
-    override val isBookmarked: Boolean,
     val runtimeMinutes: Int
 ) : Media
