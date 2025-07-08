@@ -68,7 +68,7 @@ fun SafeImage(
             } else {
                 isLoading = false
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             isLoading = false
         }
     }
