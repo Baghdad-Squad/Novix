@@ -27,8 +27,8 @@ fun CarousalDot(
     totalDots: Int,
     selectedIndex: Int,
     modifier: Modifier = Modifier,
-    highlightedSize: Dp,
-    defaultSize: Dp
+    highlightedSize: Dp = 7.dp,
+    defaultSize: Dp= 5.dp
 ) {
     LazyRow(
         modifier = modifier,
@@ -47,10 +47,10 @@ fun CarousalDot(
 
 @Composable
 private fun Dot(
+    modifier: Modifier = Modifier,
     isHighLighted: Boolean,
-    highlightedSize: Dp = 7.dp,
-    defaultSize: Dp = 5.dp,
-    modifier: Modifier = Modifier
+    highlightedSize: Dp,
+    defaultSize: Dp
 ) {
     val dotTintColor by animateColorAsState(
         targetValue = if (isHighLighted) Theme.color.primary else Theme.color.hint,
@@ -86,8 +86,6 @@ fun PreviewCarousalDot() {
             totalDots = 7,
             selectedIndex = 3,
             modifier = Modifier.fillMaxWidth(),
-            highlightedSize = 10.dp,
-            defaultSize = 6.dp
         )
     }
 }
