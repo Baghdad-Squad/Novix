@@ -7,7 +7,7 @@ import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 
-fun detectAndCropFaces(inputBitmap: Bitmap, onFacesCropped: (List<Bitmap>) -> Unit) {
+internal fun detectAndCropFaces(inputBitmap: Bitmap, onFacesCropped: (List<Bitmap>) -> Unit) {
     val image = InputImage.fromBitmap(inputBitmap, 0)
     val detector = FaceDetection.getClient(buildFaceDetectionOptions())
 
