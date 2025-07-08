@@ -22,5 +22,9 @@
     <string name="padding_value_animation">padding value animation</string>
     <string name="radius_animation">radius animation</string>
     <string name="text_color_animation">text color animation</string>
+    <string name="home_icon">Home Icon</string>
+    <string name="novix">Novix</string>
+    <string name="novix_description">Born from Nova, Made for Flix.</string>
+    <string name="app_bar_icon">App Bar Icon</string>
     <string name="category_image">category image</string>
 </resources>
