@@ -1,8 +1,7 @@
-package com.baghdad.design_system.color.model
+package com.baghdad.design_system.color
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import com.baghdad.design_system.color.theme.lightThemeColor
 
 data class NovixColor(
     val primary: Color,

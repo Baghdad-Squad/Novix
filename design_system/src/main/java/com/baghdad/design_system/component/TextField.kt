@@ -167,7 +167,6 @@ fun NovixTextField(
                                 }
                             }
                         }
-
                     }
                 )
             }
@@ -209,4 +208,3 @@ fun NovixTextFieldPreview2() {
         leadingIcon = painterResource(R.drawable.ic_user)
     )
 }
-
