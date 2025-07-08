@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 
 @Composable
-fun NovixIcon(
+fun Icon(
     imageVector: ImageVector,
-    contentDescription: String? = null,
+    contentDescription: String,
     modifier: Modifier = Modifier,
     tint: Color = Color.Unspecified
 ) {
@@ -24,9 +24,9 @@ fun NovixIcon(
 }
 
 @Composable
-fun NovixIcon(
+fun Icon(
     painter: Painter,
-    contentDescription: String? = null,
+    contentDescription: String,
     modifier: Modifier = Modifier,
     tint: Color = Color.Unspecified
 ) {
