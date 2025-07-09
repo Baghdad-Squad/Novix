@@ -43,7 +43,7 @@ fun SnackBar(
         visible = isVisible,
         enter = fadeIn(tween(animationDuration)) + slideInVertically(
             animationSpec = tween(animationDuration),
-            initialOffsetY = { -it }
+            initialOffsetY = { -it  }
         ),
         exit = fadeOut(tween(animationDuration)) + slideOutVertically(
             animationSpec = tween(animationDuration),
