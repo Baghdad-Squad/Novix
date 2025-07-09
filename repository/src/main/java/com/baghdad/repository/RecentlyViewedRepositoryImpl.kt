@@ -12,4 +12,8 @@ class RecentlyViewedRepositoryImpl : RecentlyViewedRepository {
     override suspend fun deleteAllRecentlyViewed() {
         // TODO("Not yet implemented")
     }
+
+    override suspend fun addMediaToRecentlyViewed(mediaId: Long, mediaType: String) {
+        //TODO("Not yet implemented")
+    }
 }

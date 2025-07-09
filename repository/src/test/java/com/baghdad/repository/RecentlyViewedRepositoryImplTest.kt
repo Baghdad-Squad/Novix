@@ -24,4 +24,11 @@ class RecentlyViewedRepositoryImplTest {
         }
     }
 
+    @Test
+    fun addMediaToRecentlyViewed() = runTest {
+        assertDoesNotThrow {
+            recentlyViewedRepository.addMediaToRecentlyViewed(1, "movie")
+        }
+    }
+
 }
