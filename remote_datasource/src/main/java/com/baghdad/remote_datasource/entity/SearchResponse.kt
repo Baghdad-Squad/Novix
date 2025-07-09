@@ -24,10 +24,10 @@ data class MultiSearchItem(
     val id: Int? = null,
 
     @SerialName("media_type")
-    val mediaType: String? = null,
+    val mediaType: String? = null,// TODO
 
     @SerialName("overview")
-    val overview: String? = null,
+    val movieOverview: String? = null,
 
     @SerialName("title")
     val movieTitle: String? = null,
@@ -42,10 +42,10 @@ data class MultiSearchItem(
     val firstAirDate: String? = null, // TODO TV show first air date idk if we need it
 
     @SerialName("original_name")
-    val originalName: String? = null,
+    val tvShowOriginalName: String? = null,
 
     @SerialName("poster_path")
-    val posterPath: String? = null,
+    val tvShowPosterPath: String? = null,
 
     @SerialName("profile_path")
     val profilePath: String? = null,
