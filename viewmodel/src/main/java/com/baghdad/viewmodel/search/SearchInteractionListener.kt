@@ -1,5 +1,7 @@
 package com.baghdad.viewmodel.search
 
+import com.baghdad.entity.media.Genre
+
 interface SearchInteractionListener {
     fun onSearchTextChanged(text: String)
     fun onClearRecentWatchingClick()
@@ -15,5 +17,5 @@ interface SearchInteractionListener {
     fun onFilterClick()
     fun onRatingChanged(rating: Int)
     fun onYearRangeSelected(minYear: Int?, maxYear: Int?)
-    fun onGenresSelected(genres: List<Genres>)
+    fun onGenresSelected(genres: List<Genre>)
 }
