@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
+    implementation(libs.bundles.ktor.client)
     testImplementation(libs.bundles.test.core)
 }
 
