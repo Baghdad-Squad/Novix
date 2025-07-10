@@ -1,4 +1,4 @@
-package com.baghdad.base
+package com.baghdad.viewmodel.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

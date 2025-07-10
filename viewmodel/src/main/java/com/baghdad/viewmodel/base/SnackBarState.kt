@@ -1,4 +1,4 @@
-package com.baghdad.base
+package com.baghdad.viewmodel.base
 
 data class SnackBarState(
     val message: String? = null,

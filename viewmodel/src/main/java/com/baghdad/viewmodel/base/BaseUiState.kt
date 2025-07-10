@@ -1,4 +1,4 @@
-package com.baghdad.base
+package com.baghdad.viewmodel.base
 
 open class BaseUiState(
     val isLoading: Boolean = false,
