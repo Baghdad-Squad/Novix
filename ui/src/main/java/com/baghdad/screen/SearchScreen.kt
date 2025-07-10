@@ -31,7 +31,7 @@ fun SearchScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding( horizontal = 16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         item {
             SectionHeaderWithAction(
@@ -46,7 +46,7 @@ fun SearchScreen(
                 isSaved = isSaved,
                 onSavedClick = { onSavedClick() },
                 modifier = Modifier
-                     .padding(bottom = 12.dp)
+                    .padding(bottom = 12.dp)
                     .width(168.dp)
                     .aspectRatio(0.8f)
             )
