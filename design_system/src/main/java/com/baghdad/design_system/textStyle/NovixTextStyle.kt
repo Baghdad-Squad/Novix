@@ -1,8 +1,7 @@
-package com.baghdad.design_system.textStyle.model
+package com.baghdad.design_system.textStyle
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
-import com.baghdad.design_system.textStyle.theme.novixTextStyle
 
 data class NovixTextStyle(
     val headline: SizedTextStyle,

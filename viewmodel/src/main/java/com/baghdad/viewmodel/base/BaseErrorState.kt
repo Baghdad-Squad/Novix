@@ -1,4 +1,4 @@
-package com.baghdad.base
+package com.baghdad.viewmodel.base
 
 sealed interface BaseErrorState {
     data object NoInternet : BaseErrorState

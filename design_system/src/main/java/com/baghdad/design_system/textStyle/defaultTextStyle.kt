@@ -1,4 +1,4 @@
-package com.baghdad.design_system.textStyle.theme
+package com.baghdad.design_system.textStyle
 
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -6,8 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.baghdad.design_system.R
-import com.baghdad.design_system.textStyle.model.NovixTextStyle
-import com.baghdad.design_system.textStyle.model.NovixTextStyle.SizedTextStyle
+import com.baghdad.design_system.textStyle.NovixTextStyle.SizedTextStyle
 
 val ibmPlexSans = FontFamily(
     Font(R.font.ibm_plex_sans_medium, FontWeight.Medium),
