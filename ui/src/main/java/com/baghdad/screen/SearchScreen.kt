@@ -13,8 +13,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.components.HorizontalDivider
 import com.baghdad.components.MoviesCard
-import com.baghdad.components.RecentSearch
+import com.baghdad.components.RecentSearchContent
 import com.baghdad.components.SectionHeaderWithAction
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 
@@ -58,7 +59,7 @@ fun SearchScreen(
                 onClearAllClick = { onClearAllClick() })
         }
         itemsIndexed(recentSearches) { index, title ->
-            RecentSearch(
+            RecentSearchContent(
                 title = title,
                 onCanceleClick = { onClearAllClick() }
             )
@@ -79,12 +80,14 @@ fun SearchScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun SearchScreenPreview() {
-    SearchScreen(
-        imageUrl = "",
-        contentDescription = "",
-        isSaved = false,
-        onSavedClick = {},
-        onClearAllClick = {}
+    NovixTheme{
+        SearchScreen(
+            imageUrl = "",
+            contentDescription = "",
+            isSaved = false,
+            onSavedClick = {},
+            onClearAllClick = {}
 
-    )
+        )
+    }
 }

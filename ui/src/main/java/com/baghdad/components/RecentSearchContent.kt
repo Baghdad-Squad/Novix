@@ -2,7 +2,6 @@ package com.baghdad.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -18,7 +17,7 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 
 @Composable
-fun RecentSearch(
+fun RecentSearchContent(
     title: String,
     onCanceleClick: () -> Unit,
     modifier: Modifier = Modifier
