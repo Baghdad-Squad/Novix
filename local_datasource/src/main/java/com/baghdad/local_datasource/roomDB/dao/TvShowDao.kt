@@ -19,9 +19,9 @@ interface TvShowDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM TVSHOW WHERE title = :title")
-    suspend fun getTvShowByTitle(title: String): Flow<List<TvShow>>
+    fun getTvShowByTitle(title: String): Flow<List<TvShow>>
 
     @Query("SELECT * FROM TvShow")
-    suspend fun getAllTvShow(): Flow<List<TvShow>>
+    fun getAllTvShow(): Flow<List<TvShow>>
 
 }

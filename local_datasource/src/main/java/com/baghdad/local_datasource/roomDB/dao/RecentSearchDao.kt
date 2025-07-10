@@ -21,7 +21,7 @@ interface RecentSearchDao {
         ORDER BY time DESC 
         LIMIT 10
     """)
-    suspend fun getLastTenRecentSearchItems(): List<RecentViewedWithDetails>
+    fun getLastTenRecentSearchItems(): Flow<List<RecentViewedWithDetails>>
 
 
     @Query("DElETE FROM RecentSearch")

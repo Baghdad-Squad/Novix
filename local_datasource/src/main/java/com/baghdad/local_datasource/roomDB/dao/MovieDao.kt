@@ -19,10 +19,10 @@ interface MovieDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM Movie WHERE title = :title")
-    suspend fun getMovieByTitle(title: String): Flow<List<Movie>>
+    fun getMovieByTitle(title: String): Flow<List<Movie>>
 
     @Query("SELECT * FROM Movie")
-    suspend fun getAllMovies(): Flow<List<Movie>>
+    fun getAllMovies(): Flow<List<Movie>>
 
 
 }
