@@ -8,21 +8,18 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
-
     @Upsert
     suspend fun upsertMovie(movie: Movie)
 
-    @Query("DELEtE FROM Movie WHERE id = :id")
+    @Query("DELETE FROM Movie WHERE id = :id")
     suspend fun deleteMovieById(id: Long)
 
     @Query("DELETE FROM Movie")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM Movie WHERE title LIKE '%' || :title || '%' COLLATE NOCASE")
-    fun getMovieByTitle(title: String): Flow<List<Movie>>
+    @Query("SELECT * FROM Movie WHERE title =  :id")
+    fun getMovieById(id: Long): Movie
 
     @Query("SELECT * FROM Movie")
     fun getAllMovies(): Flow<List<Movie>>
-
-
 }
