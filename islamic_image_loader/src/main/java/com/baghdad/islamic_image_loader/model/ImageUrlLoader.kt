@@ -11,7 +11,7 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import okhttp3.OkHttpClient
 
-internal suspend fun ImageUrlLoader(imageUrl: String, context: Context): Image? {
+internal suspend fun imageUrlLoader(imageUrl: String, context: Context): Image? {
     val imageLoader = buildImageLoader(context)
     val headers = buildNetworkHeaders()
     val request = buildImageRequest(imageUrl, context, headers)
