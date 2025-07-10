@@ -26,7 +26,7 @@ val excludedPackagesOrClasses = listOf(
     "com.baghdad.base",
     "com.baghdad.islamic_image_loader",
     "com.baghdad.repository.model",
-    "com.baghdad.repository.datasource",
+    "com.baghdad.repository.datasource.local",
     "com.baghdad.domain.model",
     "com.baghdad.domain.repository",
 )
