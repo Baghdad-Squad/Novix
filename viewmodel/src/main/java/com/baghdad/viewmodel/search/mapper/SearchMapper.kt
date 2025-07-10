@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.search.mapper
 
 import com.baghdad.entity.media.Genre
+import com.baghdad.entity.media.Media
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
@@ -23,6 +24,14 @@ fun Actor.toActorUI() = SearchScreenState.ActorUiState(
     name = name,
     profilePictureURL = profilePictureURL
 )
+fun Media.toMediaUI() = SearchScreenState.RecentelyViewedUiState(
+    id = id,
+    posterPictureURL = posterPictureURL,
+    // TODO: we need to add isSaved from domain
+
+)
+
+
 
 fun Genre.toGenreUI() = SearchScreenState.GenreUiState(
     id = id,

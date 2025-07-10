@@ -23,7 +23,7 @@ fun MoviesCard(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(10) {
+        item {
             HomeCard(
                 url = url,
                 contentDescription = contentDescription,
