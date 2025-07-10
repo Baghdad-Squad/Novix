@@ -34,9 +34,9 @@ import com.baghdad.design_system.theme.Theme
 fun SnackBar(
     message: String,
     modifier: Modifier = Modifier,
-    isSuccess: Boolean = true,
-    isVisible: Boolean = true,
-    animationDuration: Int = 500
+    isSuccess: Boolean,
+    isVisible: Boolean,
+    animationDuration: Int = 3000
 ) {
 
     AnimatedVisibility(
@@ -102,6 +102,7 @@ fun PreviewSuccessSnackBarDark() {
     SnackBar(
         message = "Rate submitted successfully.",
         isVisible = true,
+        isSuccess = true,
         modifier = Modifier.padding(16.dp)
     )
 }
@@ -112,6 +113,7 @@ fun PreviewSuccessSnackBarLight() {
     SnackBar(
         message = "Rate submitted successfully.",
         isVisible = true,
+        isSuccess = true,
         modifier = Modifier.padding(16.dp)
     )
 }
@@ -147,11 +149,13 @@ fun PreviewBothSnackBarsDark() {
     ) {
         SnackBar(
             message = "Rate submitted successfully.",
-            isSuccess = true
+            isSuccess = true,
+            isVisible = true,
         )
         SnackBar(
             message = "Some error happened",
-            isSuccess = false
+            isSuccess = false,
+            isVisible = true,
         )
     }
 }
@@ -165,11 +169,13 @@ fun PreviewBothSnackBarsLight() {
     ) {
         SnackBar(
             message = "Rate submitted successfully.",
-            isSuccess = true
+            isSuccess = true,
+            isVisible = true,
         )
         SnackBar(
             message = "Some error happened",
-            isSuccess = false
+            isSuccess = false,
+            isVisible = true,
         )
     }
 }
