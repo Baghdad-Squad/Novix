@@ -1,7 +1,6 @@
-package com.baghdad.design_system.color.theme
+package com.baghdad.design_system.color
 
 import androidx.compose.ui.graphics.Color
-import com.baghdad.design_system.color.model.NovixColor
 
 val darkThemeColor =
     NovixColor(
