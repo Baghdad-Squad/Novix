@@ -1,4 +1,4 @@
-package com.baghdad.components
+package com.baghdad.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

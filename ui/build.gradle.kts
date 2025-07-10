@@ -54,5 +54,4 @@ dependencies {
     testImplementation(libs.bundles.test.core)
     androidTestImplementation(libs.bundles.test.core)
     androidTestImplementation(libs.bundles.test.ui)
-    implementation(libs.bundles.material)
 }

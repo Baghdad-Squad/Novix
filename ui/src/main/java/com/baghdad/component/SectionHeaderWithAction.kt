@@ -1,18 +1,15 @@
-package com.baghdad.components
-
+package com.baghdad.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
+import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.button.TextButton
 import com.baghdad.design_system.theme.Theme
 
 @Composable
@@ -33,16 +30,11 @@ fun SectionHeaderWithAction(
             color = Theme.color.body
         )
         TextButton(
-            onClick = onClearAllClick,
-            contentPadding = PaddingValues(0.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.clear_all),
-                style = Theme.typography.label.medium,
-                color = Theme.color.primary
-            )
-        }
+            label = stringResource(R.string.clear_all),
+            onClick = { onClearAllClick() },
+        )
     }
 }
+
 
 

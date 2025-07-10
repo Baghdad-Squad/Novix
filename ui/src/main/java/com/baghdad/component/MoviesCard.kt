@@ -1,8 +1,7 @@
-package com.baghdad.components
+package com.baghdad.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +18,8 @@ fun MoviesCard(
     modifier: Modifier
 ) {
     LazyRow(
+        modifier = Modifier
+            .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -29,8 +30,6 @@ fun MoviesCard(
                 isSaved = isSaved,
                 onSavedClick = { onSavedClick() },
                 modifier = modifier
-                    .width(168.dp)
-                    .aspectRatio(0.8f)
             )
         }
     }
