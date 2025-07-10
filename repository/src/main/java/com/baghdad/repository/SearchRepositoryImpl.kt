@@ -1,7 +1,7 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.SearchResult
 import com.baghdad.domain.repository.SearchRepository
+import com.baghdad.domain.result.SearchResult
 import com.baghdad.entity.search.RecentSearch
 
 class SearchRepositoryImpl : SearchRepository   {

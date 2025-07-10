@@ -1,6 +1,6 @@
 package com.baghdad.domain.repository
 
-import com.baghdad.domain.model.SearchResult
+import com.baghdad.domain.result.SearchResult
 import com.baghdad.entity.search.RecentSearch
 
 interface SearchRepository {

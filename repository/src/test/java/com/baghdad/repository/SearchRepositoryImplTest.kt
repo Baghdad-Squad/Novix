@@ -1,6 +1,6 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.SearchResult
+import com.baghdad.domain.result.SearchResult
 import com.baghdad.entity.search.RecentSearch
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
