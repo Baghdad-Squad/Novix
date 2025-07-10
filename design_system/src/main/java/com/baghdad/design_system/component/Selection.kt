@@ -71,11 +71,11 @@ fun NovixSelection(
     }
 }
 
-@Preview (showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-private fun asdfd() {
+private fun Selection() {
     NovixSelection(
-        option = Selectable("Option 1", isSelected = true),
+        option = Selectable("Option 3", isSelected = false),
         onClick = { /* Handle click */ },
         modifier = Modifier.padding(16.dp)
     )

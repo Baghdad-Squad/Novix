@@ -3,11 +3,11 @@ package com.baghdad.design_system.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import com.baghdad.design_system.color.model.localNovixColor
-import com.baghdad.design_system.color.theme.darkThemeColor
-import com.baghdad.design_system.color.theme.lightThemeColor
-import com.baghdad.design_system.textStyle.model.localNovixTextStyle
-import com.baghdad.design_system.textStyle.theme.novixTextStyle
+import com.baghdad.design_system.color.darkThemeColor
+import com.baghdad.design_system.color.lightThemeColor
+import com.baghdad.design_system.color.localNovixColor
+import com.baghdad.design_system.textStyle.localNovixTextStyle
+import com.baghdad.design_system.textStyle.novixTextStyle
 
 @Composable
 fun NovixTheme(
