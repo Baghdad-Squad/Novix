@@ -14,7 +14,7 @@ interface RecentSearchDao {
     @Query("SELECT * FROM RecentSearch WHERE id = :id")
     suspend fun getRecentSearchById(id: Long)
 
-    @Query("SELECT * FROM RecentSearch ORDER BY timestamp DESC")
+    @Query("SELECT * FROM RecentSearch ORDER BY searchedAt DESC")
     fun getLastTenRecentSearchItems(): Flow<List<RecentViewedWithDetails>>
 
 
