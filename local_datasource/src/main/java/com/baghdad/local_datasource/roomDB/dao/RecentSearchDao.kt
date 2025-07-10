@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface RecentSearchDao {
 
     @Query("SELECT * FROM RecentSearch")
-    suspend fun getAllRecentSearch(): Flow<List<RecentSearch>>
+    fun getAllRecentSearch(): Flow<List<RecentSearch>>
 
     @Query("SELECT * FROM RecentSearch WHERE id = :id")
     suspend fun getRecentSearchById(id: Long)
@@ -24,7 +24,7 @@ interface RecentSearchDao {
     fun getLastTenRecentSearchItems(): Flow<List<RecentViewedWithDetails>>
 
 
-    @Query("DElETE FROM RecentSearch")
+    @Query("DELETE FROM RecentSearch")
     suspend fun clearAllRecentSearch()
 
     @Query("SELECT COUNT(*) FROM RecentSearch")
