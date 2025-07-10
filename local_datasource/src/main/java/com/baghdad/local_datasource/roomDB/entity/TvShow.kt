@@ -1,10 +1,14 @@
 package com.baghdad.local_datasource.roomDB.entity
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.baghdad.local_datasource.roomDB.converter.Converters
+import com.baghdad.repository.model.TvShowDto
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Entity(tableName = "TvShow")
 data class TvShow(
@@ -20,3 +24,36 @@ data class TvShow(
     @TypeConverters(Converters::class) val backdropPicturesURLs: List<String>,
     val numberOfSeasons: Int
 )
+
+fun TvShow.toDto(): TvShowDto {
+    return TvShowDto(
+        id = this.id,
+        title = this.title,
+        genres = emptyList(),
+        imdbRating = this.imdbRating,
+        userRating = this.userRating,
+        releaseDate = releaseDate.toString(),
+        overview = this.overview,
+        cast = emptyList(),
+        posterPictureURL = this.posterPictureURL,
+        backdropPicturesURLs = this.backdropPicturesURLs,
+        numberOfSeasons = this.numberOfSeasons,
+    )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun TvShowDto.toEntity(): TvShow {
+    return TvShow(
+        id = this.id,
+        title = this.title,
+        genres = emptyList(),
+        imdbRating = this.imdbRating,
+        userRating = this.userRating,
+        releaseDate = LocalDate.parse(releaseDate, DateTimeFormatter.ISO_DATE),
+        overview = this.overview,
+        cast = emptyList(),
+        posterPictureURL = this.posterPictureURL,
+        backdropPicturesURLs = this.backdropPicturesURLs,
+        numberOfSeasons = this.numberOfSeasons
+    )
+}

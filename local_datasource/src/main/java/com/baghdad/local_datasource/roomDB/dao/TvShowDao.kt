@@ -18,8 +18,8 @@ interface TvShowDao {
     @Query("DELETE FROM TvShow")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM TvShow WHERE title LIKE '%' || :title || '%' COLLATE NOCASE")
-    fun getTvShowByTitle(title: String): Flow<List<TvShow>>
+    @Query("SELECT * FROM TvShow WHERE title = :id")
+    fun getTvShowById(id: Long): TvShow
 
     @Query("SELECT * FROM TvShow")
     fun getAllTvShow(): Flow<List<TvShow>>
