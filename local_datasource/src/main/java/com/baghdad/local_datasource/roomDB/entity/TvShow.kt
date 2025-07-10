@@ -1,11 +1,11 @@
-package com.baghdad.local_datasource
+package com.baghdad.local_datasource.roomDB.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDate
 
-@Entity(tableName = "Tv Show")
-data class TvShowEntity(
+@Entity(tableName = "TvShow")
+data class TvShow(
     @PrimaryKey val id: Long,
     val title: String,
     val genres: List<String> = emptyList(),
