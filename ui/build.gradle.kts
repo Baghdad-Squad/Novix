@@ -14,6 +14,11 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{LICENSE.md,LICENSE-notice.md}"
+        }
+    }
 
     buildTypes {
         release {
