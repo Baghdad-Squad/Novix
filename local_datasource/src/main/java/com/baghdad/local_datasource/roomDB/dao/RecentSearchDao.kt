@@ -2,7 +2,6 @@ package com.baghdad.local_datasource.roomDB.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.Transaction
 import com.baghdad.local_datasource.roomDB.entity.RecentSearch
 import kotlinx.coroutines.flow.Flow
 
@@ -15,12 +14,7 @@ interface RecentSearchDao {
     @Query("SELECT * FROM RecentSearch WHERE id = :id")
     suspend fun getRecentSearchById(id: Long)
 
-    @Transaction
-    @Query("""
-        SELECT * FROM RecentSearch
-        ORDER BY time DESC 
-        LIMIT 10
-    """)
+    @Query("SELECT * FROM RecentSearch ORDER BY timestamp DESC")
     fun getLastTenRecentSearchItems(): Flow<List<RecentViewedWithDetails>>
 
 

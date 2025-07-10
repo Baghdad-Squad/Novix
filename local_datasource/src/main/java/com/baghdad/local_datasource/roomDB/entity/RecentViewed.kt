@@ -8,5 +8,5 @@ import androidx.room.PrimaryKey
 data class RecentViewed(
     @PrimaryKey val mediaId: Long,
     val mediaType: String,
-    val time : String
+    val timestamp: Long = System.currentTimeMillis()
 )

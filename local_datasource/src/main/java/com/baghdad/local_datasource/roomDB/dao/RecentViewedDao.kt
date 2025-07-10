@@ -25,11 +25,11 @@ interface RecentViewedDao {
     suspend fun clearAllRecentViewed()
 
 
-    @Query("SELECT * FROM RecentViewed ORDER BY time DESC")
+    @Query("SELECT * FROM RecentViewed ORDER BY timestamp DESC")
     fun getAllRecentViewed(): Flow<List<RecentViewed>>
 
 
-    @Query("SELECT * FROM RecentViewed WHERE mediaType = :mediaType ORDER BY time DESC")
+    @Query("SELECT * FROM RecentViewed WHERE mediaType = :mediaType ORDER BY timestamp DESC")
     fun getRecentViewedByType(mediaType: String): Flow<List<RecentViewed>>
 
 
@@ -46,7 +46,7 @@ interface RecentViewedDao {
         SELECT * FROM RecentViewed 
         LEFT JOIN Movie ON RecentViewed.mediaId = Movie.id AND RecentViewed.mediaType = 'movie'
         LEFT JOIN TvShow ON RecentViewed.mediaId = TvShow.id AND RecentViewed.mediaType = 'tv'
-        ORDER BY RecentViewed.time DESC
+        ORDER BY RecentViewed.timestamp DESC
     """)
     fun getRecentViewedWithDetails(): Flow<List<RecentViewedWithDetails>>
 
@@ -54,11 +54,9 @@ interface RecentViewedDao {
     @Transaction
     @Query("""
         SELECT * FROM RecentViewed
-        ORDER BY time DESC 
-        LIMIT 10
+        ORDER BY timestamp DESC 
     """)
     fun getLastTenRecentViewedItems(): Flow<List<RecentViewedWithDetails>>
-
 
 }
 

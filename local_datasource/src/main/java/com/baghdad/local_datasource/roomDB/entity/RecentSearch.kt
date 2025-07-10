@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class RecentSearch(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val query: String,
-    val time: String,
+    val timestamp: Long = System.currentTimeMillis()
 )
