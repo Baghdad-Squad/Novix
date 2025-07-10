@@ -3,7 +3,7 @@ package com.baghdad.entity.media
 import com.baghdad.entity.person.CastMember
 import kotlinx.datetime.LocalDate
 
-internal interface Media {
+interface Media {
     val id: Long
     val title: String
     val genres: List<Genre>
