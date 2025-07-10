@@ -2,6 +2,7 @@ package com.baghdad.domain.usecase.recentlyViewed
 
 import com.baghdad.entity.media.Media
 import com.google.common.truth.Truth
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
@@ -10,6 +11,7 @@ class GetRecentlyViewedUseCaseTest {
 
     @Test
     fun dummyTest() = runTest {
-        Truth.assertThat(getRecentlyViewedUseCase()).isEqualTo(emptyList<Media>())
+        val result = getRecentlyViewedUseCase().first()
+        Truth.assertThat(result).isEqualTo(emptyList<Media>())
     }
 }
