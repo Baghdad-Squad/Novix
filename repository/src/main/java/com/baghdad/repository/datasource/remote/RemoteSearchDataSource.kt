@@ -1,9 +1,8 @@
-package com.baghdad.repository
+package com.baghdad.repository.datasource.remote
 
 import com.baghdad.repository.model.SearchResultDto
 
-
-interface RemoteDataSource {
+interface RemoteSearchDataSource {
     suspend fun searchMultiResults(
         query: String,
         pageNumber: Int,
