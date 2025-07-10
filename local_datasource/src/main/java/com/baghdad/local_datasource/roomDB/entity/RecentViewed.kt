@@ -6,8 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "RecentViewed")
 data class RecentViewed(
-    @PrimaryKey
-    val mediaId: Long,
+    @PrimaryKey val mediaId: Long,
     val mediaType: String,
     val time : String
 )

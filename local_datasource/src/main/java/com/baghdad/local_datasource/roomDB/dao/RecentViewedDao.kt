@@ -26,11 +26,11 @@ interface RecentViewedDao {
 
 
     @Query("SELECT * FROM RecentViewed ORDER BY time DESC")
-    fun getAllRecentViewed(): Flow<List<RecentViewed>>
+    suspend fun getAllRecentViewed(): Flow<List<RecentViewed>>
 
 
     @Query("SELECT * FROM RecentViewed WHERE mediaType = :mediaType ORDER BY time DESC")
-    fun getRecentViewedByType(mediaType: String): Flow<List<RecentViewed>>
+    suspend fun getRecentViewedByType(mediaType: String): Flow<List<RecentViewed>>
 
 
     @Query("SELECT EXISTS(SELECT 1 FROM RecentViewed WHERE mediaId = :mediaId)")

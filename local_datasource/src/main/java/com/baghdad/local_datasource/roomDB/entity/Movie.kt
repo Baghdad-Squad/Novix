@@ -1,19 +1,21 @@
 package com.baghdad.local_datasource.roomDB.entity
 
 import androidx.room.Entity
-
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.baghdad.local_datasource.roomDB.converter.Converters
 
 @Entity(tableName = "Movie")
 data class Movie(
-    val id: Long,
+    @PrimaryKey val id: Long,
     val title: String,
-    val genres: List<String>,// Change to GenreDto
+    @TypeConverters(Converters::class) val genres: List<String>,
     val imdbRating: Double,
     val userRating: Double?,
     val releaseDate: String,
     val overview: String,
-    val cast: List<String>, // Change to CastMemberDto
+    @TypeConverters(Converters::class) val cast: List<String>,
     val posterPictureURL: String,
-    val backdropPicturesURLs: List<String>,
+    @TypeConverters(Converters::class) val backdropPicturesURLs: List<String>,
     val runtimeMinutes: Int
 )
