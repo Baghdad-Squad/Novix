@@ -6,9 +6,9 @@ import com.baghdad.repository.model.RecentSearchDto
 
 @Entity(tableName = "RecentSearch")
 data class RecentSearch(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val query: String,
-    val searchedAt: String
+    val searchedAt: Long = System.currentTimeMillis()
 )
 
 fun RecentSearch.toDto(): RecentSearchDto {
