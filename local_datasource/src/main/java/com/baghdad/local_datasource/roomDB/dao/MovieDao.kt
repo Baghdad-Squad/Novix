@@ -18,7 +18,7 @@ interface MovieDao {
     @Query("DELETE FROM Movie")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM Movie WHERE title = :title")
+    @Query("SELECT * FROM Movie WHERE title LIKE '%' || :title || '%' COLLATE NOCASE")
     fun getMovieByTitle(title: String): Flow<List<Movie>>
 
     @Query("SELECT * FROM Movie")
