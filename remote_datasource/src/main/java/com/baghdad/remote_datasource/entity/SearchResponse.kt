@@ -21,7 +21,7 @@ data class SearchResponse(
 @Serializable
 data class MultiSearchItem(
     @SerialName("id")
-    val id: Int? = null,
+    val id: Long? = null,
 
     @SerialName("media_type")
     val mediaType: String? = null,// TODO
@@ -39,7 +39,7 @@ data class MultiSearchItem(
     val releaseDate: String? = null,
 
     @SerialName("first_air_date")
-    val firstAirDate: String? = null, // TODO TV show first air date idk if we need it
+    val firstAirDate: String? = null,
 
     @SerialName("original_name")
     val tvShowOriginalName: String? = null,

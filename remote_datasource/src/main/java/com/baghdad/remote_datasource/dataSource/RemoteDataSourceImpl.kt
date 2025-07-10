@@ -1,7 +1,6 @@
 package com.baghdad.remote_datasource.dataSource
 
 import com.baghdad.repository.RemoteDataSource
-import com.baghdad.repository.model.SearchResult
 import com.baghdad.remote_datasource.entity.SearchResponse
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.MovieDto
@@ -44,22 +43,6 @@ class RemoteDataSourceImpl(
         val tvShows = mutableListOf<TvShowDto>()
         val actors = mutableListOf<ActorDto>()
 
-//        id = item.id ?: -1,
-//        title = item.movieTitle.orEmpty(),
-//        overview = item.movieOverview.orEmpty(),
-//        releaseDate = item.releaseDate.orEmpty(),
-//        posterPath = item.tvShowPosterPath.orEmpty()
-//        id = item.id?.toLong() ?: -1,
-//        title = item.movieTitle.orEmpty(),
-//        genres = emptyList(),
-//        imdbRating = 0.0,
-//        userRating = null,
-//        releaseDate = item.releaseDate.orEmpty(),
-//        overview = item.movieOverview.orEmpty(),
-//        cast = emptyList(),
-//        posterPictureURL = item.tvShowPosterPath.orEmpty(),
-//        backdropPicturesURLs = emptyList(),
-//        runtimeMinutes = 0
         response.results.forEach { item ->
             when (item.mediaType) {
                 "movie" -> {
