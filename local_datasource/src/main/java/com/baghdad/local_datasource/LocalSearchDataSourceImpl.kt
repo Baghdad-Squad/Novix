@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class LocalSearchDataSourceImpl(
-    val recentSearchDao: RecentSearchDao,
+    private val recentSearchDao: RecentSearchDao,
 ) : LocalSearchDataSource {
     override suspend fun addRecentSearchQuery(query: String) {
         val newRecentSearch = RecentSearch(
@@ -20,9 +20,7 @@ class LocalSearchDataSourceImpl(
 
     override suspend fun getAllRecentSearches(): Flow<List<RecentSearchDto>> {
         return recentSearchDao.getAllRecentSearch().map { it ->
-            it.map {
-                it.toDto()
-            }
+            it.map { it.toDto() }
         }
     }
 

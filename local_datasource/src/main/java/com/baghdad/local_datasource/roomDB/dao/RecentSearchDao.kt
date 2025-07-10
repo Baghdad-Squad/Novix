@@ -33,6 +33,4 @@ interface RecentSearchDao {
 
     @Query("DELETE FROM RecentSearch WHERE id = :id")
     suspend fun deleteRecentSearchById(id: Long)
-
-
 }
