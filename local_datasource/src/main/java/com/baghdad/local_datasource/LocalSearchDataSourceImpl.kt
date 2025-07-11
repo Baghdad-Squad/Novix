@@ -3,6 +3,7 @@ package com.baghdad.local_datasource
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.entity.RecentSearch
 import com.baghdad.local_datasource.roomDB.entity.toDto
+import com.baghdad.local_datasource.roomDB.errorHandler.executeFlowWithErrorHandling
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalSearchDataSource
 import com.baghdad.repository.model.RecentSearchDto
@@ -20,8 +21,8 @@ class LocalSearchDataSourceImpl(
             recentSearchDao.addRecentSearch(newRecentSearch)
     }
 
-    override suspend fun getAllRecentSearches(): Flow<List<RecentSearchDto>> =
-        executeWithErrorHandling {
+    override fun getAllRecentSearches(): Flow<List<RecentSearchDto>> =
+        executeFlowWithErrorHandling {
             recentSearchDao.getAllRecentSearch().map { it ->
             it.map { it.toDto() }
         }

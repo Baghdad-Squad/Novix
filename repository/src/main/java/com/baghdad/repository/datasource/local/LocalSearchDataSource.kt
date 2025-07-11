@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalSearchDataSource {
     suspend fun addRecentSearchQuery(query: String)
-    suspend fun getAllRecentSearches(): Flow<List<RecentSearchDto>>
+    fun getAllRecentSearches(): Flow<List<RecentSearchDto>>
     suspend fun deleteRecentSearchById(id: Long)
     suspend fun deleteAllRecentSearches()
 }
