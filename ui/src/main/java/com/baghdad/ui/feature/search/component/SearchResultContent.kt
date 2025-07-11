@@ -1,4 +1,4 @@
-package com.baghdad.screen
+package com.baghdad.ui.feature.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +25,7 @@ import com.baghdad.viewmodel.search.SearchScreenState
 
 
 @Composable
-fun ListSearchScreen(
+fun SearchResultContent(
     selectedTab: SearchTab,
     onTabSelected: (SearchTab) -> Unit,
     onSavedClick: (Long) -> Unit,
