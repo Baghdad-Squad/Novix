@@ -41,3 +41,8 @@ fun Genre.toGenreUI() = SearchScreenState.GenreUiState(
     id = id,
     name = name
 )
+
+fun SearchScreenState.GenreUiState.toGenre() = Genre(
+    id = id,
+    name = name
+)
