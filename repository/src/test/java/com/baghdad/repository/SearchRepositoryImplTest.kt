@@ -3,6 +3,7 @@ package com.baghdad.repository
 import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.entity.search.RecentSearch
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -24,8 +25,9 @@ class SearchRepositoryImplTest {
 
     @Test
     fun getRecentSearches() = runTest {
-        assertThat(searchRepository.getRecentSearches()).isEqualTo(emptyList<RecentSearch>())
-
+        assertThat(
+            searchRepository.getRecentSearches().first()
+        ).isEqualTo(emptyList<RecentSearch>())
     }
 
     @Test
@@ -37,6 +39,8 @@ class SearchRepositoryImplTest {
 
     @Test
     fun deleteAllRecentSearches() = runTest {
-        assertThat(searchRepository.getRecentSearches()).isEqualTo(emptyList<RecentSearch>())
+        assertDoesNotThrow {
+            searchRepository.deleteAllRecentSearches()
+        }
     }
 }
