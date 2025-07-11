@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.search.component
+package com.baghdad.feature.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
