@@ -1,7 +1,11 @@
 package com.baghdad.domain.usecase.recentlyViewed
 
-class DeleteAllRecentlyViewedUseCase {
+import com.baghdad.domain.repository.RecentlyViewedRepository
+
+class DeleteAllRecentlyViewedUseCase(
+    private val recentlyViewedRepository: RecentlyViewedRepository
+) {
     suspend operator fun invoke() {
-        //TODO("Not yet implemented")
+        return recentlyViewedRepository.deleteAllRecentlyViewed()
     }
 }

@@ -1,4 +1,4 @@
-package com.baghdad.domain.result
+package com.baghdad.domain.model.search
 
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
