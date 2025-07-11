@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.component.SafeImage
 
@@ -38,6 +39,7 @@ private val CardShape = RoundedCornerShape(
 fun ActorCard(
     actorName: String,
     actorImage: String,
+    onClick: () -> Unit ,
     modifier: Modifier = Modifier,
     characterName: String? = null
 ) {
@@ -45,6 +47,7 @@ fun ActorCard(
         modifier = modifier
             .fillMaxWidth()
             .background(color = Theme.color.surface)
+            .noRippleClickable { onClick() }
     ) {
         SafeImage(
             imageUrl = actorImage,
