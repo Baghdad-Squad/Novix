@@ -81,7 +81,7 @@ fun SnackBar(
 @Composable
 private fun SnackBarIcon(
     isSuccess: Boolean,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     val icon = if (isSuccess) R.drawable.ic_tick_double else R.drawable.ic_alert
     val description = if (isSuccess) "Success icon" else "Error icon"
