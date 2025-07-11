@@ -17,4 +17,5 @@ interface SearchInteractionListener {
     fun onClearRecentlyViewedClick()
     fun onSavedRecentlyViewedClick(id: Long)
     fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab)
+    fun onRecentlyViewedClick(id: Long)
 }

@@ -1,6 +1,5 @@
 package com.baghdad.design_system.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,11 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.islamic_image_loader.component.SafeImage
 
 private val CardHeight = 55.dp
 private val ActorImageSize = 78.dp
@@ -38,7 +38,8 @@ private val CardShape = RoundedCornerShape(
 @Composable
 fun ActorCard(
     actorName: String,
-    actorImage: Painter,
+    actorImage: String,
+    onClick: () -> Unit ,
     modifier: Modifier = Modifier,
     characterName: String? = null
 ) {
@@ -46,10 +47,10 @@ fun ActorCard(
         modifier = modifier
             .fillMaxWidth()
             .background(color = Theme.color.surface)
+            .noRippleClickable { onClick() }
     ) {
-        Image(
-            painter = actorImage,
-            contentScale = ContentScale.Crop,
+        SafeImage(
+            imageUrl = actorImage,
             contentDescription =
                 if (characterName.isNullOrBlank())
                     "Portrait of actor $actorName"
@@ -58,7 +59,9 @@ fun ActorCard(
             modifier = Modifier
                 .size(ActorImageSize)
                 .clip(ImageShape)
-                .border(1.dp, Theme.color.stroke, ImageShape)
+                .border(1.dp, Theme.color.stroke, ImageShape),
+            blur = 12.dp,
+            contentScale = ContentScale.Crop
         )
 
         Column(
