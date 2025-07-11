@@ -1,4 +1,4 @@
-package com.baghdad.feature.search.component
+package com.baghdad.ui.feature.search.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
