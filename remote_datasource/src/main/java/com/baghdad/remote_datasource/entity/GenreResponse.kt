@@ -18,11 +18,4 @@ data class GenreItem(
     @SerialName("name")
     val name: String
 )
-fun GenreListResponse.toDto(): List<GenreDto> {
-    return genres.map { genre ->
-        GenreDto(
-            id = genre.id.toLong(),
-            name = genre.name
-        )
-    }
-}
+
