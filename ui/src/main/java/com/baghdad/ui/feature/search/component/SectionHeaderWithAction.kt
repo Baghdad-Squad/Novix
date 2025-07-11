@@ -1,4 +1,4 @@
-package com.baghdad.component
+package com.baghdad.ui.feature.search.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
