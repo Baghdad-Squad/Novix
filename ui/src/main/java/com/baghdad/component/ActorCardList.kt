@@ -17,12 +17,14 @@ data class Actor(
 fun ActorCardList(
     actors: List<Actor>,
     modifier: Modifier = Modifier
-        .fillMaxWidth()
-        .height(900.dp)
+
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .height(900.dp)
+            .padding(horizontal = 8.dp, vertical = 8.dp)
     ) {
         items(actors) { actor ->
             ActorCard(
