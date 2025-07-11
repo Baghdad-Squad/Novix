@@ -16,7 +16,7 @@ import com.baghdad.viewmodel.search.SearchScreenState
 fun SearchScreen(
     listener: SearchInteractionListener,
     uiState: SearchScreenState,
-    onMovieSavedClick: (Long) -> Unit
+    onSavedClick: (Long) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -27,14 +27,14 @@ fun SearchScreen(
             RecentViewedSection(
                 uiState,
                 listener,
-                onMovieSavedClick
+                onSavedClick
             )
         }
         item {
             RecentSearch(
-                uiState.recentSearch,
-                listener
-            )
+                recentSearch = uiState.recentSearch,
+                onClearRecentSearchClick = { listener.onClearRecentSearchClick() },
+                onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) })
         }
     }
 }

@@ -9,20 +9,23 @@ import com.baghdad.component.HorizontalDivider
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.viewmodel.search.SearchInteractionListener
+import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
 fun RecentSearch(
-    recentSearch: List<String>,
-    listener: SearchInteractionListener
+    recentSearch: List<SearchScreenState.RecentSearchUiState>,
+    onClearRecentSearchClick: () -> Unit,
+    onRemoveRecentSearchItemClick: (Long) -> Unit
 ) {
+
     SectionHeaderWithAction(
         title = stringResource(R.string.recent_search),
-        onClearAllClick = { listener.onClearRecentSearchClick() })
+        onClearAllClick = { onClearRecentSearchClick() })
 
-    recentSearch.forEachIndexed { index, title ->
+    recentSearch.forEachIndexed { index, keyWord ->
         RecentSearchContent(
-            title = title,
-            onCancelClick = { listener.onRemoveRecentSearchItemClick(index.toLong()) },
+            title = keyWord.query,
+            onCancelClick = { onRemoveRecentSearchItemClick(keyWord.id) },
         )
 
         if (index < recentSearch.lastIndex) {
