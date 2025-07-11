@@ -6,6 +6,7 @@ import com.baghdad.entity.search.RecentSearch
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.util.executeSafely
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -14,14 +15,17 @@ class SearchRepositoryImpl(
     val remoteSearchDataSource: RemoteGenreDataSource
 ) : SearchRepository {
     override suspend fun searchByName(query: String): SearchResult {
-        val movieGenres = remoteSearchDataSource.getMovieGenre(language = "en")
-        val tvShowsGenres = remoteSearchDataSource.getTvShowGenre(language = "en")
-        return searchRemoteDataSource.searchMultiMedia(
-            query = query,
-            pageNumber = 1,
-            movieGenres,
-            tvShowsGenres
-        ).toEntity()
+        return executeSafely {
+            val movieGenres = remoteSearchDataSource.getMovieGenre(language = "en")
+            val tvShowsGenres = remoteSearchDataSource.getTvShowGenre(language = "en")
+             searchRemoteDataSource.searchMultiMedia(
+                query = query,
+                pageNumber = 1,
+                movieGenres,
+                tvShowsGenres
+            ).toEntity()
+
+        }
 
     }
 

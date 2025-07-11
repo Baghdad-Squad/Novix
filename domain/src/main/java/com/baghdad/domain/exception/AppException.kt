@@ -1,16 +1,16 @@
 package com.baghdad.domain.exception
 
 open class AppException() : Exception()
-open class NetworkException() : AppException()
+open class ApiException() : AppException()
 open class LocalDataBaseException() : AppException()
 
 
-class NoInternetException() : NetworkException()
-class SerializationException() : NetworkException()
-class RequestTimeoutException() : NetworkException()
-class TooManyRequestsException() : NetworkException()
-class ServerException() : NetworkException()
-class NotFoundSearchException() : NetworkException()
+class NoInternetException() : ApiException()
+class SerializationException() : ApiException()
+class RequestTimeoutException() : ApiException()
+class TooManyRequestsException() : ApiException()
+class ServerException() : ApiException()
+class NotFoundSearchException() : ApiException()
 
 class DataBaseCorruptException() : LocalDataBaseException()
 class StorageFullException() : LocalDataBaseException()
