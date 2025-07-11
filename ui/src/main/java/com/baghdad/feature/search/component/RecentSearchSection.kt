@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.search.component
+package com.baghdad.feature.search.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
@@ -23,7 +23,7 @@ fun LazyListScope.recentSearchSection(
             onClearAllClick = { onClearRecentSearchClick() })
     }
 
-    itemsIndexed(recentSearch){ index, keyWord ->
+    itemsIndexed(recentSearch) { index, keyWord ->
         RecentSearchItem(
             title = keyWord.query,
             onCancelClick = { onRemoveRecentSearchItemClick(keyWord.id) },
