@@ -11,22 +11,20 @@ import com.baghdad.repository.model.toEntity
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getFlowSafely
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class SearchRepositoryImpl(
     val searchRemoteDataSource: RemoteSearchDataSource,
-    val remoteSearchDataSource: RemoteGenreDataSource,
+    val remoteGenreDataSource: RemoteGenreDataSource,
     val localSearchDataSource: LocalSearchDataSource
 ) : SearchRepository {
     override suspend fun searchByName(query: String): SearchResult {
         val searchResult = executeSafely {
-            val movieGenres = remoteSearchDataSource.getMovieGenre(language = "en")
-            val tvShowsGenres = remoteSearchDataSource.getTvShowGenre(language = "en")
+            val movieGenres = remoteGenreDataSource.getMovieGenre(language = "en")
+            val tvShowsGenres = remoteGenreDataSource.getTvShowGenre(language = "en")
             searchRemoteDataSource.searchMultiMedia(
-                query = query,
-                pageNumber = 1,
-                movieGenres,
-                tvShowsGenres
+                query = query, pageNumber = 1, movieGenres, tvShowsGenres
             ).toEntity()
 
         }
@@ -57,6 +55,13 @@ class SearchRepositoryImpl(
     override suspend fun deleteAllRecentSearches() {
         return executeSafely {
             localSearchDataSource.deleteAllRecentSearches()
+        }
+    }
+
+    private suspend fun isUserSearchThisTermBeforeWithinHour(query: String): Boolean {
+        val recentSearches = localSearchDataSource.getAllRecentSearches().first()
+        return recentSearches.any {
+            it.query == query && (System.currentTimeMillis() - it.searchedAt) < 3600000
         }
     }
 }
