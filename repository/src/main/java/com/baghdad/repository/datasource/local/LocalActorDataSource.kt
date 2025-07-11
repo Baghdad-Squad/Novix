@@ -10,4 +10,5 @@ interface LocalActorDataSource {
     suspend fun getAllActors(): Flow<List<ActorDto>>
     suspend fun deleteAllActors()
     suspend fun updateActor(actor: ActorDto)
+    suspend fun searchActorsByName(name: String): List<ActorDto>
 }

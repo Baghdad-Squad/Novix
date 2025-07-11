@@ -4,6 +4,7 @@ import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.entity.Actor
 import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toEntity
+import com.baghdad.local_datasource.roomDB.errorHandler.executeFlowWithErrorHandling
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.model.ActorDto
@@ -51,4 +52,11 @@ class LocalActorDataSourceImpl(
             val actorEntity = actor.toEntity()
             actorDao.upsertActor(actorEntity)
         }
-}
+
+    override suspend fun searchActorsByName(name: String) =
+        executeWithErrorHandling {
+            actorDao.searchActorsByName(name).map {
+                it.toDto()
+            }
+        }
+    }
