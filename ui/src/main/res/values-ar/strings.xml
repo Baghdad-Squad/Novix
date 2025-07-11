@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_movies">أفلام</string>
+    <string name="tab_tv_shows">مسلسلات</string>
+    <string name="tab_actors">ممثلين</string>
+</resources>

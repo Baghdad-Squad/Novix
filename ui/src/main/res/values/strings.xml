@@ -4,4 +4,7 @@
     <string name="recent_search">Recent search</string>
     <string name="clock_icon">Clock Icon</string>
     <string name="cancel_icon">Cancel Icon</string>
+    <string name="tab_movies">Movies</string>
+    <string name="tab_tv_shows">TV shows</string>
+    <string name="tab_actors">Actors</string>
 </resources>
