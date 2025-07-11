@@ -1,5 +1,6 @@
 package com.baghdad.novix.di
 
+import com.baghdad.novix.BuildConfig
 import com.baghdad.remote_datasource.RemoteGenreDataSourceImpl
 import com.baghdad.remote_datasource.RemoteSearchSearchDataSourceImpl
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
@@ -26,7 +27,7 @@ val remoteDataSourceModule = module {
     }
 
     single(named("API_KEY")) {
-        "YOUR_API_KEY"
+        BuildConfig.API_KEY
     }
 
     single<RemoteSearchDataSource> {
