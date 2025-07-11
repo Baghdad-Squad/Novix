@@ -1,10 +1,11 @@
-package com.baghdad.component
+package com.baghdad.feature.search.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.baghdad.component.HorizontalDivider
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.viewmodel.search.SearchInteractionListener
