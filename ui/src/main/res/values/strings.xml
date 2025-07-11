@@ -4,4 +4,6 @@
     <string name="recent_search">Recent search</string>
     <string name="clock_icon">Clock Icon</string>
     <string name="cancel_icon">Cancel Icon</string>
+    <string name="search">Search..</string>
+    <string name="filter_icon">Filter Icon</string>
 </resources>
