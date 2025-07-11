@@ -1,15 +1,40 @@
 package com.baghdad.domain.usecase.recentlyViewed
 
+import com.baghdad.domain.repository.RecentlyViewedRepository
+import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class DeleteAllRecentlyViewedUseCaseTest {
-    private val deleteAllRecentlyViewedUseCase = DeleteAllRecentlyViewedUseCase()
+
+    private lateinit var recentlyViewedRepository: RecentlyViewedRepository
+    private lateinit var deleteAllRecentlyViewedUseCase: DeleteAllRecentlyViewedUseCase
+
+    @BeforeEach
+    fun setUp() {
+        recentlyViewedRepository = mockk(relaxed = true)
+        deleteAllRecentlyViewedUseCase = DeleteAllRecentlyViewedUseCase(recentlyViewedRepository)
+    }
 
     @Test
-    fun dummyTest() = runTest {
+    fun `should delete all recently viewed successfully`() = runTest {
         deleteAllRecentlyViewedUseCase()
-        Assertions.assertTrue(true)
+
+        coVerify(exactly = 1) { recentlyViewedRepository.deleteAllRecentlyViewed() }
+    }
+
+    @Test
+    fun `should propagate exception when repository throws exception`() = runTest {
+        val exception = RuntimeException()
+        coEvery { recentlyViewedRepository.deleteAllRecentlyViewed() } throws exception
+
+        val resultException = runCatching { deleteAllRecentlyViewedUseCase() }.exceptionOrNull()
+
+        assertThat(resultException).isNotNull()
+        assertThat(resultException).isInstanceOf(RuntimeException::class.java)
     }
 }
