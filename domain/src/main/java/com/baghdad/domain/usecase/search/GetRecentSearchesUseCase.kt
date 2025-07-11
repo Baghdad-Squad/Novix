@@ -1,12 +1,13 @@
 package com.baghdad.domain.usecase.search
 
+import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.entity.search.RecentSearch
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 
-class GetRecentSearchesUseCase {
+class GetRecentSearchesUseCase(
+    private val searchRepository: SearchRepository
+) {
     suspend operator fun invoke(): Flow<List<RecentSearch>> {
-        //TODO("Not yet implemented")
-        return flowOf(emptyList())
+        return searchRepository.getRecentSearches()
     }
 }
