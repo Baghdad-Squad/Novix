@@ -26,7 +26,6 @@ class SearchRepositoryImpl(
             searchRemoteDataSource.searchMultiMedia(
                 query = query, pageNumber = 1, movieGenres, tvShowsGenres
             ).toEntity()
-
         }
         executeSafely {
             localSearchDataSource.addRecentSearchQuery(query)
