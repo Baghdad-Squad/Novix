@@ -1,6 +1,6 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.model.SearchResult
+import com.baghdad.domain.result.SearchResult
 import com.baghdad.repository.model.SearchResultDto
 
 internal fun SearchResultDto.toEntity(): SearchResult {
