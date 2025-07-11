@@ -27,5 +27,14 @@
     <string name="novix_description">Born from Nova, Made for Flix.</string>
     <string name="app_bar_icon">App Bar Icon</string>
     <string name="category_image">category image</string>
-    <string name="clear_all">Clear all</string>
+    <string name="close_filter_bottomsheet">Close Filter Bottomsheet</string>
+    <string name="clear_all">Clear all</string>">
+    <string name="filter">Filter</string>
+    <string name="released_year">Released year</string>
+    <string name="genres">Genres</string>
+    <string name="imdb_rating">IMDb rating</string>
+    <string name="not_clicked">Not Clicked</string>
+    <string name="clicked">Clicked</string>
+    <string name="apply">Apply</string>
+    <string name="clear">Clear</string>
 </resources>

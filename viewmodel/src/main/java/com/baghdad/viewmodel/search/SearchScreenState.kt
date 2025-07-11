@@ -4,6 +4,7 @@ import com.baghdad.viewmodel.base.BaseUiState
 
 data class SearchScreenState(
     val searchText: String = "",
+    val selectedSearchTab: SearchTab = SearchTab.MOVIES,
     val movies: List<MovieUiState> = emptyList(),
     val tvShows: List<TvShowUiState> = emptyList(),
     val actors: List<ActorUiState> = emptyList(),
@@ -16,6 +17,8 @@ data class SearchScreenState(
         val maximumYear: Int = 0,
         val rate: Int = 0,
         val selectedGenres: List<GenreUiState> = emptyList(),
+        val moviesGenres:List<GenreUiState> = emptyList(),
+        val tvShowsGenres:List<GenreUiState> = emptyList(),
         val isBottomSheetVisible: Boolean = false
     )
 
@@ -54,4 +57,8 @@ data class SearchScreenState(
     )
 }
 
-
+enum class SearchTab{
+    MOVIES,
+    TV_SHOWS,
+    ACTORS,
+}

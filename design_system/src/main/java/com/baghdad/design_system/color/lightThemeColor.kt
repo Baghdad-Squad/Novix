@@ -6,7 +6,7 @@ val lightThemeColor =
     NovixColor(
         primary = Color(0xFFF77053),
         primaryVariant = Color(0xFFF9E8E5),
-        secondary = Color(0xFFF9E8E5),
+        secondary = Color(0xFF80071F),
         title = Color(0xDE1F1F1F),
         body = Color(0x991F1F1F),
         hint = Color(0x611F1F1F),

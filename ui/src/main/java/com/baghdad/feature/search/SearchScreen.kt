@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.search
+package com.baghdad.feature.search
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.baghdad.ui.feature.search.component.SearchTextField
-import com.baghdad.ui.feature.search.component.recentSearchSection
-import com.baghdad.ui.feature.search.component.RecentlyViewedSection
+import com.baghdad.feature.search.component.RecentlyViewedSection
+import com.baghdad.feature.search.component.SearchTextField
+import com.baghdad.feature.search.component.recentSearchSection
 import com.baghdad.viewmodel.search.SearchInteractionListener
 import com.baghdad.viewmodel.search.SearchScreenState
 
@@ -32,10 +32,11 @@ fun SearchScreen(
         }
         item {
             RecentlyViewedSection(
-               uiState.recentViewed,
-               onClearRecentlyViewedClick = {listener.onClearRecentSearchClick()},
+                uiState.recentViewed,
+                onClearRecentlyViewedClick = { listener.onClearRecentSearchClick() },
                 onSavedClick = { listener.onSavedRecentlyViewedClick(it) },
                 onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) }
+
             )
         }
             recentSearchSection(
