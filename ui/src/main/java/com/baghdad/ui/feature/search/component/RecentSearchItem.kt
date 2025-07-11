@@ -1,4 +1,4 @@
-package com.baghdad.feature.search.component
+package com.baghdad.ui.feature.search.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -17,14 +17,16 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 
 @Composable
-fun RecentSearchContent(
+fun RecentSearchItem(
     title: String,
     onCancelClick: () -> Unit,
+    onRecentSearchClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
-            .padding(vertical = 12.dp),
+            .padding(vertical = 12.dp)
+            .clickable { onRecentSearchClicked() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

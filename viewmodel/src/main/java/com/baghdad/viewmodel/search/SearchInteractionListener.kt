@@ -7,7 +7,7 @@ interface SearchInteractionListener {
     fun onClearRecentWatchingClick()
     fun onClearRecentSearchClick()
     fun onRemoveRecentSearchItemClick(id: Long)
-    fun onRecentSearchItemClick(searchText: String)
+    fun onRecentSearchItemClick(id: Long)
     fun onMovieCategoryClick()
     fun onTvShowCategoryClick()
     fun onActorCategoryClick()

@@ -1,4 +1,4 @@
-package com.baghdad.feature.search
+package com.baghdad.ui.feature.search
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -7,8 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.baghdad.feature.search.component.RecentSearch
-import com.baghdad.feature.search.component.RecentViewedSection
+import com.baghdad.ui.feature.search.component.SearchTextField
+import com.baghdad.ui.feature.search.component.recentSearchSection
+import com.baghdad.ui.feature.search.component.RecentlyViewedSection
 import com.baghdad.viewmodel.search.SearchInteractionListener
 import com.baghdad.viewmodel.search.SearchScreenState
 
@@ -24,18 +25,25 @@ fun SearchScreen(
             .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
         item {
-            RecentViewedSection(
-               uiState.recentViewed,
-               onClearRecentSearchClick =  {listener.onClearRecentSearchClick()},
-                onSavedClick = { onSavedClick(it) }
+            SearchTextField(
+                query = uiState.searchText,
+                onQueryChange = { listener.onSearchTextChanged(it) },
+                onFilterIconClick = { listener.onFilterIconClick() }
             )
         }
         item {
-            RecentSearch(
+            RecentlyViewedSection(
+               uiState.recentViewed,
+               onClearRecentlyViewedClick =  {listener.onClearRecentSearchClick()},
+                onSavedClick = { onSavedClick(it) }
+            )
+        }
+            recentSearchSection(
                 recentSearch = uiState.recentSearch,
                 onClearRecentSearchClick = { listener.onClearRecentSearchClick() },
-                onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) })
-        }
+                onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) },
+                onRecentSearchClicked = { listener.onRecentSearchItemClick(it) }
+            )
     }
 }
 
