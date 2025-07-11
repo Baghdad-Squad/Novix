@@ -48,3 +48,4 @@ fun Movie.toDto(): MovieDto = MovieDto(
     backdropPicturesURLs = this.backdropPicturesURLs,
     runtimeMinutes = this.runtimeMinutes
 )
+

@@ -16,10 +16,10 @@ interface RecentSearchDao {
     fun getAllRecentSearch(): Flow<List<RecentSearch>>
 
     @Query("SELECT * FROM RecentSearch WHERE id = :id")
-    suspend fun getRecentSearchById(id: Long)
+    suspend fun getRecentSearchById(id: Long): List<RecentSearch>
 
     @Query("SELECT * FROM RecentSearch ORDER BY searchedAt DESC")
-    fun getLastTenRecentSearchItems(): Flow<List<RecentViewedWithDetails>>
+    fun getLastTenRecentSearchItems(): Flow<List<RecentSearch>>
 
 
     @Query("DELETE FROM RecentSearch")
