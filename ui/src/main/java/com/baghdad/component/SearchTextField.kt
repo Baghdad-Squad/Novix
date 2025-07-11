@@ -1,6 +1,7 @@
 package com.baghdad.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,13 +22,12 @@ import com.baghdad.design_system.component.NovixTextField
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
-import com.baghdad.viewmodel.search.SearchInteractionListener
-import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
 fun SearchTextField(
-    uiState: SearchScreenState,
-    listener: SearchInteractionListener,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onFilterIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -44,8 +44,8 @@ fun SearchTextField(
                 .padding(top = 12.dp)
         ) {
             NovixTextField(
-                value = uiState.searchText,
-                onValueChange = { listener.onSearchTextChanged(it) },
+                value = query,
+                onValueChange = { onQueryChange(it) },
                 leadingIcon = painterResource(com.baghdad.design_system.R.drawable.search_icon),
                 hint = stringResource(R.string.search),
                 modifier = Modifier.weight(1f)
@@ -65,6 +65,7 @@ fun SearchTextField(
                     modifier = Modifier
                         .fillMaxSize(0.5f)
                         .size(20.dp)
+                        .clickable { onFilterIconClick() }
 
                 )
             }
