@@ -16,8 +16,7 @@ import com.baghdad.viewmodel.search.SearchScreenState
 @Composable
 fun SearchScreen(
     listener: SearchInteractionListener,
-    uiState: SearchScreenState,
-    onSavedClick: (Long) -> Unit
+    uiState: SearchScreenState
 ) {
     LazyColumn(
         modifier = Modifier
@@ -34,8 +33,8 @@ fun SearchScreen(
         item {
             RecentlyViewedSection(
                uiState.recentViewed,
-               onClearRecentlyViewedClick =  {listener.onClearRecentSearchClick()},
-                onSavedClick = { onSavedClick(it) }
+               onClearRecentlyViewedClick = {listener.onClearRecentSearchClick()},
+                onSavedClick = { listener.onSavedRecentlyViewedClick(it) }
             )
         }
             recentSearchSection(

@@ -4,7 +4,8 @@ import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
 
 interface SearchInteractionListener {
     fun onSearchTextChanged(text: String)
-    fun onClearRecentWatchingClick()
+    fun onClearRecentlyViewedClick()
+    fun onSavedRecentlyViewedClick(id: Long)
     fun onClearRecentSearchClick()
     fun onRemoveRecentSearchItemClick(id: Long)
     fun onRecentSearchItemClick(id: Long)
