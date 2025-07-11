@@ -1,4 +1,4 @@
-package com.baghdad.screen
+package com.baghdad.feature.search
 
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,10 +11,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.component.HorizontalDivider
-import com.baghdad.component.MoviesCard
-import com.baghdad.component.RecentSearchContent
-import com.baghdad.component.SectionHeaderWithAction
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.feature.search.component.MoviesCard
+import com.baghdad.feature.search.component.RecentSearchContent
+import com.baghdad.feature.search.component.SectionHeaderWithAction
 import com.baghdad.ui.R
 
 @Composable
