@@ -3,22 +3,26 @@ package com.baghdad.repository
 import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.entity.search.RecentSearch
+import com.baghdad.repository.datasource.local.LocalSearchDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.model.toEntity
 import com.baghdad.repository.util.executeSafely
+import com.baghdad.repository.util.getFlowSafely
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 class SearchRepositoryImpl(
     val searchRemoteDataSource: RemoteSearchDataSource,
-    val remoteSearchDataSource: RemoteGenreDataSource
+    val remoteSearchDataSource: RemoteGenreDataSource,
+    val localSearchDataSource: LocalSearchDataSource
 ) : SearchRepository {
     override suspend fun searchByName(query: String): SearchResult {
-        return executeSafely {
+        val searchResult = executeSafely {
             val movieGenres = remoteSearchDataSource.getMovieGenre(language = "en")
             val tvShowsGenres = remoteSearchDataSource.getTvShowGenre(language = "en")
-             searchRemoteDataSource.searchMultiMedia(
+            searchRemoteDataSource.searchMultiMedia(
                 query = query,
                 pageNumber = 1,
                 movieGenres,
@@ -26,19 +30,34 @@ class SearchRepositoryImpl(
             ).toEntity()
 
         }
+        executeSafely {
+            localSearchDataSource.addRecentSearchQuery(query)
+        }
+        return searchResult
 
     }
 
-    override suspend fun getRecentSearches(): Flow<List<RecentSearch>> {
-        // TODO("Not yet implemented")
-        return flowOf(emptyList())
+    override fun getRecentSearches(): Flow<List<RecentSearch>> {
+        return getFlowSafely {
+            localSearchDataSource.getAllRecentSearches().map {
+                it.map {
+                    it.toEntity()
+                }
+            }
+        }
     }
+
 
     override suspend fun deleteRecentSearchById(id: Long) {
-        // TODO("Not yet implemented")
+        return executeSafely {
+            localSearchDataSource.deleteRecentSearchById(id)
+        }
     }
 
     override suspend fun deleteAllRecentSearches() {
-        // TODO("Not yet implemented")
+        return executeSafely {
+            localSearchDataSource.deleteAllRecentSearches()
+        }
     }
 }
+
