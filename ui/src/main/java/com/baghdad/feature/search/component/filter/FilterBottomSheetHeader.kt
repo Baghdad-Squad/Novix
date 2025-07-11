@@ -1,4 +1,4 @@
-package com.baghdad.component.filter
+package com.baghdad.feature.search.component.filter
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

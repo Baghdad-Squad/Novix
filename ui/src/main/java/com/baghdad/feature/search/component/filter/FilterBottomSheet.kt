@@ -1,4 +1,4 @@
-package com.baghdad.component.filter
+package com.baghdad.feature.search.component.filter
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,16 +16,19 @@ import com.baghdad.design_system.component.BaseBottomSheet
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.feature.search.preview.DummySearchListener
+import com.baghdad.viewmodel.search.SearchInteractionListener
+import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
 fun FilterBottomSheet(
-    isVisible: Boolean,
-    onDismiss: () -> Unit,
+    listener: SearchInteractionListener,
+    uiState: SearchScreenState.FilterBottomSheetUiState,
     modifier: Modifier = Modifier
 ) {
     BaseBottomSheet(
-        isVisible = isVisible,
-        onDismiss = onDismiss
+        isVisible = uiState.isBottomSheetVisible,
+        onDismiss = listener::onBottomSheetCloseClick
     ) {
         Column(
             modifier = modifier
@@ -36,19 +39,33 @@ fun FilterBottomSheet(
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp)
             )
+
             ReleasedYearSlider(
+                uiState = uiState,
+                listener = listener,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
             )
+
             GenresSection(
+                uiState = uiState,
+                listener = listener,
                 modifier = Modifier
                     .padding(bottom = 24.dp)
             )
+
             IMDbRatingSection(
+                uiState = uiState,
+                listener = listener,
                 modifier = Modifier
                     .padding(bottom = 24.dp)
             )
-            FilterBottomSheetFooter()
+
+            FilterBottomSheetFooter(
+                listener = listener,
+                modifier = Modifier
+                    .padding(bottom = 24.dp)
+            )
 
         }
     }
@@ -67,8 +84,10 @@ private fun FilterBottomSheetPrev() {
                 modifier = Modifier.align(Alignment.Center)
             )
             FilterBottomSheet(
-                isVisible = isSheetVisible,
-                onDismiss = { isSheetVisible = false },
+                uiState = SearchScreenState.FilterBottomSheetUiState(
+                    isBottomSheetVisible = isSheetVisible // ✅ Dynamically pass value
+                ),
+                listener = DummySearchListener,
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
         }

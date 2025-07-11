@@ -1,4 +1,4 @@
-package com.baghdad.component.filter
+package com.baghdad.feature.search.component.filter
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -17,11 +13,15 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BaseRangeSlider
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.viewmodel.search.SearchInteractionListener
+import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
-fun ReleasedYearSlider(modifier: Modifier = Modifier) {
-    var sliderValue by remember { mutableStateOf(1995f..2012f) }
-    val valueRange = 1990f..2025f
+fun ReleasedYearSlider(
+    listener: SearchInteractionListener,
+    uiState: SearchScreenState.FilterBottomSheetUiState,
+    modifier: Modifier = Modifier
+) {
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -34,18 +34,23 @@ fun ReleasedYearSlider(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-        MinMaxReleaseYear()
+        MinMaxReleaseYear(uiState = uiState)
 
         BaseRangeSlider(
-            value = sliderValue,
-            onValueChange = { sliderValue = it },
-            valueRange = valueRange
+            value = uiState.selectedRange,
+            onValueChange = { newRange ->
+                listener.onYearRangeSelected(newRange)
+            },
+            valueRange = uiState.valueRange
         )
     }
 }
 
 @Composable
-fun MinMaxReleaseYear(modifier: Modifier = Modifier) {
+fun MinMaxReleaseYear(
+    uiState: SearchScreenState.FilterBottomSheetUiState,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -53,12 +58,12 @@ fun MinMaxReleaseYear(modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "1990", /*TODO*/
+            text = uiState.selectedRange.start.toInt().toString(),
             color = Theme.color.body,
             style = Theme.typography.label.small,
         )
         Text(
-            text = "2025", /*TODO*/
+            text = uiState.selectedRange.endInclusive.toInt().toString(),
             color = Theme.color.body,
             style = Theme.typography.label.small,
         )

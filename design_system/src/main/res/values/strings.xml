@@ -35,4 +35,6 @@
     <string name="imdb_rating">IMDb rating</string>
     <string name="not_clicked">Not Clicked</string>
     <string name="clicked">Clicked</string>
+    <string name="apply">Apply</string>
+    <string name="clear">Clear</string>
 </resources>

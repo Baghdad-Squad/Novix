@@ -1,4 +1,4 @@
-package com.baghdad.component.filter
+package com.baghdad.feature.search.component.filter
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -17,10 +13,15 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Star
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.viewmodel.search.SearchInteractionListener
+import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
-fun IMDbRatingSection(modifier: Modifier = Modifier) {
-    var rating by remember { mutableStateOf(0) }
+fun IMDbRatingSection(
+    uiState: SearchScreenState.FilterBottomSheetUiState,
+    listener: SearchInteractionListener,
+    modifier: Modifier = Modifier
+) {
 
     Column(
         modifier = modifier
@@ -41,8 +42,8 @@ fun IMDbRatingSection(modifier: Modifier = Modifier) {
         ) {
             repeat(10) {
                 Star(
-                    isFilled = it < rating,
-                    onClick = { rating = it + 1 }
+                    isFilled = it < uiState.rate,
+                    onClick = { listener.onRatingChanged(it) }
                 )
             }
 
