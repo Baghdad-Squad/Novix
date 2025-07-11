@@ -11,11 +11,11 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.button.OutlinedButton
 import com.baghdad.design_system.component.button.PrimaryButton
-import com.baghdad.viewmodel.search.SearchInteractionListener
 
 @Composable
 fun FilterBottomSheetFooter(
-    listener: SearchInteractionListener,
+    onApplyClick: () -> Unit,
+    onClearClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -26,12 +26,12 @@ fun FilterBottomSheetFooter(
     ) {
         PrimaryButton(
             label = stringResource(R.string.apply),
-            onClick = { listener.onApplyClick() },
+            onClick = onApplyClick,
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedButton(
             label = stringResource(R.string.clear),
-            onClick = { listener.onClearFilterClick() },
+            onClick = onClearClick,
             modifier = Modifier.fillMaxWidth()
         )
     }

@@ -13,13 +13,12 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BaseRangeSlider
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.viewmodel.search.SearchInteractionListener
-import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
 fun ReleasedYearSlider(
-    listener: SearchInteractionListener,
-    uiState: SearchScreenState.FilterBottomSheetUiState,
+    minimumYear: Int,
+    maximumYear: Int,
+    onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -34,21 +33,23 @@ fun ReleasedYearSlider(
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-        MinMaxReleaseYear(uiState = uiState)
+        MinMaxReleaseYear(
+            minimumYear = minimumYear,
+            maximumYear = maximumYear,
+        )
 
         BaseRangeSlider(
-            value = uiState.selectedRange,
-            onValueChange = { newRange ->
-                listener.onYearRangeSelected(newRange)
-            },
-            valueRange = uiState.valueRange
+            value = minimumYear.toFloat()..maximumYear.toFloat(),
+            onValueChange = onValueChange,
+            valueRange = 1990f..2025f,
         )
     }
 }
 
 @Composable
 fun MinMaxReleaseYear(
-    uiState: SearchScreenState.FilterBottomSheetUiState,
+    minimumYear: Int,
+    maximumYear: Int,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -58,12 +59,12 @@ fun MinMaxReleaseYear(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = uiState.selectedRange.start.toInt().toString(),
+            text = minimumYear.toString(),
             color = Theme.color.body,
             style = Theme.typography.label.small,
         )
         Text(
-            text = uiState.selectedRange.endInclusive.toInt().toString(),
+            text = maximumYear.toString(),
             color = Theme.color.body,
             style = Theme.typography.label.small,
         )

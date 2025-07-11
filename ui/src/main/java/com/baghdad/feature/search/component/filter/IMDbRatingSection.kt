@@ -13,16 +13,13 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Star
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.viewmodel.search.SearchInteractionListener
-import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
 fun IMDbRatingSection(
-    uiState: SearchScreenState.FilterBottomSheetUiState,
-    listener: SearchInteractionListener,
+    rate: Int,
+    onRatingChanged: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -42,11 +39,10 @@ fun IMDbRatingSection(
         ) {
             repeat(10) {
                 Star(
-                    isFilled = it < uiState.rate,
-                    onClick = { listener.onRatingChanged(it) }
+                    isFilled = it < rate,
+                    onClick = { onRatingChanged(it + 1) }
                 )
             }
-
         }
     }
 }

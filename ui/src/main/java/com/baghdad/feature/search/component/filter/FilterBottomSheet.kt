@@ -16,19 +16,30 @@ import com.baghdad.design_system.component.BaseBottomSheet
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
-import com.baghdad.feature.search.preview.DummySearchListener
-import com.baghdad.viewmodel.search.SearchInteractionListener
-import com.baghdad.viewmodel.search.SearchScreenState
+import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
+import com.baghdad.viewmodel.search.SearchTab
 
 @Composable
 fun FilterBottomSheet(
-    listener: SearchInteractionListener,
-    uiState: SearchScreenState.FilterBottomSheetUiState,
+    isBottomSheetVisible: Boolean,
+    minimumYear: Int,
+    maximumYear: Int,
+    rate: Int,
+    selectedSearchTab: SearchTab,
+    selectedGenres: List<GenreUiState>,
+    moviesGenres: List<GenreUiState>,
+    tvShowsGenres: List<GenreUiState>,
+    onApplyClick: () -> Unit,
+    onClearClick: () -> Unit,
+    onBottomSheetCloseClick: () -> Unit,
+    onGenreSelected: (GenreUiState) -> Unit,
+    onYearRangeSelected: (ClosedFloatingPointRange<Float>) -> Unit,
+    onRatingChanged: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     BaseBottomSheet(
-        isVisible = uiState.isBottomSheetVisible,
-        onDismiss = listener::onBottomSheetCloseClick
+        isVisible = isBottomSheetVisible,
+        onDismiss = { onBottomSheetCloseClick() }
     ) {
         Column(
             modifier = modifier
@@ -37,36 +48,39 @@ fun FilterBottomSheet(
             FilterBottomSheetHeader(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp)
             )
 
             ReleasedYearSlider(
-                uiState = uiState,
-                listener = listener,
+                minimumYear = minimumYear,
+                maximumYear = maximumYear,
+                onValueChange = onYearRangeSelected,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
             )
 
             GenresSection(
-                uiState = uiState,
-                listener = listener,
+                selectedSearchTab = selectedSearchTab,
+                moviesGenres = moviesGenres,
+                tvShowsGenres = tvShowsGenres,
+                selectedGenres = selectedGenres,
+                onGenreSelected = onGenreSelected,
                 modifier = Modifier
                     .padding(bottom = 24.dp)
             )
 
             IMDbRatingSection(
-                uiState = uiState,
-                listener = listener,
+                rate = rate,
+                onRatingChanged = onRatingChanged,
                 modifier = Modifier
                     .padding(bottom = 24.dp)
             )
 
             FilterBottomSheetFooter(
-                listener = listener,
+                onApplyClick = onApplyClick,
+                onClearClick = onClearClick,
                 modifier = Modifier
                     .padding(bottom = 24.dp)
             )
-
         }
     }
 }
@@ -84,10 +98,20 @@ private fun FilterBottomSheetPrev() {
                 modifier = Modifier.align(Alignment.Center)
             )
             FilterBottomSheet(
-                uiState = SearchScreenState.FilterBottomSheetUiState(
-                    isBottomSheetVisible = isSheetVisible // ✅ Dynamically pass value
-                ),
-                listener = DummySearchListener,
+                rate = 5,
+                minimumYear = 2000,
+                maximumYear = 2023,
+                moviesGenres = emptyList(),
+                tvShowsGenres = emptyList(),
+                onApplyClick = {},
+                onClearClick = {},
+                isBottomSheetVisible = isSheetVisible,
+                onBottomSheetCloseClick = { isSheetVisible = false },
+                onYearRangeSelected = {},
+                selectedGenres = emptyList(),
+                selectedSearchTab = SearchTab.MOVIES,
+                onGenreSelected = {},
+                onRatingChanged = {},
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
         }

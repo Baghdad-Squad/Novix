@@ -13,20 +13,25 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.viewmodel.search.SearchInteractionListener
-import com.baghdad.viewmodel.search.SearchScreenState
+import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
+import com.baghdad.viewmodel.search.SearchTab
 
 @Composable
 fun GenresSection(
-    listener: SearchInteractionListener,
-    uiState: SearchScreenState.FilterBottomSheetUiState,
+    selectedSearchTab: SearchTab,
+    moviesGenres: List<GenreUiState>,
+    tvShowsGenres: List<GenreUiState>,
+    selectedGenres: List<GenreUiState>,
+    onGenreSelected: (GenreUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val genres = when (uiState.isFilterMovie) {
-        true -> uiState.movieGenres
-        false -> uiState.tvShowGenres
+    val genres = when (selectedSearchTab) {
+        SearchTab.MOVIES -> moviesGenres
+        SearchTab.TV_SHOWS -> tvShowsGenres
+        SearchTab.ACTORS -> emptyList()
     }
-    val selectedGenres = uiState.selectedGenres.map { it.name }
+
+    val selectedGenreNames = selectedGenres.map { it.name }
 
     Column(
         modifier = modifier
@@ -47,12 +52,11 @@ fun GenresSection(
             genres.forEach { genre ->
                 Chip(
                     title = genre.name,
-                    isSelected = selectedGenres.contains(genre.name),
-                    onClick = {
-                        listener.onGenresSelected(genre)
-                    }
+                    isSelected = selectedGenreNames.contains(genre.name),
+                    onClick = { onGenreSelected(genre) }
                 )
             }
         }
     }
 }
+
