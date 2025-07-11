@@ -7,6 +7,8 @@ data class SearchScreenState(
     val movies: List<MovieUiState> = emptyList(),
     val tvShows: List<TvShowUiState> = emptyList(),
     val actors: List<ActorUiState> = emptyList(),
+    val recentViewed: List<MediaUiState> = emptyList(),
+    val recentSearch: List<RecentSearchUiState> = emptyList(),
     val bottomSheetUiState: FilterBottomSheetUiState
 ) : BaseUiState() {
     data class FilterBottomSheetUiState(
@@ -38,6 +40,17 @@ data class SearchScreenState(
     data class GenreUiState(
         val id: Long = 0,
         val name: String = ""
+    )
+
+    data class MediaUiState(
+        val id: Long = 0,
+        val posterPictureURL: String = "",
+        val isSaved: Boolean = false
+    )
+
+    data class RecentSearchUiState(
+        val id: Long = 0,
+        val query: String = ""
     )
 }
 
