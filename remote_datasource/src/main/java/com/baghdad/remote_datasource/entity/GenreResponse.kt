@@ -1,6 +1,5 @@
 package com.baghdad.remote_datasource.entity
 
-import com.baghdad.repository.model.GenreDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -14,8 +13,6 @@ data class GenreListResponse(
 data class GenreItem(
     @SerialName("id")
     val id: Int,
-
     @SerialName("name")
     val name: String
 )
-
