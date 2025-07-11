@@ -1,7 +1,11 @@
 package com.baghdad.domain.usecase.search
 
-class DeleteAllRecentSearchesUseCase {
+import com.baghdad.domain.repository.SearchRepository
+
+class DeleteAllRecentSearchesUseCase(
+    private val searchRepository: SearchRepository
+) {
     suspend operator fun invoke() {
-        //TODO("Not yet implemented")
+        return searchRepository.deleteAllRecentSearches()
     }
 }
