@@ -10,4 +10,5 @@ interface LocalMovieDataSource {
     suspend fun deleteMovieById(id: Long)
     suspend fun deleteAllMovies()
     suspend fun updateMovie(newMovie: MovieDto)
+    suspend fun searchMoviesByTitle(title: String): List<MovieDto>
 }
