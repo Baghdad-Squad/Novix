@@ -1,6 +1,6 @@
 package com.baghdad.repository.exception
 
-sealed class NetworkException(message: String? = null) : Exception(message)
+open class NetworkException(message: String? = null) : Exception(message)
 
 class NoInternetNetworkException : NetworkException()
 class SerializationNetworkException : NetworkException()
