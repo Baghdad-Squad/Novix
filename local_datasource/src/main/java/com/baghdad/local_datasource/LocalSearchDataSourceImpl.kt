@@ -5,14 +5,14 @@ import com.baghdad.local_datasource.roomDB.entity.RecentSearch
 import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.errorHandler.executeFlowWithErrorHandling
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
-import com.baghdad.repository.datasource.local.LocalSearchDataSource
+import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.model.RecentSearchDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class LocalSearchDataSourceImpl(
     private val recentSearchDao: RecentSearchDao,
-) : LocalSearchDataSource {
+) : LocalRecentSearchDataSource {
     override suspend fun addRecentSearchQuery(query: String) =
         executeWithErrorHandling {
         val newRecentSearch = RecentSearch(

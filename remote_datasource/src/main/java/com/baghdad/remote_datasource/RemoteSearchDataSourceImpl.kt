@@ -10,7 +10,7 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.SearchResultDto
 import io.ktor.client.HttpClient
 
-class RemoteSearchSearchDataSourceImpl(
+class RemoteSearchDataSourceImpl(
     private val httpClient: HttpClient,
     private val apiKey: String,
     private val baseUrl: String
