@@ -16,4 +16,5 @@ interface SearchInteractionListener {
     fun onRatingChanged(rating: Int)
     fun onYearRangeSelected(range: ClosedFloatingPointRange<Float>)
     fun onGenreSelected(genre: GenreUiState)
+    fun onRecentlyViewedClick(id: Long)
 }

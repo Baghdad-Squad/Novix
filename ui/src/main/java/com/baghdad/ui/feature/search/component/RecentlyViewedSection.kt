@@ -14,7 +14,9 @@ import com.baghdad.viewmodel.search.SearchScreenState
 fun RecentlyViewedSection(
     recentViewed: List<SearchScreenState.MediaUiState>,
     onClearRecentlyViewedClick: () -> Unit,
-    onSavedClick: (Long) -> Unit
+    onSavedClick: (Long) -> Unit,
+    onRecentlyViewedClick: (Long) -> Unit,
+    modifier: Modifier=Modifier
 ) {
     SectionHeaderWithAction(
         title = stringResource(R.string.recent_viewed),
@@ -23,7 +25,8 @@ fun RecentlyViewedSection(
     RecentlyViewedList(
         recentViewed = recentViewed,
         onSavedClick = onSavedClick,
-        modifier = Modifier
+        onRecentlyViewedClick = onRecentlyViewedClick,
+        modifier =modifier
             .fillMaxWidth(0.45f)
             .aspectRatio(0.8f)
             .padding(bottom = 12.dp)

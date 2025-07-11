@@ -15,6 +15,7 @@ import com.baghdad.viewmodel.search.SearchScreenState
 fun RecentlyViewedList(
     recentViewed: List<SearchScreenState.MediaUiState>,
     onSavedClick: (Long) -> Unit,
+    onRecentlyViewedClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
@@ -32,6 +33,7 @@ fun RecentlyViewedList(
                 contentDescription = recentViewedItem.id.toString(),
                 isSaved = recentViewedItem.isSaved,
                 onSavedClick = { onSavedClick(recentViewedItem.id) },
+                onClick = {onRecentlyViewedClick(recentViewedItem.id) },
                 modifier = Modifier.animateItem()
             )
         }

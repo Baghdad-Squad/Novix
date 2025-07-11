@@ -34,15 +34,17 @@ fun SearchScreen(
             RecentlyViewedSection(
                 uiState.recentViewed,
                 onClearRecentlyViewedClick = { listener.onClearRecentSearchClick() },
-                onSavedClick = { listener.onSavedRecentlyViewedClick(it) }
+                onSavedClick = { listener.onSavedRecentlyViewedClick(it) },
+                onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) }
+
             )
         }
-        recentSearchSection(
-            recentSearch = uiState.recentSearch,
-            onClearRecentSearchClick = { listener.onClearRecentSearchClick() },
-            onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) },
-            onRecentSearchClicked = { listener.onRecentSearchItemClick(it) }
-        )
+            recentSearchSection(
+                recentSearch = uiState.recentSearch,
+                onClearRecentSearchClick = { listener.onClearRecentSearchClick() },
+                onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) },
+                onRecentSearchClicked = { listener.onRecentSearchItemClick(it) }
+            )
     }
 }
 
