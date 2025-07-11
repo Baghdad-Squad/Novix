@@ -2,6 +2,7 @@ package com.baghdad.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,10 +20,10 @@ fun TvShowCardList() {
     val tvShows = getFakeTvShows()
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Adaptive(minSize = 150.dp),
         modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(0.8f)
+            .fillMaxSize()
+           .aspectRatio(0.9f)
             .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),

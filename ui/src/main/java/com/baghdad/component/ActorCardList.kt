@@ -22,8 +22,8 @@ fun ActorCardList(
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(1.8f)
+            .fillMaxSize()
+            .aspectRatio(0.8f)
             .padding(horizontal = 8.dp, vertical = 8.dp)
     ) {
         items(actors) { actor ->
