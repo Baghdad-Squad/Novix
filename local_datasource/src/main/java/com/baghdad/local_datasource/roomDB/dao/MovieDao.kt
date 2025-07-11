@@ -17,9 +17,12 @@ interface MovieDao {
     @Query("DELETE FROM Movie")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM Movie WHERE title =  :id")
-    fun getMovieById(id: Long): Movie
+    @Query("SELECT * FROM Movie WHERE id =  :id")
+    suspend fun getMovieById(id: Long): Movie
 
     @Query("SELECT * FROM Movie")
     fun getAllMovies(): Flow<List<Movie>>
+
+    @Query("SELECT * FROM Movie WHERE title LIKE '%' || :title || '%'")
+    suspend fun searchMoviesByTitle(title: String): List<Movie>
 }

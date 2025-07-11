@@ -23,4 +23,7 @@ interface ActorDao {
     @Query("DELETE FROM Actor")
     suspend fun deleteAllActors()
 
+    @Query("SELECT * FROM Actor WHERE name LIKE '%' || :name || '%'")
+    suspend fun searchActorsByName(name: String): List<Actor>
+
 }
