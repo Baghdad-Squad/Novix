@@ -14,14 +14,13 @@ import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
  fun RecentViewedSection(
-    uiState: SearchScreenState,
-    listener: SearchInteractionListener,
-    onMovieSavedClick: (Long) -> Unit
+    recentViewed: List<SearchScreenState.MediaUiState>,
+    onClearRecentSearchClick: () -> Unit,
+    onSavedClick: (Long) -> Unit
 ) {
-    val recentViewed = uiState.recentViewed
     SectionHeaderWithAction(
         title = stringResource(R.string.recent_viewed),
-        onClearAllClick = { listener.onClearRecentWatchingClick() }
+        onClearAllClick = { onClearRecentSearchClick() }
     )
 
     recentViewed.forEach { mediaItem ->
@@ -29,7 +28,7 @@ import com.baghdad.viewmodel.search.SearchScreenState
             url = mediaItem.posterPictureURL,
             contentDescription = mediaItem.id.toString(),
             isSaved = mediaItem.isSaved,
-            onSavedClick = { onMovieSavedClick(mediaItem.id) },
+            onSavedClick = { onSavedClick(mediaItem.id) },
             modifier = Modifier
                 .fillMaxWidth(0.45f)
                 .aspectRatio(0.8f)
