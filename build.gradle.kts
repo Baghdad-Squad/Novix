@@ -27,8 +27,6 @@ val excludedPackagesOrClasses = listOf(
     "com.baghdad.islamic_image_loader",
     "com.baghdad.repository.model",
     "com.baghdad.repository.datasource.local",
-    "com.baghdad.domain.model",
-    "com.baghdad.domain.repository",
 )
 
 val excludedPatterns = excludedPackagesOrClasses.flatMap { path ->
