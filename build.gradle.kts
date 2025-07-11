@@ -22,7 +22,13 @@ jacoco {
 val excludedPackagesOrClasses = listOf(
     "com.baghdad.entity",
     "com.baghdad.design_system",
-    "com.baghdad.islamic_image_loader"
+    "com.baghdad.islamic_image_loader",
+    "com.baghdad.base",
+    "com.baghdad.islamic_image_loader",
+    "com.baghdad.repository.model",
+    "com.baghdad.repository.datasource.local",
+    "com.baghdad.domain.model",
+    "com.baghdad.domain.repository"
 )
 
 val excludedPatterns = excludedPackagesOrClasses.flatMap { path ->
