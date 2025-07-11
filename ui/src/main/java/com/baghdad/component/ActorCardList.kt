@@ -23,7 +23,7 @@ fun ActorCardList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
             .fillMaxWidth()
-            .height(900.dp)
+            .aspectRatio(1.8f)
             .padding(horizontal = 8.dp, vertical = 8.dp)
     ) {
         items(actors) { actor ->

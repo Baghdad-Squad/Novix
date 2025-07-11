@@ -21,8 +21,7 @@ fun MovieCardList() {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
-            .fillMaxWidth()
-            .height(900.dp)
+            .aspectRatio(0.8f)
             .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
