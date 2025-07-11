@@ -277,6 +277,10 @@ class SearchViewModel(
         updateState { it.copy(selectedSearchTab = selectedTab) }
     }
 
+    override fun onRecentlyViewedClick(id: Long) {
+        TODO("Not yet implemented")
+    }
+
     private fun onLoading() {
         updateState { it.copy(isLoading = true) }
     }
