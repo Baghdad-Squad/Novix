@@ -14,4 +14,10 @@ interface Media {
     val cast: List<CastMember>
     val posterPictureURL: String
     val backdropPicturesURLs: List<String>
+    val type: MediaType
+
+    enum class MediaType {
+        MOVIE,
+        TV_SHOW
+    }
 }

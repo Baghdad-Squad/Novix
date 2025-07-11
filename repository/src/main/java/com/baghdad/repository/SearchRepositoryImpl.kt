@@ -1,8 +1,10 @@
 package com.baghdad.repository
 
+import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.repository.SearchRepository
-import com.baghdad.domain.result.SearchResult
 import com.baghdad.entity.search.RecentSearch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class SearchRepositoryImpl : SearchRepository   {
     override suspend fun searchByName(query: String): SearchResult {
@@ -14,9 +16,9 @@ class SearchRepositoryImpl : SearchRepository   {
         )
     }
 
-    override suspend fun getRecentSearches(): List<RecentSearch> {
+    override suspend fun getRecentSearches(): Flow<List<RecentSearch>> {
         // TODO("Not yet implemented")
-        return emptyList()
+        return flowOf(emptyList())
     }
 
     override suspend fun deleteRecentSearchById(id: Long) {
