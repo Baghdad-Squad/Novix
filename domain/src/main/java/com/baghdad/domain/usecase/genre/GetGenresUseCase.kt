@@ -8,9 +8,11 @@ class GetGenresUseCase(
     private val movieRepository: MovieRepository,
     private val tvShowRepository: TvShowRepository
 ) {
-    suspend operator fun invoke(): List<Genre> {
-        val movieGenres = movieRepository.getGenres()
-        val tvShowGenres = tvShowRepository.getGenres()
-        return (movieGenres + tvShowGenres).distinctBy { it.id }
+    suspend fun getMovieGenres(): List<Genre> {
+        return movieRepository.getGenres()
+    }
+
+    suspend fun getTvShowGenres(): List<Genre> {
+        return tvShowRepository.getGenres()
     }
 }

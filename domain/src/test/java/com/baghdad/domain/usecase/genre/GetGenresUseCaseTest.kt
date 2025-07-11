@@ -29,72 +29,66 @@ class GetGenresUseCaseTest {
     }
 
     @Test
-    fun `should return combined movies and tv shows genres when both are distinct`() = runTest {
-        val movieGenres = listOf(actionGenre, comedyGenre)
-        val tvShowGenres = listOf(dramaGenre, thrillerGenre)
-        coEvery { movieRepository.getGenres() } returns movieGenres
-        coEvery { tvShowRepository.getGenres() } returns tvShowGenres
-
-        val result = getGenresUseCase()
-
-        assertThat(result).containsExactly(actionGenre, comedyGenre, dramaGenre, thrillerGenre)
-    }
-
-    @Test
-    fun `should return distinct genres when both repositories have duplicate genres`() = runTest {
-        val movieGenres = listOf(actionGenre, comedyGenre)
-        val tvShowGenres = listOf(actionGenre, dramaGenre)
-        coEvery { movieRepository.getGenres() } returns movieGenres
-        coEvery { tvShowRepository.getGenres() } returns tvShowGenres
-
-        val result = getGenresUseCase()
-
-        assertThat(result).containsExactly(
-            actionGenre,
-            comedyGenre,
-            dramaGenre
-        )
-    }
-
-    @Test
-    fun `should return empty list when both repositories return empty lists`() = runTest {
-        coEvery { movieRepository.getGenres() } returns emptyList()
-        coEvery { tvShowRepository.getGenres() } returns emptyList()
-
-        val result = getGenresUseCase()
-
-        assertThat(result).isEmpty()
-    }
-
-    @Test
-    fun `should return only movie genres when tv show repository returns empty list`() = runTest {
+    fun `getMovieGenres should return genres from movie repository`() = runTest {
         val movieGenres = listOf(actionGenre, comedyGenre)
         coEvery { movieRepository.getGenres() } returns movieGenres
-        coEvery { tvShowRepository.getGenres() } returns emptyList()
 
-        val result = getGenresUseCase()
+        val result = getGenresUseCase.getMovieGenres()
 
         assertThat(result).containsExactly(actionGenre, comedyGenre)
     }
 
     @Test
-    fun `should return only tv show genres when movie repository returns empty list`() = runTest {
+    fun `getTvShowGenres should return genres from tv show repository`() = runTest {
         val tvShowGenres = listOf(dramaGenre, thrillerGenre)
-        coEvery { movieRepository.getGenres() } returns emptyList()
         coEvery { tvShowRepository.getGenres() } returns tvShowGenres
 
-        val result = getGenresUseCase()
+        val result = getGenresUseCase.getTvShowGenres()
 
         assertThat(result).containsExactly(dramaGenre, thrillerGenre)
     }
 
     @Test
-    fun `should propagate exception when repository throws exception`() = runTest {
-        val exception = RuntimeException()
-        coEvery { movieRepository.getGenres() } throws exception
+    fun `getMovieGenres should return empty list when movie repository returns empty list`() =
+        runTest {
+        coEvery { movieRepository.getGenres() } returns emptyList()
+
+            val result = getGenresUseCase.getMovieGenres()
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getTvShowGenres should return empty list when tv show repository returns empty list`() =
+        runTest {
         coEvery { tvShowRepository.getGenres() } returns emptyList()
 
-        val resultException = runCatching { getGenresUseCase() }.exceptionOrNull()
+            val result = getGenresUseCase.getTvShowGenres()
+
+            assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getMovieGenres should propagate exception when movie repository throws exception`() =
+        runTest {
+            val exception = RuntimeException()
+            coEvery { movieRepository.getGenres() } throws exception
+
+            val resultException =
+                runCatching { getGenresUseCase.getMovieGenres() }.exceptionOrNull()
+
+            assertThat(resultException).isNotNull()
+            assertThat(resultException).isInstanceOf(RuntimeException::class.java)
+    }
+
+    @Test
+    fun `getTvShowGenres should propagate exception when tv show repository throws exception`() =
+        runTest {
+        val exception = RuntimeException()
+            coEvery { tvShowRepository.getGenres() } throws exception
+
+            val resultException =
+                runCatching { getGenresUseCase.getTvShowGenres() }.exceptionOrNull()
 
         assertThat(resultException).isNotNull()
         assertThat(resultException).isInstanceOf(RuntimeException::class.java)
