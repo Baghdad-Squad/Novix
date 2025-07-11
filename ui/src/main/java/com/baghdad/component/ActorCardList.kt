@@ -7,17 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.ActorCard
+import com.baghdad.viewmodel.search.SearchScreenState
 
-data class Actor(
-    val name: String,
-    val image: String
-)
 
 @Composable
 fun ActorCardList(
-    actors: List<Actor>,
+    actors: List<SearchScreenState.ActorUiState>,
+    onActorClick: (Long) -> Unit,
     modifier: Modifier = Modifier
-
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -29,7 +26,8 @@ fun ActorCardList(
         items(actors) { actor ->
             ActorCard(
                 actorName = actor.name,
-                actorImage = actor.image,
+                actorImage = actor.profilePictureURL,
+                onClick = { onActorClick(actor.id) },
                 )
         }
     }
