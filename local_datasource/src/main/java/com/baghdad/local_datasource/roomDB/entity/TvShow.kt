@@ -65,7 +65,9 @@ fun TvShowDto.toEntity(): TvShow {
         genres = emptyList(),
         imdbRating = this.imdbRating,
         userRating = this.userRating,
-        releaseDate = LocalDate.parse(releaseDate, DateTimeFormatter.ISO_DATE),
+        releaseDate = System.currentTimeMillis().let {
+            LocalDate.parse(this.releaseDate, DateTimeFormatter.ISO_DATE)
+        },
         overview = this.overview,
         cast = emptyList(),
         posterPictureURL = this.posterPictureURL,
