@@ -1,5 +1,6 @@
 package com.baghdad.entity.media
 
+import com.baghdad.entity.media.Media.MediaType
 import com.baghdad.entity.person.CastMember
 import kotlinx.datetime.LocalDate
 
@@ -15,4 +16,7 @@ data class Movie(
     override val posterPictureURL: String,
     override val backdropPicturesURLs: List<String>,
     val runtimeMinutes: Int
-) : Media
+) : Media {
+    override val type: MediaType
+        get() = MediaType.MOVIE
+}
