@@ -89,6 +89,6 @@ fun ListSearchScreen(
 
 @Preview(showSystemUi = true)
 @Composable
-private fun SearchScreenPreview() {
+private fun ListSearchScreenPreview() {
     ListSearchScreen()
 }
