@@ -1,94 +1,100 @@
 package com.baghdad.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.baghdad.design_system.theme.Theme
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.baghdad.design_system.component.Chip
-import com.baghdad.ui.R
-import com.baghdad.ui.model.SearchTab
+import androidx.compose.ui.unit.dp
 import com.baghdad.component.ActorCardList
 import com.baghdad.component.MovieCardList
 import com.baghdad.component.TvShowCardList
-import com.baghdad.ui.search_screen.fake.data.getFakeActors
+import com.baghdad.design_system.component.Chip
+import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
+import com.baghdad.ui.model.SearchTab
+import com.baghdad.viewmodel.search.SearchScreenState
 
 
 @Composable
 fun ListSearchScreen(
+    selectedTab: SearchTab,
+    onTabSelected: (SearchTab) -> Unit,
+    onSavedClick: (Long) -> Unit,
+    movies: List<SearchScreenState.MovieUiState>,
+    tvShows: List<SearchScreenState.TvShowUiState>,
+    actors: List<SearchScreenState.ActorUiState>,
+    onMovieClick: (Long) -> Unit,
+    onTvShowClick: (Long) -> Unit,
+    onActorClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectedTab by remember { mutableStateOf(SearchTab.MOVIES) }
-
-    LazyColumn(
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Theme.color.surface),
-        contentPadding = PaddingValues(bottom = 16.dp)
-    ) {
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(37.dp)
-                    .padding(start = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Chip(
-                    title = stringResource(id = R.string.tab_movies),
-                    isSelected = selectedTab == SearchTab.MOVIES,
-                    onClick = { selectedTab = SearchTab.MOVIES }
-                )
-                Chip(
-                    title = stringResource(id = R.string.tab_tv_shows),
-                    isSelected = selectedTab == SearchTab.TV_SHOWS,
-                    onClick = { selectedTab = SearchTab.TV_SHOWS }
-                )
-                Chip(
-                    title = stringResource(id = R.string.tab_actors),
-                    isSelected = selectedTab == SearchTab.ACTORS,
-                    onClick = { selectedTab = SearchTab.ACTORS }
-                )
-            }
+            .background(Theme.color.surface)
+            .padding(bottom = 16.dp),
 
-            Spacer(modifier = Modifier.height(16.dp))
+        ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(37.dp)
+                .padding(start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Chip(
+                title = stringResource(id = R.string.tab_movies),
+                isSelected = selectedTab == SearchTab.MOVIES,
+                onClick = { onTabSelected(SearchTab.MOVIES) }
+            )
+            Chip(
+                title = stringResource(id = R.string.tab_tv_shows),
+                isSelected = selectedTab == SearchTab.TV_SHOWS,
+                onClick = { onTabSelected(SearchTab.TV_SHOWS) }
+            )
+            Chip(
+                title = stringResource(id = R.string.tab_actors),
+                isSelected = selectedTab == SearchTab.ACTORS,
+                onClick = { onTabSelected(SearchTab.ACTORS) }
+            )
         }
 
-        when (selectedTab) {
-            SearchTab.MOVIES -> {
-                item { MovieCardList() }
-            }
+        Spacer(modifier = Modifier.height(16.dp))
+    }
 
-            SearchTab.TV_SHOWS -> {
-                item { TvShowCardList() }
-            }
+    when (selectedTab) {
+        SearchTab.MOVIES -> {
+            MovieCardList(
+                movies = movies,
+                onSavedClick = onSavedClick,
+                onMovieClick = onMovieClick,
+            )
+        }
 
-            SearchTab.ACTORS -> {
-                item { ActorCardList(actors = getFakeActors()) }
-            }
+        SearchTab.TV_SHOWS -> {
+            TvShowCardList(
+                tvShows = tvShows,
+                onSavedClick = onSavedClick,
+                onTVShowClick = onTvShowClick,
+            )
+        }
+
+        SearchTab.ACTORS -> {
+            ActorCardList(
+                actors = actors,
+                onActorClick = onActorClick,
+            )
         }
     }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-private fun ListSearchScreenPreview() {
-    ListSearchScreen()
 }
