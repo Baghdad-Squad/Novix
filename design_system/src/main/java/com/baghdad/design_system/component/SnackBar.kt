@@ -38,7 +38,6 @@ fun SnackBar(
     isVisible: Boolean,
     animationDuration: Int = 3000
 ) {
-
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn(tween(animationDuration)) + slideInVertically(
