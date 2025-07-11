@@ -12,6 +12,11 @@ data class SearchScreenState(
     data class FilterBottomSheetUiState(
         val minimumYear: Int = 0,
         val maximumYear: Int = 0,
+        val valueRange: ClosedFloatingPointRange<Float> = 1990f..2025f,
+        val selectedRange: ClosedFloatingPointRange<Float> = 1990f..2025f,
+        val movieGenres: List<GenreUiState> = emptyList(),
+        val tvShowGenres: List<GenreUiState> = emptyList(),
+        val isFilterMovie: Boolean = true,
         val rate: Int = 0,
         val selectedGenres: List<GenreUiState> = emptyList(),
         val isBottomSheetVisible: Boolean = false

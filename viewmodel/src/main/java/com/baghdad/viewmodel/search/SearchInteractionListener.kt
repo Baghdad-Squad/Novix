@@ -14,8 +14,9 @@ interface SearchInteractionListener {
     fun onBottomSheetCloseClick()
     fun onBottomSheetClearClick()
     fun onApplyClick()
+    fun onClearFilterClick()
     fun onFilterIconClick()
     fun onRatingChanged(rating: Int)
-    fun onYearRangeSelected(minYear: Int, maxYear: Int)
-    fun onGenresSelected(genres: List<GenreUiState>)
+    fun onYearRangeSelected(newRange: ClosedFloatingPointRange<Float>)
+    fun onGenresSelected(genres: GenreUiState)
 }
