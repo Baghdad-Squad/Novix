@@ -1,10 +1,10 @@
 package com.baghdad.remote_datasource.mapper
 
-import com.baghdad.remote_datasource.entity.MultiSearchItem
+import com.baghdad.remote_datasource.entity.MultiMediaItemDto
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
 
-internal fun MultiSearchItem.toCastMember(): CastMemberDto? {
+internal fun MultiMediaItemDto.toCastMember(): CastMemberDto? {
     return if (this.mediaType == "person" && this.id != null) {
         CastMemberDto(
             actor = ActorDto(
@@ -19,7 +19,7 @@ internal fun MultiSearchItem.toCastMember(): CastMemberDto? {
     }
 }
 
-fun getCastMembers(items: List<MultiSearchItem>): List<CastMemberDto> {
+fun getCastMembers(items: List<MultiMediaItemDto>): List<CastMemberDto> {
     return items.map{
         it.toCastMember() ?: CastMemberDto(
             actor = ActorDto(
