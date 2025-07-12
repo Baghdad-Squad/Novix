@@ -5,12 +5,12 @@ import android.graphics.Bitmap
 import android.graphics.Rect
 import android.util.Log
 import com.baghdad.islamic_image_loader.utils.convertBitmapToSoftwareBitmap
+import com.baghdad.islamic_image_loader.utils.loadModelFile
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
-import java.io.FileInputStream
-import java.nio.*
-import java.nio.channels.FileChannel
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import kotlin.math.max
 import kotlin.math.min
 
@@ -79,18 +79,6 @@ fun detectFaces(
 
 private fun Bitmap.createScaledBitmap(width: Int, height: Int): Bitmap =
     Bitmap.createScaledBitmap(this, width, height, true)
-
-private fun loadModelFile(context: Context, modelName: String): MappedByteBuffer {
-    return context.assets.openFd(modelName).use { fileDescriptor ->
-        FileInputStream(fileDescriptor.fileDescriptor).channel.use { fileChannel ->
-            fileChannel.map(
-                FileChannel.MapMode.READ_ONLY,
-                fileDescriptor.startOffset,
-                fileDescriptor.declaredLength
-            )
-        }
-    }
-}
 
 private fun getPixelBoundingBox(box: FloatArray, bitmap: Bitmap): List<Int> {
     val (xCenter, yCenter, width, height) = box.take(4)

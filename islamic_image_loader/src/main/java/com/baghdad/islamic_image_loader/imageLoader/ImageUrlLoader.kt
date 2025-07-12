@@ -1,4 +1,4 @@
-package com.baghdad.islamic_image_loader.model
+package com.baghdad.islamic_image_loader.imageLoader
 
 import android.content.Context
 import coil3.Image

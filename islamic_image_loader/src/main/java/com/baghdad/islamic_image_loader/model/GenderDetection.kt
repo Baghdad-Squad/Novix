@@ -3,6 +3,7 @@ package com.baghdad.islamic_image_loader.model
 import android.content.Context
 import android.graphics.Bitmap
 import com.baghdad.islamic_image_loader.utils.convertBitmapToSoftwareBitmap
+import com.baghdad.islamic_image_loader.utils.loadModelFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.tensorflow.lite.DataType
@@ -12,20 +13,7 @@ import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import java.io.FileInputStream
-import java.nio.MappedByteBuffer
-import java.nio.channels.FileChannel
 
-
-private fun loadModelFile(context: Context, modelPath: String): MappedByteBuffer {
-    val assetFileDescriptor = context.assets.openFd(modelPath)
-    FileInputStream(assetFileDescriptor.fileDescriptor).use { inputStream ->
-        val fileChannel = inputStream.channel
-        val startOffset = assetFileDescriptor.startOffset
-        val declaredLength = assetFileDescriptor.declaredLength
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
-    }
-}
 
 private fun buildImageProcessor(inputImageSize: Int): ImageProcessor {
     return ImageProcessor.Builder()
