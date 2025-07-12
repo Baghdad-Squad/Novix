@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.search.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,12 +23,14 @@ import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
+import com.baghdad.viewmodel.search.SearchTab
 
 @Composable
 fun SearchTextField(
     query: String,
     onQueryChange: (String) -> Unit,
     onFilterIconClick: () -> Unit,
+    searchTab: SearchTab,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -52,22 +55,24 @@ fun SearchTextField(
                     .padding(end = 8.dp)
             )
 
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .aspectRatio(1f)
-                    .background(Theme.color.primary, shape = RoundedCornerShape(12.dp))
-                    .noRippleClickable { onFilterIconClick() },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(com.baghdad.design_system.R.drawable.filter_horizontal),
-                    contentDescription = stringResource(R.string.filter_icon),
+            AnimatedVisibility(searchTab == SearchTab.MOVIES || searchTab == SearchTab.TV_SHOWS || query.isBlank()) {
+                Box(
                     modifier = Modifier
-                        .fillMaxSize(0.5f)
-                        .size(20.dp)
+                        .size(48.dp)
+                        .aspectRatio(1f)
+                        .background(Theme.color.primary, shape = RoundedCornerShape(12.dp))
+                        .noRippleClickable { onFilterIconClick() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(com.baghdad.design_system.R.drawable.filter_horizontal),
+                        contentDescription = stringResource(R.string.filter_icon),
+                        modifier = Modifier
+                            .fillMaxSize(0.5f)
+                            .size(20.dp)
 
-                )
+                    )
+                }
             }
 
         }

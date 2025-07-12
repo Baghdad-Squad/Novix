@@ -60,6 +60,7 @@ fun SearchContent(
             query = uiState.searchText,
             onQueryChange = { listener.onSearchTextChanged(it) },
             onFilterIconClick = { listener.onFilterIconClick() },
+            searchTab = uiState.selectedSearchTab
         )
         AnimatedContent(uiState.searchText.isNotBlank()) { it ->
             if (it) {
@@ -75,7 +76,7 @@ fun SearchContent(
                     onActorClick = { listener.onRecentlyViewedClick(it) },
                     isLoading = uiState.isLoading
                 )
-            } else TestComp(uiState, listener)
+            } else RecentlyViewsWithSearch(uiState, listener)
         }
 
         FilterBottomSheet(
@@ -99,7 +100,7 @@ fun SearchContent(
 }
 
 @Composable
-private fun TestComp(
+private fun RecentlyViewsWithSearch(
     uiState: SearchScreenState,
     listener: SearchInteractionListener
 ) {

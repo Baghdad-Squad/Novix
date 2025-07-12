@@ -57,7 +57,7 @@ class SearchViewModel(
         val recentSearchUiState = recentSearches.map { it.toRecentSearchUI() }
         updateState { searchScreenState ->
             searchScreenState.copy(
-                recentSearch = recentSearchUiState
+                recentSearch = recentSearchUiState.distinctBy { it.query }
             )
         }
     }
