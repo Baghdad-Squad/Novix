@@ -46,6 +46,8 @@ fun SearchResultContent(
 
         ) {
 
+        Spacer(modifier = Modifier.height(12.dp))
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,30 +74,31 @@ fun SearchResultContent(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-    }
 
-    when (selectedTab) {
-        SearchTab.MOVIES -> {
-            MovieCardList(
-                movies = movies,
-                onSavedClick = onSavedClick,
-                onMovieClick = onMovieClick,
-            )
-        }
 
-        SearchTab.TV_SHOWS -> {
-            TvShowCardList(
-                tvShows = tvShows,
-                onSavedClick = onSavedClick,
-                onTVShowClick = onTvShowClick,
-            )
-        }
+        when (selectedTab) {
+            SearchTab.MOVIES -> {
+                MovieCardList(
+                    movies = movies,
+                    onSavedClick = onSavedClick,
+                    onMovieClick = onMovieClick,
+                )
+            }
 
-        SearchTab.ACTORS -> {
-            ActorCardList(
-                actors = actors,
-                onActorClick = onActorClick,
-            )
+            SearchTab.TV_SHOWS -> {
+                TvShowCardList(
+                    tvShows = tvShows,
+                    onSavedClick = onSavedClick,
+                    onTVShowClick = onTvShowClick,
+                )
+            }
+
+            SearchTab.ACTORS -> {
+                ActorCardList(
+                    actors = actors,
+                    onActorClick = onActorClick,
+                )
+            }
         }
     }
 }
