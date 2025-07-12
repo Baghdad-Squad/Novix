@@ -42,5 +42,4 @@ dependencies {
     implementation(libs.bundles.material)
     implementation(libs.androidx.ui.graphics.android)
     implementation(libs.androidx.ui.text.android)
-    implementation(libs.androidx.material3.v140alpha17)
 }
