@@ -153,7 +153,7 @@ class SearchViewModel(
     }
 
     override fun onSavedRecentlyViewedClick(id: Long) {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
     }
 
     private fun onClearRecentWatchSuccess() {
@@ -277,7 +277,7 @@ class SearchViewModel(
     }
 
     override fun onRecentlyViewedClick(id: Long) {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
     }
 
     private fun onLoading() {
