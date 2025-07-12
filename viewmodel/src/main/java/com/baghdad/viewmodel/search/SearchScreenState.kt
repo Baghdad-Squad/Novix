@@ -19,8 +19,8 @@ data class SearchScreenState(
 ) : BaseUiState {
 
     data class FilterBottomSheetUiState(
-        val minimumYear: Int = 0,
-        val maximumYear: Int = 0,
+        val minimumYear: Int = 1990,
+        val maximumYear: Int = 2025,
         val rate: Int = 0,
         val selectedGenres: List<GenreUiState> = emptyList(),
         val moviesGenres: List<GenreUiState> = emptyList(),

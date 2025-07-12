@@ -18,7 +18,7 @@ internal fun SearchResponse.toDto(
                 ActorDto(
                     id = id,
                     name = item.tvShowName ?: "Unknown",
-                    imageUrl = item.profilePath ?: ""
+                    imageUrl = ("https://image.tmdb.org/t/p/w500" + item.profilePath) ?: ""
                 )
             }
         }
@@ -36,8 +36,13 @@ internal fun SearchResponse.toDto(
                     releaseDate = item.releaseDate ?: "",
                     overview = item.movieOverview ?: "",
                     cast = getCastMembers(results),
-                    posterPictureURL = item.tvShowPosterPath ?: "",
-                    backdropPicturesURLs = item.backdropPath?.let { listOf(it) } ?: emptyList(),
+                    posterPictureURL = ("https://image.tmdb.org/t/p/w500" + item.tvShowPosterPath)
+                        ?: "",
+                    backdropPicturesURLs = ("https://image.tmdb.org/t/p/w500" + item.backdropPath)?.let {
+                        listOf(
+                            it
+                        )
+                    } ?: emptyList(),
                     runtimeMinutes = 0
                 )
             }
@@ -56,8 +61,13 @@ internal fun SearchResponse.toDto(
                     releaseDate = item.firstAirDate ?: "",
                     overview = item.movieOverview ?: "",
                     cast = getCastMembers(results),
-                    posterPictureURL = item.tvShowPosterPath ?: "",
-                    backdropPicturesURLs = item.backdropPath?.let { listOf(it) } ?: emptyList(),
+                    posterPictureURL = ("https://image.tmdb.org/t/p/w500" + item.tvShowPosterPath)
+                        ?: "",
+                    backdropPicturesURLs = ("https://image.tmdb.org/t/p/w500" + item.backdropPath)?.let {
+                        listOf(
+                            it
+                        )
+                    } ?: emptyList(),
                     numberOfSeasons = 0
                 )
             }

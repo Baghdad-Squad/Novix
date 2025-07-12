@@ -15,26 +15,26 @@ class LocalSearchDataSourceImpl(
 ) : LocalRecentSearchDataSource {
     override suspend fun addRecentSearchQuery(query: String) =
         executeWithErrorHandling {
-        val newRecentSearch = RecentSearch(
-            query = query,
-        )
+            val newRecentSearch = RecentSearch(
+                query = query,
+            )
             recentSearchDao.addRecentSearch(newRecentSearch)
-    }
+        }
 
     override fun getAllRecentSearches(): Flow<List<RecentSearchDto>> =
         executeFlowWithErrorHandling {
             recentSearchDao.getAllRecentSearch().map { it ->
-            it.map { it.toDto() }
+                it.sortedByDescending { it.searchedAt }.map { it.toDto() }
+            }
         }
-    }
 
     override suspend fun deleteRecentSearchById(id: Long) =
         executeWithErrorHandling {
-        recentSearchDao.deleteRecentSearchById(id)
-    }
+            recentSearchDao.deleteRecentSearchById(id)
+        }
 
     override suspend fun deleteAllRecentSearches() =
         executeWithErrorHandling {
-        recentSearchDao.clearAllRecentSearch()
-    }
+            recentSearchDao.clearAllRecentSearch()
+        }
 }
