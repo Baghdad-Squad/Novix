@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.ui.feature.search.SearchScreen
 
 class MainActivity : ComponentActivity() {
@@ -11,7 +12,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SearchScreen()
+            NovixTheme {
+                SearchScreen()
+            }
         }
     }
 }
