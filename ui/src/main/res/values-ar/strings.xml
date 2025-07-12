@@ -9,6 +9,6 @@
     <string name="recent_search">تم بحثه مؤخرا</string>
     <string name="clock_icon">ايقونة ساعة</string>
     <string name="cancel_icon">ايقونة اغلاك</string>
-    <string name="search">يبحث..</string>
+    <string name="search">يبحث</string>
     <string name="filter_icon">ايقونة فلتر</string>
 </resources>
