@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
@@ -55,8 +56,9 @@ fun MinMaxReleaseYear(
     maximumYear: Int,
     modifier: Modifier = Modifier
 ) {
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    val isArabic = isCurrentLocaleArabic()
 
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
@@ -64,12 +66,12 @@ fun MinMaxReleaseYear(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = minimumYear.toArabicNumerals().toString(),
+                text = if (isArabic) minimumYear.toArabicNumerals() else minimumYear.toString(),
                 color = Theme.color.body,
                 style = Theme.typography.label.small,
             )
             Text(
-                text = maximumYear.toArabicNumerals().toString(),
+                text = if (isArabic) maximumYear.toArabicNumerals() else maximumYear.toString(),
                 color = Theme.color.body,
                 style = Theme.typography.label.small,
             )
@@ -82,4 +84,10 @@ fun Int.toArabicNumerals(): String {
     return this.toString().map { digit ->
         if (digit.isDigit()) easternArabicNumerals[digit.digitToInt()] else digit
     }.joinToString("")
+}
+
+@Composable
+fun isCurrentLocaleArabic(): Boolean {
+    val locale = LocalConfiguration.current.locales[0]
+    return locale.language == "ar"
 }
