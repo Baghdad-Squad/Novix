@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 
@@ -26,7 +27,7 @@ fun RecentSearchItem(
     Row(
         modifier = modifier
             .padding(vertical = 12.dp)
-            .clickable { onRecentSearchClicked() },
+            .noRippleClickable { onRecentSearchClicked() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
