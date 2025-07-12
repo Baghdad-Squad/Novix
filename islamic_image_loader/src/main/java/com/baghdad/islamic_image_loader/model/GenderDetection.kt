@@ -2,6 +2,7 @@ package com.baghdad.islamic_image_loader.model
 
 import android.content.Context
 import android.graphics.Bitmap
+import com.baghdad.islamic_image_loader.utils.convertBitmapToSoftwareBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.tensorflow.lite.DataType
@@ -31,12 +32,6 @@ private fun buildImageProcessor(inputImageSize: Int): ImageProcessor {
         .add(ResizeOp(inputImageSize, inputImageSize, ResizeOp.ResizeMethod.BILINEAR))
         .add(NormalizeOp(0f, 255f))
         .build()
-}
-
-private fun convertBitmapToSoftwareBitmap(bitmap: Bitmap): Bitmap {
-    return if (bitmap.config == Bitmap.Config.HARDWARE) {
-        bitmap.copy(Bitmap.Config.ARGB_8888, false)
-    } else bitmap
 }
 
 internal suspend fun predictGender(image: Bitmap, context: Context, modelPath: String): FloatArray =
