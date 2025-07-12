@@ -1,10 +1,11 @@
-package com.baghdad.viewmodel.search.mapper
+package com.baghdad.viewmodel.search
 
 import com.baghdad.entity.media.Genre
+import com.baghdad.entity.media.Media
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
-import com.baghdad.viewmodel.search.SearchScreenState
+import com.baghdad.entity.search.RecentSearch
 
 fun Movie.toMovieUI() = SearchScreenState.MovieUiState(
     id = id,
@@ -23,8 +24,24 @@ fun Actor.toActorUI() = SearchScreenState.ActorUiState(
     name = name,
     profilePictureURL = profilePictureURL
 )
+fun Media.toMediaUI() = SearchScreenState.MediaUiState(
+    id = id,
+    posterPictureURL = posterPictureURL,
+    // TODO: we need to add isSaved from domain
+
+)
+
+fun RecentSearch.toRecentSearchUI() = SearchScreenState.RecentSearchUiState(
+    id = id,
+    query = query
+)
 
 fun Genre.toGenreUI() = SearchScreenState.GenreUiState(
+    id = id,
+    name = name
+)
+
+fun SearchScreenState.GenreUiState.toGenre() = Genre(
     id = id,
     name = name
 )
