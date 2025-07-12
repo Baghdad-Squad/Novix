@@ -3,10 +3,12 @@
     <string name="tab_movies">أفلام</string>
     <string name="tab_tv_shows">مسلسلات</string>
     <string name="tab_actors">ممثلين</string>
-    <string name="recent_viewed">تمّت مشاهدته مؤخرًا</string>
-    <string name="recent_search">البحث الأخير</string>
-    <string name="clock_icon">أيقونة الساعة</string>
-    <string name="cancel_icon">أيقونة الإلغاء</string>
-    <string name="search">ابحث...</string>
-    <string name="filter_icon">أيقونة التصفية</string>
+    <string name="no_search_result_picture">لا توحد نتيجة</string>
+    <string name="no_search_result_please_try_with_another_keyword">لا توجد نتيجة, حاول مجددا باسم اخر</string>
+    <string name="recent_viewed">تم مشاهدته مؤخرًا</string>
+    <string name="recent_search">تم بحثه مؤخرا</string>
+    <string name="clock_icon">ايقونة ساعة</string>
+    <string name="cancel_icon">ايقونة اغلاك</string>
+    <string name="search">يبحث..</string>
+    <string name="filter_icon">ايقونة فلتر</string>
 </resources>
