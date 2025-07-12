@@ -12,4 +12,5 @@ interface MediaDto {
     val cast: List<CastMemberDto>
     val posterPictureURL: String
     val backdropPicturesURLs: List<String>
+    val type: MediaType
 }

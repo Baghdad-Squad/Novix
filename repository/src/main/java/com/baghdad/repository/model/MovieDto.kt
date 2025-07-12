@@ -12,5 +12,8 @@ data class MovieDto(
     override val cast: List<CastMemberDto>,
     override val posterPictureURL: String,
     override val backdropPicturesURLs: List<String>,
-    val runtimeMinutes: Int
-) : MediaDto
+    val runtimeMinutes: Int,
+) : MediaDto {
+    override val type: MediaType
+        get() = MediaType.MOVIE
+}
