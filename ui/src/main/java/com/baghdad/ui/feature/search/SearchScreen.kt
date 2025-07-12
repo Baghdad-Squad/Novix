@@ -76,7 +76,7 @@ fun SearchContent(
                     onActorClick = { listener.onRecentlyViewedClick(it) },
                     isLoading = uiState.isLoading
                 )
-            } else TestComp(uiState, listener)
+            } else RecentlyViewsWithSearch(uiState, listener)
         }
 
         FilterBottomSheet(
@@ -100,7 +100,7 @@ fun SearchContent(
 }
 
 @Composable
-private fun TestComp(
+private fun RecentlyViewsWithSearch(
     uiState: SearchScreenState,
     listener: SearchInteractionListener
 ) {
