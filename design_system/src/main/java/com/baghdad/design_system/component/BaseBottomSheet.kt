@@ -21,7 +21,7 @@ fun BaseBottomSheet(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
+        skipPartiallyExpanded = false
     )
 
     LaunchedEffect(isVisible) {
