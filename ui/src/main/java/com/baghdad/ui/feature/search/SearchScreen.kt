@@ -44,10 +44,10 @@ fun SearchContent(
 ) {
     Column(
         modifier = Modifier
+            .background(Theme.color.surface)
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
-            .background(Theme.color.surface)
             .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
         SearchTextField(
