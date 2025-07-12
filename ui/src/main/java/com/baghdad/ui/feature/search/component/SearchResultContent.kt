@@ -56,6 +56,7 @@ fun SearchResultContent(
 
         Spacer(modifier = Modifier.height(12.dp))
 
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -85,27 +86,68 @@ fun SearchResultContent(
 
         when (selectedTab) {
             SearchTab.MOVIES -> {
-                MovieCardList(
-                    movies = movies,
-                    onSavedClick = onSavedClick,
-                    onMovieClick = onMovieClick,
-                )
+                if (!movies.isEmpty()) {
+                    MovieCardList(
+                        movies = movies,
+                        onSavedClick = onSavedClick,
+                        onMovieClick = onMovieClick,
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        EmptySearchState(
+                            imagePath = com.baghdad.design_system.R.drawable.no_search_results,
+                            contentDescription = stringResource(R.string.no_search_result_picture),
+                            message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                        )
+                    }
+                }
+
             }
 
             SearchTab.TV_SHOWS -> {
-                TvShowCardList(
-                    tvShows = tvShows,
-                    onSavedClick = onSavedClick,
-                    onTVShowClick = onTvShowClick,
-                )
+                if (!tvShows.isEmpty()) {
+                    TvShowCardList(
+                        tvShows = tvShows,
+                        onSavedClick = onSavedClick,
+                        onTVShowClick = onTvShowClick,
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        EmptySearchState(
+                            imagePath = com.baghdad.design_system.R.drawable.no_search_results,
+                            contentDescription = stringResource(R.string.no_search_result_picture),
+                            message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                        )
+                    }
+                }
             }
 
             SearchTab.ACTORS -> {
-                ActorCardList(
-                    actors = actors,
-                    onActorClick = onActorClick,
-                )
+                if (!actors.isEmpty()) {
+                    ActorCardList(
+                        actors = actors,
+                        onActorClick = onActorClick,
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        EmptySearchState(
+                            imagePath = com.baghdad.design_system.R.drawable.no_search_results,
+                            contentDescription = stringResource(R.string.no_search_result_picture),
+                            message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                        )
+                    }
+                }
             }
         }
     }
+
 }
