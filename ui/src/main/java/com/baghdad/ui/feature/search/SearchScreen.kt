@@ -67,9 +67,9 @@ fun SearchContent(
                     onMovieClick = { listener.onRecentlyViewedClick(it) },
                     onTvShowClick = { listener.onRecentlyViewedClick(it) },
                     onActorClick = { listener.onRecentlyViewedClick(it) },
+                    isLoading = uiState.isLoading
                 )
             } else TestComp(uiState, listener)
-
         }
 
         FilterBottomSheet(

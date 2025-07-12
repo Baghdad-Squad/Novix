@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,7 @@ import com.baghdad.component.ActorCardList
 import com.baghdad.component.MovieCardList
 import com.baghdad.component.TvShowCardList
 import com.baghdad.design_system.component.Chip
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 
@@ -36,6 +38,7 @@ fun SearchResultContent(
     onMovieClick: (Long) -> Unit,
     onTvShowClick: (Long) -> Unit,
     onActorClick: (Long) -> Unit,
+    isLoading: Boolean ,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -45,6 +48,11 @@ fun SearchResultContent(
             .padding(bottom = 16.dp),
 
         ) {
+        if (isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 

@@ -101,10 +101,13 @@ class SearchViewModel(
         searchJob?.cancel()
         if (text.isNotBlank()) {
             searchJob = tryToExecute(
-                onStart = { delay(SEARCH_DEBOUNCED_DELAY) },
+                onStart = {
+                    delay(SEARCH_DEBOUNCED_DELAY)
+                    onLoading()
+                },
                 callee = { performSearch(text) },
                 onSuccess = ::onSearchSuccess,
-
+                onFinally = ::onFinally
             )
         } else {
             clearSearchResults()

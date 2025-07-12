@@ -10,11 +10,12 @@ import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import com.baghdad.design_system.theme.Theme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun WavyLoadingIndicator() {
+fun WavyLoadingIndicator(modifier: Modifier = Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "Wavy Progress")
     val animatedProgress by infiniteTransition.animateFloat(
         initialValue = 0f, targetValue = 1f, animationSpec = infiniteRepeatable(
@@ -26,7 +27,8 @@ fun WavyLoadingIndicator() {
     CircularWavyProgressIndicator(
         progress = { animatedProgress },
         color = Theme.color.primary,
-        trackColor = Theme.color.stroke
+        trackColor = Theme.color.stroke,
+        modifier = modifier
     )
 
 }
