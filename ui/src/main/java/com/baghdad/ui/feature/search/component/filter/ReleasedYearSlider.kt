@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BaseRangeSlider
@@ -52,21 +55,31 @@ fun MinMaxReleaseYear(
     maximumYear: Int,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = minimumYear.toString(),
-            color = Theme.color.body,
-            style = Theme.typography.label.small,
-        )
-        Text(
-            text = maximumYear.toString(),
-            color = Theme.color.body,
-            style = Theme.typography.label.small,
-        )
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = minimumYear.toArabicNumerals().toString(),
+                color = Theme.color.body,
+                style = Theme.typography.label.small,
+            )
+            Text(
+                text = maximumYear.toArabicNumerals().toString(),
+                color = Theme.color.body,
+                style = Theme.typography.label.small,
+            )
+        }
     }
+}
+
+fun Int.toArabicNumerals(): String {
+    val easternArabicNumerals = listOf('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩')
+    return this.toString().map { digit ->
+        if (digit.isDigit()) easternArabicNumerals[digit.digitToInt()] else digit
+    }.joinToString("")
 }
