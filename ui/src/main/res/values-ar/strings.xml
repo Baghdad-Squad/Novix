@@ -3,4 +3,10 @@
     <string name="tab_movies">أفلام</string>
     <string name="tab_tv_shows">مسلسلات</string>
     <string name="tab_actors">ممثلين</string>
+    <string name="recent_viewed">تمّت مشاهدته مؤخرًا</string>
+    <string name="recent_search">البحث الأخير</string>
+    <string name="clock_icon">أيقونة الساعة</string>
+    <string name="cancel_icon">أيقونة الإلغاء</string>
+    <string name="search">ابحث...</string>
+    <string name="filter_icon">أيقونة التصفية</string>
 </resources>
