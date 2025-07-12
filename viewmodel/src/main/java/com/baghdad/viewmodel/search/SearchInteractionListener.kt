@@ -4,8 +4,6 @@ import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
 
 interface SearchInteractionListener {
     fun onSearchTextChanged(text: String)
-    fun onClearRecentlyViewedClick()
-    fun onSavedRecentlyViewedClick(id: Long)
     fun onClearRecentSearchClick()
     fun onRemoveRecentSearchItemClick(id: Long)
     fun onRecentSearchItemClick(id: Long)
@@ -16,5 +14,8 @@ interface SearchInteractionListener {
     fun onRatingChanged(rating: Int)
     fun onYearRangeSelected(range: ClosedFloatingPointRange<Float>)
     fun onGenreSelected(genre: GenreUiState)
+    fun onClearRecentlyViewedClick()
+    fun onSavedRecentlyViewedClick(id: Long)
+    fun onSelectedSearchTabChanged(selectedTab: SearchTab)
     fun onRecentlyViewedClick(id: Long)
 }

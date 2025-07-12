@@ -1,6 +1,8 @@
 package com.baghdad.viewmodel.search
 
 import com.baghdad.viewmodel.base.BaseUiState
+import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseErrorState
 
 data class SearchScreenState(
     val searchText: String = "",
@@ -10,15 +12,19 @@ data class SearchScreenState(
     val actors: List<ActorUiState> = emptyList(),
     val recentViewed: List<MediaUiState> = emptyList(),
     val recentSearch: List<RecentSearchUiState> = emptyList(),
-    val bottomSheetUiState: FilterBottomSheetUiState
-) : BaseUiState() {
+    val bottomSheetUiState: FilterBottomSheetUiState = FilterBottomSheetUiState(),
+    override val isLoading: Boolean = false,
+    override val snackBarState: SnackBarState = SnackBarState(),
+    override val baseErrorState: BaseErrorState? = null
+) : BaseUiState {
+
     data class FilterBottomSheetUiState(
         val minimumYear: Int = 0,
         val maximumYear: Int = 0,
         val rate: Int = 0,
         val selectedGenres: List<GenreUiState> = emptyList(),
-        val moviesGenres:List<GenreUiState> = emptyList(),
-        val tvShowsGenres:List<GenreUiState> = emptyList(),
+        val moviesGenres: List<GenreUiState> = emptyList(),
+        val tvShowsGenres: List<GenreUiState> = emptyList(),
         val isBottomSheetVisible: Boolean = false
     )
 
@@ -57,7 +63,7 @@ data class SearchScreenState(
     )
 }
 
-enum class SearchTab{
+enum class SearchTab {
     MOVIES,
     TV_SHOWS,
     ACTORS,

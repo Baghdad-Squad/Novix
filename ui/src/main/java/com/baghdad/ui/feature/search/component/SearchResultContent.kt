@@ -20,8 +20,9 @@ import com.baghdad.component.TvShowCardList
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
-import com.baghdad.ui.model.SearchTab
+
 import com.baghdad.viewmodel.search.SearchScreenState
+import com.baghdad.viewmodel.search.SearchTab
 
 
 @Composable

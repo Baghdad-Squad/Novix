@@ -1,4 +1,4 @@
-package com.baghdad.viewmodel.search.mapper
+package com.baghdad.viewmodel.search
 
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Media
@@ -6,7 +6,6 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.search.RecentSearch
-import com.baghdad.viewmodel.search.SearchScreenState
 
 fun Movie.toMovieUI() = SearchScreenState.MovieUiState(
     id = id,
@@ -38,6 +37,11 @@ fun RecentSearch.toRecentSearchUI() = SearchScreenState.RecentSearchUiState(
 )
 
 fun Genre.toGenreUI() = SearchScreenState.GenreUiState(
+    id = id,
+    name = name
+)
+
+fun SearchScreenState.GenreUiState.toGenre() = Genre(
     id = id,
     name = name
 )

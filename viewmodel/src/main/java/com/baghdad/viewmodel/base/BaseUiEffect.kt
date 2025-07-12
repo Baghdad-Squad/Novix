@@ -1,3 +1,3 @@
 package com.baghdad.viewmodel.base
 
-sealed interface BaseUiEffect
+interface BaseUiEffect
