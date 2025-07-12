@@ -74,7 +74,6 @@ fun NovixTextField(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
     ) {
         if (!label.isNullOrEmpty()) {
                 Text(

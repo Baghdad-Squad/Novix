@@ -19,6 +19,7 @@ fun RecentlyViewedSection(
     modifier: Modifier=Modifier
 ) {
     SectionHeaderWithAction(
+        modifier = modifier,
         title = stringResource(R.string.recent_viewed),
         onClearAllClick = onClearRecentlyViewedClick,
     )
@@ -26,7 +27,7 @@ fun RecentlyViewedSection(
         recentViewed = recentViewed,
         onSavedClick = onSavedClick,
         onRecentlyViewedClick = onRecentlyViewedClick,
-        modifier =modifier
+        modifier = Modifier
             .fillMaxWidth(0.45f)
             .aspectRatio(0.8f)
             .padding(bottom = 12.dp)

@@ -35,7 +35,6 @@ fun SearchTextField(
             text = stringResource(R.string.search),
             style = Theme.typography.title.large,
             color = Theme.color.title,
-            modifier = Modifier.padding(start = 16.dp)
         )
 
         Row(
@@ -48,12 +47,13 @@ fun SearchTextField(
                 onValueChange = { onQueryChange(it) },
                 leadingIcon = painterResource(com.baghdad.design_system.R.drawable.search_icon),
                 hint = stringResource(R.string.search),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
             )
 
             Box(
                 modifier = Modifier
-                    .padding(end = 16.dp)
                     .size(48.dp)
                     .aspectRatio(1f)
                     .background(Theme.color.primary, shape = RoundedCornerShape(12.dp)),
