@@ -51,7 +51,6 @@ fun SearchResultContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(37.dp)
                 .padding(start = 16.dp, end = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
