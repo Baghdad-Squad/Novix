@@ -226,6 +226,7 @@ class SearchViewModel(
                 )
             )
         }
+        onSearchTextChanged(currentState.searchText)
     }
 
     override fun onFilterIconClick() {

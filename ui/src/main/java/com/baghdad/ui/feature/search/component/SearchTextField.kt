@@ -1,7 +1,6 @@
 package com.baghdad.ui.feature.search.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.NovixTextField
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 
@@ -56,7 +56,8 @@ fun SearchTextField(
                 modifier = Modifier
                     .size(48.dp)
                     .aspectRatio(1f)
-                    .background(Theme.color.primary, shape = RoundedCornerShape(12.dp)),
+                    .background(Theme.color.primary, shape = RoundedCornerShape(12.dp))
+                    .noRippleClickable { onFilterIconClick() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -65,7 +66,6 @@ fun SearchTextField(
                     modifier = Modifier
                         .fillMaxSize(0.5f)
                         .size(20.dp)
-                        .clickable { onFilterIconClick() }
 
                 )
             }
