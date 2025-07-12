@@ -54,6 +54,7 @@ fun SearchContent(
             query = uiState.searchText,
             onQueryChange = { listener.onSearchTextChanged(it) },
             onFilterIconClick = { listener.onFilterIconClick() },
+            searchTab = uiState.selectedSearchTab
         )
         AnimatedContent(uiState.searchText.isNotBlank()) { it ->
             if (it) {
