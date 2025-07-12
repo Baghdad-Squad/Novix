@@ -20,10 +20,11 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 
 @Composable
-fun FilterBottomSheetHeader(modifier: Modifier = Modifier) {
+fun FilterBottomSheetHeader(onCloseClick: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -45,7 +46,8 @@ fun FilterBottomSheetHeader(modifier: Modifier = Modifier) {
                     width = 1.dp,
                     color = Theme.color.stroke,
                     shape = RoundedCornerShape(8.dp)
-                ),
+                )
+                .noRippleClickable { onCloseClick() },
             contentAlignment = Alignment.Center
         ) {
             Icon(

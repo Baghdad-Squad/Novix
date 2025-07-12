@@ -47,7 +47,9 @@ fun FilterBottomSheet(
         ) {
             FilterBottomSheetHeader(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp),
+                onCloseClick = onBottomSheetCloseClick
+
             )
 
             ReleasedYearSlider(

@@ -103,7 +103,8 @@ class SearchViewModel(
             searchJob = tryToExecute(
                 onStart = { delay(SEARCH_DEBOUNCED_DELAY) },
                 callee = { performSearch(text) },
-                onSuccess = ::onSearchSuccess
+                onSuccess = ::onSearchSuccess,
+
             )
         } else {
             clearSearchResults()

@@ -17,6 +17,7 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.search.component.RecentlyViewedSection
 import com.baghdad.ui.feature.search.component.SearchResultContent
 import com.baghdad.ui.feature.search.component.SearchTextField
+import com.baghdad.ui.feature.search.component.filter.FilterBottomSheet
 import com.baghdad.ui.feature.search.component.recentSearchSection
 import com.baghdad.viewmodel.search.SearchInteractionListener
 import com.baghdad.viewmodel.search.SearchScreenState
@@ -65,6 +66,23 @@ fun SearchContent(
             } else TestComp(uiState, listener)
 
         }
+
+        FilterBottomSheet(
+            isBottomSheetVisible = uiState.bottomSheetUiState.isBottomSheetVisible,
+            minimumYear = uiState.bottomSheetUiState.minimumYear,
+            maximumYear = uiState.bottomSheetUiState.maximumYear,
+            rate = uiState.bottomSheetUiState.rate,
+            selectedSearchTab = uiState.selectedSearchTab,
+            selectedGenres = uiState.bottomSheetUiState.selectedGenres,
+            moviesGenres = uiState.bottomSheetUiState.moviesGenres,
+            tvShowsGenres = uiState.bottomSheetUiState.tvShowsGenres,
+            onBottomSheetCloseClick = { listener.onBottomSheetCloseClick() },
+            onClearClick = { listener.onBottomSheetClearClick() },
+            onApplyClick = { listener.onApplyClick() },
+            onRatingChanged = { listener.onRatingChanged(it) },
+            onYearRangeSelected = { listener.onYearRangeSelected(it) },
+            onGenreSelected = { listener.onGenreSelected(it) }
+        )
     }
 
 }
