@@ -3,6 +3,7 @@ package com.baghdad.ui.feature.search
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -97,22 +98,32 @@ private fun TestComp(
             .fillMaxSize()
             .background(Theme.color.surface)
     ) {
-        item {
-            RecentlyViewedSection(
-                uiState.recentViewed,
-                onClearRecentlyViewedClick = { listener.onClearRecentSearchClick() },
-                onSavedClick = { listener.onSavedRecentlyViewedClick(it) },
-                onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) },
-                modifier = Modifier.padding(top = 12.dp)
-            )
+        if (uiState.recentViewed.isNotEmpty()) {
+            item {
+                RecentlyViewedSection(
+                    recentViewed = uiState.recentViewed,
+                    onClearRecentlyViewedClick = { listener.onClearRecentSearchClick() },
+                    onSavedClick = { listener.onSavedRecentlyViewedClick(it) },
+                    onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) },
+                    modifier = Modifier.padding(top = 12.dp)
+                )
+            }
+        }else {
+            item {
+                Spacer(modifier = Modifier.padding(top = 12.dp))
+            }
         }
+        if (uiState.recentSearch.isNotEmpty())
         recentSearchSection(
             recentSearch = uiState.recentSearch,
             onClearRecentSearchClick = { listener.onClearRecentSearchClick() },
             onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) },
-            onRecentSearchClicked = { listener.onRecentSearchItemClick(it) })
-    }
-}
+            onRecentSearchClicked = { listener.onRecentSearchItemClick(it) }
+                )
+            }
+        }
+
+
 
 @Preview
 @Composable

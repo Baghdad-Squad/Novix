@@ -112,7 +112,7 @@ class SearchViewModel(
     }
 
     private suspend fun performSearch(query: String) = searchUseCase(
-        query = query, filter = createSearchFilter()
+        query = query, filter = createSearchFilter(),
     )
 
     private fun createSearchFilter() = SearchFilter(
