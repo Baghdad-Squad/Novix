@@ -8,5 +8,5 @@
     <string name="clock_icon">أيقونة الساعة</string>
     <string name="cancel_icon">أيقونة الإلغاء</string>
     <string name="search">ابحث...</string>
-    <string name="filter_icon">أيقونة الفلتر</string>
+    <string name="filter_icon">أيقونة التصفية</string>
 </resources>
