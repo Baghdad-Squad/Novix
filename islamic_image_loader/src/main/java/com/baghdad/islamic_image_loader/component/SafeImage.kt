@@ -42,7 +42,7 @@ fun SafeImage(
     val coroutineScope = rememberCoroutineScope()
 
     var image by remember { mutableStateOf<Image?>(null) }
-    var shouldBlur by remember { mutableStateOf(false) }
+    var shouldBlur by remember { mutableStateOf(true) }
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(imageUrl) {
