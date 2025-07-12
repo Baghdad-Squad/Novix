@@ -13,6 +13,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.max
 import kotlin.math.min
+import androidx.core.graphics.scale
 
 fun detectFaces(
     context: Context,
@@ -78,7 +79,7 @@ fun detectFaces(
 }
 
 private fun Bitmap.createScaledBitmap(width: Int, height: Int): Bitmap =
-    Bitmap.createScaledBitmap(this, width, height, true)
+    this.scale(width, height)
 
 private fun getPixelBoundingBox(box: FloatArray, bitmap: Bitmap): List<Int> {
     val (xCenter, yCenter, width, height) = box.take(4)
@@ -107,7 +108,7 @@ private fun preprocessImage(bitmap: Bitmap): ByteBuffer {
     val byteBuffer = ByteBuffer.allocateDirect(1 * inputSize * inputSize * 3 * 4)
     byteBuffer.order(ByteOrder.nativeOrder())
 
-    val scaledBitmap = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, true)
+    val scaledBitmap = bitmap.scale(inputSize, inputSize)
 
     scaledBitmap.getPixels(intValues, 0, inputSize, 0, 0, inputSize, inputSize)
 
