@@ -13,4 +13,7 @@ data class TvShowDto(
     override val posterPictureURL: String,
     override val backdropPicturesURLs: List<String>,
     val numberOfSeasons: Int
-) : MediaDto
+) : MediaDto {
+    override val type: MediaType
+        get() = MediaType.TV_SHOW
+}
