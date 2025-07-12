@@ -61,10 +61,10 @@ data class SearchScreenState(
         val id: Long = 0,
         val query: String = ""
     )
+}
 
-    enum class SearchTab {
-        MOVIES,
-        TV_SHOWS,
-        ACTORS,
-    }
+enum class SearchTab {
+    MOVIES,
+    TV_SHOWS,
+    ACTORS,
 }

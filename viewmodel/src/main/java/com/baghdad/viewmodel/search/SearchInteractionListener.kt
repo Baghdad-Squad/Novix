@@ -16,6 +16,6 @@ interface SearchInteractionListener {
     fun onGenreSelected(genre: GenreUiState)
     fun onClearRecentlyViewedClick()
     fun onSavedRecentlyViewedClick(id: Long)
-    fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab)
+    fun onSelectedSearchTabChanged(selectedTab: SearchTab)
     fun onRecentlyViewedClick(id: Long)
 }

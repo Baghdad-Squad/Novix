@@ -13,12 +13,6 @@ import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseErrorState
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
-import com.baghdad.viewmodel.search.mapper.toActorUI
-import com.baghdad.viewmodel.search.mapper.toGenre
-import com.baghdad.viewmodel.search.mapper.toGenreUI
-import com.baghdad.viewmodel.search.mapper.toMovieUI
-import com.baghdad.viewmodel.search.mapper.toRecentSearchUI
-import com.baghdad.viewmodel.search.mapper.toTvShowUI
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 
@@ -273,7 +267,7 @@ class SearchViewModel(
         }
     }
 
-    override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {
+    override fun onSelectedSearchTabChanged(selectedTab: SearchTab) {
         updateState { it.copy(selectedSearchTab = selectedTab) }
     }
 
