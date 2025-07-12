@@ -1,6 +1,8 @@
 package com.baghdad.component
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -20,7 +22,6 @@ fun ActorCardList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
             .fillMaxSize()
-            .aspectRatio(0.8f)
             .padding(horizontal = 8.dp, vertical = 8.dp)
     ) {
         items(actors) { actor ->
