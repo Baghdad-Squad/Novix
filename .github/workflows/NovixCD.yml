@@ -30,13 +30,23 @@ jobs:
         run: |
           echo "API_KEY=\"${{ secrets.API_KEY }}\"" > app/secrets.properties
 
-      - name: Generate APK
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > app/keystore.jks
+
+      - name: Set environment variables for signing
+        run: |
+          echo "RELEASE_KEYSTORE_PASSWORD=${{ secrets.RELEASE_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+          echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Build signed release APK
         run: ./gradlew assembleRelease
 
       - name: Upload APK to Firebase App Distribution
         run: |
           npm install -g firebase-tools
           firebase appdistribution:distribute \
-            app/build/outputs/apk/release/app-release-unsigned.apk \
+            app/build/outputs/apk/release/app-release.apk \
             --app ${{ secrets.FIREBASE_APP_ID }} \
             --token ${{ secrets.FIREBASE_AUTH_TOKEN }}
