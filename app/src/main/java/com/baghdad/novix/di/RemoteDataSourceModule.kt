@@ -1,8 +1,9 @@
 package com.baghdad.novix.di
 
+import com.baghdad.local_datasource.LocalRecentlyViewedDataSourceImpl
 import com.baghdad.novix.BuildConfig
 import com.baghdad.remote_datasource.RemoteGenreDataSourceImpl
-import com.baghdad.remote_datasource.RemoteSearchSearchDataSourceImpl
+import com.baghdad.remote_datasource.RemoteSearchDataSourceImpl
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import io.ktor.client.HttpClient
@@ -31,7 +32,7 @@ val remoteDataSourceModule = module {
     }
 
     single<RemoteSearchDataSource> {
-        RemoteSearchSearchDataSourceImpl(
+        RemoteSearchDataSourceImpl(
             httpClient = get(),
             apiKey = get(named("API_KEY")),
             baseUrl = get(named("BASE_URL"))

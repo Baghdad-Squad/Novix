@@ -45,4 +45,11 @@ class LocalMovieDataSourceImpl(
             val movieEntity = newMovie.toEntity()
             movieDao.upsertMovie(movieEntity)
         }
+
+    override suspend fun searchMoviesByTitle(title: String) =
+        executeWithErrorHandling {
+            movieDao.searchMoviesByTitle(title).map {
+                it.toDto()
+            }
+        }
 }

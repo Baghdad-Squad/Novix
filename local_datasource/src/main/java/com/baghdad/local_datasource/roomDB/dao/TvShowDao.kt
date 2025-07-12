@@ -24,4 +24,7 @@ interface TvShowDao {
     @Query("SELECT * FROM TvShow")
     fun getAllTvShow(): Flow<List<TvShow>>
 
+    @Query("SELECT * FROM TvShow WHERE title LIKE '%' || :title || '%'")
+    suspend fun searchTvShowsByTitle(title: String): List<TvShow>
+
 }

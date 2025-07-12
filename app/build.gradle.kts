@@ -1,4 +1,3 @@
-import com.android.build.api.variant.BuildConfigField
 import java.util.Properties
 
 plugins {
@@ -88,6 +87,8 @@ dependencies {
     implementation(libs.bundles.firebase)
     implementation(libs.bundles.ktor.client)
     testImplementation(libs.bundles.test.core)
+    implementation(libs.bundles.room)
+
 }
 
 /**

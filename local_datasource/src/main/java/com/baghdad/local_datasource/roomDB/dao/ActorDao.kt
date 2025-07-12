@@ -12,7 +12,7 @@ interface ActorDao {
     suspend fun upsertActor(actor: Actor)
 
     @Query("SELECT * FROM Actor")
-    suspend fun getAllActors(): Flow<List<Actor>>
+    fun getAllActors(): Flow<List<Actor>>
 
     @Query("SELECT * FROM Actor Where name = :id")
     suspend fun getActorById(id: Long): Actor
@@ -22,5 +22,8 @@ interface ActorDao {
 
     @Query("DELETE FROM Actor")
     suspend fun deleteAllActors()
+
+    @Query("SELECT * FROM Actor WHERE name LIKE '%' || :name || '%'")
+    suspend fun searchActorsByName(name: String): List<Actor>
 
 }

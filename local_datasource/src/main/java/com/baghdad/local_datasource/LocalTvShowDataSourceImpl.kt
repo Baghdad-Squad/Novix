@@ -49,4 +49,11 @@ class LocalTvShowDataSourceImpl(
             val tvShowEntity = newMovie.toEntity()
             tvShowDao.upsertTvShow(tvShowEntity)
         }
+
+    override suspend fun searchTvShowsByTitle(title: String) =
+        executeWithErrorHandling {
+            tvShowDao.searchTvShowsByTitle(title).map {
+                it.toDto()
+            }
+        }
 }
