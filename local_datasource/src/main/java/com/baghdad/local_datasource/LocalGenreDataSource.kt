@@ -22,7 +22,7 @@ class LocalGenreDataSource(
     override suspend fun getTvShowGenre(language: String): List<GenreDto> {
         return executeWithErrorHandling {
             genreDao.getAllGenres().filter {
-                it.type == MediaType.TVSHOW.name
+                it.type == MediaType.TV_SHOW.name
             }.map { it.toEntity() }
         }
     }
