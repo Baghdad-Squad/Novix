@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_bar_icon">أيقونات شريط التنقل</string>
+    <string name="arrow_icon">أيقونة السهم</string>
+    <string name="all">الكل</string>
+    <string name="hide">إخفاء</string>
+    <string name="show">إظهار</string>
+    <string name="primary_button_icon">أيقونة الزر الرئيسي</string>
+    <string name="floating_action_button_icon">أيقونة الزر</string>
+    <string name="fab_state">حالة الزر</string>
+    <string name="fab_background_color">لون خلفية الزر</string>
+    <string name="fab_content_color">لون محتوى الزر</string>
+    <string name="outlined_button_border_color">لون إطار الزر المحدد</string>
+    <string name="negative_button_border_color">لون إطار الزر السلبي</string>
+    <string name="text_button_content_color">لون محتوى زر النص</string>
+    <string name="striped_circular_progress_indicator_animation_progress">تقدم حركة مؤشر التحميل الدائري المخطط</string>
+    <string name="rating_star">نجمة التقييم</string>
+    <string name="saved">محفوظ</string>
+    <string name="unsaved">غير محفوظ</string>
+    <string name="chip_animation">حركة الشيب</string>
+    <string name="background_color_animation">حركة لون الخلفية</string>
+    <string name="padding_value_animation">حركة قيمة الحشو</string>
+    <string name="radius_animation">حركة نصف القطر</string>
+    <string name="text_color_animation">حركة لون النص</string>
+    <string name="home_icon">أيقونة الرئيسية</string>
+    <string name="novix">نوفيكس</string>
+    <string name="novix_description">مولود من نوفا، مصمم لفليكس.</string>
+    <string name="app_bar_icon">أيقونة شريط التطبيق</string>
+    <string name="category_image">صورة الفئة</string>
+    <string name="close_filter_bottomsheet">إغلاق أسفل ورقة الفلتر</string>
+    <string name="clear_all">مسح الكل</string>
+    <string name="filter">فلتر</string>
+    <string name="released_year">سنة الإصدار</string>
+    <string name="genres">الأنواع</string>
+    <string name="imdb_rating">تقييم IMDb</string>
+    <string name="not_clicked">غير مضغوط</string>
+    <string name="clicked">مضغوط</string>
+    <string name="apply">تطبيق</string>
+    <string name="clear">مسح</string>
+</resources>
