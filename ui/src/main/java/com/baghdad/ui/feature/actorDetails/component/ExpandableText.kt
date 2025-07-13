@@ -59,5 +59,5 @@ fun ExpandableText(
 
 private object ExpandableTextDefaults {
     const val MinimizedMaxLines = 4
-    const val CollapsedTextLength = 178
+    const val CollapsedTextLength = 177
 }

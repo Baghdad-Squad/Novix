@@ -31,7 +31,9 @@ fun ActorBiographySection(
 @Composable
 private fun ActorBiographySectionPreview() {
     ActorBiographySection(
-        biography = "Matthew Paige Damon is an American actor, film producer, and screenwriter. He was ranked among Forbes' most bankable stars in 2007 and, in 2010, was one of the highest-grossing, ytttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt ",
+        biography = "Matthew Paige Damon is an American actor, " +
+                "film producer, and screenwriter. He was ranked among Forbes' most bankable stars in 2007 and, in 2010, " +
+                "was one of the highest-grossing ytttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt ",
         modifier = Modifier
     )
 }

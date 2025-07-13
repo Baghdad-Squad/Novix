@@ -12,5 +12,9 @@
     <string name="search">البحث</string>
     <string name="search_hint">ابحث عن فلم، مسلسل، ممثل</string>
     <string name="filter_icon">ايقونة الفلتر</string>
-    <string name="gallery">المعرض</string>
+    <string name="birthday">تاريخ الميلاد</string>
+    <string name="biography">السيرة الذاتية</string>
+    <string name="read_less">قراءة أقل</string>
+    <string name="read_more">قراءة المزيد</string>
+    <string name="expand">توسيع</string>
 </resources>
