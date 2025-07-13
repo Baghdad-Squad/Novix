@@ -1,9 +1,11 @@
 package com.baghdad.viewmodel.search
 
 import com.baghdad.domain.model.search.RecentlyViewed.ContentType
+import com.baghdad.domain.util.now
 import com.baghdad.viewmodel.base.BaseUiState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseErrorState
+import kotlinx.datetime.LocalDateTime
 
 data class SearchScreenState(
     val searchText: String = "",
@@ -18,14 +20,15 @@ data class SearchScreenState(
     override val snackBarState: SnackBarState = SnackBarState(),
     override val baseErrorState: BaseErrorState? = null
 ) : BaseUiState {
-
+    val searchFilter: SearchFilterUiState
+        get() = if (selectedSearchTab == SearchTab.MOVIES) {
+            bottomSheetUiState.moviesFilter
+        } else {
+            bottomSheetUiState.tvShowsFilter
+        }
     data class FilterBottomSheetUiState(
-        val minimumYear: Int = 1990,
-        val maximumYear: Int = 2025,
-        val rate: Int = 0,
-        val selectedGenres: List<GenreUiState> = emptyList(),
-        val moviesGenres: List<GenreUiState> = emptyList(),
-        val tvShowsGenres: List<GenreUiState> = emptyList(),
+        val moviesFilter: SearchFilterUiState = SearchFilterUiState(),
+        val tvShowsFilter: SearchFilterUiState = SearchFilterUiState(),
         val isBottomSheetVisible: Boolean = false
     )
 
@@ -62,6 +65,14 @@ data class SearchScreenState(
     data class RecentSearchUiState(
         val id: Long = 0,
         val query: String = ""
+    )
+
+    data class SearchFilterUiState(
+        val minimumYear: Int = 1990,
+        val maximumYear: Int = LocalDateTime.now().year,
+        val minimumRating: Int = 0,
+        val selectedGenres: List<GenreUiState> = emptyList(),
+        val allGenres: List<GenreUiState> = emptyList(),
     )
 }
 

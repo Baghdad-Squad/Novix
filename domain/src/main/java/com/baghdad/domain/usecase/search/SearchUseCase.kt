@@ -11,15 +11,20 @@ import com.baghdad.entity.media.TvShow
 class SearchUseCase(
     private val searchRepository: SearchRepository
 ) {
-    suspend operator fun invoke(query: String, filter: SearchFilter): SearchResult {
-        return searchRepository.searchByName(query).filter(filter)
+    suspend operator fun invoke(
+        query: String,
+        moviesFilter: SearchFilter,
+        tvShowsFilter: SearchFilter
+    ): SearchResult {
+        return searchRepository.searchByName(query).filter(moviesFilter, tvShowsFilter)
     }
 
-    private fun SearchResult.filter(filter: SearchFilter) = SearchResult(
-        movies = filterMovies(movies, filter),
-        tvShows = filterTvShows(tvShows, filter),
-        actors = actors
-    )
+    private fun SearchResult.filter(moviesFilter: SearchFilter, tvShowsFilter: SearchFilter) =
+        SearchResult(
+            movies = filterMovies(movies, moviesFilter),
+            tvShows = filterTvShows(tvShows, tvShowsFilter),
+            actors = actors
+        )
 
     private fun filterMovies(movies: List<Movie>, filter: SearchFilter): List<Movie> {
         return movies.filter { movie ->
