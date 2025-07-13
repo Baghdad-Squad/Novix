@@ -23,7 +23,7 @@ fun ActorStatus(
     ) {
         IconTextInfo(
             text = birthPlace,
-            painter = painterResource(com.baghdad.design_system.R.drawable.birthday_cake),
+            painter = painterResource(com.baghdad.design_system.R.drawable.ic_birthday_cake),
             contentDescription = stringResource(R.string.birthday),
         )
         if (isDeceased) {

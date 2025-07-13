@@ -38,7 +38,7 @@ fun CardInfo(
 
         IconTextInfo(
             text = birthPlace,
-            painter = painterResource(com.baghdad.design_system.R.drawable.location_05),
+            painter = painterResource(com.baghdad.design_system.R.drawable.ic_location),
             contentDescription = "birth Place"
         )
 
