@@ -17,7 +17,7 @@ class RemoteGenreDataSourceImpl(
             client = httpClient,
             url = "$baseUrl$MOVIE_GENRE_ENDPOINT",
             params = params,
-        ).toDto()
+        ).toDto(genreType = GenreDto.GenreType.MOVIE)
     }
 
     override suspend fun getTvShowGenre(language: String): List<GenreDto> {
@@ -26,7 +26,7 @@ class RemoteGenreDataSourceImpl(
             client = httpClient,
             url = "$baseUrl$TV_SHOW_GENRE_ENDPOINT",
             params = params,
-        ).toDto()
+        ).toDto(genreType = GenreDto.GenreType.TV_SHOW)
     }
     companion object {
         private const val MOVIE_GENRE_ENDPOINT = "/genre/movie/list"
