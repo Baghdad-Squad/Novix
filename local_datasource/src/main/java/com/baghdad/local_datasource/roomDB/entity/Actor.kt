@@ -17,7 +17,7 @@ fun Actor.toDto(): ActorDto = ActorDto(
     imageUrl = this.profilePictureURL
 )
 
-fun ActorDto.toEntity(): Actor = Actor(
+fun ActorDto.toDto(): Actor = Actor(
     id = this.id,
     name = this.name,
     profilePictureURL = this.imageUrl

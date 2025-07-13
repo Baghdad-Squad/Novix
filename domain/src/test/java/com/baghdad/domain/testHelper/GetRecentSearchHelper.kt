@@ -1,6 +1,6 @@
 package com.baghdad.domain.testHelper
 
-import com.baghdad.entity.search.RecentSearch
+import com.baghdad.domain.model.search.RecentSearch
 import kotlinx.datetime.LocalDateTime
 
 fun getTestRecentSearch(
@@ -14,8 +14,8 @@ fun getTestRecentSearch(
 )
 
 fun getTestRecentSearches(
-    count: Int
-): List<RecentSearch> = (1..count).map { index ->
+    size: Int
+): List<RecentSearch> = List(size) { index ->
     RecentSearch(
         id = index.toLong(),
         query = "Test Query $index",

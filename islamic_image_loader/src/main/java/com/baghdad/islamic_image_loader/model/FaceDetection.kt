@@ -1,61 +1,100 @@
 package com.baghdad.islamic_image_loader.model
 
+import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Rect
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.face.Face
-import com.google.mlkit.vision.face.FaceDetection
-import com.google.mlkit.vision.face.FaceDetectorOptions
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
+import com.baghdad.islamic_image_loader.utils.buildImageProcessor
+import com.baghdad.islamic_image_loader.utils.convertBitmapToSoftwareBitmap
+import com.baghdad.islamic_image_loader.utils.loadModelFile
+import org.tensorflow.lite.Interpreter
+import org.tensorflow.lite.support.image.TensorImage
+import java.nio.ByteBuffer
+import kotlin.math.max
+import kotlin.math.min
 
-internal fun detectAndCropFaces(inputBitmap: Bitmap, onFacesCropped: (List<Bitmap>) -> Unit) {
-    val image = InputImage.fromBitmap(inputBitmap, 0)
-    val detector = FaceDetection.getClient(buildFaceDetectionOptions())
+@RequiresApi(Build.VERSION_CODES.O)
+fun detectFaces(
+    context: Context,
+    inputBitmap: Bitmap,
+    modelName: String = "blaze_face_short_range.tflite",
+    maxFaces: Int = 5,
+    scoreThreshold: Float = 0.5f,
+    inputImageSize: Int = 128,
+    onFacesCropped: (List<Bitmap>) -> Unit
+) {
+    try {
+        val softwareBitmap = convertBitmapToSoftwareBitmap(inputBitmap)
+        val interpreter = Interpreter(loadModelFile(context, modelName))
+        val tensorImage = TensorImage.fromBitmap(softwareBitmap)
+        val imageProcessor = buildImageProcessor(inputImageSize = inputImageSize)
+        val processedImage = imageProcessor.process(tensorImage)
+        val inputBuffer: ByteBuffer = processedImage.buffer
 
-    detector.process(image)
-        .addOnSuccessListener { faces ->
-            val croppedFaces = faces.take(5).mapNotNull { face ->
-                try {
-                    cropFace(inputBitmap, face)
-                } catch (_: Exception) {
-                    null
-                }
+        val outputBoxes = Array(1) { Array(896) { FloatArray(16) } }
+        val outputScores = Array(1) { Array(896) { FloatArray(1) } }
+
+        interpreter.runForMultipleInputsOutputs(
+            arrayOf(inputBuffer),
+            mapOf(0 to outputBoxes, 1 to outputScores)
+        )
+
+        val croppedFaces = processDetections(
+            outputBoxes[0],
+            outputScores[0],
+            softwareBitmap,
+            scoreThreshold,
+            maxFaces
+        )
+
+        interpreter.close()
+        onFacesCropped(croppedFaces)
+
+    } catch (e: Exception) {
+        onFacesCropped(emptyList())
+    }
+}
+
+private fun processDetections(
+    boxes: Array<FloatArray>,
+    scores: Array<FloatArray>,
+    bitmap: Bitmap,
+    scoreThreshold: Float,
+    maxFaces: Int
+): List<Bitmap> {
+    val bitmapWidth = bitmap.width
+    val bitmapHeight = bitmap.height
+    val croppedFaces = mutableListOf<Bitmap>()
+
+    val validIndices = scores.indices.filter { scores[it][0] >= scoreThreshold }
+
+    for (i in validIndices) {
+        if (croppedFaces.size >= maxFaces) break
+
+        val box = boxes[i]
+        val (xCenter, yCenter, width, height) = box
+
+        val halfWidth = width * 0.5f
+        val halfHeight = height * 0.5f
+
+        val xMin = max(0, ((xCenter - halfWidth) * bitmapWidth).toInt())
+        val yMin = max(0, ((yCenter - halfHeight) * bitmapHeight).toInt())
+        val xMax = min(bitmapWidth, ((xCenter + halfWidth) * bitmapWidth).toInt())
+        val yMax = min(bitmapHeight, ((yCenter + halfHeight) * bitmapHeight).toInt())
+
+        val rectWidth = xMax - xMin
+        val rectHeight = yMax - yMin
+
+        if (rectWidth > 10 && rectHeight > 10) {
+            try {
+                val cropped = Bitmap.createBitmap(bitmap, xMin, yMin, rectWidth, rectHeight)
+                croppedFaces.add(cropped)
+            } catch (_: Exception) {
+
             }
-            onFacesCropped(croppedFaces)
         }
-        .addOnFailureListener {
-            onFacesCropped(emptyList())
-        }
-}
+    }
 
-private fun buildFaceDetectionOptions(): FaceDetectorOptions {
-    return FaceDetectorOptions.Builder()
-        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
-        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
-        .build()
-}
-
-private fun cropFace(inputBitmap: Bitmap, face: Face): Bitmap {
-    val bounds: Rect = face.boundingBox
-    val safeBounds = createSafeBoundsRectangle(bounds = bounds, inputBitmap = inputBitmap)
-    return createCroppedFaceBitmap(inputBitmap, safeBounds)
-}
-
-private fun createSafeBoundsRectangle(bounds: Rect, inputBitmap: Bitmap): Rect {
-    return Rect(
-        bounds.left.coerceAtLeast(0),
-        bounds.top.coerceAtLeast(0),
-        bounds.right.coerceAtMost(inputBitmap.width),
-        bounds.bottom.coerceAtMost(inputBitmap.height)
-    )
-}
-
-private fun createCroppedFaceBitmap(inputBitmap: Bitmap, safeBounds: Rect): Bitmap {
-    return Bitmap.createBitmap(
-        inputBitmap,
-        safeBounds.left,
-        safeBounds.top,
-        safeBounds.width(),
-        safeBounds.height()
-    )
+    return croppedFaces
 }
