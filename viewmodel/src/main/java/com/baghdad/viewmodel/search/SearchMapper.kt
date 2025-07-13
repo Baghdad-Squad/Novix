@@ -2,6 +2,7 @@ package com.baghdad.viewmodel.search
 
 import com.baghdad.domain.model.search.RecentSearch
 import com.baghdad.domain.model.search.RecentlyViewed
+import com.baghdad.domain.model.search.SearchFilter
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
@@ -40,6 +41,13 @@ fun RecentSearch.toRecentSearchUI() = SearchScreenState.RecentSearchUiState(
 fun Genre.toGenreUI() = SearchScreenState.GenreUiState(
     id = id,
     name = name
+)
+
+fun SearchScreenState.SearchFilterUiState.toSearchFilter() = SearchFilter(
+    minimumYear = minimumYear,
+    maximumYear = maximumYear,
+    minimumRating = minimumRating,
+    selectedGenres = selectedGenres.map { it.toGenre() }
 )
 
 fun SearchScreenState.GenreUiState.toGenre() = Genre(

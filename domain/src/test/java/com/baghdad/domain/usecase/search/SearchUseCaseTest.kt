@@ -24,7 +24,7 @@ class SearchUseCaseTest {
 
     private val movie1 = getTestMovie(
         id = 1L,
-        title = "Movie A",
+        title = "Movie 1",
         imdbRating = 8.5,
         releaseDate = LocalDate(year = 2020, month = 1, day = 1),
         genres = listOf(genreAction)
@@ -32,7 +32,7 @@ class SearchUseCaseTest {
 
     private val movie2 = getTestMovie(
         id = 2L,
-        title = "Movie B",
+        title = "Movie 2",
         imdbRating = 6.0,
         releaseDate = LocalDate(2010, 1, 1),
         genres = listOf(genreDrama)
@@ -40,7 +40,7 @@ class SearchUseCaseTest {
 
     private val tvShow1 = getTestTvShow(
         id = 1L,
-        title = "Show A",
+        title = "Show 1",
         imdbRating = 7.8,
         releaseDate = LocalDate(2022, 1, 1),
         genres = listOf(genreDrama),
@@ -48,7 +48,7 @@ class SearchUseCaseTest {
 
     private val tvShow2 = getTestTvShow(
         id = 2L,
-        title = "Show B",
+        title = "Show 2",
         imdbRating = 5.0,
         releaseDate = LocalDate(2005, 1, 1),
         genres = listOf(genreAction)
@@ -69,21 +69,28 @@ class SearchUseCaseTest {
         )
         coEvery { searchRepository.searchByName(any()) } returns unfilteredResult
 
-        val filter = SearchFilter(
+        val movieFilter = SearchFilter(
+            minimumYear = 2015,
+            maximumYear = 2023,
+            minimumRating = 9,
+            selectedGenres = listOf(genreDrama)
+        )
+
+        val tvShowFilter = SearchFilter(
             minimumYear = 2015,
             maximumYear = 2023,
             minimumRating = 7,
             selectedGenres = listOf(genreDrama)
         )
 
-        val result = searchUseCase("test", filter)
+        val result = searchUseCase("test", movieFilter, tvShowFilter)
 
         assertThat(result.movies).isEmpty()
         assertThat(result.tvShows).containsExactly(tvShow1)
     }
 
     @Test
-    fun `should return all results when filter is default (no restrictions)`() = runTest {
+    fun `should return all results when both filters has no restrictions`() = runTest {
         val unfilteredResult = SearchResult(
             movies = listOf(movie1, movie2),
             tvShows = listOf(tvShow1, tvShow2),
@@ -91,21 +98,21 @@ class SearchUseCaseTest {
         )
         coEvery { searchRepository.searchByName(any()) } returns unfilteredResult
 
-        val filter = SearchFilter(
+        val defaultFilter = SearchFilter(
             minimumYear = Int.MIN_VALUE,
             maximumYear = Int.MAX_VALUE,
             minimumRating = 0,
             selectedGenres = emptyList()
         )
 
-        val result = searchUseCase("test", filter)
+        val result = searchUseCase("test", defaultFilter, defaultFilter)
 
         assertThat(result.movies).containsExactlyElementsIn(unfilteredResult.movies)
         assertThat(result.tvShows).containsExactlyElementsIn(unfilteredResult.tvShows)
     }
 
     @Test
-    fun `should return empty results when no items match filter`() = runTest {
+    fun `should return empty results when no items match either filter`() = runTest {
         val unfilteredResult = SearchResult(
             movies = listOf(movie2),
             tvShows = listOf(tvShow2),
@@ -113,14 +120,21 @@ class SearchUseCaseTest {
         )
         coEvery { searchRepository.searchByName(any()) } returns unfilteredResult
 
-        val filter = SearchFilter(
+        val movieFilter = SearchFilter(
             minimumYear = 2020,
             maximumYear = 2023,
             minimumRating = 9,
             selectedGenres = listOf(genreDrama)
         )
 
-        val result = searchUseCase("test", filter)
+        val tvShowFilter = SearchFilter(
+            minimumYear = 2020,
+            maximumYear = 2023,
+            minimumRating = 9,
+            selectedGenres = listOf(genreAction)
+        )
+
+        val result = searchUseCase("test", movieFilter, tvShowFilter)
 
         assertThat(result.movies).isEmpty()
         assertThat(result.tvShows).isEmpty()
@@ -138,7 +152,7 @@ class SearchUseCaseTest {
             selectedGenres = emptyList()
         )
 
-        val thrown = runCatching { searchUseCase("test", filter) }.exceptionOrNull()
+        val thrown = runCatching { searchUseCase("test", filter, filter) }.exceptionOrNull()
 
         assertThat(thrown).isNotNull()
         assertThat(thrown).isInstanceOf(RuntimeException::class.java)
