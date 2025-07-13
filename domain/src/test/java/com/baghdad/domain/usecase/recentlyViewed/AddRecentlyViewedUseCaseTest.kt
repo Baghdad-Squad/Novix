@@ -1,9 +1,6 @@
 package com.baghdad.domain.usecase.recentlyViewed
 
 import com.baghdad.domain.repository.RecentlyViewedRepository
-import com.baghdad.domain.testHelper.getTestMovie
-import com.baghdad.domain.testHelper.getTestTvShow
-import com.baghdad.entity.media.Media.MediaType
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -24,43 +21,48 @@ class AddRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `should add movie to recently viewed when media is movie`() = runTest {
-        val testMovie = getTestMovie()
-        addRecentlyViewedUseCase(testMovie)
+    fun `should add movie to recently viewed`() = runTest {
+        val movieId = 123L
+
+        addRecentlyViewedUseCase.addRecentlyViewedMovie(movieId)
 
         coVerify {
-            recentlyViewedRepository.addMediaToRecentlyViewed(
-                mediaId = testMovie.id,
-                mediaType = MediaType.MOVIE
-            )
+            recentlyViewedRepository.addMovieToRecentlyViewed(movieId)
         }
     }
 
     @Test
-    fun `should add tv show to recently viewed when media is tv show`() = runTest {
-        val testTvShow = getTestTvShow()
+    fun `should add tv show to recently viewed`() = runTest {
+        val tvShowId = 456L
 
-        addRecentlyViewedUseCase(getTestTvShow())
+        addRecentlyViewedUseCase.addRecentlyViewedTvShow(tvShowId)
 
         coVerify {
-            recentlyViewedRepository.addMediaToRecentlyViewed(
-                mediaId = testTvShow.id,
-                mediaType = MediaType.TV_SHOW
-            )
+            recentlyViewedRepository.addTvShowToRecentlyViewed(tvShowId)
         }
     }
 
     @Test
-    fun `should propagate exception when repository throws exception`() = runTest {
-        val testMovie = getTestMovie()
-        coEvery {
-            recentlyViewedRepository.addMediaToRecentlyViewed(
-                any(),
-                any()
-            )
-        } throws RuntimeException()
+    fun `should propagate exception when repository throws exception for movie`() = runTest {
+        val movieId = 789L
+        coEvery { recentlyViewedRepository.addMovieToRecentlyViewed(movieId) } throws RuntimeException()
 
-        val resultException = runCatching { addRecentlyViewedUseCase(testMovie) }.exceptionOrNull()
+        val resultException = runCatching {
+            addRecentlyViewedUseCase.addRecentlyViewedMovie(movieId)
+        }.exceptionOrNull()
+
+        assertThat(resultException).isNotNull()
+        assertThat(resultException).isInstanceOf(RuntimeException::class.java)
+    }
+
+    @Test
+    fun `should propagate exception when repository throws exception for tv show`() = runTest {
+        val tvShowId = 321L
+        coEvery { recentlyViewedRepository.addTvShowToRecentlyViewed(tvShowId) } throws RuntimeException()
+
+        val resultException = runCatching {
+            addRecentlyViewedUseCase.addRecentlyViewedTvShow(tvShowId)
+        }.exceptionOrNull()
 
         assertThat(resultException).isNotNull()
         assertThat(resultException).isInstanceOf(RuntimeException::class.java)
