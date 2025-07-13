@@ -45,10 +45,5 @@ val useCaseModule = module {
             searchRepository = get()
         )
     }
-    single {
-        FirstTimeToOpenAppUseCase(
-            context = get()
-        )
-    }
 }
 
