@@ -11,4 +11,9 @@
     <string name="tab_actors">Actors</string>
     <string name="no_search_result_picture">no search result picture</string>
     <string name="no_search_result_please_try_with_another_keyword">No search result, please try with another keyword!</string>
+    <string name="birthday">Birthday</string>
+    <string name="biography">Biography</string>
+    <string name="read_less">Read less</string>
+    <string name="read_more">" Read more"</string>
+    <string name="expand">EXPAND</string>
 </resources>
