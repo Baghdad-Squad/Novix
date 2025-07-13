@@ -1,6 +1,8 @@
 package com.baghdad.domain.usecase.recentlyViewed
 
+import com.baghdad.domain.model.search.RecentlyViewed.ContentType
 import com.baghdad.domain.repository.RecentlyViewedRepository
+import com.baghdad.domain.testHelper.getRecentlyViewedItem
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -22,49 +24,60 @@ class AddRecentlyViewedUseCaseTest {
 
     @Test
     fun `should add movie to recently viewed`() = runTest {
-        val movieId = 123L
+        val movie = getRecentlyViewedItem(contentType = ContentType.MOVIE)
 
-        addRecentlyViewedUseCase.addRecentlyViewedMovie(movieId)
+        addRecentlyViewedUseCase(movie.contentId, movie.contentImageUrl, movie.contentType)
 
-        coVerify {
-            recentlyViewedRepository.addMovieToRecentlyViewed(movieId)
+        coVerify(exactly = 1) {
+            recentlyViewedRepository.addRecentlyViewed(
+                withArg {
+                    assertThat(it.contentId).isEqualTo(movie.contentId)
+                    assertThat(it.contentImageUrl).isEqualTo(movie.contentImageUrl)
+                    assertThat(it.contentType).isEqualTo(ContentType.MOVIE)
+                    assertThat(it.viewedAt).isNotNull()
+                })
         }
     }
 
     @Test
     fun `should add tv show to recently viewed`() = runTest {
-        val tvShowId = 456L
+        val tvShow = getRecentlyViewedItem(contentType = ContentType.TV_SHOW)
 
-        addRecentlyViewedUseCase.addRecentlyViewedTvShow(tvShowId)
+        addRecentlyViewedUseCase(
+            contentId = tvShow.contentId,
+            contentImageUrl = tvShow.contentImageUrl,
+            contentType = tvShow.contentType
+        )
 
-        coVerify {
-            recentlyViewedRepository.addTvShowToRecentlyViewed(tvShowId)
+        coVerify(exactly = 1) {
+            recentlyViewedRepository.addRecentlyViewed(
+                withArg {
+                    assertThat(it.contentId).isEqualTo(tvShow.contentId)
+                    assertThat(it.contentImageUrl).isEqualTo(tvShow.contentImageUrl)
+                    assertThat(it.contentType).isEqualTo(ContentType.TV_SHOW)
+                    assertThat(it.viewedAt).isNotNull()
+                }
+            )
         }
     }
 
     @Test
-    fun `should propagate exception when repository throws exception for movie`() = runTest {
-        val movieId = 789L
-        coEvery { recentlyViewedRepository.addMovieToRecentlyViewed(movieId) } throws RuntimeException()
+    fun `should propagate exception when repository throws`() = runTest {
+        val recentlyViewed = getRecentlyViewedItem()
 
-        val resultException = runCatching {
-            addRecentlyViewedUseCase.addRecentlyViewedMovie(movieId)
+        coEvery {
+            recentlyViewedRepository.addRecentlyViewed(any())
+        } throws RuntimeException()
+
+        val exception = runCatching {
+            addRecentlyViewedUseCase(
+                recentlyViewed.contentId,
+                recentlyViewed.contentImageUrl,
+                recentlyViewed.contentType
+            )
         }.exceptionOrNull()
 
-        assertThat(resultException).isNotNull()
-        assertThat(resultException).isInstanceOf(RuntimeException::class.java)
-    }
-
-    @Test
-    fun `should propagate exception when repository throws exception for tv show`() = runTest {
-        val tvShowId = 321L
-        coEvery { recentlyViewedRepository.addTvShowToRecentlyViewed(tvShowId) } throws RuntimeException()
-
-        val resultException = runCatching {
-            addRecentlyViewedUseCase.addRecentlyViewedTvShow(tvShowId)
-        }.exceptionOrNull()
-
-        assertThat(resultException).isNotNull()
-        assertThat(resultException).isInstanceOf(RuntimeException::class.java)
+        assertThat(exception).isNotNull()
+        assertThat(exception).isInstanceOf(RuntimeException::class.java)
     }
 }

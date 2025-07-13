@@ -6,6 +6,6 @@ class DeleteAllRecentlyViewedUseCase(
     private val recentlyViewedRepository: RecentlyViewedRepository
 ) {
     suspend operator fun invoke() {
-        return recentlyViewedRepository.deleteAllRecentlyViewed()
+        recentlyViewedRepository.deleteAllRecentlyViewed()
     }
 }
