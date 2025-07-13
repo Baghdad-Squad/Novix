@@ -27,9 +27,9 @@
     <string name="novix_description">تصميم يجمع بين إبداع نوفا وعالم فليكس</string>
     <string name="app_bar_icon">أيقونة شريط التطبيق</string>
     <string name="category_image">صورة الفئة</string>
-    <string name="close_filter_bottomsheet">إغلاق لوحة التصفية</string>
+    <string name="close_filter_bottomsheet">إغلاق لوحة الفرز</string>
     <string name="clear_all">مسح الكل</string>
-    <string name="filter">تصفية</string>
+    <string name="filter">فرز</string>
     <string name="released_year">سنة الإصدار</string>
     <string name="genres">الأنواع</string>
     <string name="imdb_rating">تقييم IMDb</string>
@@ -37,4 +37,6 @@
     <string name="clicked">مضغوط</string>
     <string name="apply">تطبيق</string>
     <string name="clear">مسح</string>
+    <string name="text_input_field">حقل ادخال بيانات</string>
+
 </resources>

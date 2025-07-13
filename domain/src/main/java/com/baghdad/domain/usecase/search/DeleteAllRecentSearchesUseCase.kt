@@ -6,6 +6,6 @@ class DeleteAllRecentSearchesUseCase(
     private val searchRepository: SearchRepository
 ) {
     suspend operator fun invoke() {
-        return searchRepository.deleteAllRecentSearches()
+        searchRepository.deleteAllRecentSearches()
     }
 }

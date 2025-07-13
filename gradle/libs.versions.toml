@@ -8,7 +8,6 @@ composeBom = "2025.06.01"
 composeNavigation = "2.9.0"
 coreKtx = "1.16.0"
 espressoCore = "3.6.1"
-faceDetection = "16.1.7"
 firebaseBom = "33.16.0"
 foundation = "1.8.3"
 junit = "4.13.2"
@@ -33,8 +32,7 @@ truth = "1.4.4"
 google-services = "4.4.3"
 crashlytics = "3.0.4"
 perf-plugin = "1.4.2"
-tensorflowLite = "2.17.0"
-tensorflowLiteGpu = "2.17.0"
+
 
 
 [libraries]
@@ -116,12 +114,8 @@ mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "moc
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 
 # tensorflow
-tensorflow-lite = { module = "org.tensorflow:tensorflow-lite", version.ref = "tensorflowLite" }
-tensorflow-lite-gpu = { module = "org.tensorflow:tensorflow-lite-gpu", version.ref = "tensorflowLiteGpu" }
 tensorflow-lite-support = { module = "org.tensorflow:tensorflow-lite-support", version.ref = "tensorflowLiteSupport" }
 
-# mlkit
-face-detection = { module = "com.google.mlkit:face-detection", version.ref = "faceDetection" }
 
 # coil
 coil = { module = "io.coil-kt.coil3:coil" }
@@ -210,8 +204,6 @@ test-ui = [
 ]
 
 tensorflow = [
-    "tensorflow-lite",
-    "tensorflow-lite-gpu",
     "tensorflow-lite-support"
 ]
 

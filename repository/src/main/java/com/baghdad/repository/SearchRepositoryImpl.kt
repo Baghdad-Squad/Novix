@@ -1,8 +1,8 @@
 package com.baghdad.repository
 
+import com.baghdad.domain.model.search.RecentSearch
 import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.repository.SearchRepository
-import com.baghdad.entity.search.RecentSearch
 import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
@@ -11,7 +11,6 @@ import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.model.SearchResultDto
-import com.baghdad.repository.model.toEntity
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getFlowSafely
 import kotlinx.coroutines.flow.Flow

@@ -3,8 +3,6 @@ package com.baghdad.local_datasource
 import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.entity.Actor
 import com.baghdad.local_datasource.roomDB.entity.toDto
-import com.baghdad.local_datasource.roomDB.entity.toEntity
-import com.baghdad.local_datasource.roomDB.errorHandler.executeFlowWithErrorHandling
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.model.ActorDto
@@ -49,7 +47,7 @@ class LocalActorDataSourceImpl(
 
     override suspend fun updateActor(actor: ActorDto) =
         executeWithErrorHandling {
-            val actorEntity = actor.toEntity()
+            val actorEntity = actor.toDto()
             actorDao.upsertActor(actorEntity)
         }
 
