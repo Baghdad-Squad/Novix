@@ -1,11 +1,11 @@
 package com.baghdad.repository.datasource.local
 
-import com.baghdad.repository.model.MediaDto
-import com.baghdad.repository.model.MediaType
+import com.baghdad.repository.model.RecentlyViewedDto
+import kotlinx.coroutines.flow.Flow
 
 interface LocalRecentlyViewedDataSource {
-    suspend fun getAllRecentlyViewed(): List<MediaDto>
+    fun getAllRecentlyViewed(): Flow<List<RecentlyViewedDto>>
     suspend fun deleteAllRecentlyViewed()
-    suspend fun addMediaToRecentlyViewed(mediaId: Long, mediaType: MediaType)
+    suspend fun addMediaToRecentlyViewed(recentlyViewedDto: RecentlyViewedDto)
 
 }
