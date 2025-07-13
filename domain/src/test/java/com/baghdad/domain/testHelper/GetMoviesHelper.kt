@@ -21,13 +21,13 @@ fun getTestMovie(
     id = id,
     title = title,
     genres = genres,
-    imdbRating = imdbRating,
+    averageRating = imdbRating,
     userRating = userRating,
     releaseDate = releaseDate,
     overview = overview,
     cast = cast,
-    posterPictureURL = posterPictureURL,
-    backdropPicturesURLs = backdropPicturesURLs,
+    posterImageURL = posterPictureURL,
+    backdropImagesURLs = backdropPicturesURLs,
     runtimeMinutes = runtimeMinutes
 )
 

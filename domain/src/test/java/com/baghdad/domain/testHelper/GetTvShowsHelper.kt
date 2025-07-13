@@ -20,19 +20,18 @@ fun getTestTvShow(
     id = id,
     title = title,
     genres = genres,
-    imdbRating = imdbRating,
+    averageRating = imdbRating,
     userRating = userRating,
     releaseDate = releaseDate,
     overview = overview,
-    cast = cast,
-    posterPictureURL = posterPictureURL,
-    backdropPicturesURLs = backdropPicturesURLs,
+    posterImageURL = posterPictureURL,
+    backdropImagesURLs = backdropPicturesURLs,
     numberOfSeasons = numberOfSeasons
 )
 
 fun getTestTvShows(
-    count: Int
-): List<TvShow> = (1..count).map { index ->
+    size: Int
+): List<TvShow> = List(size) { index ->
     getTestTvShow(
         id = index.toLong(),
         title = "Test TV Show $index",
