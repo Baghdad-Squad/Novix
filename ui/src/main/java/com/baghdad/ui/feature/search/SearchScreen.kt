@@ -1,6 +1,7 @@
 package com.baghdad.ui.feature.search
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.modifier.customEdgeGlow
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -50,12 +52,22 @@ fun SearchContent(
 ) {
     Column(
         modifier = Modifier
-            .background(Theme.color.surface)
             .fillMaxSize()
-            .statusBarsPadding()
+            .background(Theme.color.surface)
+            .customEdgeGlow(
+                color = Theme.color.primary,
+                opacity = 0.08f,
+                blurRadius = 100.dp,
+                offsetX = (-210).dp,
+                offsetY = (-185).dp,
+                angle = 179.24f
+            )
+        .statusBarsPadding()
             .navigationBarsPadding()
             .padding(vertical = 12.dp, horizontal = 16.dp)
-    ) {
+    )
+
+    {
         SearchTextField(
             query = uiState.searchText,
             onQueryChange = { listener.onSearchTextChanged(it) },
