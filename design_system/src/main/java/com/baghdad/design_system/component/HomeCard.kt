@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
@@ -26,9 +25,8 @@ fun HomeCard(
 ) {
     Box(
         modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(Theme.color.surface)
-            .border(1.dp, Theme.color.stroke)
+            .background(Theme.color.surface, shape = RoundedCornerShape(12.dp))
+            .border(1.dp, Theme.color.stroke, shape = RoundedCornerShape(12.dp))
             .noRippleClickable { onClick() },
         contentAlignment = Alignment.Center,
 
@@ -51,3 +49,4 @@ fun HomeCard(
 
     }
 }
+

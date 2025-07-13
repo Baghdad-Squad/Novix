@@ -12,9 +12,10 @@ data class Genre(
     val type: String
 )
 
-fun Genre.toEntity(): GenreDto {
+fun Genre.toDto(): GenreDto {
     return GenreDto(
         id = this.id,
-        name = this.name
+        name = this.name,
+        type = GenreDto.GenreType.valueOf(type)
     )
 }

@@ -81,13 +81,7 @@ fun SearchContent(
 
         FilterBottomSheet(
             isBottomSheetVisible = uiState.bottomSheetUiState.isBottomSheetVisible,
-            minimumYear = uiState.bottomSheetUiState.minimumYear,
-            maximumYear = uiState.bottomSheetUiState.maximumYear,
-            rate = uiState.bottomSheetUiState.rate,
-            selectedSearchTab = uiState.selectedSearchTab,
-            selectedGenres = uiState.bottomSheetUiState.selectedGenres,
-            moviesGenres = uiState.bottomSheetUiState.moviesGenres,
-            tvShowsGenres = uiState.bottomSheetUiState.tvShowsGenres,
+            searchFilter = uiState.searchFilter,
             onBottomSheetCloseClick = { listener.onBottomSheetCloseClick() },
             onClearClick = { listener.onBottomSheetClearClick() },
             onApplyClick = { listener.onApplyClick() },

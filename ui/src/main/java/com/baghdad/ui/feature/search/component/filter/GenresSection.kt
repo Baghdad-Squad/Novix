@@ -14,23 +14,14 @@ import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
-import com.baghdad.viewmodel.search.SearchTab
 
 @Composable
 fun GenresSection(
-    selectedSearchTab: SearchTab,
-    moviesGenres: List<GenreUiState>,
-    tvShowsGenres: List<GenreUiState>,
+    allGenres: List<GenreUiState>,
     selectedGenres: List<GenreUiState>,
     onGenreSelected: (GenreUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val genres = when (selectedSearchTab) {
-        SearchTab.MOVIES -> moviesGenres
-        SearchTab.TV_SHOWS -> tvShowsGenres
-        SearchTab.ACTORS -> emptyList()
-    }
-
     val selectedGenreNames = selectedGenres.map { it.name }
 
     Column(
@@ -49,7 +40,7 @@ fun GenresSection(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            genres.forEach { genre ->
+            allGenres.forEach { genre ->
                 Chip(
                     title = genre.name,
                     isSelected = selectedGenreNames.contains(genre.name),

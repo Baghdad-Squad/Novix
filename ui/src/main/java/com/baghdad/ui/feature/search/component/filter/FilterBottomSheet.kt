@@ -18,19 +18,13 @@ import com.baghdad.design_system.component.BaseBottomSheet
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.viewmodel.search.SearchScreenState
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
-import com.baghdad.viewmodel.search.SearchTab
 
 @Composable
 fun FilterBottomSheet(
     isBottomSheetVisible: Boolean,
-    minimumYear: Int,
-    maximumYear: Int,
-    rate: Int,
-    selectedSearchTab: SearchTab,
-    selectedGenres: List<GenreUiState>,
-    moviesGenres: List<GenreUiState>,
-    tvShowsGenres: List<GenreUiState>,
+    searchFilter: SearchScreenState.SearchFilterUiState,
     onApplyClick: () -> Unit,
     onClearClick: () -> Unit,
     onBottomSheetCloseClick: () -> Unit,
@@ -56,25 +50,23 @@ fun FilterBottomSheet(
             )
 
             ReleasedYearSlider(
-                minimumYear = minimumYear,
-                maximumYear = maximumYear,
+                minimumYear = searchFilter.minimumYear,
+                maximumYear = searchFilter.maximumYear,
                 onValueChange = onYearRangeSelected,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
             )
 
             GenresSection(
-                selectedSearchTab = selectedSearchTab,
-                moviesGenres = moviesGenres,
-                tvShowsGenres = tvShowsGenres,
-                selectedGenres = selectedGenres,
+                allGenres = searchFilter.allGenres,
+                selectedGenres = searchFilter.selectedGenres,
                 onGenreSelected = onGenreSelected,
                 modifier = Modifier
                     .padding(bottom = 24.dp)
             )
 
             IMDbRatingSection(
-                rate = rate,
+                rate = searchFilter.minimumRating,
                 onRatingChanged = onRatingChanged,
                 modifier = Modifier
                     .padding(bottom = 24.dp)
@@ -103,18 +95,12 @@ private fun FilterBottomSheetPrev() {
                 modifier = Modifier.align(Alignment.Center)
             )
             FilterBottomSheet(
-                rate = 5,
-                minimumYear = 2000,
-                maximumYear = 2023,
-                moviesGenres = emptyList(),
-                tvShowsGenres = emptyList(),
+                searchFilter = SearchScreenState.SearchFilterUiState(),
                 onApplyClick = {},
                 onClearClick = {},
                 isBottomSheetVisible = isSheetVisible,
                 onBottomSheetCloseClick = { isSheetVisible = false },
                 onYearRangeSelected = {},
-                selectedGenres = emptyList(),
-                selectedSearchTab = SearchTab.MOVIES,
                 onGenreSelected = {},
                 onRatingChanged = {},
                 modifier = Modifier.align(Alignment.BottomCenter)
