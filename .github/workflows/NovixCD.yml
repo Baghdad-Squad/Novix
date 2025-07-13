@@ -40,13 +40,54 @@ jobs:
           echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
           echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
 
+      - name: Authenticate GitHub CLI
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token --hostname github.com
+
+      - name: Extract last merged PR to develop (text only, no images/videos)
+        id: release_notes
+        run: |
+          PR_JSON=$(gh pr list --base develop --state merged --limit 1 --json title,body)
+
+          TITLE=$(echo "$PR_JSON" | jq -r '.[0].title // "No title"')
+          BODY=$(echo "$PR_JSON" | jq -r '.[0].body // "No description"')
+
+          # Clean the body content - remove images, videos, and problematic characters
+          CLEAN_BODY=$(echo "$BODY" | \
+            sed -E 's/!\[[^]]*\]\([^)]*\)//g' | \
+            sed -E 's/<img[^>]*>//g' | \
+            sed -E 's/<video[^>]*>.*<\/video>//g' | \
+            tr -d '\r' | \
+            sed 's/[[:cntrl:]]//g')
+
+          # Create release notes
+          RELEASE_NOTES="${TITLE}\n\n${CLEAN_BODY}"
+
+          # Write to file (limit to 1000 characters)
+          echo -e "$RELEASE_NOTES" | head -c 1000 > release_notes.txt
+
+          # For GitHub output, use a delimiter to handle multiline content safely
+          {
+            echo "notes<<EOF"
+            echo -e "$RELEASE_NOTES" | head -c 500
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          echo "Release notes created:"
+          cat release_notes.txt
+
       - name: Build signed release APK
         run: ./gradlew assembleRelease
 
       - name: Upload APK to Firebase App Distribution
+        env:
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_AUTH_TOKEN: ${{ secrets.FIREBASE_AUTH_TOKEN }}
         run: |
           npm install -g firebase-tools
           firebase appdistribution:distribute \
             app/build/outputs/apk/release/app-release.apk \
-            --app ${{ secrets.FIREBASE_APP_ID }} \
-            --token ${{ secrets.FIREBASE_AUTH_TOKEN }}
+            --app "$FIREBASE_APP_ID" \
+            --token "$FIREBASE_AUTH_TOKEN" \
+            --groups "qa-team" \
+            --release-notes-file release_notes.txt

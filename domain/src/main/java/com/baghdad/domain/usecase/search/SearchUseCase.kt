@@ -23,7 +23,7 @@ class SearchUseCase(
 
     private fun filterMovies(movies: List<Movie>, filter: SearchFilter): List<Movie> {
         return movies.filter { movie ->
-            matchesRatingFilter(movie.imdbRating, filter.minimumRating) &&
+            matchesRatingFilter(movie.averageRating, filter.minimumRating) &&
                     matchesYearFilter(
                         movie.releaseDate.year,
                         filter.minimumYear,
@@ -35,7 +35,7 @@ class SearchUseCase(
 
     private fun filterTvShows(tvShows: List<TvShow>, filter: SearchFilter): List<TvShow> {
         return tvShows.filter { show ->
-            matchesRatingFilter(show.imdbRating, filter.minimumRating) &&
+            matchesRatingFilter(show.averageRating, filter.minimumRating) &&
                     matchesYearFilter(
                         show.releaseDate.year,
                         filter.minimumYear,

@@ -2,51 +2,27 @@ package com.baghdad.islamic_image_loader.model
 
 import android.content.Context
 import android.graphics.Bitmap
+import com.baghdad.islamic_image_loader.utils.buildImageProcessor
+import com.baghdad.islamic_image_loader.utils.convertBitmapToSoftwareBitmap
+import com.baghdad.islamic_image_loader.utils.loadModelFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.support.common.ops.NormalizeOp
-import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
-import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import java.io.FileInputStream
-import java.nio.MappedByteBuffer
-import java.nio.channels.FileChannel
 
 
-private fun loadModelFile(context: Context, modelPath: String): MappedByteBuffer {
-    val assetFileDescriptor = context.assets.openFd(modelPath)
-    FileInputStream(assetFileDescriptor.fileDescriptor).use { inputStream ->
-        val fileChannel = inputStream.channel
-        val startOffset = assetFileDescriptor.startOffset
-        val declaredLength = assetFileDescriptor.declaredLength
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
-    }
-}
-
-private fun buildImageProcessor(inputImageSize: Int): ImageProcessor {
-    return ImageProcessor.Builder()
-        .add(ResizeOp(inputImageSize, inputImageSize, ResizeOp.ResizeMethod.BILINEAR))
-        .add(NormalizeOp(0f, 255f))
-        .build()
-}
-
-private fun convertBitmapToSoftwareBitmap(bitmap: Bitmap): Bitmap {
-    return if (bitmap.config == Bitmap.Config.HARDWARE) {
-        bitmap.copy(Bitmap.Config.ARGB_8888, false)
-    } else bitmap
-}
-
-internal suspend fun predictGender(image: Bitmap, context: Context, modelPath: String): FloatArray =
+internal suspend fun predictGender(
+    image: Bitmap,
+    context: Context,
+    modelPath: String,
+    inputImageSize: Int = 128
+): FloatArray =
     withContext(Dispatchers.Default) {
         val interpreter = Interpreter(loadModelFile(context, modelPath))
         val image = convertBitmapToSoftwareBitmap(image)
-
-        val inputImageSize = 128
         val imageProcessor = buildImageProcessor(inputImageSize)
-
         val tensorImage = TensorImage.fromBitmap(image)
         val processedImage = imageProcessor.process(tensorImage)
         val outputBuffer =

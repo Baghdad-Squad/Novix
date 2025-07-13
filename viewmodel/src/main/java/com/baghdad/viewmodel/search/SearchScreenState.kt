@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.search
 
+import com.baghdad.domain.model.search.RecentlyViewed.ContentType
 import com.baghdad.viewmodel.base.BaseUiState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseErrorState
@@ -10,7 +11,7 @@ data class SearchScreenState(
     val movies: List<MovieUiState> = emptyList(),
     val tvShows: List<TvShowUiState> = emptyList(),
     val actors: List<ActorUiState> = emptyList(),
-    val recentViewed: List<MediaUiState> = emptyList(),
+    val recentViewed: List<RecentlyViewedUiState> = emptyList(),
     val recentSearch: List<RecentSearchUiState> = emptyList(),
     val bottomSheetUiState: FilterBottomSheetUiState = FilterBottomSheetUiState(),
     override val isLoading: Boolean = false,
@@ -51,9 +52,10 @@ data class SearchScreenState(
         val name: String = ""
     )
 
-    data class MediaUiState(
+    data class RecentlyViewedUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
+        val contentType: ContentType = ContentType.MOVIE,
         val isSaved: Boolean = false
     )
 

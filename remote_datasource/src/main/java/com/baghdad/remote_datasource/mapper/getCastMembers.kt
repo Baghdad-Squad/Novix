@@ -18,16 +18,3 @@ internal fun MultiMediaItemDto.toCastMember(): CastMemberDto? {
         null
     }
 }
-
-fun getCastMembers(items: List<MultiMediaItemDto>): List<CastMemberDto> {
-    return items.map{
-        it.toCastMember() ?: CastMemberDto(
-            actor = ActorDto(
-                id = -1,
-                name = "Unknown Actor",
-                imageUrl = ""
-            ),
-            characterName = "Unknown Character"
-        )
-    }
-}

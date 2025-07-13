@@ -6,10 +6,11 @@
     <string name="no_search_result_picture">لا توحد نتيجة</string>
     <string name="no_search_result_please_try_with_another_keyword">لا توجد نتيجة, حاول مجددا باسم اخر</string>
     <string name="recent_viewed">تم مشاهدته مؤخرًا</string>
-    <string name="recent_search">تم بحثه مؤخرا</string>
+    <string name="recent_search">تم البحث عنه مؤخرا</string>
     <string name="clock_icon">ايقونة ساعة</string>
     <string name="cancel_icon">ايقونة اغلاك</string>
-    <string name="search">يبحث</string>
-    <string name="filter_icon">ايقونة فلتر</string>
+    <string name="search">البحث</string>
+    <string name="search_hint">ابحث عن فلم، مسلسل، ممثل</string>
+    <string name="filter_icon">ايقونة الفلتر</string>
     <string name="gallery">المعرض</string>
 </resources>
