@@ -22,8 +22,8 @@ import coil3.Image
 import coil3.compose.asPainter
 import coil3.toBitmap
 import com.baghdad.islamic_image_loader.R
-import com.baghdad.islamic_image_loader.model.detectAndCropFaces
-import com.baghdad.islamic_image_loader.model.imageUrlLoader
+import com.baghdad.islamic_image_loader.model.  detectFaces
+import com.baghdad.islamic_image_loader.imageLoader.imageUrlLoader
 import com.baghdad.islamic_image_loader.model.predictGender
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,16 +42,15 @@ fun SafeImage(
     val coroutineScope = rememberCoroutineScope()
 
     var image by remember { mutableStateOf<Image?>(null) }
-    var shouldBlur by remember { mutableStateOf(false) }
+    var shouldBlur by remember { mutableStateOf(true) }
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(imageUrl) {
-        try {
             val loadedImage = imageUrlLoader(imageUrl, context)
             image = loadedImage
 
             if (loadedImage != null) {
-                detectAndCropFaces(loadedImage.toBitmap()) { croppedFaces ->
+                detectFaces(context = context, loadedImage.toBitmap()) { croppedFaces ->
                     if (croppedFaces.isNotEmpty()) {
                         coroutineScope.launch {
                             val hasFemaleFace = withContext(Dispatchers.IO) {
@@ -68,9 +67,7 @@ fun SafeImage(
             } else {
                 isLoading = false
             }
-        } catch (_: Exception) {
-            isLoading = false
-        }
+
     }
 
     Box(modifier = modifier) {
