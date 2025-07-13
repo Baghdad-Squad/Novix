@@ -1,10 +1,10 @@
 package com.baghdad.ui.feature.actor.component
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,31 +20,28 @@ import com.baghdad.ui.R
 
 @Composable
 fun GallerySection(
-    actorPhotos: List<String>,
+    imageUrls: List<String>,
     modifier: Modifier = Modifier,
     onClickShowAll: () -> Unit = {}
 ) {
-    Column {
+    Column(modifier = modifier) {
         SectionHeader(
             title = stringResource(R.string.gallery),
             isShowAllVisiable = true,
             onClick = onClickShowAll,
-            modifier = modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
 
         LazyRow(
-            contentPadding = PaddingValues(
-                top = 12.dp,
-                bottom = 16.dp
-            )
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(top = 12.dp, start = 16.dp)
         ) {
 
-            items(actorPhotos.size) { photo ->
+            items(imageUrls.size) { image ->
                 SafeImage(
-                    imageUrl = photo.toString(),
+                    imageUrl = image.toString(),
                     contentDescription = stringResource(R.string.gallery),
                     modifier = Modifier
-                        .padding(end = 8.dp)
                         .size(88.dp)
                         .clip(RoundedCornerShape(12))
                         .border(1.dp, Theme.color.stroke, RoundedCornerShape(12)),
