@@ -1,11 +1,10 @@
 package com.baghdad.domain.repository
 
-import com.baghdad.entity.media.Media
-import com.baghdad.entity.media.Media.MediaType
+import com.baghdad.domain.model.search.RecentlyViewed
 import kotlinx.coroutines.flow.Flow
 
 interface RecentlyViewedRepository {
-    suspend fun getAllRecentlyViewed(): Flow<List<Media>>
+    suspend fun getAllRecentlyViewed(): Flow<List<RecentlyViewed>>
     suspend fun deleteAllRecentlyViewed()
-    suspend fun addMediaToRecentlyViewed(mediaId: Long, mediaType: MediaType)
+    suspend fun addRecentlyViewed(recentlyViewed: RecentlyViewed)
 }

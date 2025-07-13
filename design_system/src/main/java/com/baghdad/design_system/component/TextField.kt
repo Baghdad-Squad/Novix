@@ -128,7 +128,7 @@ fun NovixTextField(
                             if (leadingIcon != null) {
                                 Icon(
                                     painter = leadingIcon,
-                                    contentDescription = "text input field",
+                                    contentDescription = stringResource(R.string.text_input_field),
                                     modifier = Modifier.size(24.dp),
                                     tint = iconTint
                                 )
