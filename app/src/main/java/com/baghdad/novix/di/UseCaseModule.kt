@@ -4,6 +4,7 @@ import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
+import com.baghdad.domain.usecase.search.FirstTimeToOpenAppUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchUseCase
 import org.koin.dsl.module
@@ -43,6 +44,11 @@ val useCaseModule = module {
     single {
         SearchUseCase(
             searchRepository = get()
+        )
+    }
+    single {
+        FirstTimeToOpenAppUseCase(
+            context = get()
         )
     }
 }
