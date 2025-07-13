@@ -13,11 +13,11 @@ import com.baghdad.ui.R
 
 @Composable
 fun ActorStatus(
+    modifier: Modifier = Modifier,
     birthPlace: String,
-    isDeceased: Boolean,
-    deathDate: String,
-    modifier: Modifier = Modifier
+    deathDate: String? = null
 ) {
+
     Row(
         modifier = modifier.padding(top = 8.dp)
     ) {
@@ -26,12 +26,13 @@ fun ActorStatus(
             painter = painterResource(com.baghdad.design_system.R.drawable.ic_birthday_cake),
             contentDescription = stringResource(R.string.birthday),
         )
-        if (isDeceased) {
-            Text(
-                text = deathDate,
-                style = Theme.typography.body.medium,
-                color = Theme.color.body
-            )
+
+        if (!deathDate.isNullOrEmpty()) {
+                Text(
+                    text = deathDate,
+                    style = Theme.typography.body.medium,
+                    color = Theme.color.body
+                )
+            }
         }
     }
-}

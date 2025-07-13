@@ -19,9 +19,9 @@ fun ActorCardDetails(
     characterRole: String,
     birthPlace: String,
     birthDate: String,
-    deathDate: String,
-    isDeceased: Boolean = false
+    deathDate: String? = null
 ) {
+
     Box(
         modifier = modifier
             .padding(horizontal = 16.dp)
@@ -36,6 +36,7 @@ fun ActorCardDetails(
                 shape = RoundedCornerShape(16.dp)
             )
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -46,14 +47,16 @@ fun ActorCardDetails(
                 characterRole = characterRole,
                 birthPlace = birthPlace
             )
-            ActorStatus(
-                birthPlace = birthDate,
-                isDeceased = isDeceased,
-                deathDate = deathDate
-            )
+
+                ActorStatus(
+                    birthPlace = birthDate,
+                    deathDate = deathDate
+                )
+            }
         }
     }
-}
+
+
 @Preview(showBackground = true)
 @NovixPreviews
 @Composable
@@ -64,8 +67,7 @@ private fun CardPreview() {
             characterRole = "Acting",
             birthPlace = "Santa Cruz del Norte, Cuba",
             birthDate = "1988-04-30",
-            deathDate = " - 2012-30-03",
-            isDeceased = false
+            deathDate = " - 2012-30-03"
         )
     }
 
