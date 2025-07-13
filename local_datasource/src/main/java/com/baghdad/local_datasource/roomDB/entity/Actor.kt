@@ -1,15 +1,28 @@
 package com.baghdad.local_datasource.roomDB.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.baghdad.local_datasource.roomDB.entity.Actor.Companion.ACTOR_TABLE_NAME
 import com.baghdad.repository.model.ActorDto
 
-@Entity(tableName = "Actor")
+@Entity(tableName = ACTOR_TABLE_NAME)
 data class Actor(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = ID)
+    val id: Long = 0L,
+    @ColumnInfo(name = NAME)
     val name: String,
+    @ColumnInfo(name = PROFILE_PICTURE_URL)
     val profilePictureURL: String,
-)
+) {
+    companion object {
+        const val ACTOR_TABLE_NAME = "Actor"
+        const val ID = "id"
+        const val NAME = "name"
+        const val PROFILE_PICTURE_URL = "profilePictureURL"
+    }
+}
 
 fun Actor.toDto(): ActorDto = ActorDto(
     id = this.id,
@@ -22,3 +35,4 @@ fun ActorDto.toDto(): Actor = Actor(
     name = this.name,
     profilePictureURL = this.imageUrl
 )
+
