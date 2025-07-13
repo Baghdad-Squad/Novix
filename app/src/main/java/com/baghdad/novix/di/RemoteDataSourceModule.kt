@@ -1,7 +1,7 @@
 package com.baghdad.novix.di
 
 import com.baghdad.novix.BuildConfig
-import com.baghdad.remote_datasource.ApiInterceptor
+import com.baghdad.remote_datasource.interceptor.ApiInterceptor
 import com.baghdad.remote_datasource.RemoteGenreDataSourceImpl
 import com.baghdad.remote_datasource.RemoteSearchDataSourceImpl
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource

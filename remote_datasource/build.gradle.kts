@@ -50,4 +50,5 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.bundles.test.core)
     testImplementation(libs.ktor.client.mock)
+    testImplementation(kotlin("test"))
 }
