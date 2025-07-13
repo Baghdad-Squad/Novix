@@ -14,7 +14,6 @@ fun TvShowDto.toEntity(): TvShow {
         releaseDate = LocalDate.parse(releaseDate),
         overview = overview,
         posterImageURL = posterPictureURL,
-        backdropImagesURLs = backdropPicturesURLs,
         numberOfSeasons = numberOfSeasons
     )
 }

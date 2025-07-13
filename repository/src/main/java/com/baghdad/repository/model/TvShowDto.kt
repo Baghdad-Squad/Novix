@@ -9,8 +9,6 @@ data class TvShowDto(
     val userRating: Double?,
     val releaseDate: String,
     val overview: String,
-    val cast: List<CastMemberDto>,
     val posterPictureURL: String,
-    val backdropPicturesURLs: List<String>,
     val numberOfSeasons: Int
 )

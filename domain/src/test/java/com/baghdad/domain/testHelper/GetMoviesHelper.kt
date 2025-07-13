@@ -2,7 +2,6 @@ package com.baghdad.domain.testHelper
 
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
-import com.baghdad.entity.person.CastMember
 import kotlinx.datetime.LocalDate
 
 fun getTestMovie(
@@ -13,9 +12,7 @@ fun getTestMovie(
     userRating: Double? = null,
     releaseDate: LocalDate = LocalDate(2020, 1, 1),
     overview: String = "Overview of Test Movie",
-    cast: List<CastMember> = emptyList(),
     posterPictureURL: String = "http://example.com/poster.jpg",
-    backdropPicturesURLs: List<String> = listOf("http://example.com/backdrop.jpg"),
     runtimeMinutes: Int = 120
 ) = Movie(
     id = id,
@@ -25,9 +22,7 @@ fun getTestMovie(
     userRating = userRating,
     releaseDate = releaseDate,
     overview = overview,
-    cast = cast,
     posterImageURL = posterPictureURL,
-    backdropImagesURLs = backdropPicturesURLs,
     runtimeMinutes = runtimeMinutes
 )
 
@@ -39,6 +34,5 @@ fun getTestMovies(
         title = "Test Movie $index",
         releaseDate = LocalDate(2020, 1, index % 28 + 1),
         posterPictureURL = "http://example.com/poster$index.jpg",
-        backdropPicturesURLs = listOf("http://example.com/backdrop$index.jpg"),
     )
 }

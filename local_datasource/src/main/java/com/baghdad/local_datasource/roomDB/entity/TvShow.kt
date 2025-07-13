@@ -19,9 +19,7 @@ data class TvShow(
     val userRating: Double?,
     @TypeConverters(Converters::class) val releaseDate: String,
     val overview: String,
-    @TypeConverters(Converters::class) val cast: List<String>,
     val posterPictureURL: String,
-    @TypeConverters(Converters::class) val backdropPicturesURLs: List<String>,
     val numberOfSeasons: Int
 )
 
@@ -34,9 +32,7 @@ fun TvShow.toDto(): TvShowDto {
         userRating = this.userRating,
         releaseDate = releaseDate,
         overview = this.overview,
-        cast = emptyList(),
         posterPictureURL = this.posterPictureURL,
-        backdropPicturesURLs = this.backdropPicturesURLs,
         numberOfSeasons = this.numberOfSeasons,
     )
 }
@@ -51,9 +47,7 @@ fun TvShowDto.toEntity(): TvShow {
         userRating = this.userRating,
         releaseDate = LocalDate.parse(this.releaseDate, DateTimeFormatter.ISO_DATE).toString(),
         overview = this.overview,
-        cast = emptyList(),
         posterPictureURL = this.posterPictureURL,
-        backdropPicturesURLs = this.backdropPicturesURLs,
         numberOfSeasons = this.numberOfSeasons
     )
 }

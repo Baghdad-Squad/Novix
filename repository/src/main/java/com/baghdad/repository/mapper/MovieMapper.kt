@@ -13,9 +13,7 @@ fun MovieDto.toEntity(): Movie {
         userRating = userRating,
         releaseDate = LocalDate.parse(releaseDate),
         overview = overview,
-        cast = cast.map { it.toEntity() },
         posterImageURL = posterPictureURL,
-        backdropImagesURLs = backdropPicturesURLs,
         runtimeMinutes = runtimeMinutes
     )
 }

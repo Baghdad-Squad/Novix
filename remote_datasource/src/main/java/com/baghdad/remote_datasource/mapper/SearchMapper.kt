@@ -35,14 +35,7 @@ internal fun SearchResponse.toDto(
                     userRating = null,
                     releaseDate = item.releaseDate ?: "",
                     overview = item.movieOverview ?: "",
-                    cast = getCastMembers(results),
-                    posterPictureURL = ("https://image.tmdb.org/t/p/w500" + item.tvShowPosterPath)
-                        ?: "",
-                    backdropPicturesURLs = ("https://image.tmdb.org/t/p/w500" + item.backdropPath)?.let {
-                        listOf(
-                            it
-                        )
-                    } ?: emptyList(),
+                    posterPictureURL = ("https://image.tmdb.org/t/p/w500" + item.tvShowPosterPath),
                     runtimeMinutes = 0
                 )
             }
@@ -60,14 +53,7 @@ internal fun SearchResponse.toDto(
                     userRating = null,
                     releaseDate = item.firstAirDate ?: "",
                     overview = item.movieOverview ?: "",
-                    cast = getCastMembers(results),
-                    posterPictureURL = ("https://image.tmdb.org/t/p/w500" + item.tvShowPosterPath)
-                        ?: "",
-                    backdropPicturesURLs = ("https://image.tmdb.org/t/p/w500" + item.backdropPath)?.let {
-                        listOf(
-                            it
-                        )
-                    } ?: emptyList(),
+                    posterPictureURL = ("https://image.tmdb.org/t/p/w500" + item.tvShowPosterPath),
                     numberOfSeasons = 0
                 )
             }

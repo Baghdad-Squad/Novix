@@ -15,9 +15,7 @@ data class Movie(
     val userRating: Double?,
     val releaseDate: String,
     val overview: String,
-    @TypeConverters(Converters::class) val cast: List<String>,
     val posterPictureURL: String,
-    @TypeConverters(Converters::class) val backdropPicturesURLs: List<String>,
     val runtimeMinutes: Int
 )
 
@@ -29,9 +27,7 @@ fun MovieDto.toEntity(): Movie = Movie(
     userRating = this.userRating,
     releaseDate = this.releaseDate,
     overview = this.overview,
-    cast = emptyList(),
     posterPictureURL = this.posterPictureURL,
-    backdropPicturesURLs = emptyList(),
     runtimeMinutes = this.runtimeMinutes
 )
 
@@ -43,9 +39,7 @@ fun Movie.toDto(): MovieDto = MovieDto(
     userRating = this.userRating,
     releaseDate = this.releaseDate,
     overview = this.overview,
-    cast = emptyList(),
     posterPictureURL = this.posterPictureURL,
-    backdropPicturesURLs = this.backdropPicturesURLs,
     runtimeMinutes = this.runtimeMinutes
 )
 
