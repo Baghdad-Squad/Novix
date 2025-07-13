@@ -1,4 +1,4 @@
-package com.baghdad.remote_datasource
+package com.baghdad.remoteDataSource
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

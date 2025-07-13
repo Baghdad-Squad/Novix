@@ -1,9 +1,9 @@
 package com.baghdad.novix.di
 
 import com.baghdad.novix.BuildConfig
-import com.baghdad.remote_datasource.interceptor.ApiInterceptor
-import com.baghdad.remote_datasource.RemoteGenreDataSourceImpl
-import com.baghdad.remote_datasource.RemoteSearchDataSourceImpl
+import com.baghdad.remoteDataSource.util.interceptor.ApiInterceptor
+import com.baghdad.remoteDataSource.util.RemoteGenreDataSourceImpl
+import com.baghdad.remoteDataSource.util.RemoteSearchDataSourceImpl
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import io.ktor.client.HttpClient

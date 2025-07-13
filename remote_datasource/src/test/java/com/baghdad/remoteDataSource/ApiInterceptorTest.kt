@@ -1,9 +1,8 @@
-package com.baghdad.remote_datasource
+package com.baghdad.remoteDataSource
 
-import com.baghdad.remote_datasource.interceptor.ApiInterceptor
+import com.baghdad.remoteDataSource.util.interceptor.ApiInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.MockRequestHandler
 import io.ktor.client.engine.mock.respondOk
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
@@ -37,4 +36,4 @@ class ApiInterceptorTest {
         client.get("https://example.com/test")
         assertTrue(apiKeyFound, "api_key parameter should be present in the request URL")
     }
-} 
+}

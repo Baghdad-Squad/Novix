@@ -1,4 +1,4 @@
-package com.baghdad.remote_datasource.util
+package com.baghdad.remoteDataSource.util
 import com.baghdad.repository.exception.NetworkException
 import com.baghdad.repository.exception.NoInternetNetworkException
 import com.baghdad.repository.exception.RequestTimeoutNetworkException

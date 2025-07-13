@@ -1,8 +1,7 @@
-package com.baghdad.remote_datasource
+package com.baghdad.remoteDataSource.util
 
-import com.baghdad.remote_datasource.entity.GenreListResponse
-import com.baghdad.remote_datasource.mapper.toDto
-import com.baghdad.remote_datasource.util.handleRequest
+import com.baghdad.remoteDataSource.util.entity.GenreListResponse
+import com.baghdad.remoteDataSource.util.mapper.toDto
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.model.GenreDto
 import io.ktor.client.HttpClient
@@ -10,7 +9,7 @@ import io.ktor.client.HttpClient
 class RemoteGenreDataSourceImpl(
     private val httpClient: HttpClient,
     private val baseUrl: String
-): RemoteGenreDataSource  {
+): RemoteGenreDataSource {
     override suspend fun getMovieGenre(language: String): List<GenreDto> {
         val params = mapOf("language" to language)
         return handleRequest<GenreListResponse>(

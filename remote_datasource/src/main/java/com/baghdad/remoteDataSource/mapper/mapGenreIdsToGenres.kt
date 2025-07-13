@@ -1,4 +1,4 @@
-package com.baghdad.remote_datasource.mapper
+package com.baghdad.remoteDataSource.util.mapper
 
 import com.baghdad.repository.model.GenreDto
 
