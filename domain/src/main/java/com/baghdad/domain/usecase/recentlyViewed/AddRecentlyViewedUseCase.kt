@@ -1,15 +1,19 @@
 package com.baghdad.domain.usecase.recentlyViewed
 
 import com.baghdad.domain.repository.RecentlyViewedRepository
-import com.baghdad.entity.media.Media
 
 class AddRecentlyViewedUseCase(
     private val recentlyViewedRepository: RecentlyViewedRepository
 ) {
-    suspend operator fun invoke(media: Media) {
-        return recentlyViewedRepository.addMediaToRecentlyViewed(
-            mediaId = media.id,
-            mediaType = media.type
+    suspend fun addRecentlyViewedMovie(movieId: Long) {
+        return recentlyViewedRepository.addMovieToRecentlyViewed(
+            movieId = movieId
+        )
+    }
+
+    suspend fun addRecentlyViewedTvShow(tvShowId: Long) {
+        return recentlyViewedRepository.addTvShowToRecentlyViewed(
+            tvShowId = tvShowId
         )
     }
 }
