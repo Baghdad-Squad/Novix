@@ -11,4 +11,5 @@
     <string name="cancel_icon">ايقونة اغلاك</string>
     <string name="search">يبحث</string>
     <string name="filter_icon">ايقونة فلتر</string>
+    <string name="gallery">المعرض</string>
 </resources>

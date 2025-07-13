@@ -11,4 +11,5 @@
     <string name="tab_actors">Actors</string>
     <string name="no_search_result_picture">no search result picture</string>
     <string name="no_search_result_please_try_with_another_keyword">No search result, please try with another keyword!</string>
+    <string name="gallery">Gallery</string>
 </resources>

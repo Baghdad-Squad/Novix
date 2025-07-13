@@ -1,8 +1,8 @@
 package com.baghdad.ui.feature.actor.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -11,36 +11,43 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.SectionHeader
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.islamic_image_loader.component.SafeImage
+import com.baghdad.ui.R
 
 @Composable
-fun ActorGalleryDetails(
-    actorPhotos: List<Int>,
+fun GallerySection(
+    actorPhotos: List<String>,
     modifier: Modifier = Modifier,
     onClickShowAll: () -> Unit = {}
 ) {
     Column {
         SectionHeader(
-            title = "Gallery",
+            title = stringResource(R.string.gallery),
             isShowAllVisiable = true,
             onClick = onClickShowAll,
-            modifier = Modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth()
         )
 
-        LazyRow(modifier = modifier.padding(top = 12.dp, start = 16.dp)) {
+        LazyRow(
+            contentPadding = PaddingValues(
+                top = 12.dp,
+                bottom = 16.dp
+            )
+        ) {
 
             items(actorPhotos.size) { photo ->
-                Image(
-                    painter = painterResource(photo),
-                    contentDescription = "Actor Image",
+                SafeImage(
+                    imageUrl = photo.toString(),
+                    contentDescription = stringResource(R.string.gallery),
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .size(88.dp)
                         .clip(RoundedCornerShape(12))
-                        .border(1.dp, Theme.color.stroke, RoundedCornerShape(12))
+                        .border(1.dp, Theme.color.stroke, RoundedCornerShape(12)),
                 )
             }
         }
