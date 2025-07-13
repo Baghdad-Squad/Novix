@@ -58,8 +58,6 @@ val localDataSourceModule = module {
     single<LocalRecentlyViewedDataSource> {
         LocalRecentlyViewedDataSourceImpl(
             recentlyViewedDao = get<RecentlyViewedDao>(),
-            movieDao = get<MovieDao>(),
-            tvShowDao = get<TvShowDao>()
         )
     }
 
