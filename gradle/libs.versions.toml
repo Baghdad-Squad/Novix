@@ -10,6 +10,7 @@ coreKtx = "1.16.0"
 espressoCore = "3.6.1"
 firebaseBom = "33.16.0"
 foundation = "1.8.3"
+foundationVersion = "1.6.7"
 junit = "4.13.2"
 junitJupiter = "5.8.2"
 junitVersion = "1.2.1"
@@ -39,6 +40,7 @@ perf-plugin = "1.4.2"
 # AndroidX
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-foundation-v167 = { module = "androidx.compose.foundation:foundation", version.ref = "foundationVersion" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

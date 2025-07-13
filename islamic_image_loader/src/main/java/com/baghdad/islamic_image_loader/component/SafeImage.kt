@@ -2,6 +2,7 @@ package com.baghdad.islamic_image_loader.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,8 +23,8 @@ import coil3.Image
 import coil3.compose.asPainter
 import coil3.toBitmap
 import com.baghdad.islamic_image_loader.R
-import com.baghdad.islamic_image_loader.model.  detectFaces
 import com.baghdad.islamic_image_loader.imageLoader.imageUrlLoader
+import com.baghdad.islamic_image_loader.model.detectFaces
 import com.baghdad.islamic_image_loader.model.predictGender
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,14 +71,19 @@ fun SafeImage(
 
     }
 
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
         when {
             !isLoading && image != null -> {
                 Image(
                     painter = image!!.asPainter(context),
                     contentDescription = contentDescription,
                     contentScale = contentScale,
-                    modifier = if (shouldBlur) Modifier.blur(blur) else Modifier
+                    modifier = Modifier
+                        .matchParentSize()
+                        .then(if (shouldBlur) Modifier.blur(blur) else Modifier)
                 )
             }
 
