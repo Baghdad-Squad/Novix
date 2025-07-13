@@ -44,15 +44,26 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token --hostname github.com
 
-      - name: Extract last merged PR to develop (text only, no images/videos)
+      - name: Extract PR info from triggering commit
         id: release_notes
         run: |
-          PR_JSON=$(gh pr list --base develop --state merged --limit 1 --json title,body)
+          COMMIT_SHA="${{ github.sha }}"
+          echo "Looking for PR with merge commit: $COMMIT_SHA"
 
-          TITLE=$(echo "$PR_JSON" | jq -r '.[0].title // "No title"')
-          BODY=$(echo "$PR_JSON" | jq -r '.[0].body // "No description"')
+          # Fetch the latest merged PRs to 'develop' with merge commit info
+          PR_JSON=$(gh pr list --base develop --state merged --json title,body,mergeCommit --jq \
+            ".[] | select(.mergeCommit.oid == \"$COMMIT_SHA\")")
 
-          # Clean the body content - remove images, videos, and problematic characters
+          if [ -z "$PR_JSON" ]; then
+            echo "No PR found with merge commit $COMMIT_SHA"
+            echo "notes=No matching PR found." >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          TITLE=$(echo "$PR_JSON" | jq -r '.title // "No title"')
+          BODY=$(echo "$PR_JSON" | jq -r '.body // "No description"')
+
+          # Clean markdown content (images, videos, etc.)
           CLEAN_BODY=$(echo "$BODY" | \
             sed -E 's/!\[[^]]*\]\([^)]*\)//g' | \
             sed -E 's/<img[^>]*>//g' | \
@@ -60,13 +71,10 @@ jobs:
             tr -d '\r' | \
             sed 's/[[:cntrl:]]//g')
 
-          # Create release notes
           RELEASE_NOTES="${TITLE}\n\n${CLEAN_BODY}"
 
-          # Write to file (limit to 1000 characters)
           echo -e "$RELEASE_NOTES" | head -c 1000 > release_notes.txt
 
-          # For GitHub output, use a delimiter to handle multiline content safely
           {
             echo "notes<<EOF"
             echo -e "$RELEASE_NOTES" | head -c 500
