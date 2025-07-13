@@ -1,6 +1,5 @@
 package com.baghdad.novix.di
 
-import com.baghdad.local_datasource.LocalRecentlyViewedDataSourceImpl
 import com.baghdad.novix.BuildConfig
 import com.baghdad.remote_datasource.RemoteGenreDataSourceImpl
 import com.baghdad.remote_datasource.RemoteSearchDataSourceImpl
@@ -8,6 +7,7 @@ import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -20,9 +20,14 @@ val remoteDataSourceModule = module {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
+            install(DefaultRequest) {
+                url {
+                    parameters.append("api_key", BuildConfig.API_KEY)
+                }
+            }
         }
     }
-    
+
     single(named("BASE_URL")) {
         "https://api.themoviedb.org/3"
     }
@@ -34,15 +39,13 @@ val remoteDataSourceModule = module {
     single<RemoteSearchDataSource> {
         RemoteSearchDataSourceImpl(
             httpClient = get(),
-            apiKey = get(named("API_KEY")),
             baseUrl = get(named("BASE_URL"))
         )
     }
 
-    single< RemoteGenreDataSource> {
+    single<RemoteGenreDataSource> {
         RemoteGenreDataSourceImpl(
             httpClient = get(),
-            apiKey = get(named("API_KEY")),
             baseUrl = get(named("BASE_URL"))
         )
     }
