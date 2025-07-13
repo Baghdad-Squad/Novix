@@ -110,47 +110,61 @@ private fun RecentlyViewsWithSearch(
             .fillMaxSize()
             .background(Theme.color.surface)
     ) {
-        if (uiState.recentSearch.isEmpty() && uiState.recentViewed.isEmpty()) {
+        if (uiState.isFirstTimeOpen) {
             item {
                 Box(
                     modifier = Modifier.height(600.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     EmptySearchState(
-                        imagePath = com.baghdad.design_system.R.drawable.no_search_results,
-                        contentDescription = stringResource(R.string.no_search_result_picture),
-                        message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                        imagePath = com.baghdad.design_system.R.drawable.start_explore,
+                        contentDescription = "",
+                        message = stringResource(R.string.start_exploring),
                     )
                 }
             }
         } else {
-
-            if (uiState.recentViewed.isNotEmpty()) {
+            if (uiState.recentSearch.isEmpty() && uiState.recentViewed.isEmpty()) {
                 item {
-                    RecentlyViewedSection(
-                        recentViewed = uiState.recentViewed,
-                        onClearRecentlyViewedClick = { listener.onClearRecentSearchClick() },
-                        onSavedClick = { listener.onSavedRecentlyViewedClick(it) },
-                        onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) },
-                        modifier = Modifier.padding(top = 12.dp)
-                    )
+                    Box(
+                        modifier = Modifier.height(600.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        EmptySearchState(
+                            imagePath = com.baghdad.design_system.R.drawable.no_search_results,
+                            contentDescription = stringResource(R.string.no_search_result_picture),
+                            message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                        )
+                    }
                 }
             } else {
-                item {
-                    Spacer(modifier = Modifier.padding(top = 12.dp))
+
+                if (uiState.recentViewed.isNotEmpty()) {
+                    item {
+                        RecentlyViewedSection(
+                            recentViewed = uiState.recentViewed,
+                            onClearRecentlyViewedClick = { listener.onClearRecentSearchClick() },
+                            onSavedClick = { listener.onSavedRecentlyViewedClick(it) },
+                            onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) },
+                            modifier = Modifier.padding(top = 12.dp)
+                        )
+                    }
+                } else {
+                    item {
+                        Spacer(modifier = Modifier.padding(top = 12.dp))
+                    }
                 }
+                if (uiState.recentSearch.isNotEmpty())
+                    recentSearchSection(
+                        recentSearch = uiState.recentSearch,
+                        onClearRecentSearchClick = { listener.onClearRecentSearchClick() },
+                        onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) },
+                        onRecentSearchClicked = { listener.onRecentSearchItemClick(it) }
+                    )
             }
-            if (uiState.recentSearch.isNotEmpty())
-                recentSearchSection(
-                    recentSearch = uiState.recentSearch,
-                    onClearRecentSearchClick = { listener.onClearRecentSearchClick() },
-                    onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) },
-                    onRecentSearchClicked = { listener.onRecentSearchItemClick(it) }
-                )
         }
     }
 }
-
 
 @Preview
 @Composable
@@ -158,7 +172,7 @@ private fun SearchScreenPreview() {
     NovixTheme {
         SearchContent(
             uiState = SearchScreenState(
-                searchText = "", recentSearch = emptyList(), recentViewed = emptyList()
+                searchText = "", recentSearch = emptyList(), recentViewed = emptyList(), isFirstTimeOpen = true
             ), listener = object : SearchInteractionListener {
                 override fun onSearchTextChanged(query: String) {}
                 override fun onFilterIconClick() {}
