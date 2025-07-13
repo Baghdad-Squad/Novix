@@ -11,6 +11,5 @@ data class TvShow(
     val releaseDate: LocalDate,
     val overview: String,
     val posterImageURL: String,
-    val backdropImagesURLs: List<String>,
     val numberOfSeasons: Int
 )

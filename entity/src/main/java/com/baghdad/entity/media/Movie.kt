@@ -1,6 +1,5 @@
 package com.baghdad.entity.media
 
-import com.baghdad.entity.person.CastMember
 import kotlinx.datetime.LocalDate
 
 data class Movie(
@@ -11,8 +10,6 @@ data class Movie(
     val userRating: Double?,
     val releaseDate: LocalDate,
     val overview: String,
-    val cast: List<CastMember>,
     val posterImageURL: String,
-    val backdropImagesURLs: List<String>,
     val runtimeMinutes: Int
 )
