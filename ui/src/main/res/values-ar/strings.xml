@@ -12,4 +12,5 @@
     <string name="search">البحث</string>
     <string name="search_hint">ابحث عن فلم، مسلسل، ممثل</string>
     <string name="filter_icon">ايقونة الفلتر</string>
+    <string name="gallery">المعرض</string>
 </resources>
