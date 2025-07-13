@@ -2,43 +2,35 @@ package com.baghdad.islamic_image_loader.model
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Rect
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import com.baghdad.islamic_image_loader.utils.buildImageProcessor
 import com.baghdad.islamic_image_loader.utils.convertBitmapToSoftwareBitmap
 import com.baghdad.islamic_image_loader.utils.loadModelFile
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.image.TensorImage
-import org.tensorflow.lite.support.image.ops.ResizeOp
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import kotlin.math.max
 import kotlin.math.min
-import androidx.core.graphics.scale
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun detectFaces(
     context: Context,
     inputBitmap: Bitmap,
     modelName: String = "blaze_face_short_range.tflite",
     maxFaces: Int = 5,
-    scoreThreshold: Float = 0.5f,
-    resizedWidth: Int = 128,
-    resizedHeight: Int = 128,
-    usePreprocessing: Boolean = true,
+    scoreThreshold: Float = 0.8f,
+    inputImageSize: Int = 128,
     onFacesCropped: (List<Bitmap>) -> Unit
 ) {
     try {
-        val inputBitmap = convertBitmapToSoftwareBitmap(inputBitmap)
+        val softwareBitmap = convertBitmapToSoftwareBitmap(inputBitmap)
         val interpreter = Interpreter(loadModelFile(context, modelName))
-
-        val bitmap = if (usePreprocessing) {
-            val tensorImage = TensorImage.fromBitmap(inputBitmap)
-            val resizeOp = ResizeOp(resizedWidth, resizedHeight, ResizeOp.ResizeMethod.BILINEAR)
-            resizeOp.apply(tensorImage).bitmap
-        } else {
-            inputBitmap.createScaledBitmap(resizedWidth, resizedHeight)
-        }
-
-        val inputBuffer = preprocessImage(bitmap)
+        val tensorImage = TensorImage.fromBitmap(softwareBitmap)
+        val imageProcessor = buildImageProcessor(inputImageSize = inputImageSize)
+        val processedImage = imageProcessor.process(tensorImage)
+        val inputBuffer: ByteBuffer = processedImage.buffer
 
         val outputBoxes = Array(1) { Array(896) { FloatArray(16) } }
         val outputScores = Array(1) { Array(896) { FloatArray(1) } }
@@ -48,79 +40,61 @@ fun detectFaces(
             mapOf(0 to outputBoxes, 1 to outputScores)
         )
 
-        val croppedFaces = mutableListOf<Bitmap>()
-
-        for (i in 0 until 896) {
-            val score = outputScores[0][i][0]
-            if (score < scoreThreshold) continue
-
-            val box = outputBoxes[0][i]
-            val (xMin, yMin, xMax, yMax) = getPixelBoundingBox(box, inputBitmap)
-
-            val safeRect = createSafeBoundsRectangle(Rect(xMin, yMin, xMax, yMax), inputBitmap)
-            if (safeRect.width() > 10 && safeRect.height() > 10) {
-                try {
-                    val cropped = createCroppedFaceBitmap(inputBitmap, safeRect)
-                    croppedFaces.add(cropped)
-                    if (croppedFaces.size >= maxFaces) break
-                } catch (_: Exception) {
-
-                }
-            }
-        }
+        val croppedFaces = processDetections(
+            outputBoxes[0],
+            outputScores[0],
+            softwareBitmap,
+            scoreThreshold,
+            maxFaces
+        )
 
         interpreter.close()
         onFacesCropped(croppedFaces)
 
     } catch (e: Exception) {
-        Log.e("FaceDetection", "Error in face detection", e)
         onFacesCropped(emptyList())
     }
 }
 
-private fun Bitmap.createScaledBitmap(width: Int, height: Int): Bitmap =
-    this.scale(width, height)
+private fun processDetections(
+    boxes: Array<FloatArray>,
+    scores: Array<FloatArray>,
+    bitmap: Bitmap,
+    scoreThreshold: Float,
+    maxFaces: Int
+): List<Bitmap> {
+    val bitmapWidth = bitmap.width
+    val bitmapHeight = bitmap.height
+    val croppedFaces = mutableListOf<Bitmap>()
 
-private fun getPixelBoundingBox(box: FloatArray, bitmap: Bitmap): List<Int> {
-    val (xCenter, yCenter, width, height) = box.take(4)
-    val xMin = ((xCenter - width / 2f) * bitmap.width).toInt()
-    val yMin = ((yCenter - height / 2f) * bitmap.height).toInt()
-    val xMax = ((xCenter + width / 2f) * bitmap.width).toInt()
-    val yMax = ((yCenter + height / 2f) * bitmap.height).toInt()
-    return listOf(xMin, yMin, xMax, yMax)
-}
+    val validIndices = scores.indices.filter { scores[it][0] >= scoreThreshold }
 
-private fun createSafeBoundsRectangle(bounds: Rect, bitmap: Bitmap): Rect {
-    val left = max(0, bounds.left)
-    val top = max(0, bounds.top)
-    val right = min(bitmap.width, bounds.right)
-    val bottom = min(bitmap.height, bounds.bottom)
-    return Rect(left, top, right, bottom)
-}
+    for (i in validIndices) {
+        if (croppedFaces.size >= maxFaces) break
 
-private fun createCroppedFaceBitmap(bitmap: Bitmap, rect: Rect): Bitmap {
-    return Bitmap.createBitmap(bitmap, rect.left, rect.top, rect.width(), rect.height())
-}
+        val box = boxes[i]
+        val (xCenter, yCenter, width, height) = box
 
-private fun preprocessImage(bitmap: Bitmap): ByteBuffer {
-    val inputSize = 128
-    val intValues = IntArray(inputSize * inputSize)
-    val byteBuffer = ByteBuffer.allocateDirect(1 * inputSize * inputSize * 3 * 4)
-    byteBuffer.order(ByteOrder.nativeOrder())
+        val halfWidth = width * 0.5f
+        val halfHeight = height * 0.5f
 
-    val scaledBitmap = bitmap.scale(inputSize, inputSize)
+        val xMin = max(0, ((xCenter - halfWidth) * bitmapWidth).toInt())
+        val yMin = max(0, ((yCenter - halfHeight) * bitmapHeight).toInt())
+        val xMax = min(bitmapWidth, ((xCenter + halfWidth) * bitmapWidth).toInt())
+        val yMax = min(bitmapHeight, ((yCenter + halfHeight) * bitmapHeight).toInt())
 
-    scaledBitmap.getPixels(intValues, 0, inputSize, 0, 0, inputSize, inputSize)
+        val rectWidth = xMax - xMin
+        val rectHeight = yMax - yMin
 
-    for (pixel in intValues) {
-        val r = ((pixel shr 16) and 0xFF) / 255.0f
-        val g = ((pixel shr 8) and 0xFF) / 255.0f
-        val b = (pixel and 0xFF) / 255.0f
-        byteBuffer.putFloat(r)
-        byteBuffer.putFloat(g)
-        byteBuffer.putFloat(b)
+        if (rectWidth > 10 && rectHeight > 10) {
+            try {
+                val cropped = Bitmap.createBitmap(bitmap, xMin, yMin, rectWidth, rectHeight)
+                croppedFaces.add(cropped)
+            } catch (_: Exception) {
+
+            }
+        }
     }
 
-    byteBuffer.rewind()
-    return byteBuffer
+    return croppedFaces
 }

@@ -22,7 +22,7 @@ import coil3.Image
 import coil3.compose.asPainter
 import coil3.toBitmap
 import com.baghdad.islamic_image_loader.R
-import com.baghdad.islamic_image_loader.model.detectFaces
+import com.baghdad.islamic_image_loader.model.  detectFaces
 import com.baghdad.islamic_image_loader.imageLoader.imageUrlLoader
 import com.baghdad.islamic_image_loader.model.predictGender
 import kotlinx.coroutines.Dispatchers
