@@ -12,7 +12,6 @@ import io.ktor.client.HttpClient
 
 class RemoteSearchDataSourceImpl(
     private val httpClient: HttpClient,
-    private val apiKey: String,
     private val baseUrl: String
 ) : RemoteSearchDataSource {
     override suspend fun searchMultiMedia(
@@ -25,7 +24,6 @@ class RemoteSearchDataSourceImpl(
             client = httpClient,
             url = "$baseUrl$SEARCH_MULTI_ENDPOINT",
             params = params.toParams(),
-            apiKey = apiKey
         )
 
         return searchResponse.toDto(movieGenres, tvGenres)

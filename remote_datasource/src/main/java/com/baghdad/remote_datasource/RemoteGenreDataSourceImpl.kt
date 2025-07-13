@@ -9,7 +9,6 @@ import io.ktor.client.HttpClient
 
 class RemoteGenreDataSourceImpl(
     private val httpClient: HttpClient,
-    private val apiKey: String,
     private val baseUrl: String
 ): RemoteGenreDataSource  {
     override suspend fun getMovieGenre(language: String): List<GenreDto> {
@@ -18,7 +17,6 @@ class RemoteGenreDataSourceImpl(
             client = httpClient,
             url = "$baseUrl$MOVIE_GENRE_ENDPOINT",
             params = params,
-            apiKey = apiKey
         ).toDto()
     }
 
@@ -28,7 +26,6 @@ class RemoteGenreDataSourceImpl(
             client = httpClient,
             url = "$baseUrl$TV_SHOW_GENRE_ENDPOINT",
             params = params,
-            apiKey = apiKey
         ).toDto()
     }
     companion object {
