@@ -7,14 +7,16 @@ import io.ktor.client.engine.mock.respondOk
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
-import kotlin.test.Test
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+
+
 
 class ApiInterceptorTest {
     @Test
-    fun `ApiInterceptor should adds api_key parameter to requests`() = runBlocking {
+    fun `ApiInterceptor should adds api_key parameter to requests`() = runTest {
         val testApiKey = "test_key_123"
         var apiKeyFound = false
 
