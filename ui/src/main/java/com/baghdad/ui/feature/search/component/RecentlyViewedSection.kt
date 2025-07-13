@@ -12,7 +12,7 @@ import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
 fun RecentlyViewedSection(
-    recentViewed: List<SearchScreenState.MediaUiState>,
+    recentViewed: List<SearchScreenState.RecentlyViewedUiState>,
     onClearRecentlyViewedClick: () -> Unit,
     onSavedClick: (Long) -> Unit,
     onRecentlyViewedClick: (Long) -> Unit,
