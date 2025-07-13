@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.preview.NovixPreviews
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
 @Composable
@@ -53,15 +55,18 @@ fun ActorCardDetails(
     }
 }
 @Preview(showBackground = true)
+@NovixPreviews
 @Composable
 private fun CardPreview() {
-    ActorCardDetails(
-        fullName = "Tom Hanks",
-        characterRole = "Acting",
-        birthPlace = "Santa Cruz del Norte, Cuba",
-        birthDate = "1988-04-30",
-        deathDate = " - 2012-30-03",
-        isDeceased = false
-    )
+    NovixTheme {
+        ActorCardDetails(
+            fullName = "Tom Hanks",
+            characterRole = "Acting",
+            birthPlace = "Santa Cruz del Norte, Cuba",
+            birthDate = "1988-04-30",
+            deathDate = " - 2012-30-03",
+            isDeceased = false
+        )
+    }
 
 }

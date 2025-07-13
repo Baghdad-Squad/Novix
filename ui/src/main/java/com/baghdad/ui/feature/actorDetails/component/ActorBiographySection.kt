@@ -19,7 +19,7 @@ fun ActorBiographySection(
     Column(modifier = modifier.padding(16.dp)) {
         Text(
             text = stringResource(R.string.biography),
-            style = Theme.typography.title.medium,
+            style = Theme.typography.body.small,
             color = Theme.color.title
         )
         ExpandableText(biography)
@@ -31,10 +31,7 @@ fun ActorBiographySection(
 @Composable
 private fun ActorBiographySectionPreview() {
     ActorBiographySection(
-        biography = "Matthew Paige Damon is an American actor, film producer, and screenwriter. " +
-                "He was ranked among Forbes' most bankable stars in 2007 and, in 2010, was one of the highest-grossing " +
-                "actors of all time, known for roles in Good Will Hunting, The Bourne series, and The Martian. " +
-                "His career spans decades with numerous awards and nominations for his versatile performances.",
+        biography = "Matthew Paige Damon is an American actor, film producer, and screenwriter. He was ranked among Forbes' most bankable stars in 2007 and, in 2010, was one of the highest-grossing, ytttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt ",
         modifier = Modifier
     )
 }
