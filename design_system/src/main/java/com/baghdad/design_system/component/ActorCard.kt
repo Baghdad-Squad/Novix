@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,7 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.modifier.Side
+import com.baghdad.design_system.modifier.customBorder
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.component.SafeImage
@@ -69,9 +71,10 @@ fun ActorCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Theme.color.surface)
-                .offset(x = (-1).dp)
-                .border(
-                    width = 1.dp, color = Theme.color.stroke, shape = CardShape
+                .customBorder(
+                    borderWidth = 1.dp,
+                    color = Theme.color.stroke,
+                    sides = listOf(Side.Top, Side.Bottom)
                 )
                 .clip(CardShape)
                 .height(CardHeight)
@@ -96,3 +99,14 @@ fun ActorCard(
         }
     }
 }
+
+@Composable
+@Preview(showBackground = true)
+private fun ActorCardPreview(){
+    ActorCard(
+        actorName = "Hasan",
+        actorImage = "https://example.com/image.jpg",
+        onClick = { },
+    )
+}
+
