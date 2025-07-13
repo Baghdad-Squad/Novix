@@ -20,7 +20,7 @@ fun detectFaces(
     inputBitmap: Bitmap,
     modelName: String = "blaze_face_short_range.tflite",
     maxFaces: Int = 5,
-    scoreThreshold: Float = 0.8f,
+    scoreThreshold: Float = 0.5f,
     inputImageSize: Int = 128,
     onFacesCropped: (List<Bitmap>) -> Unit
 ) {
