@@ -110,20 +110,6 @@ private fun RecentlyViewsWithSearch(
             .fillMaxSize()
             .background(Theme.color.surface)
     ) {
-        if (uiState.isFirstTimeOpen) {
-            item {
-                Box(
-                    modifier = Modifier.height(600.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    EmptySearchState(
-                        imagePath = com.baghdad.design_system.R.drawable.start_explore,
-                        contentDescription = "",
-                        message = stringResource(R.string.start_exploring),
-                    )
-                }
-            }
-        } else {
             if (uiState.recentSearch.isEmpty() && uiState.recentViewed.isEmpty()) {
                 item {
                     Box(
@@ -133,7 +119,7 @@ private fun RecentlyViewsWithSearch(
                         EmptySearchState(
                             imagePath = com.baghdad.design_system.R.drawable.no_search_results,
                             contentDescription = stringResource(R.string.no_search_result_picture),
-                            message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                            message = stringResource(R.string.start_exploring),
                         )
                     }
                 }
@@ -164,7 +150,7 @@ private fun RecentlyViewsWithSearch(
             }
         }
     }
-}
+
 
 @Preview
 @Composable
@@ -172,7 +158,7 @@ private fun SearchScreenPreview() {
     NovixTheme {
         SearchContent(
             uiState = SearchScreenState(
-                searchText = "", recentSearch = emptyList(), recentViewed = emptyList(), isFirstTimeOpen = true
+                searchText = "", recentSearch = emptyList(), recentViewed = emptyList(),
             ), listener = object : SearchInteractionListener {
                 override fun onSearchTextChanged(query: String) {}
                 override fun onFilterIconClick() {}

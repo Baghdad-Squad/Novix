@@ -13,7 +13,6 @@ data class SearchScreenState(
     val recentViewed: List<MediaUiState> = emptyList(),
     val recentSearch: List<RecentSearchUiState> = emptyList(),
     val bottomSheetUiState: FilterBottomSheetUiState = FilterBottomSheetUiState(),
-    val isFirstTimeOpen: Boolean = false,
     override val isLoading: Boolean = false,
     override val snackBarState: SnackBarState = SnackBarState(),
     override val baseErrorState: BaseErrorState? = null

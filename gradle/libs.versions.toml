@@ -7,7 +7,6 @@ coilCompose = "3.2.0"
 composeBom = "2025.06.01"
 composeNavigation = "2.9.0"
 coreKtx = "1.16.0"
-datastorePreferences = "1.0.0"
 espressoCore = "3.6.1"
 faceDetection = "16.1.7"
 firebaseBom = "33.16.0"
@@ -42,7 +41,6 @@ tensorflowLiteGpu = "2.17.0"
 # AndroidX
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

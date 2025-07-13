@@ -6,7 +6,6 @@ import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
-import com.baghdad.domain.usecase.search.FirstTimeToOpenAppUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchUseCase
 import com.baghdad.entity.media.Genre
@@ -24,7 +23,6 @@ class SearchViewModel(
     private val deleteAllRecentSearchesUseCase: DeleteAllRecentSearchesUseCase,
     private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase,
     private val searchUseCase: SearchUseCase,
-    private val firstTimeToOpenAppUseCase: FirstTimeToOpenAppUseCase
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
 
@@ -32,7 +30,6 @@ class SearchViewModel(
         getRecentSearches()
         getMovieGenres()
         getTvShowGenres()
-        checkFirstTimeOpen()
     }
 
     private var searchJob: Job? = null
@@ -47,23 +44,6 @@ class SearchViewModel(
             // TODO: Handle specific exceptions
             else -> BaseErrorState.ServerError
         }
-    }
-    private fun checkFirstTimeOpen() {
-        tryToCollect(
-            flowProvider = { firstTimeToOpenAppUseCase.isFirstTime() },
-            onNewValue = { isFirstTime ->
-                updateState { it.copy(isFirstTimeOpen = isFirstTime) }
-            }
-        )
-    }
-
-    private fun markFirstTimeCompleted() {
-        tryToExecute(
-            callee = { firstTimeToOpenAppUseCase.setFirstTimeCompleted() },
-            onSuccess = {
-                updateState { it.copy(isFirstTimeOpen = false) }
-            }
-        )
     }
 
     private fun getRecentSearches() {
@@ -118,9 +98,6 @@ class SearchViewModel(
 
     override fun onSearchTextChanged(text: String) {
         updateState { it.copy(searchText = text) }
-        if (currentState.isFirstTimeOpen && text.isNotEmpty()) {
-            markFirstTimeCompleted()
-        }
         searchJob?.cancel()
         if (text.isNotBlank()) {
             searchJob = tryToExecute(

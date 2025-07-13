@@ -47,5 +47,4 @@ dependencies {
     implementation(libs.bundles.coroutines)
     implementation(libs.kotlinx.datetime)
     testImplementation(libs.bundles.test.core)
-    implementation(libs.androidx.datastore.preferences)
 }
