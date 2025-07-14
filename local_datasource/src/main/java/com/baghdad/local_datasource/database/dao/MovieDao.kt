@@ -3,13 +3,13 @@ package com.baghdad.local_datasource.database.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.baghdad.local_datasource.database.entity.Movie
+import com.baghdad.local_datasource.database.dto.LocalMovieDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
     @Upsert
-    suspend fun upsertMovie(movie: Movie)
+    suspend fun upsertMovie(localMovieDto: LocalMovieDto)
 
     @Query("DELETE FROM Movie WHERE id = :id")
     suspend fun deleteMovieById(id: Long)
@@ -18,11 +18,11 @@ interface MovieDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM Movie WHERE id =  :id")
-    suspend fun getMovieById(id: Long): Movie
+    suspend fun getMovieById(id: Long): LocalMovieDto
 
     @Query("SELECT * FROM Movie")
-    fun getAllMovies(): Flow<List<Movie>>
+    fun getAllMovies(): Flow<List<LocalMovieDto>>
 
     @Query("SELECT * FROM Movie WHERE title LIKE '%' || :title || '%'")
-    suspend fun searchMoviesByTitle(title: String): List<Movie>
+    suspend fun searchMoviesByTitle(title: String): List<LocalMovieDto>
 }
