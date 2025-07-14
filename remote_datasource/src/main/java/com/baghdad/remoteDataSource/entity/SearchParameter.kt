@@ -1,4 +1,4 @@
-package com.baghdad.remote_datasource.entity
+package com.baghdad.remoteDataSource.util.entity
 
 data class SearchParameter(
     val query: String,

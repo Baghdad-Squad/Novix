@@ -1,6 +1,6 @@
-package com.baghdad.remote_datasource.mapper
+package com.baghdad.remoteDataSource.util.mapper
 
-import com.baghdad.remote_datasource.entity.GenreListResponse
+import com.baghdad.remoteDataSource.util.entity.GenreListResponse
 import com.baghdad.repository.model.GenreDto
 
 fun GenreListResponse.toDto(genreType: GenreDto.GenreType): List<GenreDto> {

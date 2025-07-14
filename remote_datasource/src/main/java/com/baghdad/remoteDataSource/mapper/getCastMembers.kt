@@ -1,6 +1,6 @@
-package com.baghdad.remote_datasource.mapper
+package com.baghdad.remoteDataSource.util.mapper
 
-import com.baghdad.remote_datasource.entity.MultiMediaItemDto
+import com.baghdad.remoteDataSource.util.entity.MultiMediaItemDto
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
 
