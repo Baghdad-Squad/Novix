@@ -1,6 +1,6 @@
-package com.baghdad.remoteDataSource.util.mapper
+package com.baghdad.remoteDataSource.mapper
 
-import com.baghdad.remoteDataSource.util.entity.SearchResponse
+import com.baghdad.remoteDataSource.response.SearchResponse
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
