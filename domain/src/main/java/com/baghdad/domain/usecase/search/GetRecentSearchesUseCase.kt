@@ -1,7 +1,7 @@
 package com.baghdad.domain.usecase.search
 
-import com.baghdad.domain.model.search.RecentSearch
 import com.baghdad.domain.repository.SearchRepository
+import com.baghdad.entity.search.RecentSearch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

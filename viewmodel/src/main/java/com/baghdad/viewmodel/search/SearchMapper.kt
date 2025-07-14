@@ -1,12 +1,12 @@
 package com.baghdad.viewmodel.search
 
-import com.baghdad.domain.model.search.RecentSearch
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.model.search.SearchFilter
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
+import com.baghdad.entity.search.RecentSearch
 
 fun Movie.toMovieUI() = SearchScreenState.MovieUiState(
     id = id,
