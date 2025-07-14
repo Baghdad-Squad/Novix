@@ -9,10 +9,12 @@ class GetRecentlyViewedUseCase(
     private val recentlyViewedRepository: RecentlyViewedRepository
 ) {
     suspend operator fun invoke(): Flow<List<RecentlyViewed>> {
-        return recentlyViewedRepository.getAllRecentlyViewed().takeSortedByMostRecent()
+        return recentlyViewedRepository.getAllRecentlyViewed().sortedByMostRecent()
     }
 
-    private fun Flow<List<RecentlyViewed>>.takeSortedByMostRecent(): Flow<List<RecentlyViewed>> {
-        return this.map { it.sortedByDescending { viewed -> viewed.viewedAt }.take(10) }
+    private fun Flow<List<RecentlyViewed>>.sortedByMostRecent(): Flow<List<RecentlyViewed>> {
+        return this.map {
+            it.sortedByDescending { viewed -> viewed.viewedAt }
+        }
     }
 }

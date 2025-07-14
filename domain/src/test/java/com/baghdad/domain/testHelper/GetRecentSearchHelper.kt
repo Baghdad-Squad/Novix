@@ -1,6 +1,6 @@
 package com.baghdad.domain.testHelper
 
-import com.baghdad.domain.model.search.RecentSearch
+import com.baghdad.entity.search.RecentSearch
 import kotlinx.datetime.LocalDateTime
 
 fun getTestRecentSearch(
