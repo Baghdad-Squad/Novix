@@ -19,7 +19,7 @@ fun ActorBiographySection(
     biography: String,
     isExpanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
         Text(
