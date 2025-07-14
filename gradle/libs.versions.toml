@@ -22,6 +22,7 @@ ktor = "2.3.10"
 lifecycleRuntimeKtx = "2.9.1"
 material = "1.12.0"
 mockk = "1.14.2"
+readMoreVersion = "1.6.3"
 room = "2.7.2"
 runtimeAndroid = "1.8.3"
 uiGraphicsAndroid = "1.8.3"
@@ -44,6 +45,7 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+readmore-material3 = { group = "com.webtoonscorp.android", name = "readmore-material3", version.ref = "readMoreVersion" }
 
 # Material3
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxMaterial3" }

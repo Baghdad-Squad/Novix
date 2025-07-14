@@ -1,58 +1,81 @@
 package com.baghdad.design_system.component
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.baghdad.design_system.R
+import com.baghdad.design_system.preview.NovixPreviews
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
+import com.webtoonscorp.android.readmore.foundation.ToggleArea
+import com.webtoonscorp.android.readmore.material3.ReadMoreText
+
 @Composable
-
 fun ExpandableText(
+    modifier: Modifier = Modifier,
     text: String,
-   modifier: Modifier = Modifier
+    isExpanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
 ) {
-    val minLines  = 4
-    var expanded by remember { mutableStateOf(false) }
-    val expandTag = stringResource(R.string.expand)
+    AnimatedContent(
+        targetState = isExpanded,
+        transitionSpec = {
+            fadeIn(animationSpec = tween(300)) togetherWith
+                    fadeOut(animationSpec = tween(300))
+        },
+        label = "ReadMoreAnimation"
+    ) { expanded ->
+        ReadMoreText(
+            text = text,
+            expanded = expanded,
+            onExpandedChange = onExpandedChange,
+            style = Theme.typography.body.small,
+            textAlign = TextAlign.Justify,
+            color = Theme.color.body,
 
-    val expandLabel = if (expanded) "Read less" else "Read more"
+            readMoreText = stringResource(R.string.read_more),
+            readMoreColor = Theme.color.primary,
+            readMoreStyle = Theme.typography.label.medium.toSpanStyle(),
+            readMoreMaxLines = 4,
 
-    val displayText = if (expanded) text else text.take(177).trimEnd()
-
-    val annotatedText = buildAnnotatedString {
-        append(displayText)
-        pushStringAnnotation(tag = expandTag, annotation = expandTag)
-        pushStyle(
-            SpanStyle(
-                color = Theme.color.primary,
-                fontSize = Theme.typography.label.medium.fontSize
-            )
+            toggleArea = ToggleArea.All,
+            modifier = modifier
         )
-        append(expandLabel)
     }
+}
 
-    ClickableText(
-        modifier =modifier,
-        annotatedText = annotatedText,
-        style = Theme.typography.body.small,
-        color = Theme.color.body,
-        maxLines = if (expanded) Int.MAX_VALUE else minLines,
-        onClick = { tag, _ ->
-            if (tag == expandTag) {
-                expanded = !expanded
-            }
+@NovixPreviews
+@Composable
+private fun ReadMoreTextComposePreview() {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    NovixTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.color.surface)
+                .padding(16.dp)
+        ) {
+            ExpandableText(
+                text = "It is a 1994 American drama film, considered one of the greatest films in cinematic history. It revolves around Andy Dufresne, a banker wrongfully convicted of the murder of his wife and her lover, and imprisoned in Shawshank Red State Prison. There, he forms a friendship with another inmate named Red and embarks on a long journey of pain, hope, and planning for freedom.",
+                isExpanded = expanded,
+                onExpandedChange = { expanded = it }
+            )
         }
-    )
+    }
 }
