@@ -38,5 +38,9 @@
     <string name="apply">تطبيق</string>
     <string name="clear">مسح</string>
     <string name="text_input_field">حقل ادخال بيانات</string>
+    <string name="expand">توسيع</string>
+    <string name="read_more">اقرأ المزيد</string>
+    <string name="read_less">إخفاء</string>
+
 
 </resources>

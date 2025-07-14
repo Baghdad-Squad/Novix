@@ -12,6 +12,9 @@
     <string name="search">البحث</string>
     <string name="search_hint">ابحث...</string>
     <string name="filter_icon">ايقونة الفلتر</string>
+    <string name="birthday">تاريخ الميلاد</string>
+    <string name="biography">السيرة الذاتية</string>
+    <string name="expand">توسيع</string>
     <string name="gallery">المعرض</string>
     <string name="snackbar_network_error">لا يوجد اتصال بالإنترنت</string>
     <string name="snackbar_database_error">حدث خطأ في قاعدة البيانات</string>
@@ -20,5 +23,6 @@
     <string name="snackbar_removed_success">تمت الإزالة بنجاح</string>
     <string name="snackbar_saved_success">تم حفظ العنصر بنجاح</string>
     <string name="empty_string"> </string>
-
+    <string name="read_less">عرض أقل</string>
+    <string name="read_more">عرض المزيد</string>
 </resources>
