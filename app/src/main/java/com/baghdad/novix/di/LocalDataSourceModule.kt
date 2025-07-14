@@ -11,7 +11,7 @@ import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
-import com.baghdad.local_datasource.roomDB.dao.RecentViewedDao
+import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.repository.datasource.local.LocalActorDataSource
@@ -33,7 +33,7 @@ val localDataSourceModule = module {
 
     single<MovieDao> { get<NovixDatabase>().movieDao() }
     single<TvShowDao> { get<NovixDatabase>().tvShowDao() }
-    single<RecentViewedDao> { get<NovixDatabase>().recentViewedDao() }
+    single<RecentlyViewedDao> { get<NovixDatabase>().recentViewedDao() }
     single<RecentSearchDao> { get<NovixDatabase>().recentSearchDao() }
     single<ActorDao> { get<NovixDatabase>().actorDao() }
     single<GenreDao> { get<NovixDatabase>().genreDao() }
@@ -57,9 +57,7 @@ val localDataSourceModule = module {
 
     single<LocalRecentlyViewedDataSource> {
         LocalRecentlyViewedDataSourceImpl(
-            recentViewedDao = get<RecentViewedDao>(),
-            movieDao = get<MovieDao>(),
-            tvShowDao = get<TvShowDao>()
+            recentlyViewedDao = get<RecentlyViewedDao>(),
         )
     }
 

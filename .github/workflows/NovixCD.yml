@@ -40,13 +40,62 @@ jobs:
           echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
           echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
 
+      - name: Authenticate GitHub CLI
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token --hostname github.com
+
+      - name: Extract PR info from triggering commit
+        id: release_notes
+        run: |
+          COMMIT_SHA="${{ github.sha }}"
+          echo "Looking for PR with merge commit: $COMMIT_SHA"
+
+          # Fetch the latest merged PRs to 'develop' with merge commit info
+          PR_JSON=$(gh pr list --base develop --state merged --json title,body,mergeCommit --jq \
+            ".[] | select(.mergeCommit.oid == \"$COMMIT_SHA\")")
+
+          if [ -z "$PR_JSON" ]; then
+            echo "No PR found with merge commit $COMMIT_SHA"
+            echo "notes=No matching PR found." >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          TITLE=$(echo "$PR_JSON" | jq -r '.title // "No title"')
+          BODY=$(echo "$PR_JSON" | jq -r '.body // "No description"')
+
+          # Clean markdown content (images, videos, etc.)
+          CLEAN_BODY=$(echo "$BODY" | \
+            sed -E 's/!\[[^]]*\]\([^)]*\)//g' | \
+            sed -E 's/<img[^>]*>//g' | \
+            sed -E 's/<video[^>]*>.*<\/video>//g' | \
+            tr -d '\r' | \
+            sed 's/[[:cntrl:]]//g')
+
+          RELEASE_NOTES="${TITLE}\n\n${CLEAN_BODY}"
+
+          echo -e "$RELEASE_NOTES" | head -c 1000 > release_notes.txt
+
+          {
+            echo "notes<<EOF"
+            echo -e "$RELEASE_NOTES" | head -c 500
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          echo "Release notes created:"
+          cat release_notes.txt
+
       - name: Build signed release APK
         run: ./gradlew assembleRelease
 
       - name: Upload APK to Firebase App Distribution
+        env:
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_AUTH_TOKEN: ${{ secrets.FIREBASE_AUTH_TOKEN }}
         run: |
           npm install -g firebase-tools
           firebase appdistribution:distribute \
             app/build/outputs/apk/release/app-release.apk \
-            --app ${{ secrets.FIREBASE_APP_ID }} \
-            --token ${{ secrets.FIREBASE_AUTH_TOKEN }}
+            --app "$FIREBASE_APP_ID" \
+            --token "$FIREBASE_AUTH_TOKEN" \
+            --groups "qa-team" \
+            --release-notes-file release_notes.txt

@@ -31,7 +31,8 @@ fun SearchTextField(
     onQueryChange: (String) -> Unit,
     onFilterIconClick: () -> Unit,
     searchTab: SearchTab,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hint : String = stringResource(R.string.search_hint),
 ) {
     Column(modifier = modifier) {
         Text(
@@ -49,7 +50,7 @@ fun SearchTextField(
                 value = query,
                 onValueChange = { onQueryChange(it) },
                 leadingIcon = painterResource(com.baghdad.design_system.R.drawable.search_icon),
-                hint = stringResource(R.string.search),
+                hint = hint,
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 8.dp)

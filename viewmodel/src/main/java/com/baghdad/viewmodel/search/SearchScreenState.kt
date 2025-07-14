@@ -1,8 +1,11 @@
 package com.baghdad.viewmodel.search
 
+import com.baghdad.domain.model.search.RecentlyViewed.ContentType
+import com.baghdad.domain.util.now
 import com.baghdad.viewmodel.base.BaseUiState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseErrorState
+import kotlinx.datetime.LocalDateTime
 
 data class SearchScreenState(
     val searchText: String = "",
@@ -10,21 +13,22 @@ data class SearchScreenState(
     val movies: List<MovieUiState> = emptyList(),
     val tvShows: List<TvShowUiState> = emptyList(),
     val actors: List<ActorUiState> = emptyList(),
-    val recentViewed: List<MediaUiState> = emptyList(),
+    val recentViewed: List<RecentlyViewedUiState> = emptyList(),
     val recentSearch: List<RecentSearchUiState> = emptyList(),
     val bottomSheetUiState: FilterBottomSheetUiState = FilterBottomSheetUiState(),
     override val isLoading: Boolean = false,
     override val snackBarState: SnackBarState = SnackBarState(),
     override val baseErrorState: BaseErrorState? = null
 ) : BaseUiState {
-
+    val searchFilter: SearchFilterUiState
+        get() = if (selectedSearchTab == SearchTab.MOVIES) {
+            bottomSheetUiState.moviesFilter
+        } else {
+            bottomSheetUiState.tvShowsFilter
+        }
     data class FilterBottomSheetUiState(
-        val minimumYear: Int = 1990,
-        val maximumYear: Int = 2025,
-        val rate: Int = 0,
-        val selectedGenres: List<GenreUiState> = emptyList(),
-        val moviesGenres: List<GenreUiState> = emptyList(),
-        val tvShowsGenres: List<GenreUiState> = emptyList(),
+        val moviesFilter: SearchFilterUiState = SearchFilterUiState(),
+        val tvShowsFilter: SearchFilterUiState = SearchFilterUiState(),
         val isBottomSheetVisible: Boolean = false
     )
 
@@ -51,15 +55,24 @@ data class SearchScreenState(
         val name: String = ""
     )
 
-    data class MediaUiState(
+    data class RecentlyViewedUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
+        val contentType: ContentType = ContentType.MOVIE,
         val isSaved: Boolean = false
     )
 
     data class RecentSearchUiState(
         val id: Long = 0,
         val query: String = ""
+    )
+
+    data class SearchFilterUiState(
+        val minimumYear: Int = 1990,
+        val maximumYear: Int = LocalDateTime.now().year,
+        val minimumRating: Int = 0,
+        val selectedGenres: List<GenreUiState> = emptyList(),
+        val allGenres: List<GenreUiState> = emptyList(),
     )
 }
 

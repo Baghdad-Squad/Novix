@@ -23,15 +23,16 @@ class GetRecentSearchesUseCaseTest {
     }
 
     @Test
-    fun `should return flow with multiple recent search items`() = runTest {
-        val searches = getTestRecentSearches(5)
-        coEvery { searchRepository.getRecentSearches() } returns flowOf(searches)
+    fun `should return sorted recent searches by searchedAt descending`() = runTest {
+        val unsortedSearches = getTestRecentSearches(size = 5).shuffled()
+        val expectedSorted = unsortedSearches.sortedByDescending { it.searchedAt }
+
+        coEvery { searchRepository.getRecentSearches() } returns flowOf(unsortedSearches)
 
         val result = getRecentSearchesUseCase().toList()
 
         assertThat(result).hasSize(1)
-        assertThat(result.first()).hasSize(5)
-        assertThat(result.first()).containsExactlyElementsIn(searches).inOrder()
+        assertThat(result.first()).containsExactlyElementsIn(expectedSorted).inOrder()
     }
 
     @Test
@@ -45,9 +46,13 @@ class GetRecentSearchesUseCaseTest {
     }
 
     @Test
-    fun `should handle multiple flow emissions from repository`() = runTest {
-        val firstEmission = getTestRecentSearches(2)
-        val secondEmission = getTestRecentSearches(3)
+    fun `should handle multiple flow emissions and sort each`() = runTest {
+        val firstEmission = getTestRecentSearches(3).shuffled()
+        val secondEmission = getTestRecentSearches(2).shuffled()
+
+        val sortedFirst = firstEmission.sortedByDescending { it.searchedAt }
+        val sortedSecond = secondEmission.sortedByDescending { it.searchedAt }
+
         coEvery { searchRepository.getRecentSearches() } returns flowOf(
             firstEmission,
             secondEmission
@@ -56,8 +61,8 @@ class GetRecentSearchesUseCaseTest {
         val result = getRecentSearchesUseCase().toList()
 
         assertThat(result).hasSize(2)
-        assertThat(result[0]).containsExactlyElementsIn(firstEmission).inOrder()
-        assertThat(result[1]).containsExactlyElementsIn(secondEmission).inOrder()
+        assertThat(result[0]).containsExactlyElementsIn(sortedFirst).inOrder()
+        assertThat(result[1]).containsExactlyElementsIn(sortedSecond).inOrder()
     }
 
     @Test
@@ -65,7 +70,9 @@ class GetRecentSearchesUseCaseTest {
         val exception = RuntimeException()
         coEvery { searchRepository.getRecentSearches() } throws exception
 
-        val resultException = runCatching { getRecentSearchesUseCase().toList() }.exceptionOrNull()
+        val resultException = runCatching {
+            getRecentSearchesUseCase().toList()
+        }.exceptionOrNull()
 
         assertThat(resultException).isNotNull()
         assertThat(resultException).isInstanceOf(RuntimeException::class.java)

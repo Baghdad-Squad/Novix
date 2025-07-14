@@ -1,7 +1,7 @@
 package com.baghdad.domain.usecase.recentlyViewed
 
 import com.baghdad.domain.repository.RecentlyViewedRepository
-import com.baghdad.domain.testHelper.getTestMedia
+import com.baghdad.domain.testHelper.getRecentlyViewedList
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -24,40 +24,45 @@ class GetRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `should return flow with limited to 10 items when repository returns more than 10`() =
+    fun `should return flow with limited to 10 sorted items when repository returns more than 10`() =
         runTest {
-            val mediaList = getTestMedia(15)
-            coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(mediaList)
+            val items = getRecentlyViewedList(15).shuffled()
+            val expected = items.sortedByDescending { it.viewedAt }.take(10)
+            coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(items)
 
             val result = getRecentlyViewedUseCase().toList()
 
             assertThat(result).hasSize(1)
             assertThat(result.first()).hasSize(10)
-            assertThat(result.first()).containsExactlyElementsIn(mediaList.take(10)).inOrder()
+            assertThat(result.first()).containsExactlyElementsIn(expected).inOrder()
         }
 
     @Test
-    fun `should return flow with all items when repository returns less than 10`() = runTest {
-        val mediaList = getTestMedia(3)
-        coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(mediaList)
+    fun `should return flow with all sorted items when repository returns less than 10`() =
+        runTest {
+            val items = getRecentlyViewedList(3).shuffled()
+            val expected = items.sortedByDescending { it.viewedAt }
+            coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(items)
 
         val result = getRecentlyViewedUseCase().toList()
 
         assertThat(result).hasSize(1)
         assertThat(result.first()).hasSize(3)
-        assertThat(result.first()).containsExactlyElementsIn(mediaList).inOrder()
+            assertThat(result.first()).containsExactlyElementsIn(expected).inOrder()
     }
 
     @Test
-    fun `should return flow with exactly 10 items when repository returns exactly 10`() = runTest {
-        val mediaList = getTestMedia(10)
-        coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(mediaList)
+    fun `should return flow with exactly 10 sorted items when repository returns exactly 10`() =
+        runTest {
+            val items = getRecentlyViewedList(10).shuffled()
+            val expected = items.sortedByDescending { it.viewedAt }
+            coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(items)
 
         val result = getRecentlyViewedUseCase().toList()
 
         assertThat(result).hasSize(1)
         assertThat(result.first()).hasSize(10)
-        assertThat(result.first()).containsExactlyElementsIn(mediaList).inOrder()
+            assertThat(result.first()).containsExactlyElementsIn(expected).inOrder()
     }
 
     @Test
@@ -71,9 +76,12 @@ class GetRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `should handle multiple flow emissions from repository`() = runTest {
-        val firstEmission = getTestMedia(1)
-        val secondEmission = getTestMedia(15)
+    fun `should handle multiple flow emissions and sort+limit each one`() = runTest {
+        val firstEmission = getRecentlyViewedList(1).shuffled()
+        val secondEmission = getRecentlyViewedList(15).shuffled()
+        val expectedFirst = firstEmission.sortedByDescending { it.viewedAt }.take(10)
+        val expectedSecond = secondEmission.sortedByDescending { it.viewedAt }.take(10)
+
         coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(
             firstEmission,
             secondEmission
@@ -82,14 +90,13 @@ class GetRecentlyViewedUseCaseTest {
         val result = getRecentlyViewedUseCase().toList()
 
         assertThat(result).hasSize(2)
-        assertThat(result[0]).hasSize(1)
-        assertThat(result[1]).hasSize(10)
-        assertThat(result[1]).containsExactlyElementsIn(secondEmission.take(10)).inOrder()
+        assertThat(result[0]).containsExactlyElementsIn(expectedFirst).inOrder()
+        assertThat(result[1]).containsExactlyElementsIn(expectedSecond).inOrder()
     }
 
     @Test
     fun `should propagate exception when repository throws exception`() = runTest {
-        val exception = RuntimeException()
+        val exception = RuntimeException("Something went wrong")
         coEvery { recentlyViewedRepository.getAllRecentlyViewed() } throws exception
 
         val resultException = runCatching { getRecentlyViewedUseCase().toList() }.exceptionOrNull()
