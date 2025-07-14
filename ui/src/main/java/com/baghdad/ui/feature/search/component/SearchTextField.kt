@@ -60,7 +60,6 @@ fun SearchTextField(
                 Box(
                     modifier = Modifier
                         .size(50.dp)
-                        .aspectRatio(1f)
                         .background(Theme.color.primary, shape = RoundedCornerShape(12.dp))
                         .noRippleClickable { onFilterIconClick() },
                     contentAlignment = Alignment.Center
