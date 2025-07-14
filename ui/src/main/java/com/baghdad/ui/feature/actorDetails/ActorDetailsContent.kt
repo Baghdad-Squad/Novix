@@ -11,9 +11,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
+import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
@@ -44,6 +46,14 @@ fun ActorDetailsContent(
                 modifier = Modifier.padding(bottom = 104.dp)
             )
 
+            IconButton(
+                icon = painterResource(com.baghdad.design_system.R.drawable.ic_go_back),
+                onClick = { listener.onBackIconClick() },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 16.dp, top = 60.dp)
+            )
+
             ActorCardDetails(
                 fullName = uiState.actorInfo.name,
                 characterRole = uiState.actorInfo.department,
@@ -63,11 +73,13 @@ fun ActorDetailsContent(
             isExpanded = uiState.isTextExpanded,
             modifier = Modifier.padding(bottom = 16.dp)
         )
+
         GallerySection(
             imageUrls = uiState.gallery,
             onClickShowAll = { listener.onViewAllGalleryClick() },
             modifier = Modifier.padding(bottom = 16.dp)
         )
+
         TopMediaPicksSection(
             title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
             items = uiState.topMoviesPicks,
@@ -78,6 +90,7 @@ fun ActorDetailsContent(
             onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
             modifier = Modifier.padding(bottom = 16.dp)
         )
+
         TopMediaPicksSection(
             title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
             items = uiState.topTvShowsPicks,
