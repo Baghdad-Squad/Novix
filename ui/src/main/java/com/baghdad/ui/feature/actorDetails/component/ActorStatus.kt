@@ -30,7 +30,7 @@ fun ActorStatus(
         if (!deathDate.isNullOrEmpty()) {
                 Text(
                     text = deathDate,
-                    style = Theme.typography.body.medium,
+                    style = Theme.typography.label.small,
                     color = Theme.color.body
                 )
             }

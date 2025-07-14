@@ -31,7 +31,7 @@ fun IconTextInfo(
         )
         Text(
             text = text,
-            style = Theme.typography.body.medium,
+            style = Theme.typography.label.small,
             color = Theme.color.body,
             modifier = Modifier.padding(start = 4.dp)
         )

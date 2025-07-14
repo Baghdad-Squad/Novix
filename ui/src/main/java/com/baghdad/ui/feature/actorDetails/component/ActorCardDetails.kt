@@ -2,11 +2,13 @@ package com.baghdad.ui.feature.actorDetails.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
@@ -24,30 +26,28 @@ fun ActorCardDetails(
 
     Box(
         modifier = modifier
-            .padding(horizontal = 16.dp)
-            .aspectRatio(2.80f)
+            .background(
+                color = Theme.color.surface,
+                shape = RoundedCornerShape(16.dp)
+            )
             .border(
                 width = 1.dp,
                 color = Theme.color.stroke,
                 shape = RoundedCornerShape(16.dp)
             )
-            .background(
-                color = Theme.color.surface,
-                shape = RoundedCornerShape(16.dp)
-            )
-    ) {
+            .padding(12.dp)
 
+
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
         ) {
             CardInfo(
                 fullName = fullName,
                 characterRole = characterRole,
                 birthPlace = birthPlace
             )
-
                 ActorStatus(
                     birthPlace = birthDate,
                     deathDate = deathDate
@@ -57,7 +57,6 @@ fun ActorCardDetails(
     }
 
 
-@Preview(showBackground = true)
 @NovixPreviews
 @Composable
 private fun CardPreview() {

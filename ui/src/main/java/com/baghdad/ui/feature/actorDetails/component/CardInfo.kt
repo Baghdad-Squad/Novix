@@ -3,9 +3,11 @@ package com.baghdad.ui.feature.actorDetails.component
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.R
 import com.baghdad.design_system.component.CircleDot
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
@@ -25,8 +27,8 @@ fun CardInfo(
 
     Row(
         modifier = modifier
-            .padding(top = 30.dp),
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+            .padding(top = 44.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = characterRole,
@@ -38,8 +40,8 @@ fun CardInfo(
 
         IconTextInfo(
             text = birthPlace,
-            painter = painterResource(com.baghdad.design_system.R.drawable.ic_location),
-            contentDescription = "birth Place"
+            painter = painterResource(R.drawable.ic_birth_place),
+            contentDescription = "birth place"
         )
 
         CircleDot()
