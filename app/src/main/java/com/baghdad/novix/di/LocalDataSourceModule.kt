@@ -20,6 +20,8 @@ import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
 import com.baghdad.repository.datasource.local.LocalTvShowDataSource
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val localDataSourceModule = module {
@@ -31,46 +33,19 @@ val localDataSourceModule = module {
         ).build()
     }
 
+
     single<MovieDao> { get<NovixDatabase>().movieDao() }
     single<TvShowDao> { get<NovixDatabase>().tvShowDao() }
     single<RecentlyViewedDao> { get<NovixDatabase>().recentViewedDao() }
     single<RecentSearchDao> { get<NovixDatabase>().recentSearchDao() }
     single<ActorDao> { get<NovixDatabase>().actorDao() }
     single<GenreDao> { get<NovixDatabase>().genreDao() }
-    single<LocalMovieDataSource> {
-        LocalMovieDataSourceImpl(
-            movieDao = get<MovieDao>()
-        )
-    }
 
 
-    single<LocalGenreDataSource> {
-        LocalGenreDataSource(
-            genreDao = get<GenreDao>()
-        )
-    }
-    single<LocalRecentSearchDataSource> {
-        LocalSearchDataSourceImpl(
-            recentSearchDao = get<RecentSearchDao>()
-        )
-    }
-
-    single<LocalRecentlyViewedDataSource> {
-        LocalRecentlyViewedDataSourceImpl(
-            recentlyViewedDao = get<RecentlyViewedDao>(),
-        )
-    }
-
-    single<LocalTvShowDataSource> {
-        LocalTvShowDataSourceImpl(
-            tvShowDao = get<TvShowDao>()
-        )
-    }
-
-    single<LocalActorDataSource> {
-        LocalActorDataSourceImpl(
-            actorDao = get<ActorDao>()
-        )
-    }
-
+    singleOf(::LocalMovieDataSourceImpl) { bind<LocalMovieDataSource>() }
+    singleOf(::LocalGenreDataSource)
+    singleOf(::LocalSearchDataSourceImpl) { bind<LocalRecentSearchDataSource>() }
+    singleOf(::LocalRecentlyViewedDataSourceImpl) { bind<LocalRecentlyViewedDataSource>() }
+    singleOf(::LocalTvShowDataSourceImpl) { bind<LocalTvShowDataSource>() }
+    singleOf(::LocalActorDataSourceImpl) { bind<LocalActorDataSource>() }
 }

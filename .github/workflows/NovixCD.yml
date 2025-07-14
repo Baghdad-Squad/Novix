@@ -5,6 +5,9 @@ on:
     branches:
       - develop
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -22,23 +25,25 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Decode and recreate google-services.json
+      - name: Bump versionName only (no commit yet)
+        id: versioning
         run: |
-          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > app/google-services.json
+          VERSION_FILE="app/version.properties"
 
-      - name: Create secrets.properties file
-        run: |
-          echo "API_KEY=\"${{ secrets.API_KEY }}\"" > app/secrets.properties
+          # Read current version name
+          VERSION_NAME=$(grep VERSION_NAME $VERSION_FILE | cut -d'=' -f2)
 
-      - name: Decode keystore
-        run: |
-          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > app/keystore.jks
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NAME"
+          PATCH=$((PATCH + 1))
 
-      - name: Set environment variables for signing
-        run: |
-          echo "RELEASE_KEYSTORE_PASSWORD=${{ secrets.RELEASE_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
-          echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
-          echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
+          NEW_VERSION_NAME="${MAJOR}.${MINOR}.${PATCH}"
+
+          echo "Bumping versionName: $VERSION_NAME → $NEW_VERSION_NAME"
+
+          # Update version.properties (in-place)
+          sed -i "s/VERSION_NAME=$VERSION_NAME/VERSION_NAME=$NEW_VERSION_NAME/" $VERSION_FILE
+
+          echo "versionName=$NEW_VERSION_NAME" >> $GITHUB_OUTPUT
 
       - name: Authenticate GitHub CLI
         run: |
@@ -48,9 +53,8 @@ jobs:
         id: release_notes
         run: |
           COMMIT_SHA="${{ github.sha }}"
-          echo "Looking for PR with merge commit: $COMMIT_SHA"
+          echo "🔍 Looking for PR with merge commit: $COMMIT_SHA"
 
-          # Fetch the latest merged PRs to 'develop' with merge commit info
           PR_JSON=$(gh pr list --base develop --state merged --json title,body,mergeCommit --jq \
             ".[] | select(.mergeCommit.oid == \"$COMMIT_SHA\")")
 
@@ -63,7 +67,6 @@ jobs:
           TITLE=$(echo "$PR_JSON" | jq -r '.title // "No title"')
           BODY=$(echo "$PR_JSON" | jq -r '.body // "No description"')
 
-          # Clean markdown content (images, videos, etc.)
           CLEAN_BODY=$(echo "$BODY" | \
             sed -E 's/!\[[^]]*\]\([^)]*\)//g' | \
             sed -E 's/<img[^>]*>//g' | \
@@ -99,3 +102,12 @@ jobs:
             --token "$FIREBASE_AUTH_TOKEN" \
             --groups "qa-team" \
             --release-notes-file release_notes.txt
+
+      - name: Commit and push versionName bump
+        if: success()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add app/version.properties
+          git commit -m "ci: bump version to ${{ steps.versioning.outputs.versionName }}"
+          git push

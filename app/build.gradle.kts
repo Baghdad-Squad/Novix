@@ -11,6 +11,11 @@ plugins {
     jacoco
 }
 
+val versionPropsFile = rootProject.file("app/version.properties")
+val versionProps = Properties().apply {
+    load(versionPropsFile.inputStream())
+}
+
 android {
     namespace = "com.baghdad.novix"
     compileSdk = 35
@@ -19,8 +24,8 @@ android {
         applicationId = "com.baghdad.novix"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionName = versionProps.getProperty("VERSION_NAME") ?: "1.0.0"
+        versionCode = versionProps.getProperty("VERSION_CODE")?.toIntOrNull() ?: 1
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

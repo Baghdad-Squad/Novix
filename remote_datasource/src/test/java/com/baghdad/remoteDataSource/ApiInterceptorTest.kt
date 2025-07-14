@@ -1,6 +1,7 @@
 package com.baghdad.remoteDataSource
 
-import com.baghdad.remoteDataSource.util.interceptor.ApiInterceptor
+import com.baghdad.remoteDataSource.interceptor.ApiInterceptor
+import com.baghdad.repository.language.LanguageProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respondOk
@@ -17,25 +18,34 @@ import org.junit.jupiter.api.Test
 class ApiInterceptorTest {
     @Test
     fun `ApiInterceptor should adds api_key parameter to requests`() = runTest {
-        val testApiKey = "test_key_123"
-        var apiKeyFound = false
+        val fakeApiKey = "TEST_KEY"
+        val fakeLanguage = "ar"
 
-        val mockEngine = MockEngine { request ->
-            val url = request.url.toString()
-            apiKeyFound = url.contains("api_key=$testApiKey")
-            respondOk("{}")
+        val mockLanguageProvider = object : LanguageProvider {
+            override fun getCurrentLanguage(): String = fakeLanguage
         }
 
-        val client = HttpClient(mockEngine) {
+        var capturedUrl: String? = null
+
+        val client = HttpClient(MockEngine) {
             install(ContentNegotiation) {
-                json(Json { ignoreUnknownKeys = true })
+                json(Json)
             }
             install(ApiInterceptor) {
-                apiKey = testApiKey
+                apiKey = fakeApiKey
+                languageProvider = mockLanguageProvider
+            }
+            engine {
+                addHandler { request ->
+                    capturedUrl = request.url.toString()
+                    respondOk()
+                }
             }
         }
 
-        client.get("https://example.com/test")
-        assertTrue(apiKeyFound, "api_key parameter should be present in the request URL")
+        client.get("https://fake.api.com/test")
+
+        assertTrue(capturedUrl!!.contains("api_key=$fakeApiKey"))
+        assertTrue(capturedUrl.contains("language=$fakeLanguage"))
     }
 }

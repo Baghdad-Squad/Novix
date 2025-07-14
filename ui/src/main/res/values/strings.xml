@@ -12,5 +12,18 @@
     <string name="tab_actors">Actors</string>
     <string name="no_search_result_picture">no search result picture</string>
     <string name="no_search_result_please_try_with_another_keyword">No search result, please try with another keyword!</string>
+    <string name="birthday">Birthday</string>
+    <string name="biography">Biography</string>
+    <string name="read_less">Read less</string>
+    <string name="read_more">" Read more"</string>
+    <string name="expand">EXPAND</string>
     <string name="gallery">Gallery</string>
+    <string name="snackbar_network_error">No internet connection</string>
+    <string name="snackbar_database_error">Something went wrong with the database</string>
+    <string name="snackbar_unauthorized_error">You are not authorized</string>
+    <string name="snackbar_unknown_error">An unknown error occurred</string>
+    <string name="snackbar_removed_success">Item removed successfully</string>
+    <string name="snackbar_saved_success">Item saved successfully</string>
+    <string name="empty_string"> </string>
+    <string name="birth_place">birth Place</string>
 </resources>

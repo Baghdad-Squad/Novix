@@ -13,7 +13,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NovixTheme {
-                SearchScreen()
+                SearchScreen(
+                    navigateToActorDetails = { /* TODO: Implement navigation */ },
+                    navigateToMovieDetails = { /* TODO: Implement navigation */ },
+                    navigateToTvShowDetails = { /* TODO: Implement navigation */ },
+                    navigateToRecentlyViewedDetails = { /* TODO: Implement navigation */ }
+                )
             }
         }
     }
