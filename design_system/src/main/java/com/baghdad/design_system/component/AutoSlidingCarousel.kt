@@ -67,7 +67,7 @@ fun AutoSlidingImageCarousel(
                         drawRect(
                             brush = Brush.linearGradient(
                                 colors = listOf(
-                                    Color(0xB3000000),
+                                    Color(0x4D000000),
                                     Color(0x14000000)
                                 ),
                             )
