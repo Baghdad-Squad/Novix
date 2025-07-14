@@ -94,9 +94,9 @@ fun SearchContent(
                     movies = uiState.movies,
                     tvShows = uiState.tvShows,
                     actors = uiState.actors,
-                    onMovieClick = { listener.onRecentlyViewedClick(it) },
-                    onTvShowClick = { listener.onRecentlyViewedClick(it) },
-                    onActorClick = { listener.onRecentlyViewedClick(it) },
+                    onMovieClick = { listener.onMovieItemClick(it) },
+                    onTvShowClick = { listener.onTvShowItemClick(it) },
+                    onActorClick = { listener.onActorItemClick(it) },
                     isLoading = uiState.isLoading
                 )
             } else RecentlyViewsWithSearch(uiState, listener)
