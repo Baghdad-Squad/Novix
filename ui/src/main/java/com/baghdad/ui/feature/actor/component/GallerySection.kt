@@ -12,11 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.SectionHeader
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.component.SafeImage
 import com.baghdad.ui.R
+import com.baghdad.ui.feature.gallery.GalleryScreen
 
 @Composable
 fun GallerySection(
@@ -50,3 +52,4 @@ fun GallerySection(
         }
     }
 }
+
