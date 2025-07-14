@@ -1,9 +1,9 @@
-package com.baghdad.local_datasource.roomDB.dao
+package com.baghdad.local_datasource.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.baghdad.local_datasource.roomDB.entity.Genre
+import com.baghdad.local_datasource.database.entity.Genre
 
 @Dao
 interface GenreDao {

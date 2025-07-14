@@ -1,9 +1,9 @@
-package com.baghdad.local_datasource.roomDB.dao
+package com.baghdad.local_datasource.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.baghdad.local_datasource.roomDB.entity.TvShow
+import com.baghdad.local_datasource.database.entity.TvShow
 import kotlinx.coroutines.flow.Flow
 
 @Dao
