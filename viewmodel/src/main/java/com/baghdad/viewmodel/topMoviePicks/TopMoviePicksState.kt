@@ -12,6 +12,3 @@ data class TopMoviePicksState(
         val isSaved: Boolean = false
     )
 }
-
-
-
