@@ -1,14 +1,14 @@
-package com.baghdad.local_datasource.roomDB.entity
+package com.baghdad.local_datasource.database.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.baghdad.local_datasource.roomDB.entity.Genre.Companion.GERE_TABLE_NAME
+import com.baghdad.local_datasource.database.dto.Genre.Companion.GENRE_TABLE_NAME
 import com.baghdad.repository.model.GenreDto
 
-@Entity(tableName = GERE_TABLE_NAME)
+@Entity(tableName = GENRE_TABLE_NAME)
 data class Genre(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = ID)
     var id: Long = 0,
     @ColumnInfo(name = NAME)
@@ -17,7 +17,7 @@ data class Genre(
     val type: String
 ) {
     companion object {
-        const val GERE_TABLE_NAME = "Genre"
+        const val GENRE_TABLE_NAME = "Genre"
         const val ID = "id"
         const val NAME = "name"
         const val TYPE = "type"

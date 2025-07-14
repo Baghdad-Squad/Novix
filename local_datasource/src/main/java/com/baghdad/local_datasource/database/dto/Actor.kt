@@ -8,7 +8,7 @@ import com.baghdad.repository.model.ActorDto
 
 @Entity(tableName = ACTOR_TABLE_NAME)
 data class Actor(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = ID)
     val id: Long = 0L,
     @ColumnInfo(name = NAME)

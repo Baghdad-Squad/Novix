@@ -1,4 +1,4 @@
-package com.baghdad.local_datasource.roomDB.entity
+package com.baghdad.local_datasource.database.dto
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -6,8 +6,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.baghdad.local_datasource.roomDB.converter.Converters
-import com.baghdad.local_datasource.roomDB.entity.TvShow.Companion.TV_SHOW_TABLE_NAME
+import com.baghdad.local_datasource.Converters
+import com.baghdad.local_datasource.database.dto.TvShow.Companion.TV_SHOW_TABLE_NAME
 import com.baghdad.repository.model.TvShowDto
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

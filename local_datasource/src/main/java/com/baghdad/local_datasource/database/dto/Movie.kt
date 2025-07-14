@@ -1,10 +1,10 @@
-package com.baghdad.local_datasource.roomDB.entity
+package com.baghdad.local_datasource.database.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.baghdad.local_datasource.roomDB.converter.Converters
+import com.baghdad.local_datasource.Converters
 import com.baghdad.repository.model.MovieDto
 
 @Entity(tableName = "Movie")

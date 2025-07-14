@@ -1,9 +1,9 @@
-package com.baghdad.local_datasource.roomDB.entity
+package com.baghdad.local_datasource.database.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.baghdad.local_datasource.roomDB.entity.RecentlyViewed.Companion.RECENTLY_VIEWED_TABLE_NAME
+import com.baghdad.local_datasource.database.dto.RecentlyViewed.Companion.RECENTLY_VIEWED_TABLE_NAME
 import com.baghdad.repository.model.RecentlyViewedDto
 
 
