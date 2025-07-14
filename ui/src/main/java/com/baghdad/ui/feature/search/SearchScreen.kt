@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,8 +59,7 @@ fun SearchContent(
                 color = Theme.color.primary,
                 opacity = 0.08f,
                 blurRadius = 100.dp,
-                offsetX = (-210).dp,
-                offsetY = (-185).dp,
+                offset = Offset(-210f , -185f),
                 angle = 179.24f
             )
         .statusBarsPadding()

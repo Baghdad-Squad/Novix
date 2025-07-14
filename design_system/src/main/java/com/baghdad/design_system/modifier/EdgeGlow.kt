@@ -26,13 +26,11 @@ import com.baghdad.design_system.theme.Theme
 @Composable
 fun Modifier.customEdgeGlow(
     color: Color = Theme.color.primary,
-    width: Dp = 533.5.dp,
-    height: Dp = 416.4.dp,
+    size: Size = Size(533.5f , 416.4f),
     angle: Float = 179.24f,
     opacity: Float = 0.08f,
     blurRadius: Dp = 150.dp,
-    offsetX: Dp = (-210).dp,
-    offsetY: Dp = (-185).dp
+    offset: Offset = Offset(-210f , -185f)
 ) = composed {
     val infiniteTransition = rememberInfiniteTransition()
     val glowAlpha by infiniteTransition.animateFloat(
@@ -56,8 +54,8 @@ fun Modifier.customEdgeGlow(
                     brush = Brush.linearGradient(
                         0f to color.copy(alpha = 0f), 1f to color.copy(alpha = glowAlpha)
                     ),
-                    topLeft = Offset(offsetX.toPx(), offsetY.toPx()),
-                    size = Size(width.toPx(), height.toPx()),
+                    topLeft = Offset(offset.x.dp.toPx(), offset.y.dp.toPx()),
+                    size = Size(size.width.dp.toPx(), size.height.dp.toPx()),
                     blendMode = BlendMode.Screen
                 )
             }
