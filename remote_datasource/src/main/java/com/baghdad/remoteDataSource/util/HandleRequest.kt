@@ -44,6 +44,9 @@ suspend inline fun <reified T> handleRequest(
         response.status == HttpStatusCode.TooManyRequests -> {
             throw TooManyRequestsNetworkException()
         }
+        response.status == HttpStatusCode.Unauthorized -> {
+            throw UnknownNetworkException()
+        }
         response.status.value in 500..599 -> {
             throw ServerNetworkException()
         }
