@@ -1,9 +1,9 @@
-package com.baghdad.local_datasource.roomDB.entity
+package com.baghdad.local_datasource.database.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.baghdad.local_datasource.roomDB.entity.Actor.Companion.ACTOR_TABLE_NAME
+import com.baghdad.local_datasource.database.dto.Actor.Companion.ACTOR_TABLE_NAME
 import com.baghdad.repository.model.ActorDto
 
 @Entity(tableName = ACTOR_TABLE_NAME)
@@ -30,7 +30,7 @@ fun Actor.toDto(): ActorDto = ActorDto(
     imageUrl = this.profilePictureURL
 )
 
-fun ActorDto.toDto(): Actor = Actor(
+fun ActorDto.toEntity(): Actor = Actor(
     id = this.id,
     name = this.name,
     profilePictureURL = this.imageUrl
