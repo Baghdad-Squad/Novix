@@ -38,7 +38,5 @@
     <string name="apply">Apply</string>
     <string name="clear">Clear</string>
     <string name="text_input_field">text input field</string>
-    <string name="read_less">Read less</string>
-    <string name="read_more">" Read more"</string>
     <string name="expand">EXPAND</string>
 </resources>
