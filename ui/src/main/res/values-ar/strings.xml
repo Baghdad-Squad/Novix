@@ -23,6 +23,9 @@
     <string name="snackbar_removed_success">تمت الإزالة بنجاح</string>
     <string name="snackbar_saved_success">تم حفظ العنصر بنجاح</string>
     <string name="empty_string"> </string>
-    <string name="read_less">عرض أقل</string>
+    <string name="read_less">إخفاء</string>
     <string name="read_more">عرض المزيد</string>
+    <string name="birth_place">مكان الميلاد</string>
+    <string name="top_tv_shows_picks">أفضل المسلسلات المختارة</string>
+    <string name="top_movies_picks">أفضل الأفلام المختارة</string>
 </resources>
