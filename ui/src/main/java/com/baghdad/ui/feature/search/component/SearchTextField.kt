@@ -59,8 +59,7 @@ fun SearchTextField(
             AnimatedVisibility(searchTab == SearchTab.MOVIES || searchTab == SearchTab.TV_SHOWS || query.isBlank()) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
-                        .aspectRatio(1f)
+                        .size(50.dp)
                         .background(Theme.color.primary, shape = RoundedCornerShape(12.dp))
                         .noRippleClickable { onFilterIconClick() },
                     contentAlignment = Alignment.Center

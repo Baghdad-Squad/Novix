@@ -24,49 +24,21 @@ class GetRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `should return flow with limited to 10 sorted items when repository returns more than 10`() =
-        runTest {
-            val items = getRecentlyViewedList(15).shuffled()
-            val expected = items.sortedByDescending { it.viewedAt }.take(10)
-            coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(items)
+    fun `returns all items sorted by viewedAt when repository emits items`() = runTest {
+        val items = getRecentlyViewedList(15).shuffled()
+        val expected = items.sortedByDescending { it.viewedAt }
 
-            val result = getRecentlyViewedUseCase().toList()
-
-            assertThat(result).hasSize(1)
-            assertThat(result.first()).hasSize(10)
-            assertThat(result.first()).containsExactlyElementsIn(expected).inOrder()
-        }
-
-    @Test
-    fun `should return flow with all sorted items when repository returns less than 10`() =
-        runTest {
-            val items = getRecentlyViewedList(3).shuffled()
-            val expected = items.sortedByDescending { it.viewedAt }
-            coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(items)
+        coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(items)
 
         val result = getRecentlyViewedUseCase().toList()
 
         assertThat(result).hasSize(1)
-        assertThat(result.first()).hasSize(3)
-            assertThat(result.first()).containsExactlyElementsIn(expected).inOrder()
+        assertThat(result.first()).hasSize(15)
+        assertThat(result.first()).containsExactlyElementsIn(expected).inOrder()
     }
 
     @Test
-    fun `should return flow with exactly 10 sorted items when repository returns exactly 10`() =
-        runTest {
-            val items = getRecentlyViewedList(10).shuffled()
-            val expected = items.sortedByDescending { it.viewedAt }
-            coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(items)
-
-        val result = getRecentlyViewedUseCase().toList()
-
-        assertThat(result).hasSize(1)
-        assertThat(result.first()).hasSize(10)
-            assertThat(result.first()).containsExactlyElementsIn(expected).inOrder()
-    }
-
-    @Test
-    fun `should return flow with empty list when repository returns empty list`() = runTest {
+    fun `returns empty list when repository emits empty list`() = runTest {
         coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(emptyList())
 
         val result = getRecentlyViewedUseCase().toList()
@@ -76,11 +48,12 @@ class GetRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `should handle multiple flow emissions and sort+limit each one`() = runTest {
-        val firstEmission = getRecentlyViewedList(1).shuffled()
-        val secondEmission = getRecentlyViewedList(15).shuffled()
-        val expectedFirst = firstEmission.sortedByDescending { it.viewedAt }.take(10)
-        val expectedSecond = secondEmission.sortedByDescending { it.viewedAt }.take(10)
+    fun `applies sorting to each emission when repository emits multiple lists`() = runTest {
+        val firstEmission = getRecentlyViewedList(5).shuffled()
+        val secondEmission = getRecentlyViewedList(8).shuffled()
+
+        val expectedFirst = firstEmission.sortedByDescending { it.viewedAt }
+        val expectedSecond = secondEmission.sortedByDescending { it.viewedAt }
 
         coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(
             firstEmission,
@@ -95,8 +68,8 @@ class GetRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `should propagate exception when repository throws exception`() = runTest {
-        val exception = RuntimeException("Something went wrong")
+    fun `throws exception when repository throws`() = runTest {
+        val exception = RuntimeException()
         coEvery { recentlyViewedRepository.getAllRecentlyViewed() } throws exception
 
         val resultException = runCatching { getRecentlyViewedUseCase().toList() }.exceptionOrNull()

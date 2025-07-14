@@ -1,4 +1,4 @@
-package com.baghdad.remote_datasource.mapper
+package com.baghdad.remoteDataSource.mapper
 
 import com.baghdad.repository.model.GenreDto
 
@@ -8,8 +8,7 @@ internal fun mapGenreIdsToGenres(
 ): List<GenreDto> {
     if (genreIds.isEmpty() || availableGenres?.isEmpty() == true) return emptyList()
 
-    val genreMap = availableGenres?.associateBy { it.id.toInt() }
     return genreIds.mapNotNull { genreId ->
-        genreMap?.get(genreId)
+        availableGenres?.firstOrNull{it.id == genreId.toLong()}
     }
 }

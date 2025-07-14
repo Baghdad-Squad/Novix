@@ -11,7 +11,12 @@
     <string name="cancel_icon">ايقونة اغلاك</string>
     <string name="start_exploring">ابدأ الاستكشاف! ابحث عن أفلامك ومسلسلاتك وبرامجك المفضلة</string>
     <string name="search">البحث</string>
-    <string name="search_hint">ابحث عن فلم، مسلسل، ممثل</string>
+    <string name="search_hint">ابحث...</string>
     <string name="filter_icon">ايقونة الفلتر</string>
+    <string name="birthday">تاريخ الميلاد</string>
+    <string name="biography">السيرة الذاتية</string>
+    <string name="expand">توسيع</string>
     <string name="gallery">المعرض</string>
+    <string name="read_less">عرض أقل</string>
+    <string name="read_more">عرض المزيد</string>
 </resources>

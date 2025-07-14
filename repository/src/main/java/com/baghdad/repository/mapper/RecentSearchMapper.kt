@@ -1,6 +1,6 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.domain.model.search.RecentSearch
+import com.baghdad.entity.search.RecentSearch
 import com.baghdad.repository.model.RecentSearchDto
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime

@@ -1,4 +1,4 @@
-package com.baghdad.remote_datasource.entity
+package com.baghdad.remoteDataSource.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class GenreListResponse(
     @SerialName("genres")
-    val genres: List<GenreItem>
+    val genres: List<GenreItemDto>
 )
 
 @Serializable
-data class GenreItem(
+data class GenreItemDto(
     @SerialName("id")
     val id: Int,
     @SerialName("name")

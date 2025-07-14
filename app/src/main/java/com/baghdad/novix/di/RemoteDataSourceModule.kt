@@ -1,16 +1,20 @@
 package com.baghdad.novix.di
 
-import com.baghdad.local_datasource.LocalRecentlyViewedDataSourceImpl
 import com.baghdad.novix.BuildConfig
-import com.baghdad.remote_datasource.RemoteGenreDataSourceImpl
-import com.baghdad.remote_datasource.RemoteSearchDataSourceImpl
+import com.baghdad.remoteDataSource.interceptor.ApiInterceptor
+import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
+import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
+import com.baghdad.local_datasource.language.AppLanguageProvider
+import com.baghdad.repository.language.LanguageProvider
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -20,9 +24,18 @@ val remoteDataSourceModule = module {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
+            install(ApiInterceptor) {
+                apiKey = BuildConfig.API_KEY
+                languageProvider = get()
+            }
+            install(HttpTimeout){
+                requestTimeoutMillis = 20_000
+                connectTimeoutMillis = 20_000
+                socketTimeoutMillis = 20_000
+            }
         }
     }
-    
+
     single(named("BASE_URL")) {
         "https://api.themoviedb.org/3"
     }
@@ -34,16 +47,15 @@ val remoteDataSourceModule = module {
     single<RemoteSearchDataSource> {
         RemoteSearchDataSourceImpl(
             httpClient = get(),
-            apiKey = get(named("API_KEY")),
             baseUrl = get(named("BASE_URL"))
         )
     }
 
-    single< RemoteGenreDataSource> {
+    single<RemoteGenreDataSource> {
         RemoteGenreDataSourceImpl(
             httpClient = get(),
-            apiKey = get(named("API_KEY")),
             baseUrl = get(named("BASE_URL"))
         )
     }
+    single<LanguageProvider> { AppLanguageProvider() }
 }

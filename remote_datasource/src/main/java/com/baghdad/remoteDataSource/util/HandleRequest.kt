@@ -1,4 +1,4 @@
-package com.baghdad.remote_datasource.util
+package com.baghdad.remoteDataSource.util
 import com.baghdad.repository.exception.NetworkException
 import com.baghdad.repository.exception.NoInternetNetworkException
 import com.baghdad.repository.exception.RequestTimeoutNetworkException
@@ -21,11 +21,10 @@ suspend inline fun <reified T> handleRequest(
     client: HttpClient,
     url: String,
     params: Map<String, String> = emptyMap(),
-    apiKey: String? = null,
 ): T {
     val response = try {
         client.get(url) {
-            configureRequest(params, apiKey)
+            configureRequest(params)
         }
     }catch (e: Throwable) {
         throw mapToNetworkException(e)
@@ -45,6 +44,9 @@ suspend inline fun <reified T> handleRequest(
         response.status == HttpStatusCode.TooManyRequests -> {
             throw TooManyRequestsNetworkException()
         }
+        response.status == HttpStatusCode.Unauthorized -> {
+            throw UnknownNetworkException()
+        }
         response.status.value in 500..599 -> {
             throw ServerNetworkException()
         }
@@ -57,9 +59,7 @@ suspend inline fun <reified T> handleRequest(
 
 fun HttpRequestBuilder.configureRequest(
     params: Map<String, String>,
-    apiKey: String?,
 ) {
-    apiKey?.let { parameter("api_key", it) }
     params.forEach { (key, value) ->
         parameter(key, value)
     }

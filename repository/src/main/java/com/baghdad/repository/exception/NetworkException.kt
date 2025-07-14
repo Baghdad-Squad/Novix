@@ -8,4 +8,4 @@ class RequestTimeoutNetworkException : NetworkException()
 class TooManyRequestsNetworkException : NetworkException()
 class ServerNetworkException : NetworkException()
 class UnknownNetworkException : NetworkException()
-
+class UnauthorizedNetworkException : NetworkException()
