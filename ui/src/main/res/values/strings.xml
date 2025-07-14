@@ -18,5 +18,12 @@
     <string name="read_more">" Read more"</string>
     <string name="expand">EXPAND</string>
     <string name="gallery">Gallery</string>
+    <string name="snackbar_network_error">No internet connection</string>
+    <string name="snackbar_database_error">Something went wrong with the database</string>
+    <string name="snackbar_unauthorized_error">You are not authorized</string>
+    <string name="snackbar_unknown_error">An unknown error occurred</string>
+    <string name="snackbar_removed_success">Item removed successfully</string>
+    <string name="snackbar_saved_success">Item saved successfully</string>
+    <string name="empty_string"> </string>
     <string name="birth_place">birth Place</string>
 </resources>

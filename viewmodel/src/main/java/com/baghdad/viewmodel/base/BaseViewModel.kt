@@ -2,7 +2,11 @@ package com.baghdad.viewmodel.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.baghdad.viewmodel.errorStates.BaseErrorState
+import com.baghdad.domain.exception.LocalDataBaseException
+import com.baghdad.domain.exception.NetworkException
+import com.baghdad.domain.exception.UnAuthorizedException
+import com.baghdad.domain.exception.UnknownException
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +49,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
     }
 
     fun showSnackBar(
-        message: String,
+        message: BaseSnackBarMessage,
         isSuccess: Boolean,
         durationMillis: Long = 3000L,
     ) {
@@ -59,8 +63,8 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
             }
             delay(durationMillis)
             _snackBarState.update {
-                SnackBarState(
-                    isVisible = false,
+                it.copy(
+                    isVisible = false
                 )
             }
         }
@@ -69,7 +73,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
     protected fun <T> tryToExecute(
         callee: suspend () -> T,
         onSuccess: ((T) -> Unit)? = null,
-        onError: (BaseErrorState) -> Unit = ::handleError,
+        onError: (Throwable) -> Unit = ::handleError,
         dispatcher: CoroutineDispatcher = Dispatchers.IO,
         onStart: suspend () -> Unit = {},
         onFinally: () -> Unit = {},
@@ -89,7 +93,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
     private suspend fun <T> runWithErrorCheck(
         callee: suspend () -> T,
         onSuccess: ((T) -> Unit)?,
-        onError: (BaseErrorState) -> Unit,
+        onError: (Throwable) -> Unit,
         onStart: suspend () -> Unit,
         onFinally: () -> Unit,
     ) {
@@ -97,9 +101,9 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
         try {
             val result = callee()
             onSuccess?.invoke(result)
-        } catch (exception: Exception) {
-            val errorState = mapExceptionToErrorState(exception)
-            onError(errorState)
+        } catch (throwable: Throwable) {
+            handleError(throwable)
+            onError(throwable)
         } finally {
             onFinally()
         }
@@ -108,38 +112,37 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
     protected fun <T> tryToCollect(
         flowProvider: suspend () -> Flow<T>,
         onNewValue: suspend (T) -> Unit,
-        onError: (BaseErrorState) -> Unit = ::handleError,
+        onError: (Throwable) -> Unit = ::handleError,
         dispatcher: CoroutineDispatcher = Dispatchers.IO
-    ) {
+    ): Job {
         val handler = CoroutineExceptionHandler { _, throwable ->
-            val errorState = mapThrowableToErrorState(throwable)
-            onError(errorState)
+            mapThrowableToErrorMessage(throwable)
+            onError(throwable)
         }
-        viewModelScope.launch(dispatcher + handler) {
+        return viewModelScope.launch(dispatcher + handler) {
             flowProvider().distinctUntilChanged().collectLatest {
                 onNewValue(it)
             }
         }
     }
 
-
-    private fun mapExceptionToErrorState(exception: Exception): BaseErrorState {
-        return when (exception) {
-            // TODO: Replace these exceptions with most common domain exceptions
-            // is NoInternetDomainException -> BaseErrorState.NoInternet
-            // is AuthorizationException -> BaseErrorState.UnAuthorized
-            // is ServerException -> BaseErrorState.ServerError
-            else -> mapThrowableToErrorState(exception)
+    private fun handleError(throwable: Throwable) {
+        val errorMessage = when (throwable) {
+            is LocalDataBaseException -> BaseSnackBarMessage.DataBaseError
+            is UnknownException -> BaseSnackBarMessage.UnknownError
+            is UnAuthorizedException -> BaseSnackBarMessage.UnAuthorizedError
+            is NetworkException -> BaseSnackBarMessage.NetworkError
+            else -> mapThrowableToErrorMessage(throwable)
         }
+        showSnackBar(message = errorMessage, isSuccess = false)
     }
 
-    private fun createExceptionHandler(onError: (BaseErrorState) -> Unit): CoroutineExceptionHandler {
+    private fun createExceptionHandler(onError: (Throwable) -> Unit): CoroutineExceptionHandler {
         return CoroutineExceptionHandler { _, throwable ->
-            val errorState = mapThrowableToErrorState(throwable)
-            onError(errorState)
+            mapThrowableToErrorMessage(throwable)
+            onError(throwable)
         }
     }
 
-    protected abstract fun handleError(baseErrorState: BaseErrorState)
-    protected abstract fun mapThrowableToErrorState(throwable: Throwable): BaseErrorState
+    protected abstract fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage
 }
