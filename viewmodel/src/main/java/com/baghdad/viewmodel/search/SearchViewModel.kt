@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.search
 
-import com.baghdad.domain.model.search.RecentSearch
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -12,6 +11,7 @@ import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchUseCase
 import com.baghdad.entity.media.Genre
+import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
