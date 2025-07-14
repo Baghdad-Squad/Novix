@@ -32,13 +32,13 @@ fun IconButton(
     tintIcon: Color = Theme.color.title,
     borderStroke: BorderStroke? = BorderStroke(width = 1.dp, Theme.color.stroke),
     shape : Shape = RoundedCornerShape(12.dp),
-    size: Dp = 40.dp,
+    size: Pair<Dp,Dp> = Pair(48.dp, 48.dp),
     onClick: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
             .clip(shape)
-            .size(size)
+            .size(width = size.first, height = size.second)
             .then(
                 if (borderStroke == null) Modifier else Modifier.border(borderStroke, shape = shape)
             )
