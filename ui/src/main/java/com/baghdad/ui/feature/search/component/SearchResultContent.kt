@@ -22,6 +22,7 @@ import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
+import com.baghdad.viewmodel.search.MediaType
 
 import com.baghdad.viewmodel.search.SearchScreenState
 import com.baghdad.viewmodel.search.SearchTab
@@ -35,8 +36,8 @@ fun SearchResultContent(
     movies: List<SearchScreenState.MovieUiState>,
     tvShows: List<SearchScreenState.TvShowUiState>,
     actors: List<SearchScreenState.ActorUiState>,
-    onMovieClick: (Long) -> Unit,
-    onTvShowClick: (Long) -> Unit,
+    onMovieClick: (Long, String, MediaType) -> Unit,
+    onTvShowClick: (Long, String, MediaType) -> Unit,
     onActorClick: (Long) -> Unit,
     isLoading: Boolean ,
     modifier: Modifier = Modifier,

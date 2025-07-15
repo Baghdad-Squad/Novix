@@ -1,8 +1,10 @@
 package com.baghdad.viewmodel.search
 
 import com.baghdad.domain.model.search.RecentSearch
+import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
@@ -14,6 +16,10 @@ import com.baghdad.viewmodel.errorStates.BaseErrorState
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class SearchViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -21,7 +27,8 @@ class SearchViewModel(
     private val deleteAllRecentlyViewedUseCase: DeleteAllRecentlyViewedUseCase,
     private val deleteAllRecentSearchesUseCase: DeleteAllRecentSearchesUseCase,
     private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase,
-    private val searchUseCase: SearchUseCase
+    private val searchUseCase: SearchUseCase,
+    private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
 
@@ -367,8 +374,33 @@ class SearchViewModel(
         updateState { it.copy(selectedSearchTab = selectedTab) }
     }
 
-    override fun onRecentlyViewedClick(id: Long) {
-//        TODO("Not yet implemented")
+    @OptIn(ExperimentalTime::class)
+    override fun onRecentlyViewedClick(id: Long, imageUrl: String, contentType: MediaType) {
+        tryToExecute(
+            callee = {
+                val recentlyViewed = RecentlyViewed(
+                    contentId = id,
+                    contentImageUrl = imageUrl,
+                    contentType = RecentlyViewed.ContentType.valueOf(contentType.name),
+                    viewedAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                )
+                addRecentlyViewedUseCase(
+                    contentId = recentlyViewed.contentId,
+                    contentImageUrl = recentlyViewed.contentImageUrl,
+                    contentType = recentlyViewed.contentType
+                )
+                recentlyViewed.toRecentlyViewedUI()
+            },
+            onSuccess = { recentlyViewed ->
+                updateState {
+                    it.copy(
+                        recentViewed = it.recentViewed.plus(recentlyViewed).distinctBy { it.id }
+                            .take(10)
+                    )
+                }
+            },
+            onError = {}
+        )
     }
 
     private fun onLoading() {

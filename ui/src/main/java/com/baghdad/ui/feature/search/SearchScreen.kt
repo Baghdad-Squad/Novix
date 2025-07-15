@@ -28,6 +28,7 @@ import com.baghdad.ui.feature.search.component.SearchResultContent
 import com.baghdad.ui.feature.search.component.SearchTextField
 import com.baghdad.ui.feature.search.component.filter.FilterBottomSheet
 import com.baghdad.ui.feature.search.component.recentSearchSection
+import com.baghdad.viewmodel.search.MediaType
 import com.baghdad.viewmodel.search.SearchInteractionListener
 import com.baghdad.viewmodel.search.SearchScreenState
 import com.baghdad.viewmodel.search.SearchTab
@@ -71,9 +72,17 @@ fun SearchContent(
                     movies = uiState.movies,
                     tvShows = uiState.tvShows,
                     actors = uiState.actors,
-                    onMovieClick = { listener.onRecentlyViewedClick(it) },
-                    onTvShowClick = { listener.onRecentlyViewedClick(it) },
-                    onActorClick = { listener.onRecentlyViewedClick(it) },
+                    onMovieClick = { id, imageUrl, type ->
+                        listener.onRecentlyViewedClick(
+                            id = id, imageUrl = imageUrl, contentType = type
+                        )
+                    },
+                    onTvShowClick = { id, imageUrl, type ->
+                        listener.onRecentlyViewedClick(
+                            id = id, imageUrl = imageUrl, contentType = type
+                        )
+                    },
+                    onActorClick = { },
                     isLoading = uiState.isLoading
                 )
             } else RecentlyViewsWithSearch(uiState, listener)
@@ -87,8 +96,7 @@ fun SearchContent(
             onApplyClick = { listener.onApplyClick() },
             onRatingChanged = { listener.onRatingChanged(it) },
             onYearRangeSelected = { listener.onYearRangeSelected(it) },
-            onGenreSelected = { listener.onGenreSelected(it) }
-        )
+            onGenreSelected = { listener.onGenreSelected(it) })
     }
 
 }
@@ -125,7 +133,7 @@ private fun RecentlyViewsWithSearch(
                         recentViewed = uiState.recentViewed,
                         onClearRecentlyViewedClick = { listener.onClearRecentSearchClick() },
                         onSavedClick = { listener.onSavedRecentlyViewedClick(it) },
-                        onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) },
+                        onRecentlyViewedClick = { },
                         modifier = Modifier.padding(top = 12.dp)
                     )
                 }
@@ -139,8 +147,7 @@ private fun RecentlyViewsWithSearch(
                     recentSearch = uiState.recentSearch,
                     onClearRecentSearchClick = { listener.onClearRecentSearchClick() },
                     onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) },
-                    onRecentSearchClicked = { listener.onRecentSearchItemClick(it) }
-                )
+                    onRecentSearchClicked = { listener.onRecentSearchItemClick(it) })
         }
     }
 }
@@ -166,7 +173,11 @@ private fun SearchScreenPreview() {
                 override fun onBottomSheetCloseClick() {}
                 override fun onBottomSheetClearClick() {}
                 override fun onApplyClick() {}
-                override fun onRecentlyViewedClick(item: Long) {}
+                override fun onRecentlyViewedClick(
+                    id: Long, imageUrl: String, contentType: MediaType
+                ) {
+                }
+
                 override fun onSavedRecentlyViewedClick(item: Long) {}
                 override fun onSelectedSearchTabChanged(selectedTab: SearchTab) {}
             })

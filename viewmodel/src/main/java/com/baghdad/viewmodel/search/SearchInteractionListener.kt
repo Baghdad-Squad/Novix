@@ -17,5 +17,5 @@ interface SearchInteractionListener {
     fun onClearRecentlyViewedClick()
     fun onSavedRecentlyViewedClick(id: Long)
     fun onSelectedSearchTabChanged(selectedTab: SearchTab)
-    fun onRecentlyViewedClick(id: Long)
+    fun onRecentlyViewedClick(id: Long, imageUrl: String, contentType: MediaType)
 }

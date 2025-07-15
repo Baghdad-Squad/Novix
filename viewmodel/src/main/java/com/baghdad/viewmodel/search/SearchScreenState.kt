@@ -36,13 +36,19 @@ data class SearchScreenState(
         val id: Long = 0,
         val posterPictureURL: String = "",
         val isSaved: Boolean = false
-    )
+    ) {
+        val type: MediaType
+            get() = MediaType.MOVIE
+    }
 
     data class TvShowUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
-        val isSaved: Boolean = false
-    )
+        val isSaved: Boolean = false,
+    ) {
+        val type: MediaType
+            get() = MediaType.TV_SHOW
+    }
 
     data class ActorUiState(
         val id: Long = 0,
@@ -80,4 +86,9 @@ enum class SearchTab {
     MOVIES,
     TV_SHOWS,
     ACTORS,
+}
+
+enum class MediaType {
+    MOVIE,
+    TV_SHOW
 }
