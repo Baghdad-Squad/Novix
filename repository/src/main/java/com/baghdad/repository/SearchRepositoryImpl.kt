@@ -4,6 +4,7 @@ import com.baghdad.domain.model.search.RecentSearch
 import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.repository.datasource.local.LocalActorDataSource
+import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.datasource.local.LocalTvShowDataSource
@@ -24,43 +25,62 @@ class SearchRepositoryImpl(
     private val localRecentSearchDataSource: LocalRecentSearchDataSource,
     private val localActorDataSource: LocalActorDataSource,
     private val localMovieDataSource: LocalMovieDataSource,
-    private val localTvShowDataSource: LocalTvShowDataSource
+    private val localTvShowDataSource: LocalTvShowDataSource,
+    private val localGenreDataSource: LocalGenreDataSource
 ) : SearchRepository {
-    override suspend fun searchByName(query: String): SearchResult {
 
+    override suspend fun searchByName(query: String): SearchResult {
         return executeSafely {
             if (isUserSearchThisTermWithinHour(query)) {
-                SearchResultDto(
-                    actors = localActorDataSource.searchActorsByName(query),
-                    movies = localMovieDataSource.searchMoviesByTitle(query),
-                    tvShows = localTvShowDataSource.searchTvShowsByTitle(query)
-                ).toEntity()
+                getLocalSearchResult(query)
             } else {
-
-                val movieGenres =
-                    remoteGenreDataSource.getMovieGenre(language = Locale.getDefault().language)
-                val tvShowsGenres =
-                    remoteGenreDataSource.getTvShowGenre(language = Locale.getDefault().language)
+                updateGenreCache()
+                val defaultLanguage = Locale.getDefault().language
                 val searchResultDto = searchRemoteDataSource.searchMultiMedia(
-                    query = query, pageNumber = 1, movieGenres, tvShowsGenres
+                    query = query,
+                    pageNumber = 1,
+                    movieGenres = localGenreDataSource.getMovieGenre(defaultLanguage),
+                    tvGenres = localGenreDataSource.getTvShowGenre(defaultLanguage)
                 )
-
-                localRecentSearchDataSource.addRecentSearchQuery(query)
-                searchResultDto.actors.forEach {
-                    localActorDataSource.addActor(it.name, it.imageUrl)
-                }
-                searchResultDto.movies.forEach {
-                    localMovieDataSource.addMovie(it)
-                }
-                searchResultDto.tvShows.forEach {
-                    localTvShowDataSource.addTvShow(it)
-                }
+                cacheSearchResult(query, searchResultDto)
                 searchResultDto.toEntity()
             }
         }
-
-
     }
+
+    private suspend fun getLocalSearchResult(query: String): SearchResult {
+        return SearchResultDto(
+            actors = localActorDataSource.searchActorsByName(query),
+            movies = localMovieDataSource.searchMoviesByTitle(query),
+            tvShows = localTvShowDataSource.searchTvShowsByTitle(query)
+        ).toEntity()
+    }
+
+    private suspend fun updateGenreCache() {
+        val lang = Locale.getDefault().language
+
+        val movieGenres = remoteGenreDataSource.getMovieGenre(lang)
+        val tvGenres = remoteGenreDataSource.getTvShowGenre(lang)
+
+        movieGenres.forEach { localGenreDataSource.addGenre(it) }
+        tvGenres.forEach { localGenreDataSource.addGenre(it) }
+    }
+
+    private suspend fun cacheSearchResult(query: String, dto: SearchResultDto) {
+        localRecentSearchDataSource.addRecentSearchQuery(query)
+
+        dto.actors.forEach {
+            localActorDataSource.addActor(it.name, it.imageUrl)
+        }
+        dto.movies.forEach {
+            localMovieDataSource.addMovie(it)
+        }
+        dto.tvShows.forEach {
+            localTvShowDataSource.addTvShow(it)
+        }
+    }
+
+
 
     override fun getRecentSearches(): Flow<List<RecentSearch>> {
         return getFlowSafely {
