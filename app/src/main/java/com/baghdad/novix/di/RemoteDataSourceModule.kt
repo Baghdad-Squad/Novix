@@ -57,5 +57,13 @@ val remoteDataSourceModule = module {
             baseUrl = get(named("BASE_URL"))
         )
     }
+
+    single<RemoteGenreDataSource>{
+        RemoteGenreDataSourceImpl(
+            httpClient = get(),
+            baseUrl = get(named("BASE_URL"))
+        )
+    }
+
     single<LanguageProvider> { AppLanguageProvider() }
 }
