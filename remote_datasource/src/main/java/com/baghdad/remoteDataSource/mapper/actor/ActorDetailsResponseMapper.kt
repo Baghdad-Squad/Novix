@@ -9,10 +9,10 @@ fun ActorDetailsResponse.toDto(): ActorDto {
         name = this.name.orEmpty(),
         imageUrl = this.profilePath.orEmpty(),
         biography = this.biography.orEmpty(),
-        birthdayDate = this.birthday.orEmpty(),
-        deathDate = this.deathday.orEmpty(),
+        birthdayDate = this.birthday ?: "0001-01-01",
+        deathDate = this.deathday,
         placeOfBirth = this.placeOfBirth.orEmpty(),
-        headerPictures = listOf(this.homepage.toString()),
+        headerPictures = emptyList(),
         department = this.knownForDepartment.orEmpty()
     )
 }

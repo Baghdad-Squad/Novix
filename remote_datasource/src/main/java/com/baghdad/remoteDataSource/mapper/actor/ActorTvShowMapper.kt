@@ -11,9 +11,9 @@ fun ActorTvShowDto.toDto(
         genres = emptyList(),
         imdbRating = this.voteAverage ?: 0.0,
         userRating = null,
-        releaseDate = this.firstAirDate.orEmpty(),
+        releaseDate = this.firstAirDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
         overview = this.overview.orEmpty(),
-        posterPictureURL = this.posterPath.orEmpty(),
+        posterPictureURL = "https://image.tmdb.org/t/p/w500" + this.posterPath,
         numberOfSeasons = 0
     )
 }

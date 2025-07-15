@@ -7,7 +7,7 @@ fun ActorImagesResponse.toDto(): ActorImagesDto {
     return ActorImagesDto(
         actorId = this.id?.toLong() ?: 0L,
         images = this.profiles
-            ?.mapNotNull { it.filePath }
+            ?.map { "https://image.tmdb.org/t/p/w500" + it.filePath }
             ?: emptyList()
     )
 }
