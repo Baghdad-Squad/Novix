@@ -30,7 +30,7 @@ class RemoteMovieDataSourceImpl(
         ).toDto()
     }
 
-    override suspend fun getMovieCredits(movieId: Long): List<CastMemberDto> {
+    override suspend fun getMovieCastMembers(movieId: Long): List<CastMemberDto> {
         val endpoint = MOVIE_CREDITS_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<CreditsResponse>(
             client = httpClient,

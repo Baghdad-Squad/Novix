@@ -36,9 +36,9 @@ class MovieRepositoryImpl(
         }
     }
 
-    override suspend fun getMovieCredits(movieId: Long): List<CastMember> {
+    override suspend fun getMovieCastMembers(movieId: Long): List<CastMember> {
         return executeSafely {
-            remoteMovieDataSource.getMovieCredits(movieId).map {
+            remoteMovieDataSource.getMovieCastMembers(movieId).map {
                 it.toEntity()
             }
         }
