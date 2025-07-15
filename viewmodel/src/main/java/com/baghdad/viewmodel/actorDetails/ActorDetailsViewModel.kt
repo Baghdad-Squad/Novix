@@ -11,6 +11,7 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class ActorDetailsViewModel(
+    actorId: Long,
     private val getActorInfoUseCase: GetActorInfoUseCase,
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
@@ -18,8 +19,6 @@ class ActorDetailsViewModel(
 ) :
     BaseViewModel<ActorDetailsScreenState, ActorDetailsScreenEffect>(ActorDetailsScreenState()),
     ActorDetailsInteractionListener {
-
-    private val actorId: Long = 1 /*TODO*/
 
     init {
         getActorInfo(actorId = actorId)
@@ -106,7 +105,7 @@ class ActorDetailsViewModel(
 
 
     override fun onBackIconClick() {
-//        TODO("Not yet implemented")
+        sendEffect(ActorDetailsScreenEffect.NavigateBack)
     }
 
     override fun onReadMoreBiographyClick() {
@@ -114,23 +113,23 @@ class ActorDetailsViewModel(
     }
 
     override fun onViewAllGalleryClick() {
-//        TODO("Not yet implemented")
+        sendEffect(ActorDetailsScreenEffect.NavigateToActorGallery)
     }
 
     override fun onViewAllTopMoviesPicksClick() {
-//        TODO("Not yet implemented")
+        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopMoviePicks)
     }
 
     override fun onViewAllTopTvShowsClick() {
-//        TODO("Not yet implemented")
+        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks)
     }
 
     override fun onMovieCardClick(movieId: Long) {
-//        TODO("Not yet implemented")
+        sendEffect(ActorDetailsScreenEffect.NavigateToMovieDetails(movieId))
     }
 
     override fun onTvShowCardClick(tvShowId: Long) {
-//        TODO("Not yet implemented")
+        sendEffect(ActorDetailsScreenEffect.NavigateToTvShowDetails(tvShowId))
     }
 
     override fun onSaveMovieClick(movieId: Long) {
