@@ -32,6 +32,7 @@ fun ActorBiographySection(
             modifier = modifier,
             text = biography,
             isExpanded = isExpanded,
+            readMoreMaxLines = 4,
             onExpandedChange = onExpandedChange
         )
     }

@@ -16,7 +16,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.preview.NovixPreviews
@@ -30,6 +29,7 @@ fun ExpandableText(
     text: String,
     isExpanded: Boolean,
     modifier: Modifier = Modifier,
+    readMoreMaxLines: Int,
     onExpandedChange: (Boolean) -> Unit,
 ) {
     AnimatedContent(
@@ -45,13 +45,16 @@ fun ExpandableText(
             expanded = expanded,
             onExpandedChange = onExpandedChange,
             style = Theme.typography.body.small,
-            textAlign = TextAlign.Justify,
             color = Theme.color.body,
 
             readMoreText = stringResource(R.string.read_more),
             readMoreColor = Theme.color.primary,
             readMoreStyle = Theme.typography.label.medium.toSpanStyle(),
-            readMoreMaxLines = 4,
+            readMoreMaxLines = readMoreMaxLines,
+
+            readLessText = stringResource(R.string.read_less),
+            readLessColor = Theme.color.primary,
+            readLessStyle = Theme.typography.label.medium.toSpanStyle(),
 
             toggleArea = ToggleArea.All,
             modifier = modifier
@@ -74,7 +77,8 @@ private fun ReadMoreTextComposePreview() {
             ExpandableText(
                 text = "It is a 1994 American drama film, considered one of the greatest films in cinematic history. It revolves around Andy Dufresne, a banker wrongfully convicted of the murder of his wife and her lover, and imprisoned in Shawshank Red State Prison. There, he forms a friendship with another inmate named Red and embarks on a long journey of pain, hope, and planning for freedom.",
                 isExpanded = expanded,
-                onExpandedChange = { expanded = it }
+                onExpandedChange = { expanded = it },
+                readMoreMaxLines = 4,
             )
         }
     }

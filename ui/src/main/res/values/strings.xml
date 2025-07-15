@@ -31,4 +31,6 @@
     <string name="overview">Overview</string>
     <string name="play_trailer">Play trailer</string>
     <string name="card_movie_image">card movie image</string>
+    <string name="top_tv_shows_picks">Top tv shows picks</string>
+    <string name="top_movies_picks">Top movies picks</string>
 </resources>
