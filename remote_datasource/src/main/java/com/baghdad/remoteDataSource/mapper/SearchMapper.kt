@@ -20,8 +20,8 @@ internal fun SearchResponse.toDto(
                     name = item.tvShowName ?: "Unknown",
                     imageUrl = ("https://image.tmdb.org/t/p/w500" + item.profilePath) ?: "",
                     biography = "",
-                    birthdayDate = "",
-                    deathDate = "323-232-32",
+                    birthdayDate = "2025-11-11",
+                    deathDate = "2025-12-12",
                     placeOfBirth = "",
                     headerPictures = emptyList(),
                     department = ""
