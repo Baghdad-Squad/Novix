@@ -53,7 +53,6 @@ dependencies {
     implementation(project(":repository"))
     implementation(libs.bundles.coroutines)
     implementation(libs.bundles.room)
-    implementation(libs.androidx.runner)
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.bundles.test.core)
     androidTestImplementation(libs.bundles.test.core)
@@ -61,6 +60,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.room.testing)
     androidTestImplementation(libs.mockk.android)
-    testImplementation(kotlin("test"))
 
 }
