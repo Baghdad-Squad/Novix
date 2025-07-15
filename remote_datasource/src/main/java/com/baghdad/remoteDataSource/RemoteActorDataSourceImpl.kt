@@ -6,31 +6,32 @@ import com.baghdad.remoteDataSource.response.actor.ActorImagesResponse
 import com.baghdad.remoteDataSource.response.actor.ActorMoviesResponse
 import com.baghdad.remoteDataSource.response.actor.ActorTvShowsResponse
 import com.baghdad.remoteDataSource.util.handleRequest
+import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.TvShowDto
-import com.baghdad.repository.model.actor.ActorDetailsDto
+import com.baghdad.repository.model.actor.ActorDto
 import com.baghdad.repository.model.actor.ActorImagesDto
 import io.ktor.client.HttpClient
 
 class RemoteActorDataSourceImpl(
     private val httpClient: HttpClient,
     private val baseUrl: String
-) {
-    suspend fun getActorDetails(personId: Int): ActorDetailsDto {
+): RemoteActorDataSource {
+    override suspend fun getActorDetails(personId: Long): ActorDto {
         return handleRequest<ActorDetailsResponse>(
             client = httpClient,
             url = "$baseUrl${PERSON_DETAILS_ENDPOINT.replace("{person_id}", personId.toString())}"
         ).toDto()
     }
 
-    suspend fun getActorImages(personId: Int): ActorImagesDto {
+    override suspend fun getActorImages(personId: Long): ActorImagesDto {
         return handleRequest<ActorImagesResponse>(
             client = httpClient,
             url = "$baseUrl${PERSON_IMAGES_ENDPOINT.replace("{person_id}", personId.toString())}"
         ).toDto()
     }
 
-    suspend fun getActorMovies(personId: Int): List<MovieDto> {
+    override suspend fun getActorMovies(personId: Long): List<MovieDto> {
         return handleRequest<ActorMoviesResponse>(
             client = httpClient,
             url = "$baseUrl${
@@ -42,7 +43,7 @@ class RemoteActorDataSourceImpl(
         ).cast?.map { it.toDto() } ?: emptyList()
     }
 
-    suspend fun getActorTvShows(personId: Int): List<TvShowDto> {
+    override suspend fun getActorTvShows(personId: Long): List<TvShowDto> {
         return handleRequest<ActorTvShowsResponse>(
             client = httpClient,
             url = "$baseUrl${
