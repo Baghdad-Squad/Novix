@@ -14,7 +14,7 @@ import com.baghdad.design_system.theme.Theme
 fun CircleDot(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .padding(horizontal = 8.dp)
+            .padding(start = 8.dp, end = 10.dp)
             .size(3.dp)
             .background(Theme.color.body, CircleShape)
     )

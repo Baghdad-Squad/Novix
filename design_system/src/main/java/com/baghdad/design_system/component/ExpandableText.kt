@@ -29,6 +29,7 @@ import com.webtoonscorp.android.readmore.material3.ReadMoreText
 fun ExpandableText(
     text: String,
     isExpanded: Boolean,
+    readMoreMaxLines: Int,
     modifier: Modifier = Modifier,
     onExpandedChange: (Boolean) -> Unit,
 ) {
@@ -45,13 +46,16 @@ fun ExpandableText(
             expanded = expanded,
             onExpandedChange = onExpandedChange,
             style = Theme.typography.body.small,
-            textAlign = TextAlign.Justify,
             color = Theme.color.body,
 
             readMoreText = stringResource(R.string.read_more),
             readMoreColor = Theme.color.primary,
             readMoreStyle = Theme.typography.label.medium.toSpanStyle(),
-            readMoreMaxLines = 4,
+            readMoreMaxLines = readMoreMaxLines,
+
+            readLessText = stringResource(R.string.read_less),
+            readLessColor = Theme.color.primary,
+            readLessStyle = Theme.typography.label.medium.toSpanStyle(),
 
             toggleArea = ToggleArea.All,
             modifier = modifier
@@ -74,7 +78,8 @@ private fun ReadMoreTextComposePreview() {
             ExpandableText(
                 text = "It is a 1994 American drama film, considered one of the greatest films in cinematic history. It revolves around Andy Dufresne, a banker wrongfully convicted of the murder of his wife and her lover, and imprisoned in Shawshank Red State Prison. There, he forms a friendship with another inmate named Red and embarks on a long journey of pain, hope, and planning for freedom.",
                 isExpanded = expanded,
-                onExpandedChange = { expanded = it }
+                onExpandedChange = { expanded = it },
+                readMoreMaxLines = 4,
             )
         }
     }

@@ -31,18 +31,25 @@ fun IconButton(
     background: Color = Theme.color.backgroundLow,
     tintIcon: Color = Theme.color.title,
     borderStroke: BorderStroke? = BorderStroke(width = 1.dp, Theme.color.stroke),
-    shape : Shape = RoundedCornerShape(12.dp),
-    size: Pair<Dp,Dp> = Pair(48.dp, 48.dp),
+    shape: Shape = RoundedCornerShape(12.dp),
+    size: Pair<Dp, Dp> = Pair(48.dp, 48.dp),
     onClick: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(color = Theme.color.backgroundLow)
+            .size(40.dp)
+            .border(
+                width = 1.dp,
+                color = Theme.color.stroke,
+                shape = RoundedCornerShape(12.dp)
+            )
             .clip(shape)
             .size(width = size.first, height = size.second)
             .then(
                 if (borderStroke == null) Modifier else Modifier.border(borderStroke, shape = shape)
             )
-            .background(color = background)
             .noRippleClickable {
                 onClick.invoke()
             }
