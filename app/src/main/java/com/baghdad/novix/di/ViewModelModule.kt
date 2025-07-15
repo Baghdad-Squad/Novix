@@ -14,4 +14,8 @@ val viewModelModule = module {
     viewModel {
         (actorId: Long) -> ActorGalleryViewModel(get(), actorId)
     }
+    viewModel { (actorId: Long) ->
+        ActorDetailsViewModel(actorId, get(), get(), get(), get())
+
+    }
 }
