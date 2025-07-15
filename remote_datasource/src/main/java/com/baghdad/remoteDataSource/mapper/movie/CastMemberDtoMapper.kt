@@ -3,7 +3,7 @@ package com.baghdad.remoteDataSource.mapper.movie
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.actor.ActorDto
 
-fun com.baghdad.remoteDataSource.response.CastMemberDto.toDto(): CastMemberDto {
+fun com.baghdad.remoteDataSource.response.CastMemberResponse.toDto(): CastMemberDto {
     return CastMemberDto(
         actor = ActorDto(
             id = (id ?: 0).toLong(),
