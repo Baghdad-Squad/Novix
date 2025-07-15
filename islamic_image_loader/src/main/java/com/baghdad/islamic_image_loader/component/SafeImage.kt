@@ -2,7 +2,7 @@ package com.baghdad.islamic_image_loader.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -73,7 +73,7 @@ fun SafeImage(
 
     Box(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
     ) {
         when {
             !isLoading && image != null -> {
@@ -82,7 +82,7 @@ fun SafeImage(
                     contentDescription = contentDescription,
                     contentScale = contentScale,
                     modifier = Modifier
-                        .matchParentSize()
+                        .fillMaxWidth()
                         .then(if (shouldBlur) Modifier.blur(blur) else Modifier)
                 )
             }

@@ -5,13 +5,14 @@
     <string name="clock_icon">Clock Icon</string>
     <string name="cancel_icon">Cancel Icon</string>
     <string name="search">Search</string>
-    <string name="search_hint">Search...</string>
+    <string name="search_hint">Search about films, movie, and actors</string>
     <string name="filter_icon">Filter Icon</string>
     <string name="tab_movies">Movies</string>
     <string name="tab_tv_shows">TV shows</string>
     <string name="tab_actors">Actors</string>
     <string name="no_search_result_picture">no search result picture</string>
     <string name="no_search_result_please_try_with_another_keyword">No search result, please try with another keyword!</string>
+    <string name="start_exploring">Start exploring! Search for your favorite movies, series and shows</string>
     <string name="birthday">Birthday</string>
     <string name="biography">Biography</string>
     <string name="read_less">Read less</string>
@@ -26,4 +27,6 @@
     <string name="snackbar_saved_success">Item saved successfully</string>
     <string name="empty_string"> </string>
     <string name="birth_place">birth Place</string>
+    <string name="top_tv_shows_picks">Top tv shows picks</string>
+    <string name="top_movies_picks">Top movies picks</string>
 </resources>

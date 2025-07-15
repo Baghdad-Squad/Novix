@@ -12,3 +12,4 @@ fun GenreListResponse.toDto(genreType: GenreDto.GenreType): List<GenreDto> {
         )
     }
 }
+

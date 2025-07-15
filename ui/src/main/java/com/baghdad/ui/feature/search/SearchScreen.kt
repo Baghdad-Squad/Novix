@@ -31,6 +31,7 @@ import com.baghdad.ui.feature.search.component.SearchResultContent
 import com.baghdad.ui.feature.search.component.SearchTextField
 import com.baghdad.ui.feature.search.component.filter.FilterBottomSheet
 import com.baghdad.ui.feature.search.component.recentSearchSection
+import com.baghdad.ui.navigation.graph.search.SearchNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
@@ -43,10 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel = koinViewModel(),
-    navigateToActorDetails: (id: Long) -> Unit,
-    navigateToMovieDetails: (id: Long) -> Unit,
-    navigateToTvShowDetails: (id: Long) -> Unit,
-    navigateToRecentlyViewedDetails: (id: Long) -> Unit
+    handleNavigation: (SearchNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
@@ -56,13 +54,23 @@ fun SearchScreen(
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
-            is SearchScreenEffect.NavigateToActorDetails -> navigateToActorDetails(effect.actorId)
-            is SearchScreenEffect.NavigateToMovieDetails -> navigateToMovieDetails(effect.movieId)
-            is SearchScreenEffect.NavigateToRecentlyViewedDetails -> navigateToRecentlyViewedDetails(
-                effect.mediaId
+            is SearchScreenEffect.NavigateToActorDetails -> handleNavigation(
+                SearchNavEvent.NavigateToActorDetails(
+                    effect.actorId
+                )
             )
 
-            is SearchScreenEffect.NavigateToTvShowDetails -> navigateToTvShowDetails(effect.tvShowId)
+            is SearchScreenEffect.NavigateToMovieDetails -> handleNavigation(
+                SearchNavEvent.NavigateToMovieDetails(
+                    effect.movieId
+                )
+            )
+
+            is SearchScreenEffect.NavigateToTvShowDetails -> handleNavigation(
+                SearchNavEvent.NavigateToTvShowDetails(
+                    effect.tvShowId
+                )
+            )
         }
     }
 }
@@ -137,9 +145,9 @@ private fun RecentlyViewsWithSearch(
                     modifier = Modifier.height(600.dp), contentAlignment = Alignment.Center
                 ) {
                     EmptySearchState(
-                        imagePath = com.baghdad.design_system.R.drawable.no_search_results,
-                        contentDescription = stringResource(R.string.no_search_result_picture),
-                        message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                        imagePath = com.baghdad.design_system.R.drawable.start_explore,
+                        contentDescription = stringResource(R.string.start_exploring),
+                        message = stringResource(R.string.start_exploring),
                     )
                 }
             }
