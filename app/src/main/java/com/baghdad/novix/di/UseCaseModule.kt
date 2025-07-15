@@ -1,5 +1,9 @@
 package com.baghdad.novix.di
 
+import com.baghdad.domain.usecase.actorDetails.GetActorGalleryUseCase
+import com.baghdad.domain.usecase.actorDetails.GetActorInfoUseCase
+import com.baghdad.domain.usecase.actorDetails.GetActorMoviesUseCase
+import com.baghdad.domain.usecase.actorDetails.GetActorTvShowUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
@@ -20,5 +24,9 @@ val useCaseModule = module {
     singleOf(::DeleteRecentSearchUseCase)
     singleOf(::GetRecentSearchesUseCase)
     singleOf(::SearchUseCase)
+    singleOf(::GetActorInfoUseCase)
+    singleOf(::GetActorMoviesUseCase)
+    singleOf(::GetActorTvShowUseCase)
+    singleOf(::GetActorGalleryUseCase)
 }
 
