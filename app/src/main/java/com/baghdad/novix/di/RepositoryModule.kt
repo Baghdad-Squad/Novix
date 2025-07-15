@@ -1,9 +1,11 @@
 package com.baghdad.novix.di
 
+import com.baghdad.domain.repository.ActorRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.domain.repository.RecentlyViewedRepository
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.repository.TvShowRepository
+import com.baghdad.repository.ActorRepositoryImpl
 import com.baghdad.repository.MovieRepositoryImpl
 import com.baghdad.repository.RecentlyViewedRepositoryImpl
 import com.baghdad.repository.SearchRepositoryImpl
@@ -17,4 +19,6 @@ val repositoryModule = module {
     singleOf(::MovieRepositoryImpl) { bind<MovieRepository>() }
     singleOf(::TvShowRepositoryImpl) { bind<TvShowRepository>() }
     singleOf(::RecentlyViewedRepositoryImpl) { bind<RecentlyViewedRepository>() }
+    singleOf(::ActorRepositoryImpl) { bind<ActorRepository>() }
+
 }

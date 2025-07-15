@@ -391,7 +391,14 @@ class SearchViewModel(
     }
 
     override fun onRecentlyViewedClick(id: Long) {
-        sendEffect(SearchScreenEffect.NavigateToRecentlyViewedDetails(id))
+        val recentlyViewed = currentState.recentViewed.find { it.id == id }
+        recentlyViewed?.let {
+            if (it.contentType == RecentlyViewed.ContentType.MOVIE) {
+                onMovieItemClick(id)
+            } else {
+                onTvShowItemClick(id)
+            }
+        }
     }
 
     override fun onMovieItemClick(
