@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.search
 
-import android.util.Log
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -419,8 +418,7 @@ class SearchViewModel(
     override fun onMovieItemClick(
         contentId: Long
     ) {
-        Log.d("SearchViewModel", "onMovieItemClick: $contentId")
-        Log.d("SearchViewModel", "onMovieItemClick: ${currentState.movies}")
+
         val contentImageUrl =
             currentState.movies.find { it.id == contentId }?.posterPictureURL ?: ""
         tryToExecute(
