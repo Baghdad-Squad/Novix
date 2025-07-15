@@ -40,10 +40,12 @@ fun AutoSlidingImageCarousel(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(pagerState.currentPage) {
-        delay(autoSlideDuration)
-        val nextPage = (pagerState.currentPage + 1) % imageUrls.size
-        coroutineScope.launch {
-            pagerState.animateScrollToPage(nextPage)
+        if (imageUrls.isNotEmpty()) {
+            delay(autoSlideDuration)
+            val nextPage = (pagerState.currentPage + 1) % imageUrls.size
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(nextPage)
+            }
         }
     }
 
