@@ -2,7 +2,7 @@ package com.baghdad.local_datasource.roomDB.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.baghdad.repository.model.ActorDto
+import com.baghdad.repository.model.actor.ActorDto
 
 @Entity(tableName = "Actor")
 data class Actor(

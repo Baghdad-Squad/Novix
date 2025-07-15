@@ -1,6 +1,13 @@
 package com.baghdad.novix.di
 
+import com.baghdad.domain.usecase.actorDetails.GetActorGalleryUseCase
+import com.baghdad.domain.usecase.actorDetails.GetActorInfoUseCase
+import com.baghdad.domain.usecase.actorDetails.GetActorMoviesUseCase
+import com.baghdad.domain.usecase.actorDetails.GetActorTvShowUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
+import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
+import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
@@ -20,5 +27,12 @@ val useCaseModule = module {
     singleOf(::DeleteRecentSearchUseCase)
     singleOf(::GetRecentSearchesUseCase)
     singleOf(::SearchUseCase)
+    singleOf(::GetActorInfoUseCase)
+    singleOf(::GetActorMoviesUseCase)
+    singleOf(::GetActorTvShowUseCase)
+    singleOf(::GetActorGalleryUseCase)
+    singleOf(::GetMovieDetailsUseCase)
+    singleOf(::GetMovieCastMembersUseCase)
+    singleOf(::GetSimilarMoviesUseCase)
 }
 
