@@ -6,12 +6,5 @@ open class LocalDataBaseException() : AppException()
 
 
 class NoInternetException() : NetworkException()
-class SerializationException() : NetworkException()
-class RequestTimeoutException() : NetworkException()
-class TooManyRequestsException() : NetworkException()
-class ServerException() : NetworkException()
-class NotFoundSearchException() : NetworkException()
-
-class DataBaseCorruptException() : LocalDataBaseException()
+class UnKnownNetworkException() : NetworkException()
 class StorageFullException() : LocalDataBaseException()
-class NotFoundException() : LocalDataBaseException()
