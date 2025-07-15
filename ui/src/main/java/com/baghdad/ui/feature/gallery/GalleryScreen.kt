@@ -11,54 +11,71 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.component.SafeImage
 import com.baghdad.ui.R
+import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.viewmodel.gallery.GalleryInteractionListener
+import com.baghdad.viewmodel.gallery.GalleryScreenEffect
 import com.baghdad.viewmodel.gallery.GalleryScreenState
+import com.baghdad.viewmodel.gallery.GalleryViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GalleryScreen(
-    modifier: Modifier = Modifier,
-    uiState: GalleryScreenState,
-    onBackClick: () -> Unit
+    viewModel: GalleryViewModel = koinViewModel(),
+    listner: GalleryInteractionListener
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
-        TopAppBar(
-            onGoBackClick = onBackClick,
-            screenTitle = stringResource(R.string.gallery),
-        ) {}
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         ActorGalleryScreenContent(
-            uiState = uiState
+            uiState = uiState,
+            listner = listner
+
         )
+    ObserveAsEffect(effect = viewModel.uiEffect) { effect ->
+        when (effect) {
+            is GalleryScreenEffect.OnBackClick -> listner.onBackClick()
+
+        }
+    }
     }
 
-}
 
 @Composable
 fun ActorGalleryScreenContent(
     uiState: GalleryScreenState,
+    listner: GalleryInteractionListener
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(104.dp),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(uiState.images) { actorItem ->
-            SafeImage(
-                imageUrl = actorItem,
-                contentDescription = stringResource(R.string.gallery),
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(RoundedCornerShape(12))
-                    .border(1.dp, Theme.color.stroke)
-            )
+    Column(modifier = Modifier.fillMaxSize()) {
+        TopAppBar(
+            onGoBackClick = listner::onBackClick,
+            screenTitle = stringResource(R.string.gallery),
+        ) {}
+
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(104.dp),
+            contentPadding = PaddingValues(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(uiState.images) { actorItem ->
+                SafeImage(
+                    imageUrl = actorItem,
+                    contentDescription = stringResource(R.string.gallery),
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(12))
+                        .border(1.dp, Theme.color.stroke)
+                )
+            }
         }
     }
 }
