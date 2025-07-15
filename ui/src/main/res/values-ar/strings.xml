@@ -25,12 +25,12 @@
     <string name="empty_string"> </string>
     <string name="read_less">إخفاء</string>
     <string name="read_more">عرض المزيد</string>
-    <string name="birth_place">مكان الميلاد</string>
-    <string name="top_tv_shows_picks">أفضل المسلسلات المختارة</string>
-    <string name="top_movies_picks">أفضل الأفلام المختارة</string>
     <string name="cast">طاقم الممثلين</string>
     <string name="more_like_this">مشابه</string>
     <string name="overview">نبذة عامة</string>
     <string name="play_trailer">تشغيل الاعلان</string>
     <string name="card_movie_image">صورة كارد الفلم</string>
+    <string name="birth_place">مكان الميلاد</string>
+    <string name="top_tv_shows_picks">أفضل المسلسلات المختارة</string>
+    <string name="top_movies_picks">أفضل الأفلام المختارة</string>
 </resources>
