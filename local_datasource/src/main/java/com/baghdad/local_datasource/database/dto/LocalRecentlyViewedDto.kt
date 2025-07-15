@@ -32,16 +32,16 @@ fun LocalRecentlyViewedDto.toDto(): RecentlyViewedDto {
     return RecentlyViewedDto(
         contentId = this.contentId,
         contentType = RecentlyViewedDto.ContentType.valueOf(contentType),
-        contentImageUrl = contentImageURL,
-        viewedAtEpochMillis = viewedAt
+        contentImageUrl = this.contentImageURL,
+        viewedAtEpochMillis = this.viewedAt
     )
 }
 
 fun RecentlyViewedDto.toEntity(): LocalRecentlyViewedDto {
     return LocalRecentlyViewedDto(
         contentId = this.contentId,
-        contentType = contentType.name,
-        contentImageURL = contentImageUrl,
-        viewedAt = viewedAtEpochMillis
+        contentType = this.contentType.name,
+        contentImageURL = this.contentImageUrl,
+        viewedAt = this.viewedAtEpochMillis
     )
 }
