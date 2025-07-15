@@ -1,9 +1,8 @@
-package com.baghdad.viewmodel.gallery
+package com.baghdad.viewmodel.actorGallery
 
 import com.baghdad.viewmodel.base.BaseUiState
-import com.baghdad.viewmodel.base.SnackBarState
 
-data class GalleryScreenState(
+data class ActorGalleryScreenState(
     val images: List<String> = emptyList(),
     override val isLoading: Boolean = false
 ) : BaseUiState

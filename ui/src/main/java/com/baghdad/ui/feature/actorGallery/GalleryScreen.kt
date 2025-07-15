@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.gallery
+package com.baghdad.ui.feature.actorGallery
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -22,38 +22,42 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.component.SafeImage
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
-import com.baghdad.viewmodel.gallery.GalleryInteractionListener
-import com.baghdad.viewmodel.gallery.GalleryScreenEffect
-import com.baghdad.viewmodel.gallery.GalleryScreenState
-import com.baghdad.viewmodel.gallery.GalleryViewModel
+import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
+import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenEffect
+import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenState
+import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun GalleryScreen(
-    viewModel: GalleryViewModel = koinViewModel(),
-    listner: GalleryInteractionListener
+    actorId: Long,
+    viewModel: ActorGalleryViewModel = koinViewModel(parameters = { parametersOf(actorId) }),
+    handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        ActorGalleryScreenContent(
-            uiState = uiState,
-            listner = listner
+    ActorGalleryScreenContent(
+        uiState = uiState,
+        listner = viewModel
 
-        )
+    )
 
     ObserveAsEffect(effect = viewModel.uiEffect) { effect ->
         when (effect) {
-            is GalleryScreenEffect.OnBackClick -> listner.onBackClick()
+            is ActorGalleryScreenEffect.OnBackClick -> {
+               handleNavigation(ActorDetailsNavEvent.NavigateBack)
+            }
 
         }
     }
 
-    }
+}
 
 @Composable
 fun ActorGalleryScreenContent(
-    uiState: GalleryScreenState,
-    listner: GalleryInteractionListener
+    uiState: ActorGalleryScreenState,
+    listner: ActorGalleryViewModel
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(

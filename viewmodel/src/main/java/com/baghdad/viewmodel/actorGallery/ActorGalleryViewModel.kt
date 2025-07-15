@@ -1,15 +1,15 @@
-package com.baghdad.viewmodel.gallery
+package com.baghdad.viewmodel.actorGallery
 
 import com.baghdad.domain.usecase.gallery.GetGalleryImagesUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
-class GalleryViewModel(
+class ActorGalleryViewModel(
     private val getGalleryImagesUseCase: GetGalleryImagesUseCase,
     private val actorId: Long
 
-): BaseViewModel<GalleryScreenState, GalleryScreenEffect> (GalleryScreenState()),
-    GalleryInteractionListener {
+): BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect> (ActorGalleryScreenState()),
+    ActorGalleryInteractionListener {
 
     init {
         getActorGalleryImages(actorId)
@@ -45,7 +45,7 @@ class GalleryViewModel(
     }
 
     override fun onBackClick() {
-        sendEffect(GalleryScreenEffect.OnBackClick)
+        sendEffect(ActorGalleryScreenEffect.OnBackClick)
 
     }
 }
