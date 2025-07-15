@@ -257,7 +257,7 @@ private fun FloatingIconsButton(
                 icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
                     R.drawable.ic_star
                 ),
-                tintIcon = Theme.color.surface,
+                tintIcon = Theme.color.onPrimary,
                 background = Theme.color.primary,
                 borderStroke = null,
                 size = Pair(52.dp, 48.dp),

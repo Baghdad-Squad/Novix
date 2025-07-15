@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
 @Composable
@@ -38,7 +39,7 @@ fun IconButton(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(color = Theme.color.backgroundLow)
+            .background(color = background)
             .size(40.dp)
             .border(
                 width = 1.dp,
@@ -68,12 +69,14 @@ fun IconButton(
 @Composable
 @Preview(showBackground = true)
 private fun IconButtonPreview() {
-    IconButton(
-        icon = painterResource(R.drawable.ic_star),
-        onClick = { /* Do something */ },
-        modifier = Modifier,
-        background = Theme.color.primary,
-        tintIcon = Theme.color.surface,
-        borderStroke = BorderStroke(1.dp, Theme.color.stroke),
-    )
+    NovixTheme(isDarkTheme = true) {
+        IconButton(
+            icon = painterResource(R.drawable.ic_star),
+            onClick = { /* Do something */ },
+            modifier = Modifier,
+            background = Theme.color.primary,
+            tintIcon = Theme.color.surface,
+            borderStroke = BorderStroke(1.dp, Theme.color.stroke),
+        )
+    }
 }
