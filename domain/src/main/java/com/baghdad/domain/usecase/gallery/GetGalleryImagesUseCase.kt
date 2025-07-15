@@ -1,10 +1,12 @@
 package com.baghdad.domain.usecase.gallery
 
-class GetGalleryImagesUseCase(
+import com.baghdad.domain.repository.ActorRepository
 
+class GetGalleryImagesUseCase(
+    private val actorRepository: ActorRepository
 ) {
     suspend fun invoke(actorId: Long): List<String>{
-      return listOf("")
+      return actorRepository.getActorGallery(actorId)
     }
 
 }
