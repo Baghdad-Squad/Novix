@@ -8,11 +8,11 @@ data class CreditsResponse(
     @SerialName("id")
     val id: Int? = null,
     @SerialName("cast")
-    val cast: List<CastMemberDto>? = null,
+    val cast: List<CastMemberResponse>? = null,
 )
 
 @Serializable
-data class CastMemberDto(
+data class CastMemberResponse(
     @SerialName("adult")
     val adult: Boolean? = null,
     @SerialName("gender")
