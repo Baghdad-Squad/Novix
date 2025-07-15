@@ -19,7 +19,8 @@ val repositoryModule = module {
             localRecentSearchDataSource = get(),
             localActorDataSource = get(),
             localMovieDataSource = get(),
-            localTvShowDataSource = get()
+            localTvShowDataSource = get(),
+            localGenreDataSource = get()
         )
     }
 
@@ -36,7 +37,10 @@ val repositoryModule = module {
 
     single<RecentlyViewedRepository> {
         RecentlyViewedRepositoryImpl(
-            localRecentlyViewedDataSource = get()
+            localRecentlyViewedDataSource = get(),
+            localFavoriteGenreDataSource = get(),
+            localMovieDataSource = get(),
+            localTvShowDataSource = get(),
         )
     }
 
