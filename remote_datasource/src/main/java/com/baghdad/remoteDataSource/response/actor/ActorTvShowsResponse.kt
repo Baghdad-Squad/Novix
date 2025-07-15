@@ -17,23 +17,16 @@ data class ActorTvShowDto(
     val name: String? = null,
     @SerialName("genre_ids")
     val genreIds: List<Int>? = null,
-    @SerialName("backdrop_path")
-    val backdropPath: String? = null,
     @SerialName("overview")
     val overview: String? = null,
     @SerialName("poster_path")
     val posterPath: String? = null,
-    @SerialName("original_name")
-    val originalName: String? = null,
-    @SerialName("popularity")
-    val popularity: Double? = null,
-    @SerialName("first_air_date")
-    val firstAirDate: String? = null,
     @SerialName("vote_average")
     val voteAverage: Double? = null,
-    @SerialName("character")
-    val character: String? = null,
-    @SerialName("credit_id")
-    val creditId: String? = null,
+    @SerialName("first_air_date")
+    val firstAirDate: String? = null,
+    @SerialName("original_name")
+    val originalName: String? = null,
 )
+
 
