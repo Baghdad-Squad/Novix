@@ -5,24 +5,24 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class GalleryViewModel(
-    private val getGalleryImagesUseCase: GetGalleryImagesUseCase
+    private val getGalleryImagesUseCase: GetGalleryImagesUseCase,
+    private val actorId: Long
 
-): BaseViewModel<GalleryScreenState, GalleryScreenEffect> (GalleryScreenState()), GalleryInteractionListener {
+): BaseViewModel<GalleryScreenState, GalleryScreenEffect> (GalleryScreenState()),
+    GalleryInteractionListener {
 
     init {
-        getActorGalleryImages()
+        getActorGalleryImages(actorId)
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
     }
 
-    private fun getActorGalleryImages(){
-
-        updateState { it.copy(isLoading = true) }
+    fun getActorGalleryImages(actorId: Long){
 
         tryToExecute(
-            callee = { getGalleryImagesUseCase.getActorImages() },
+            callee = { getGalleryImagesUseCase.getActorImages(actorId) },
             onStart = ::onStart,
             onSuccess = ::onGalleryActorSuccess,
             onFinally = ::onFinally
@@ -37,7 +37,7 @@ class GalleryViewModel(
     }
 
     private fun onStart() {
-        updateState { it.copy(isLoading = false) }
+        updateState { it.copy(isLoading = true) }
     }
 
     private fun onFinally() {
