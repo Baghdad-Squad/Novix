@@ -4,8 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.baghdad.ui.feature.actorGallery.GalleryScreen
 import com.baghdad.ui.feature.actorDetails.ActorDetailsScreen
+import com.baghdad.ui.feature.actorGallery.GalleryScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.graph.util.toGraph
 import com.baghdad.ui.navigation.route.ActorDetailsRoute
@@ -25,7 +25,7 @@ fun NavGraphBuilder.actorDetailsNavGraph(navController: NavHostController) {
             }
         }
         composable<ActorDetailsRoute.ActorGalleryScreen> { backStackEntry ->
-            val actorId = backStackEntry.toGraph<Graph.ActorDetailsGraph>(navController).actorId
+            val actorId = backStackEntry.toGraph<ActorDetailsGraph>(navController).actorId
             GalleryScreen(actorId) { event ->
                 handleActorDetailsNavigation(event, navController)
             }
