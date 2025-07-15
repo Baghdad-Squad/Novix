@@ -5,6 +5,7 @@ on:
     branches:
       - develop
 
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -48,9 +49,8 @@ jobs:
         id: release_notes
         run: |
           COMMIT_SHA="${{ github.sha }}"
-          echo "Looking for PR with merge commit: $COMMIT_SHA"
+          echo "🔍 Looking for PR with merge commit: $COMMIT_SHA"
 
-          # Fetch the latest merged PRs to 'develop' with merge commit info
           PR_JSON=$(gh pr list --base develop --state merged --json title,body,mergeCommit --jq \
             ".[] | select(.mergeCommit.oid == \"$COMMIT_SHA\")")
 
@@ -63,7 +63,6 @@ jobs:
           TITLE=$(echo "$PR_JSON" | jq -r '.title // "No title"')
           BODY=$(echo "$PR_JSON" | jq -r '.body // "No description"')
 
-          # Clean markdown content (images, videos, etc.)
           CLEAN_BODY=$(echo "$BODY" | \
             sed -E 's/!\[[^]]*\]\([^)]*\)//g' | \
             sed -E 's/<img[^>]*>//g' | \
