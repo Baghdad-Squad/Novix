@@ -18,7 +18,7 @@ interface TvShowDao {
     @Query("DELETE FROM TvShow")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM TvShow WHERE title = :id")
+    @Query("SELECT * FROM TvShow WHERE id = :id")
     fun getTvShowById(id: Long): TvShow
 
     @Query("SELECT * FROM TvShow")
