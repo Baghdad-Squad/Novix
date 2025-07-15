@@ -15,10 +15,16 @@ internal fun SearchResponse.toDto(
         .filter { it.mediaType == "person" }
         .mapNotNull { item ->
             item.id?.let { id ->
-                ActorDto(
+                ActorDto( /*TODO replace with real data */
                     id = id,
                     name = item.tvShowName ?: "Unknown",
-                    imageUrl = ("https://image.tmdb.org/t/p/w500" + item.profilePath) ?: ""
+                    imageUrl = ("https://image.tmdb.org/t/p/w500" + item.profilePath) ?: "",
+                    biography = "",
+                    birthdayDate = "2025-11-11",
+                    deathDate = "2025-12-12",
+                    placeOfBirth = "",
+                    headerPictures = emptyList(),
+                    department = ""
                 )
             }
         }
