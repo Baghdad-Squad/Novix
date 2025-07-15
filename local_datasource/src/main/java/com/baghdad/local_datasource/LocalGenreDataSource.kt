@@ -1,9 +1,9 @@
 package com.baghdad.local_datasource
 
-import com.baghdad.local_datasource.roomDB.dao.GenreDao
-import com.baghdad.local_datasource.roomDB.entity.Genre
-import com.baghdad.local_datasource.roomDB.entity.toDto
-import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
+import com.baghdad.local_datasource.database.dao.GenreDao
+import com.baghdad.local_datasource.database.dto.LocalGenreDto
+import com.baghdad.local_datasource.database.dto.toDto
+import com.baghdad.local_datasource.database.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.model.GenreDto
 
@@ -32,7 +32,7 @@ class LocalGenreDataSource(
     ) {
         executeWithErrorHandling {
             genreDao.addGenre(
-                Genre(
+                LocalGenreDto(
                     type = type.name,
                     name = genre.name
                 )

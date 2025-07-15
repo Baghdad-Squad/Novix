@@ -1,4 +1,4 @@
-package com.baghdad.local_datasource.roomDB.errorHandler
+package com.baghdad.local_datasource.database.errorHandler
 
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteFullException

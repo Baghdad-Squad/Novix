@@ -4,7 +4,7 @@ import com.baghdad.repository.model.actor.ActorDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class LocalActorDtoKtTest {
+class LocalActorDtoTest {
 
     private val fakeActor1 = LocalActorDto(
         id = 1L,
