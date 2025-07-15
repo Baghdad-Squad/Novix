@@ -10,6 +10,7 @@ import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
+import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
 import com.baghdad.local_datasource.roomDB.entity.Actor
 import com.baghdad.local_datasource.roomDB.entity.Genre
@@ -17,6 +18,7 @@ import com.baghdad.local_datasource.roomDB.entity.LocalFavoriteGenreDto
 import com.baghdad.local_datasource.roomDB.entity.Movie
 import com.baghdad.local_datasource.roomDB.entity.RecentSearch
 import com.baghdad.local_datasource.roomDB.entity.RecentlyViewed
+import com.baghdad.local_datasource.roomDB.entity.SearchQuery
 import com.baghdad.local_datasource.roomDB.entity.TvShow
 
 @Database(
@@ -27,7 +29,8 @@ import com.baghdad.local_datasource.roomDB.entity.TvShow
         RecentlyViewed::class,
         Actor::class,
         Genre::class,
-        LocalFavoriteGenreDto::class
+        LocalFavoriteGenreDto::class,
+        SearchQuery::class
     ],
     version = 1
 )
@@ -42,4 +45,5 @@ abstract class NovixDatabase : RoomDatabase(){
     abstract fun actorDao(): ActorDao
     abstract fun genreDao(): GenreDao
     abstract fun favoriteGenreDao(): FavoriteGenreDao
+    abstract fun searchQueryDao(): SearchQueryDao
 }

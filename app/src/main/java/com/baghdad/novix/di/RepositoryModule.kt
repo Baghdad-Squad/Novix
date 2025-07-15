@@ -20,7 +20,8 @@ val repositoryModule = module {
             localActorDataSource = get(),
             localMovieDataSource = get(),
             localTvShowDataSource = get(),
-            localGenreDataSource = get()
+            localGenreDataSource = get(),
+            localSearchQueryDataSource = get(),
         )
     }
 
