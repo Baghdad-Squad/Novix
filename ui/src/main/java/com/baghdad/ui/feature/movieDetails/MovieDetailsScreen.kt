@@ -29,6 +29,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -148,7 +149,10 @@ private fun MovieDetailsContent(
             ) {
 
             item(span = { GridItemSpan(maxLineSpan) }) {
-                HeaderSliderSection(state.movieImages, indicatorVisibility = state.movieImages.size > 1)
+                HeaderSliderSection(
+                    state.movieImages,
+                    indicatorVisibility = state.movieImages.size > 1
+                )
             }
 
             item(span = { GridItemSpan(maxLineSpan) }) {
@@ -243,35 +247,52 @@ private fun FloatingIconsButton(
     listener: MovieDetailsInteractionListener,
     state: MovieDetailsState,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Crossfade(
-            targetState = state.isStared,
-        ) { isStared ->
-            IconButton(
-                icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
-                    R.drawable.ic_star
-                ),
-                tintIcon = Theme.color.onPrimary,
-                background = Theme.color.primary,
-                borderStroke = null,
-                size = Pair(52.dp, 48.dp),
-                onClick = {
-                    listener.onStarMovieClick()
-                }
-            )
-        }
-        PrimaryButton(
-            stringResource(com.baghdad.ui.R.string.play_trailer),
-            modifier = Modifier.fillMaxWidth(),
-            isEnabled = state.isHasTrailer,
-            isLoading = state.isLoading,
+    Box(modifier) {
+        Box(
+            modifier = Modifier
+                .zIndex(1f)
+                .fillMaxWidth()
+                .height(112.dp)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0x000D0608),
+                            Color(0xFF000000),
+                        ),
+                    )
+                )
+        )
+        Row(
+            modifier = modifier
+                .zIndex(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            Crossfade(
+                targetState = state.isStared,
+            ) { isStared ->
+                IconButton(
+                    icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
+                        R.drawable.ic_star
+                    ),
+                    tintIcon = Theme.color.onPrimary,
+                    background = Theme.color.primary,
+                    borderStroke = null,
+                    size = Pair(52.dp, 48.dp),
+                    onClick = {
+                        listener.onStarMovieClick()
+                    }
+                )
+            }
+            PrimaryButton(
+                stringResource(com.baghdad.ui.R.string.play_trailer),
+                modifier = Modifier.fillMaxWidth(),
+                isEnabled = state.isHasTrailer,
+                isLoading = state.isLoading,
+            ) {
+            }
         }
     }
 }
