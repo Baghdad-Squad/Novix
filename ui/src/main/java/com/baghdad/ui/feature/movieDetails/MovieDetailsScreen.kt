@@ -253,7 +253,6 @@ private fun FloatingIconsButton(
     ) {
         Crossfade(
             targetState = state.isStared,
-            animationSpec = tween(300)
         ) { isStared ->
             IconButton(
                 icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
