@@ -10,7 +10,7 @@ fun MovieResult.toDto(): MovieDto {
         genres =  emptyList(),
         imdbRating = voteAverage ?: 0.0,
         userRating = 0.0,
-        releaseDate = releaseDate ?: "Unknown",
+        releaseDate = releaseDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
         overview = overview ?: "No overview available.",
         posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
         runtimeMinutes = 0

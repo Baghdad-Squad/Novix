@@ -10,7 +10,7 @@ fun com.baghdad.remoteDataSource.response.CastMemberResponse.toDto(): CastMember
             name = name ?: "Unknown Actor",
             imageUrl = profilePath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
             biography = "",
-            birthdayDate = "",
+            birthdayDate = "0001-01-01",
             deathDate = null,
             placeOfBirth = "",
             headerPictures = emptyList(),
