@@ -28,7 +28,7 @@ class SearchViewModel(
     private val deleteAllRecentlyViewedUseCase: DeleteAllRecentlyViewedUseCase,
     private val deleteAllRecentSearchesUseCase: DeleteAllRecentSearchesUseCase,
     private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase,
-    private val searchUseCase: SearchUseCase
+    private val searchUseCase: SearchUseCase,
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
     private var searchJob: Job? = null
@@ -406,7 +406,14 @@ class SearchViewModel(
     }
 
     override fun onRecentlyViewedClick(id: Long) {
-        sendEffect(SearchScreenEffect.NavigateToRecentlyViewedDetails(id))
+        val recentlyViewed = currentState.recentViewed.find { it.id == id }
+        recentlyViewed?.let {
+            if (it.contentType == RecentlyViewed.ContentType.MOVIE) {
+                onMovieItemClick(id)
+            } else {
+                onTvShowItemClick(id)
+            }
+        }
     }
 
     override fun onMovieItemClick(
