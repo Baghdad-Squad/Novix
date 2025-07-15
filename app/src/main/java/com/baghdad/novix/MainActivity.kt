@@ -5,11 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.novix.util.IconSwitcher
 import com.baghdad.ui.feature.search.SearchScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        IconSwitcher.switchAppIcon(this)
         enableEdgeToEdge()
         setContent {
             NovixTheme {
