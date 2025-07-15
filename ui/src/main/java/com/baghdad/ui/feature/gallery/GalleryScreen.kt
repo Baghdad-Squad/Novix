@@ -40,14 +40,15 @@ fun GalleryScreen(
             listner = listner
 
         )
+
     ObserveAsEffect(effect = viewModel.uiEffect) { effect ->
         when (effect) {
             is GalleryScreenEffect.OnBackClick -> listner.onBackClick()
 
         }
     }
-    }
 
+    }
 
 @Composable
 fun ActorGalleryScreenContent(
