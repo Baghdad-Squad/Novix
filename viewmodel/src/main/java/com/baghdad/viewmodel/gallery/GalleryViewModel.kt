@@ -22,7 +22,7 @@ class GalleryViewModel(
     fun getActorGalleryImages(actorId: Long){
 
         tryToExecute(
-            callee = { getGalleryImagesUseCase.getActorImages(actorId) },
+            callee = { getGalleryImagesUseCase.invoke(actorId) },
             onStart = ::onStart,
             onSuccess = ::onGalleryActorSuccess,
             onFinally = ::onFinally
