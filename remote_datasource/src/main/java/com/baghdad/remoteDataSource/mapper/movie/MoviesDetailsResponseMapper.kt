@@ -7,7 +7,7 @@ import com.baghdad.repository.model.MovieDto
 
 fun MovieDetailsResponse.toDto(userRating: Double? = null): MovieDto {
     return MovieDto(
-        id = (id ?: 0).toLong(),
+        id = (id ?: 0),
         title = title ?: "Untitled",
         genres = genres?.mapNotNull { it.toGenreDto() } ?: emptyList(),
         imdbRating = voteAverage ?: 0.0,
