@@ -27,7 +27,7 @@ class SearchViewModel(
     private val deleteAllRecentlyViewedUseCase: DeleteAllRecentlyViewedUseCase,
     private val deleteAllRecentSearchesUseCase: DeleteAllRecentSearchesUseCase,
     private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase,
-    private val searchUseCase: SearchUseCase
+    private val searchUseCase: SearchUseCase,
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
     private var searchJob: Job? = null
