@@ -266,7 +266,7 @@ private fun FloatingIconsButton(
             modifier = modifier
                 .zIndex(1f)
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .padding(horizontal = 12.dp, vertical = 24.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
