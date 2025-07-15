@@ -1,9 +1,10 @@
-package com.baghdad.remoteDataSource.mapper.movie
+package com.baghdad.remoteDataSource.mapper.actor
 
+import com.baghdad.remoteDataSource.response.CastMemberResponse
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.actor.ActorDto
 
-fun com.baghdad.remoteDataSource.response.CastMemberResponse.toDto(): CastMemberDto {
+fun CastMemberResponse.toDto(): CastMemberDto {
     return CastMemberDto(
         actor = ActorDto(
             id = (id ?: 0).toLong(),
