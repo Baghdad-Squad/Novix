@@ -13,6 +13,7 @@ import com.baghdad.design_system.component.ExpandableText
 fun OverviewSection(
     overview: String,
     isExtended: Boolean,
+    readMoreMaxLines : Int = 4,
     onExtendClicked: () -> Unit,
 ) {
     Column(modifier = Modifier.offset(y = (-48).dp)) {
@@ -27,7 +28,8 @@ fun OverviewSection(
         ExpandableText(
             modifier = Modifier.padding(horizontal = 16.dp),
             isExpanded = isExtended,
-            text = overview
+            text = overview,
+            readMoreMaxLines = readMoreMaxLines,
         ) {
             onExtendClicked()
         }

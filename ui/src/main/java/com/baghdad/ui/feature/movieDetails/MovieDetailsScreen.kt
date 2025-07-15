@@ -225,7 +225,6 @@ private fun MovieDetailsContent(
 private fun HeaderSliderSection(movieImages: List<String>, indicatorVisibility: Boolean = true) {
 
     Box(modifier = Modifier.fillMaxWidth()) {
-
         AutoSlidingImageCarousel(
             imageUrls = movieImages,
             modifier = Modifier
