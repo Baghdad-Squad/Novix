@@ -9,21 +9,21 @@ import com.baghdad.local_datasource.database.dao.MovieDao
 import com.baghdad.local_datasource.database.dao.RecentSearchDao
 import com.baghdad.local_datasource.database.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.database.dao.TvShowDao
-import com.baghdad.local_datasource.database.entity.Actor
-import com.baghdad.local_datasource.database.entity.Genre
-import com.baghdad.local_datasource.database.entity.Movie
-import com.baghdad.local_datasource.database.entity.RecentSearch
-import com.baghdad.local_datasource.database.entity.RecentlyViewed
-import com.baghdad.local_datasource.database.entity.TvShow
+import com.baghdad.local_datasource.database.dto.LocalActorDto
+import com.baghdad.local_datasource.database.dto.LocalGenreDto
+import com.baghdad.local_datasource.database.dto.LocalMovieDto
+import com.baghdad.local_datasource.database.dto.LocalRecentSearchDto
+import com.baghdad.local_datasource.database.dto.LocalRecentlyViewedDto
+import com.baghdad.local_datasource.database.dto.LocalTvShowDto
 
 @Database(
     entities = [
-        TvShow::class,
-        Movie::class,
-        RecentSearch::class,
-        RecentlyViewed::class,
-        Actor::class,
-        Genre::class
+        LocalTvShowDto::class,
+        LocalMovieDto::class,
+        LocalRecentSearchDto::class,
+        LocalRecentlyViewedDto::class,
+        LocalActorDto::class,
+        LocalGenreDto::class
     ],
     version = 1
 )
