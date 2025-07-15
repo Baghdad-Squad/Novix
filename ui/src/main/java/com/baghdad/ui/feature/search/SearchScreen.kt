@@ -137,9 +137,9 @@ private fun RecentlyViewsWithSearch(
                     modifier = Modifier.height(600.dp), contentAlignment = Alignment.Center
                 ) {
                     EmptySearchState(
-                        imagePath = com.baghdad.design_system.R.drawable.no_search_results,
-                        contentDescription = stringResource(R.string.no_search_result_picture),
-                        message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                        imagePath = com.baghdad.design_system.R.drawable.start_explore,
+                        contentDescription = stringResource(R.string.start_exploring),
+                        message = stringResource(R.string.start_exploring),
                     )
                 }
             }
