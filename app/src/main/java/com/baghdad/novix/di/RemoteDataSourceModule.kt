@@ -5,8 +5,10 @@ import com.baghdad.remoteDataSource.interceptor.ApiInterceptor
 import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.local_datasource.language.AppLanguageProvider
+import com.baghdad.remoteDataSource.RemoteMovieDataSourceImpl
 import com.baghdad.repository.language.LanguageProvider
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
+import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -60,6 +62,13 @@ val remoteDataSourceModule = module {
 
     single<RemoteGenreDataSource>{
         RemoteGenreDataSourceImpl(
+            httpClient = get(),
+            baseUrl = get(named("BASE_URL"))
+        )
+    }
+
+    single<RemoteMovieDataSource>{
+        RemoteMovieDataSourceImpl(
             httpClient = get(),
             baseUrl = get(named("BASE_URL"))
         )
