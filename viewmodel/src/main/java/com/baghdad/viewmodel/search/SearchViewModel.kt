@@ -405,7 +405,7 @@ class SearchViewModel(
         contentId: Long
     ) {
         val contentImageUrl =
-            currentState.tvShows.find { it.id == contentId }?.posterPictureURL ?: ""
+            currentState.movies.find { it.id == contentId }?.posterPictureURL ?: ""
         tryToExecute(
             callee = {
                 addRecentlyViewedUseCase(

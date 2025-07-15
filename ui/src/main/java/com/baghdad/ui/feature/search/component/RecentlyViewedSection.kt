@@ -31,8 +31,6 @@ fun RecentlyViewedSection(
         onCardClick = { onRecentlyViewedClick(it.id) },
         isSaved = { it.isSaved },
         modifier = Modifier
-            .fillMaxWidth(0.45f)
-            .aspectRatio(0.8f)
             .padding(bottom = 12.dp)
     )
 }

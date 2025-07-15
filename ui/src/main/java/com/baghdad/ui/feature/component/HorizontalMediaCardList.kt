@@ -25,7 +25,6 @@ fun <T> HorizontalMediaCardList(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
