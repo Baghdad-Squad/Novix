@@ -6,7 +6,7 @@ import com.baghdad.local_datasource.database.dto.toDto
 import com.baghdad.local_datasource.database.dto.toEntity
 import com.baghdad.local_datasource.database.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalActorDataSource
-import com.baghdad.repository.model.ActorDto
+import com.baghdad.repository.model.actor.ActorDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -17,7 +17,13 @@ class LocalActorDataSourceImpl(
         executeWithErrorHandling {
             val localActorDto = LocalActorDto(
                 name = name,
-                profilePictureURL = imageUrl
+                profilePictureURL = imageUrl,
+                birthDate = "",
+                deathDate = null,
+                biography = "",
+                placeOfBirth = "",
+                headerPictures = emptyList(),
+                department = ""
             )
             actorDao.upsertActor(localActorDto)
         }

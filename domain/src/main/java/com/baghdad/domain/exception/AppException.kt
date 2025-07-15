@@ -4,7 +4,8 @@ open class AppException() : Exception()
 open class NetworkException() : AppException()
 open class LocalDataBaseException() : AppException()
 
-
+class UnknownException() : AppException()
+class UnAuthorizedException() : NetworkException()
 class NoInternetException() : NetworkException()
 class SerializationException() : NetworkException()
 class RequestTimeoutException() : NetworkException()
