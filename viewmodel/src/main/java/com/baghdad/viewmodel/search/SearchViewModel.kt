@@ -6,6 +6,7 @@ import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
+import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
@@ -28,7 +29,8 @@ class SearchViewModel(
     private val deleteAllRecentSearchesUseCase: DeleteAllRecentSearchesUseCase,
     private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase,
     private val searchUseCase: SearchUseCase,
-    private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase
+    private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase,
+    private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
 
@@ -36,6 +38,7 @@ class SearchViewModel(
         getRecentSearches()
         getMovieGenres()
         getTvShowGenres()
+        getRecentlyViewed()
     }
 
     private var searchJob: Job? = null
@@ -92,6 +95,22 @@ class SearchViewModel(
             callee = { getGenresUseCase.getTvShowGenres() },
             onSuccess = ::onGetTvShowGenresSuccess,
             onFinally = ::onFinally
+        )
+    }
+
+    private fun getRecentlyViewed() {
+        tryToCollect(
+            flowProvider = { getRecentlyViewedUseCase.invoke() },
+            onNewValue = { newValues ->
+                updateState {
+                    it.copy(
+                        recentViewed = newValues.map { it.toRecentlyViewedUI() }.distinctBy {
+                            it.id
+                        }
+                    )
+                }
+            },
+            onError = {},
         )
     }
 
@@ -163,9 +182,11 @@ class SearchViewModel(
     }
 
     private fun onClearRecentWatchSuccess() {
-        showSnackBar(
-            message = "SuccessStates.Clear", isSuccess = true
-        )
+        updateState {
+            it.copy(
+                recentViewed = emptyList()
+            )
+        }
     }
 
     override fun onClearRecentSearchClick() {

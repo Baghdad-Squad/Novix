@@ -3,6 +3,7 @@ package com.baghdad.novix.di
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
+import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
@@ -48,6 +49,11 @@ val useCaseModule = module {
     }
     single {
         AddRecentlyViewedUseCase(
+            recentlyViewedRepository = get()
+        )
+    }
+    single {
+        GetRecentlyViewedUseCase(
             recentlyViewedRepository = get()
         )
     }

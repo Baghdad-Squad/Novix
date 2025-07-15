@@ -1,7 +1,8 @@
 package com.baghdad.ui.feature.search.component
 
-import androidx.compose.foundation.layout.aspectRatio
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,16 +22,19 @@ fun RecentlyViewedSection(
     SectionHeaderWithAction(
         modifier = modifier,
         title = stringResource(R.string.recent_viewed),
-        onClearAllClick = onClearRecentlyViewedClick,
+        onClearAllClick = {
+            Log.i("TAG", "RecentlyViewedSection: Clicked")
+            onClearRecentlyViewedClick()
+        },
     )
     RecentlyViewedList(
         recentViewed = recentViewed,
         onSavedClick = onSavedClick,
         onRecentlyViewedClick = onRecentlyViewedClick,
         modifier = Modifier
-            .fillMaxWidth(0.45f)
-            .aspectRatio(0.8f)
-            .padding(bottom = 12.dp)
+            .fillMaxWidth()
+            .height(210.dp)
+            .padding(bottom = 12.dp, top = 12.dp)
     )
 
 }
