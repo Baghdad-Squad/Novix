@@ -37,7 +37,7 @@ fun ReviewerHeader(
     ) {
         SafeImage(
             imageUrl = imageUrl,
-            contentDescription = "Reviewer image for $name",
+            contentDescription = null,
             modifier = Modifier
                 .size(ReviewerImageSize)
                 .align(Alignment.CenterVertically)

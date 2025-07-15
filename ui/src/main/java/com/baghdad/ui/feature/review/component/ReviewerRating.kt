@@ -18,7 +18,6 @@ import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
-import java.util.Locale
 
 private val iconSize = 12.dp
 private val spacerBetweenElements = 4.dp
@@ -48,7 +47,7 @@ fun ReviewerRating(
         )
 
         Text(
-            text = String.format(Locale.getDefault(), "%.1f", rating),
+            text = String.format("%.1f", rating),
             style = Theme.typography.label.small,
             color = Theme.color.title
         )
