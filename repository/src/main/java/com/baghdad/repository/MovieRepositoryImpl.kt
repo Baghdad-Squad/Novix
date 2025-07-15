@@ -31,10 +31,16 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun getMovieDetails(movieId: Long): Movie {
-        TODO("Not yet implemented")
+        return executeSafely {
+            remoteMovieDataSource.getMovieDetails(movieId).toEntity()
+        }
     }
 
     override suspend fun getMovieCredits(movieId: Long): List<CastMember> {
-        TODO("Not yet implemented")
+        return executeSafely {
+            remoteMovieDataSource.getMovieCredits(movieId).map {
+                it.toEntity()
+            }
+        }
     }
 }
