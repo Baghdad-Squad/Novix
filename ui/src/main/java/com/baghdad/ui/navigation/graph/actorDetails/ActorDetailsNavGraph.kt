@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.actorDetails.ActorDetailsScreen
+import com.baghdad.ui.feature.topMoviePicks.TopMoviePicksScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.graph.util.toGraph
 import com.baghdad.ui.navigation.route.ActorDetailsRoute
@@ -29,7 +30,9 @@ fun NavGraphBuilder.actorDetailsNavGraph(navController: NavHostController) {
         }
         composable<ActorDetailsRoute.ActorTopMoviePicksScreen> { backStackEntry ->
             val actorId = backStackEntry.toGraph<ActorDetailsGraph>(navController).actorId
-            DummyScreen("Actor Top Movie Picks Screen $actorId")
+            TopMoviePicksScreen(actorId = actorId) { event ->
+                handleActorDetailsNavigation(event, navController)
+            }
         }
         composable<ActorDetailsRoute.ActorTopTvShowPicksScreen> { backStackEntry ->
             val actorId = backStackEntry.toGraph<ActorDetailsGraph>(navController).actorId
