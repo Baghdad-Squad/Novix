@@ -27,9 +27,9 @@ import com.webtoonscorp.android.readmore.material3.ReadMoreText
 
 @Composable
 fun ExpandableText(
-    modifier: Modifier = Modifier,
     text: String,
     isExpanded: Boolean,
+    modifier: Modifier = Modifier,
     onExpandedChange: (Boolean) -> Unit,
 ) {
     AnimatedContent(
