@@ -7,10 +7,12 @@ import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
+import com.baghdad.repository.datasource.local.LocalSearchQueryDataSource
 import com.baghdad.repository.datasource.local.LocalTvShowDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.model.SearchQueryDto
 import com.baghdad.repository.model.SearchResultDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getFlowSafely
@@ -26,25 +28,28 @@ class SearchRepositoryImpl(
     private val localActorDataSource: LocalActorDataSource,
     private val localMovieDataSource: LocalMovieDataSource,
     private val localTvShowDataSource: LocalTvShowDataSource,
-    private val localGenreDataSource: LocalGenreDataSource
+    private val localGenreDataSource: LocalGenreDataSource,
+    private val localSearchQueryDataSource: LocalSearchQueryDataSource
 ) : SearchRepository {
 
     override suspend fun searchByName(query: String): SearchResult {
         return executeSafely {
+            deleteInvalidCacheOfMoreThanOneHour()
             if (isUserSearchThisTermWithinHour(query)) {
                 getLocalSearchResult(query)
             } else {
                 updateGenreCache()
                 val defaultLanguage = Locale.getDefault().language
-                val searchResultDto = searchRemoteDataSource.searchMultiMedia(
+                val searchResult = searchRemoteDataSource.searchMultiMedia(
                     query = query,
                     pageNumber = 1,
                     movieGenres = localGenreDataSource.getMovieGenre(defaultLanguage),
                     tvGenres = localGenreDataSource.getTvShowGenre(defaultLanguage)
                 )
-                cacheSearchResult(query, searchResultDto)
-                searchResultDto.toEntity()
+                cacheSearchResult(query, searchResult)
+                searchResult.toEntity()
             }
+
         }
     }
 
@@ -71,16 +76,41 @@ class SearchRepositoryImpl(
 
         dto.actors.forEach {
             localActorDataSource.addActor(it.name, it.imageUrl)
+            localSearchQueryDataSource.addSearchQuery(
+                SearchQueryDto(
+                    queryName = query,
+                    mediaId = it.id,
+                    mediaType = SearchQueryDto.MediaType.ACTOR
+                )
+            )
         }
         dto.movies.forEach {
             localMovieDataSource.addMovie(it)
+            localSearchQueryDataSource.addSearchQuery(
+                SearchQueryDto(
+                    queryName = query,
+                    mediaId = it.id,
+                    mediaType = SearchQueryDto.MediaType.MOVIE
+                )
+            )
         }
         dto.tvShows.forEach {
             localTvShowDataSource.addTvShow(it)
+            localSearchQueryDataSource.addSearchQuery(
+                SearchQueryDto(
+                    queryName = query,
+                    mediaId = it.id,
+                    mediaType = SearchQueryDto.MediaType.TV_SHOW
+                )
+            )
         }
     }
 
 
+    private suspend fun deleteInvalidCacheOfMoreThanOneHour() {
+        val oneHourBeforeNow = System.currentTimeMillis() - 3600000
+        localSearchQueryDataSource.deleteInvalidSearchQueries(oneHourBeforeNow)
+    }
 
     override fun getRecentSearches(): Flow<List<RecentSearch>> {
         return getFlowSafely {
