@@ -1,7 +1,5 @@
 package com.baghdad.ui.feature.search.component
 
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,8 +29,6 @@ fun RecentlyViewedSection(
         onCardClick = { onRecentlyViewedClick(it.id) },
         isSaved = { it.isSaved },
         modifier = Modifier
-            .fillMaxWidth(0.45f)
-            .aspectRatio(0.8f)
             .padding(bottom = 12.dp)
     )
 }
