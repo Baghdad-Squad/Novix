@@ -5,8 +5,6 @@ on:
     branches:
       - develop
 
-permissions:
-  contents: write
 
 jobs:
   deploy:
@@ -42,26 +40,6 @@ jobs:
           echo "RELEASE_KEYSTORE_PASSWORD=${{ secrets.RELEASE_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
           echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
           echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
-
-      - name: Bump versionName only (no commit yet)
-        id: versioning
-        run: |
-          VERSION_FILE="app/version.properties"
-
-          # Read current version name
-          VERSION_NAME=$(grep VERSION_NAME $VERSION_FILE | cut -d'=' -f2)
-
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NAME"
-          PATCH=$((PATCH + 1))
-
-          NEW_VERSION_NAME="${MAJOR}.${MINOR}.${PATCH}"
-
-          echo "Bumping versionName: $VERSION_NAME → $NEW_VERSION_NAME"
-
-          # Update version.properties (in-place)
-          sed -i "s/VERSION_NAME=$VERSION_NAME/VERSION_NAME=$NEW_VERSION_NAME/" $VERSION_FILE
-
-          echo "versionName=$NEW_VERSION_NAME" >> $GITHUB_OUTPUT
 
       - name: Authenticate GitHub CLI
         run: |
@@ -120,12 +98,3 @@ jobs:
             --token "$FIREBASE_AUTH_TOKEN" \
             --groups "qa-team" \
             --release-notes-file release_notes.txt
-
-      - name: Commit and push versionName bump
-        if: success()
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add app/version.properties
-          git commit -m "ci: bump version to ${{ steps.versioning.outputs.versionName }}"
-          git push

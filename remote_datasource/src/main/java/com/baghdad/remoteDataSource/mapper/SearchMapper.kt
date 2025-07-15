@@ -1,11 +1,11 @@
 package com.baghdad.remoteDataSource.mapper
 
 import com.baghdad.remoteDataSource.response.SearchResponse
-import com.baghdad.repository.model.actor.ActorDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.SearchResultDto
 import com.baghdad.repository.model.TvShowDto
+import com.baghdad.repository.model.actor.ActorDto
 
 internal fun SearchResponse.toDto(
     movieGenres: List<GenreDto>?,
@@ -20,8 +20,8 @@ internal fun SearchResponse.toDto(
                     name = item.tvShowName ?: "Unknown",
                     imageUrl = ("https://image.tmdb.org/t/p/w500" + item.profilePath) ?: "",
                     biography = "",
-                    birthdayDate = "2025-07-15",
-                    deathDate = "2025-07-15",
+                    birthdayDate = "2025-11-11",
+                    deathDate = "2025-12-12",
                     placeOfBirth = "",
                     headerPictures = emptyList(),
                     department = ""

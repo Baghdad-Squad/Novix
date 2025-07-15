@@ -1,4 +1,5 @@
-
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Properties
 
 plugins {
@@ -11,10 +12,7 @@ plugins {
     jacoco
 }
 
-val versionPropsFile = rootProject.file("app/version.properties")
-val versionProps = Properties().apply {
-    load(versionPropsFile.inputStream())
-}
+val formattedDate: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd HH:mm"))
 
 android {
     namespace = "com.baghdad.novix"
@@ -24,8 +22,8 @@ android {
         applicationId = "com.baghdad.novix"
         minSdk = 24
         targetSdk = 35
-        versionName = versionProps.getProperty("VERSION_NAME") ?: "1.0.0"
-        versionCode = versionProps.getProperty("VERSION_CODE")?.toIntOrNull() ?: 1
+        versionName = "1.0-($formattedDate)"
+        versionCode = 1
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
