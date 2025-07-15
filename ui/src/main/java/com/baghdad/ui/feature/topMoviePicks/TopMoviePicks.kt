@@ -1,7 +1,6 @@
 package com.baghdad.ui.feature.topMoviePicks
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -15,8 +14,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.R
 import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.HotScaffold
 import com.baghdad.design_system.component.Text
@@ -72,13 +73,13 @@ private fun TopMoviePicksContent(
             Row (modifier = Modifier.padding(top = 52.dp)
             , verticalAlignment = Alignment.CenterVertically) {
                 IconButton(
-                    icon = painterResource(com.baghdad.design_system.R.drawable.ic_go_back),
+                    icon = painterResource(R.drawable.ic_go_back),
                     onClick = { listener.onBackClicked() },
                     modifier = Modifier
                         .padding(start = 16.dp, bottom = 8.dp)
                 )
                 Text(
-                    text = "Top Picks",
+                    text = stringResource(com.baghdad.ui.R.string.top_movies_picks),
                     style = Theme.typography.title.large,
                     color = Theme.color.title,
                     modifier = Modifier
