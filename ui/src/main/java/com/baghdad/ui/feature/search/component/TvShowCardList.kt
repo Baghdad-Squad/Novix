@@ -10,14 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.HomeCard
-import com.baghdad.viewmodel.search.MediaType
 import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
 fun TvShowCardList(
     tvShows: List<SearchScreenState.TvShowUiState>,
     onSavedClick: (Long) -> Unit,
-    onTVShowClick: (id: Long, imageUrl: String, type: MediaType) -> Unit,
+    onTVShowClick: (id: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -39,8 +38,6 @@ fun TvShowCardList(
                 onClick = {
                     onTVShowClick(
                         tvShow.id,
-                        tvShow.posterPictureURL,
-                        tvShow.type
                     )
                 },
                 modifier = Modifier.aspectRatio(0.8f)

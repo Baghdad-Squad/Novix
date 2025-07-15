@@ -27,6 +27,8 @@ import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
 import com.baghdad.repository.datasource.local.LocalSearchQueryDataSource
 import com.baghdad.repository.datasource.local.LocalTvShowDataSource
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val localDataSourceModule = module {
@@ -38,6 +40,7 @@ val localDataSourceModule = module {
         ).build()
     }
 
+
     single<MovieDao> { get<NovixDatabase>().movieDao() }
     single<TvShowDao> { get<NovixDatabase>().tvShowDao() }
     single<RecentlyViewedDao> { get<NovixDatabase>().recentViewedDao() }
@@ -48,56 +51,14 @@ val localDataSourceModule = module {
     single<SearchQueryDao> { get<NovixDatabase>().searchQueryDao() }
 
 
-    single<LocalMovieDataSource> {
-        LocalMovieDataSourceImpl(
-            movieDao = get<MovieDao>(),
-            genreDao = get<GenreDao>()
-        )
-    }
 
-    single<LocalGenreDataSource> {
-        LocalGenreDataSourceImpl(
-            genreDao = get<GenreDao>()
-        )
-    }
+    singleOf(::LocalMovieDataSourceImpl) { bind<LocalMovieDataSource>() }
+    singleOf(::LocalGenreDataSourceImpl) { bind<LocalGenreDataSource>() }
+    singleOf(::LocalSearchDataSourceImpl) { bind<LocalRecentSearchDataSource>() }
+    singleOf(::LocalRecentlyViewedDataSourceImpl) { bind<LocalRecentlyViewedDataSource>() }
+    singleOf(::LocalTvShowDataSourceImpl) { bind<LocalTvShowDataSource>() }
+    singleOf(::LocalActorDataSourceImpl) { bind<LocalActorDataSource>() }
+    singleOf(::LocalFavoriteGenreDataSourceImpl) { bind<LocalFavoriteGenreDataSource>() }
+    singleOf(::LocalSearchQueryDataSourceImpl) { bind<LocalSearchQueryDataSource>() }
 
-    single<LocalRecentSearchDataSource> {
-        LocalSearchDataSourceImpl(
-            recentSearchDao = get<RecentSearchDao>()
-        )
-    }
-
-    single<LocalRecentlyViewedDataSource> {
-        LocalRecentlyViewedDataSourceImpl(
-            recentlyViewedDao = get<RecentlyViewedDao>(),
-        )
-    }
-
-    single<LocalTvShowDataSource> {
-        LocalTvShowDataSourceImpl(
-            tvShowDao = get<TvShowDao>(),
-            genreDao = get<GenreDao>()
-        )
-    }
-
-    single<LocalActorDataSource> {
-        LocalActorDataSourceImpl(
-            actorDao = get<ActorDao>()
-        )
-    }
-
-    single<LocalFavoriteGenreDataSource> {
-        LocalFavoriteGenreDataSourceImpl(
-            favoriteGenreDao = get<FavoriteGenreDao>()
-        )
-    }
-
-    single<LocalSearchQueryDataSource> {
-        LocalSearchQueryDataSourceImpl(
-            searchQueryDao = get(),
-            movieDao = get(),
-            tvShowDao = get(),
-            actorDao = get()
-        )
-    }
 }

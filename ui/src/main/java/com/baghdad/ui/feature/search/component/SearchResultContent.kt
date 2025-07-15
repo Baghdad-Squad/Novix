@@ -22,24 +22,22 @@ import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
-import com.baghdad.viewmodel.search.MediaType
 
 import com.baghdad.viewmodel.search.SearchScreenState
-import com.baghdad.viewmodel.search.SearchTab
 
 
 @Composable
 fun SearchResultContent(
-    selectedTab: SearchTab,
-    onTabSelected: (SearchTab) -> Unit,
+    selectedTab: SearchScreenState.SearchTab,
+    onTabSelected: (SearchScreenState.SearchTab) -> Unit,
     onSavedClick: (Long) -> Unit,
     movies: List<SearchScreenState.MovieUiState>,
     tvShows: List<SearchScreenState.TvShowUiState>,
     actors: List<SearchScreenState.ActorUiState>,
-    onMovieClick: (Long, String, MediaType) -> Unit,
-    onTvShowClick: (Long, String, MediaType) -> Unit,
+    onMovieClick: (Long) -> Unit,
+    onTvShowClick: (Long) -> Unit,
     onActorClick: (Long) -> Unit,
-    isLoading: Boolean ,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -66,18 +64,18 @@ fun SearchResultContent(
         ) {
             Chip(
                 title = stringResource(id = R.string.tab_movies),
-                isSelected = selectedTab == SearchTab.MOVIES,
-                onClick = { onTabSelected(SearchTab.MOVIES) }
+                isSelected = selectedTab == SearchScreenState.SearchTab.MOVIES,
+                onClick = { onTabSelected(SearchScreenState.SearchTab.MOVIES) }
             )
             Chip(
                 title = stringResource(id = R.string.tab_tv_shows),
-                isSelected = selectedTab == SearchTab.TV_SHOWS,
-                onClick = { onTabSelected(SearchTab.TV_SHOWS) }
+                isSelected = selectedTab == SearchScreenState.SearchTab.TV_SHOWS,
+                onClick = { onTabSelected(SearchScreenState.SearchTab.TV_SHOWS) }
             )
             Chip(
                 title = stringResource(id = R.string.tab_actors),
-                isSelected = selectedTab == SearchTab.ACTORS,
-                onClick = { onTabSelected(SearchTab.ACTORS) }
+                isSelected = selectedTab == SearchScreenState.SearchTab.ACTORS,
+                onClick = { onTabSelected(SearchScreenState.SearchTab.ACTORS) }
             )
         }
 
@@ -85,7 +83,7 @@ fun SearchResultContent(
 
 
         when (selectedTab) {
-            SearchTab.MOVIES -> {
+            SearchScreenState.SearchTab.MOVIES -> {
                 if (!movies.isEmpty()) {
                     MovieCardList(
                         movies = movies,
@@ -107,8 +105,8 @@ fun SearchResultContent(
 
             }
 
-            SearchTab.TV_SHOWS -> {
-                if (!tvShows.isEmpty()) {
+            SearchScreenState.SearchTab.TV_SHOWS -> {
+                if (tvShows.isNotEmpty()) {
                     TvShowCardList(
                         tvShows = tvShows,
                         onSavedClick = onSavedClick,
@@ -128,8 +126,8 @@ fun SearchResultContent(
                 }
             }
 
-            SearchTab.ACTORS -> {
-                if (!actors.isEmpty()) {
+            SearchScreenState.SearchTab.ACTORS -> {
+                if (actors.isNotEmpty()) {
                     ActorCardList(
                         actors = actors,
                         onActorClick = onActorClick,

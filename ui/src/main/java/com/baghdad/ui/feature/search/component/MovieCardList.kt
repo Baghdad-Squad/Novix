@@ -10,14 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.HomeCard
-import com.baghdad.viewmodel.search.MediaType
 import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
 fun MovieCardList(
     movies: List<SearchScreenState.MovieUiState>,
     onSavedClick: (Long) -> Unit,
-    onMovieClick: (id: Long, imageUrl: String, type: MediaType) -> Unit,
+    onMovieClick: (id: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -37,8 +36,6 @@ fun MovieCardList(
                 onClick = {
                     onMovieClick(
                         movie.id,
-                        movie.posterPictureURL,
-                        movie.type
                     )
                 },
                 modifier = Modifier.aspectRatio(0.8f)

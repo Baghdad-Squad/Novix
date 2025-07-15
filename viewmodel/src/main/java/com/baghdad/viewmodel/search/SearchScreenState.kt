@@ -3,8 +3,6 @@ package com.baghdad.viewmodel.search
 import com.baghdad.domain.model.search.RecentlyViewed.ContentType
 import com.baghdad.domain.util.now
 import com.baghdad.viewmodel.base.BaseUiState
-import com.baghdad.viewmodel.base.SnackBarState
-import com.baghdad.viewmodel.errorStates.BaseErrorState
 import kotlinx.datetime.LocalDateTime
 
 data class SearchScreenState(
@@ -17,8 +15,6 @@ data class SearchScreenState(
     val recentSearch: List<RecentSearchUiState> = emptyList(),
     val bottomSheetUiState: FilterBottomSheetUiState = FilterBottomSheetUiState(),
     override val isLoading: Boolean = false,
-    override val snackBarState: SnackBarState = SnackBarState(),
-    override val baseErrorState: BaseErrorState? = null
 ) : BaseUiState {
     val searchFilter: SearchFilterUiState
         get() = if (selectedSearchTab == SearchTab.MOVIES) {
@@ -36,19 +32,13 @@ data class SearchScreenState(
         val id: Long = 0,
         val posterPictureURL: String = "",
         val isSaved: Boolean = false
-    ) {
-        val type: MediaType
-            get() = MediaType.MOVIE
-    }
+    )
 
     data class TvShowUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
-        val isSaved: Boolean = false,
-    ) {
-        val type: MediaType
-            get() = MediaType.TV_SHOW
-    }
+        val isSaved: Boolean = false
+    )
 
     data class ActorUiState(
         val id: Long = 0,
@@ -80,15 +70,12 @@ data class SearchScreenState(
         val selectedGenres: List<GenreUiState> = emptyList(),
         val allGenres: List<GenreUiState> = emptyList(),
     )
+
+    enum class SearchTab {
+        MOVIES,
+        TV_SHOWS,
+        ACTORS,
+    }
 }
 
-enum class SearchTab {
-    MOVIES,
-    TV_SHOWS,
-    ACTORS,
-}
 
-enum class MediaType {
-    MOVIE,
-    TV_SHOW
-}

@@ -1,4 +1,4 @@
-package com.baghdad.domain.model.search
+package com.baghdad.entity.search
 
 import kotlinx.datetime.LocalDateTime
 
