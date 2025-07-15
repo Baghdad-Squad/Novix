@@ -17,6 +17,7 @@ fun LabeledIconRow(title: String, icon: Painter, modifier: Modifier = Modifier) 
         Icon(
             painter = icon,
             contentDescription = "Icon",
+            tint = Theme.color.body,
             modifier = Modifier.align(alignment = Alignment.CenterVertically)
         )
         Text(
