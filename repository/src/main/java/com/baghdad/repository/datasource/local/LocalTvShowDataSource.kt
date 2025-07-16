@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalTvShowDataSource {
     suspend fun addTvShow(tvShow: TvShowDto)
+    suspend fun addTvShows(tvShows: List<TvShowDto>)
     suspend fun getTvShowById(id: Long): TvShowDto
     suspend fun getAllTvShows(): Flow<List<TvShowDto>>
     suspend fun deleteTvShowById(id: Long)

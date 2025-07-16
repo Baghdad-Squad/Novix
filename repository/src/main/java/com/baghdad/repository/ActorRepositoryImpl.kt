@@ -6,18 +6,19 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
+import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.util.executeSafely
 
 class ActorRepositoryImpl(
     private val remoteActorDataSource: RemoteActorDataSource,
+    private val remoteSearchDataSource: RemoteSearchDataSource,
     private val localActorDataSource: LocalActorDataSource
 ) : ActorRepository {
     override suspend fun getActorInfo(actorId: Long): Actor {
         return executeSafely {
             remoteActorDataSource.getActorDetails(actorId).toEntity()
         }
-
     }
 
     override suspend fun getActorMovies(actorId: Long): List<Movie> {
@@ -37,10 +38,4 @@ class ActorRepositoryImpl(
             remoteActorDataSource.getActorImages(actorId).images
         }
     }
-
-    override suspend fun searchActorsByName(name: String): List<Actor> {
-
-    }
-
-
 }

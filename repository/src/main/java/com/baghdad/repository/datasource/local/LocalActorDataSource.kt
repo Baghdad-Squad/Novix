@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalActorDataSource {
     suspend fun addActor(name: String, imageUrl: String)
+    suspend fun addActors(actors: List<ActorDto>)
     suspend fun deleteActorById(id : Long)
     suspend fun getActorById(id : Long) : ActorDto
     suspend fun getAllActors(): Flow<List<ActorDto>>
