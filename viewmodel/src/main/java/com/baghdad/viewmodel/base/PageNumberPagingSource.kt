@@ -1,7 +1,5 @@
 package com.baghdad.viewmodel.base
 
-import android.graphics.pdf.LoadParams
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -18,7 +16,6 @@ class PagedResultPagingSource<T : Any>(
         return try {
             val page = params.key ?: 1
             val result = loadData(page)
-            Log.e("pagggge", "searching for34343 ${result.data}")
             LoadResult.Page(
                 data = result.data,
                 prevKey = result.prevKey,
@@ -26,7 +23,6 @@ class PagedResultPagingSource<T : Any>(
             )
 
         } catch (e: Exception) {
-            Log.e("pagggge", "exception ${e}", e)
             LoadResult.Error(e)
         }
     }
@@ -40,11 +36,15 @@ class PagedResultPagingSource<T : Any>(
 
 
 fun <T : Any> createPagedResultPager(
-    pageSize: Int = 20,
+    pageSize: Int = 15,
     loadData: suspend (page: Int) -> PagedResult<T>
 ): Flow<PagingData<T>> {
     return Pager(
-        config = PagingConfig(pageSize = pageSize),
+        config = PagingConfig(
+            pageSize = pageSize,
+            initialLoadSize = pageSize,
+            prefetchDistance = 4
+        ),
         pagingSourceFactory = { PagedResultPagingSource(loadData) }
     ).flow
 }
