@@ -4,6 +4,7 @@ import com.baghdad.domain.usecase.actorDetails.GetActorMoviesUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
 
 class TopMoviePicksViewModel(
     val  actorId: Long,
@@ -43,7 +44,16 @@ class TopMoviePicksViewModel(
     }
 
     override fun onSaveMovieClicked(movieId: Long) {
-        TODO("Not yet implemented")
+        updateState {
+            it.copy(
+                movies = it.movies.map { item ->
+                    if (item.id == movieId) item.copy(isSaved = item.isSaved.not()) else item
+                }
+            )
+        }
+        showSnackBar(
+            message = SearchScreenBaseSnackBarMessages.SavedItemSuccessfully, isSuccess = true
+        )
     }
 
     override fun onBackClicked() {
