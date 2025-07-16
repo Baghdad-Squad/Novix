@@ -7,6 +7,10 @@ interface LocalSearchQueryDataSource {
     suspend fun addSearchQueries(queries: List<SearchQueryDto>)
     suspend fun getInvalidSearchQueries(timestamp: Long): List<SearchQueryDto>
     suspend fun getAllSearchQueries(): List<SearchQueryDto>
+    suspend fun getSearchByQuery(
+        query: String,
+        type: SearchQueryDto.MediaType
+    ): List<SearchQueryDto>
     suspend fun deleteInvalidSearchQueries(timestamp: Long)
     suspend fun deleteAllSearchQueries()
 }
