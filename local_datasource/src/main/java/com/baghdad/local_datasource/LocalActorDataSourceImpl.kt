@@ -22,7 +22,8 @@ class LocalActorDataSourceImpl(
                 biography = "",
                 placeOfBirth = "",
                 headerPictures = emptyList(),
-                department = ""
+                department = "",
+                characterName = ""
             )
             actorDao.upsertActor(actor)
         }

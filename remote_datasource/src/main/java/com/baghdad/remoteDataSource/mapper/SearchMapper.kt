@@ -24,7 +24,8 @@ internal fun SearchResponse.toDto(
                     deathDate = "2025-12-12",
                     placeOfBirth = "",
                     headerPictures = emptyList(),
-                    department = ""
+                    department = "",
+                    characterName = ""
                 )
             }
         }
@@ -60,7 +61,8 @@ internal fun SearchResponse.toDto(
                     releaseDate = item.firstAirDate ?: "",
                     overview = item.movieOverview ?: "",
                     posterPictureURL = ("https://image.tmdb.org/t/p/w500" + item.tvShowPosterPath),
-                    numberOfSeasons = 0
+                    numberOfSeasons = 0,
+                    headerPictures = emptyList()
                 )
             }
         }
