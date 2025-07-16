@@ -1,9 +1,7 @@
 package com.baghdad.viewmodel.search
 
 import com.baghdad.domain.model.search.RecentlyViewed.ContentType
-import com.baghdad.domain.util.now
 import com.baghdad.viewmodel.base.BaseUiState
-import kotlinx.datetime.LocalDateTime
 
 data class SearchScreenState(
     val searchText: String = "",
@@ -64,8 +62,8 @@ data class SearchScreenState(
     )
 
     data class SearchFilterUiState(
-        val minimumYear: Int = 1990,
-        val maximumYear: Int = LocalDateTime.now().year,
+        val minimumYear: Int? = null,
+        val maximumYear: Int? = null,
         val minimumRating: Int = 0,
         val selectedGenres: List<GenreUiState> = emptyList(),
         val allGenres: List<GenreUiState> = emptyList(),

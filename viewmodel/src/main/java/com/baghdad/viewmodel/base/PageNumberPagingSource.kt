@@ -40,7 +40,7 @@ class PagedResultPagingSource<T : Any>(
 
 
 fun <T : Any> createPagedResultPager(
-    pageSize: Int = 15,
+    pageSize: Int = 20,
     loadData: suspend (page: Int) -> PagedResult<T>
 ): Flow<PagingData<T>> {
     return Pager(

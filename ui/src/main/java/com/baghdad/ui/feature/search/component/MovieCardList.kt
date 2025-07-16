@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import com.baghdad.design_system.component.HomeCard
 import com.baghdad.viewmodel.search.SearchScreenState
 
@@ -27,7 +28,9 @@ fun MovieCardList(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
 
         ) {
-        items(movies.itemCount) { index ->
+        items(
+            count = movies.itemCount,
+            key = movies.itemKey { it.id }) { index ->
             val movie = movies[index] ?: return@items
             HomeCard(
                 url = movie.posterPictureURL,
