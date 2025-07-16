@@ -29,7 +29,7 @@ fun Actor.toDto(): ActorDto = ActorDto(
     department = this.department
 )
 
-fun ActorDto.toDto(): Actor = Actor(
+fun ActorDto.toEntity(): Actor = Actor(
     id = this.id,
     name = this.name,
     profilePictureURL = this.imageUrl,

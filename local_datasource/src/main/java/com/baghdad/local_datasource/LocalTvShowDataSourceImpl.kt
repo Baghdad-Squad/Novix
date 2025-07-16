@@ -24,6 +24,12 @@ class LocalTvShowDataSourceImpl(
         }
     }
 
+    override suspend fun addTvShows(tvShows: List<TvShowDto>) {
+        executeWithErrorHandling {
+            tvShowDao.upsertTvShows(tvShows.map(TvShowDto::toLocalDto))
+        }
+    }
+
 
     override suspend fun getTvShowById(id: Long): TvShowDto {
         return executeWithErrorHandling {

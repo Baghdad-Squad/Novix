@@ -12,6 +12,9 @@ interface TvShowDao {
     @Upsert
     suspend fun upsertTvShow(tvShow: TvShow)
 
+    @Upsert
+    suspend fun upsertTvShows(tvShows: List<TvShow>)
+
     @Query("DELETE FROM TvShow WHERE id = :id")
     suspend fun deleteTvShowByID(id: Long)
 

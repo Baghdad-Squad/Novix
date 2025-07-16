@@ -21,6 +21,12 @@ class LocalMovieDataSourceImpl(
             movieDao.upsertMovie(movieEntity)
         }
 
+    override suspend fun addMovies(movies: List<MovieDto>) {
+        executeWithErrorHandling {
+            movieDao.upsertMovies(movies.map(MovieDto::toLocalDto))
+        }
+    }
+
     override suspend fun getMovieById(id: Long): MovieDto =
         executeWithErrorHandling {
             val movie = movieDao.getMovieById(id)

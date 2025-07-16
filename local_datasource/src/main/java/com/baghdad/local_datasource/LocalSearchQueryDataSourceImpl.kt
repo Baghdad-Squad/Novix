@@ -23,6 +23,12 @@ class LocalSearchQueryDataSourceImpl(
         }
     }
 
+    override suspend fun addSearchQueries(queries: List<SearchQueryDto>) {
+        executeWithErrorHandling {
+            searchQueryDao.addSearchQueries(queries.map(SearchQueryDto::toLocalDto))
+        }
+    }
+
     override suspend fun getInvalidSearchQueries(
         timestamp: Long
     ): List<SearchQueryDto> {

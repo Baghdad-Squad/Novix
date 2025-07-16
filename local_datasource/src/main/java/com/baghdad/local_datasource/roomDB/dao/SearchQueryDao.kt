@@ -13,6 +13,9 @@ interface SearchQueryDao {
     @Insert(onConflict = REPLACE)
     suspend fun addSearchQuery(searchQuery: SearchQuery)
 
+    @Insert(onConflict = REPLACE)
+    suspend fun addSearchQueries(searchQueries: List<SearchQuery>)
+
     @Query("SELECT * FROM search_query WHERE timestamp < :timestamp")
     suspend fun getInvalidSearchQueries(timestamp: Long): List<SearchQuery>
 

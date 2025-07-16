@@ -11,6 +11,9 @@ interface ActorDao {
     @Upsert
     suspend fun upsertActor(actor: Actor)
 
+    @Upsert
+    suspend fun upsertActors(actors: List<Actor>)
+
     @Query("SELECT * FROM Actor")
     fun getAllActors(): Flow<List<Actor>>
 

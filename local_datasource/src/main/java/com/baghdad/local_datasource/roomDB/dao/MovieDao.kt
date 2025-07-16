@@ -11,6 +11,9 @@ interface MovieDao {
     @Upsert
     suspend fun upsertMovie(movie: Movie)
 
+    @Upsert
+    suspend fun upsertMovies(movies: List<Movie>)
+
     @Query("DELETE FROM Movie WHERE id = :id")
     suspend fun deleteMovieById(id: Long)
 
