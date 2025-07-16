@@ -43,4 +43,15 @@ class MovieRepositoryImpl(
             }
         }
     }
+
+    override suspend fun getMoviesByGenre(
+        genreId: Long,
+        page: Int
+    ): List<Movie> {
+        return executeSafely {
+            remoteMovieDataSource.getMoviesByGenre(genreId, page).map {
+                it.toEntity()
+            }
+        }
+    }
 }
