@@ -10,7 +10,6 @@ import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
-import com.baghdad.repository.util.executeSafely
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -79,14 +78,10 @@ class LocalMovieDataSourceImpl(
             movieDao.upsertMovie(movieEntity)
         }
 
-    override suspend fun searchMoviesByTitle(title: String, page: Int?, pageSize: Int) =
+    override suspend fun searchMoviesByTitle(title: String, page: Int, pageSize: Int) =
         executeWithErrorHandling {
             val currentPage = page ?: 1
             val offset = (currentPage - 1) * pageSize
-            Log.d(
-                "LocalMovieDataSourceImpl",
-                "Searching for movies with title: $title, page: $currentPage, offset: $offset"
-            )
             movieDao.getMoviesFromSearchQuery(title, pageSize, offset).map {
                 val genresDto = it.genres.map {
                     genreDao.getGenreById(it).toDto()
@@ -96,7 +91,7 @@ class LocalMovieDataSourceImpl(
         }
 
     override suspend fun getMovieCountByTitle(title: String): Int {
-        return executeSafely {
+        return executeWithErrorHandling {
             movieDao.getMovieCountBySearchQuery(title)
         }
     }
