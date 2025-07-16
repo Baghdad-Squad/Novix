@@ -1,6 +1,5 @@
 package com.baghdad.local_datasource
 
-import android.util.Log
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
 import com.baghdad.local_datasource.roomDB.entity.toDto
@@ -76,15 +75,25 @@ class LocalTvShowDataSourceImpl(
         }
     }
 
-    override suspend fun searchTvShowsByTitle(title: String): List<TvShowDto> {
+    override suspend fun searchTvShowsByTitle(
+        title: String,
+        page: Int,
+        pageSize: Int
+    ): List<TvShowDto> {
         return executeWithErrorHandling {
-            tvShowDao.searchTvShowsByTitle(title).map {
-                val genres = it.genres.map {
-                    Log.i("genres in search tv show", it.toString())
+            val offset = (page - 1) * pageSize
+            tvShowDao.getTvShowsFromSearchQuery(title, pageSize, offset).map {
+                val genresDto = it.genres.map {
                     genreDao.getGenreById(it).toDto()
                 }
-                it.toDto(genres)
+                it.toDto(genresDto)
             }
+        }
+    }
+
+    override suspend fun getTvShowCountByTitle(title: String): Int {
+        return executeWithErrorHandling {
+            tvShowDao.getTvShowCountBySearchQuery(title)
         }
     }
 }

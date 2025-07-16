@@ -96,40 +96,50 @@ class SearchRepositoryImpl(
         )
     }
 
+    override suspend fun searchTvShowsByName(
+        title: String,
+        page: Int
+    ): PagedResult<TvShow> {
+        return executePagedCachedOperation(
+            page = page,
+            pageSize = 20,
+            mapToEntity = TvShowDto::toEntity,
+            shouldFetchFromRemote = {
+                !isUserSearchThisTermWithinHour(title) ||
+                        !hasEnoughTvShowCachedDataForPage(title, page)
+            },
+            fetchFromRemote = {
+                updateGenreCache()
+                val genres = localGenreDataSource.getTvShowGenre(Locale.getDefault().language)
+                searchRemoteDataSource.searchTvShows(title, page, genres)
+            },
+            cacheRemoteData = { data ->
+                cacheTvShowSearchResult(isFirstSearch = page == 1, title, data)
+            },
+            fetchFromLocal = {
+                localTvShowDataSource.searchTvShowsByTitle(title, page, 20)
+            },
+            getTotalCount = {
+                localTvShowDataSource.getTvShowCountByTitle(title)
+            },
+            onStart = {
+                deleteInvalidCacheOfMoreThanOneHour()
+            }
+        )
+    }
+
     private suspend fun hasEnoughMovieCachedDataForPage(title: String, page: Int): Boolean {
         val requiredItemsCount = page * 20
         val cachedCount = localMovieDataSource.getMovieCountByTitle(title)
         return cachedCount >= requiredItemsCount
     }
 
-    override suspend fun searchTvShowsByName(
-        title: String,
-        page: Int
-    ): PagedResult<TvShow> {
-        return executeSafely {
-            deleteInvalidCacheOfMoreThanOneHour()
-            if (isUserSearchThisTermWithinHour(title)) {
-                PagedResult(
-                    data = localTvShowDataSource.searchTvShowsByTitle(title)
-                        .map(TvShowDto::toEntity),
-                    nextKey = null,
-                    prevKey = null
-                )
-            } else {
-                updateGenreCache()
-                val genres = localGenreDataSource.getTvShowGenre(Locale.getDefault().language)
-                val response = searchRemoteDataSource.searchTvShows(title, page, genres)
-                cacheTvShowsSearchResult(title, response.data)
-
-                PagedResult(
-                    data = response.data.map(TvShowDto::toEntity),
-                    nextKey = response.nextKey,
-                    prevKey = response.prevKey
-                )
-            }
-
-        }
+    private suspend fun hasEnoughTvShowCachedDataForPage(title: String, page: Int): Boolean {
+        val requiredItemsCount = page * 20
+        val cachedCount = localTvShowDataSource.getTvShowCountByTitle(title)
+        return cachedCount >= requiredItemsCount
     }
+
 
     private suspend fun updateGenreCache() {
         val lang = Locale.getDefault().language
@@ -157,12 +167,15 @@ class SearchRepositoryImpl(
         localSearchQueryDataSource.addSearchQueries(movies.map { it.toSearchQueryDto(query) })
     }
 
-    private suspend fun cacheTvShowsSearchResult(query: String, tvShows: List<TvShowDto>) {
-        localRecentSearchDataSource.addRecentSearchQuery(query)
+    private suspend fun cacheTvShowSearchResult(
+        isFirstSearch: Boolean,
+        query: String,
+        tvShows: List<TvShowDto>
+    ) {
+        if (isFirstSearch) localRecentSearchDataSource.addRecentSearchQuery(query)
         localTvShowDataSource.addTvShows(tvShows)
         localSearchQueryDataSource.addSearchQueries(tvShows.map { it.toSearchQueryDto(query) })
     }
-
 
     private suspend fun deleteInvalidCacheOfMoreThanOneHour() {
         val oneHourBeforeNow = System.currentTimeMillis() - 3600000

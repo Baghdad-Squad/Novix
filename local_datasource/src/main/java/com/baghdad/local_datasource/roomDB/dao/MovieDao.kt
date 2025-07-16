@@ -30,9 +30,6 @@ interface MovieDao {
     @Query("SELECT * FROM Movie")
     fun getAllMovies(): Flow<List<Movie>>
 
-    @Query("SELECT * FROM Movie WHERE title LIKE '%' || :title || '%' LIMIT :pageSize OFFSET :offset")
-    suspend fun searchMoviesByTitle(title: String, pageSize: Int, offset: Int): List<Movie>
-
     @Query(
         """
     SELECT m.* FROM Movie m

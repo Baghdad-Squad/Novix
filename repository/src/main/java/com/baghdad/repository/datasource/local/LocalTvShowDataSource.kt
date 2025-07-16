@@ -11,5 +11,6 @@ interface LocalTvShowDataSource {
     suspend fun deleteTvShowById(id: Long)
     suspend fun deleteAllTvShows()
     suspend fun updateTvShow(newMovie: TvShowDto)
-    suspend fun searchTvShowsByTitle(title: String): List<TvShowDto>
+    suspend fun searchTvShowsByTitle(title: String, page: Int, pageSize: Int = 20): List<TvShowDto>
+    suspend fun getTvShowCountByTitle(title: String): Int
 }
