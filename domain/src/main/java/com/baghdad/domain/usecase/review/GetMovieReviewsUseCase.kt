@@ -7,7 +7,7 @@ class GetMovieReviewsUseCase() {
 
     suspend operator fun invoke(movieId: Long): List<Review> = listOf(
         Review(
-            id = "1",
+            id = -1,
             authorName = "CinephileHub",
             authorAvatarUrl = "https://via.placeholder.com/150",
             contentTitle = "Matrix Reloaded",
@@ -16,7 +16,7 @@ class GetMovieReviewsUseCase() {
             rating = 9.2f
         ),
         Review(
-            id = "2",
+            id = -1,
             authorName = "FilmGeek",
             authorAvatarUrl = "https://via.placeholder.com/150",
             contentTitle = "Matrix Revolutions",
