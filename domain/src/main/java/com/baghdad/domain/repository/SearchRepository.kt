@@ -11,8 +11,7 @@ interface SearchRepository {
     fun getRecentSearches(): Flow<List<RecentSearch>>
     suspend fun deleteRecentSearchById(id : Long)
     suspend fun deleteAllRecentSearches()
-    suspend fun searchActorsByName(name: String, page: Int?): PagedResult<Actor>
-    suspend fun searchMoviesByName(title: String, page: Int?): PagedResult<Movie>
-    suspend fun searchTvShowsByName(title: String, page: Int?): PagedResult<TvShow>
-
+    suspend fun searchActorsByName(name: String, page: Int): PagedResult<Actor>
+    suspend fun searchMoviesByTitle(title: String, page: Int): PagedResult<Movie>
+    suspend fun searchTvShowsByName(title: String, page: Int): PagedResult<TvShow>
 }

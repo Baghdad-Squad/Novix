@@ -15,7 +15,7 @@ class SearchTvShowsUseCase(
     suspend operator fun invoke(
         query: String,
         filter: SearchFilter,
-        page: Int?
+        page: Int
     ): PagedResult<TvShow> {
         val favoriteGenres = favoriteGenreRepository.getFavoriteGenres()
         return searchRepository.searchTvShowsByName(query, page).let {
