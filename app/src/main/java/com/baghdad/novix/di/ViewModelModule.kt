@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModelOf(::SearchViewModel)
-    viewModel{ (id: Long) ->
+    viewModel { (id: Long) ->
         MovieDetailsViewModel(
             movieId = id,
             getMovieDetailsUseCase = get(),
@@ -19,6 +19,7 @@ val viewModelModule = module {
             getMoreLikeThisPosterImageUseCase = get(),
             getMovieCategoryUseCase = get()
         )
+    }
 
     viewModel {
         (actorId: Long) -> ActorGalleryViewModel(get(), actorId)
