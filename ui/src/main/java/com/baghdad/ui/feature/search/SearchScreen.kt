@@ -157,7 +157,7 @@ private fun RecentlyViewsWithSearch(
                 item {
                     RecentlyViewedSection(
                         recentViewed = uiState.recentViewed,
-                        onClearRecentlyViewedClick = { listener.onClearRecentSearchClick() },
+                        onClearRecentlyViewedClick = { listener.onClearRecentlyViewedClick() },
                         onSavedClick = { listener.onSaveRecentlyViewedClick(it) },
                         onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) },
                         modifier = Modifier.padding(top = 12.dp)

@@ -1,7 +1,9 @@
 package com.baghdad.ui.feature.search.component
 
-import androidx.compose.foundation.layout.aspectRatio
+import android.util.Log
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +24,9 @@ fun RecentlyViewedSection(
     SectionHeaderWithAction(
         modifier = modifier,
         title = stringResource(R.string.recent_viewed),
-        onClearAllClick = onClearRecentlyViewedClick,
+        onClearAllClick = {
+            onClearRecentlyViewedClick()
+        },
     )
     HorizontalMediaCardList(
         items = recentViewed,
@@ -30,10 +34,11 @@ fun RecentlyViewedSection(
         onSavedClick = { onSavedClick(it.id) },
         onCardClick = { onRecentlyViewedClick(it.id) },
         isSaved = { it.isSaved },
+        contentPadding = PaddingValues(),
         modifier = Modifier
-            .fillMaxWidth(0.45f)
-            .aspectRatio(0.8f)
-            .padding(bottom = 12.dp)
+            .fillMaxWidth()
+            .height(210.dp)
+            .padding(bottom = 12.dp, top = 12.dp)
     )
 }
 
