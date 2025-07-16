@@ -1,4 +1,4 @@
-package com.baghdad.mapper
+package com.baghdad.remoteDataSource.mapper
 
 import com.baghdad.remoteDataSource.response.TVShowResponse
 import com.baghdad.repository.model.GenreDto
@@ -18,7 +18,7 @@ fun TVShowResponse.toDto(): TvShowDto {
         } ?: emptyList(),
         imdbRating = this.voteAverage ?: 0.0,
         userRating = null,
-        releaseDate = this.firstAirDate.orEmpty(),
+        releaseDate = this.firstAirDate ?: "0001-01-01",
         overview = this.overview.orEmpty(),
         posterPictureURL = this.posterPath.orEmpty(),
         numberOfSeasons = this.numberOfSeasons ?: 0
