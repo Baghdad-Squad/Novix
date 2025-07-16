@@ -3,7 +3,7 @@ package com.baghdad.remoteDataSource
 import MovieDetailsResponse
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.toDto
-import com.baghdad.remoteDataSource.response.CreditsResponse
+import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
@@ -33,15 +33,24 @@ class RemoteMovieDataSourceImpl(
 
     override suspend fun getMovieCastMembers(movieId: Long): List<CastMemberDto> {
         val endpoint = MOVIE_CREDITS_ENDPOINT.replace("{movie_id}", movieId.toString())
-        return handleRequest<CreditsResponse>(
+        return handleRequest<CastMembersResponse>(
             client = httpClient,
             url = "$baseUrl$endpoint"
         ).cast?.map { it.toDto() } ?: emptyList()
+    }
+
+    override suspend fun getMoviesByGenre(genreId: Long, page: Int): List<MovieDto> {
+        val endpoint = MOVIE_WITH_GENRE_ENDPOINT
+        return handleRequest<SimilarMovieResponse>(
+            client = httpClient,
+            url = "$baseUrl$endpoint?with_genres=$genreId&page=$page"
+        ).results.orEmpty().map { it.toDto() }
     }
 
     companion object {
         private const val SIMILAR_MOVIES_ENDPOINT = "/movie/{movie_id}/similar"
         private const val MOVIE_DETAILS_ENDPOINT = "/movie/{movie_id}"
         private const val MOVIE_CREDITS_ENDPOINT = "/movie/{movie_id}/credits"
+        private const val MOVIE_WITH_GENRE_ENDPOINT = "/discover/movie"
     }
 }

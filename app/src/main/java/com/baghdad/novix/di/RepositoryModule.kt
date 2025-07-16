@@ -20,5 +20,4 @@ val repositoryModule = module {
     singleOf(::TvShowRepositoryImpl) { bind<TvShowRepository>() }
     singleOf(::RecentlyViewedRepositoryImpl) { bind<RecentlyViewedRepository>() }
     singleOf(::ActorRepositoryImpl) { bind<ActorRepository>() }
-
 }
