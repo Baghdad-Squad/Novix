@@ -446,6 +446,7 @@ class SearchViewModel(
 
     override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {
         updateState { it.copy(selectedSearchTab = selectedTab) }
+        performSearchByTab(currentState.searchText)
     }
 
     override fun onRecentlyViewedClick(id: Long) {
