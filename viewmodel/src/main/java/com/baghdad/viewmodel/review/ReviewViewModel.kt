@@ -9,16 +9,14 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 class ReviewViewModel(
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase,
     private val getSeriesReviewsUseCase: GetSeriesReviewsUseCase,
+    val contentId: Long,
     contentType: ContentType,
 ) : BaseViewModel<ReviewScreenState, ReviewScreenEffect>(ReviewScreenState()),
     ReviewInteractionListener {
 
-    private val contentTypes = contentType
-    private val contentId: Long = 1 // Todo
-
 
     init {
-        when (contentTypes) {
+        when (contentType) {
             ContentType.MOVIE -> loadReviewsForMovie()
             ContentType.SERIES -> loadReviewsForSeries()
         }

@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.baghdad.ui.navigation.graph.DummyScreen
+import com.baghdad.ui.feature.review.ReviewScreen
 import com.baghdad.ui.navigation.graph.util.toGraph
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.ReviewsRoute
@@ -16,7 +16,12 @@ fun NavGraphBuilder.reviewsNavGraph(navController: NavHostController) {
         composable<ReviewsRoute.ReviewsScreen> { backStackEntry ->
             val mediaId = backStackEntry.toGraph<Graph.ReviewsGraph>(navController).mediaId
             val mediaType = backStackEntry.toGraph<Graph.ReviewsGraph>(navController).mediaType
-            DummyScreen(title = "Reviews Screen: $mediaType - $mediaId")
+            ReviewScreen(
+                mediaId = mediaId,
+                mediaType = mediaType
+            ) { event ->
+                handleReviewsNavEvent(event = event, navController = navController)
+            }
         }
     }
 }
