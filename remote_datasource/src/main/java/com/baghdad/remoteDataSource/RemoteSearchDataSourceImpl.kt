@@ -23,10 +23,10 @@ class RemoteSearchDataSourceImpl(
 ) : RemoteSearchDataSource {
     override suspend fun searchMovies(
         query: String,
-        pageNumber: Int,
+        page: Int?,
         genres: List<GenreDto>
     ): PagedResultDto<MovieDto> {
-        val params = SearchParameter(query, pageNumber)
+        val params = SearchParameter(query, page)
         val searchResponse = handleRequest<MovieSearchResponse>(
             client = httpClient,
             url = "$baseUrl$SEARCH_MOVIES_ENDPOINT",
@@ -38,10 +38,10 @@ class RemoteSearchDataSourceImpl(
 
     override suspend fun searchTvShows(
         query: String,
-        pageNumber: Int,
+        page: Int?,
         genres: List<GenreDto>
     ): PagedResultDto<TvShowDto> {
-        val params = SearchParameter(query, pageNumber)
+        val params = SearchParameter(query, page)
         val searchResponse = handleRequest<TvShowSearchResponse>(
             client = httpClient,
             url = "$baseUrl$SEARCH_TV_SHOWS_ENDPOINT",
@@ -52,9 +52,9 @@ class RemoteSearchDataSourceImpl(
 
     override suspend fun searchActors(
         query: String,
-        pageNumber: Int
+        page: Int?,
     ): PagedResultDto<ActorDto> {
-        val params = SearchParameter(query, pageNumber)
+        val params = SearchParameter(query, page)
         val searchResponse = handleRequest<ActorSearchResponse>(
             client = httpClient,
             url = "$baseUrl$SEARCH_ACTORS_ENDPOINT",
