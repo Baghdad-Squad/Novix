@@ -2,13 +2,17 @@ package com.baghdad.repository
 
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Genre
+import com.baghdad.entity.media.TvShow
+import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
+import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.util.executeSafely
 import java.util.Locale
 
 class TvShowRepositoryImpl(
-    val remoteGenreDataSource: RemoteGenreDataSource
+    val remoteGenreDataSource: RemoteGenreDataSource,
+    val tvShowRemoteDataSource: RemoteTvShowDataSource
 ) : TvShowRepository {
     override suspend fun getGenres(): List<Genre> {
         return executeSafely {
@@ -17,4 +21,41 @@ class TvShowRepositoryImpl(
             it.toEntity()
         }
     }
+
+    override suspend fun getTvShowDetails(tvId: Long): TvShow{
+        return executeSafely {
+            tvShowRemoteDataSource.getTvShowDetails(tvId).toEntity()
+        }
+    }
+
+    override suspend fun getTvShowCastMembers(tvId: Long): List<CastMember>{
+        return executeSafely {
+            tvShowRemoteDataSource.getTvShowCastMembers(tvId).map {
+                it.toEntity()
+            }
+        }
+    }
+
+    override suspend fun getTvShowImages(tvId: Long): List<String>{
+        return executeSafely {
+            tvShowRemoteDataSource.getTvShowImages(tvId)
+        }
+    }
+
+    override suspend fun getTvShowByGenre(genreId: Long, page: Int): List<TvShow>{
+        return executeSafely {
+            tvShowRemoteDataSource.getTvShowByGenre(genreId, page).map {
+                it.toEntity()
+            }
+        }
+    }
+
+    override suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<TvShow>{
+        return executeSafely {
+            tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber).map {
+                it.toEntity()
+            }
+        }
+    }
+
 }
