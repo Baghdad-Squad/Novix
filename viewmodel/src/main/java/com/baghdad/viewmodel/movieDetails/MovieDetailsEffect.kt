@@ -5,7 +5,7 @@ import com.baghdad.viewmodel.base.BaseUiEffect
 sealed interface MovieDetailsEffect : BaseUiEffect{
 
     data class NavigateToCategory(
-        val categoryName: String
+        val id: Long
     ): MovieDetailsEffect
 
     data class NavigateToReviewDetails(
@@ -13,11 +13,11 @@ sealed interface MovieDetailsEffect : BaseUiEffect{
     ) : MovieDetailsEffect
 
     data class NavigateToActorDetails(
-        val id: String
+        val id: Long
     ): MovieDetailsEffect
 
     data class NavigateToMovie(
-        val id: String
+        val id: Long
     ): MovieDetailsEffect
 
 }

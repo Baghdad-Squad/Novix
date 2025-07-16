@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.HomeCard
@@ -43,37 +41,37 @@ import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieDetailsHeader
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
 import com.baghdad.ui.feature.movieDetails.component.TextSection
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun MovieDetailsScreen(
-    navigateToMovie: (id: Long) -> Unit,
-    navigateToActorDetails: (id: Long) -> Unit,
-    navigateToReviewDetails: (id: Long) -> Unit,
-    navigateToCategory: (name: String) -> Unit,
+    listener: MovieDetailsInteractionListener,
+    state: MovieDetailsState,
+    snakBarState: SnackBarState,
+    viewModel: MovieDetailsViewModel,
+    handleNavigation: (MovieDetailsNavEvent) -> Unit,
 ) {
 
-    val viewModel: MovieDetailsViewModel = koinViewModel()
-    val state by viewModel.uiState.collectAsState()
-    val snakeBar = viewModel.snackBarState.collectAsStateWithLifecycle()
+    ObserveAsEffect(viewModel.uiEffect) { effect ->
+        handleEffect(effect, handleNavigation)
+    }
     MovieDetailsContent(
-        listener = viewModel,
+        listener = listener,
         state = state,
-        snakBarState = snakeBar.value,
-        navigateToMovie = navigateToMovie,
-        navigateToActorDetails = navigateToActorDetails,
-        navigateToReviewDetails = navigateToReviewDetails,
-        navigateToCategory = navigateToCategory,
-    )
+        snakBarState = snakBarState,
+
+        )
 }
 
 @Composable
@@ -81,12 +79,7 @@ private fun MovieDetailsContent(
     listener: MovieDetailsInteractionListener,
     state: MovieDetailsState,
     snakBarState: SnackBarState,
-    navigateToMovie: (id: Long) -> Unit,
-    navigateToActorDetails: (id: Long) -> Unit,
-    navigateToReviewDetails: (id: Long) -> Unit,
-    navigateToCategory: (name: String) -> Unit,
-
-    ) {
+) {
     val lazyState = rememberLazyGridState()
     var shouldReduceAspectRatio by remember { mutableStateOf(false) }
     val targetAspectRange = 1.38f..1.42f
@@ -297,4 +290,38 @@ private fun FloatingIconsButton(
     }
 }
 
+private fun handleEffect(
+    effect: MovieDetailsEffect,
+    handleNavigation: (MovieDetailsNavEvent) -> Unit,
+) {
+    when (effect) {
+        is MovieDetailsEffect.NavigateToActorDetails -> {
+            handleNavigation(
+                MovieDetailsNavEvent.NavigateToActorDetails(
+                    actorId = effect.id
+                )
+            )
+        }
+
+        is MovieDetailsEffect.NavigateToCategory -> {
+            handleNavigation(
+                MovieDetailsNavEvent.NavigateToCategoryMovies(
+                    categoryId = effect.id
+                )
+            )
+        }
+
+        is MovieDetailsEffect.NavigateToMovie -> handleNavigation(
+            MovieDetailsNavEvent.NavigateToMovieDetails(
+                movieId = effect.id,
+            )
+        )
+
+        is MovieDetailsEffect.NavigateToReviewDetails -> handleNavigation(
+            MovieDetailsNavEvent.NavigateToReviews(
+                movieId = effect.id
+            )
+        )
+    }
+}
 
