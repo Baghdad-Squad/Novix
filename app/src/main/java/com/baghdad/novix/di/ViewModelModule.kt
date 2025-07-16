@@ -18,7 +18,6 @@ val viewModelModule = module {
         ActorDetailsViewModel(actorId, get(), get(), get(), get())
 
     }
-    viewModelOf(::ActorDetailsViewModel)
     viewModel { (mediaId: Long, mediaType: ContentType) ->
         ReviewViewModel(
             contentId = mediaId,
@@ -27,5 +26,4 @@ val viewModelModule = module {
             getSeriesReviewsUseCase = get()
         )
     }
-
 }

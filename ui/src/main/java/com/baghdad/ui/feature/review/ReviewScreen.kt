@@ -19,7 +19,6 @@ import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.review.component.ReviewerCard
 import com.baghdad.ui.navigation.graph.reviews.ReviewsNavEvent
-import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewInteractionListener
 import com.baghdad.viewmodel.review.ReviewScreenEffect
 import com.baghdad.viewmodel.review.ReviewScreenState
@@ -30,7 +29,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ReviewScreen(
-    mediaType: ContentType,
+    mediaType: String,
     mediaId: Long,
     viewModel: ReviewViewModel = koinViewModel(parameters = { parametersOf(mediaId, mediaType) }),
     onNavEvent: (ReviewsNavEvent) -> Unit

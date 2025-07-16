@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.review
 
 import com.baghdad.entity.media.Review
+import kotlinx.datetime.LocalDate
 
 class GetSeriesReviewsUseCase {
 
@@ -11,7 +12,7 @@ class GetSeriesReviewsUseCase {
             authorAvatarUrl = "https://via.placeholder.com/150",
             contentTitle = "Matrix Reloaded",
             reviewText = "Amazing movie about choice and control.",
-            postedDate = "03‑12‑2001",
+            postedDate = LocalDate(1, 1, 1),
             rating = 9.2f
         ),
         Review(
@@ -20,7 +21,7 @@ class GetSeriesReviewsUseCase {
             authorAvatarUrl = "https://via.placeholder.com/150",
             contentTitle = "Matrix Revolutions",
             reviewText = "A bold finale with huge action set‑pieces.",
-            postedDate = "28‑10‑2003",
+            postedDate = LocalDate(1, 1, 1),
             rating = 8.4f
         )
     )
