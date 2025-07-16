@@ -52,4 +52,5 @@ dependencies {
     androidTestImplementation(libs.bundles.test.core)
     androidTestImplementation(libs.androidx.room.testing)
     androidTestImplementation(libs.androidx.junit)
+    implementation(libs.kotlinx.datetime)
 }

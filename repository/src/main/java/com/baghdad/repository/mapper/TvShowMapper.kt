@@ -11,7 +11,8 @@ fun TvShowDto.toEntity(): TvShow {
         genres = genres.map { it.toEntity() },
         averageRating = imdbRating,
         userRating = userRating,
-        releaseDate = LocalDate.parse(releaseDate),
+        releaseDate = releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+            ?: LocalDate(1990, 1, 1),
         overview = overview,
         posterImageURL = posterPictureURL,
         numberOfSeasons = numberOfSeasons

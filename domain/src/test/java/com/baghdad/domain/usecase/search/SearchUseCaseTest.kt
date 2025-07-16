@@ -2,6 +2,7 @@ package com.baghdad.domain.usecase.search
 
 import com.baghdad.domain.model.search.SearchFilter
 import com.baghdad.domain.model.search.SearchResult
+import com.baghdad.domain.repository.FavoriteGenreRepository
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.testHelper.getTestMovie
 import com.baghdad.domain.testHelper.getTestTvShow
@@ -18,6 +19,7 @@ class SearchUseCaseTest {
 
     private lateinit var searchRepository: SearchRepository
     private lateinit var searchUseCase: SearchUseCase
+    private lateinit var favoriteGenreRepository: FavoriteGenreRepository
 
     private val genreAction = Genre(id = 1, name = "Action")
     private val genreDrama = Genre(id = 2, name = "Drama")
@@ -57,7 +59,8 @@ class SearchUseCaseTest {
     @BeforeEach
     fun setUp() {
         searchRepository = mockk(relaxed = true)
-        searchUseCase = SearchUseCase(searchRepository)
+        favoriteGenreRepository = mockk(relaxed = true)
+        searchUseCase = SearchUseCase(searchRepository, favoriteGenreRepository)
     }
 
     @Test
