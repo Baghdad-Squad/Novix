@@ -64,10 +64,17 @@ class LocalActorDataSourceImpl(
             actorDao.upsertActor(actorEntity)
         }
 
-    override suspend fun searchActorsByName(name: String) =
+    override suspend fun searchActorsByName(name: String, page: Int, pageSize: Int) =
         executeWithErrorHandling {
-            actorDao.searchActorsByName(name).map {
+            val offset = (page - 1) * pageSize
+            actorDao.getActorsFromSearchQuery(name, pageSize, offset).map {
                 it.toDto()
             }
         }
+
+    override suspend fun getActorCountByName(name: String): Int {
+        return executeWithErrorHandling {
+            actorDao.getActorCountBySearchQuery(name)
+        }
     }
+}
