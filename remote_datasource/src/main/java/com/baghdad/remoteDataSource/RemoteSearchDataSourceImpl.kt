@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource
 
+import android.util.Log
 import com.baghdad.remoteDataSource.mapper.search.toPagedActorDtos
 import com.baghdad.remoteDataSource.mapper.search.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.search.toPagedTvShowDtos
@@ -23,7 +24,7 @@ class RemoteSearchDataSourceImpl(
 ) : RemoteSearchDataSource {
     override suspend fun searchMovies(
         query: String,
-        page: Int?,
+        page: Int,
         genres: List<GenreDto>
     ): PagedResultDto<MovieDto> {
         val params = SearchParameter(query, page)
@@ -32,13 +33,14 @@ class RemoteSearchDataSourceImpl(
             url = "$baseUrl$SEARCH_MOVIES_ENDPOINT",
             params = params.toParams(),
         )
+        Log.d("PagedResultPagingSource", "Search Response: ${searchResponse.results?.size}")
 
         return searchResponse.toPagedMovieDtos(genres = genres)
     }
 
     override suspend fun searchTvShows(
         query: String,
-        page: Int?,
+        page: Int,
         genres: List<GenreDto>
     ): PagedResultDto<TvShowDto> {
         val params = SearchParameter(query, page)
@@ -52,7 +54,7 @@ class RemoteSearchDataSourceImpl(
 
     override suspend fun searchActors(
         query: String,
-        page: Int?,
+        page: Int,
     ): PagedResultDto<ActorDto> {
         val params = SearchParameter(query, page)
         val searchResponse = handleRequest<ActorSearchResponse>(
