@@ -25,7 +25,6 @@ internal fun SearchResponse.toDto(
                     placeOfBirth = "",
                     headerPictures = emptyList(),
                     department = "",
-                    characterName = ""
                 )
             }
         }

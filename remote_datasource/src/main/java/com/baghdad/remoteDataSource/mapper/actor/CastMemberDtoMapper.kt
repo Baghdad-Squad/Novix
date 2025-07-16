@@ -16,7 +16,6 @@ fun CastMemberResponse.toDto(): CastMemberDto {
             placeOfBirth = "",
             headerPictures = emptyList(),
             department = knownForDepartment ?: "Unknown",
-            characterName = character ?: "Unknown"
         ),
         characterName = character ?: "Unknown"
     )

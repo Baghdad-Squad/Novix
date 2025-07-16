@@ -19,6 +19,7 @@ data class TvShowDetailsScreenState(
         val releaseDate: String = "",
         val seasonCount: Int = 0,
         val overView: String = "",
+        val headerPictures: List<String> = emptyList()
     )
 
     data class GenreUiState(
@@ -40,5 +41,6 @@ data class TvShowDetailsScreenState(
         val rating: Double = 0.0,
         val duration: String = "",
         val releaseDate: String = "",
+        val currentSeason: Int = 0
     )
 }

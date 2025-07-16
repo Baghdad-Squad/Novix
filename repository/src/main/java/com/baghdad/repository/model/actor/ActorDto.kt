@@ -10,5 +10,4 @@ data class ActorDto(
     val placeOfBirth: String,
     val headerPictures: List<String>,
     val department: String,
-    val characterName: String?
 )

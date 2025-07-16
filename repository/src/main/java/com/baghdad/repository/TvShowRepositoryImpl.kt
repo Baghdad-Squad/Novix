@@ -4,7 +4,7 @@ import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
-import com.baghdad.entity.person.Actor
+import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.util.executeSafely
@@ -14,7 +14,7 @@ import java.util.Locale
 class TvShowRepositoryImpl(
     val remoteGenreDataSource: RemoteGenreDataSource
 ) : TvShowRepository {
-    override suspend fun getTvShowInfo(tvShowId: Long): TvShow {
+    override suspend fun getTvShowDetails(tvShowId: Long): TvShow {
         return TvShow(
             id = 1,
             title = "title",
@@ -30,7 +30,7 @@ class TvShowRepositoryImpl(
 //        TODO("Not yet implemented")
     }
 
-    override suspend fun getTvShowCast(tvShowId: Long): List<Actor> {
+    override suspend fun getTvShowCastMembers(tvShowId: Long): List<CastMember> {
         return emptyList()
 
 //        TODO("Not yet implemented")
@@ -47,5 +47,10 @@ class TvShowRepositoryImpl(
         }.map {
             it.toEntity()
         }
+    }
+
+    override suspend fun getTvShowsByGenres(genreId: Long): List<TvShow> {
+        return emptyList()
+//        TODO("Not yet implemented")
     }
 }

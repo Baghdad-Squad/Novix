@@ -14,16 +14,16 @@ class LocalActorDataSourceImpl(
 ) : LocalActorDataSource {
     override suspend fun addActor(name: String, imageUrl: String) =
         executeWithErrorHandling {
-            val actor = Actor( /*TODO replace with real data */
+            val actor = Actor(
+                /*TODO replace with real data */
                 name = name,
                 profilePictureURL = imageUrl,
-                birthDate = "",
+                birthDate = "2025-11-11",
                 deathDate = null,
                 biography = "",
                 placeOfBirth = "",
                 headerPictures = emptyList(),
                 department = "",
-                characterName = ""
             )
             actorDao.upsertActor(actor)
         }

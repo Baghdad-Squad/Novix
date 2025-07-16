@@ -14,6 +14,5 @@ fun ActorDetailsResponse.toDto(): ActorDto {
         placeOfBirth = this.placeOfBirth.orEmpty(),
         headerPictures = listOf("https://image.tmdb.org/t/p/w500"+ this.profilePath),
         department = this.knownForDepartment.orEmpty(),
-        characterName = null /*TODO*/
     )
 }

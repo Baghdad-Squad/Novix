@@ -1,4 +1,4 @@
-package com.baghdad.domain.usecase.tvShowDetails
+package com.baghdad.domain.usecase.tvShow
 
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Episode

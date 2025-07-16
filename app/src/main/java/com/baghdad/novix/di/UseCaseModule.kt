@@ -1,9 +1,9 @@
 package com.baghdad.novix.di
 
-import com.baghdad.domain.usecase.actorDetails.GetActorGalleryUseCase
-import com.baghdad.domain.usecase.actorDetails.GetActorInfoUseCase
-import com.baghdad.domain.usecase.actorDetails.GetActorMoviesUseCase
-import com.baghdad.domain.usecase.actorDetails.GetActorTvShowUseCase
+import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
+import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
+import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
+import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase

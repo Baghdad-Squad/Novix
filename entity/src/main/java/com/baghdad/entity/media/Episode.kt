@@ -8,5 +8,6 @@ data class Episode(
     val episodeNumber: Int,
     val rating: Double,
     val duration: String,
-    val releasedDate: LocalDate
+    val releasedDate: LocalDate,
+    val currentSeason: Int
 )

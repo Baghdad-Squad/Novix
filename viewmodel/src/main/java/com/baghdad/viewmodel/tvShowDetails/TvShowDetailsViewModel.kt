@@ -1,15 +1,15 @@
 package com.baghdad.viewmodel.tvShowDetails
 
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
-import com.baghdad.domain.usecase.tvShowDetails.GetTvShowCastUseCase
-import com.baghdad.domain.usecase.tvShowDetails.GetTvShowEpisodesUseCase
-import com.baghdad.domain.usecase.tvShowDetails.GetTvShowInfoUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowCastUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowEpisodesUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class TvShowDetailsViewModel(
     private val tvShowId: Long,
-    private val getTvShowInfoUseCase: GetTvShowInfoUseCase,
+    private val getTvShowDetailsUseCase: GetTvShowDetailsUseCase,
     private val getTvShowCastUseCase: GetTvShowCastUseCase,
     private val getTvShowEpisodesUseCase: GetTvShowEpisodesUseCase,
     private val getTvShowGenresUseCase: GetGenresUseCase
