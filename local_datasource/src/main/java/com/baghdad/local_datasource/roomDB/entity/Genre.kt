@@ -6,8 +6,8 @@ import com.baghdad.repository.model.GenreDto
 
 @Entity(tableName = "Genre")
 data class Genre(
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0,
+    @PrimaryKey
+    var id: Long,
     var name: String,
     val type: String
 )

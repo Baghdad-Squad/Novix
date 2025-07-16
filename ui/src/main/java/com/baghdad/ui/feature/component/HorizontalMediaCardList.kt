@@ -19,12 +19,14 @@ fun <T> HorizontalMediaCardList(
     onSavedClick: (T) -> Unit,
     onCardClick: (T) -> Unit,
     isSaved: (T) -> Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
 ) {
     LazyRow(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp),
+        contentPadding = contentPadding,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {

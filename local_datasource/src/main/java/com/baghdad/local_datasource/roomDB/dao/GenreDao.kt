@@ -2,12 +2,13 @@ package com.baghdad.local_datasource.roomDB.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import com.baghdad.local_datasource.roomDB.entity.Genre
 
 @Dao
 interface GenreDao {
-    @Insert
+    @Insert(onConflict = REPLACE)
     fun addGenre(genre: Genre)
 
     @Query("SELECT * FROM Genre")
