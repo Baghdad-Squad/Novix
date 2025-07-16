@@ -38,5 +38,7 @@ interface SearchQueryDao {
     @Query("DELETE FROM search_query WHERE queryName = :queryName")
     suspend fun deleteSearchQueryByName(queryName: String)
 
+    @Query("SELECT * FROM search_query WHERE queryName = :queryName AND mediaType = :mediaType")
+    suspend fun getSearchByQuery(queryName: String, mediaType: String): List<SearchQuery>
 
 }

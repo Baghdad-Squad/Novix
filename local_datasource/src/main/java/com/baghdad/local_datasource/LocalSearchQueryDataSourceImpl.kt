@@ -4,6 +4,7 @@ import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
 import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
+import com.baghdad.local_datasource.roomDB.entity.SearchQuery
 import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
@@ -40,6 +41,15 @@ class LocalSearchQueryDataSourceImpl(
     override suspend fun getAllSearchQueries(): List<SearchQueryDto> {
         return executeWithErrorHandling {
             searchQueryDao.getAllSearchQueries().map { it.toDto() }
+        }
+    }
+
+    override suspend fun getSearchByQuery(
+        query: String,
+        type: MediaType
+    ): List<SearchQueryDto> {
+        return executeWithErrorHandling {
+            searchQueryDao.getSearchByQuery(query, type.name).map(SearchQuery::toDto)
         }
     }
 
