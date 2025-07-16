@@ -7,6 +7,6 @@ fun Review.toReviewUi() = ReviewScreenState.ReviewUiState(
     authorAvatarUrl = authorAvatarUrl,
     contentTitle = contentTitle,
     reviewText = reviewText,
-    postedDate = postedDate,
+    postedDate = postedDate.toString(),
     rating = rating
 )

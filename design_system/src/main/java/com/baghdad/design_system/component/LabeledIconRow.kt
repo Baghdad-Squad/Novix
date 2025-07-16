@@ -13,12 +13,11 @@ import com.baghdad.design_system.theme.Theme
 
 @Composable
 fun LabeledIconRow(title: String, icon: Painter, modifier: Modifier = Modifier) {
-    Row(modifier = modifier) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Icon(
             painter = icon,
-            contentDescription = "Icon",
+            contentDescription = null,
             tint = Theme.color.body,
-            modifier = Modifier.align(alignment = Alignment.CenterVertically)
         )
         Text(
             text = title,
