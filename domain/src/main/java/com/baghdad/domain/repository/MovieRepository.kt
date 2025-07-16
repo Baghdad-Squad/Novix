@@ -9,5 +9,4 @@ interface MovieRepository {
     suspend fun getSimilarMovies(movieId: Long): List<Movie>
     suspend fun getMovieDetails(movieId: Long): Movie
     suspend fun getMovieCastMembers(movieId: Long): List<CastMember>
-    suspend fun searchMoviesByName(query: String): List<Movie>
 }

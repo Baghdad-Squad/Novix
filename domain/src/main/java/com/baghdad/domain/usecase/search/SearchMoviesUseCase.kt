@@ -1,20 +1,25 @@
 package com.baghdad.domain.usecase.search
 
+import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.search.SearchFilter
 import com.baghdad.domain.repository.FavoriteGenreRepository
-import com.baghdad.domain.repository.MovieRepository
+import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.util.SearchFilterHelper
 import com.baghdad.entity.media.Movie
 
 class SearchMoviesUseCase(
-    private val movieRepository: MovieRepository,
+    private val searchRepository: SearchRepository,
     private val favoriteGenreRepository: FavoriteGenreRepository,
     private val filterHelper: SearchFilterHelper
 ) {
-    suspend operator fun invoke(query: String, filter: SearchFilter): List<Movie> {
+    suspend operator fun invoke(
+        query: String,
+        filter: SearchFilter,
+        page: Int?
+    ): PagedResult<Movie> {
         val favoriteGenres = favoriteGenreRepository.getFavoriteGenres()
-        return movieRepository.searchMoviesByName(query)
-            .filter { movie ->
+        return searchRepository.searchMoviesByName(query, page).let {
+            it.copy(data = it.data.filter { movie ->
                 filterHelper.matchesRatingFilter(movie.averageRating, filter.minimumRating) &&
                         filterHelper.matchesYearFilter(
                             movie.releaseDate.year,
@@ -23,8 +28,10 @@ class SearchMoviesUseCase(
                         ) &&
                         filterHelper.matchesGenreFilter(movie.genres, filter.selectedGenres)
             }
-            .sortedByDescending { movie ->
-                movie.genres.sumOf { genre -> favoriteGenres[genre.name] ?: 0 }
-            }
+                .sortedByDescending { movie ->
+                    movie.genres.sumOf { genre -> favoriteGenres[genre.name] ?: 0 }
+                }
+            )
+        }
     }
 }
