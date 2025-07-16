@@ -7,7 +7,7 @@ import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.model.GenreDto
 
-class LocalGenreDataSource(
+class LocalGenreDataSourceImpl(
     val genreDao: GenreDao
 ) : LocalGenreDataSource {
     override suspend fun getMovieGenre(language: String): List<GenreDto> {
@@ -28,13 +28,13 @@ class LocalGenreDataSource(
 
     override suspend fun addGenre(
         genre: GenreDto,
-        type: GenreDto.GenreType
     ) {
         executeWithErrorHandling {
             genreDao.addGenre(
                 Genre(
-                    type = type.name,
-                    name = genre.name
+                    type = genre.type.name,
+                    name = genre.name,
+                    id = genre.id
                 )
             )
         }
