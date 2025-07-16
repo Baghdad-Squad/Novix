@@ -74,7 +74,7 @@ class SearchRepositoryImpl(
             mapToEntity = MovieDto::toEntity,
             shouldFetchFromRemote = {
                 !isUserSearchThisTermWithinHour(title) ||
-                        !hasEnoughCachedDataForPage(title, page)
+                        !hasEnoughMovieCachedDataForPage(title, page)
             },
             fetchFromRemote = {
                 updateGenreCache()
@@ -96,7 +96,7 @@ class SearchRepositoryImpl(
         )
     }
 
-    private suspend fun hasEnoughCachedDataForPage(title: String, page: Int): Boolean {
+    private suspend fun hasEnoughMovieCachedDataForPage(title: String, page: Int): Boolean {
         val requiredItemsCount = page * 20
         val cachedCount = localMovieDataSource.getMovieCountByTitle(title)
         return cachedCount >= requiredItemsCount

@@ -70,9 +70,7 @@ suspend fun <TEntity, TDto> executePagedCachedOperation(
         val localData = fetchFromLocal()
         val totalCount = getTotalCount()
 
-        if (!hasNextPage) {
-            hasNextPage = (page * pageSize) < totalCount
-        }
+        hasNextPage = hasNextPage || (page * pageSize) < totalCount
 
         PagedResult(
             data = localData.map(mapToEntity),
