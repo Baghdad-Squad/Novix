@@ -1,14 +1,14 @@
 package com.baghdad.viewmodel.actorGallery
 
-import com.baghdad.domain.usecase.gallery.GetGalleryImagesUseCase
+import com.baghdad.domain.usecase.actorDetails.GetActorGalleryUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class ActorGalleryViewModel(
-    private val getGalleryImagesUseCase: GetGalleryImagesUseCase,
+    private val getGalleryImagesUseCase: GetActorGalleryUseCase,
     private val actorId: Long
 
-): BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect> (ActorGalleryScreenState()),
+) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
     ActorGalleryInteractionListener {
 
     init {
@@ -19,7 +19,7 @@ class ActorGalleryViewModel(
         return BaseSnackBarMessage.UnknownError
     }
 
-    fun getActorGalleryImages(actorId: Long){
+    fun getActorGalleryImages(actorId: Long) {
 
         tryToExecute(
             callee = { getGalleryImagesUseCase.invoke(actorId) },
