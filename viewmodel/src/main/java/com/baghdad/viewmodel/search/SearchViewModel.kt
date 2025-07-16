@@ -9,7 +9,6 @@ import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
-import com.baghdad.domain.usecase.search.SearchUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.base.BaseViewModel

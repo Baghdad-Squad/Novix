@@ -38,5 +38,9 @@ class ActorRepositoryImpl(
         }
     }
 
+    override suspend fun searchActorsByName(name: String): List<Actor> {
+
+    }
+
 
 }
