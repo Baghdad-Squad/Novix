@@ -32,8 +32,8 @@ import org.koin.core.parameter.parametersOf
 fun ReviewScreen(
     mediaType: ContentType,
     mediaId: Long,
-    onNavEvent: (ReviewsNavEvent) -> Unit,
-    viewModel: ReviewViewModel = koinViewModel(parameters = { parametersOf(mediaId, mediaType) })
+    viewModel: ReviewViewModel = koinViewModel(parameters = { parametersOf(mediaId, mediaType) }),
+    onNavEvent: (ReviewsNavEvent) -> Unit
 ) {
 
 

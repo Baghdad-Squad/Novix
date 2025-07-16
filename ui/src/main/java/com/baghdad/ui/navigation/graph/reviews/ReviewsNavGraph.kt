@@ -18,7 +18,7 @@ fun NavGraphBuilder.reviewsNavGraph(navController: NavHostController) {
             val mediaType = backStackEntry.toGraph<Graph.ReviewsGraph>(navController).mediaType
             ReviewScreen(
                 mediaId = mediaId,
-                mediaType = mediaType
+                mediaType = mediaType,
             ) { event ->
                 handleReviewsNavEvent(event = event, navController = navController)
             }
