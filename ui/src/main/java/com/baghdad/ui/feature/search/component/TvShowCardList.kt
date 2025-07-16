@@ -15,8 +15,8 @@ import com.baghdad.viewmodel.search.SearchScreenState
 @Composable
 fun TvShowCardList(
     tvShows: List<SearchScreenState.TvShowUiState>,
-    onSavedClick:(Long) -> Unit,
-    onTVShowClick:(Long) -> Unit,
+    onSavedClick: (Long) -> Unit,
+    onTVShowClick: (id: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -28,14 +28,18 @@ fun TvShowCardList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
 
-    ) {
+        ) {
         items(tvShows) { tvShow ->
             HomeCard(
                 url = tvShow.posterPictureURL,
                 contentDescription = null,
                 isSaved = tvShow.isSaved,
                 onSavedClick = { onSavedClick(tvShow.id) },
-                onClick = { onTVShowClick(tvShow.id) },
+                onClick = {
+                    onTVShowClick(
+                        tvShow.id,
+                    )
+                },
                 modifier = Modifier.aspectRatio(0.8f)
             )
         }

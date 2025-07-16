@@ -14,10 +14,10 @@ import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
 fun MovieCardList(
-    movies: List<SearchScreenState.MovieUiState> ,
-    onSavedClick:(Long) -> Unit,
-    onMovieClick:(Long) -> Unit,
-    modifier: Modifier=Modifier
+    movies: List<SearchScreenState.MovieUiState>,
+    onSavedClick: (Long) -> Unit,
+    onMovieClick: (id: Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 150.dp),
@@ -26,14 +26,18 @@ fun MovieCardList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
 
-    ) {
+        ) {
         items(movies) { movie ->
             HomeCard(
                 url = movie.posterPictureURL,
                 contentDescription = null,
                 isSaved = movie.isSaved,
                 onSavedClick = { onSavedClick(movie.id) },
-                onClick= { onMovieClick(movie.id) },
+                onClick = {
+                    onMovieClick(
+                        movie.id,
+                    )
+                },
                 modifier = Modifier.aspectRatio(0.8f)
             )
         }

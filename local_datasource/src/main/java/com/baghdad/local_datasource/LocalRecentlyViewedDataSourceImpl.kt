@@ -3,7 +3,7 @@ package com.baghdad.local_datasource
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.entity.RecentlyViewed
 import com.baghdad.local_datasource.roomDB.entity.toDto
-import com.baghdad.local_datasource.roomDB.entity.toEntity
+import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.local_datasource.roomDB.errorHandler.executeFlowWithErrorHandling
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
@@ -26,7 +26,7 @@ class LocalRecentlyViewedDataSourceImpl(
 
     override suspend fun addMediaToRecentlyViewed(recentlyViewedDto: RecentlyViewedDto) =
         executeWithErrorHandling {
-            recentlyViewedDao.upsertRecentlyViewed(recentlyViewedDto.toEntity())
+            recentlyViewedDao.upsertRecentlyViewed(recentlyViewedDto.toLocalDto())
         }
 
 }

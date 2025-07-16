@@ -54,8 +54,7 @@ class SearchViewModel(
         val recentViewedUiState = recentlyViewed.map { it.toRecentlyViewedUI() }
         updateState { searchScreenState ->
             searchScreenState.copy(
-                recentViewed = recentViewedUiState.distinctBy { it.id }
-            )
+                recentViewed = recentViewedUiState.distinctBy { it.id })
         }
     }
 
@@ -70,8 +69,7 @@ class SearchViewModel(
         val recentSearchUiState = recentSearches.map { it.toRecentSearchUI() }
         updateState { searchScreenState ->
             searchScreenState.copy(
-                recentSearch = recentSearchUiState.distinctBy { it.query }
-            )
+                recentSearch = recentSearchUiState.distinctBy { it.query })
         }
     }
 
@@ -102,6 +100,20 @@ class SearchViewModel(
         )
     }
 
+    private fun getRecentlyViewed() {
+        tryToCollect(
+            flowProvider = { getRecentlyViewedUseCase.invoke() },
+            onNewValue = { newValues ->
+                updateState {
+                    it.copy(recentViewed = newValues.map { it.toRecentlyViewedUI() }.distinctBy {
+                        it.id
+                    })
+                }
+            },
+            onError = {},
+        )
+    }
+
     private fun onGetTvShowGenresSuccess(genres: List<Genre>) {
         updateState { searchScreenState ->
             searchScreenState.copy(
@@ -119,9 +131,9 @@ class SearchViewModel(
         if (text.isNotBlank()) {
             searchJob = tryToExecute(
                 onStart = {
-                    delay(SEARCH_DEBOUNCED_DELAY)
-                    onLoading()
-                },
+                delay(SEARCH_DEBOUNCED_DELAY)
+                onLoading()
+            },
                 callee = { performSearch(text) },
                 onSuccess = ::onSearchSuccess,
                 onFinally = ::onFinally
@@ -170,8 +182,7 @@ class SearchViewModel(
             it.copy(
                 recentViewed = it.recentViewed.map { item ->
                     if (item.id == id) item.copy(isSaved = item.isSaved.not()) else item
-                }
-            )
+                })
         }
         showSnackBar(
             message = SearchScreenBaseSnackBarMessages.SavedItemSuccessfully, isSuccess = true
@@ -182,6 +193,11 @@ class SearchViewModel(
         showSnackBar(
             message = SearchScreenBaseSnackBarMessages.RemovedItemSuccessfully, isSuccess = true
         )
+        updateState {
+            it.copy(
+                recentViewed = emptyList()
+            )
+        }
     }
 
     override fun onClearRecentSearchClick() {
@@ -321,8 +337,7 @@ class SearchViewModel(
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
                     moviesFilter = it.bottomSheetUiState.moviesFilter.copy(
-                        minimumYear = range.start.toInt(),
-                        maximumYear = range.endInclusive.toInt()
+                        minimumYear = range.start.toInt(), maximumYear = range.endInclusive.toInt()
                     )
                 )
             )
@@ -334,8 +349,7 @@ class SearchViewModel(
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
                     tvShowsFilter = it.bottomSheetUiState.tvShowsFilter.copy(
-                        minimumYear = range.start.toInt(),
-                        maximumYear = range.endInclusive.toInt()
+                        minimumYear = range.start.toInt(), maximumYear = range.endInclusive.toInt()
                     )
                 )
             )
@@ -404,16 +418,15 @@ class SearchViewModel(
     override fun onMovieItemClick(
         contentId: Long
     ) {
+
         val contentImageUrl =
-            currentState.tvShows.find { it.id == contentId }?.posterPictureURL ?: ""
+            currentState.movies.find { it.id == contentId }?.posterPictureURL ?: ""
         tryToExecute(
             callee = {
-                addRecentlyViewedUseCase(
-                    contentId,
-                    contentImageUrl,
-                    RecentlyViewed.ContentType.MOVIE
-                )
-            },
+            addRecentlyViewedUseCase(
+                contentId, contentImageUrl, RecentlyViewed.ContentType.MOVIE
+            )
+        },
             onSuccess = { onAddRecentlyViewedMovieSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally
@@ -431,12 +444,10 @@ class SearchViewModel(
             currentState.tvShows.find { it.id == contentId }?.posterPictureURL ?: ""
         tryToExecute(
             callee = {
-                addRecentlyViewedUseCase(
-                    contentId,
-                    contentImageUrl,
-                    RecentlyViewed.ContentType.TV_SHOW
-                )
-            },
+            addRecentlyViewedUseCase(
+                contentId, contentImageUrl, RecentlyViewed.ContentType.TV_SHOW
+            )
+        },
             onSuccess = { onAddRecentlyViewedTvShowSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally

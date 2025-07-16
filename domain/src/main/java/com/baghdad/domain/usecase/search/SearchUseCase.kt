@@ -2,6 +2,7 @@ package com.baghdad.domain.usecase.search
 
 import com.baghdad.domain.model.search.SearchFilter
 import com.baghdad.domain.model.search.SearchResult
+import com.baghdad.domain.repository.FavoriteGenreRepository
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -9,44 +10,50 @@ import com.baghdad.entity.media.TvShow
 
 
 class SearchUseCase(
-    private val searchRepository: SearchRepository
+    private val searchRepository: SearchRepository,
+    private val favoriteGenreRepository: FavoriteGenreRepository
 ) {
     suspend operator fun invoke(
-        query: String,
-        moviesFilter: SearchFilter,
-        tvShowsFilter: SearchFilter
+        query: String, moviesFilter: SearchFilter, tvShowsFilter: SearchFilter
     ): SearchResult {
-        return searchRepository.searchByName(query).filter(moviesFilter, tvShowsFilter)
+        val userFavoriteGenre = favoriteGenreRepository.getFavoriteGenres()
+        return searchRepository.searchByName(query)
+            .filter(moviesFilter, tvShowsFilter, favoriteGenres = userFavoriteGenre)
     }
 
-    private fun SearchResult.filter(moviesFilter: SearchFilter, tvShowsFilter: SearchFilter) =
-        SearchResult(
-            movies = filterMovies(movies, moviesFilter),
-            tvShows = filterTvShows(tvShows, tvShowsFilter),
+    private fun SearchResult.filter(
+        moviesFilter: SearchFilter, tvShowsFilter: SearchFilter, favoriteGenres: Map<String, Int>
+    ): SearchResult {
+
+        return SearchResult(
+            movies = filterMovies(
+                movies, moviesFilter
+            ).sortedByDescending {
+                it.genres.sumOf { genre -> favoriteGenres[genre.name] ?: 0 }
+            },
+            tvShows = filterTvShows(
+                tvShows, tvShowsFilter
+            ).sortedByDescending {
+                it.genres.sumOf { genre -> favoriteGenres[genre.name] ?: 0 }
+            },
             actors = actors
         )
 
+    }
+
     private fun filterMovies(movies: List<Movie>, filter: SearchFilter): List<Movie> {
         return movies.filter { movie ->
-            matchesRatingFilter(movie.averageRating, filter.minimumRating) &&
-                    matchesYearFilter(
-                        movie.releaseDate.year,
-                        filter.minimumYear,
-                        filter.maximumYear
-                    ) &&
-                    matchesGenreFilter(movie.genres, filter.selectedGenres)
+            matchesRatingFilter(movie.averageRating, filter.minimumRating) && matchesYearFilter(
+                movie.releaseDate.year, filter.minimumYear, filter.maximumYear
+            ) && matchesGenreFilter(movie.genres, filter.selectedGenres)
         }
     }
 
     private fun filterTvShows(tvShows: List<TvShow>, filter: SearchFilter): List<TvShow> {
         return tvShows.filter { show ->
-            matchesRatingFilter(show.averageRating, filter.minimumRating) &&
-                    matchesYearFilter(
-                        show.releaseDate.year,
-                        filter.minimumYear,
-                        filter.maximumYear
-                    ) &&
-                    matchesGenreFilter(show.genres, filter.selectedGenres)
+            matchesRatingFilter(show.averageRating, filter.minimumRating) && matchesYearFilter(
+                show.releaseDate.year, filter.minimumYear, filter.maximumYear
+            ) && matchesGenreFilter(show.genres, filter.selectedGenres)
         }
     }
 

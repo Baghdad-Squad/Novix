@@ -1,59 +1,85 @@
 package com.baghdad.local_datasource
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.util.Log
+import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
 import com.baghdad.local_datasource.roomDB.entity.toDto
-import com.baghdad.local_datasource.roomDB.entity.toEntity
+import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalTvShowDataSource
+import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.TvShowDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class LocalTvShowDataSourceImpl(
-    private val tvShowDao: TvShowDao
+    private val tvShowDao: TvShowDao,
+    private val genreDao: GenreDao
 ) : LocalTvShowDataSource {
-    @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun addTvShow(movie: TvShowDto) =
-        executeWithErrorHandling {
-            val tvShowEntity = movie.toEntity()
+
+    override suspend fun addTvShow(movie: TvShowDto) {
+        return executeWithErrorHandling {
+            val tvShowEntity = movie.toLocalDto()
             tvShowDao.upsertTvShow(tvShowEntity)
         }
+    }
 
-    override suspend fun getTvShowById(id: Long): TvShowDto =
-        executeWithErrorHandling {
-            tvShowDao.getTvShowById(id).toDto()
+
+    override suspend fun getTvShowById(id: Long): TvShowDto {
+        return executeWithErrorHandling {
+            val tvShow = tvShowDao.getTvShowById(id)
+            val genres: List<GenreDto> = tvShow.genres.map {
+                genreDao.getGenreById(it).toDto()
+            }
+            tvShow.toDto(genres)
         }
+    }
 
-    override suspend fun getAllTvShows(): Flow<List<TvShowDto>> =
-        executeWithErrorHandling {
+
+    override suspend fun getAllTvShows(): Flow<List<TvShowDto>> {
+        return executeWithErrorHandling {
             tvShowDao.getAllTvShow().map {
-                it.map { it.toDto() }
+                it.map {
+                    val genres = it.genres.map {
+                        genreDao.getGenreById(it).toDto()
+                    }
+                    it.toDto(genres)
+                }
             }
         }
+    }
 
-    override suspend fun deleteTvShowById(id: Long) =
+
+    override suspend fun deleteTvShowById(id: Long) {
         executeWithErrorHandling {
             tvShowDao.deleteTvShowByID(id)
         }
+    }
 
-    override suspend fun deleteAllTvShows() =
+
+    override suspend fun deleteAllTvShows() {
         executeWithErrorHandling {
             tvShowDao.deleteAll()
         }
+    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun updateTvShow(newMovie: TvShowDto) =
+
+    override suspend fun updateTvShow(tvShow: TvShowDto) {
         executeWithErrorHandling {
-            val tvShowEntity = newMovie.toEntity()
-            tvShowDao.upsertTvShow(tvShowEntity)
+            tvShowDao.upsertTvShow(tvShow.toLocalDto())
         }
+    }
 
-    override suspend fun searchTvShowsByTitle(title: String) =
-        executeWithErrorHandling {
+    override suspend fun searchTvShowsByTitle(title: String): List<TvShowDto> {
+        return executeWithErrorHandling {
             tvShowDao.searchTvShowsByTitle(title).map {
-                it.toDto()
+                val genres = it.genres.map {
+                    Log.i("genres in search tv show", it.toString())
+                    genreDao.getGenreById(it).toDto()
+                }
+                it.toDto(genres)
             }
         }
+    }
 }
+
