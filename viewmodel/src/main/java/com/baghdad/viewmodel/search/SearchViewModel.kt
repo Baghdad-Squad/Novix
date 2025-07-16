@@ -20,6 +20,7 @@ import com.baghdad.viewmodel.base.createPagedResultPager
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class SearchViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -73,11 +75,13 @@ class SearchViewModel(
                 callee = {
                     Log.e("pagggge", "searching for $text")
                     _moviesPagingFlow.value = createPagedResultPager { page ->
-                        searchMoviesUseCase(
-                            query = text,
-                            filter = currentState.bottomSheetUiState.moviesFilter.toSearchFilter(),
-                            page = page
-                        )
+                        withContext(Dispatchers.IO) {
+                            searchMoviesUseCase(
+                                query = text,
+                                filter = currentState.bottomSheetUiState.moviesFilter.toSearchFilter(),
+                                page = page
+                            )
+                        }
                     }.map { pagingData ->
                         Log.e("pagggge", "searching for ${pagingData}")
                         pagingData.map {
