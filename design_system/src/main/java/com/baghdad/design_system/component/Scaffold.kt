@@ -26,8 +26,7 @@ fun Scaffold(
 ) {
     Box(
         modifier = modifier
-            .fillMaxSize()
-            .background(Theme.color.surface),
+            .fillMaxSize(),
         contentAlignment = Alignment.TopCenter
     ) {
         Column(
