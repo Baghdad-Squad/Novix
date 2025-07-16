@@ -6,7 +6,9 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.baghdad.domain.model.PagedResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 
 class PagedResultPagingSource<T : Any>(
     private val loadData: suspend (page: Int) -> PagedResult<T>
@@ -15,7 +17,9 @@ class PagedResultPagingSource<T : Any>(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
         return try {
             val page = params.key ?: 1
-            val result = loadData(page)
+            val result = withContext(Dispatchers.IO) {
+                loadData(page)
+            }
             LoadResult.Page(
                 data = result.data,
                 prevKey = result.prevKey,
@@ -45,7 +49,10 @@ fun <T : Any> createPagedResultPager(
             initialLoadSize = pageSize,
             prefetchDistance = 4
         ),
-        pagingSourceFactory = { PagedResultPagingSource(loadData) }
+        pagingSourceFactory = {
+            PagedResultPagingSource(loadData)
+        }
     ).flow
 }
+
 

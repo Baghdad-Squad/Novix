@@ -1,20 +1,20 @@
-package com.baghdad.component
+package com.baghdad.ui.feature.search.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
 import com.baghdad.design_system.component.HomeCard
 import com.baghdad.viewmodel.search.SearchScreenState
 
 @Composable
 fun TvShowCardList(
-    tvShows: List<SearchScreenState.TvShowUiState>,
+    tvShows: LazyPagingItems<SearchScreenState.TvShowUiState>,
     onSavedClick: (Long) -> Unit,
     onTVShowClick: (id: Long) -> Unit,
     modifier: Modifier = Modifier
@@ -29,7 +29,8 @@ fun TvShowCardList(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
 
         ) {
-        items(tvShows) { tvShow ->
+        items(tvShows.itemCount) { index ->
+            val tvShow = tvShows[index] ?: return@items
             HomeCard(
                 url = tvShow.posterPictureURL,
                 contentDescription = null,

@@ -16,9 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import com.baghdad.component.ActorCardList
-import com.baghdad.component.MovieCardList
-import com.baghdad.component.TvShowCardList
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.theme.Theme
@@ -33,8 +30,8 @@ fun SearchResultContent(
     onTabSelected: (SearchScreenState.SearchTab) -> Unit,
     onSavedClick: (Long) -> Unit,
     movies: LazyPagingItems<SearchScreenState.MovieUiState>,
-    tvShows: List<SearchScreenState.TvShowUiState>,
-    actors: List<SearchScreenState.ActorUiState>,
+    tvShows: LazyPagingItems<SearchScreenState.TvShowUiState>,
+    actors: LazyPagingItems<SearchScreenState.ActorUiState>,
     onMovieClick: (Long) -> Unit,
     onTvShowClick: (Long) -> Unit,
     onActorClick: (Long) -> Unit,
@@ -107,7 +104,7 @@ fun SearchResultContent(
             }
 
             SearchScreenState.SearchTab.TV_SHOWS -> {
-                if (tvShows.isNotEmpty()) {
+                if (tvShows.itemCount != 0) {
                     TvShowCardList(
                         tvShows = tvShows,
                         onSavedClick = onSavedClick,
@@ -128,7 +125,7 @@ fun SearchResultContent(
             }
 
             SearchScreenState.SearchTab.ACTORS -> {
-                if (actors.isNotEmpty()) {
+                if (actors.itemCount != 0) {
                     ActorCardList(
                         actors = actors,
                         onActorClick = onActorClick,

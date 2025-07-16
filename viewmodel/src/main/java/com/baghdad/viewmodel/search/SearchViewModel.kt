@@ -1,10 +1,8 @@
 package com.baghdad.viewmodel.search
 
-import android.util.Log
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.baghdad.domain.model.search.RecentlyViewed
-import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
@@ -12,7 +10,9 @@ import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
+import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
+import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -20,7 +20,6 @@ import com.baghdad.viewmodel.base.createPagedResultPager
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +27,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 
 class SearchViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -39,8 +37,8 @@ class SearchViewModel(
     private val deleteAllRecentSearchesUseCase: DeleteAllRecentSearchesUseCase,
     private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase,
     private val searchMoviesUseCase: SearchMoviesUseCase,
-//    private val searchTvShowsUseCase: SearchTvShowsUseCase,
-//    private val searchActorsUseCase: SearchActorsUseCase
+    private val searchTvShowsUseCase: SearchTvShowsUseCase,
+    private val searchActorsUseCase: SearchActorsUseCase
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
     private var searchJob: Job? = null
@@ -50,6 +48,15 @@ class SearchViewModel(
     val moviesPagingFlow: StateFlow<Flow<PagingData<SearchScreenState.MovieUiState>>> =
         _moviesPagingFlow
 
+    private val _tvShowsPagingFlow =
+        MutableStateFlow<Flow<PagingData<SearchScreenState.TvShowUiState>>>(emptyFlow())
+    val tvShowsPagingFlow: StateFlow<Flow<PagingData<SearchScreenState.TvShowUiState>>> =
+        _tvShowsPagingFlow
+
+    private val _actorsPagingFlow =
+        MutableStateFlow<Flow<PagingData<SearchScreenState.ActorUiState>>>(emptyFlow())
+    val actorsPagingFlow: StateFlow<Flow<PagingData<SearchScreenState.ActorUiState>>> =
+        _actorsPagingFlow
 
     init {
         getRecentSearches()
@@ -64,57 +71,63 @@ class SearchViewModel(
 
     override fun onSearchTextChanged(text: String) {
         updateState { it.copy(searchText = text) }
-
         searchJob?.cancel()
-        if (text.isNotBlank()) {
-            searchJob = tryToExecute(
-                onStart = {
-                    delay(SEARCH_DEBOUNCED_DELAY)
-                    onLoading()
-                },
-                callee = {
-                    Log.e("pagggge", "searching for $text")
-                    _moviesPagingFlow.value = createPagedResultPager { page ->
-                        withContext(Dispatchers.IO) {
-                            searchMoviesUseCase(
-                                query = text,
-                                filter = currentState.bottomSheetUiState.moviesFilter.toSearchFilter(),
-                                page = page
-                            )
-                        }
-                    }.map { pagingData ->
-                        Log.e("pagggge", "searching for ${pagingData}")
-                        pagingData.map {
-                            Log.e("pagggge", "searching for $it")
-                            it.toMovieUI()
-                        }
-                    }
-                },
-                onSuccess = {},
-                onFinally = ::onFinally
-            )
-        } else {
-            clearSearchResults()
+
+        if (text.isBlank()) {
+            clearAllPagingFlows()
+            return
+        }
+
+        searchJob = tryToExecute(
+            onStart = { handleSearchStart() },
+            callee = { performSearchByTab(text) },
+            onFinally = ::onFinally
+        )
+    }
+
+    private fun performSearchByTab(text: String) {
+        when (currentState.selectedSearchTab) {
+            SearchScreenState.SearchTab.MOVIES -> searchMovies(text)
+            SearchScreenState.SearchTab.TV_SHOWS -> searchTvShows(text)
+            SearchScreenState.SearchTab.ACTORS -> searchActors(text)
         }
     }
 
-    private fun clearSearchResults() {
+    private fun searchMovies(text: String) {
+        _moviesPagingFlow.value = createPagedResultPager { page ->
+            searchMoviesUseCase(
+                query = text,
+                filter = currentState.bottomSheetUiState.moviesFilter.toSearchFilter(),
+                page = page
+            )
+        }.map { it.map { movie -> movie.toMovieUI() } }
+    }
+
+    private fun searchTvShows(text: String) {
+        _tvShowsPagingFlow.value = createPagedResultPager { page ->
+            searchTvShowsUseCase(
+                query = text,
+                filter = currentState.bottomSheetUiState.tvShowsFilter.toSearchFilter(),
+                page = page
+            )
+        }.map { it.map { tv -> tv.toTvShowUI() } }
+    }
+
+    private fun searchActors(text: String) {
+        _actorsPagingFlow.value = createPagedResultPager { page ->
+            searchActorsUseCase(query = text, page = page)
+        }.map { it.map { actor -> actor.toActorUI() } }
+    }
+
+    private fun clearAllPagingFlows() {
         _moviesPagingFlow.value = emptyFlow()
-        updateState {
-            it.copy(movies = emptyList())
-        }
+        _tvShowsPagingFlow.value = emptyFlow()
+        _actorsPagingFlow.value = emptyFlow()
     }
 
-
-    private fun onSearchSuccess(searchResult: SearchResult) {
-        val movieUiState = searchResult.movies.map { it.toMovieUI() }
-        val actorsUiState = searchResult.actors.map { it.toActorUI() }
-        val tvShowUiState = searchResult.tvShows.map { it.toTvShowUI() }
-        updateState {
-            it.copy(
-                movies = movieUiState, tvShows = tvShowUiState, actors = actorsUiState
-            )
-        }
+    private suspend fun handleSearchStart() {
+        delay(SEARCH_DEBOUNCED_DELAY)
+        onLoading()
     }
 
     private fun getRecentViewed() {

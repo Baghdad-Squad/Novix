@@ -48,15 +48,20 @@ fun SearchScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    val pagingFlow by viewModel.moviesPagingFlow.collectAsStateWithLifecycle()
-    val movieItems = pagingFlow.collectAsLazyPagingItems()
-
+    val movieItems =
+        viewModel.moviesPagingFlow.collectAsStateWithLifecycle().value.collectAsLazyPagingItems()
+    val actorItems =
+        viewModel.actorsPagingFlow.collectAsStateWithLifecycle().value.collectAsLazyPagingItems()
+    val tvShowItems =
+        viewModel.tvShowsPagingFlow.collectAsStateWithLifecycle().value.collectAsLazyPagingItems()
 
     SearchContent(
         uiState = uiState,
         listener = viewModel,
         snackBarState = snackBarState,
-        movieItems = movieItems
+        movieItems = movieItems,
+        actorItems = actorItems,
+        tvShowItems = tvShowItems
     )
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
@@ -87,7 +92,9 @@ fun SearchContent(
     uiState: SearchScreenState,
     listener: SearchInteractionListener,
     snackBarState: SnackBarState,
-    movieItems: LazyPagingItems<SearchScreenState.MovieUiState>
+    movieItems: LazyPagingItems<SearchScreenState.MovieUiState>,
+    actorItems: LazyPagingItems<SearchScreenState.ActorUiState>,
+    tvShowItems: LazyPagingItems<SearchScreenState.TvShowUiState>
 ) {
     Column(
         modifier = Modifier
@@ -110,8 +117,8 @@ fun SearchContent(
                     onTabSelected = { listener.onSelectedSearchTabChanged(it) },
                     onSavedClick = { listener.onSaveRecentlyViewedClick(it) },
                     movies = movieItems,
-                    tvShows = uiState.tvShows,
-                    actors = uiState.actors,
+                    tvShows = tvShowItems,
+                    actors = actorItems,
                     onMovieClick = { listener.onMovieItemClick(it) },
                     onTvShowClick = { listener.onTvShowItemClick(it) },
                     onActorClick = { listener.onActorItemClick(it) },
@@ -196,35 +203,3 @@ private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     }
 }
 
-//@Preview
-//@Composable
-//private fun SearchScreenPreview() {
-//    NovixTheme {
-//        SearchContent(
-//            uiState = SearchScreenState(
-//                searchText = "", recentSearch = emptyList(), recentViewed = emptyList()
-//            ), listener = object : SearchInteractionListener {
-//                override fun onSearchTextChanged(query: String) {}
-//                override fun onFilterIconClick() {}
-//                override fun onRatingChanged(rating: Int) {}
-//                override fun onYearRangeSelected(range: ClosedFloatingPointRange<Float>) {}
-//                override fun onGenreSelected(genre: SearchScreenState.GenreUiState) {}
-//                override fun onClearRecentlyViewedClick() {}
-//                override fun onClearRecentSearchClick() {}
-//                override fun onRemoveRecentSearchItemClick(id: Long) {}
-//                override fun onRecentSearchItemClick(id: Long) {}
-//                override fun onFilterCloseIconClick() {}
-//                override fun onFilterClearClick() {}
-//                override fun onApplyFilterClick() {}
-//                override fun onRecentlyViewedClick(item: Long) {}
-//                override fun onMovieItemClick(contentId: Long) {}
-//                override fun onTvShowItemClick(contentId: Long) {}
-//                override fun onActorItemClick(id: Long) {}
-//                override fun onSaveRecentlyViewedClick(item: Long) {}
-//                override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {}
-//            },
-//            snackBarState = SnackBarState(),
-//            movieItems =  emptyList<>()
-//        )
-//    }
-//}
