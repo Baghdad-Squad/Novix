@@ -1,5 +1,8 @@
 package com.baghdad.viewmodel.search
 
+import android.util.Log
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -9,14 +12,21 @@ import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
+import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.base.BaseViewModel
+import com.baghdad.viewmodel.base.createPagedResultPager
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.map
 
 class SearchViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -26,10 +36,18 @@ class SearchViewModel(
     private val deleteAllRecentlyViewedUseCase: DeleteAllRecentlyViewedUseCase,
     private val deleteAllRecentSearchesUseCase: DeleteAllRecentSearchesUseCase,
     private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase,
-    private val searchUseCase: SearchUseCase,
+    private val searchMoviesUseCase: SearchMoviesUseCase,
+//    private val searchTvShowsUseCase: SearchTvShowsUseCase,
+//    private val searchActorsUseCase: SearchActorsUseCase
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
     private var searchJob: Job? = null
+
+    private val _moviesPagingFlow =
+        MutableStateFlow<Flow<PagingData<SearchScreenState.MovieUiState>>>(emptyFlow())
+    val moviesPagingFlow: StateFlow<Flow<PagingData<SearchScreenState.MovieUiState>>> =
+        _moviesPagingFlow
+
 
     init {
         getRecentSearches()
@@ -40,6 +58,59 @@ class SearchViewModel(
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
+    }
+
+    override fun onSearchTextChanged(text: String) {
+        updateState { it.copy(searchText = text) }
+
+        searchJob?.cancel()
+        if (text.isNotBlank()) {
+            searchJob = tryToExecute(
+                onStart = {
+                    delay(SEARCH_DEBOUNCED_DELAY)
+                    onLoading()
+                },
+                callee = {
+                    Log.e("pagggge", "searching for $text")
+                    _moviesPagingFlow.value = createPagedResultPager { page ->
+                        searchMoviesUseCase(
+                            query = text,
+                            filter = currentState.bottomSheetUiState.moviesFilter.toSearchFilter(),
+                            page = page
+                        )
+                    }.map { pagingData ->
+                        Log.e("pagggge", "searching for ${pagingData}")
+                        pagingData.map {
+                            Log.e("pagggge", "searching for $it")
+                            it.toMovieUI()
+                        }
+                    }
+                },
+                onSuccess = {},
+                onFinally = ::onFinally
+            )
+        } else {
+            clearSearchResults()
+        }
+    }
+
+    private fun clearSearchResults() {
+        _moviesPagingFlow.value = emptyFlow()
+        updateState {
+            it.copy(movies = emptyList())
+        }
+    }
+
+
+    private fun onSearchSuccess(searchResult: SearchResult) {
+        val movieUiState = searchResult.movies.map { it.toMovieUI() }
+        val actorsUiState = searchResult.actors.map { it.toActorUI() }
+        val tvShowUiState = searchResult.tvShows.map { it.toTvShowUI() }
+        updateState {
+            it.copy(
+                movies = movieUiState, tvShows = tvShowUiState, actors = actorsUiState
+            )
+        }
     }
 
     private fun getRecentViewed() {
@@ -120,49 +191,6 @@ class SearchViewModel(
                     tvShowsFilter = searchScreenState.bottomSheetUiState.tvShowsFilter.copy(
                         allGenres = genres.map { it.toGenreUI() })
                 )
-            )
-        }
-    }
-
-    override fun onSearchTextChanged(text: String) {
-        updateState { it.copy(searchText = text) }
-        searchJob?.cancel()
-        if (text.isNotBlank()) {
-            searchJob = tryToExecute(
-                onStart = {
-                delay(SEARCH_DEBOUNCED_DELAY)
-                onLoading()
-            },
-                callee = { performSearch(text) },
-                onSuccess = ::onSearchSuccess,
-                onFinally = ::onFinally
-            )
-        } else {
-            clearSearchResults()
-        }
-    }
-
-    private suspend fun performSearch(query: String) = searchUseCase(
-        query = query,
-        moviesFilter = currentState.bottomSheetUiState.moviesFilter.toSearchFilter(),
-        tvShowsFilter = currentState.bottomSheetUiState.tvShowsFilter.toSearchFilter()
-    )
-
-    private fun clearSearchResults() {
-        updateState {
-            it.copy(
-                movies = emptyList(), tvShows = emptyList(), actors = emptyList()
-            )
-        }
-    }
-
-    private fun onSearchSuccess(searchResult: SearchResult) {
-        val movieUiState = searchResult.movies.map { it.toMovieUI() }
-        val actorsUiState = searchResult.actors.map { it.toActorUI() }
-        val tvShowUiState = searchResult.tvShows.map { it.toTvShowUI() }
-        updateState {
-            it.copy(
-                movies = movieUiState, tvShows = tvShowUiState, actors = actorsUiState
             )
         }
     }
@@ -422,10 +450,10 @@ class SearchViewModel(
             currentState.movies.find { it.id == contentId }?.posterPictureURL ?: ""
         tryToExecute(
             callee = {
-            addRecentlyViewedUseCase(
-                contentId, contentImageUrl, RecentlyViewed.ContentType.MOVIE
-            )
-        },
+                addRecentlyViewedUseCase(
+                    contentId, contentImageUrl, RecentlyViewed.ContentType.MOVIE
+                )
+            },
             onSuccess = { onAddRecentlyViewedMovieSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally
@@ -443,10 +471,10 @@ class SearchViewModel(
             currentState.tvShows.find { it.id == contentId }?.posterPictureURL ?: ""
         tryToExecute(
             callee = {
-            addRecentlyViewedUseCase(
-                contentId, contentImageUrl, RecentlyViewed.ContentType.TV_SHOW
-            )
-        },
+                addRecentlyViewedUseCase(
+                    contentId, contentImageUrl, RecentlyViewed.ContentType.TV_SHOW
+                )
+            },
             onSuccess = { onAddRecentlyViewedTvShowSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally

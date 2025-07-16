@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
 import com.baghdad.component.ActorCardList
 import com.baghdad.component.MovieCardList
 import com.baghdad.component.TvShowCardList
@@ -31,7 +32,7 @@ fun SearchResultContent(
     selectedTab: SearchScreenState.SearchTab,
     onTabSelected: (SearchScreenState.SearchTab) -> Unit,
     onSavedClick: (Long) -> Unit,
-    movies: List<SearchScreenState.MovieUiState>,
+    movies: LazyPagingItems<SearchScreenState.MovieUiState>,
     tvShows: List<SearchScreenState.TvShowUiState>,
     actors: List<SearchScreenState.ActorUiState>,
     onMovieClick: (Long) -> Unit,
@@ -84,7 +85,7 @@ fun SearchResultContent(
 
         when (selectedTab) {
             SearchScreenState.SearchTab.MOVIES -> {
-                if (!movies.isEmpty()) {
+                if (movies.itemCount != 0) {
                     MovieCardList(
                         movies = movies,
                         onSavedClick = onSavedClick,

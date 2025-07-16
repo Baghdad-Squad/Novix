@@ -14,6 +14,9 @@ import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
+import com.baghdad.domain.usecase.search.SearchActorsUseCase
+import com.baghdad.domain.usecase.search.SearchMoviesUseCase
+import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -25,7 +28,6 @@ val useCaseModule = module {
     singleOf(::DeleteAllRecentSearchesUseCase)
     singleOf(::DeleteRecentSearchUseCase)
     singleOf(::GetRecentSearchesUseCase)
-    singleOf(::SearchUseCase)
     singleOf(::GetActorInfoUseCase)
     singleOf(::GetActorMoviesUseCase)
     singleOf(::GetActorTvShowUseCase)
@@ -33,5 +35,8 @@ val useCaseModule = module {
     singleOf(::GetMovieDetailsUseCase)
     singleOf(::GetMovieCastMembersUseCase)
     singleOf(::GetSimilarMoviesUseCase)
+    singleOf(::SearchMoviesUseCase)
+    singleOf(::SearchTvShowsUseCase)
+    singleOf(::SearchActorsUseCase)
 }
 

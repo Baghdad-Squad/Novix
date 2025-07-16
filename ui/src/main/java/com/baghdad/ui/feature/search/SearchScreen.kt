@@ -16,11 +16,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.SnackBar
-import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -48,8 +48,15 @@ fun SearchScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+    val pagingFlow by viewModel.moviesPagingFlow.collectAsStateWithLifecycle()
+    val movieItems = pagingFlow.collectAsLazyPagingItems()
+
+
     SearchContent(
-        uiState = uiState, listener = viewModel, snackBarState
+        uiState = uiState,
+        listener = viewModel,
+        snackBarState = snackBarState,
+        movieItems = movieItems
     )
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
@@ -77,7 +84,10 @@ fun SearchScreen(
 
 @Composable
 fun SearchContent(
-    uiState: SearchScreenState, listener: SearchInteractionListener, snackBarState: SnackBarState
+    uiState: SearchScreenState,
+    listener: SearchInteractionListener,
+    snackBarState: SnackBarState,
+    movieItems: LazyPagingItems<SearchScreenState.MovieUiState>
 ) {
     Column(
         modifier = Modifier
@@ -99,7 +109,7 @@ fun SearchContent(
                     selectedTab = uiState.selectedSearchTab,
                     onTabSelected = { listener.onSelectedSearchTabChanged(it) },
                     onSavedClick = { listener.onSaveRecentlyViewedClick(it) },
-                    movies = uiState.movies,
+                    movies = movieItems,
                     tvShows = uiState.tvShows,
                     actors = uiState.actors,
                     onMovieClick = { listener.onMovieItemClick(it) },
@@ -186,34 +196,35 @@ private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     }
 }
 
-@Preview
-@Composable
-private fun SearchScreenPreview() {
-    NovixTheme {
-        SearchContent(
-            uiState = SearchScreenState(
-                searchText = "", recentSearch = emptyList(), recentViewed = emptyList()
-            ), listener = object : SearchInteractionListener {
-                override fun onSearchTextChanged(query: String) {}
-                override fun onFilterIconClick() {}
-                override fun onRatingChanged(rating: Int) {}
-                override fun onYearRangeSelected(range: ClosedFloatingPointRange<Float>) {}
-                override fun onGenreSelected(genre: SearchScreenState.GenreUiState) {}
-                override fun onClearRecentlyViewedClick() {}
-                override fun onClearRecentSearchClick() {}
-                override fun onRemoveRecentSearchItemClick(id: Long) {}
-                override fun onRecentSearchItemClick(id: Long) {}
-                override fun onFilterCloseIconClick() {}
-                override fun onFilterClearClick() {}
-                override fun onApplyFilterClick() {}
-                override fun onRecentlyViewedClick(item: Long) {}
-                override fun onMovieItemClick(contentId: Long) {}
-                override fun onTvShowItemClick(contentId: Long) {}
-                override fun onActorItemClick(id: Long) {}
-                override fun onSaveRecentlyViewedClick(item: Long) {}
-                override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {}
-            },
-            snackBarState = SnackBarState()
-        )
-    }
-}
+//@Preview
+//@Composable
+//private fun SearchScreenPreview() {
+//    NovixTheme {
+//        SearchContent(
+//            uiState = SearchScreenState(
+//                searchText = "", recentSearch = emptyList(), recentViewed = emptyList()
+//            ), listener = object : SearchInteractionListener {
+//                override fun onSearchTextChanged(query: String) {}
+//                override fun onFilterIconClick() {}
+//                override fun onRatingChanged(rating: Int) {}
+//                override fun onYearRangeSelected(range: ClosedFloatingPointRange<Float>) {}
+//                override fun onGenreSelected(genre: SearchScreenState.GenreUiState) {}
+//                override fun onClearRecentlyViewedClick() {}
+//                override fun onClearRecentSearchClick() {}
+//                override fun onRemoveRecentSearchItemClick(id: Long) {}
+//                override fun onRecentSearchItemClick(id: Long) {}
+//                override fun onFilterCloseIconClick() {}
+//                override fun onFilterClearClick() {}
+//                override fun onApplyFilterClick() {}
+//                override fun onRecentlyViewedClick(item: Long) {}
+//                override fun onMovieItemClick(contentId: Long) {}
+//                override fun onTvShowItemClick(contentId: Long) {}
+//                override fun onActorItemClick(id: Long) {}
+//                override fun onSaveRecentlyViewedClick(item: Long) {}
+//                override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {}
+//            },
+//            snackBarState = SnackBarState(),
+//            movieItems =  emptyList<>()
+//        )
+//    }
+//}

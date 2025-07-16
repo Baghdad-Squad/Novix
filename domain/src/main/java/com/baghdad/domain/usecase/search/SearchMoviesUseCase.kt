@@ -1,5 +1,6 @@
 package com.baghdad.domain.usecase.search
 
+import android.util.Log
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.search.SearchFilter
 import com.baghdad.domain.repository.FavoriteGenreRepository
@@ -31,7 +32,10 @@ class SearchMoviesUseCase(
                 .sortedByDescending { movie ->
                     movie.genres.sumOf { genre -> favoriteGenres[genre.name] ?: 0 }
                 }
-            )
+            ).let {
+                Log.e("from domain", "searching for $it")
+                it
+            }
         }
     }
 }
