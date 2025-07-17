@@ -1,5 +1,6 @@
 package com.baghdad.repository.util
 
+import android.util.Log
 import com.baghdad.domain.exception.LocalDataBaseException
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.exception.UnKnownNetworkException
@@ -29,6 +30,7 @@ suspend fun <T> executeSafely(block: suspend () -> T): T {
     } catch (e: ServerNetworkException) {
         throw NetworkException()
     } catch (e: Exception) {
+        Log.e("bla bla", e.message, e)
         throw UnKnownNetworkException()
     }
 }
