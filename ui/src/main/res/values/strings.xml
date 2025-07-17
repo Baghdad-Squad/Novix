@@ -29,4 +29,6 @@
     <string name="birth_place">birth Place</string>
     <string name="top_tv_shows_picks">Top tv shows picks</string>
     <string name="top_movies_picks">Top movies picks</string>
+    <string name="an_error_occurred">An error occurred</string>
+    <string name="retry">Retry</string>
 </resources>
