@@ -2,11 +2,10 @@ package com.baghdad.remoteDataSource.response.tvShow
 
 import Genre
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-
+@Serializable
 data class TVShowDetailsResponse(
-    @SerialName("first_air_date")
-    val firstAirDate: String? = null,
     @SerialName("genres")
     val genres: List<Genre>? = null,
     @SerialName("id")
@@ -21,6 +20,8 @@ data class TVShowDetailsResponse(
     val posterPath: String? = null,
     @SerialName("vote_average")
     val voteAverage: Double? = null,
+    @SerialName("first_air_date")
+    val firstAirDate: String? = null,
 )
 
 
