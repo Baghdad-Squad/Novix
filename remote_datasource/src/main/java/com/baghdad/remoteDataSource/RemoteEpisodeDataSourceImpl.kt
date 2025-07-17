@@ -2,6 +2,7 @@ package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.EpisodeImageResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowImagesResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
@@ -44,10 +45,10 @@ class RemoteEpisodeDataSourceImpl(
             .replace("{tv_id}", tvId.toString())
             .replace("{season_number}", seasonNumber.toString())
             .replace("{episode_number}", episodeNumber.toString())
-        return handleRequest<TVShowImagesResponse>(
+        return handleRequest<EpisodeImageResponse>(
             client = httpClient,
             url = "$baseUrl$endpoint"
-        ).backdrops.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
+        ).stills.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
     companion object{
         private const val EPISODES_DETAILS_ENDPOINT = "/tv/{tv_id}/season/{season_number}/episode/{episode_number}"
