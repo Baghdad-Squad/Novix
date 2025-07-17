@@ -1,6 +1,8 @@
 package com.baghdad.domain.repository
 
+import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
+import com.baghdad.entity.media.Review
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
 
@@ -16,5 +18,8 @@ interface TvShowRepository {
 
     suspend fun getTvShowByGenre(genreId: Long, page: Int): List<TvShow>
 
-    suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<TvShow>
+    suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<Episode>
+
+    suspend fun getTvShowReviews(tvId: Long): List<Review>
+
 }

@@ -3,6 +3,7 @@ package com.baghdad.repository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
+import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
@@ -50,6 +51,14 @@ class MovieRepositoryImpl(
     ): List<Movie> {
         return executeSafely {
             remoteMovieDataSource.getMoviesByGenre(genreId, page).map {
+                it.toEntity()
+            }
+        }
+    }
+
+    override suspend fun getMovieReviews(movieId: Long): List<Review> {
+        return executeSafely {
+            remoteMovieDataSource.getMovieReviews(movieId).map {
                 it.toEntity()
             }
         }

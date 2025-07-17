@@ -1,7 +1,9 @@
 package com.baghdad.repository
 
 import com.baghdad.domain.repository.TvShowRepository
+import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
+import com.baghdad.entity.media.Review
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
@@ -50,12 +52,21 @@ class TvShowRepositoryImpl(
         }
     }
 
-    override suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<TvShow>{
+    override suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<Episode>{
         return executeSafely {
             tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber).map {
                 it.toEntity()
             }
         }
     }
+
+    override suspend fun getTvShowReviews(tvId: Long): List<Review>{
+        return executeSafely {
+            tvShowRemoteDataSource.getTvShowReviews(tvId).map {
+                it.toEntity()
+            }
+        }
+    }
+
 
 }

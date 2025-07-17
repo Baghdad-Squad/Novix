@@ -3,6 +3,7 @@ package com.baghdad.remoteDataSource
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowImagesResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
@@ -11,6 +12,7 @@ import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 import io.ktor.client.HttpClient
 
@@ -61,6 +63,14 @@ class RemoteTvShowDataSourceImpl(
             url = "$baseUrl$endpoint"
         ).episodes.orEmpty().map { it.toDto() }
     }
+    override suspend fun getTvShowReviews(tvId: Long): List<ReviewDto> {
+        val endpoint = TV_SHOW_REVIEWS_ENDPOINT.replace("{tv_id}", tvId.toString())
+        return handleRequest<ReviewsResponse>(
+            client = httpClient,
+            url = "$baseUrl$endpoint"
+        ).results.orEmpty().map { it.toDto() }
+    }
+
 
     companion object {
         private const val TV_SHOW_DETAILS_ENDPOINT = "/tv/{tv_id}"
@@ -68,5 +78,6 @@ class RemoteTvShowDataSourceImpl(
         private const val TV_SHOW_IMAGES_ENDPOINT = "/tv/{tv_id}/images"
         private const val TV_SHOW_EPISODES_ENDPOINT = "/tv/{tv_id}/season/{season_number}"
         private const val TV_SHOW_WITH_GENRE_ENDPOINT = "/discover/tv"
-    }
+        private const val TV_SHOW_REVIEWS_ENDPOINT = "/tv/{tv_id}/reviews"
+}
 }

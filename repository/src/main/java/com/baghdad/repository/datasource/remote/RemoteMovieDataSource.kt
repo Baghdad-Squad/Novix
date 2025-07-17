@@ -2,6 +2,7 @@ package com.baghdad.repository.datasource.remote
 
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.ReviewDto
 
 interface RemoteMovieDataSource {
     suspend fun getSimilarMovies(movieId: Long): List<MovieDto>
@@ -9,4 +10,6 @@ interface RemoteMovieDataSource {
     suspend fun getMovieCastMembers(movieId: Long): List<CastMemberDto>
 
     suspend fun getMoviesByGenre(genreId: Long, page: Int): List<MovieDto>
+
+    suspend fun getMovieReviews(movieId: Long): List<ReviewDto>
 }

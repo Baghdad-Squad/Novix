@@ -2,6 +2,7 @@ package com.baghdad.repository.datasource.remote
 
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 
 interface RemoteTvShowDataSource {
@@ -15,4 +16,6 @@ interface RemoteTvShowDataSource {
     suspend fun getTvShowByGenre(genreId: Long, page: Int): List<TvShowDto>
 
     suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<EpisodeDto>
+
+    suspend fun getTvShowReviews(tvId: Long): List<ReviewDto>
 }
