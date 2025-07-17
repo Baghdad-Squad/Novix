@@ -22,7 +22,7 @@ fun RecentlyViewed.toDto(): RecentlyViewedDto {
     )
 }
 
-fun RecentlyViewedDto.toEntity(): RecentlyViewed {
+fun RecentlyViewedDto.toLocalDto(): RecentlyViewed {
     return RecentlyViewed(
         contentId = this.contentId,
         contentType = contentType.name,

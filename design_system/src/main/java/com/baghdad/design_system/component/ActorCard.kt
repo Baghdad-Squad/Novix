@@ -1,5 +1,6 @@
 package com.baghdad.design_system.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,9 +20,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.islamic_image_loader.component.SafeImage
 
 private val CardHeight = 55.dp
 private val ActorImageSize = 78.dp
@@ -49,8 +50,8 @@ fun ActorCard(
             .background(color = Theme.color.surface)
             .noRippleClickable { onClick() }
     ) {
-        SafeImage(
-            imageUrl = actorImage,
+        Image(
+            painter = rememberAsyncImagePainter(actorImage),
             contentDescription =
                 if (characterName.isNullOrBlank())
                     "Portrait of actor $actorName"
@@ -60,7 +61,6 @@ fun ActorCard(
                 .size(ActorImageSize)
                 .clip(ImageShape)
                 .border(1.dp, Theme.color.stroke, ImageShape),
-            blur = 12.dp,
             contentScale = ContentScale.Crop
         )
 
