@@ -1,6 +1,6 @@
 package com.baghdad.repository.datasource.local
 
-import com.baghdad.repository.model.actor.ActorDto
+import com.baghdad.repository.model.ActorDto
 import kotlinx.coroutines.flow.Flow
 
 interface LocalActorDataSource {
