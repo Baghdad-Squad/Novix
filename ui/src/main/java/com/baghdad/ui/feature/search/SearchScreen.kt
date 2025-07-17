@@ -160,7 +160,7 @@ private fun RecentlyViewsWithSearch(
                         onClearRecentlyViewedClick = { listener.onClearRecentlyViewedClick() },
                         onSavedClick = { listener.onSaveRecentlyViewedClick(it) },
                         onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) },
-                        modifier = Modifier.padding(top = 12.dp)
+                        modifier = Modifier.padding(top = 8.dp)
                     )
                 }
             } else {
