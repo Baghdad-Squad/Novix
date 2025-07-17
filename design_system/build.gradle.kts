@@ -43,5 +43,5 @@ dependencies {
     implementation(libs.androidx.ui.graphics.android)
     implementation(libs.androidx.ui.text.android)
     implementation(libs.readmore.material3)
-
+    implementation(libs.bundles.coil)
 }
