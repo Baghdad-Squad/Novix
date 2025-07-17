@@ -37,11 +37,11 @@ class TopTvShowViewModel(
         return BaseSnackBarMessage.UnknownError
     }
 
-    override fun onMovieDetailsClicked(movieId: Long) {
+    override fun onMovieDetailsClick(movieId: Long) {
         sendEffect(TopTvShowPicksEffect.NavigateToTvShowDetails(movieId))
     }
 
-    override fun onSaveTvShowClicked(tvShowId: Long) {
+    override fun onSaveTvShowClick(tvShowId: Long) {
         updateState {
             it.copy(
                 tvShows = it.tvShows.map { item ->
@@ -54,7 +54,7 @@ class TopTvShowViewModel(
         )
     }
 
-    override fun onBackClicked() {
+    override fun onBackClick() {
         sendEffect(TopTvShowPicksEffect.NavigateBack)
     }
 

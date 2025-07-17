@@ -87,7 +87,7 @@ private fun TopTvShowPicksContent(
             ) {
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
-                    onClick = { listener.onBackClicked() },
+                    onClick = { listener.onBackClick() },
                     modifier = Modifier
                         .padding(start = 16.dp, bottom = 8.dp)
                 )
@@ -120,8 +120,8 @@ private fun TopTvShowPicksContent(
                     url = tvShow.posterPictureURL,
                     contentDescription = null,
                     isSaved = tvShow.isSaved,
-                    onSavedClick = { listener.onSaveTvShowClicked(tvShow.id) },
-                    onClick = { listener.onMovieDetailsClicked(tvShow.id) },
+                    onSavedClick = { listener.onSaveTvShowClick(tvShow.id) },
+                    onClick = { listener.onMovieDetailsClick(tvShow.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }
