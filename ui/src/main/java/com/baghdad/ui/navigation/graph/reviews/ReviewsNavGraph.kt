@@ -14,11 +14,11 @@ fun NavGraphBuilder.reviewsNavGraph(navController: NavHostController) {
         startDestination = ReviewsRoute.ReviewsScreen
     ) {
         composable<ReviewsRoute.ReviewsScreen> { backStackEntry ->
-            val mediaId = backStackEntry.toGraph<Graph.ReviewsGraph>(navController).mediaId
-            val mediaType = backStackEntry.toGraph<Graph.ReviewsGraph>(navController).mediaType
+            val graph = backStackEntry.toGraph<Graph.ReviewsGraph>(navController)
+
             ReviewScreen(
-                mediaId = mediaId,
-                mediaType = mediaType,
+                mediaId = graph.mediaId,
+                mediaType = graph.mediaType
             ) { event ->
                 handleReviewsNavEvent(event = event, navController = navController)
             }
