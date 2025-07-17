@@ -6,12 +6,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.novix.util.IconSwitcher
+import com.baghdad.ui.feature.search.SearchScreen
 import com.baghdad.ui.navigation.NovixNavHost
 import com.baghdad.ui.navigation.route.Graph
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        IconSwitcher.switchAppIcon(this)
         enableEdgeToEdge()
         setContent {
             NovixTheme {
