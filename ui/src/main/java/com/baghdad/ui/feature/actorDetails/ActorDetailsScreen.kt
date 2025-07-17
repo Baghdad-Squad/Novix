@@ -15,7 +15,10 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun ActorDetailsScreen(
     actorId: Long,
-    viewModel: ActorDetailsViewModel = koinViewModel(parameters = { parametersOf(actorId) }),
+    viewModel: ActorDetailsViewModel = koinViewModel(
+        key = actorId.toString(),
+        parameters = { parametersOf(actorId) }
+    ),
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
