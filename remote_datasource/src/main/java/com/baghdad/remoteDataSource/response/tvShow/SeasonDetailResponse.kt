@@ -1,4 +1,4 @@
-package com.baghdad.remoteDataSource.response
+package com.baghdad.remoteDataSource.response.tvShow
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

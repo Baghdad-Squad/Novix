@@ -1,10 +1,10 @@
-package com.baghdad.remoteDataSource.response
+package com.baghdad.remoteDataSource.response.tvShow
 
 import Genre
 import kotlinx.serialization.SerialName
 
 
-data class TVShowResponse(
+data class TVShowDetailsResponse(
     @SerialName("adult")
     val adult: Boolean? = null,
     @SerialName("backdrop_path")
@@ -58,4 +58,6 @@ data class TVShowResponse(
     @SerialName("vote_count")
     val voteCount: Int? = null
 )
+
+
 
