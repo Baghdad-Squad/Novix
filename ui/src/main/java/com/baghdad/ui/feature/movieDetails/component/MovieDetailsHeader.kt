@@ -29,7 +29,7 @@ fun MovieDetailsHeader(
     releaseDate: String,
     rating: Double,
     categories: List<String>,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     onViewReviewClicked: () -> Unit,
 ) {
     Column(
@@ -59,7 +59,6 @@ fun MovieDetailsHeader(
                     fontSize = 14.sp,
                     style = Theme.typography.label.medium,
                     color = Theme.color.body,
-                    modifier = Modifier
                 )
                 if (index < categories.size - 1) {
                     CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
