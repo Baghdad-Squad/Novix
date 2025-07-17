@@ -5,6 +5,7 @@ import com.baghdad.local_datasource.roomDB.entity.Actor
 import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toEntity
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
+import com.baghdad.local_datasource.util.calculatePageOffset
 import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.model.actor.ActorDto
 import kotlinx.coroutines.flow.Flow
@@ -66,10 +67,8 @@ class LocalActorDataSourceImpl(
 
     override suspend fun searchActorsByName(name: String, page: Int, pageSize: Int) =
         executeWithErrorHandling {
-            val offset = (page - 1) * pageSize
-            actorDao.getActorsFromSearchQuery(name, pageSize, offset).map {
-                it.toDto()
-            }
+            val pageOffset = calculatePageOffset(pageSize, page)
+            actorDao.getActorsFromSearchQuery(name, pageSize, pageOffset).map(Actor::toDto)
         }
 
     override suspend fun getActorCountByName(name: String): Int {

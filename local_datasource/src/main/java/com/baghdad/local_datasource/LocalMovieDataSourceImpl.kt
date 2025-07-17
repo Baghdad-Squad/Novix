@@ -4,9 +4,12 @@ import android.util.Log
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
 import com.baghdad.local_datasource.roomDB.entity.Genre
+import com.baghdad.local_datasource.roomDB.entity.Movie
 import com.baghdad.local_datasource.roomDB.entity.toDto
+import com.baghdad.local_datasource.roomDB.entity.toDtos
 import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
+import com.baghdad.local_datasource.util.calculatePageOffset
 import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
@@ -80,15 +83,18 @@ class LocalMovieDataSourceImpl(
 
     override suspend fun searchMoviesByTitle(title: String, page: Int, pageSize: Int) =
         executeWithErrorHandling {
-            val currentPage = page ?: 1
-            val offset = (currentPage - 1) * pageSize
-            movieDao.getMoviesFromSearchQuery(title, pageSize, offset).map {
-                val genresDto = it.genres.map {
-                    genreDao.getGenreById(it).toDto()
-                }
-                it.toDto(genresDto)
-            }
+            val pageOffset = calculatePageOffset(pageSize, page)
+            val movies = movieDao.getMoviesFromSearchQuery(title, pageSize, pageOffset)
+            val genresMap = getGenresMap(movies)
+            movies.toDtos(genresMap)
         }
+
+    private fun getGenresMap(
+        movies: List<Movie>
+    ): Map<Long, Genre> {
+        val allGenreIds = movies.flatMap { it.genres }.distinct()
+        return genreDao.getGenresByIds(allGenreIds).associateBy { it.id }
+    }
 
     override suspend fun getMovieCountByTitle(title: String): Int {
         return executeWithErrorHandling {

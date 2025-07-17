@@ -2,9 +2,13 @@ package com.baghdad.local_datasource
 
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
+import com.baghdad.local_datasource.roomDB.entity.Genre
+import com.baghdad.local_datasource.roomDB.entity.TvShow
 import com.baghdad.local_datasource.roomDB.entity.toDto
+import com.baghdad.local_datasource.roomDB.entity.toDtos
 import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
+import com.baghdad.local_datasource.util.calculatePageOffset
 import com.baghdad.repository.datasource.local.LocalTvShowDataSource
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.TvShowDto
@@ -81,14 +85,18 @@ class LocalTvShowDataSourceImpl(
         pageSize: Int
     ): List<TvShowDto> {
         return executeWithErrorHandling {
-            val offset = (page - 1) * pageSize
-            tvShowDao.getTvShowsFromSearchQuery(title, pageSize, offset).map {
-                val genresDto = it.genres.map {
-                    genreDao.getGenreById(it).toDto()
-                }
-                it.toDto(genresDto)
-            }
+            val pageOffset = calculatePageOffset(pageSize, page)
+            val tvShows = tvShowDao.getTvShowsFromSearchQuery(title, pageSize, pageOffset)
+            val genresMap = getGenresMap(tvShows)
+            tvShows.toDtos(genresMap)
         }
+    }
+
+    private fun getGenresMap(
+        tvShows: List<TvShow>
+    ): Map<Long, Genre> {
+        val allGenreIds = tvShows.flatMap { it.genres }.distinct()
+        return genreDao.getGenresByIds(allGenreIds).associateBy { it.id }
     }
 
     override suspend fun getTvShowCountByTitle(title: String): Int {
