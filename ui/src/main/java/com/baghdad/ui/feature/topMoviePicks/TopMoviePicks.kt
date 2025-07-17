@@ -39,7 +39,10 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun TopMoviePicksScreen(
     actorId: Long,
-    viewModel: TopMoviePicksViewModel = koinViewModel(parameters = { parametersOf(actorId) }),
+    viewModel: TopMoviePicksViewModel = koinViewModel(
+        key = actorId.toString(),
+        parameters = { parametersOf(actorId) }
+    ),
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -97,7 +100,7 @@ private fun TopMoviePicksContent(
                 )
             }
         },
-        ) {
+    ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             modifier = Modifier

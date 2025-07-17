@@ -39,7 +39,10 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun TopTvShowPicksScreen(
     actorId: Long,
-    viewModel: TopTvShowViewModel = koinViewModel(parameters = { parametersOf(actorId) }),
+    viewModel: TopTvShowViewModel = koinViewModel(
+        key = actorId.toString(),
+        parameters = { parametersOf(actorId) }
+    ),
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
