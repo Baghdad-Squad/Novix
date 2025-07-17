@@ -33,7 +33,10 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun GalleryScreen(
     actorId: Long,
-    viewModel: ActorGalleryViewModel = koinViewModel(parameters = { parametersOf(actorId) }),
+    viewModel: ActorGalleryViewModel = koinViewModel(
+        key = actorId.toString(),
+        parameters = { parametersOf(actorId) }
+    ),
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -60,7 +63,9 @@ fun ActorGalleryScreenContent(
     uiState: ActorGalleryScreenState,
     listner: ActorGalleryViewModel
 ) {
-    Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .statusBarsPadding()) {
         TopAppBar(
             onGoBackClick = listner::onBackClick,
             screenTitle = stringResource(R.string.gallery),
