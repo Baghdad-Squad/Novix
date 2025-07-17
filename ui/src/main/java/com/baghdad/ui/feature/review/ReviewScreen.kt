@@ -32,10 +32,12 @@ import org.koin.core.parameter.parametersOf
 fun ReviewScreen(
     mediaType: ContentType,
     mediaId: Long,
-    viewModel: ReviewViewModel = koinViewModel(parameters = { parametersOf(mediaId, mediaType) }),
+    viewModel: ReviewViewModel = koinViewModel(
+        key = mediaId.toString(),
+        parameters = { parametersOf(mediaId, mediaType) }
+    ),
     onNavEvent: (ReviewsNavEvent) -> Unit
 ) {
-
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
