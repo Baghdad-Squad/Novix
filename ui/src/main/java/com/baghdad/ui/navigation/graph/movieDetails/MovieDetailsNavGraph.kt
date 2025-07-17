@@ -1,10 +1,10 @@
 package com.baghdad.ui.navigation.graph.movieDetails
 
 import androidx.navigation.NavGraphBuilder
+import com.baghdad.ui.feature.movieDetails.MovieDetailsScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.graph.util.toGraph
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.Graph
@@ -17,8 +17,13 @@ fun NavGraphBuilder.movieDetailsNavGraph(navController: NavHostController) {
     ) {
         composable<MovieDetailsRoute.MovieDetailsScreen> { backStackEntry ->
             val movieId = backStackEntry.toGraph<Graph.MovieDetailsGraph>(navController).movieId
-            DummyScreen("Movie Details Screen: $movieId")
-        }
+            MovieDetailsScreen (
+                movieId  = movieId,
+                handleNavigation = { event ->
+                    handleMovieDetailsNavigation(event, navController)
+                }
+            )
+    }
     }
 }
 
