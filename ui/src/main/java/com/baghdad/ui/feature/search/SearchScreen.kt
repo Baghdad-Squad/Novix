@@ -85,7 +85,6 @@ fun SearchContent(
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
         SearchTextField(
             query = uiState.searchText,
@@ -160,7 +159,7 @@ private fun RecentlyViewsWithSearch(
                         onClearRecentlyViewedClick = { listener.onClearRecentlyViewedClick() },
                         onSavedClick = { listener.onSaveRecentlyViewedClick(it) },
                         onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) },
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier = Modifier.padding(top = 12.dp)
                     )
                 }
             } else {
