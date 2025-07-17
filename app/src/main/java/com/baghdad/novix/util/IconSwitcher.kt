@@ -11,8 +11,8 @@ object IconSwitcher {
     fun switchAppIcon(context: Context) {
         val packageManager = context.packageManager
 
-        val componentLight = ComponentName(context, "com.baghdad.novix.MainActivityLight")
-        val componentDark = ComponentName(context, "com.baghdad.novix.MainActivityDark")
+        val componentLight = ComponentName(context, "com.baghdad.novix.MainActivity")
+        val componentDark = ComponentName(context, "com.baghdad.novix.MainActivity")
 
         val isDark = (context.resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES

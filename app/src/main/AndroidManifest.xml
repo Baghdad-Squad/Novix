@@ -18,7 +18,7 @@
             android:theme="@style/Theme.Novix" />
 
         <activity-alias
-            android:name=".MainActivityLight"
+            android:name=".MainActivity"
             android:enabled="true"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_light"
@@ -31,7 +31,7 @@
         </activity-alias>
 
         <activity-alias
-            android:name=".MainActivityDark"
+            android:name=".MainActivity"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
