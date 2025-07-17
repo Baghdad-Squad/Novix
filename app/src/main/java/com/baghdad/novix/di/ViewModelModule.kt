@@ -4,6 +4,7 @@ import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
+import com.baghdad.viewmodel.topTvShowPicks.TopTvShowViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
@@ -18,5 +19,8 @@ val viewModelModule = module {
     }
     viewModel{ (actorId: Long) ->
         TopMoviePicksViewModel(actorId, get())
+    }
+    viewModel { (actorId: Long) ->
+        TopTvShowViewModel(actorId, get())
     }
 }
