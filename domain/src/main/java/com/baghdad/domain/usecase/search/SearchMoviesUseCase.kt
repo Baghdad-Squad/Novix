@@ -18,20 +18,26 @@ class SearchMoviesUseCase(
         page: Int
     ): PagedResult<Movie> {
         val favoriteGenres = favoriteGenreRepository.getFavoriteGenres()
-        return searchRepository.searchMoviesByTitle(query, page).let {
-            it.copy(data = it.data.filter { movie ->
-                filterHelper.matchesRatingFilter(movie.averageRating, filter.minimumRating) &&
-                        filterHelper.matchesYearFilter(
-                            movie.releaseDate.year,
-                            filter.minimumYear,
-                            filter.maximumYear
-                        )
-                        && filterHelper.matchesGenreFilter(movie.genres, filter.selectedGenres)
-            }
-                .sortedByDescending { movie ->
-                    movie.genres.sumOf { genre -> favoriteGenres[genre.name] ?: 0 }
-                }
-            )
-        }
+        val searchResults = searchRepository.searchMoviesByTitle(query, page)
+
+        val filteredMovies = searchResults.data
+            .filter { movie -> matchesAllFilters(movie, filter) }
+            .sortedByDescending { movie -> calculateFavoriteGenreScore(movie, favoriteGenres) }
+
+        return searchResults.copy(data = filteredMovies)
+    }
+
+    private fun matchesAllFilters(movie: Movie, filter: SearchFilter): Boolean {
+        return filterHelper.matchesRatingFilter(movie.averageRating, filter.minimumRating) &&
+                filterHelper.matchesYearFilter(
+                    movie.releaseDate.year,
+                    filter.minimumYear,
+                    filter.maximumYear
+                ) &&
+                filterHelper.matchesGenreFilter(movie.genres, filter.selectedGenres)
+    }
+
+    private fun calculateFavoriteGenreScore(movie: Movie, favoriteGenres: Map<String, Int>): Int {
+        return movie.genres.sumOf { genre -> favoriteGenres[genre.name] ?: 0 }
     }
 }

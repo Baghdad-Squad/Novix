@@ -18,20 +18,26 @@ class SearchTvShowsUseCase(
         page: Int
     ): PagedResult<TvShow> {
         val favoriteGenres = favoriteGenreRepository.getFavoriteGenres()
-        return searchRepository.searchTvShowsByName(query, page).let {
-            it.copy(data = it.data.filter { show ->
-                filterHelper.matchesRatingFilter(show.averageRating, filter.minimumRating) &&
-                        filterHelper.matchesYearFilter(
-                            show.releaseDate.year,
-                            filter.minimumYear,
-                            filter.maximumYear
-                        ) &&
-                        filterHelper.matchesGenreFilter(show.genres, filter.selectedGenres)
-            }
-                .sortedByDescending { show ->
-                    show.genres.sumOf { genre -> favoriteGenres[genre.name] ?: 0 }
-                }
-            )
-        }
+        val searchResults = searchRepository.searchTvShowsByName(query, page)
+
+        val filteredShows = searchResults.data
+            .filter { show -> matchesAllFilters(show, filter) }
+            .sortedByDescending { show -> calculateFavoriteGenreScore(show, favoriteGenres) }
+
+        return searchResults.copy(data = filteredShows)
+    }
+
+    private fun matchesAllFilters(show: TvShow, filter: SearchFilter): Boolean {
+        return filterHelper.matchesRatingFilter(show.averageRating, filter.minimumRating) &&
+                filterHelper.matchesYearFilter(
+                    show.releaseDate.year,
+                    filter.minimumYear,
+                    filter.maximumYear
+                ) &&
+                filterHelper.matchesGenreFilter(show.genres, filter.selectedGenres)
+    }
+
+    private fun calculateFavoriteGenreScore(show: TvShow, favoriteGenres: Map<String, Int>): Int {
+        return show.genres.sumOf { genre -> favoriteGenres[genre.name] ?: 0 }
     }
 }
