@@ -54,25 +54,23 @@ suspend fun <TEntity, TDto> executePagedCachedOperation(
     fetchFromRemote: suspend () -> PagedResultDto<TDto>,
     cacheRemoteData: suspend (List<TDto>) -> Unit,
     fetchFromLocal: suspend () -> List<TDto>,
-    getTotalCount: suspend () -> Int,
+    getTotalCachedCount: suspend () -> Int,
     mapToEntity: (TDto) -> TEntity
 ): PagedResult<TEntity> {
     return executeSafely {
         onStart?.invoke()
-
-        val shouldFetch = shouldFetchFromRemote()
-
         var hasNextPage = false
-        if (shouldFetch) {
+
+        if (shouldFetchFromRemote()) {
             val response = fetchFromRemote()
             hasNextPage = response.nextKey != null
             cacheRemoteData(response.data)
         }
 
         val localData = fetchFromLocal()
-        val totalCount = getTotalCount()
+        val totalCachedCount = getTotalCachedCount()
 
-        hasNextPage = hasNextPage || (page * pageSize) < totalCount
+        hasNextPage = hasNextPage || (page * pageSize) < totalCachedCount
 
         PagedResult(
             data = localData.map(mapToEntity),
