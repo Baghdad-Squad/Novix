@@ -81,7 +81,6 @@ class SearchViewModel(
         searchJob = tryToExecute(
             onStart = { handleSearchStart() },
             callee = { performSearchByTab(text) },
-            onFinally = ::onFinally
         )
     }
 
@@ -94,29 +93,44 @@ class SearchViewModel(
     }
 
     private fun searchMovies(text: String) {
-        _moviesPagingFlow.value = createPagedResultPager { page ->
-            searchMoviesUseCase(
-                query = text,
-                filter = currentState.bottomSheetUiState.moviesFilter.toSearchFilter(),
-                page = page
-            )
-        }.map { it.map { movie -> movie.toMovieUI() } }
+        _moviesPagingFlow.value = createPagedResultPager(
+            loadData = { page ->
+                searchMoviesUseCase(
+                    query = text,
+                    filter = currentState.bottomSheetUiState.moviesFilter.toSearchFilter(),
+                    page = page
+                )
+            },
+            onInitialLoadFinished = {
+                onFinally()
+            }
+        ).map { it.map { movie -> movie.toMovieUI() } }
     }
 
     private fun searchTvShows(text: String) {
-        _tvShowsPagingFlow.value = createPagedResultPager { page ->
-            searchTvShowsUseCase(
-                query = text,
-                filter = currentState.bottomSheetUiState.tvShowsFilter.toSearchFilter(),
-                page = page
-            )
-        }.map { it.map { tv -> tv.toTvShowUI() } }
+        _tvShowsPagingFlow.value = createPagedResultPager(
+            loadData = { page ->
+                searchTvShowsUseCase(
+                    query = text,
+                    filter = currentState.bottomSheetUiState.tvShowsFilter.toSearchFilter(),
+                    page = page
+                )
+            },
+            onInitialLoadFinished = {
+                onFinally()
+            }
+        ).map { it.map { tv -> tv.toTvShowUI() } }
     }
 
     private fun searchActors(text: String) {
-        _actorsPagingFlow.value = createPagedResultPager { page ->
-            searchActorsUseCase(query = text, page = page)
-        }.map { it.map { actor -> actor.toActorUI() } }
+        _actorsPagingFlow.value = createPagedResultPager(
+            loadData = { page ->
+                searchActorsUseCase(query = text, page = page)
+            },
+            onInitialLoadFinished = {
+                onFinally()
+            }
+        ).map { it.map { actor -> actor.toActorUI() } }
     }
 
     private fun clearAllPagingFlows() {

@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class PagedResultPagingSource<T : Any>(
-    private val loadData: suspend (page: Int) -> PagedResult<T>
+    private val loadData: suspend (page: Int) -> PagedResult<T>,
+    private val onInitialLoadFinished: suspend () -> Unit,
 ) : PagingSource<Int, T>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
@@ -19,6 +20,9 @@ class PagedResultPagingSource<T : Any>(
             val page = params.key ?: 1
             val result = withContext(Dispatchers.IO) {
                 loadData(page)
+            }
+            if (params.key == null || page == 1) {
+                onInitialLoadFinished()
             }
             LoadResult.Page(
                 data = result.data,
@@ -41,7 +45,8 @@ class PagedResultPagingSource<T : Any>(
 
 fun <T : Any> createPagedResultPager(
     pageSize: Int = 20,
-    loadData: suspend (page: Int) -> PagedResult<T>
+    loadData: suspend (page: Int) -> PagedResult<T>,
+    onInitialLoadFinished: suspend () -> Unit
 ): Flow<PagingData<T>> {
     return Pager(
         config = PagingConfig(
@@ -50,7 +55,7 @@ fun <T : Any> createPagedResultPager(
             prefetchDistance = 4
         ),
         pagingSourceFactory = {
-            PagedResultPagingSource(loadData)
+            PagedResultPagingSource(loadData, onInitialLoadFinished)
         }
     ).flow
 }
