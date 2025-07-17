@@ -1,7 +1,7 @@
 package com.baghdad.viewmodel.topMoviePicks
 
 interface TopMoviePicksInteractionListener {
-    fun onMovieDetailsClicked(movieId: Long)
-    fun onSaveMovieClicked(movieId: Long)
-    fun onBackClicked()
+    fun onMovieDetailsClick(movieId: Long)
+    fun onSaveMovieClick(movieId: Long)
+    fun onBackClick()
 }

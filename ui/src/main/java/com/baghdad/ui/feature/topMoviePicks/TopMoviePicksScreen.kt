@@ -87,7 +87,7 @@ private fun TopMoviePicksContent(
             ) {
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
-                    onClick = { listener.onBackClicked() },
+                    onClick = { listener.onBackClick() },
                     modifier = Modifier
                         .padding(start = 16.dp, bottom = 8.dp)
                 )
@@ -120,8 +120,8 @@ private fun TopMoviePicksContent(
                     url = movie.posterPictureURL,
                     contentDescription = null,
                     isSaved = movie.isSaved,
-                    onSavedClick = { listener.onSaveMovieClicked(movie.id) },
-                    onClick = { listener.onMovieDetailsClicked(movie.id) },
+                    onSavedClick = { listener.onSaveMovieClick(movie.id) },
+                    onClick = { listener.onMovieDetailsClick(movie.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }

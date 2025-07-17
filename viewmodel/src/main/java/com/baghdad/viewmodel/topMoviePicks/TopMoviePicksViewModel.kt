@@ -37,11 +37,11 @@ class TopMoviePicksViewModel(
         return BaseSnackBarMessage.UnknownError
     }
 
-    override fun onMovieDetailsClicked(movieId: Long) {
+    override fun onMovieDetailsClick(movieId: Long) {
         sendEffect(TopMoviePicksEffect.NavigateToMovieDetails(movieId))
     }
 
-    override fun onSaveMovieClicked(movieId: Long) {
+    override fun onSaveMovieClick(movieId: Long) {
         updateState {
             it.copy(
                 movies = it.movies.map { item ->
@@ -54,7 +54,7 @@ class TopMoviePicksViewModel(
         )
     }
 
-    override fun onBackClicked() {
+    override fun onBackClick() {
         sendEffect(TopMoviePicksEffect.NavigateBack)
     }
     private fun onLoading() {
