@@ -67,39 +67,46 @@ fun ActorDetailsContent(
             )
         }
 
-        ActorBiographySection(
-            biography = uiState.actorInfo.biography,
-            onExpandedChange = { listener.onReadMoreBiographyClick() },
-            isExpanded = uiState.isTextExpanded,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        if (!uiState.actorInfo.biography.isNullOrBlank()) {
+            ActorBiographySection(
+                biography = uiState.actorInfo.biography,
+                onExpandedChange = { listener.onReadMoreBiographyClick() },
+                isExpanded = uiState.isTextExpanded,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
 
-        GallerySection(
-            imageUrls = uiState.gallery,
-            onClickShowAll = { listener.onViewAllGalleryClick() },
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        if (uiState.gallery.isNotEmpty()) {
+            GallerySection(
+                imageUrls = uiState.gallery,
+                onClickShowAll = { listener.onViewAllGalleryClick() },
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
 
-        TopMediaPicksSection(
-            title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
-            items = uiState.topMoviesPicks,
-            imageUrl = { it.posterPictureURL },
-            onSavedClick = { listener.onSaveMovieClick(it.id) },
-            onCardClick = { listener.onMovieCardClick(it.id) },
-            isSaved = { it.isSaved },
-            onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        TopMediaPicksSection(
-            title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
-            items = uiState.topTvShowsPicks,
-            imageUrl = { it.posterPictureURL },
-            onSavedClick = { listener.onSaveTvShowClick(it.id) },
-            onCardClick = { listener.onTvShowCardClick(it.id) },
-            isSaved = { it.isSaved },
-            onClickShowAll = { listener.onViewAllTopTvShowsClick() },
-        )
+        if (uiState.topMoviesPicks.isNotEmpty()) {
+            TopMediaPicksSection(
+                title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
+                items = uiState.topMoviesPicks,
+                imageUrl = { it.posterPictureURL },
+                onSavedClick = { listener.onSaveMovieClick(it.id) },
+                onCardClick = { listener.onMovieCardClick(it.id) },
+                isSaved = { it.isSaved },
+                onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+        if (uiState.topTvShowsPicks.isNotEmpty()) {
+            TopMediaPicksSection(
+                title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
+                items = uiState.topTvShowsPicks,
+                imageUrl = { it.posterPictureURL },
+                onSavedClick = { listener.onSaveTvShowClick(it.id) },
+                onCardClick = { listener.onTvShowCardClick(it.id) },
+                isSaved = { it.isSaved },
+                onClickShowAll = { listener.onViewAllTopTvShowsClick() },
+            )
+        }
     }
 }
 
