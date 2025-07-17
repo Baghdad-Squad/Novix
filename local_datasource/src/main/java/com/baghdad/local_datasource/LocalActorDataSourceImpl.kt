@@ -14,19 +14,9 @@ import kotlinx.coroutines.flow.map
 class LocalActorDataSourceImpl(
     private val actorDao: ActorDao
 ) : LocalActorDataSource {
-    override suspend fun addActor(name: String, imageUrl: String) =
+    override suspend fun addActor(actor: ActorDto) =
         executeWithErrorHandling {
-            val actor = Actor( /*TODO replace with real data */
-                name = name,
-                profilePictureURL = imageUrl,
-                birthDate = "",
-                deathDate = null,
-                biography = "",
-                placeOfBirth = "",
-                headerPictures = emptyList(),
-                department = ""
-            )
-            actorDao.upsertActor(actor)
+            actorDao.upsertActor(actor.toEntity())
         }
 
     override suspend fun addActors(actors: List<ActorDto>) {
