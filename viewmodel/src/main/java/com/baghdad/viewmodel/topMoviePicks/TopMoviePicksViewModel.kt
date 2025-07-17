@@ -10,9 +10,7 @@ class TopMoviePicksViewModel(
     val  actorId: Long,
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
 ): BaseViewModel<TopMoviePicksState, TopMoviePicksEffect>
-    (TopMoviePicksState(
-        isLoading = false
-    )), TopMoviePicksInteractionListener {
+    (TopMoviePicksState()), TopMoviePicksInteractionListener {
 
      init {
          getActorMovies(actorId)

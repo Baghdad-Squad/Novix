@@ -92,7 +92,7 @@ private fun TopTvShowPicksContent(
                         .padding(start = 16.dp, bottom = 8.dp)
                 )
                 Text(
-                    text = stringResource(com.baghdad.ui.R.string.top_movies_picks),
+                    text = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
                     style = Theme.typography.title.large,
                     color = Theme.color.title,
                     modifier = Modifier
