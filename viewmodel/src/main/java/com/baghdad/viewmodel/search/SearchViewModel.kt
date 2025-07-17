@@ -1,7 +1,6 @@
 package com.baghdad.viewmodel.search
 
 import androidx.paging.PagingData
-import androidx.paging.map
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
@@ -16,7 +15,6 @@ import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.base.BaseViewModel
-import com.baghdad.viewmodel.base.createPagedResultPager
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
@@ -26,7 +24,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.map
 
 class SearchViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -93,7 +90,7 @@ class SearchViewModel(
     }
 
     private fun searchMovies(text: String) {
-        _moviesPagingFlow.value = createPagedResultPager(
+        collectPagingFlow(
             loadData = { page ->
                 searchMoviesUseCase(
                     query = text,
@@ -101,14 +98,14 @@ class SearchViewModel(
                     page = page
                 )
             },
-            onInitialLoadFinished = {
-                onFinally()
-            }
-        ).map { it.map { movie -> movie.toMovieUI() } }
+            onInitialLoadFinished = ::onFinally,
+            mapEntityToUiState = { it.toMovieUI() },
+            onFlowCreated = { _moviesPagingFlow.value = it }
+        )
     }
 
     private fun searchTvShows(text: String) {
-        _tvShowsPagingFlow.value = createPagedResultPager(
+        collectPagingFlow(
             loadData = { page ->
                 searchTvShowsUseCase(
                     query = text,
@@ -116,21 +113,24 @@ class SearchViewModel(
                     page = page
                 )
             },
-            onInitialLoadFinished = {
-                onFinally()
-            }
-        ).map { it.map { tv -> tv.toTvShowUI() } }
+            onInitialLoadFinished = ::onFinally,
+            mapEntityToUiState = { it.toTvShowUI() },
+            onFlowCreated = { _tvShowsPagingFlow.value = it }
+        )
     }
 
     private fun searchActors(text: String) {
-        _actorsPagingFlow.value = createPagedResultPager(
+        collectPagingFlow(
             loadData = { page ->
-                searchActorsUseCase(query = text, page = page)
+                searchActorsUseCase(
+                    query = text,
+                    page = page
+                )
             },
-            onInitialLoadFinished = {
-                onFinally()
-            }
-        ).map { it.map { actor -> actor.toActorUI() } }
+            onInitialLoadFinished = ::onFinally,
+            mapEntityToUiState = { it.toActorUI() },
+            onFlowCreated = { _actorsPagingFlow.value = it }
+        )
     }
 
     private fun clearAllPagingFlows() {
