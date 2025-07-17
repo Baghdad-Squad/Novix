@@ -1,6 +1,5 @@
 package com.baghdad.ui.navigation.graph.movieDetails
 
-import androidx.compose.ui.semantics.SemanticsProperties.ContentType
 import androidx.navigation.NavGraphBuilder
 import com.baghdad.ui.feature.movieDetails.MovieDetailsScreen
 import androidx.navigation.NavHostController
@@ -10,6 +9,7 @@ import com.baghdad.ui.navigation.graph.util.toGraph
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.MovieDetailsRoute
+import com.baghdad.viewmodel.review.ContentType
 
 fun NavGraphBuilder.movieDetailsNavGraph(navController: NavHostController) {
     navigation<Graph.MovieDetailsGraph>(
