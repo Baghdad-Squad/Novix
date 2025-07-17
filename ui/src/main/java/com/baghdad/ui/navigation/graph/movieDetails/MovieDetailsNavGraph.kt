@@ -9,6 +9,7 @@ import com.baghdad.ui.navigation.graph.util.toGraph
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.MovieDetailsRoute
+import com.baghdad.viewmodel.review.ContentType
 
 fun NavGraphBuilder.movieDetailsNavGraph(navController: NavHostController) {
     navigation<Graph.MovieDetailsGraph>(
@@ -43,7 +44,7 @@ private fun handleMovieDetailsNavigation(
         )
 
         is MovieDetailsNavEvent.NavigateToReviews -> navController.navigate(
-            Graph.ReviewsGraph(event.movieId, "movie")
+            Graph.ReviewsGraph(event.movieId, ContentType.MOVIE)
         )
     }
 }
