@@ -15,15 +15,11 @@ data class EpisodeDetailsResponse(
     val overview: String? = null,
     @SerialName("id")
     val id: Int = 0,
-    @SerialName("production_code")
-    val productionCode: String? = null,
     @SerialName("runtime")
     val runtime: Int = 0,
     @SerialName("season_number")
     val seasonNumber: Int = 0,
     @SerialName("vote_average")
     val voteAverage: Double = 0.0,
-    @SerialName("vote_count")
-    val voteCount: Int = 0
 )
 

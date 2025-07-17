@@ -29,10 +29,6 @@ data class ReviewResponse(
     val createdAt: String? = null,
     @SerialName("id")
     val id: String? = null,
-    @SerialName("updated_at")
-    val updatedAt: String? = null,
-    @SerialName("url")
-    val url: String? = null
 )
 
 @Serializable
