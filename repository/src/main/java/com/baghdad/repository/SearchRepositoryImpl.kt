@@ -40,15 +40,20 @@ class SearchRepositoryImpl(
 
     override suspend fun searchActorsByName(
         name: String,
-        page: Int
+        page: Int,
+        pageSize: Int
     ): PagedResult<Actor> {
         return executePagedCachedOperation(
             page = page,
-            pageSize = 20,
+            pageSize = pageSize,
             mapToEntity = ActorDto::toEntity,
             shouldFetchFromRemote = {
                 !isUserSearchThisTermWithinHour(name) ||
-                        !hasEnoughActorCachedDataForPage(name, page)
+                        !hasEnoughCachedDataForPage(
+                            page = page,
+                            pageSize = pageSize,
+                            getCachedCount = { localActorDataSource.getActorCountByName(name) }
+                        )
             },
             fetchFromRemote = {
                 searchRemoteDataSource.searchActors(name, page)
@@ -57,9 +62,9 @@ class SearchRepositoryImpl(
                 cacheActorSearchResult(isFirstSearch = page == 1, name, data)
             },
             fetchFromLocal = {
-                localActorDataSource.searchActorsByName(name, page, 20)
+                localActorDataSource.searchActorsByName(name, page, pageSize)
             },
-            getTotalCount = {
+            getTotalCachedCount = {
                 localActorDataSource.getActorCountByName(name)
             },
             onStart = {
@@ -68,9 +73,20 @@ class SearchRepositoryImpl(
         )
     }
 
+    private suspend fun cacheActorSearchResult(
+        isFirstSearch: Boolean,
+        query: String,
+        actors: List<ActorDto>
+    ) {
+        if (isFirstSearch) localRecentSearchDataSource.addRecentSearchQuery(query)
+        localActorDataSource.addActors(actors)
+        localSearchQueryDataSource.addSearchQueries(actors.map { it.toSearchQueryDto(query) })
+    }
+
     override suspend fun searchMoviesByTitle(
         title: String,
-        page: Int
+        page: Int,
+        pageSize: Int
     ): PagedResult<Movie> {
         return executePagedCachedOperation(
             page = page,
@@ -78,7 +94,11 @@ class SearchRepositoryImpl(
             mapToEntity = MovieDto::toEntity,
             shouldFetchFromRemote = {
                 !isUserSearchThisTermWithinHour(title) ||
-                        !hasEnoughMovieCachedDataForPage(title, page)
+                        !hasEnoughCachedDataForPage(
+                            page = page,
+                            pageSize = pageSize,
+                            getCachedCount = { localMovieDataSource.getMovieCountByTitle(title) }
+                        )
             },
             fetchFromRemote = {
                 updateGenreCache()
@@ -89,76 +109,15 @@ class SearchRepositoryImpl(
                 cacheMovieSearchResult(isFirstSearch = page == 1, title, data)
             },
             fetchFromLocal = {
-                localMovieDataSource.searchMoviesByTitle(title, page, 20)
+                localMovieDataSource.searchMoviesByTitle(title, page, pageSize)
             },
-            getTotalCount = {
+            getTotalCachedCount = {
                 localMovieDataSource.getMovieCountByTitle(title)
             },
             onStart = {
                 deleteInvalidCacheOfMoreThanOneHour()
             }
         )
-    }
-
-    override suspend fun searchTvShowsByName(
-        title: String,
-        page: Int
-    ): PagedResult<TvShow> {
-        return executePagedCachedOperation(
-            page = page,
-            pageSize = 20,
-            mapToEntity = TvShowDto::toEntity,
-            shouldFetchFromRemote = {
-                !isUserSearchThisTermWithinHour(title) ||
-                        !hasEnoughTvShowCachedDataForPage(title, page)
-            },
-            fetchFromRemote = {
-                updateGenreCache()
-                val genres = localGenreDataSource.getTvShowGenre(Locale.getDefault().language)
-                searchRemoteDataSource.searchTvShows(title, page, genres)
-            },
-            cacheRemoteData = { data ->
-                cacheTvShowSearchResult(isFirstSearch = page == 1, title, data)
-            },
-            fetchFromLocal = {
-                localTvShowDataSource.searchTvShowsByTitle(title, page, 20)
-            },
-            getTotalCount = {
-                localTvShowDataSource.getTvShowCountByTitle(title)
-            },
-            onStart = {
-                deleteInvalidCacheOfMoreThanOneHour()
-            }
-        )
-    }
-
-    private suspend fun hasEnoughMovieCachedDataForPage(title: String, page: Int): Boolean {
-        val requiredItemsCount = page * 20
-        val cachedCount = localMovieDataSource.getMovieCountByTitle(title)
-        return cachedCount >= requiredItemsCount
-    }
-
-    private suspend fun hasEnoughTvShowCachedDataForPage(title: String, page: Int): Boolean {
-        val requiredItemsCount = page * 20
-        val cachedCount = localTvShowDataSource.getTvShowCountByTitle(title)
-        return cachedCount >= requiredItemsCount
-    }
-
-    private suspend fun hasEnoughActorCachedDataForPage(name: String, page: Int): Boolean {
-        val requiredItemsCount = page * 20
-        val cachedCount = localActorDataSource.getActorCountByName(name)
-        return cachedCount >= requiredItemsCount
-    }
-
-
-    private suspend fun updateGenreCache() {
-        val lang = Locale.getDefault().language
-
-        val movieGenres = remoteGenreDataSource.getMovieGenre(lang)
-        val tvGenres = remoteGenreDataSource.getTvShowGenre(lang)
-
-        movieGenres.forEach { localGenreDataSource.addGenre(it) }
-        tvGenres.forEach { localGenreDataSource.addGenre(it) }
     }
 
     private suspend fun cacheMovieSearchResult(
@@ -171,6 +130,43 @@ class SearchRepositoryImpl(
         localSearchQueryDataSource.addSearchQueries(movies.map { it.toSearchQueryDto(query) })
     }
 
+    override suspend fun searchTvShowsByName(
+        title: String,
+        page: Int,
+        pageSize: Int
+    ): PagedResult<TvShow> {
+        return executePagedCachedOperation(
+            page = page,
+            pageSize = pageSize,
+            mapToEntity = TvShowDto::toEntity,
+            shouldFetchFromRemote = {
+                !isUserSearchThisTermWithinHour(title) ||
+                        !hasEnoughCachedDataForPage(
+                            page = page,
+                            pageSize = pageSize,
+                            getCachedCount = { localTvShowDataSource.getTvShowCountByTitle(title) }
+                        )
+            },
+            fetchFromRemote = {
+                updateGenreCache()
+                val genres = localGenreDataSource.getTvShowGenre(Locale.getDefault().language)
+                searchRemoteDataSource.searchTvShows(title, page, genres)
+            },
+            cacheRemoteData = { data ->
+                cacheTvShowSearchResult(isFirstSearch = page == 1, title, data)
+            },
+            fetchFromLocal = {
+                localTvShowDataSource.searchTvShowsByTitle(title, page, pageSize)
+            },
+            getTotalCachedCount = {
+                localTvShowDataSource.getTvShowCountByTitle(title)
+            },
+            onStart = {
+                deleteInvalidCacheOfMoreThanOneHour()
+            }
+        )
+    }
+
     private suspend fun cacheTvShowSearchResult(
         isFirstSearch: Boolean,
         query: String,
@@ -179,6 +175,27 @@ class SearchRepositoryImpl(
         if (isFirstSearch) localRecentSearchDataSource.addRecentSearchQuery(query)
         localTvShowDataSource.addTvShows(tvShows)
         localSearchQueryDataSource.addSearchQueries(tvShows.map { it.toSearchQueryDto(query) })
+    }
+
+    private suspend fun hasEnoughCachedDataForPage(
+        page: Int,
+        pageSize: Int,
+        getCachedCount: suspend () -> Int
+    ): Boolean {
+        val requiredItemsCount = page * pageSize
+        val cachedCount = getCachedCount()
+        return cachedCount >= requiredItemsCount
+    }
+
+
+    private suspend fun updateGenreCache() {
+        val lang = Locale.getDefault().language
+
+        val movieGenres = remoteGenreDataSource.getMovieGenre(lang)
+        val tvGenres = remoteGenreDataSource.getTvShowGenre(lang)
+
+        movieGenres.forEach { localGenreDataSource.addGenre(it) }
+        tvGenres.forEach { localGenreDataSource.addGenre(it) }
     }
 
     private suspend fun deleteInvalidCacheOfMoreThanOneHour() {
@@ -195,17 +212,6 @@ class SearchRepositoryImpl(
             }
         }
     }
-
-    private suspend fun cacheActorSearchResult(
-        isFirstSearch: Boolean,
-        query: String,
-        actors: List<ActorDto>
-    ) {
-        if (isFirstSearch) localRecentSearchDataSource.addRecentSearchQuery(query)
-        localActorDataSource.addActors(actors)
-        localSearchQueryDataSource.addSearchQueries(actors.map { it.toSearchQueryDto(query) })
-    }
-
 
     override suspend fun deleteRecentSearchById(id: Long) {
         return executeSafely {
