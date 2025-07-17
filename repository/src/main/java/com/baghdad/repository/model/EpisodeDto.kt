@@ -7,5 +7,7 @@ data class EpisodeDto(
     val rating: Double,
     val duration: String,
     val releasedDate: String,
-    val currentSeason: Int
+    val currentSeason: Int,
+    val overview: String,
+    val headerPictures: List<String>,
 )

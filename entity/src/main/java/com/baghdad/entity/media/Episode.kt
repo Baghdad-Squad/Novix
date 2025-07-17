@@ -9,5 +9,7 @@ data class Episode(
     val rating: Double,
     val duration: String,
     val releasedDate: LocalDate,
-    val currentSeason: Int
+    val currentSeason: Int,
+    val overview: String,
+    val headerPictures: List<String>,
 )

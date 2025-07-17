@@ -17,6 +17,13 @@ class EpisodeRepositoryImpl(
     ): Episode {
         return executeSafely {
             remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber).toEntity()
+                .copy(
+                    headerPictures = remoteEpisodeDataSource.getEpisodeImages(
+                        tvId,
+                        seasonNumber,
+                        episodeNumber
+                    ).take(3)
+                )
         }
     }
 
