@@ -63,4 +63,10 @@ class MovieRepositoryImpl(
             }
         }
     }
+
+    override suspend fun getMovieImages(movieId: Long): List<String> {
+        return executeSafely {
+            remoteMovieDataSource.getMovieImages(movieId)
+        }
+    }
 }
