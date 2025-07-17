@@ -1,7 +1,9 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.mapper.actor.toDto
+import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.EpisodeDetailsResponse
 import com.baghdad.remoteDataSource.response.EpisodeImageResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
@@ -21,10 +23,10 @@ class RemoteEpisodeDataSourceImpl(
             .replace("{tv_id}", tvId.toString())
             .replace("{season_number}", seasonNumber.toString())
             .replace("{episode_number}", episodeNumber.toString())
-        return handleRequest<EpisodeDto>(
+        return handleRequest<EpisodeDetailsResponse>(
             client = httpClient,
             url = "$baseUrl$endpoint"
-        )
+        ).toDto()
     }
 
     override suspend fun getEpisodeCastMembers(tvId: Long, seasonNumber: Int, episodeNumber: Int): List<CastMemberDto> {

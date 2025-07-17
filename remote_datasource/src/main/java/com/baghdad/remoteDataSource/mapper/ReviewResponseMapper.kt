@@ -11,6 +11,6 @@ fun ReviewResponse.toDto(): ReviewDto {
         contentTitle = authorDetails?.username ?: "",
         rating = authorDetails?.rating?.toFloatOrNull() ?: 0f,
         reviewText = content ?: "",
-        postedDate = createdAt ?: ""
+        postedDate = createdAt ?: "0001-01-01"
     )
 }
