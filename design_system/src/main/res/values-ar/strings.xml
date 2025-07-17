@@ -27,7 +27,7 @@
     <string name="novix_description">تصميم يجمع بين إبداع نوفا وعالم فليكس</string>
     <string name="app_bar_icon">أيقونة شريط التطبيق</string>
     <string name="category_image">صورة الفئة</string>
-    <string name="close_filter_bottomsheet">إغلاق لوحة الفرز</string>
+    <string name="close_title_bottomsheet">إغلاق لوحة الفرز</string>
     <string name="clear_all">مسح الكل</string>
     <string name="filter">فرز</string>
     <string name="released_year">سنة الإصدار</string>
@@ -41,6 +41,6 @@
     <string name="expand">توسيع</string>
     <string name="read_more">اقرأ المزيد</string>
     <string name="read_less">إخفاء</string>
-
+    <string name="go_back">العودة</string>
 
 </resources>
