@@ -2,13 +2,11 @@ package com.baghdad.ui.feature.topMoviePicks
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -18,16 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.HomeCard
-import com.baghdad.design_system.component.HotScaffold
+import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.Text
-import com.baghdad.design_system.component.button.FloatingActionButton
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
@@ -76,15 +72,15 @@ private fun TopMoviePicksContent(
     uiState: TopMoviePicksState,
     listener: TopMoviePicksInteractionListener,
 ) {
-
-    HotScaffold(
+    Scaffold(
         topBar = {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(Theme.color.surface)
                     .statusBarsPadding()
-                    .padding(top = 12.dp,bottom = 17.dp)
-                , verticalAlignment = Alignment.CenterVertically
+                    .padding(top = 12.dp, bottom = 17.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
@@ -101,8 +97,7 @@ private fun TopMoviePicksContent(
                 )
             }
         },
-
-    ) {
+        ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             modifier = Modifier
