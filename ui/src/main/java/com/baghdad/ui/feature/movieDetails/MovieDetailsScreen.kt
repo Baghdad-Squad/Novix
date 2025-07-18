@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -41,12 +43,15 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.SaveIcon
+import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieDetailsHeader
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
@@ -57,6 +62,7 @@ import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.Navigat
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToReviews
 import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
@@ -92,7 +98,6 @@ private fun MovieDetailsContent(
     snackBarState: SnackBarState
 ) {
 
-
     val lazyState = rememberLazyGridState()
     var shouldReduceAspectRatio by remember { mutableStateOf(false) }
     val targetAspectRange = 1.38f..1.42f
@@ -115,120 +120,135 @@ private fun MovieDetailsContent(
             }
     }
 
-    Box(Modifier.fillMaxSize()) {
-        TopAppBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(animatedColor)
-                .zIndex(1f)
-                .align(Alignment.TopCenter)
-                .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = {
-                listener.onBackClick()
-            },
-            content = {
-                SaveIcon(
-                    size = 40,
-                    backgroundColor = Theme.color.iconBackgroundLow,
-                    isSaved = state.isSaved,
-                    onClick = {
-                        listener.onSaveCurrentMovieClick()
-                    }
-                )
-            }
-        )
-
-        LazyVerticalGrid(
-            state = lazyState,
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-
-            ) {
-
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                HeaderSliderSection(
-                    state.movieImages,
-                    indicatorVisibility = state.movieImages.size > 1
-                )
-            }
-
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                MovieDetailsHeader(
-                    title = state.movieName,
-                    releaseDate = state.date,
-                    rating = state.rating,
-                    duration = state.duration,
-                    categories = state.categories,
-                    modifier = Modifier
-                        .offset(y = (-48).dp)
-                        .padding(horizontal = 16.dp),
-                    onViewReviewClicked = {
-                        listener.onReviewClick(state.movieId)
-                    },
-                    onViewCategoryClicked = { listener.onCategoryClick(it) }
-                )
-            }
-
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                OverviewSection(
-                    overview = state.overView,
-                    isExtended = state.isExtendText,
-                ) { listener.onExtendOverviewClick() }
-            }
-
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                ActorsSection(
-                    actors = state.castes,
-                    modifier = Modifier.offset(y = (-48).dp),
-                    onClick = { listener.onActorClick(id = it) }
-                )
-            }
-
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Text(
-                    text = stringResource(com.baghdad.ui.R.string.more_like_this),
-                    fontSize = 18.sp,
-                    style = Theme.typography.title.medium,
-                    color = Theme.color.title,
-                    modifier = Modifier
-                        .offset(y = (-48).dp)
-                        .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                )
-            }
-
-            itemsIndexed(state.moreLikeThisMovie) { index, movieLikeThis ->
-                HomeCard(
-                    url = movieLikeThis.imageUrl,
-                    contentDescription = stringResource(com.baghdad.ui.R.string.card_movie_image),
-                    isSaved = movieLikeThis.isSaved,
-                    onSavedClick = {
-                        listener.onSaveMoreLikeThisMedia(movieLikeThis.id)
-                    },
-                    onClick = {
-                        listener.onMovieLikeClick(movieLikeThis.id)
-                    },
-                    modifier = Modifier
-                        .offset(y = (-48).dp)
-                        .height(210.dp)
-                        .then(
-                            if (index % 2 == 0) Modifier.padding(start = 16.dp)
-                            else Modifier.padding(end = 16.dp)
-                        )
-                        .clip(RoundedCornerShape(12.dp))
-                )
-            }
+    Scaffold(
+        modifier = Modifier
+            .background(Theme.color.surface)
+            .systemBarsPadding()
+            .statusBarsPadding(),
+        topBar = {
+            TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(animatedColor)
+                    .zIndex(1f)
+                    .padding(top = 56.dp, bottom = 8.dp),
+                onGoBackClick = {
+                    listener.onBackClick()
+                },
+                content = {
+                    SaveIcon(
+                        size = 40,
+                        backgroundColor = Theme.color.iconBackgroundLow,
+                        isSaved = state.isSaved,
+                        onClick = {
+                            listener.onSaveCurrentMovieClick()
+                        }
+                    )
+                }
+            )
+        }, floatingActionButton = {
+            FloatingIconsButton(
+                listener = listener,
+                state = state
+            )
+        }, snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
         }
-        FloatingIconsButton(
-            Modifier.align(Alignment.BottomCenter),
-            listener = listener,
-            state = state
-        )
+    ) {
+        Box(Modifier.fillMaxSize()) {
+            LazyVerticalGrid(
+                state = lazyState,
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.color.surface),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
 
+                ) {
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    HeaderSliderSection(
+                        state.movieImages,
+                        indicatorVisibility = state.movieImages.size > 1
+                    )
+                }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    MovieDetailsHeader(
+                        title = state.movieName,
+                        releaseDate = state.date,
+                        rating = state.rating,
+                        duration = state.duration,
+                        categories = state.categories,
+                        modifier = Modifier
+                            .offset(y = (-48).dp)
+                            .padding(horizontal = 16.dp),
+                        onViewReviewClicked = {
+                            listener.onReviewClick(state.movieId)
+                        },
+                        onViewCategoryClicked = { listener.onCategoryClick(it) }
+                    )
+                }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    OverviewSection(
+                        overview = state.overView,
+                        isExtended = state.isExtendText,
+                    ) { listener.onExtendOverviewClick() }
+                }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    ActorsSection(
+                        actors = state.castes,
+                        modifier = Modifier.offset(y = (-48).dp),
+                        onClick = { listener.onActorClick(id = it) }
+                    )
+                }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Text(
+                        text = stringResource(com.baghdad.ui.R.string.more_like_this),
+                        fontSize = 18.sp,
+                        style = Theme.typography.title.medium,
+                        color = Theme.color.title,
+                        modifier = Modifier
+                            .offset(y = (-48).dp)
+                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                    )
+                }
+
+                itemsIndexed(state.moreLikeThisMovie) { index, movieLikeThis ->
+                    HomeCard(
+                        url = movieLikeThis.imageUrl,
+                        contentDescription = stringResource(com.baghdad.ui.R.string.card_movie_image),
+                        isSaved = movieLikeThis.isSaved,
+                        onSavedClick = {
+                            listener.onSaveMoreLikeThisMedia(movieLikeThis.id)
+                        },
+                        onClick = {
+                            listener.onMovieLikeClick(movieLikeThis.id)
+                        },
+                        modifier = Modifier
+                            .offset(y = (-48).dp)
+                            .height(210.dp)
+                            .then(
+                                if (index % 2 == 0) Modifier.padding(start = 16.dp)
+                                else Modifier.padding(end = 16.dp)
+                            )
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                }
+            }
+
+
+        }
     }
+
 
 }
 
@@ -251,7 +271,7 @@ private fun HeaderSliderSection(movieImages: List<String>, indicatorVisibility: 
 
 @Composable
 private fun FloatingIconsButton(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     listener: MovieDetailsInteractionListener,
     state: MovieDetailsState,
 ) {
@@ -304,6 +324,13 @@ private fun FloatingIconsButton(
         }
     }
 }
+
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
+
+}
+
 
 private fun handleEffect(
     effect: MovieDetailsEffect,
