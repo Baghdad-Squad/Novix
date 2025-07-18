@@ -35,7 +35,7 @@ class SearchViewModel(
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
     private var searchJob: Job? = null
-
+    private var lastSearch: String = ""
     init {
         getRecentSearches()
         getRecentViewed()
@@ -48,17 +48,22 @@ class SearchViewModel(
     }
 
     override fun onSearchTextChanged(text: String) {
+        val trimmed = text.trim()
         updateState { it.copy(searchText = text) }
-        searchJob?.cancel()
 
-        if (text.isBlank()) {
+        if (trimmed == lastSearch) return
+
+        searchJob?.cancel()
+        lastSearch = trimmed
+
+        if (trimmed.isBlank()) {
             clearAllPagingFlows()
             return
         }
 
         searchJob = tryToExecute(
             onStart = { handleSearchStart() },
-            callee = { performSearchByTab(text) },
+            callee = { performSearchByTab(trimmed) },
         )
     }
 
@@ -186,19 +191,6 @@ class SearchViewModel(
         )
     }
 
-    private fun getRecentlyViewed() {
-        tryToCollect(
-            flowProvider = { getRecentlyViewedUseCase.invoke() },
-            onNewValue = { newValues ->
-                updateState {
-                    it.copy(recentViewed = newValues.map { it.toRecentlyViewedUI() }.distinctBy {
-                        it.id
-                    })
-                }
-            },
-            onError = {},
-        )
-    }
 
     private fun onGetTvShowGenresSuccess(genres: List<Genre>) {
         updateState { searchScreenState ->
