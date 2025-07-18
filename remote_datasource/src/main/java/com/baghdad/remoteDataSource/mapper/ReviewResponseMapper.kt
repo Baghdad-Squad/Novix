@@ -6,7 +6,7 @@ import com.baghdad.repository.model.ReviewDto
 fun ReviewResponse.toDto(): ReviewDto {
     return ReviewDto(
         id = id?.toString() ?: "",
-        authorName = (authorDetails?.name.takeIf { !it.isNullOrBlank() }) ?: "Unknown Name",
+        authorName = (authorDetails?.name.takeIf { !it.isNullOrBlank() }) ?: "Guest",
         authorAvatarUrl = authorDetails?.avatarPath ?:  "",
         contentTitle = authorDetails?.username ?: "",
         rating = authorDetails?.rating ?: 0f,
