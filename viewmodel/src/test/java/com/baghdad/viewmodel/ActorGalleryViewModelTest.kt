@@ -156,5 +156,4 @@ class ActorGalleryViewModelTest {
         val listImage = "image1.jpg"
         val differentActorId = 456L
     }
-
 }
