@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel
 
-import com.baghdad.domain.usecase.actorDetails.GetActorGalleryUseCase
+import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenEffect
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import io.mockk.coEvery
