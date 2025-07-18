@@ -1,6 +1,7 @@
 package com.baghdad.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -17,9 +18,8 @@ fun TvShowCardList(
     tvShows: List<SearchScreenState.TvShowUiState>,
     onSavedClick: (Long) -> Unit,
     onTVShowClick: (id: Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 150.dp),
@@ -27,8 +27,9 @@ fun TvShowCardList(
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(bottom = 8.dp)
 
-        ) {
+    ) {
         items(tvShows) { tvShow ->
             HomeCard(
                 url = tvShow.posterPictureURL,

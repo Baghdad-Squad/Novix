@@ -1,7 +1,5 @@
 package com.baghdad.ui.feature.search.component
 
-import android.util.Log
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,7 +20,7 @@ fun RecentlyViewedSection(
     modifier: Modifier = Modifier
 ) {
     SectionHeaderWithAction(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 16.dp),
         title = stringResource(R.string.recent_viewed),
         onClearAllClick = {
             onClearRecentlyViewedClick()
@@ -34,7 +32,6 @@ fun RecentlyViewedSection(
         onSavedClick = { onSavedClick(it.id) },
         onCardClick = { onRecentlyViewedClick(it.id) },
         isSaved = { it.isSaved },
-        contentPadding = PaddingValues(),
         modifier = Modifier
             .fillMaxWidth()
             .height(210.dp)
