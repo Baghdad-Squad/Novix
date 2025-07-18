@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,7 +30,6 @@ import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.util.hideNavigationBar
-import com.baghdad.ui.feature.util.showNavigationBar
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesEffect
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesState
@@ -81,14 +79,6 @@ private fun CategoryMoviesContent(
     val view = LocalView.current
     LaunchedEffect(Unit) {
         hideNavigationBar(context, view)
-    }
-    DisposableEffect(Unit) {
-        onDispose {
-            showNavigationBar(
-                context,
-                view
-            )
-        }
     }
 
     Scaffold(
