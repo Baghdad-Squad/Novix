@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource.response.search
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
