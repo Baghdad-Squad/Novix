@@ -79,7 +79,7 @@ fun ActorGalleryScreenContent(
             )
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(vertical = 12.dp)
+            .padding(top = 12.dp)
     ) {
         TopAppBar(
             onGoBackClick = listner::onBackClick,
