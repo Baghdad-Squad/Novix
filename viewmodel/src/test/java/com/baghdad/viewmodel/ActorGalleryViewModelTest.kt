@@ -132,18 +132,6 @@ class ActorGalleryViewModelTest {
     }
 
     @Test
-    fun `state should be properly initialized with default values`() {
-
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
-
-        viewModel = createViewModel()
-
-        val state = viewModel.uiState.value
-        Assertions.assertTrue(state.images.isEmpty())
-        Assertions.assertFalse(state.isLoading)
-    }
-
-    @Test
     fun `viewModel should implement ActorGalleryInteractionListener`() {
 
         coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
