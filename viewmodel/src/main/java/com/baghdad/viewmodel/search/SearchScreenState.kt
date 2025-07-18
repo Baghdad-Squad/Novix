@@ -1,14 +1,17 @@
 package com.baghdad.viewmodel.search
 
+import androidx.paging.PagingData
 import com.baghdad.domain.model.search.RecentlyViewed.ContentType
 import com.baghdad.viewmodel.base.BaseUiState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 data class SearchScreenState(
     val searchText: String = "",
     val selectedSearchTab: SearchTab = SearchTab.MOVIES,
-    val movies: List<MovieUiState> = emptyList(),
-    val tvShows: List<TvShowUiState> = emptyList(),
-    val actors: List<ActorUiState> = emptyList(),
+    val moviesFlow: Flow<PagingData<MovieUiState>> = flowOf(),
+    val tvShowsFlow: Flow<PagingData<TvShowUiState>> = flowOf(),
+    val actorsFlow: Flow<PagingData<ActorUiState>> = flowOf(),
     val recentViewed: List<RecentlyViewedUiState> = emptyList(),
     val recentSearch: List<RecentSearchUiState> = emptyList(),
     val bottomSheetUiState: FilterBottomSheetUiState = FilterBottomSheetUiState(),

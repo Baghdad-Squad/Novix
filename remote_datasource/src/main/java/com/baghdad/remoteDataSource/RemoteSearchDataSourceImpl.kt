@@ -1,6 +1,5 @@
 package com.baghdad.remoteDataSource
 
-import android.util.Log
 import com.baghdad.remoteDataSource.mapper.search.toPagedActorDtos
 import com.baghdad.remoteDataSource.mapper.search.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.search.toPagedTvShowDtos
@@ -33,8 +32,6 @@ class RemoteSearchDataSourceImpl(
             url = "$baseUrl$SEARCH_MOVIES_ENDPOINT",
             params = params.toParams(),
         )
-        Log.d("PagedResultPagingSource", "Search Response: ${searchResponse.results?.size}")
-
         return searchResponse.toPagedMovieDtos(genres = genres)
     }
 
@@ -63,6 +60,16 @@ class RemoteSearchDataSourceImpl(
             params = params.toParams(),
         )
         return searchResponse.toPagedActorDtos()
+    }
+
+    override suspend fun getMoviesResultCount(title: String): Int {
+        val params = SearchParameter(title, 1)
+        val searchResponse = handleRequest<MovieSearchResponse>(
+            client = httpClient,
+            url = "$baseUrl$SEARCH_MOVIES_ENDPOINT",
+            params = params.toParams(),
+        )
+        return searchResponse.totalResults ?: 0
     }
 
     companion object {

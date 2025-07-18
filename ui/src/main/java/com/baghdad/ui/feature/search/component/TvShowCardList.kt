@@ -15,7 +15,7 @@ import com.baghdad.viewmodel.search.SearchScreenState
 fun TvShowCardList(
     tvShows: LazyPagingItems<SearchScreenState.TvShowUiState>,
     onSavedClick: (Long) -> Unit,
-    onTVShowClick: (id: Long) -> Unit,
+    onTVShowClick: (id: Long, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyPagingVerticalGrid<SearchScreenState.TvShowUiState>(
@@ -34,6 +34,7 @@ fun TvShowCardList(
             onClick = {
                 onTVShowClick(
                     tvShow.id,
+                    tvShow.posterPictureURL
                 )
             },
             modifier = Modifier.aspectRatio(0.8f)

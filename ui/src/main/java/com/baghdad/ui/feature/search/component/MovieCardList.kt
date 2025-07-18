@@ -15,7 +15,7 @@ import com.baghdad.viewmodel.search.SearchScreenState
 fun MovieCardList(
     movies: LazyPagingItems<SearchScreenState.MovieUiState>,
     onSavedClick: (Long) -> Unit,
-    onMovieClick: (id: Long) -> Unit,
+    onMovieClick: (id: Long, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyPagingVerticalGrid<SearchScreenState.MovieUiState>(
@@ -34,6 +34,7 @@ fun MovieCardList(
             onClick = {
                 onMovieClick(
                     movie.id,
+                    movie.posterPictureURL
                 )
             },
             modifier = Modifier.aspectRatio(0.8f)

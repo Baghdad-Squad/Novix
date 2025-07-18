@@ -49,11 +49,11 @@ fun SearchScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val movieItems =
-        viewModel.moviesPagingFlow.collectAsStateWithLifecycle().value.collectAsLazyPagingItems()
+        uiState.moviesFlow.collectAsLazyPagingItems()
     val actorItems =
-        viewModel.actorsPagingFlow.collectAsStateWithLifecycle().value.collectAsLazyPagingItems()
+        uiState.actorsFlow.collectAsLazyPagingItems()
     val tvShowItems =
-        viewModel.tvShowsPagingFlow.collectAsStateWithLifecycle().value.collectAsLazyPagingItems()
+        uiState.tvShowsFlow.collectAsLazyPagingItems()
 
     SearchContent(
         uiState = uiState,
@@ -119,8 +119,8 @@ fun SearchContent(
                     movies = movieItems,
                     tvShows = tvShowItems,
                     actors = actorItems,
-                    onMovieClick = { listener.onMovieItemClick(it) },
-                    onTvShowClick = { listener.onTvShowItemClick(it) },
+                    onMovieClick = { id, imageUrl -> listener.onMovieItemClick(id, imageUrl) },
+                    onTvShowClick = { id, imageUrl -> listener.onTvShowItemClick(id, imageUrl) },
                     onActorClick = { listener.onActorItemClick(it) },
                     isLoading = uiState.isLoading
                 )
@@ -176,7 +176,12 @@ private fun RecentlyViewsWithSearch(
                         recentViewed = uiState.recentViewed,
                         onClearRecentlyViewedClick = { listener.onClearRecentlyViewedClick() },
                         onSavedClick = { listener.onSaveRecentlyViewedClick(it) },
-                        onRecentlyViewedClick = { listener.onRecentlyViewedClick(it) },
+                        onRecentlyViewedClick = { id, imageUrl ->
+                            listener.onRecentlyViewedClick(
+                                id,
+                                imageUrl
+                            )
+                        },
                         modifier = Modifier.padding(top = 12.dp)
                     )
                 }

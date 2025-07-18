@@ -120,6 +120,12 @@ class SearchRepositoryImpl(
         )
     }
 
+    private suspend fun hasLessMovieCacheThanRemote(title: String): Boolean {
+        val cachedMoviesCount = localMovieDataSource.getMovieCountByTitle(title)
+        val remoteCount = searchRemoteDataSource.getMoviesResultCount(title)
+        return cachedMoviesCount < remoteCount
+    }
+
     private suspend fun cacheMovieSearchResult(
         isFirstSearch: Boolean,
         query: String,

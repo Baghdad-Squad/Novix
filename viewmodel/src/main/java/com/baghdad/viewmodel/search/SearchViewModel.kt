@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.search
 
-import androidx.paging.PagingData
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
@@ -20,10 +19,7 @@ import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 
 class SearchViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -39,21 +35,6 @@ class SearchViewModel(
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
     private var searchJob: Job? = null
-
-    private val _moviesPagingFlow =
-        MutableStateFlow<Flow<PagingData<SearchScreenState.MovieUiState>>>(emptyFlow())
-    val moviesPagingFlow: StateFlow<Flow<PagingData<SearchScreenState.MovieUiState>>> =
-        _moviesPagingFlow
-
-    private val _tvShowsPagingFlow =
-        MutableStateFlow<Flow<PagingData<SearchScreenState.TvShowUiState>>>(emptyFlow())
-    val tvShowsPagingFlow: StateFlow<Flow<PagingData<SearchScreenState.TvShowUiState>>> =
-        _tvShowsPagingFlow
-
-    private val _actorsPagingFlow =
-        MutableStateFlow<Flow<PagingData<SearchScreenState.ActorUiState>>>(emptyFlow())
-    val actorsPagingFlow: StateFlow<Flow<PagingData<SearchScreenState.ActorUiState>>> =
-        _actorsPagingFlow
 
     init {
         getRecentSearches()
@@ -100,7 +81,7 @@ class SearchViewModel(
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toMovieUI() },
-            onFlowCreated = { _moviesPagingFlow.value = it }
+            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } }
         )
     }
 
@@ -115,7 +96,7 @@ class SearchViewModel(
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toTvShowUI() },
-            onFlowCreated = { _tvShowsPagingFlow.value = it }
+            onFlowCreated = { tvShowsFlow -> updateState { it.copy(tvShowsFlow = tvShowsFlow) } }
         )
     }
 
@@ -129,14 +110,18 @@ class SearchViewModel(
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toActorUI() },
-            onFlowCreated = { _actorsPagingFlow.value = it }
+            onFlowCreated = { actorsFlow -> updateState { it.copy(actorsFlow = actorsFlow) } }
         )
     }
 
     private fun clearAllPagingFlows() {
-        _moviesPagingFlow.value = emptyFlow()
-        _tvShowsPagingFlow.value = emptyFlow()
-        _actorsPagingFlow.value = emptyFlow()
+        updateState {
+            it.copy(
+                moviesFlow = flowOf(),
+                tvShowsFlow = flowOf(),
+                actorsFlow = flowOf()
+            )
+        }
     }
 
     private suspend fun handleSearchStart() {
@@ -463,23 +448,21 @@ class SearchViewModel(
         performSearchByTab(currentState.searchText)
     }
 
-    override fun onRecentlyViewedClick(id: Long) {
+    override fun onRecentlyViewedClick(id: Long, imageUrl: String) {
         val recentlyViewed = currentState.recentViewed.find { it.id == id }
         recentlyViewed?.let {
             if (it.contentType == RecentlyViewed.ContentType.MOVIE) {
-                onMovieItemClick(id)
+                onMovieItemClick(id, imageUrl)
             } else {
-                onTvShowItemClick(id)
+                onTvShowItemClick(id, imageUrl)
             }
         }
     }
 
     override fun onMovieItemClick(
-        contentId: Long
+        contentId: Long,
+        contentImageUrl: String
     ) {
-
-        val contentImageUrl =
-            currentState.movies.find { it.id == contentId }?.posterPictureURL ?: ""
         tryToExecute(
             callee = {
                 addRecentlyViewedUseCase(
@@ -498,9 +481,8 @@ class SearchViewModel(
 
     override fun onTvShowItemClick(
         contentId: Long,
+        contentImageUrl: String
     ) {
-        val contentImageUrl =
-            currentState.tvShows.find { it.id == contentId }?.posterPictureURL ?: ""
         tryToExecute(
             callee = {
                 addRecentlyViewedUseCase(

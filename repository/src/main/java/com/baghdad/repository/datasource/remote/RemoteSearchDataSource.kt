@@ -23,4 +23,6 @@ interface RemoteSearchDataSource {
         query: String,
         page: Int
     ): PagedResultDto<ActorDto>
+
+    suspend fun getMoviesResultCount(title: String): Int
 }
