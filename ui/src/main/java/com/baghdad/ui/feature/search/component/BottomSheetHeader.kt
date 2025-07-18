@@ -56,7 +56,7 @@ fun BottomSheetHeader(
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_close),
-                contentDescription = stringResource(R.string.close_title_bottomsheet),
+                contentDescription = stringResource(R.string.close_bottomsheet),
                 tint = Theme.color.title,
                 modifier = Modifier.size(16.dp)
             )

@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.component
+package com.baghdad.ui.feature.component.bottomSheet
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
