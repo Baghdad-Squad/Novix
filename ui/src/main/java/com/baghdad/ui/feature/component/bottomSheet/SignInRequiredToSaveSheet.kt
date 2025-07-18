@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.component
+package com.baghdad.ui.feature.component.bottomSheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,11 +16,10 @@ import com.baghdad.design_system.component.button.OutlinedButton
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
 
 @Composable
-fun SavedListBottomSheet(
+fun SignInRequiredToSaveSheet(
     onBottomSheetCloseClick: () -> Unit,
     title: String,
     description: String,
-    textButton: String,
     isVisible: Boolean,
     onClearClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -53,7 +52,7 @@ fun SavedListBottomSheet(
             )
 
             OutlinedButton(
-                label = textButton,
+                label = stringResource(com.baghdad.ui.R.string.login),
                 onClick = onClearClick,
                 modifier = Modifier.fillMaxWidth()
             )
