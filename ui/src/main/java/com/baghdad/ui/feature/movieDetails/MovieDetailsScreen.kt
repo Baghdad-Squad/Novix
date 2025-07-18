@@ -173,53 +173,59 @@ private fun MovieDetailsContent(
                 )
             }
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                OverviewSection(
-                    overview = state.overView,
-                    isExtended = state.isExtendText,
-                ) { listener.onExtendOverviewClick() }
+            if (state.overView.isNotBlank()) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    OverviewSection(
+                        overview = state.overView,
+                        isExtended = state.isExtendText,
+                    ) { listener.onExtendOverviewClick() }
+                }
             }
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                ActorsSection(
-                    actors = state.castes,
-                    modifier = Modifier.offset(y = (-48).dp),
-                    onClick = { listener.onActorClick(id = it) }
-                )
+            if (state.castes.isNotEmpty()) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    ActorsSection(
+                        actors = state.castes,
+                        modifier = Modifier.offset(y = (-48).dp),
+                        onClick = { listener.onActorClick(id = it) }
+                    )
+                }
             }
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Text(
-                    text = stringResource(com.baghdad.ui.R.string.more_like_this),
-                    fontSize = 18.sp,
-                    style = Theme.typography.title.medium,
-                    color = Theme.color.title,
-                    modifier = Modifier
-                        .offset(y = (-48).dp)
-                        .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                )
-            }
+            if (state.moreLikeThisMovie.isNotEmpty()) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Text(
+                        text = stringResource(com.baghdad.ui.R.string.more_like_this),
+                        fontSize = 18.sp,
+                        style = Theme.typography.title.medium,
+                        color = Theme.color.title,
+                        modifier = Modifier
+                            .offset(y = (-48).dp)
+                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                    )
+                }
 
-            itemsIndexed(state.moreLikeThisMovie) { index, movieLikeThis ->
-                HomeCard(
-                    url = movieLikeThis.imageUrl,
-                    contentDescription = stringResource(com.baghdad.ui.R.string.card_movie_image),
-                    isSaved = movieLikeThis.isSaved,
-                    onSavedClick = {
-                        listener.onSaveMoreLikeThisMedia(movieLikeThis.id)
-                    },
-                    onClick = {
-                        listener.onMovieLikeClick(movieLikeThis.id)
-                    },
-                    modifier = Modifier
-                        .offset(y = (-48).dp)
-                        .height(210.dp)
-                        .then(
-                            if (index % 2 == 0) Modifier.padding(start = 16.dp)
-                            else Modifier.padding(end = 16.dp)
-                        )
-                        .clip(RoundedCornerShape(12.dp))
-                )
+                itemsIndexed(state.moreLikeThisMovie) { index, movieLikeThis ->
+                    HomeCard(
+                        url = movieLikeThis.imageUrl,
+                        contentDescription = stringResource(com.baghdad.ui.R.string.card_movie_image),
+                        isSaved = movieLikeThis.isSaved,
+                        onSavedClick = {
+                            listener.onSaveMoreLikeThisMedia(movieLikeThis.id)
+                        },
+                        onClick = {
+                            listener.onMovieLikeClick(movieLikeThis.id)
+                        },
+                        modifier = Modifier
+                            .offset(y = (-48).dp)
+                            .height(210.dp)
+                            .then(
+                                if (index % 2 == 0) Modifier.padding(start = 16.dp)
+                                else Modifier.padding(end = 16.dp)
+                            )
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                }
             }
         }
         FloatingIconsButton(
