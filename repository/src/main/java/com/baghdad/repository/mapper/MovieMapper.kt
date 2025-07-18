@@ -2,6 +2,7 @@ package com.baghdad.repository.mapper
 
 import com.baghdad.entity.media.Movie
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.SearchQueryDto
 import kotlinx.datetime.LocalDate
 
 fun MovieDto.toEntity(): Movie {
@@ -16,5 +17,13 @@ fun MovieDto.toEntity(): Movie {
         overview = overview,
         posterImageURL = posterPictureURL,
         runtimeMinutes = runtimeMinutes
+    )
+}
+
+fun MovieDto.toSearchQueryDto(query: String): SearchQueryDto {
+    return SearchQueryDto(
+        queryName = query,
+        mediaId = this.id,
+        mediaType = SearchQueryDto.MediaType.MOVIE,
     )
 }

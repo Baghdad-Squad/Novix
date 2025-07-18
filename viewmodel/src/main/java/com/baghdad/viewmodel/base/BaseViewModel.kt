@@ -2,10 +2,13 @@ package com.baghdad.viewmodel.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.baghdad.domain.exception.LocalDataBaseException
 import com.baghdad.domain.exception.NetworkException
 import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.domain.exception.UnknownException
+import com.baghdad.domain.model.PagedResult
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -17,8 +20,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -88,6 +93,26 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
                 onFinally = onFinally
             )
         }
+    }
+
+    protected fun <Entity : Any, UiState : Any> collectPagingFlow(
+        loadData: suspend (page: Int) -> PagedResult<Entity>,
+        onInitialLoadFinished: suspend () -> Unit,
+        pageSize: Int = 20,
+        mapEntityToUiState: (Entity) -> UiState,
+        onFlowCreated: (Flow<PagingData<UiState>>) -> Unit
+    ) {
+        val flow = createPagedResultPager(
+            pageSize = pageSize,
+            loadData = loadData,
+            onInitialLoadFinished = onInitialLoadFinished
+        ).map { pagingData ->
+            pagingData.map { entity -> mapEntityToUiState(entity) }
+        }.catch {
+            handleError(it)
+            emit(PagingData.empty())
+        }
+        onFlowCreated(flow)
     }
 
     private suspend fun <T> runWithErrorCheck(

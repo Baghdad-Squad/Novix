@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,7 +31,8 @@ fun SearchTextField(
     onFilterIconClick: () -> Unit,
     searchTab: SearchScreenState.SearchTab,
     modifier: Modifier = Modifier,
-    hint : String = stringResource(R.string.search_hint),
+    maxLength: Int = 100,
+    hint: String = stringResource(R.string.search_hint),
 ) {
     Column(modifier = modifier) {
         Text(
@@ -53,7 +53,9 @@ fun SearchTextField(
                 hint = hint,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp)
+                    .padding(end = 8.dp),// Optional: auto-trim extra input
+                maxLength = maxLength
+
             )
 
             AnimatedVisibility(searchTab == SearchScreenState.SearchTab.MOVIES || searchTab == SearchScreenState.SearchTab.TV_SHOWS || query.isBlank()) {

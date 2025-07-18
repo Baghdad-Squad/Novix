@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.search.component
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,7 +17,7 @@ fun RecentlyViewedSection(
     recentViewed: List<SearchScreenState.RecentlyViewedUiState>,
     onClearRecentlyViewedClick: () -> Unit,
     onSavedClick: (Long) -> Unit,
-    onRecentlyViewedClick: (Long) -> Unit,
+    onRecentlyViewedClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SectionHeaderWithAction(
@@ -30,7 +31,7 @@ fun RecentlyViewedSection(
         items = recentViewed,
         imageUrl = { it.posterPictureURL },
         onSavedClick = { onSavedClick(it.id) },
-        onCardClick = { onRecentlyViewedClick(it.id) },
+        onCardClick = { onRecentlyViewedClick(it.id, it.posterPictureURL) },
         isSaved = { it.isSaved },
         modifier = Modifier
             .fillMaxWidth()

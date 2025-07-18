@@ -1,11 +1,14 @@
 package com.baghdad.local_datasource
 
-import android.util.Log
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
+import com.baghdad.local_datasource.roomDB.entity.Genre
+import com.baghdad.local_datasource.roomDB.entity.TvShow
 import com.baghdad.local_datasource.roomDB.entity.toDto
+import com.baghdad.local_datasource.roomDB.entity.toDtos
 import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
+import com.baghdad.local_datasource.util.calculatePageOffset
 import com.baghdad.repository.datasource.local.LocalTvShowDataSource
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.TvShowDto
@@ -21,6 +24,12 @@ class LocalTvShowDataSourceImpl(
         return executeWithErrorHandling {
             val tvShowEntity = movie.toLocalDto()
             tvShowDao.upsertTvShow(tvShowEntity)
+        }
+    }
+
+    override suspend fun addTvShows(tvShows: List<TvShowDto>) {
+        executeWithErrorHandling {
+            tvShowDao.upsertTvShows(tvShows.map(TvShowDto::toLocalDto))
         }
     }
 
@@ -70,16 +79,24 @@ class LocalTvShowDataSourceImpl(
         }
     }
 
-    override suspend fun searchTvShowsByTitle(title: String): List<TvShowDto> {
+    override suspend fun searchTvShowsByTitle(
+        title: String,
+        page: Int,
+        pageSize: Int
+    ): List<TvShowDto> {
         return executeWithErrorHandling {
-            tvShowDao.searchTvShowsByTitle(title).map {
-                val genres = it.genres.map {
-                    Log.i("genres in search tv show", it.toString())
-                    genreDao.getGenreById(it).toDto()
-                }
-                it.toDto(genres)
-            }
+            val pageOffset = calculatePageOffset(pageSize, page)
+            val tvShows = tvShowDao.getTvShowsFromSearchQuery(title, pageSize, pageOffset)
+            val genresMap = getGenresMap(tvShows)
+            tvShows.toDtos(genresMap)
         }
+    }
+
+    private fun getGenresMap(
+        tvShows: List<TvShow>
+    ): Map<Long, Genre> {
+        val allGenreIds = tvShows.flatMap { it.genres }.distinct()
+        return genreDao.getGenresByIds(allGenreIds).associateBy { it.id }
     }
 }
 
