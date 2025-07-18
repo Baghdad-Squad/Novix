@@ -36,4 +36,5 @@
     <string name="top_movies_picks">Top movies picks</string>
     <string name="reviews">Reviews</string>
     <string name="guests_of_honor">Guests of honor</string>
+    <string name="season_template">S%1$s</string>
 </resources>

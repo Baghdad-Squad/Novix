@@ -1,89 +1,28 @@
 package com.baghdad.ui.feature.episodeDetails.component
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.baghdad.design_system.component.ActorCard
-import com.baghdad.design_system.component.Text
-import com.baghdad.design_system.theme.Theme
-import com.baghdad.ui.R
-import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsState
-import com.baghdad.viewmodel.movieDetails.MovieDetailsState
+import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenState
 
-@Composable
-fun GuestsOfHonorSection(
-    guestsOfHonor: List<EpisodeDetailsState.GuestsOfHoner>,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    ){
-    Column(modifier = modifier.padding(bottom = 16.dp)) {
-        Text(
-            text = stringResource(R.string.guests_of_honor),
-            fontSize = 18.sp,
-            style = Theme.typography.title.medium,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
-        )
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(guestsOfHonor) { actor ->
-                actor.imageUrl?.let {
-                    ActorCard(
-                        actorName = actor.name,
-                        actorImage = it,
-                        onClick = {
-                            onClick()
-                        },
-                        characterName = actor.characterName,
-                        modifier = Modifier.fillParentMaxWidth(0.92f)
-                    )
-                }
 
-            }
-        }
-    }
-}
-
-@Composable
-fun ActorsSection(
-    actors: List<MovieDetailsState.ActorCardInfo>,
-    modifier: Modifier = Modifier,
+fun LazyListScope.guestsOfHonorItems(
+    guestsOfHonor: List<EpisodeDetailsScreenState.GuestsOfHonerUiState>,
+    onClick: (Long) -> Unit,
 ) {
-    Column(modifier = modifier.padding(bottom = 16.dp)) {
-        Text(
-            text = stringResource(com.baghdad.ui.R.string.cast),
-            fontSize = 18.sp,
-            style = Theme.typography.title.medium,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
+    items(
+        items = guestsOfHonor,
+        key = { it.id }
+    ) { guestOfHonor ->
+        ActorCard(
+            actorName = guestOfHonor.name,
+            actorImage = guestOfHonor.profilePictureURL,
+            onClick = {
+                onClick(guestOfHonor.id)
+            },
+            characterName = guestOfHonor.characterName,
+            modifier = Modifier.animateItem()
         )
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(actors) { actor ->
-                actor.imageUrl?.let {
-                    ActorCard(
-                        actorName = actor.name,
-                        actorImage = it,
-                        onClick = {},
-                        characterName = actor.characterName,
-                        modifier = Modifier.fillParentMaxWidth(0.92f)
-                    )
-                }
-
-            }
-        }
     }
 }

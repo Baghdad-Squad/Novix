@@ -5,13 +5,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import com.baghdad.ui.feature.episodeDetails.EpisodeDetailsScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.graph.util.toGraph
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.Graph.ActorDetailsGraph
 import com.baghdad.ui.navigation.route.TvShowDetailsRoute
-import com.baghdad.ui.navigation.route.TvShowDetailsRoute.EpisodeDetailsScreen
 import com.baghdad.viewmodel.review.ContentType
 
 fun NavGraphBuilder.tvShowDetailsNavGraph(navController: NavHostController) {
@@ -22,11 +22,19 @@ fun NavGraphBuilder.tvShowDetailsNavGraph(navController: NavHostController) {
             val tvShowId = backStackEntry.toGraph<Graph.TvShowDetailsGraph>(navController).tvShowId
             DummyScreen(title = "Tv Show Details Screen: $tvShowId")
         }
-        composable<EpisodeDetailsScreen> { backStackEntry ->
+        composable<TvShowDetailsRoute.EpisodeDetailsScreen> { backStackEntry ->
             val tvShowId = backStackEntry.toGraph<Graph.TvShowDetailsGraph>(navController).tvShowId
-            val seasonNumber = backStackEntry.toRoute<EpisodeDetailsScreen>().seasonNumber
-            val episodeNumber = backStackEntry.toRoute<EpisodeDetailsScreen>().episodeNumber
-            DummyScreen(title = "Episode Details Screen: $tvShowId, Season: $seasonNumber, Episode: $episodeNumber")
+            val seasonNumber =
+                backStackEntry.toRoute<TvShowDetailsRoute.EpisodeDetailsScreen>().seasonNumber
+            val episodeNumber =
+                backStackEntry.toRoute<TvShowDetailsRoute.EpisodeDetailsScreen>().episodeNumber
+            EpisodeDetailsScreen(
+                tvShowId = tvShowId,
+                seasonNumber = seasonNumber,
+                episodeNumber = episodeNumber
+            ) { navEvent ->
+                handleTvShowDetailsNavEvent(navEvent, navController)
+            }
         }
     }
 }
@@ -39,7 +47,7 @@ private fun handleTvShowDetailsNavEvent(
         TvShowDetailsNavEvent.NavigateBack -> navController.popBackStack()
 
         is TvShowDetailsNavEvent.NavigateToEpisodeDetails -> navController.navigate(
-            EpisodeDetailsScreen(event.seasonNumber, event.episodeNumber)
+            TvShowDetailsRoute.EpisodeDetailsScreen(event.seasonNumber, event.episodeNumber)
         )
 
         is TvShowDetailsNavEvent.NavigateToActorDetails -> navController.navigate(

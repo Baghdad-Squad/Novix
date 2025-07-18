@@ -4,11 +4,13 @@ import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
+import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.util.executeSafely
 
 class EpisodeRepositoryImpl(
-    private val remoteEpisodeDataSource: RemoteEpisodeDataSource
+    private val remoteEpisodeDataSource: RemoteEpisodeDataSource,
+    private val remoteTvShowDataSource: RemoteTvShowDataSource
 ) : EpisodeRepository {
     override suspend fun getEpisodeDetails(
         tvId: Long,
@@ -16,13 +18,13 @@ class EpisodeRepositoryImpl(
         episodeNumber: Int
     ): Episode {
         return executeSafely {
+            val trailerUrl =
+                remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber)
+            val tvShowImages = remoteTvShowDataSource.getTvShowImages(tvId).take(MAX_TV_SHOW_IMAGES)
             remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber).toEntity()
                 .copy(
-                    headerPictures = remoteEpisodeDataSource.getEpisodeImages(
-                        tvId,
-                        seasonNumber,
-                        episodeNumber
-                    ).take(3)
+                    trailerUrl = trailerUrl,
+                    headerPictures = tvShowImages
                 )
         }
     }
@@ -32,11 +34,13 @@ class EpisodeRepositoryImpl(
         seasonNumber: Int,
         episodeNumber: Int
     ): List<CastMember> {
-        return executeSafely() {
+        return executeSafely {
             remoteEpisodeDataSource.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
                 .map { it.toEntity() }
         }
     }
 
-
+    companion object {
+        const val MAX_TV_SHOW_IMAGES = 10
+    }
 }

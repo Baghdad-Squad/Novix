@@ -14,6 +14,7 @@ fun EpisodeDto.toEntity(): Episode {
         releasedDate = this.releasedDate.toLocalDate(),
         currentSeason = this.currentSeason,
         overview = this.overview,
-        headerPictures = this.headerPictures
+        headerPictures = this.headerPictures,
+        trailerUrl = this.trailerUrl
     )
 }

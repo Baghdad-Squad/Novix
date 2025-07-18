@@ -1,0 +1,23 @@
+package com.baghdad.viewmodel.episodeDetails
+
+import com.baghdad.entity.media.Episode
+import com.baghdad.entity.person.CastMember
+
+fun Episode.toUiState() = EpisodeDetailsScreenState.EpisodeUiState(
+    id = id,
+    title = title,
+    episodeNumber = episodeNumber,
+    rating = rating,
+    duration = duration,
+    releasedDate = releasedDate.toString(),
+    currentSeason = currentSeason,
+    overview = overview,
+    headerPictures = headerPictures
+)
+
+fun CastMember.toUiState() = EpisodeDetailsScreenState.GuestsOfHonerUiState(
+    id = actor.id,
+    name = actor.name,
+    profilePictureURL = actor.profilePictureURL,
+    characterName = characterName
+)

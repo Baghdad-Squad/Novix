@@ -1,17 +1,17 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.mapper.actor.toDto
-import com.baghdad.remoteDataSource.mapper.toDto
+import com.baghdad.remoteDataSource.mapper.episode.mapToYoutubeTrailerUrl
+import com.baghdad.remoteDataSource.mapper.episode.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
-import com.baghdad.remoteDataSource.response.EpisodeDetailsResponse
-import com.baghdad.remoteDataSource.response.EpisodeImageResponse
+import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
+import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
+import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
 import io.ktor.client.HttpClient
-import kotlin.collections.map
-import kotlin.collections.orEmpty
 
 class RemoteEpisodeDataSourceImpl(
     private val httpClient: HttpClient,
@@ -51,10 +51,28 @@ class RemoteEpisodeDataSourceImpl(
             url = "$baseUrl$endpoint"
         ).stills.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
+
+    override suspend fun getEpisodeTrailer(
+        tvId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): String {
+        val endpoint = EPISODE_VIDEOS_ENDPOINT
+            .replace("{tv_id}", tvId.toString())
+            .replace("{season_number}", seasonNumber.toString())
+            .replace("{episode_number}", episodeNumber.toString())
+        return handleRequest<EpisodeVideosResponse>(
+            client = httpClient,
+            url = "$baseUrl$endpoint"
+        ).mapToYoutubeTrailerUrl()
+    }
+
     companion object{
         private const val EPISODES_DETAILS_ENDPOINT = "/tv/{tv_id}/season/{season_number}/episode/{episode_number}"
         private const val EPISODE_CREDITS_ENDPOINT = "/tv/{tv_id}/season/{season_number}/episode/{episode_number}/credits"
         private const val EPISODE_IMAGES_ENDPOINT = "/tv/{tv_id}/season/{season_number}/episode/{episode_number}/images"
+        private const val EPISODE_VIDEOS_ENDPOINT =
+            "/tv/{tv_id}/season/{season_number}/episode/{episode_number}/videos"
 
     }
 }
