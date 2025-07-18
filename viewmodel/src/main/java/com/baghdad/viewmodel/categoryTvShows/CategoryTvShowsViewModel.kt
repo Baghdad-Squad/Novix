@@ -36,6 +36,10 @@ class CategoryTvShowsViewModel(
         }
     }
 
+    override fun onTvShowClicked(tvShowId: Long) {
+
+    }
+
     private fun getTvShowsByCategoryId(categoryId: Long) {
         tryToExecute(
             callee = {
