@@ -3,6 +3,7 @@ package com.baghdad.ui.feature.review
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -58,8 +59,8 @@ fun ReviewContent(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
+            .navigationBarsPadding()
             .background(Theme.color.surface)
-
     ) {
         TopAppBar(
             screenTitle = stringResource(R.string.reviews),
