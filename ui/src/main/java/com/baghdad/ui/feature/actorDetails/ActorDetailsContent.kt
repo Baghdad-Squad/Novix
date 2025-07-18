@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -23,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
+import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
@@ -33,6 +36,7 @@ import com.baghdad.ui.feature.actorDetails.component.GallerySection
 import com.baghdad.ui.feature.actorDetails.component.TopMediaPicksSection
 import com.baghdad.viewmodel.actorDetails.ActorDetailsInteractionListener
 import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenState
+
 
 @Composable
 fun ActorDetailsContent(
@@ -78,7 +82,6 @@ fun ActorDetailsContent(
                     modifier = Modifier.padding(bottom = 104.dp)
                 )
 
-
                 ActorCardDetails(
                     fullName = uiState.actorInfo.name,
                     characterRole = uiState.actorInfo.department,
@@ -92,7 +95,7 @@ fun ActorDetailsContent(
                 )
             }
 
-            if (!uiState.actorInfo.biography.isNullOrBlank()) {
+            if (uiState.actorInfo.biography.isNotBlank()) {
                 ActorBiographySection(
                     biography = uiState.actorInfo.biography,
                     onExpandedChange = { listener.onReadMoreBiographyClick() },
@@ -133,6 +136,18 @@ fun ActorDetailsContent(
                 )
             }
         }
+        TopAppBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(animatedColor)
+                .zIndex(1f)
+                .align(Alignment.TopCenter)
+                .padding(top = 56.dp, bottom = 8.dp),
+            onGoBackClick = {
+                listener.onBackIconClick()
+            },
+            content = {}
+        )
     }
 }
 @NovixPreviews
