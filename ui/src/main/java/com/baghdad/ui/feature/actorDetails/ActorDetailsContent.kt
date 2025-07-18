@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -22,12 +21,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
-import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
@@ -96,59 +92,49 @@ fun ActorDetailsContent(
                 )
             }
 
-            ActorBiographySection(
-                biography = uiState.actorInfo.biography,
-                onExpandedChange = { listener.onReadMoreBiographyClick() },
-                isExpanded = uiState.isTextExpanded,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+            if (!uiState.actorInfo.biography.isNullOrBlank()) {
+                ActorBiographySection(
+                    biography = uiState.actorInfo.biography,
+                    onExpandedChange = { listener.onReadMoreBiographyClick() },
+                    isExpanded = uiState.isTextExpanded,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
 
-            GallerySection(
-                imageUrls = uiState.gallery,
-                onClickShowAll = { listener.onViewAllGalleryClick() },
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+            if (uiState.gallery.isNotEmpty()) {
+                GallerySection(
+                    imageUrls = uiState.gallery,
+                    onClickShowAll = { listener.onViewAllGalleryClick() },
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
 
-            TopMediaPicksSection(
-                title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
-                items = uiState.topMoviesPicks,
-                imageUrl = { it.posterPictureURL },
-                onSavedClick = { listener.onSaveMovieClick(it.id) },
-                onCardClick = { listener.onMovieCardClick(it.id) },
-                isSaved = { it.isSaved },
-                onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            TopMediaPicksSection(
-                title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
-                items = uiState.topTvShowsPicks,
-                imageUrl = { it.posterPictureURL },
-                onSavedClick = { listener.onSaveTvShowClick(it.id) },
-                onCardClick = { listener.onTvShowCardClick(it.id) },
-                isSaved = { it.isSaved },
-                onClickShowAll = { listener.onViewAllTopTvShowsClick() },
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(animatedColor)
-                .zIndex(1f)
-                .align(Alignment.TopCenter)
-                .padding(top = 60.dp, start = 8.dp, bottom = 8.dp)
-        ) {
-            IconButton(
-                icon = painterResource(com.baghdad.design_system.R.drawable.ic_go_back),
-                onClick = { listener.onBackIconClick() },
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-            )
+            if (uiState.topMoviesPicks.isNotEmpty()) {
+                TopMediaPicksSection(
+                    title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
+                    items = uiState.topMoviesPicks,
+                    imageUrl = { it.posterPictureURL },
+                    onSavedClick = { listener.onSaveMovieClick(it.id) },
+                    onCardClick = { listener.onMovieCardClick(it.id) },
+                    isSaved = { it.isSaved },
+                    onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
+            if (uiState.topTvShowsPicks.isNotEmpty()) {
+                TopMediaPicksSection(
+                    title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
+                    items = uiState.topTvShowsPicks,
+                    imageUrl = { it.posterPictureURL },
+                    onSavedClick = { listener.onSaveTvShowClick(it.id) },
+                    onCardClick = { listener.onTvShowCardClick(it.id) },
+                    isSaved = { it.isSaved },
+                    onClickShowAll = { listener.onViewAllTopTvShowsClick() },
+                )
+            }
         }
     }
 }
-
 @NovixPreviews
 @Composable
 private fun ActorDetailsScreenPrev() {
