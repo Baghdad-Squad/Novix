@@ -73,10 +73,11 @@ fun FilterBottomSheet(
                     .padding(bottom = 24.dp)
             )
 
-            FilterBottomSheetFooter(
+            BottomSheetFooter(
                 onApplyClick = onApplyClick,
                 onClearClick = onClearClick,
                 modifier = Modifier
+                    .padding(horizontal = 16.dp)
                     .padding(bottom = 24.dp)
             )
         }
