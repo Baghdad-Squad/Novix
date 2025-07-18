@@ -19,9 +19,9 @@ import com.baghdad.repository.mapper.toSearchQueryDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.TvShowDto
 import com.baghdad.repository.model.actor.ActorDto
-import com.baghdad.repository.util.executePagedCachedOperation
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getFlowSafely
+import com.baghdad.repository.util.getPagedSafely
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.Locale
@@ -42,7 +42,7 @@ class SearchRepositoryImpl(
         page: Int,
         pageSize: Int
     ): PagedResult<Actor> {
-        return executePagedCachedOperation(
+        return getPagedSafely(
             page = page,
             pageSize = pageSize,
             mapToEntity = ActorDto::toEntity,
@@ -84,7 +84,7 @@ class SearchRepositoryImpl(
         page: Int,
         pageSize: Int
     ): PagedResult<Movie> {
-        return executePagedCachedOperation(
+        return getPagedSafely(
             page = page,
             pageSize = pageSize,
             mapToEntity = MovieDto::toEntity,
@@ -128,7 +128,7 @@ class SearchRepositoryImpl(
         page: Int,
         pageSize: Int
     ): PagedResult<TvShow> {
-        return executePagedCachedOperation(
+        return getPagedSafely(
             page = page,
             pageSize = pageSize,
             mapToEntity = TvShowDto::toEntity,

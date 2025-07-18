@@ -1,6 +1,7 @@
 package com.baghdad.ui.feature.search.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.Composable
@@ -24,7 +25,8 @@ fun MovieCardList(
         columns = GridCells.Adaptive(minSize = 150.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        key = { it.id }
+        key = { it.id },
+        contentPadding = PaddingValues(vertical = 8.dp)
     ) { movie ->
         HomeCard(
             url = movie.posterPictureURL,

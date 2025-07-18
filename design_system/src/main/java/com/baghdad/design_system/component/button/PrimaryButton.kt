@@ -22,11 +22,11 @@ import com.baghdad.design_system.theme.Theme
 @Composable
 fun PrimaryButton(
     label: String,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     painter: Painter? = null,
     isLoading: Boolean = false,
     isEnabled: Boolean = true,
+    onClick: () -> Unit,
 ) {
     Button(
         onClick = onClick,
