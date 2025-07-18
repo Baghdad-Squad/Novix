@@ -18,6 +18,7 @@ import com.baghdad.design_system.component.BaseBottomSheet
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.ui.feature.component.bottomSheet.BottomSheetFooter
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
 import com.baghdad.viewmodel.search.SearchScreenState
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState

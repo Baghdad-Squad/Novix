@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.search.component.filter
+package com.baghdad.ui.feature.component.bottomSheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
