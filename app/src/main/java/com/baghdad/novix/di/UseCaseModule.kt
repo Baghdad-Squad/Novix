@@ -7,14 +7,13 @@ import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
-import com.baghdad.domain.usecase.genre.GetGenreMoviesUseCase
-import com.baghdad.domain.usecase.genre.GetGenreTvShowsUseCase
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCategoryUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
+import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
@@ -43,7 +42,6 @@ val useCaseModule = module {
     singleOf(::DeleteAllRecentSearchesUseCase)
     singleOf(::DeleteRecentSearchUseCase)
     singleOf(::GetRecentSearchesUseCase)
-    singleOf(::SearchUseCase)
     singleOf(::GetActorInfoUseCase)
     singleOf(::GetActorMoviesUseCase)
     singleOf(::GetActorTvShowUseCase)
@@ -55,6 +53,7 @@ val useCaseModule = module {
     singleOf(::GetTvShowCastMembersUseCase)
     singleOf(::GetTvShowImagesUseCase)
     singleOf(::GetTvShowsByGenreUseCase)
+    singleOf(::GetMoviesByGenreUseCase)
     singleOf(::GetTvShowSeasonEpisodesUseCase)
     singleOf(::GetEpisodeDetailsUseCase)
     singleOf(::GetEpisodeCastMembersUseCase)
@@ -65,8 +64,6 @@ val useCaseModule = module {
     singleOf(::SearchTvShowsUseCase)
     singleOf(::SearchActorsUseCase)
     singleOf(::GetMovieGalleryUseCase)
-    singleOf(::GetGenreTvShowsUseCase)
-    singleOf(::GetGenreMoviesUseCase)
     singleOf(::GetTvShowGenreNameByIdUseCase)
     singleOf(::GetMovieGenreNameByIdUseCase)
 }
