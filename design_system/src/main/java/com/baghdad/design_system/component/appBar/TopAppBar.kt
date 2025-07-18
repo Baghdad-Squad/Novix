@@ -30,6 +30,7 @@ fun TopAppBar(
                 tintIcon = Theme.color.title,
                 onClick = onGoBackClick,
                 modifier = Modifier
+                    .padding(end = 12.dp)
             )
         }
 
@@ -38,7 +39,7 @@ fun TopAppBar(
                 text = screenTitle,
                 style = Theme.typography.title.large,
                 color = Theme.color.title,
-                modifier = Modifier.padding(start = 12.dp).weight(1f)
+                modifier = Modifier.weight(1f)
             )
         }
         content()

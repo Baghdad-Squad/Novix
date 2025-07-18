@@ -1,10 +1,13 @@
 package com.baghdad.ui.feature.actorGallery
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -15,15 +18,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.modifier.dropShadow
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.component.SafeImage
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
+import com.baghdad.viewmodel.actorGallery.ActorGalleryInteractionListener
 import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenEffect
 import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenState
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
@@ -35,22 +41,20 @@ fun GalleryScreen(
     actorId: Long,
     viewModel: ActorGalleryViewModel = koinViewModel(
         key = actorId.toString(),
-        parameters = { parametersOf(actorId) }
-    ),
+        parameters = { parametersOf(actorId) }),
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ActorGalleryScreenContent(
-        uiState = uiState,
-        listner = viewModel
+        uiState = uiState, listner = viewModel
 
     )
 
     ObserveAsEffect(effect = viewModel.uiEffect) { effect ->
         when (effect) {
             is ActorGalleryScreenEffect.OnBackClick -> {
-               handleNavigation(ActorDetailsNavEvent.NavigateBack)
+                handleNavigation(ActorDetailsNavEvent.NavigateBack)
             }
 
         }
@@ -61,11 +65,24 @@ fun GalleryScreen(
 @Composable
 fun ActorGalleryScreenContent(
     uiState: ActorGalleryScreenState,
-    listner: ActorGalleryViewModel
+    listner: ActorGalleryInteractionListener
 ) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .statusBarsPadding()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.color.surface)
+            .dropShadow(
+                color = Theme.color.primary,
+                alpha = 0.08f,
+                offsetX = (-210).dp,
+                offsetY = (18).dp,
+                shape = RectangleShape,
+                blur = 336.dp
+            )
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(top = 12.dp)
+    ) {
         TopAppBar(
             onGoBackClick = listner::onBackClick,
             screenTitle = stringResource(R.string.gallery),
