@@ -155,7 +155,6 @@ class ActorGalleryViewModelTest {
         val actorId = 123L
         val listImage = "image1.jpg"
         val differentActorId = 456L
-        val newActorId = 999L
     }
 
 }
