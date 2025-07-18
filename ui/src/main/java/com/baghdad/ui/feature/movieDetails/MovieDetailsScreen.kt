@@ -40,8 +40,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.HomeCard
-import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.SaveIcon
+import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
@@ -124,7 +124,7 @@ private fun MovieDetailsContent(
                 .align(Alignment.TopCenter)
                 .padding(top = 56.dp, bottom = 8.dp),
             onGoBackClick = {
-                listener.onNavigateBack()
+                listener.onBackClick()
             },
             content = {
                 SaveIcon(
