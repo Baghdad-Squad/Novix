@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -144,30 +143,8 @@ fun TvShowDetailsContent(
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
-            .systemBarsPadding()
-            .statusBarsPadding(),
-        topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(animatedColor)
-                    .zIndex(1f)
-                    .padding(top = 56.dp, bottom = 8.dp),
-                onGoBackClick = {
-                    listener.onClickBackIcon()
-                },
-                content = {
-                    SaveIcon(
-                        size = 40,
-                        backgroundColor = Theme.color.iconBackgroundLow,
-                        isSaved = uiState.isTvShowSaved,
-                        onClick = {
-                            listener.onClickSaveTvShow(tvShowId)
-                        }
-                    )
-                }
-            )
-        }, floatingActionButton = {
+            .systemBarsPadding(),
+        floatingActionButton = {
             FloatingIconsButton(
                 hasTrailer = uiState.hasTrailer,
                 onStarClick = { listener.onClickAddRating() },
@@ -268,8 +245,26 @@ fun TvShowDetailsContent(
                     )
                 }
             }
-
-
+            TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(animatedColor)
+                    .zIndex(1f)
+                    .padding(top = 56.dp, bottom = 8.dp),
+                onGoBackClick = {
+                    listener.onClickBackIcon()
+                },
+                content = {
+                    SaveIcon(
+                        size = 40,
+                        backgroundColor = Theme.color.iconBackgroundLow,
+                        isSaved = uiState.isTvShowSaved,
+                        onClick = {
+                            listener.onClickSaveTvShow(tvShowId)
+                        }
+                    )
+                }
+            )
         }
     }
 

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -123,30 +122,8 @@ private fun MovieDetailsContent(
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
-            .systemBarsPadding()
-            .statusBarsPadding(),
-        topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(animatedColor)
-                    .zIndex(1f)
-                    .padding(top = 56.dp, bottom = 8.dp),
-                onGoBackClick = {
-                    listener.onBackClick()
-                },
-                content = {
-                    SaveIcon(
-                        size = 40,
-                        backgroundColor = Theme.color.iconBackgroundLow,
-                        isSaved = state.isSaved,
-                        onClick = {
-                            listener.onSaveCurrentMovieClick()
-                        }
-                    )
-                }
-            )
-        }, floatingActionButton = {
+            .systemBarsPadding(),
+        floatingActionButton = {
             FloatingIconsButton(
                 listener = listener,
                 state = state
@@ -244,11 +221,28 @@ private fun MovieDetailsContent(
                     )
                 }
             }
-
-
+            TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(animatedColor)
+                    .zIndex(1f)
+                    .padding(top = 56.dp, bottom = 8.dp),
+                onGoBackClick = {
+                    listener.onBackClick()
+                },
+                content = {
+                    SaveIcon(
+                        size = 40,
+                        backgroundColor = Theme.color.iconBackgroundLow,
+                        isSaved = state.isSaved,
+                        onClick = {
+                            listener.onSaveCurrentMovieClick()
+                        }
+                    )
+                }
+            )
         }
     }
-
 
 }
 
