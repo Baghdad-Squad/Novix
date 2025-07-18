@@ -44,9 +44,9 @@ class TvShowRepositoryImpl(
         }
     }
 
-    override suspend fun getTvShowByGenre(genreId: Long, page: Int): List<TvShow>{
+    override suspend fun getTvShowsByGenre(genreId: Long, page: Int): List<TvShow>{
         return executeSafely {
-            tvShowRemoteDataSource.getTvShowByGenre(genreId, page).map {
+            tvShowRemoteDataSource.getTvShowsByGenre(genreId, page).map {
                 it.toEntity()
             }
         }

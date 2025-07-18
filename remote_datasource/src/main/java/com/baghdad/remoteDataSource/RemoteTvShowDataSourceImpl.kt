@@ -46,7 +46,7 @@ class RemoteTvShowDataSourceImpl(
         ).backdrops.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
 
-    override suspend fun getTvShowByGenre(genreId: Long, page: Int): List<TvShowDto> {
+    override suspend fun getTvShowsByGenre(genreId: Long, page: Int): List<TvShowDto> {
         val endpoint = TV_SHOW_WITH_GENRE_ENDPOINT
         return handleRequest<TvShowResponse>(
             client = httpClient,

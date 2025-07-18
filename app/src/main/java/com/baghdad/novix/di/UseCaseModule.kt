@@ -21,7 +21,7 @@ import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchUseCase
-import com.baghdad.domain.usecase.tvShow.GetTvShowByGenreUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowEpisodesUseCase
@@ -48,7 +48,7 @@ val useCaseModule = module {
     singleOf(::GetTvShowDetailsUseCase)
     singleOf(::GetTvShowCastMembersUseCase)
     singleOf(::GetTvShowImagesUseCase)
-    singleOf(::GetTvShowByGenreUseCase)
+    singleOf(::GetTvShowsByGenreUseCase)
     singleOf(::GetTvShowEpisodesUseCase)
     singleOf(::GetEpisodeDetailsUseCase)
     singleOf(::GetEpisodeCastMembersUseCase)
