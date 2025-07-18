@@ -50,6 +50,7 @@ import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieDetailsHeader
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.*
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
@@ -116,7 +117,9 @@ private fun MovieDetailsContent(
                 .zIndex(1f)
                 .align(Alignment.TopCenter)
                 .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = { },
+            onGoBackClick = {
+                listener.onBackClick()
+            },
             content = {
                 Crossfade(
                     targetState = state.isSaved,
@@ -306,7 +309,7 @@ private fun handleEffect(
     when (effect) {
         is MovieDetailsEffect.NavigateToActorDetails -> {
             handleNavigation(
-                MovieDetailsNavEvent.NavigateToActorDetails(
+                NavigateToActorDetails(
                     actorId = effect.id
                 )
             )
@@ -314,23 +317,28 @@ private fun handleEffect(
 
         is MovieDetailsEffect.NavigateToCategory -> {
             handleNavigation(
-                MovieDetailsNavEvent.NavigateToCategoryMovies(
+                NavigateToCategoryMovies(
                     categoryId = effect.id
                 )
             )
         }
 
         is MovieDetailsEffect.NavigateToMovie -> handleNavigation(
-            MovieDetailsNavEvent.NavigateToMovieDetails(
+            NavigateToMovieDetails(
                 movieId = effect.id,
             )
         )
 
         is MovieDetailsEffect.NavigateToReviewDetails -> handleNavigation(
-            MovieDetailsNavEvent.NavigateToReviews(
+            NavigateToReviews(
                 movieId = effect.id
             )
         )
+
+        is MovieDetailsEffect.NavigateBack -> {
+            handleNavigation(NavigateBack)
+        }
+
     }
 }
 
