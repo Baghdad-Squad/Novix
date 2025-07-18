@@ -110,7 +110,7 @@ fun SearchContent(
             onFilterIconClick = { listener.onFilterIconClick() },
             searchTab = uiState.selectedSearchTab
         )
-        AnimatedContent(uiState.searchText.isNotBlank()) { it ->
+        AnimatedContent(uiState.isUserTyping.not() && uiState.searchText.isNotBlank()) { it ->
             if (it) {
                 SearchResultContent(
                     selectedTab = uiState.selectedSearchTab,

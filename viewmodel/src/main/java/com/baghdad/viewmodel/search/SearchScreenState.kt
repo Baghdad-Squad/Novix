@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 
 data class SearchScreenState(
     val searchText: String = "",
+    val isUserTyping: Boolean = false,
     val selectedSearchTab: SearchTab = SearchTab.MOVIES,
     val moviesFlow: Flow<PagingData<MovieUiState>> = flowOf(),
     val tvShowsFlow: Flow<PagingData<TvShowUiState>> = flowOf(),

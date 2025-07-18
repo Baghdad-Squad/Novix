@@ -49,7 +49,7 @@ class SearchViewModel(
 
     override fun onSearchTextChanged(text: String) {
         val trimmed = text.trim()
-        updateState { it.copy(searchText = text, isLoading = true) }
+        updateState { it.copy(searchText = text, isUserTyping = true) }
 
         if (trimmed == lastSearch) return
 
@@ -57,6 +57,7 @@ class SearchViewModel(
         lastSearch = trimmed
 
         if (trimmed.isBlank()) {
+            updateState { it.copy(isUserTyping = false) }
             clearAllPagingFlows()
             return
         }
@@ -131,6 +132,7 @@ class SearchViewModel(
 
     private suspend fun handleSearchStart() {
         delay(SEARCH_DEBOUNCED_DELAY)
+        updateState { it.copy(isUserTyping = false) }
         onLoading()
     }
 
