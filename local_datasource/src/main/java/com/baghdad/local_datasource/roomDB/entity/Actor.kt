@@ -2,11 +2,11 @@ package com.baghdad.local_datasource.roomDB.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.baghdad.repository.model.actor.ActorDto
+import com.baghdad.repository.model.ActorDto
 
 @Entity(tableName = "Actor")
 data class Actor(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
+    @PrimaryKey val id: Long = 0L,
     val name: String,
     val profilePictureURL: String,
     val birthDate: String,
@@ -14,7 +14,7 @@ data class Actor(
     val deathDate: String?,
     val biography: String,
     val headerPictures: List<String>,
-    val department: String
+    val department: String,
 )
 
 fun Actor.toDto(): ActorDto = ActorDto(
@@ -26,10 +26,10 @@ fun Actor.toDto(): ActorDto = ActorDto(
     deathDate = this.deathDate,
     placeOfBirth = this.placeOfBirth,
     headerPictures = this.headerPictures,
-    department = this.department
+    department = this.department,
 )
 
-fun ActorDto.toDto(): Actor = Actor(
+fun ActorDto.toEntity(): Actor = Actor(
     id = this.id,
     name = this.name,
     profilePictureURL = this.imageUrl,
@@ -38,5 +38,5 @@ fun ActorDto.toDto(): Actor = Actor(
     deathDate = this.deathDate,
     placeOfBirth = this.placeOfBirth,
     headerPictures = this.headerPictures,
-    department = this.department
+    department = this.department,
 )

@@ -22,7 +22,7 @@ fun getTestTvShow(
     releaseDate = releaseDate,
     overview = overview,
     posterImageURL = posterPictureURL,
-    numberOfSeasons = numberOfSeasons
+    numberOfSeasons = numberOfSeasons,
 )
 
 fun getTestTvShows(

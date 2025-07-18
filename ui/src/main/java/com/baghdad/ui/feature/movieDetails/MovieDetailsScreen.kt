@@ -34,11 +34,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.HomeCard
+import com.baghdad.design_system.component.SaveIcon
+import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
@@ -47,8 +50,12 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieDetailsHeader
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
-import com.baghdad.ui.feature.movieDetails.component.TextSection
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateBack
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToActorDetails
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToCategoryMovies
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToReviews
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
@@ -64,23 +71,24 @@ fun MovieDetailsScreen(
     viewModel: MovieDetailsViewModel = koinViewModel(parameters = { parametersOf(movieId) }),
     handleNavigation: (MovieDetailsNavEvent) -> Unit,
 ) {
+    val state by viewModel.uiState.collectAsState()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
-    val state by viewModel.uiState.collectAsState()
-    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+
     MovieDetailsContent(
         listener = viewModel,
         state = state,
         snackBarState = snackBarState
-        )
+    )
 }
 
 @Composable
 private fun MovieDetailsContent(
     listener: MovieDetailsInteractionListener,
-    state: MovieDetailsState ,
+    state: MovieDetailsState,
     snackBarState: SnackBarState
 ) {
 
@@ -115,23 +123,18 @@ private fun MovieDetailsContent(
                 .zIndex(1f)
                 .align(Alignment.TopCenter)
                 .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = { },
+            onGoBackClick = {
+                listener.onBackClick()
+            },
             content = {
-                Crossfade(
-                    targetState = state.isSaved,
-                    animationSpec = tween(300)
-                ) { isSaved ->
-                    IconButton(
-                        icon = if (isSaved) painterResource(R.drawable.ic_save_fill) else painterResource(
-                            R.drawable.ic_save
-                        ),
-                        tintIcon = Theme.color.title,
-                        onClick = {
-                            listener.onSaveCurrentMovieClick()
-                        }
-                    )
-                }
-
+                SaveIcon(
+                    size = 40,
+                    backgroundColor = Theme.color.iconBackgroundLow,
+                    isSaved = state.isSaved,
+                    onClick = {
+                        listener.onSaveCurrentMovieClick()
+                    }
+                )
             }
         )
 
@@ -164,7 +167,9 @@ private fun MovieDetailsContent(
                         .offset(y = (-48).dp)
                         .padding(horizontal = 16.dp),
                     onViewReviewClicked = {
-                    }
+                        listener.onReviewClick(state.movieId)
+                    },
+                    onViewCategoryClicked = { listener.onCategoryClick(it) }
                 )
             }
 
@@ -178,18 +183,21 @@ private fun MovieDetailsContent(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 ActorsSection(
                     actors = state.castes,
-                    modifier = Modifier.offset(y = (-48).dp)
+                    modifier = Modifier.offset(y = (-48).dp),
+                    onClick = { listener.onActorClick(id = it) }
                 )
             }
 
             item(span = { GridItemSpan(maxLineSpan) }) {
-                TextSection(
+                Text(
                     text = stringResource(com.baghdad.ui.R.string.more_like_this),
+                    fontSize = 18.sp,
+                    style = Theme.typography.title.medium,
+                    color = Theme.color.title,
                     modifier = Modifier
                         .offset(y = (-48).dp)
-                        .padding(end = 16.dp),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
                 )
-
             }
 
             itemsIndexed(state.moreLikeThisMovie) { index, movieLikeThis ->
@@ -200,7 +208,9 @@ private fun MovieDetailsContent(
                     onSavedClick = {
                         listener.onSaveMoreLikeThisMedia(movieLikeThis.id)
                     },
-                    onClick = {},
+                    onClick = {
+                        listener.onMovieLikeClick(movieLikeThis.id)
+                    },
                     modifier = Modifier
                         .offset(y = (-48).dp)
                         .height(210.dp)
@@ -300,33 +310,31 @@ private fun handleEffect(
     handleNavigation: (MovieDetailsNavEvent) -> Unit,
 ) {
     when (effect) {
-        is MovieDetailsEffect.NavigateToActorDetails -> {
-            handleNavigation(
-                MovieDetailsNavEvent.NavigateToActorDetails(
-                    actorId = effect.id
-                )
+        is MovieDetailsEffect.NavigateToActorDetails -> handleNavigation(
+            NavigateToActorDetails(
+                actorId = effect.id
             )
-        }
+        )
 
-        is MovieDetailsEffect.NavigateToCategory -> {
-            handleNavigation(
-                MovieDetailsNavEvent.NavigateToCategoryMovies(
-                    categoryId = effect.id
-                )
+        is MovieDetailsEffect.NavigateToCategory -> handleNavigation(
+            NavigateToCategoryMovies(
+                categoryId = effect.id
             )
-        }
+        )
 
         is MovieDetailsEffect.NavigateToMovie -> handleNavigation(
-            MovieDetailsNavEvent.NavigateToMovieDetails(
+            NavigateToMovieDetails(
                 movieId = effect.id,
             )
         )
 
         is MovieDetailsEffect.NavigateToReviewDetails -> handleNavigation(
-            MovieDetailsNavEvent.NavigateToReviews(
+            NavigateToReviews(
                 movieId = effect.id
             )
         )
+
+        MovieDetailsEffect.NavigateBack -> handleNavigation(NavigateBack)
     }
 }
 

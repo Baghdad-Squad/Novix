@@ -1,9 +1,9 @@
 package com.baghdad.viewmodel.actorDetails
 
-import com.baghdad.domain.usecase.actorDetails.GetActorGalleryUseCase
-import com.baghdad.domain.usecase.actorDetails.GetActorInfoUseCase
-import com.baghdad.domain.usecase.actorDetails.GetActorMoviesUseCase
-import com.baghdad.domain.usecase.actorDetails.GetActorTvShowUseCase
+import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
+import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
+import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
+import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor

@@ -2,7 +2,7 @@ package com.baghdad.remoteDataSource.mapper.actor
 
 import com.baghdad.remoteDataSource.response.CastMemberResponse
 import com.baghdad.repository.model.CastMemberDto
-import com.baghdad.repository.model.actor.ActorDto
+import com.baghdad.repository.model.ActorDto
 
 fun CastMemberResponse.toDto(): CastMemberDto {
     return CastMemberDto(
@@ -15,7 +15,7 @@ fun CastMemberResponse.toDto(): CastMemberDto {
             deathDate = null,
             placeOfBirth = "",
             headerPictures = emptyList(),
-            department = knownForDepartment ?: "Unknown"
+            department = knownForDepartment ?: "Unknown",
         ),
         characterName = character ?: "Unknown"
     )
