@@ -10,6 +10,8 @@ data class TvShowDetailsScreenState(
     val isBottomSheetVisible: Boolean = false,
     val isTextExpanded: Boolean = false,
     val userRating: Double = 0.0,
+    val hasTrailer: Boolean = true,
+    val isTvShowSaved: Boolean = false,
     override val isLoading: Boolean = false,
 ) : BaseUiState {
     data class TvShowInfoUiState(
@@ -41,6 +43,7 @@ data class TvShowDetailsScreenState(
         val rating: Double = 0.0,
         val duration: String = "",
         val releaseDate: String = "",
-        val currentSeason: Int = 0
+        val currentSeason: Int = 0,
+        val imageUrl: String = ""
     )
 }

@@ -1,9 +1,11 @@
 package com.baghdad.viewmodel.tvShowDetails
 
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
-import com.baghdad.domain.usecase.tvShow.GetTvShowEpisodesUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
+import com.baghdad.entity.media.Episode
+import com.baghdad.entity.media.TvShow
+import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
@@ -11,13 +13,49 @@ class TvShowDetailsViewModel(
     private val tvShowId: Long,
     private val getTvShowDetailsUseCase: GetTvShowDetailsUseCase,
     private val getTvShowCastUseCase: GetTvShowCastUseCase,
-    private val getTvShowEpisodesUseCase: GetTvShowEpisodesUseCase,
-    private val getTvShowGenresUseCase: GetGenresUseCase
+    private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
 ) :
     BaseViewModel<TvShowDetailsScreenState, TvShowDetailsScreenEffect>(TvShowDetailsScreenState()),
     TvShowDetailsInteractionListener {
 
     init {
+        getTvShowDetails(tvShowId)
+        getTvShowCast(tvShowId)
+        onClickSeasonTab(0)
+    }
+
+    private fun getTvShowDetails(tvShowId: Long) {
+        tryToExecute(
+            callee = { getTvShowDetailsUseCase(tvShowId) },
+            onSuccess = ::onGetTvShowDetailsSuccess,
+            onStart = ::onLoading,
+            onFinally = ::onFinally
+        )
+    }
+
+    private fun onGetTvShowDetailsSuccess(tvShow: TvShow) {
+        updateState { tvShowDetailsScreenState ->
+            tvShowDetailsScreenState.copy(
+                tvShowInfo = tvShow.toUiState()
+            )
+        }
+    }
+
+    private fun getTvShowCast(tvShowId: Long) {
+        tryToExecute(
+            callee = { getTvShowCastUseCase(tvShowId) },
+            onSuccess = ::onGetTvShowCastSuccess,
+            onStart = ::onLoading,
+            onFinally = ::onFinally
+        )
+    }
+
+    private fun onGetTvShowCastSuccess(cast: List<CastMember>) {
+        updateState { tvShowDetailsScreenState ->
+            tvShowDetailsScreenState.copy(
+                castMembers = cast.map { it.toUiState() }
+            )
+        }
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
@@ -40,8 +78,8 @@ class TvShowDetailsViewModel(
         sendEffect(TvShowDetailsScreenEffect.NavigateToActorDetails(actorId))
     }
 
-    override fun onClickEpisode(episodeId: Long) {
-        sendEffect(TvShowDetailsScreenEffect.NavigateToEpisodeDetails(episodeId))
+    override fun onClickEpisode(seasonNumber: Int, episodeNumber: Int) {
+        sendEffect(TvShowDetailsScreenEffect.NavigateToEpisodeDetails(seasonNumber, episodeNumber))
     }
 
     override fun onClickReviews(tvShowId: Long) {
@@ -56,11 +94,35 @@ class TvShowDetailsViewModel(
 //        TODO("Not yet implemented")
     }
 
-    override fun onClickSeasonTab() {
-//        TODO("Not yet implemented")
+    override fun onClickSeasonTab(seasonIndex: Int) {
+        updateState { it.copy(selectedSeasonIndex = seasonIndex) }
+
+        tryToExecute(
+            callee = { getTvShowSeasonEpisodesUseCase(tvShowId, seasonIndex + 1) },
+            onSuccess = ::onGetTvShowEpisodesSuccess,
+            onStart = ::onLoading,
+            onFinally = ::onFinally
+        )
+    }
+
+    private fun onGetTvShowEpisodesSuccess(episodes: List<Episode>) {
+        updateState { tvShowDetailsScreenState ->
+            tvShowDetailsScreenState.copy(
+                episodes = episodes.map { it.toUiState() }
+            )
+        }
     }
 
     override fun onClickPlayTrailer() {
 //        TODO("Not yet implemented")
     }
+
+    private fun onLoading() {
+        updateState { it.copy(isLoading = true) }
+    }
+
+    private fun onFinally() {
+        updateState { it.copy(isLoading = false) }
+    }
+
 }

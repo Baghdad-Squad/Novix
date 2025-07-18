@@ -5,10 +5,10 @@ interface TvShowDetailsInteractionListener {
     fun onClickReadMoreOverview()
     fun onClickGenre(genreId: Long)
     fun onClickCastMember(actorId: Long)
-    fun onClickEpisode(episodeId: Long)
+    fun onClickEpisode(seasonNumber: Int, episodeNumber: Int)
     fun onClickReviews(tvShowId: Long)
     fun onClickSaveTvShow(tvShowId: Long)
     fun onClickAddRating()
-    fun onClickSeasonTab()
+    fun onClickSeasonTab(seasonIndex: Int)
     fun onClickPlayTrailer() /*TODO*/
 }

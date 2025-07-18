@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.tvShowDetails
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
-import com.baghdad.entity.person.Actor
+import com.baghdad.entity.person.CastMember
 
 fun TvShow.toUiState() = TvShowDetailsScreenState.TvShowInfoUiState(
     title = title,
@@ -20,10 +20,11 @@ fun Genre.toUiState() = TvShowDetailsScreenState.GenreUiState(
     name = name,
 )
 
-fun Actor.toUiState() = TvShowDetailsScreenState.CastMemberUiState(
-    id = id,
-    name = name,
-    imageUrl = profilePictureURL,
+fun CastMember.toUiState() = TvShowDetailsScreenState.CastMemberUiState(
+    id = actor.id,
+    name = actor.name,
+    imageUrl = actor.profilePictureURL,
+    characterName = characterName
 )
 
 fun Episode.toUiState() = TvShowDetailsScreenState.EpisodeUiState(
@@ -33,5 +34,6 @@ fun Episode.toUiState() = TvShowDetailsScreenState.EpisodeUiState(
     rating = rating,
     duration = duration,
     releaseDate = releasedDate.toString(),
-    currentSeason = currentSeason
+    currentSeason = currentSeason,
+    imageUrl = imageUrl
 )
