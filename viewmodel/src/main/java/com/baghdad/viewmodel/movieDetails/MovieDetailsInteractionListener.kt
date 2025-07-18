@@ -10,5 +10,7 @@ interface MovieDetailsInteractionListener {
 
     fun onExtendOverviewClick()
 
+    fun onClickBackIcon()
+
 
 }
