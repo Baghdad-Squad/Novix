@@ -31,6 +31,7 @@ class PagedResultPagingSource<T : Any>(
             )
 
         } catch (e: Exception) {
+            onInitialLoadFinished()
             LoadResult.Error(e)
         }
     }
