@@ -5,7 +5,7 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.SearchResultDto
 import com.baghdad.repository.model.TvShowDto
-import com.baghdad.repository.model.actor.ActorDto
+import com.baghdad.repository.model.ActorDto
 
 internal fun SearchResponse.toDto(
     movieGenres: List<GenreDto>?,

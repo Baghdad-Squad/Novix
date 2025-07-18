@@ -1,8 +1,10 @@
 package com.baghdad.repository
 
+import android.util.Log
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
+import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
@@ -41,6 +43,34 @@ class MovieRepositoryImpl(
             remoteMovieDataSource.getMovieCastMembers(movieId).map {
                 it.toEntity()
             }
+        }
+    }
+
+    override suspend fun getMoviesByGenre(
+        genreId: Long,
+        page: Int
+    ): List<Movie> {
+        return executeSafely {
+            remoteMovieDataSource.getMoviesByGenre(genreId, page).map {
+                it.toEntity()
+            }
+        }
+    }
+
+    override suspend fun getMovieReviews(movieId: Long): List<Review> {
+        Log.d("MovieRepositoryImpl", "getMovieReviews: $movieId")
+        val result =  executeSafely {
+            remoteMovieDataSource.getMovieReviews(movieId).map {
+                it.toEntity()
+            }
+        }
+        Log.d("MovieRepositoryImpl", "getMovieReviews: $result")
+        return result
+    }
+
+    override suspend fun getMovieImages(movieId: Long): List<String> {
+        return executeSafely {
+            remoteMovieDataSource.getMovieImages(movieId)
         }
     }
 }
