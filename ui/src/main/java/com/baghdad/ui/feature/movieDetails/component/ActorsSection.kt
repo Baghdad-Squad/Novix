@@ -27,6 +27,7 @@ fun ActorsSection(
             text = stringResource(com.baghdad.ui.R.string.cast),
             fontSize = 18.sp,
             style = Theme.typography.title.medium,
+            color = Theme.color.title,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
         )
         LazyRow(
