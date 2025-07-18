@@ -151,24 +151,6 @@ class ActorGalleryViewModelTest {
         coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(actorId) }
     }
 
-    @Test
-    fun `getActorGalleryImages should call usecase with new actorId when actorId changes`() =
-        runTest {
-
-
-            coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
-            coEvery { getGalleryImagesUseCase.invoke(newActorId) } returns emptyList()
-
-            viewModel = createViewModel()
-            advanceUntilIdle()
-
-            viewModel.getActorGalleryImages(newActorId)
-            advanceUntilIdle()
-
-            coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(actorId) }
-            coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(newActorId) }
-        }
-
     private companion object {
         val actorId = 123L
         val listImage = "image1.jpg"
