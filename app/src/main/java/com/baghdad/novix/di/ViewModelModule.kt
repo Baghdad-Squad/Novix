@@ -27,8 +27,8 @@ val viewModelModule = module {
         )
     }
 
-    viewModel {
-        (actorId: Long) -> ActorGalleryViewModel(get(), actorId)
+    viewModel { (actorId: Long) ->
+        ActorGalleryViewModel(get(), actorId)
     }
     viewModel { (actorId: Long) ->
         ActorDetailsViewModel(actorId, get(), get(), get(), get())
@@ -42,7 +42,7 @@ val viewModelModule = module {
             getSeriesReviewsUseCase = get()
         )
     }
-    viewModel{ (actorId: Long) ->
+    viewModel { (actorId: Long) ->
         TopMoviePicksViewModel(actorId, get())
     }
     viewModel { (actorId: Long) ->
@@ -53,6 +53,6 @@ val viewModelModule = module {
     }
 
     viewModel { (categoryId: Long) ->
-        CategoryMoviesViewModel(categoryId)
+        CategoryMoviesViewModel(categoryId, get(), get())
     }
 }
