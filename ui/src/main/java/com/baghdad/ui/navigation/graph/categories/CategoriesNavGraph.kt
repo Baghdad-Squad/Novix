@@ -23,7 +23,12 @@ fun NavGraphBuilder.categoriesNavGraph(navController: NavHostController) {
         composable<CategoryMoviesScreen> { backStackEntry ->
             val categoryId =
                 backStackEntry.toRoute<CategoryMoviesScreen>().categoryId
-            DummyScreen(title = "Category Movies Screen: $categoryId")
+            com.baghdad.ui.feature.categoryMovies.CategoryMoviesScreen(categoryId = categoryId) {
+                handleCategoriesNavEvent(
+                    it,
+                    navController
+                )
+            }
         }
         composable<CategoryTvShowsScreen> { backStackEntry ->
             val categoryId =
