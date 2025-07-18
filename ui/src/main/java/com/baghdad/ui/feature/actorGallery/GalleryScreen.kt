@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -38,22 +40,20 @@ fun GalleryScreen(
     actorId: Long,
     viewModel: ActorGalleryViewModel = koinViewModel(
         key = actorId.toString(),
-        parameters = { parametersOf(actorId) }
-    ),
+        parameters = { parametersOf(actorId) }),
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ActorGalleryScreenContent(
-        uiState = uiState,
-        listner = viewModel
+        uiState = uiState, listner = viewModel
 
     )
 
     ObserveAsEffect(effect = viewModel.uiEffect) { effect ->
         when (effect) {
             is ActorGalleryScreenEffect.OnBackClick -> {
-               handleNavigation(ActorDetailsNavEvent.NavigateBack)
+                handleNavigation(ActorDetailsNavEvent.NavigateBack)
             }
 
         }
@@ -63,13 +63,12 @@ fun GalleryScreen(
 
 @Composable
 fun ActorGalleryScreenContent(
-    uiState: ActorGalleryScreenState,
-    listner: ActorGalleryViewModel
+    uiState: ActorGalleryScreenState, listner: ActorGalleryViewModel
 ) {
     Column(
         modifier = Modifier
-        .fillMaxSize()
-        .background(Theme.color.surface)
+            .fillMaxSize()
+            .background(Theme.color.surface)
             .dropShadow(
                 color = Theme.color.primary,
                 alpha = 0.08f,
@@ -78,7 +77,10 @@ fun ActorGalleryScreenContent(
                 shape = RectangleShape,
                 blur = 336.dp
             )
-        .statusBarsPadding()) {
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(vertical = 12.dp)
+    ) {
         TopAppBar(
             onGoBackClick = listner::onBackClick,
             screenTitle = stringResource(R.string.gallery),
