@@ -29,7 +29,7 @@ import com.baghdad.design_system.theme.Theme
 fun IconButton(
     icon: Painter,
     modifier: Modifier = Modifier,
-    background: Color = Theme.color.backgroundLow,
+    background: Color = Theme.color.iconBackgroundLow,
     tintIcon: Color = Theme.color.title,
     borderStroke: BorderStroke? = BorderStroke(width = 1.dp, Theme.color.stroke),
     shape: Shape = RoundedCornerShape(12.dp),
@@ -40,7 +40,6 @@ fun IconButton(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(color = background)
-            .size(40.dp)
             .border(
                 width = 1.dp,
                 color = Theme.color.stroke,
