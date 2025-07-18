@@ -61,7 +61,7 @@ fun SaveIcon(
         ) { saved ->
             Icon(
                 painter = painterResource(
-                    if (saved) R.drawable.ic_add_bookmark
+                    if (!saved) R.drawable.ic_add_bookmark
                     else R.drawable.ic_remove_bookmark
                 ),
                 contentDescription = if (saved) stringResource(R.string.saved) else stringResource(R.string.unsaved),
