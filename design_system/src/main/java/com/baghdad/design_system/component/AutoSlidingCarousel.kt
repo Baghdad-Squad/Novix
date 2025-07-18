@@ -15,7 +15,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.component.SafeImage
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun AutoSlidingImageCarousel(
@@ -37,15 +35,12 @@ fun AutoSlidingImageCarousel(
     indicatorVisibility: Boolean = true,
 ) {
     val pagerState = rememberPagerState(pageCount = { imageUrls.size })
-    val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(pagerState.currentPage) {
-        if (imageUrls.isNotEmpty()) {
+    LaunchedEffect(imageUrls) {
+        while (true) {
             delay(autoSlideDuration)
-            val nextPage = (pagerState.currentPage + 1) % imageUrls.size
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(nextPage)
-            }
+            val next = (pagerState.currentPage + 1) % imageUrls.size
+            pagerState.animateScrollToPage(next)
         }
     }
 
