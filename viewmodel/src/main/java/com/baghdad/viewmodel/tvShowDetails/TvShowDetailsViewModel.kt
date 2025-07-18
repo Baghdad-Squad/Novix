@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.tvShowDetails
 
-import com.baghdad.domain.usecase.tvShow.GetTvShowCastUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
 import com.baghdad.entity.media.Episode
@@ -12,7 +12,7 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 class TvShowDetailsViewModel(
     private val tvShowId: Long,
     private val getTvShowDetailsUseCase: GetTvShowDetailsUseCase,
-    private val getTvShowCastUseCase: GetTvShowCastUseCase,
+    private val getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase,
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
 ) :
     BaseViewModel<TvShowDetailsScreenState, TvShowDetailsScreenEffect>(TvShowDetailsScreenState()),
@@ -43,7 +43,7 @@ class TvShowDetailsViewModel(
 
     private fun getTvShowCast(tvShowId: Long) {
         tryToExecute(
-            callee = { getTvShowCastUseCase(tvShowId) },
+            callee = { getTvShowCastMembersUseCase(tvShowId) },
             onSuccess = ::onGetTvShowCastSuccess,
             onStart = ::onLoading,
             onFinally = ::onFinally
