@@ -167,7 +167,8 @@ private fun MovieDetailsContent(
                         .padding(horizontal = 16.dp),
                     onViewReviewClicked = {
                         listener.onReviewClick(state.movieId)
-                    }
+                    },
+                    onViewCategoryClicked = {listener.onCategoryClick(it)}
                 )
             }
 

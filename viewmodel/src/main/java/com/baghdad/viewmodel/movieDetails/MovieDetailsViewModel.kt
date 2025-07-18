@@ -8,6 +8,7 @@ import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.search.toGenreUI
 import kotlin.math.roundToInt
 
 class MovieDetailsViewModel(
@@ -163,14 +164,14 @@ class MovieDetailsViewModel(
 
     private fun onGetMovieCategorySuccess() {
         tryToExecute(
-            callee = { getMovieCategoryUseCase(movieId) },
+            callee = { getMovieCategoryUseCase(movieId).map { it.toMoviesDetailsUiState() } },
             onSuccess = ::onGetMovieCategorySuccess,
             onStart = ::onLoading,
             onFinally = ::onFinally
         )
     }
 
-    private fun onGetMovieCategorySuccess(genres: List<String>) {
+    private fun onGetMovieCategorySuccess(genres: List<MovieDetailsState.GenreUiState>) {
         updateState { state ->
             state.copy(
                 categories = genres,
