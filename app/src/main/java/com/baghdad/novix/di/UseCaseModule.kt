@@ -10,8 +10,8 @@ import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCategoryUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
-import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
+import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
@@ -20,12 +20,14 @@ import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
-import com.baghdad.domain.usecase.search.SearchUseCase
-import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
+import com.baghdad.domain.usecase.search.SearchActorsUseCase
+import com.baghdad.domain.usecase.search.SearchMoviesUseCase
+import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowEpisodesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowImagesUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -37,7 +39,6 @@ val useCaseModule = module {
     singleOf(::DeleteAllRecentSearchesUseCase)
     singleOf(::DeleteRecentSearchUseCase)
     singleOf(::GetRecentSearchesUseCase)
-    singleOf(::SearchUseCase)
     singleOf(::GetActorInfoUseCase)
     singleOf(::GetActorMoviesUseCase)
     singleOf(::GetActorTvShowUseCase)
@@ -54,8 +55,10 @@ val useCaseModule = module {
     singleOf(::GetEpisodeCastMembersUseCase)
     singleOf(::GetMovieReviewsUseCase)
     singleOf(::GetTvShowReviewsUseCase)
-
-    singleOf(::GetMovieGalleryUseCase)
     singleOf(::GetMovieCategoryUseCase)
+    singleOf(::SearchMoviesUseCase)
+    singleOf(::SearchTvShowsUseCase)
+    singleOf(::SearchActorsUseCase)
+    singleOf(::GetMovieGalleryUseCase)
 }
 

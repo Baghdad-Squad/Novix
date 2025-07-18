@@ -44,3 +44,11 @@ fun Movie.toDto(genres: List<GenreDto>): MovieDto = MovieDto(
     runtimeMinutes = this.runtimeMinutes
 )
 
+fun List<Movie>.toDtos(genresMap: Map<Long, Genre>): List<MovieDto> {
+    return this.map { movie ->
+        val genres = movie.genres.mapNotNull { genreId ->
+            genresMap[genreId]?.toDto()
+        }
+        movie.toDto(genres)
+    }
+}

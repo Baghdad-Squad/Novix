@@ -13,6 +13,9 @@ interface SearchQueryDao {
     @Insert(onConflict = REPLACE)
     suspend fun addSearchQuery(searchQuery: SearchQuery)
 
+    @Insert(onConflict = REPLACE)
+    suspend fun addSearchQueries(searchQueries: List<SearchQuery>)
+
     @Query("SELECT * FROM search_query WHERE timestamp < :timestamp")
     suspend fun getInvalidSearchQueries(timestamp: Long): List<SearchQuery>
 
@@ -35,5 +38,7 @@ interface SearchQueryDao {
     @Query("DELETE FROM search_query WHERE queryName = :queryName")
     suspend fun deleteSearchQueryByName(queryName: String)
 
+    @Query("SELECT * FROM search_query WHERE queryName = :queryName AND mediaType = :mediaType")
+    suspend fun getSearchByQuery(queryName: String, mediaType: String): List<SearchQuery>
 
 }
