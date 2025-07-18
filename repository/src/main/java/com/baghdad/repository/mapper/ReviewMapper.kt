@@ -2,7 +2,7 @@ package com.baghdad.repository.mapper
 
 import com.baghdad.entity.media.Review
 import com.baghdad.repository.model.ReviewDto
-import kotlinx.datetime.toLocalDate
+import kotlinx.datetime.LocalDate
 
 fun ReviewDto.toEntity(): Review {
     return Review(
@@ -12,6 +12,6 @@ fun ReviewDto.toEntity(): Review {
         contentTitle = this.contentTitle,
         rating = this.rating,
         reviewText = this.reviewText,
-        postedDate = this.postedDate.toLocalDate()
+        postedDate = LocalDate.parse(this.postedDate.substring(0, 10))
     )
 }

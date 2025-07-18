@@ -6,11 +6,11 @@ import com.baghdad.repository.model.ReviewDto
 fun ReviewResponse.toDto(): ReviewDto {
     return ReviewDto(
         id = id?.toLongOrNull() ?: 0L,
-        authorName = authorDetails?.name ?: "",
-        authorAvatarUrl =  authorDetails?.avatarPath ?:  "",
+        authorName = (authorDetails?.name.takeIf { !it.isNullOrBlank() }) ?: "Unknown Name",
+        authorAvatarUrl = authorDetails?.avatarPath ?:  "",
         contentTitle = authorDetails?.username ?: "",
-        rating = authorDetails?.rating?.toFloatOrNull() ?: 0f,
+        rating = authorDetails?.rating ?: 0f,
         reviewText = content ?: "",
-        postedDate = createdAt ?: "0001-01-01"
+        postedDate = createdAt.takeIf { !it.isNullOrBlank() } ?: "0001-01-01"
     )
 }

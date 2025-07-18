@@ -1,5 +1,6 @@
 package com.baghdad.repository
 
+import android.util.Log
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -57,11 +58,14 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun getMovieReviews(movieId: Long): List<Review> {
-        return executeSafely {
+        Log.d("MovieRepositoryImpl", "getMovieReviews: $movieId")
+        val result =  executeSafely {
             remoteMovieDataSource.getMovieReviews(movieId).map {
                 it.toEntity()
             }
         }
+        Log.d("MovieRepositoryImpl", "getMovieReviews: $result")
+        return result
     }
 
     override suspend fun getMovieImages(movieId: Long): List<String> {

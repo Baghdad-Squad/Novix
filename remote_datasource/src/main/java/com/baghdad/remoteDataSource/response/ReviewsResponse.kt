@@ -6,15 +6,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ReviewsResponse(
     @SerialName("id")
-    val id: Int = 0,
+    val id: Int? = 0,
     @SerialName("page")
-    val page: Int = 0,
+    val page: Int? = 0,
     @SerialName("results")
     val results: List<ReviewResponse>? = null,
     @SerialName("total_pages")
-    val totalPages: Int = 0,
+    val totalPages: Int? = 0,
     @SerialName("total_results")
-    val totalResults: Int = 0
+    val totalResults: Int? = 0
 )
 
 @Serializable
@@ -40,5 +40,5 @@ data class MovieAuthorDetails(
     @SerialName("avatar_path")
     val avatarPath: String? = null,
     @SerialName("rating")
-    val rating: String? = null
+    val rating: Float? = null
 )

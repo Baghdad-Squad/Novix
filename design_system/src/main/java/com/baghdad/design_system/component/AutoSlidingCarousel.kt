@@ -1,5 +1,6 @@
 package com.baghdad.design_system.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +33,8 @@ import kotlinx.coroutines.launch
 fun AutoSlidingImageCarousel(
     imageUrls: List<String>,
     modifier: Modifier = Modifier,
-    autoSlideDuration: Long = 3000L
+    autoSlideDuration: Long = 3000L,
+    indicatorVisibility: Boolean = true,
 ) {
     val pagerState = rememberPagerState(pageCount = { imageUrls.size })
     val coroutineScope = rememberCoroutineScope()
@@ -78,25 +80,31 @@ fun AutoSlidingImageCarousel(
             )
         }
 
-        Row(
+        AnimatedVisibility(
+            visible = indicatorVisibility,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Theme.color.iconBackgroundLow)
-                .border(
-                    width = 1.dp,
-                    color = Theme.color.stroke,
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(horizontal = 12.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.Center,
         ) {
-            CarousalDot(
-                totalDots = imageUrls.size,
-                selectedIndex = pagerState.currentPage,
+            Row(
                 modifier = Modifier
-            )
+
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Theme.color.iconBackgroundLow)
+                    .border(
+                        width = 1.dp,
+                        color = Theme.color.stroke,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                CarousalDot(
+                    totalDots = imageUrls.size,
+                    selectedIndex = pagerState.currentPage,
+                    modifier = Modifier
+                )
+            }
         }
     }
 }
