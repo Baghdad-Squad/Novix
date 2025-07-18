@@ -5,6 +5,7 @@ import com.baghdad.repository.exception.RequestTimeoutNetworkException
 import com.baghdad.repository.exception.SerializationNetworkException
 import com.baghdad.repository.exception.ServerNetworkException
 import com.baghdad.repository.exception.TooManyRequestsNetworkException
+import com.baghdad.repository.exception.UnauthorizedNetworkException
 import com.baghdad.repository.exception.UnknownNetworkException
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -45,7 +46,7 @@ suspend inline fun <reified T> handleRequest(
             throw TooManyRequestsNetworkException()
         }
         response.status == HttpStatusCode.Unauthorized -> {
-            throw UnknownNetworkException()
+            throw UnauthorizedNetworkException()
         }
         response.status.value in 500..599 -> {
             throw ServerNetworkException()
