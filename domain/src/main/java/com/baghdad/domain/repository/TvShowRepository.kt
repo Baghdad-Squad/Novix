@@ -10,7 +10,7 @@ interface TvShowRepository {
 
     suspend fun getTvShowCastMembers(tvShowId: Long): List<CastMember>
 
-    suspend fun getTvShowEpisodes(tvShowId: Long): List<Episode>
+    suspend fun getTvShowSeasonEpisodes(tvShowId: Long, seasonNumber: Int): List<Episode>
 
     suspend fun getGenres() : List<Genre>
 

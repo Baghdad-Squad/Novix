@@ -36,7 +36,7 @@ class TvShowRepositoryImpl(
 //        TODO("Not yet implemented")
     }
 
-    override suspend fun getTvShowEpisodes(tvShowId: Long): List<Episode> {
+    override suspend fun getTvShowSeasonEpisodes(tvShowId: Long, seasonNumber: Int): List<Episode> {
         return emptyList()
 //        TODO("Not yet implemented")
     }
