@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.categoryTvShows
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,9 +13,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,6 +29,7 @@ import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.feature.util.hideNavigationBar
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsEffect
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState
@@ -67,7 +70,12 @@ private fun CategoryTvShowsContent(
     uiState: CategoryTvShowsState,
     listener: CategoryTvShowsViewModel,
 ) {
-    Log.i("TAG", "CategoryTvShowsContent: $uiState")
+    val context = LocalContext.current
+    val view = LocalView.current
+    LaunchedEffect(Unit) {
+        hideNavigationBar(context, view)
+    }
+
     Scaffold(
         topBar = {
             Row(
