@@ -49,7 +49,7 @@ val viewModelModule = module {
         TopTvShowViewModel(actorId, get())
     }
     viewModel { (categoryId: Long) ->
-        CategoryTvShowsViewModel(categoryId, get())
+        CategoryTvShowsViewModel(categoryId, get(), get())
     }
 
     viewModel { (categoryId: Long) ->

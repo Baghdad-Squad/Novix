@@ -1,17 +1,21 @@
 package com.baghdad.viewmodel.categoryTvShows
 
 import com.baghdad.domain.usecase.category.GetCategoryTvShowsUseCase
+import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
+import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class CategoryTvShowsViewModel(
     private val categoryId: Long,
-    private val getTvShowsCategoryUseCase: GetCategoryTvShowsUseCase
+    private val getTvShowsCategoryUseCase: GetCategoryTvShowsUseCase,
+    private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase
 ) : BaseViewModel<CategoryTvShowsState, CategoryTvShowsEffect>(CategoryTvShowsState()),
     CategoryTvShowsInteractionListener {
 
     init {
         getTvShowsByCategoryId(categoryId = categoryId)
+        getCategoryNameById(categoryId = categoryId)
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
@@ -34,14 +38,33 @@ class CategoryTvShowsViewModel(
 
     private fun getTvShowsByCategoryId(categoryId: Long) {
         tryToExecute(
-            callee = { getTvShowsCategoryUseCase.invoke(categoryId = categoryId) },
-            onSuccess = { ::onSuccess },
-            onError = { ::onError }
+            callee = {
+                getTvShowsCategoryUseCase.invoke(categoryId = categoryId)
+            },
+            onSuccess = { onGetTvShowsSuccess(it) },
+            onError = { onGetTvShowsError() }
 
         )
     }
 
-    private fun onSuccess() {}
-    private fun onError() {}
+    private fun onGetTvShowsSuccess(tvShows: List<TvShow>) {
+        updateState { it.copy(tvShows = tvShows.map { it.toUiState() }) }
+    }
+
+    private fun onGetTvShowsError() {}
+
+    private fun getCategoryNameById(categoryId: Long) {
+        tryToExecute(
+            callee = { getCategoryNameByIdUseCase.invoke(categoryId) },
+            onSuccess = { onSuccessGetCategoryName(it.name) },
+            onError = { onErrorGetCategoryName() }
+        )
+    }
+
+    fun onSuccessGetCategoryName(categoryName: String) {
+        updateState { it.copy(categoryName = categoryName) }
+    }
+
+    fun onErrorGetCategoryName() {}
 
 }

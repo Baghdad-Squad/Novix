@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.categoryTvShows
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,9 +39,7 @@ import org.koin.core.parameter.parametersOf
 fun CategoryTvShowsScreen(
     categoryId: Long,
     viewModel: CategoryTvShowsViewModel = koinViewModel(
-        key = categoryId.toString(),
-        parameters = { parametersOf(categoryId) }
-    ),
+        key = categoryId.toString(), parameters = { parametersOf(categoryId) }),
     handleNavigation: (CategoriesNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -48,14 +47,12 @@ fun CategoryTvShowsScreen(
         handleEffect(effect, handleNavigation)
     }
     CategoryTvShowsContent(
-        uiState = uiState,
-        listener = viewModel
+        uiState = uiState, listener = viewModel
     )
 }
 
 private fun handleEffect(
-    effect: CategoryTvShowsEffect,
-    handleNavigation: (CategoriesNavEvent) -> Unit
+    effect: CategoryTvShowsEffect, handleNavigation: (CategoriesNavEvent) -> Unit
 ) {
     when (effect) {
         is CategoryTvShowsEffect.NavigateBack -> handleNavigation(
@@ -70,6 +67,7 @@ private fun CategoryTvShowsContent(
     uiState: CategoryTvShowsState,
     listener: CategoryTvShowsViewModel,
 ) {
+    Log.i("TAG", "CategoryTvShowsContent: $uiState")
     Scaffold(
         topBar = {
             Row(
@@ -77,21 +75,23 @@ private fun CategoryTvShowsContent(
                     .fillMaxWidth()
                     .background(Theme.color.surface)
                     .statusBarsPadding()
-                    .padding(top = 12.dp, bottom = 17.dp),
+                    .padding(top = 12.dp, bottom = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
                     onClick = { listener.onBackClicked() },
-                    modifier = Modifier
-                        .padding(start = 16.dp, bottom = 8.dp)
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        end = 12.dp,
+                    )
+
                 )
                 Text(
                     text = uiState.categoryName,
                     style = Theme.typography.title.large,
                     color = Theme.color.title,
-                    modifier = Modifier
-                        .padding(start = 8.dp, bottom = 8.dp)
+                    modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
                 )
             }
         },
@@ -102,23 +102,18 @@ private fun CategoryTvShowsContent(
                 .fillMaxSize()
                 .background(Theme.color.surface),
             contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = 8.dp,
-                bottom = 8.dp
+                start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(
-                uiState.tvShows,
-                key = { it.id }
-            ) { movie ->
+                uiState.tvShows, key = { it.id }) { tvShow ->
                 HomeCard(
-                    url = movie.posterPictureURL,
+                    url = tvShow.posterPictureURL,
                     contentDescription = null,
-                    isSaved = movie.isSaved,
-                    onSavedClick = { },
+                    isSaved = tvShow.isSaved,
+                    onSavedClick = { listener.onSavedClick(tvShow.id) },
                     onClick = { },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
