@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.modifier.noRippleClickable
@@ -30,6 +31,7 @@ import com.baghdad.design_system.theme.Theme
 @Composable
 fun Star(
     isFilled: Boolean,
+    starSize: Dp,
     onClick: () -> Unit,
 ) {
     AnimatedContent(
@@ -46,7 +48,7 @@ fun Star(
             contentDescription = if (clicked) stringResource(R.string.clicked) else stringResource(R.string.not_clicked),
             tint = Theme.color.yellowAccent,
             modifier = Modifier
-                .size(24.dp)
+                .size(starSize)
                 .noRippleClickable { onClick() }
         )
     }
@@ -66,7 +68,7 @@ private fun StarIconPreview() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Star(isFilled = isFilled, onClick = { isFilled = !isFilled })
+            Star(isFilled = isFilled, onClick = { isFilled = !isFilled }, starSize = 24.dp)
         }
     }
 }
