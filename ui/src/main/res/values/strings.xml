@@ -27,12 +27,14 @@
     <string name="snackbar_saved_success">Item saved successfully</string>
     <string name="empty_string"> </string>
     <string name="birth_place">birth Place</string>
-    <string name="cast">Cast</string>
     <string name="more_like_this">More like this</string>
-    <string name="overview">Overview</string>
     <string name="play_trailer">Play trailer</string>
     <string name="card_movie_image">card movie image</string>
     <string name="top_tv_shows_picks">Top tv shows picks</string>
     <string name="top_movies_picks">Top movies picks</string>
     <string name="reviews">Reviews</string>
+    <string name="overview">Overview</string>
+    <string name="cast">Cast</string>
+    <string name="season">Season</string>
+    <string name="episode">Episode %1$s</string>
 </resources>
