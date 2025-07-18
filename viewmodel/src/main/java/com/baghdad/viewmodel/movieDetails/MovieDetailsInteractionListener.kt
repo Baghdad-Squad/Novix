@@ -16,8 +16,6 @@ interface MovieDetailsInteractionListener {
 
     fun onReviewClick(id: Long)
 
-    fun onNavigateBack()
-
     fun onMovieLikeClick(id : Long)
 
     fun onBackClick()

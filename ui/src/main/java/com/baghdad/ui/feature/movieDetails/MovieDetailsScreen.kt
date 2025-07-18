@@ -50,7 +50,11 @@ import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieDetailsHeader
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent
-import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.*
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateBack
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToActorDetails
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToCategoryMovies
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToReviews
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
@@ -136,7 +140,6 @@ private fun MovieDetailsContent(
                         }
                     )
                 }
-
             }
         )
 
@@ -171,7 +174,7 @@ private fun MovieDetailsContent(
                     onViewReviewClicked = {
                         listener.onReviewClick(state.movieId)
                     },
-                    onViewCategoryClicked = {listener.onCategoryClick(it)}
+                    onViewCategoryClicked = { listener.onCategoryClick(it) }
                 )
             }
 
@@ -186,7 +189,7 @@ private fun MovieDetailsContent(
                 ActorsSection(
                     actors = state.castes,
                     modifier = Modifier.offset(y = (-48).dp),
-                    onClick = {listener.onActorClick(id = it)}
+                    onClick = { listener.onActorClick(id = it) }
                 )
             }
 
@@ -200,7 +203,6 @@ private fun MovieDetailsContent(
                         .offset(y = (-48).dp)
                         .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
                 )
-
             }
 
             itemsIndexed(state.moreLikeThisMovie) { index, movieLikeThis ->
@@ -317,15 +319,13 @@ private fun handleEffect(
             NavigateToActorDetails(
                 actorId = effect.id
             )
-            )
-
+        )
 
         is MovieDetailsEffect.NavigateToCategory -> handleNavigation(
             NavigateToCategoryMovies(
                 categoryId = effect.id
             )
-            )
-
+        )
 
         is MovieDetailsEffect.NavigateToMovie -> handleNavigation(
             NavigateToMovieDetails(
@@ -342,7 +342,6 @@ private fun handleEffect(
         is MovieDetailsEffect.NavigateBack -> {
             handleNavigation(NavigateBack)
         }
-
 
         MovieDetailsEffect.NavigateBack -> handleNavigation(NavigateBack)
     }
