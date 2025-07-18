@@ -168,54 +168,62 @@ fun TvShowDetailsContent(
                 }
             }
 
-            item {
-                TvShowOverviewSection(
-                    overview = uiState.tvShowInfo.overView,
-                    onExpandedChange = { listener.onClickReadMoreOverview() },
-                    isExpanded = uiState.isTextExpanded,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+            if (uiState.tvShowInfo.overView.isEmpty()) {
+                item {
+                    TvShowOverviewSection(
+                        overview = uiState.tvShowInfo.overView,
+                        onExpandedChange = { listener.onClickReadMoreOverview() },
+                        isExpanded = uiState.isTextExpanded,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
             }
 
-            item {
-                CastMembersSection(
-                    actors = uiState.castMembers,
-                    onClickCastMember = { actorId ->
-                        actorId?.let { listener.onClickCastMember(it) }
-                    },
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+            if (uiState.castMembers.isNotEmpty()) {
+                item {
+                    CastMembersSection(
+                        actors = uiState.castMembers,
+                        onClickCastMember = { actorId ->
+                            actorId?.let { listener.onClickCastMember(it) }
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
             }
 
-            item {
-                SeasonSection(
-                    seasonCount = uiState.tvShowInfo.seasonCount,
-                    selectedSeasonIndex = uiState.selectedSeasonIndex,
-                    onSeasonSelected = { listener.onClickSeasonTab(it) },
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
 
-            item {
-                Text(
-                    text = "${uiState.episodes.size} Episodes",
-                    style = Theme.typography.label.small,
-                    color = Theme.color.hint,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 12.dp)
-                )
-            }
+            if (uiState.episodes.isNotEmpty()) {
+                item {
+                    SeasonSection(
+                        seasonCount = uiState.tvShowInfo.seasonCount,
+                        selectedSeasonIndex = uiState.selectedSeasonIndex,
+                        onSeasonSelected = { listener.onClickSeasonTab(it) },
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
 
-            item {
-                EpisodesSection(
-                    episodes = uiState.episodes,
-                    posterPictureUrl = uiState.tvShowInfo.posterPictureURL,
-                    onClickEpisode = { seasonNumber, episodeNumber ->
-                        listener.onClickEpisode(seasonNumber, episodeNumber)
-                    },
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+
+                item {
+                    Text(
+                        text = "${uiState.episodes.size} Episodes",
+                        style = Theme.typography.label.small,
+                        color = Theme.color.hint,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 12.dp)
+                    )
+                }
+
+                item {
+                    EpisodesSection(
+                        episodes = uiState.episodes,
+                        posterPictureUrl = uiState.tvShowInfo.posterPictureURL,
+                        onClickEpisode = { seasonNumber, episodeNumber ->
+                            listener.onClickEpisode(seasonNumber, episodeNumber)
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
             }
         }
 

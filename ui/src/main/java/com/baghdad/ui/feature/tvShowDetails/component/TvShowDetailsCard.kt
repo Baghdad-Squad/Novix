@@ -44,32 +44,38 @@ fun TvShowDetailsCard(
             .border(1.dp, Theme.color.stroke, shape = RoundedCornerShape(16.dp))
             .padding(12.dp)
     ) {
-        Text(
-            text = title,
-            style = Theme.typography.title.medium,
-            color = Theme.color.title,
-            modifier = Modifier.padding(bottom = 44.dp)
-        )
-        FlowRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            genres.forEachIndexed { index, genre ->
-                Text(
-                    text = genre.name,
-                    style = Theme.typography.label.small,
-                    color = Theme.color.body,
-                    modifier = Modifier
-                        .noRippleClickable { onGenreClick(genre.id) }
-                )
-                if (index < genres.size - 1) {
-                    CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+        if (title.isNotBlank()) {
+            Text(
+                text = title,
+                style = Theme.typography.title.medium,
+                color = Theme.color.title,
+                modifier = Modifier.padding(bottom = 44.dp)
+            )
+        }
+
+        if (genres.isNotEmpty()) {
+            FlowRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                genres.forEachIndexed { index, genre ->
+                    Text(
+                        text = genre.name,
+                        style = Theme.typography.label.small,
+                        color = Theme.color.body,
+                        modifier = Modifier
+                            .noRippleClickable { onGenreClick(genre.id) }
+                    )
+                    if (index < genres.size - 1) {
+                        CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+                    }
                 }
             }
         }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -81,11 +87,15 @@ fun TvShowDetailsCard(
                 icon = painterResource(R.drawable.ic_star_filled),
                 tint = Theme.color.yellowAccent
             )
-            CircleDot()
-            LabeledIconRow(
-                title = date,
-                icon = painterResource(R.drawable.ic_calender),
-            )
+
+            if (date.isNotBlank()) {
+                CircleDot()
+                LabeledIconRow(
+                    title = date,
+                    icon = painterResource(R.drawable.ic_calender),
+                )
+            }
+
             CircleDot()
             LabeledIconRow(
                 title = seasonsCount.toString(),
