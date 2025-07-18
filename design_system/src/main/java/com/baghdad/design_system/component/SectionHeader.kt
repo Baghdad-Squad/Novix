@@ -21,7 +21,7 @@ import com.baghdad.design_system.theme.Theme
 @Composable
 fun SectionHeader(
     title: String,
-    isShowAllVisiable: Boolean,
+    isShowAllVisible: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -38,7 +38,7 @@ fun SectionHeader(
             color = Theme.color.title
         )
 
-        if (isShowAllVisiable) {
+        if (isShowAllVisible) {
             Row(
                 modifier = Modifier.noRippleClickable { onClick() },
             ) {
@@ -65,7 +65,7 @@ fun SectionHeader(
 fun SectionHeaderPreview() {
     SectionHeader(
         title = "New arrival",
-        isShowAllVisiable = true,
+        isShowAllVisible = true,
         onClick = { }
     )
 }

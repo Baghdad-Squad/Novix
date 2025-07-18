@@ -64,7 +64,8 @@ class ActorDetailsViewModel(
     private fun onGetActorMoviesSuccess(movies: List<Movie>) {
         updateState { actorDetailsScreenState ->
             actorDetailsScreenState.copy(
-                topMoviesPicks = movies.map { it.toMovieUI() }
+                isMoviesMoreThanTen = movies.size > 10,
+                topMoviesPicks = movies.take(10).map { it.toMovieUI() }
             )
         }
     }
@@ -81,7 +82,8 @@ class ActorDetailsViewModel(
     private fun onGetActorTvShowsSuccess(tvShows: List<TvShow>) {
         updateState { actorDetailsScreenState ->
             actorDetailsScreenState.copy(
-                topTvShowsPicks = tvShows.map { it.toTvShowUI() }
+                isTvShowsMoreThanTen = tvShows.size > 10,
+                topTvShowsPicks = tvShows.take(10).map { it.toTvShowUI() }
             )
         }
     }
@@ -98,7 +100,8 @@ class ActorDetailsViewModel(
     private fun onGetActorGallerySuccess(gallery: List<String>) {
         updateState { actorDetailsScreenState ->
             actorDetailsScreenState.copy(
-                gallery = gallery
+                isGalleryMoreThanTen = gallery.size > 10,
+                gallery = gallery.take(10)
             )
         }
     }

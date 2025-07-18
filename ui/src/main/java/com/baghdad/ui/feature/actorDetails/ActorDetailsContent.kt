@@ -107,6 +107,7 @@ fun ActorDetailsContent(
             if (uiState.gallery.isNotEmpty()) {
                 GallerySection(
                     imageUrls = uiState.gallery,
+                    isMoreThanTen = uiState.isGalleryMoreThanTen,
                     onClickShowAll = { listener.onViewAllGalleryClick() },
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
@@ -120,6 +121,7 @@ fun ActorDetailsContent(
                     onSavedClick = { listener.onSaveMovieClick(it.id) },
                     onCardClick = { listener.onMovieCardClick(it.id) },
                     isSaved = { it.isSaved },
+                    isMoreThanTen = uiState.isMoviesMoreThanTen,
                     onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
@@ -132,6 +134,7 @@ fun ActorDetailsContent(
                     onSavedClick = { listener.onSaveTvShowClick(it.id) },
                     onCardClick = { listener.onTvShowCardClick(it.id) },
                     isSaved = { it.isSaved },
+                    isMoreThanTen = uiState.isTvShowsMoreThanTen,
                     onClickShowAll = { listener.onViewAllTopTvShowsClick() },
                 )
             }

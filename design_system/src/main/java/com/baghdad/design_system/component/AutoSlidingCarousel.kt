@@ -79,31 +79,32 @@ fun AutoSlidingImageCarousel(
                     }
             )
         }
-
-        AnimatedVisibility(
-            visible = indicatorVisibility,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 48.dp)
-        ) {
-            Row(
+        if (imageUrls.size > 1) {
+            AnimatedVisibility(
+                visible = indicatorVisibility,
                 modifier = Modifier
-
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Theme.color.iconBackgroundLow)
-                    .border(
-                        width = 1.dp,
-                        color = Theme.color.stroke,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.Center,
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 48.dp)
             ) {
-                CarousalDot(
-                    totalDots = imageUrls.size,
-                    selectedIndex = pagerState.currentPage,
+                Row(
                     modifier = Modifier
-                )
+
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Theme.color.iconBackgroundLow)
+                        .border(
+                            width = 1.dp,
+                            color = Theme.color.stroke,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    CarousalDot(
+                        totalDots = imageUrls.size,
+                        selectedIndex = pagerState.currentPage,
+                        modifier = Modifier
+                    )
+                }
             }
         }
     }
