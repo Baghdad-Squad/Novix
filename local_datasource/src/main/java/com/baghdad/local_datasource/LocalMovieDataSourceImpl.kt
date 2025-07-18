@@ -96,9 +96,4 @@ class LocalMovieDataSourceImpl(
         return genreDao.getGenresByIds(allGenreIds).associateBy { it.id }
     }
 
-    override suspend fun getMovieCountByTitle(title: String): Int {
-        return executeWithErrorHandling {
-            movieDao.getMovieCountBySearchQuery(title)
-        }
-    }
 }

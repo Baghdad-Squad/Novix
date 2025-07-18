@@ -98,11 +98,5 @@ class LocalTvShowDataSourceImpl(
         val allGenreIds = tvShows.flatMap { it.genres }.distinct()
         return genreDao.getGenresByIds(allGenreIds).associateBy { it.id }
     }
-
-    override suspend fun getTvShowCountByTitle(title: String): Int {
-        return executeWithErrorHandling {
-            tvShowDao.getTvShowCountBySearchQuery(title)
-        }
-    }
 }
 

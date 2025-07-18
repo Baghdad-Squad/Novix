@@ -13,5 +13,4 @@ interface LocalMovieDataSource {
     suspend fun deleteAllMovies()
     suspend fun updateMovie(newMovie: MovieDto)
     suspend fun searchMoviesByTitle(title: String, page: Int, pageSize: Int = 20): List<MovieDto>
-    suspend fun getMovieCountByTitle(title: String): Int
 }

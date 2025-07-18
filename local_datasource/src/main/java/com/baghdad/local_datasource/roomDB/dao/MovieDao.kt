@@ -44,16 +44,4 @@ interface MovieDao {
         offset: Int,
         mediaType: String = SearchQueryDto.MediaType.MOVIE.name
     ): List<Movie>
-
-    @Query(
-        """
-    SELECT COUNT(*) FROM Movie m
-    INNER JOIN search_query sq ON m.id = sq.mediaId
-    WHERE sq.queryName = :queryName AND sq.mediaType = :mediaType
-"""
-    )
-    suspend fun getMovieCountBySearchQuery(
-        queryName: String,
-        mediaType: String = SearchQueryDto.MediaType.MOVIE.name
-    ): Int
 }

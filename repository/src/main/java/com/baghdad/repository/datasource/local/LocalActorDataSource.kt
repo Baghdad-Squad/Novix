@@ -12,5 +12,4 @@ interface LocalActorDataSource {
     suspend fun deleteAllActors()
     suspend fun updateActor(actor: ActorDto)
     suspend fun searchActorsByName(name: String, page: Int, pageSize: Int = 20): List<ActorDto>
-    suspend fun getActorCountByName(name: String): Int
 }

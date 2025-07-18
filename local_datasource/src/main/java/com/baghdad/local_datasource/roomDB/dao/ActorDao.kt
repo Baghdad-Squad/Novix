@@ -44,18 +44,4 @@ interface ActorDao {
         offset: Int,
         mediaType: String = SearchQueryDto.MediaType.ACTOR.name
     ): List<Actor>
-
-
-    @Query(
-        """
-        SELECT COUNT(*) FROM Actor a
-        INNER JOIN search_query sq ON a.id = sq.mediaId
-        WHERE sq.queryName = :queryName AND sq.mediaType = :mediaType
-        """
-    )
-    suspend fun getActorCountBySearchQuery(
-        queryName: String,
-        mediaType: String = SearchQueryDto.MediaType.ACTOR.name
-    ): Int
-
 }

@@ -60,10 +60,4 @@ class LocalActorDataSourceImpl(
             val pageOffset = calculatePageOffset(pageSize, page)
             actorDao.getActorsFromSearchQuery(name, pageSize, pageOffset).map(Actor::toDto)
         }
-
-    override suspend fun getActorCountByName(name: String): Int {
-        return executeWithErrorHandling {
-            actorDao.getActorCountBySearchQuery(name)
-        }
-    }
 }

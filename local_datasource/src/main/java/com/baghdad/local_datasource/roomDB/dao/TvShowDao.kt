@@ -42,17 +42,4 @@ interface TvShowDao {
         offset: Int,
         mediaType: String = SearchQueryDto.MediaType.TV_SHOW.name
     ): List<TvShow>
-
-    @Query(
-        """
-    SELECT COUNT(*) FROM TvShow t
-    INNER JOIN search_query sq ON t.id = sq.mediaId
-    WHERE sq.queryName = :queryName AND sq.mediaType = :mediaType
-"""
-    )
-    suspend fun getTvShowCountBySearchQuery(
-        queryName: String,
-        mediaType: String = SearchQueryDto.MediaType.TV_SHOW.name
-    ): Int
-
 }
