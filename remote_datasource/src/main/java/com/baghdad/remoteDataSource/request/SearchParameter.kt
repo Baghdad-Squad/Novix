@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource.request
 
+
 data class SearchParameter(
     val query: String,
     val pageNumber: Int = 1,
