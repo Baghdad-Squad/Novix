@@ -35,6 +35,16 @@ class RemoteSearchDataSourceImpl(
         return searchResponse.toPagedMovieDtos(genres = genres)
     }
 
+    override suspend fun getMoviesResultCount(title: String): Int {
+        val params = SearchParameter(title, 1)
+        val searchResponse = handleRequest<MovieSearchResponse>(
+            client = httpClient,
+            url = "$baseUrl$SEARCH_MOVIES_ENDPOINT",
+            params = params.toParams(),
+        )
+        return searchResponse.totalResults ?: 0
+    }
+
     override suspend fun searchTvShows(
         query: String,
         page: Int,
@@ -47,6 +57,16 @@ class RemoteSearchDataSourceImpl(
             params = params.toParams(),
         )
         return searchResponse.toPagedTvShowDtos(genres = genres)
+    }
+
+    override suspend fun getTvShowsResultCount(title: String): Int {
+        val params = SearchParameter(title, 1)
+        val searchResponse = handleRequest<TvShowSearchResponse>(
+            client = httpClient,
+            url = "$baseUrl$SEARCH_TV_SHOWS_ENDPOINT",
+            params = params.toParams(),
+        )
+        return searchResponse.totalResults ?: 0
     }
 
     override suspend fun searchActors(
@@ -62,11 +82,11 @@ class RemoteSearchDataSourceImpl(
         return searchResponse.toPagedActorDtos()
     }
 
-    override suspend fun getMoviesResultCount(title: String): Int {
-        val params = SearchParameter(title, 1)
-        val searchResponse = handleRequest<MovieSearchResponse>(
+    override suspend fun getActorsResultCount(name: String): Int {
+        val params = SearchParameter(name, 1)
+        val searchResponse = handleRequest<ActorSearchResponse>(
             client = httpClient,
-            url = "$baseUrl$SEARCH_MOVIES_ENDPOINT",
+            url = "$baseUrl$SEARCH_ACTORS_ENDPOINT",
             params = params.toParams(),
         )
         return searchResponse.totalResults ?: 0

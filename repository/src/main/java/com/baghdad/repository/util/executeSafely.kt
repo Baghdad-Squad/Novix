@@ -50,32 +50,54 @@ suspend fun <TEntity, TDto> executePagedCachedOperation(
     page: Int,
     pageSize: Int = 20,
     onStart: (suspend () -> Unit)? = null,
-    shouldFetchFromRemote: suspend () -> Boolean,
-    fetchFromRemote: suspend () -> PagedResultDto<TDto>,
-    cacheRemoteData: suspend (List<TDto>) -> Unit,
-    fetchFromLocal: suspend () -> List<TDto>,
-    getTotalCachedCount: suspend () -> Int,
+    getCachedTotalCount: suspend () -> Int,
+    getRemoteTotalCount: suspend () -> Int,
+    getCachedPage: suspend (Int, Int) -> List<TDto>,
+    getRemoteData: suspend (Int, Int) -> PagedResultDto<TDto>,
+    cacheData: suspend (List<TDto>) -> Unit,
     mapToEntity: (TDto) -> TEntity
 ): PagedResult<TEntity> {
-    return executeSafely {
-        onStart?.invoke()
-        var hasNextPage = false
-
-        if (shouldFetchFromRemote()) {
-            val response = fetchFromRemote()
-            hasNextPage = response.nextKey != null
-            cacheRemoteData(response.data)
+    onStart?.invoke()
+    val totalCachedCount = getCachedTotalCount()
+    if (totalCachedCount >= (page * pageSize)) {
+        val localData = getCachedPage(page, pageSize)
+        if ((page * pageSize) < totalCachedCount) {
+            return PagedResult(
+                data = localData.map(mapToEntity),
+                nextKey = if ((page * pageSize) < totalCachedCount) page + 1 else null,
+                prevKey = if (page > 1) page - 1 else null
+            )
+        } else {
+            val remoteTotalCount = getRemoteTotalCount()
+            return PagedResult(
+                data = localData.map(mapToEntity),
+                nextKey = if (totalCachedCount < remoteTotalCount) page + 1 else null,
+                prevKey = if (page > 1) page - 1 else null
+            )
         }
-
-        val localData = fetchFromLocal()
-        val totalCachedCount = getTotalCachedCount()
-
-        hasNextPage = hasNextPage || (page * pageSize) < totalCachedCount
-
-        PagedResult(
-            data = localData.map(mapToEntity),
-            nextKey = if (hasNextPage) page + 1 else null,
-            prevKey = if (page > 1) page - 1 else null
-        )
+    } else {
+        val remoteTotalCount = getRemoteTotalCount()
+        val remoteData = getRemoteData(page, pageSize)
+        if (totalCachedCount < remoteTotalCount) {
+            cacheData(remoteData.data)
+        }
+        val localData = getCachedPage(page, pageSize)
+        return if ((page * pageSize) < totalCachedCount) {
+            PagedResult(
+                data = localData.map(mapToEntity),
+                nextKey = if ((page * pageSize) < totalCachedCount) page + 1 else null,
+                prevKey = if (page > 1) page - 1 else null
+            )
+        } else {
+            Log.d(
+                "testExecutePagedCachedOperation",
+                "Remote total count: $remoteTotalCount, Cached total count: $totalCachedCount"
+            )
+            PagedResult(
+                data = localData.map(mapToEntity),
+                nextKey = if (totalCachedCount < remoteTotalCount) page + 1 else null,
+                prevKey = if (page > 1) page - 1 else null
+            )
+        }
     }
 }

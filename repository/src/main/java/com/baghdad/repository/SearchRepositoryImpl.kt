@@ -23,7 +23,6 @@ import com.baghdad.repository.util.executePagedCachedOperation
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getFlowSafely
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.util.Locale
 
@@ -47,28 +46,27 @@ class SearchRepositoryImpl(
             page = page,
             pageSize = pageSize,
             mapToEntity = ActorDto::toEntity,
-            shouldFetchFromRemote = {
-                !isUserSearchThisTermWithinHour(name) ||
-                        !hasEnoughCachedDataForPage(
-                            page = page,
-                            pageSize = pageSize,
-                            getCachedCount = { localActorDataSource.getActorCountByName(name) }
-                        )
-            },
-            fetchFromRemote = {
-                searchRemoteDataSource.searchActors(name, page)
-            },
-            cacheRemoteData = { data ->
-                cacheActorSearchResult(isFirstSearch = page == 1, name, data)
-            },
-            fetchFromLocal = {
-                localActorDataSource.searchActorsByName(name, page, pageSize)
-            },
-            getTotalCachedCount = {
-                localActorDataSource.getActorCountByName(name)
-            },
             onStart = {
                 deleteInvalidCacheOfMoreThanOneHour()
+            },
+            getCachedTotalCount = { localActorDataSource.getActorCountByName(name) },
+            getRemoteTotalCount = { searchRemoteDataSource.getActorsResultCount(name) },
+            getCachedPage = { page, pageSize ->
+                localActorDataSource.searchActorsByName(
+                    name,
+                    page,
+                    pageSize
+                )
+            },
+            getRemoteData = { page, _ ->
+                searchRemoteDataSource.searchActors(query = name, page = page)
+            },
+            cacheData = {
+                cacheActorSearchResult(
+                    isFirstSearch = page == 1,
+                    query = name,
+                    actors = it
+                )
             }
         )
     }
@@ -90,40 +88,33 @@ class SearchRepositoryImpl(
     ): PagedResult<Movie> {
         return executePagedCachedOperation(
             page = page,
-            pageSize = 20,
+            pageSize = pageSize,
             mapToEntity = MovieDto::toEntity,
-            shouldFetchFromRemote = {
-                !isUserSearchThisTermWithinHour(title) ||
-                        !hasEnoughCachedDataForPage(
-                            page = page,
-                            pageSize = pageSize,
-                            getCachedCount = { localMovieDataSource.getMovieCountByTitle(title) }
-                        )
-            },
-            fetchFromRemote = {
-                updateGenreCache()
-                val genres = localGenreDataSource.getMovieGenre(Locale.getDefault().language)
-                searchRemoteDataSource.searchMovies(title, page, genres)
-            },
-            cacheRemoteData = { data ->
-                cacheMovieSearchResult(isFirstSearch = page == 1, title, data)
-            },
-            fetchFromLocal = {
-                localMovieDataSource.searchMoviesByTitle(title, page, pageSize)
-            },
-            getTotalCachedCount = {
-                localMovieDataSource.getMovieCountByTitle(title)
-            },
             onStart = {
                 deleteInvalidCacheOfMoreThanOneHour()
+            },
+            getCachedTotalCount = { localMovieDataSource.getMovieCountByTitle(title) },
+            getRemoteTotalCount = { searchRemoteDataSource.getMoviesResultCount(title) },
+            getCachedPage = { page, pageSize ->
+                localMovieDataSource.searchMoviesByTitle(
+                    title,
+                    page,
+                    pageSize
+                )
+            },
+            getRemoteData = { page, _ ->
+                updateGenreCache()
+                val genres = localGenreDataSource.getMovieGenre(Locale.getDefault().language)
+                searchRemoteDataSource.searchMovies(query = title, page = page, genres)
+            },
+            cacheData = {
+                cacheMovieSearchResult(
+                    isFirstSearch = page == 1,
+                    query = title,
+                    movies = it
+                )
             }
         )
-    }
-
-    private suspend fun hasLessMovieCacheThanRemote(title: String): Boolean {
-        val cachedMoviesCount = localMovieDataSource.getMovieCountByTitle(title)
-        val remoteCount = searchRemoteDataSource.getMoviesResultCount(title)
-        return cachedMoviesCount < remoteCount
     }
 
     private suspend fun cacheMovieSearchResult(
@@ -145,30 +136,29 @@ class SearchRepositoryImpl(
             page = page,
             pageSize = pageSize,
             mapToEntity = TvShowDto::toEntity,
-            shouldFetchFromRemote = {
-                !isUserSearchThisTermWithinHour(title) ||
-                        !hasEnoughCachedDataForPage(
-                            page = page,
-                            pageSize = pageSize,
-                            getCachedCount = { localTvShowDataSource.getTvShowCountByTitle(title) }
-                        )
-            },
-            fetchFromRemote = {
-                updateGenreCache()
-                val genres = localGenreDataSource.getTvShowGenre(Locale.getDefault().language)
-                searchRemoteDataSource.searchTvShows(title, page, genres)
-            },
-            cacheRemoteData = { data ->
-                cacheTvShowSearchResult(isFirstSearch = page == 1, title, data)
-            },
-            fetchFromLocal = {
-                localTvShowDataSource.searchTvShowsByTitle(title, page, pageSize)
-            },
-            getTotalCachedCount = {
-                localTvShowDataSource.getTvShowCountByTitle(title)
-            },
             onStart = {
                 deleteInvalidCacheOfMoreThanOneHour()
+            },
+            getCachedTotalCount = { localTvShowDataSource.getTvShowCountByTitle(title) },
+            getRemoteTotalCount = { searchRemoteDataSource.getTvShowsResultCount(title) },
+            getCachedPage = { page, pageSize ->
+                localTvShowDataSource.searchTvShowsByTitle(
+                    title,
+                    page,
+                    pageSize
+                )
+            },
+            getRemoteData = { page, _ ->
+                updateGenreCache()
+                val genres = localGenreDataSource.getTvShowGenre(Locale.getDefault().language)
+                searchRemoteDataSource.searchTvShows(query = title, page = page, genres)
+            },
+            cacheData = {
+                cacheTvShowSearchResult(
+                    isFirstSearch = page == 1,
+                    query = title,
+                    tvShows = it
+                )
             }
         )
     }
@@ -181,16 +171,6 @@ class SearchRepositoryImpl(
         if (isFirstSearch) localRecentSearchDataSource.addRecentSearchQuery(query)
         localTvShowDataSource.addTvShows(tvShows)
         localSearchQueryDataSource.addSearchQueries(tvShows.map { it.toSearchQueryDto(query) })
-    }
-
-    private suspend fun hasEnoughCachedDataForPage(
-        page: Int,
-        pageSize: Int,
-        getCachedCount: suspend () -> Int
-    ): Boolean {
-        val requiredItemsCount = page * pageSize
-        val cachedCount = getCachedCount()
-        return cachedCount >= requiredItemsCount
     }
 
 
@@ -228,13 +208,6 @@ class SearchRepositoryImpl(
     override suspend fun deleteAllRecentSearches() {
         return executeSafely {
             localRecentSearchDataSource.deleteAllRecentSearches()
-        }
-    }
-
-    private suspend fun isUserSearchThisTermWithinHour(query: String): Boolean {
-        val recentSearches = localRecentSearchDataSource.getAllRecentSearches().first()
-        return recentSearches.any {
-            it.query == query && (System.currentTimeMillis() - it.searchedAt) < 3600000
         }
     }
 }
