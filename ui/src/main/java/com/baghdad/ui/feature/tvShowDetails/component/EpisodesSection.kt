@@ -29,6 +29,7 @@ import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 @Composable
 fun EpisodesSection(
     episodes: List<TvShowDetailsScreenState.EpisodeUiState>,
+    posterPictureUrl: String,
     onClickEpisode: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -41,7 +42,7 @@ fun EpisodesSection(
         episodes.forEach { episode ->
             EpisodeCard(
                 episodeNumber = episode.episodeNumber,
-                imageUrl = episode.imageUrl,
+                imageUrl = posterPictureUrl,
                 episodeName = episode.name,
                 releaseDate = episode.releaseDate,
                 duration = episode.duration,

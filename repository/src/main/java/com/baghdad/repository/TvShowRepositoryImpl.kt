@@ -52,7 +52,7 @@ class TvShowRepositoryImpl(
         }
     }
 
-    override suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<Episode>{
+    override suspend fun getTvShowSeasonEpisodes(tvId: Long, seasonNumber: Int): List<Episode> {
         return executeSafely {
             tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber).map {
                 it.toEntity()

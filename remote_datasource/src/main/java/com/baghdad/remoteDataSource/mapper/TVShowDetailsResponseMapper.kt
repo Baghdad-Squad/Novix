@@ -21,6 +21,8 @@ fun TVShowDetailsResponse.toDto(): TvShowDto {
         releaseDate = this.firstAirDate ?: "0001-01-01",
         overview = this.overview.orEmpty(),
         posterPictureURL = this.posterPath.orEmpty(),
-        numberOfSeasons = this.numberOfSeasons ?: 0
+        numberOfSeasons = this.numberOfSeasons ?: 0,
+        headerPictures = emptyList()
+
     )
 }

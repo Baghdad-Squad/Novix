@@ -210,6 +210,7 @@ fun TvShowDetailsContent(
             item {
                 EpisodesSection(
                     episodes = uiState.episodes,
+                    posterPictureUrl = uiState.tvShowInfo.posterPictureURL,
                     onClickEpisode = { seasonNumber, episodeNumber ->
                         listener.onClickEpisode(seasonNumber, episodeNumber)
                     },

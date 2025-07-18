@@ -12,7 +12,8 @@ fun TvShow.toUiState() = TvShowDetailsScreenState.TvShowInfoUiState(
     releaseDate = releaseDate.toString(),
     seasonCount = numberOfSeasons,
     overView = overview,
-    headerPictures = headerPictures
+    headerPictures = headerPictures,
+    posterPictureURL = posterImageURL
 )
 
 fun Genre.toUiState() = TvShowDetailsScreenState.GenreUiState(
@@ -35,5 +36,4 @@ fun Episode.toUiState() = TvShowDetailsScreenState.EpisodeUiState(
     duration = duration,
     releaseDate = releasedDate.toString(),
     currentSeason = currentSeason,
-    imageUrl = imageUrl
 )
