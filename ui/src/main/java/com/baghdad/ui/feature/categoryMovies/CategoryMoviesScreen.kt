@@ -29,14 +29,14 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesEffect
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesState
-import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModelMovies
+import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun CategoryMoviesScreen(
     categoryId: Long,
-    viewModel: CategoryMoviesViewModelMovies = koinViewModel(
+    viewModel: CategoryMoviesViewModel = koinViewModel(
         key = categoryId.toString(),
         parameters = { parametersOf(categoryId) }
     ),
@@ -67,7 +67,7 @@ private fun handleEffect(
 @Composable
 private fun CategoryMoviesContent(
     uiState: CategoryMoviesState,
-    listener: CategoryMoviesViewModelMovies,
+    listener: CategoryMoviesViewModel,
 ) {
     Scaffold(
         topBar = {
