@@ -49,7 +49,8 @@ fun ActorCardDetails(
                 birthPlace = birthPlace
             )
                 ActorStatus(
-                    birthPlace = birthDate,
+                    birthPlace = birthPlace,
+                    birthDate = birthDate,
                     deathDate = deathDate
                 )
             }
@@ -66,7 +67,7 @@ private fun CardPreview() {
             characterRole = "Acting",
             birthPlace = "Santa Cruz del Norte, Cuba",
             birthDate = "1988-04-30",
-            deathDate = " - 2012-30-03"
+            deathDate = "2012-30-03"
         )
     }
 

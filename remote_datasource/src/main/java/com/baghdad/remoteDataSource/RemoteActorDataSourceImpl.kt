@@ -9,8 +9,7 @@ import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.TvShowDto
-import com.baghdad.repository.model.actor.ActorDto
-import com.baghdad.repository.model.actor.ActorImagesDto
+import com.baghdad.repository.model.ActorDto
 import io.ktor.client.HttpClient
 
 class RemoteActorDataSourceImpl(
@@ -24,11 +23,11 @@ class RemoteActorDataSourceImpl(
         ).toDto()
     }
 
-    override suspend fun getActorImages(personId: Long): ActorImagesDto {
+    override suspend fun getActorImages(personId: Long): List<String> {
         return handleRequest<ActorImagesResponse>(
             client = httpClient,
             url = "$baseUrl${PERSON_IMAGES_ENDPOINT.replace("{person_id}", personId.toString())}"
-        ).toDto()
+        ).profiles.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
 
     override suspend fun getActorMovies(personId: Long): List<MovieDto> {
