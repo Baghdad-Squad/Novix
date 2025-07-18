@@ -10,5 +10,8 @@ interface MovieDetailsInteractionListener {
 
     fun onExtendOverviewClick()
 
+    fun onCategoryClick(categoryId: Long)
+
+    fun onBackClicked()
 
 }
