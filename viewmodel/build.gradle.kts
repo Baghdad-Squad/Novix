@@ -48,5 +48,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.paging.common.android)
     testImplementation(libs.bundles.test.core)
+    implementation("androidx.paging:paging-runtime:3.3.6")
 }

@@ -33,6 +33,8 @@
     <string name="top_tv_shows_picks">Top tv shows picks</string>
     <string name="top_movies_picks">Top movies picks</string>
     <string name="reviews">Reviews</string>
+    <string name="an_error_occurred">An error occurred</string>
+    <string name="retry">Retry</string>
     <string name="overview">Overview</string>
     <string name="cast">Cast</string>
     <string name="season">Season</string>

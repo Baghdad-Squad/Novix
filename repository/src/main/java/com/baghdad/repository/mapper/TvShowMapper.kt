@@ -1,6 +1,7 @@
 package com.baghdad.repository.mapper
 
 import com.baghdad.entity.media.TvShow
+import com.baghdad.repository.model.SearchQueryDto
 import com.baghdad.repository.model.TvShowDto
 import kotlinx.datetime.LocalDate
 
@@ -17,5 +18,13 @@ fun TvShowDto.toEntity(): TvShow {
         posterImageURL = posterPictureURL,
         numberOfSeasons = numberOfSeasons,
         headerPictures = headerPictures
+    )
+}
+
+fun TvShowDto.toSearchQueryDto(query: String): SearchQueryDto {
+    return SearchQueryDto(
+        queryName = query,
+        mediaId = id,
+        mediaType = SearchQueryDto.MediaType.TV_SHOW
     )
 }

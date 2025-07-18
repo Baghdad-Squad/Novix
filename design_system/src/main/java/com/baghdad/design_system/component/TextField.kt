@@ -55,6 +55,7 @@ fun NovixTextField(
     singleLine: Boolean = true,
     isTextMasked: Boolean = false,
     trailingVisibility: Boolean = false,
+    maxLength: Int = Int.MAX_VALUE,
     maxLines: Int = 1,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -107,7 +108,13 @@ fun NovixTextField(
             ) {
                 BasicTextField(
                     value = value,
-                    onValueChange = onValueChange,
+                    onValueChange = {
+                        if (it.length <= maxLength) {
+                            onValueChange(it)
+                        } else {
+                            onValueChange(it.take(maxLength))
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester)

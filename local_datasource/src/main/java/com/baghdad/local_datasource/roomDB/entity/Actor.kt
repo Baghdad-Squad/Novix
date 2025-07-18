@@ -6,7 +6,7 @@ import com.baghdad.repository.model.ActorDto
 
 @Entity(tableName = "Actor")
 data class Actor(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
+    @PrimaryKey val id: Long = 0L,
     val name: String,
     val profilePictureURL: String,
     val birthDate: String,
@@ -29,7 +29,7 @@ fun Actor.toDto(): ActorDto = ActorDto(
     department = this.department,
 )
 
-fun ActorDto.toDto(): Actor = Actor(
+fun ActorDto.toEntity(): Actor = Actor(
     id = this.id,
     name = this.name,
     profilePictureURL = this.imageUrl,

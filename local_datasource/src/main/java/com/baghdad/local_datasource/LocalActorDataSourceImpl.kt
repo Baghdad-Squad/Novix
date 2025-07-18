@@ -3,7 +3,9 @@ package com.baghdad.local_datasource
 import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.entity.Actor
 import com.baghdad.local_datasource.roomDB.entity.toDto
+import com.baghdad.local_datasource.roomDB.entity.toEntity
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
+import com.baghdad.local_datasource.util.calculatePageOffset
 import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.model.ActorDto
 import kotlinx.coroutines.flow.Flow
@@ -12,21 +14,16 @@ import kotlinx.coroutines.flow.map
 class LocalActorDataSourceImpl(
     private val actorDao: ActorDao
 ) : LocalActorDataSource {
-    override suspend fun addActor(name: String, imageUrl: String) =
+    override suspend fun addActor(actor: ActorDto) =
         executeWithErrorHandling {
-            val actor = Actor(
-                /*TODO replace with real data */
-                name = name,
-                profilePictureURL = imageUrl,
-                birthDate = "2025-11-11",
-                deathDate = null,
-                biography = "",
-                placeOfBirth = "",
-                headerPictures = emptyList(),
-                department = "",
-            )
-            actorDao.upsertActor(actor)
+            actorDao.upsertActor(actor.toEntity())
         }
+
+    override suspend fun addActors(actors: List<ActorDto>) {
+        executeWithErrorHandling {
+            actorDao.upsertActors(actors.map(ActorDto::toEntity))
+        }
+    }
 
     override suspend fun deleteActorById(id: Long) =
         executeWithErrorHandling {
@@ -54,14 +51,13 @@ class LocalActorDataSourceImpl(
 
     override suspend fun updateActor(actor: ActorDto) =
         executeWithErrorHandling {
-            val actorEntity = actor.toDto()
+            val actorEntity = actor.toEntity()
             actorDao.upsertActor(actorEntity)
         }
 
-    override suspend fun searchActorsByName(name: String) =
+    override suspend fun searchActorsByName(name: String, page: Int, pageSize: Int) =
         executeWithErrorHandling {
-            actorDao.searchActorsByName(name).map {
-                it.toDto()
-            }
+            val pageOffset = calculatePageOffset(pageSize, page)
+            actorDao.getActorsFromSearchQuery(name, pageSize, pageOffset).map(Actor::toDto)
         }
-    }
+}

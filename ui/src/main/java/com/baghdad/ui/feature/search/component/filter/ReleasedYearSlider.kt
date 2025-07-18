@@ -20,8 +20,8 @@ import com.baghdad.design_system.theme.Theme
 
 @Composable
 fun ReleasedYearSlider(
-    minimumYear: Int,
-    maximumYear: Int,
+    minimumYear: Int?,
+    maximumYear: Int?,
     onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -43,17 +43,17 @@ fun ReleasedYearSlider(
         )
 
         BaseRangeSlider(
-            value = minimumYear.toFloat()..maximumYear.toFloat(),
+            value = (minimumYear?.toFloat() ?: 1900f)..(maximumYear?.toFloat() ?: 2035f),
             onValueChange = onValueChange,
-            valueRange = 1990f..2025f,
+            valueRange = 1900f..2035f,
         )
     }
 }
 
 @Composable
 fun MinMaxReleaseYear(
-    minimumYear: Int,
-    maximumYear: Int,
+    minimumYear: Int?,
+    maximumYear: Int?,
     modifier: Modifier = Modifier
 ) {
     val isArabic = isCurrentLocaleArabic()
@@ -66,12 +66,14 @@ fun MinMaxReleaseYear(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = if (isArabic) minimumYear.toArabicNumerals() else minimumYear.toString(),
+                text = minimumYear?.let { if (isArabic) it.toArabicNumerals() else it.toString() }
+                    ?: stringResource(R.string.not_set),
                 color = Theme.color.body,
                 style = Theme.typography.label.small,
             )
             Text(
-                text = if (isArabic) maximumYear.toArabicNumerals() else maximumYear.toString(),
+                text = maximumYear?.let { if (isArabic) it.toArabicNumerals() else it.toString() }
+                    ?: stringResource(R.string.not_set),
                 color = Theme.color.body,
                 style = Theme.typography.label.small,
             )

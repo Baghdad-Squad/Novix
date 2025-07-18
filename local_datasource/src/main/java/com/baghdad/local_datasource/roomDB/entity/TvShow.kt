@@ -52,3 +52,12 @@ fun TvShowDto.toLocalDto(): TvShow {
         headerPictures = this.headerPictures
     )
 }
+
+fun List<TvShow>.toDtos(genresMap: Map<Long, Genre>): List<TvShowDto> {
+    return this.map { tvShow ->
+        val genres = tvShow.genres.mapNotNull { genreId ->
+            genresMap[genreId]?.toDto()
+        }
+        tvShow.toDto(genres)
+    }
+}

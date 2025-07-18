@@ -1,5 +1,6 @@
 package com.baghdad.novix.di
 
+import com.baghdad.domain.util.SearchFilterHelper
 import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
@@ -15,6 +16,10 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModelOf(::SearchViewModel)
+    single { SearchFilterHelper() }
+    viewModel { (actorId: Long) ->
+        ActorGalleryViewModel(get(), actorId)
+    }
     viewModel { (id: Long) ->
         MovieDetailsViewModel(
             movieId = id,
@@ -24,10 +29,6 @@ val viewModelModule = module {
             getMoreLikeThisPosterImageUseCase = get(),
             getMovieCategoryUseCase = get()
         )
-    }
-
-    viewModel {
-        (actorId: Long) -> ActorGalleryViewModel(get(), actorId)
     }
     viewModel { (actorId: Long) ->
         ActorDetailsViewModel(actorId, get(), get(), get(), get())

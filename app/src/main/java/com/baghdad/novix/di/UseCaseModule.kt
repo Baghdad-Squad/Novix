@@ -20,7 +20,9 @@ import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
-import com.baghdad.domain.usecase.search.SearchUseCase
+import com.baghdad.domain.usecase.search.SearchActorsUseCase
+import com.baghdad.domain.usecase.search.SearchMoviesUseCase
+import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowImagesUseCase
@@ -37,7 +39,6 @@ val useCaseModule = module {
     singleOf(::DeleteAllRecentSearchesUseCase)
     singleOf(::DeleteRecentSearchUseCase)
     singleOf(::GetRecentSearchesUseCase)
-    singleOf(::SearchUseCase)
     singleOf(::GetActorInfoUseCase)
     singleOf(::GetActorMoviesUseCase)
     singleOf(::GetActorTvShowUseCase)
@@ -54,7 +55,10 @@ val useCaseModule = module {
     singleOf(::GetEpisodeCastMembersUseCase)
     singleOf(::GetMovieReviewsUseCase)
     singleOf(::GetTvShowReviewsUseCase)
-    singleOf(::GetMovieGalleryUseCase)
     singleOf(::GetMovieCategoryUseCase)
+    singleOf(::SearchMoviesUseCase)
+    singleOf(::SearchTvShowsUseCase)
+    singleOf(::SearchActorsUseCase)
+    singleOf(::GetMovieGalleryUseCase)
 }
 

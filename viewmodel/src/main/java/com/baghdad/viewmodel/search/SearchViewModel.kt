@@ -1,7 +1,6 @@
 package com.baghdad.viewmodel.search
 
 import com.baghdad.domain.model.search.RecentlyViewed
-import com.baghdad.domain.model.search.SearchResult
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
@@ -9,7 +8,9 @@ import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
-import com.baghdad.domain.usecase.search.SearchUseCase
+import com.baghdad.domain.usecase.search.SearchActorsUseCase
+import com.baghdad.domain.usecase.search.SearchMoviesUseCase
+import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -18,6 +19,7 @@ import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOf
 
 class SearchViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -27,11 +29,14 @@ class SearchViewModel(
     private val deleteAllRecentlyViewedUseCase: DeleteAllRecentlyViewedUseCase,
     private val deleteAllRecentSearchesUseCase: DeleteAllRecentSearchesUseCase,
     private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase,
-    private val searchUseCase: SearchUseCase,
+    private val searchMoviesUseCase: SearchMoviesUseCase,
+    private val searchTvShowsUseCase: SearchTvShowsUseCase,
+    private val searchActorsUseCase: SearchActorsUseCase
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
     private var searchJob: Job? = null
-
+    private var lastSearch: String = ""
+    private var tabChanged = false
     init {
         getRecentSearches()
         getRecentViewed()
@@ -41,6 +46,95 @@ class SearchViewModel(
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
+    }
+
+    override fun onSearchTextChanged(text: String) {
+        val trimmed = text.trim()
+        updateState { it.copy(searchText = text, isUserTyping = true) }
+
+        if (trimmed == lastSearch && !tabChanged) return
+
+        searchJob?.cancel()
+        lastSearch = trimmed
+
+        if (trimmed.isBlank()) {
+            clearAllPagingFlows()
+            return
+        }
+
+        searchJob = tryToExecute(
+            onStart = { handleSearchStart() },
+            callee = { performSearchByTab(trimmed) },
+        )
+    }
+
+    private fun performSearchByTab(text: String) {
+        when (currentState.selectedSearchTab) {
+            SearchScreenState.SearchTab.MOVIES -> searchMovies(text)
+            SearchScreenState.SearchTab.TV_SHOWS -> searchTvShows(text)
+            SearchScreenState.SearchTab.ACTORS -> searchActors(text)
+        }
+        tabChanged = false
+    }
+
+    private fun searchMovies(text: String) {
+        collectPagingFlow(
+            loadData = { page ->
+                searchMoviesUseCase(
+                    query = text,
+                    filter = currentState.bottomSheetUiState.moviesFilter.toSearchFilter(),
+                    page = page
+                )
+            },
+            onInitialLoadFinished = ::onFinally,
+            mapEntityToUiState = { it.toMovieUI() },
+            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } }
+        )
+    }
+
+    private fun searchTvShows(text: String) {
+        collectPagingFlow(
+            loadData = { page ->
+                searchTvShowsUseCase(
+                    query = text,
+                    filter = currentState.bottomSheetUiState.tvShowsFilter.toSearchFilter(),
+                    page = page
+                )
+            },
+            onInitialLoadFinished = ::onFinally,
+            mapEntityToUiState = { it.toTvShowUI() },
+            onFlowCreated = { tvShowsFlow -> updateState { it.copy(tvShowsFlow = tvShowsFlow) } }
+        )
+    }
+
+    private fun searchActors(text: String) {
+        collectPagingFlow(
+            loadData = { page ->
+                searchActorsUseCase(
+                    query = text,
+                    page = page
+                )
+            },
+            onInitialLoadFinished = ::onFinally,
+            mapEntityToUiState = { it.toActorUI() },
+            onFlowCreated = { actorsFlow -> updateState { it.copy(actorsFlow = actorsFlow) } }
+        )
+    }
+
+    private fun clearAllPagingFlows() {
+        updateState {
+            it.copy(
+                moviesFlow = flowOf(),
+                tvShowsFlow = flowOf(),
+                actorsFlow = flowOf()
+            )
+        }
+    }
+
+    private suspend fun handleSearchStart() {
+        delay(SEARCH_DEBOUNCED_DELAY)
+        updateState { it.copy(isUserTyping = false) }
+        onLoading()
     }
 
     private fun getRecentViewed() {
@@ -100,19 +194,6 @@ class SearchViewModel(
         )
     }
 
-    private fun getRecentlyViewed() {
-        tryToCollect(
-            flowProvider = { getRecentlyViewedUseCase.invoke() },
-            onNewValue = { newValues ->
-                updateState {
-                    it.copy(recentViewed = newValues.map { it.toRecentlyViewedUI() }.distinctBy {
-                        it.id
-                    })
-                }
-            },
-            onError = {},
-        )
-    }
 
     private fun onGetTvShowGenresSuccess(genres: List<Genre>) {
         updateState { searchScreenState ->
@@ -121,49 +202,6 @@ class SearchViewModel(
                     tvShowsFilter = searchScreenState.bottomSheetUiState.tvShowsFilter.copy(
                         allGenres = genres.map { it.toGenreUI() })
                 )
-            )
-        }
-    }
-
-    override fun onSearchTextChanged(text: String) {
-        updateState { it.copy(searchText = text) }
-        searchJob?.cancel()
-        if (text.isNotBlank()) {
-            searchJob = tryToExecute(
-                onStart = {
-                delay(SEARCH_DEBOUNCED_DELAY)
-                onLoading()
-            },
-                callee = { performSearch(text) },
-                onSuccess = ::onSearchSuccess,
-                onFinally = ::onFinally
-            )
-        } else {
-            clearSearchResults()
-        }
-    }
-
-    private suspend fun performSearch(query: String) = searchUseCase(
-        query = query,
-        moviesFilter = currentState.bottomSheetUiState.moviesFilter.toSearchFilter(),
-        tvShowsFilter = currentState.bottomSheetUiState.tvShowsFilter.toSearchFilter()
-    )
-
-    private fun clearSearchResults() {
-        updateState {
-            it.copy(
-                movies = emptyList(), tvShows = emptyList(), actors = emptyList()
-            )
-        }
-    }
-
-    private fun onSearchSuccess(searchResult: SearchResult) {
-        val movieUiState = searchResult.movies.map { it.toMovieUI() }
-        val actorsUiState = searchResult.actors.map { it.toActorUI() }
-        val tvShowUiState = searchResult.tvShows.map { it.toTvShowUI() }
-        updateState {
-            it.copy(
-                movies = movieUiState, tvShows = tvShowUiState, actors = actorsUiState
             )
         }
     }
@@ -401,32 +439,32 @@ class SearchViewModel(
     }
 
     override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {
-        updateState { it.copy(selectedSearchTab = selectedTab) }
+        updateState { it.copy(selectedSearchTab = selectedTab, isLoading = true) }
+        tabChanged = true
+        performSearchByTab(currentState.searchText)
     }
 
-    override fun onRecentlyViewedClick(id: Long) {
+    override fun onRecentlyViewedClick(id: Long, imageUrl: String) {
         val recentlyViewed = currentState.recentViewed.find { it.id == id }
         recentlyViewed?.let {
             if (it.contentType == RecentlyViewed.ContentType.MOVIE) {
-                onMovieItemClick(id)
+                onMovieItemClick(id, imageUrl)
             } else {
-                onTvShowItemClick(id)
+                onTvShowItemClick(id, imageUrl)
             }
         }
     }
 
     override fun onMovieItemClick(
-        contentId: Long
+        contentId: Long,
+        contentImageUrl: String
     ) {
-
-        val contentImageUrl =
-            currentState.movies.find { it.id == contentId }?.posterPictureURL ?: ""
         tryToExecute(
             callee = {
-            addRecentlyViewedUseCase(
-                contentId, contentImageUrl, RecentlyViewed.ContentType.MOVIE
-            )
-        },
+                addRecentlyViewedUseCase(
+                    contentId, contentImageUrl, RecentlyViewed.ContentType.MOVIE
+                )
+            },
             onSuccess = { onAddRecentlyViewedMovieSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally
@@ -439,15 +477,14 @@ class SearchViewModel(
 
     override fun onTvShowItemClick(
         contentId: Long,
+        contentImageUrl: String
     ) {
-        val contentImageUrl =
-            currentState.tvShows.find { it.id == contentId }?.posterPictureURL ?: ""
         tryToExecute(
             callee = {
-            addRecentlyViewedUseCase(
-                contentId, contentImageUrl, RecentlyViewed.ContentType.TV_SHOW
-            )
-        },
+                addRecentlyViewedUseCase(
+                    contentId, contentImageUrl, RecentlyViewed.ContentType.TV_SHOW
+                )
+            },
             onSuccess = { onAddRecentlyViewedTvShowSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally
