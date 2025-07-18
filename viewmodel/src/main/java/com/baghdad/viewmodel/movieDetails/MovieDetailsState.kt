@@ -6,7 +6,7 @@ data class MovieDetailsState(
     val movieId: Long = 0L,
     val movieImages: List<String> = emptyList(),
     val movieName: String = "",
-    val categories: List<String> = emptyList(),
+    val categories: List<CategoryUiState> = emptyList(),
     val rating: Double = 0.0,
     val duration: String = "",
     val date: String = "",
@@ -31,5 +31,10 @@ data class MovieDetailsState(
         val imageUrl: String = "",
         val id: Long = 0,
         val isSaved: Boolean = false,
+    )
+
+    data class CategoryUiState(
+        val id: Long = 0,
+        val name: String = "",
     )
 }
