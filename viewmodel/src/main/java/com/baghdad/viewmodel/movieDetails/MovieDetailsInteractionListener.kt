@@ -18,6 +18,8 @@ interface MovieDetailsInteractionListener {
 
     fun onNavigateBack()
 
+    fun onMovieLikeClick(id : Long)
+
 
 
 }

@@ -206,7 +206,7 @@ private fun MovieDetailsContent(
                         listener.onSaveMoreLikeThisMedia(movieLikeThis.id)
                     },
                     onClick = {
-                        listener.onActorClick(movieLikeThis.id)
+                        listener.onMovieLikeClick(movieLikeThis.id)
                     },
                     modifier = Modifier
                         .offset(y = (-48).dp)
