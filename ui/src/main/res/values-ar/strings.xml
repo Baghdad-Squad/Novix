@@ -39,4 +39,5 @@
     <string name="retry">أعد المحاولة</string>
     <string name="season">موسم</string>
     <string name="episode">حلقة %1$s</string>
+    <string name="view_reviews">عرض التقييمات</string>
 </resources>
