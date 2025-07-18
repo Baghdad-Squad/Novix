@@ -12,6 +12,7 @@ import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.Graph.ActorDetailsGraph
 import com.baghdad.ui.navigation.route.TvShowDetailsRoute
 import com.baghdad.ui.navigation.route.TvShowDetailsRoute.EpisodeDetailsScreen
+import com.baghdad.viewmodel.review.ContentType
 
 fun NavGraphBuilder.tvShowDetailsNavGraph(navController: NavHostController) {
     navigation<Graph.TvShowDetailsGraph>(
@@ -52,7 +53,7 @@ private fun handleTvShowDetailsNavEvent(
         TvShowDetailsNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
 
         is TvShowDetailsNavEvent.NavigateToReviews -> navController.navigate(
-            Graph.ReviewsGraph(event.movieId, "tvShow")
+            Graph.ReviewsGraph(event.movieId, ContentType.SERIES)
         )
     }
 }

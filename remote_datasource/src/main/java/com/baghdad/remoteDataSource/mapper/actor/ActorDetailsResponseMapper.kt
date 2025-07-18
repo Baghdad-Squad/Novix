@@ -9,7 +9,7 @@ fun ActorDetailsResponse.toDto(): ActorDto {
         name = this.name.orEmpty(),
         imageUrl = "https://image.tmdb.org/t/p/w500"+ this.profilePath,
         biography = this.biography.orEmpty(),
-        birthdayDate = this.birthday ?: "0001-01-01",
+        birthdayDate = this.birthday ?: "",
         deathDate = this.deathday,
         placeOfBirth = this.placeOfBirth.orEmpty(),
         headerPictures = listOf("https://image.tmdb.org/t/p/w500"+ this.profilePath),

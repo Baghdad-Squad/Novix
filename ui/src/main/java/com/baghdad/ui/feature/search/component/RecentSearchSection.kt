@@ -15,24 +15,28 @@ fun LazyListScope.recentSearchSection(
     recentSearch: List<SearchScreenState.RecentSearchUiState>,
     onClearRecentSearchClick: () -> Unit,
     onRecentSearchClicked: (Long) -> Unit,
-    onRemoveRecentSearchItemClick: (Long) -> Unit
+    onRemoveRecentSearchItemClick: (Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     item {
         SectionHeaderWithAction(
             title = stringResource(R.string.recent_search),
-            onClearAllClick = { onClearRecentSearchClick() })
+            onClearAllClick = { onClearRecentSearchClick() },
+            modifier = modifier
+        )
     }
 
     itemsIndexed(recentSearch) { index, keyWord ->
         RecentSearchItem(
             title = keyWord.query,
             onCancelClick = { onRemoveRecentSearchItemClick(keyWord.id) },
-            onRecentSearchClicked = { onRecentSearchClicked(keyWord.id) }
+            onRecentSearchClicked = { onRecentSearchClicked(keyWord.id) },
+            modifier = modifier
         )
 
         if (index < recentSearch.lastIndex) {
             HorizontalDivider(
-                modifier = Modifier
+                modifier = modifier
                     .padding(horizontal = 2.dp),
                 thickness = 1.dp,
                 color = Theme.color.stroke

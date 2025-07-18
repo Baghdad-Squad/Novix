@@ -19,3 +19,27 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep debugging information
+-keepattributes SourceFile,LineNumberTable,Signature
+-keepparameternames
+
+
+-keep class com.baghdad.remoteDataSource.response.** { *; }
+-keep class com.baghdad.ui.navigation.** { *; }
+
+
+# Still obfuscate third-party libraries for size optimization
+# But keep your own code readable
+
+# Kotlin Serialization rules (keep your existing ones)
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
+
+
+# Don't warn about missing serializers
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+-dontwarn org.slf4j.impl.StaticMDCBinder
+-dontwarn org.slf4j.impl.StaticMarkerBinder
+-dontwarn org.tensorflow.lite.gpu.GpuDelegateFactory$Options$GpuBackend
+-dontwarn org.tensorflow.lite.gpu.GpuDelegateFactory$Options

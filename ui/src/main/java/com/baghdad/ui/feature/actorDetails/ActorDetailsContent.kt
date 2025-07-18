@@ -1,5 +1,8 @@
 package com.baghdad.ui.feature.actorDetails
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,13 +12,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
-import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
@@ -32,77 +40,101 @@ fun ActorDetailsContent(
     listener: ActorDetailsInteractionListener,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    val scrollState = rememberScrollState()
+    var shouldShowBackground by remember { mutableStateOf(false) }
+
+    val animatedColor by animateColorAsState(
+        targetValue = if (shouldShowBackground)
+            Theme.color.surface
+        else
+            Color.Transparent,
+        animationSpec = tween(
+            durationMillis = 500,
+            easing = FastOutSlowInEasing
+        ),
+    )
+
+    LaunchedEffect(scrollState) {
+        snapshotFlow { scrollState.value }
+            .collect { scrollValue ->
+                shouldShowBackground = scrollValue > 450
+            }
+    }
+    Box(
         modifier = modifier
             .background(Theme.color.surface)
             .fillMaxSize()
             .navigationBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(bottom = 24.dp)
     ) {
-        Box {
-            AutoSlidingImageCarousel(
-                imageUrls = uiState.actorInfo.headerPictures,
-                modifier = Modifier.padding(bottom = 104.dp)
-            )
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(bottom = 24.dp)
+        ) {
+            Box {
+                AutoSlidingImageCarousel(
+                    imageUrls = uiState.actorInfo.headerPictures,
+                    modifier = Modifier.padding(bottom = 104.dp)
+                )
 
-            IconButton(
-                icon = painterResource(com.baghdad.design_system.R.drawable.ic_go_back),
-                onClick = { listener.onBackIconClick() },
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = 16.dp, top = 60.dp)
-            )
 
-            ActorCardDetails(
-                fullName = uiState.actorInfo.name,
-                characterRole = uiState.actorInfo.department,
-                birthPlace = uiState.actorInfo.placeOfBirth,
-                birthDate = uiState.actorInfo.birthdayDate,
-                deathDate = uiState.actorInfo.deathDate,
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .padding(horizontal = 16.dp)
-                    .align(Alignment.BottomCenter)
-            )
+                ActorCardDetails(
+                    fullName = uiState.actorInfo.name,
+                    characterRole = uiState.actorInfo.department,
+                    birthPlace = uiState.actorInfo.placeOfBirth,
+                    birthDate = uiState.actorInfo.birthdayDate,
+                    deathDate = uiState.actorInfo.deathDate,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .padding(horizontal = 16.dp)
+                        .align(Alignment.BottomCenter)
+                )
+            }
+
+            if (!uiState.actorInfo.biography.isNullOrBlank()) {
+                ActorBiographySection(
+                    biography = uiState.actorInfo.biography,
+                    onExpandedChange = { listener.onReadMoreBiographyClick() },
+                    isExpanded = uiState.isTextExpanded,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
+
+            if (uiState.gallery.isNotEmpty()) {
+                GallerySection(
+                    imageUrls = uiState.gallery,
+                    onClickShowAll = { listener.onViewAllGalleryClick() },
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
+
+            if (uiState.topMoviesPicks.isNotEmpty()) {
+                TopMediaPicksSection(
+                    title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
+                    items = uiState.topMoviesPicks,
+                    imageUrl = { it.posterPictureURL },
+                    onSavedClick = { listener.onSaveMovieClick(it.id) },
+                    onCardClick = { listener.onMovieCardClick(it.id) },
+                    isSaved = { it.isSaved },
+                    onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
+            if (uiState.topTvShowsPicks.isNotEmpty()) {
+                TopMediaPicksSection(
+                    title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
+                    items = uiState.topTvShowsPicks,
+                    imageUrl = { it.posterPictureURL },
+                    onSavedClick = { listener.onSaveTvShowClick(it.id) },
+                    onCardClick = { listener.onTvShowCardClick(it.id) },
+                    isSaved = { it.isSaved },
+                    onClickShowAll = { listener.onViewAllTopTvShowsClick() },
+                )
+            }
         }
-
-        ActorBiographySection(
-            biography = uiState.actorInfo.biography,
-            onExpandedChange = { listener.onReadMoreBiographyClick() },
-            isExpanded = uiState.isTextExpanded,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        GallerySection(
-            imageUrls = uiState.gallery,
-            onClickShowAll = { listener.onViewAllGalleryClick() },
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        TopMediaPicksSection(
-            title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
-            items = uiState.topMoviesPicks,
-            imageUrl = { it.posterPictureURL },
-            onSavedClick = { listener.onSaveMovieClick(it.id) },
-            onCardClick = { listener.onMovieCardClick(it.id) },
-            isSaved = { it.isSaved },
-            onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        TopMediaPicksSection(
-            title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
-            items = uiState.topTvShowsPicks,
-            imageUrl = { it.posterPictureURL },
-            onSavedClick = { listener.onSaveTvShowClick(it.id) },
-            onCardClick = { listener.onTvShowCardClick(it.id) },
-            isSaved = { it.isSaved },
-            onClickShowAll = { listener.onViewAllTopTvShowsClick() },
-        )
     }
 }
-
 @NovixPreviews
 @Composable
 private fun ActorDetailsScreenPrev() {
