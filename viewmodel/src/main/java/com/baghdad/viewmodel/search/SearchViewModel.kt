@@ -50,7 +50,7 @@ class SearchViewModel(
 
     override fun onSearchTextChanged(text: String) {
         val trimmed = text.trim()
-        updateState { it.copy(searchText = text) }
+        updateState { it.copy(searchText = text, isUserTyping = true) }
 
         if (trimmed == lastSearch && !tabChanged) return
 
