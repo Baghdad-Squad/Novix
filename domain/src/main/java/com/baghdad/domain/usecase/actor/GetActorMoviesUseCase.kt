@@ -1,4 +1,4 @@
-package com.baghdad.domain.usecase.actorDetails
+package com.baghdad.domain.usecase.actor
 
 import com.baghdad.domain.repository.ActorRepository
 import com.baghdad.entity.media.Movie

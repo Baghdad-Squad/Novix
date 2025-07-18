@@ -29,7 +29,9 @@ fun TopAppBar(
                 icon = painterResource(R.drawable.ic_arrow_left),
                 tintIcon = Theme.color.title,
                 onClick = onGoBackClick,
+                size = Pair(40.dp, 40.dp),
                 modifier = Modifier
+                    .padding(end = 12.dp)
             )
         }
 
@@ -38,7 +40,7 @@ fun TopAppBar(
                 text = screenTitle,
                 style = Theme.typography.title.large,
                 color = Theme.color.title,
-                modifier = Modifier.padding(start = 12.dp).weight(1f)
+                modifier = Modifier.weight(1f)
             )
         }
         content()

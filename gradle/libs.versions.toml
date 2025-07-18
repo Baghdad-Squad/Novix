@@ -34,6 +34,7 @@ truth = "1.4.4"
 google-services = "4.4.3"
 crashlytics = "3.0.4"
 perf-plugin = "1.4.2"
+pagingCommonAndroid = "3.3.6"
 
 
 
@@ -125,6 +126,7 @@ tensorflow-lite-support = { module = "org.tensorflow:tensorflow-lite-support", v
 coil = { module = "io.coil-kt.coil3:coil" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
+androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
 
 
 [plugins]

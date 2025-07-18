@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import com.baghdad.ui.feature.tvShowDetails.TvShowDetailsScreen
 import com.baghdad.ui.feature.episodeDetails.EpisodeDetailsScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.graph.util.toGraph
@@ -20,7 +21,9 @@ fun NavGraphBuilder.tvShowDetailsNavGraph(navController: NavHostController) {
     ) {
         composable<TvShowDetailsRoute.TvShowDetailsScreen> { backStackEntry ->
             val tvShowId = backStackEntry.toGraph<Graph.TvShowDetailsGraph>(navController).tvShowId
-            DummyScreen(title = "Tv Show Details Screen: $tvShowId")
+            TvShowDetailsScreen(tvShowId) { event ->
+                handleTvShowDetailsNavEvent(event, navController)
+            }
         }
         composable<TvShowDetailsRoute.EpisodeDetailsScreen> { backStackEntry ->
             val tvShowId = backStackEntry.toGraph<Graph.TvShowDetailsGraph>(navController).tvShowId

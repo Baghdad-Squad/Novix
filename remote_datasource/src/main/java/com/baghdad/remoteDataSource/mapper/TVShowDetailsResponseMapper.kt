@@ -20,7 +20,7 @@ fun TVShowDetailsResponse.toDto(): TvShowDto {
         userRating = null,
         releaseDate = this.firstAirDate ?: "0001-01-01",
         overview = this.overview.orEmpty(),
-        posterPictureURL = this.posterPath.orEmpty(),
-        numberOfSeasons = this.numberOfSeasons ?: 0
+        posterPictureURL = "https://image.tmdb.org/t/p/w500" + this.posterPath.orEmpty(),
+        numberOfSeasons = this.numberOfSeasons ?: 0,
     )
 }

@@ -17,8 +17,8 @@ interface SearchInteractionListener {
     fun onGenreSelected(genre: GenreUiState)
     fun onSaveRecentlyViewedClick(id: Long)
     fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab)
-    fun onRecentlyViewedClick(id: Long)
-    fun onMovieItemClick(contentId: Long)
-    fun onTvShowItemClick(contentId: Long)
+    fun onRecentlyViewedClick(id: Long, imageUrl: String)
+    fun onMovieItemClick(contentId: Long, contentImageUrl: String)
+    fun onTvShowItemClick(contentId: Long, contentImageUrl: String)
     fun onActorItemClick(id: Long)
 }

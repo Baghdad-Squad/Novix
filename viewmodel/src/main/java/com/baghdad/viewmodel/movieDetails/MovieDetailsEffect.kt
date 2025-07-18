@@ -20,6 +20,5 @@ sealed interface MovieDetailsEffect : BaseUiEffect{
         val id: Long
     ): MovieDetailsEffect
 
-    object NavigateBack : MovieDetailsEffect
-
+    data object NavigateBack: MovieDetailsEffect
 }
