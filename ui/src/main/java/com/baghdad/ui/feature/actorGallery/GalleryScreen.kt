@@ -16,10 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.modifier.dropShadow
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.component.SafeImage
 import com.baghdad.ui.R
@@ -68,6 +70,14 @@ fun ActorGalleryScreenContent(
         modifier = Modifier
         .fillMaxSize()
         .background(Theme.color.surface)
+            .dropShadow(
+                color = Theme.color.primary,
+                alpha = 0.08f,
+                offsetX = (-210).dp,
+                offsetY = (18).dp,
+                shape = RectangleShape,
+                blur = 336.dp
+            )
         .statusBarsPadding()) {
         TopAppBar(
             onGoBackClick = listner::onBackClick,
