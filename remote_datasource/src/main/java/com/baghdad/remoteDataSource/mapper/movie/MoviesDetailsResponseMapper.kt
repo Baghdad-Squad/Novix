@@ -1,7 +1,7 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
-import com.baghdad.remoteDataSource.response.Genre
-import com.baghdad.remoteDataSource.response.MovieDetailsResponse
+import com.baghdad.remoteDataSource.response.movie.Genre
+import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 

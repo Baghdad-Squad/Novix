@@ -66,12 +66,13 @@ fun MovieDetailsScreen(
     viewModel: MovieDetailsViewModel = koinViewModel(parameters = { parametersOf(movieId) }),
     handleNavigation: (MovieDetailsNavEvent) -> Unit,
 ) {
+    val state by viewModel.uiState.collectAsState()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
-    val state by viewModel.uiState.collectAsState()
-    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+
     MovieDetailsContent(
         listener = viewModel,
         state = state,
@@ -168,7 +169,9 @@ private fun MovieDetailsContent(
                         .offset(y = (-48).dp)
                         .padding(horizontal = 16.dp),
                     onViewReviewClicked = {
-                    }
+                        listener.onReviewClick(state.movieId)
+                    },
+                    onViewCategoryClicked = {listener.onCategoryClick(it)}
                 )
             }
 
@@ -182,7 +185,8 @@ private fun MovieDetailsContent(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 ActorsSection(
                     actors = state.castes,
-                    modifier = Modifier.offset(y = (-48).dp)
+                    modifier = Modifier.offset(y = (-48).dp),
+                    onClick = {listener.onActorClick(id = it)}
                 )
             }
 
@@ -207,7 +211,9 @@ private fun MovieDetailsContent(
                     onSavedClick = {
                         listener.onSaveMoreLikeThisMedia(movieLikeThis.id)
                     },
-                    onClick = {},
+                    onClick = {
+                        listener.onMovieLikeClick(movieLikeThis.id)
+                    },
                     modifier = Modifier
                         .offset(y = (-48).dp)
                         .height(210.dp)
@@ -307,21 +313,19 @@ private fun handleEffect(
     handleNavigation: (MovieDetailsNavEvent) -> Unit,
 ) {
     when (effect) {
-        is MovieDetailsEffect.NavigateToActorDetails -> {
-            handleNavigation(
-                NavigateToActorDetails(
-                    actorId = effect.id
-                )
+        is MovieDetailsEffect.NavigateToActorDetails -> handleNavigation(
+            NavigateToActorDetails(
+                actorId = effect.id
             )
-        }
+            )
 
-        is MovieDetailsEffect.NavigateToCategory -> {
-            handleNavigation(
-                NavigateToCategoryMovies(
-                    categoryId = effect.id
-                )
+
+        is MovieDetailsEffect.NavigateToCategory -> handleNavigation(
+            NavigateToCategoryMovies(
+                categoryId = effect.id
             )
-        }
+            )
+
 
         is MovieDetailsEffect.NavigateToMovie -> handleNavigation(
             NavigateToMovieDetails(
@@ -339,6 +343,8 @@ private fun handleEffect(
             handleNavigation(NavigateBack)
         }
 
+
+        MovieDetailsEffect.NavigateBack -> handleNavigation(NavigateBack)
     }
 }
 

@@ -1,11 +1,13 @@
 package com.baghdad.design_system.component.appBar
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.NovixTheme
@@ -36,7 +38,7 @@ fun TopAppBar(
                 text = screenTitle,
                 style = Theme.typography.title.large,
                 color = Theme.color.title,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.padding(start = 12.dp).weight(1f)
             )
         }
         content()

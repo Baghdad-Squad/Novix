@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.movieDetails.component
 
+import android.R.attr.onClick
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +22,7 @@ import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 fun ActorsSection(
     actors: List<MovieDetailsState.ActorCardInfo>,
     modifier: Modifier = Modifier,
+    onClick: (id: Long) -> Unit = {}
 ) {
     Column(modifier = modifier.padding(bottom = 16.dp)) {
         Text(
@@ -40,7 +42,7 @@ fun ActorsSection(
                     ActorCard(
                         actorName = actor.name,
                         actorImage = it,
-                        onClick = {},
+                        onClick = {onClick(actor.id.toLong())},
                         characterName = actor.characterName,
                         modifier = Modifier.fillParentMaxWidth(0.92f)
                     )
