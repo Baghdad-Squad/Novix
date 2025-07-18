@@ -9,6 +9,6 @@
       android:translateY="-66.96">
     <path
         android:pathData="M0,0h432v432h-432z"
-        android:fillColor="#FCF9F5"/>
+        android:fillColor="@color/novix_icon_background" />
   </group>
 </vector>

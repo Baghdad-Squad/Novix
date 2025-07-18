@@ -18,8 +18,12 @@
             android:endX="144"
             android:endY="288"
             android:type="linear">
-          <item android:offset="0" android:color="#FFF77053"/>
-          <item android:offset="1" android:color="#FFF77053"/>
+          <item
+              android:color="@color/novix_icon_foreground"
+              android:offset="0" />
+          <item
+              android:color="@color/novix_icon_foreground"
+              android:offset="1" />
         </gradient>
       </aapt:attr>
     </path>
@@ -35,8 +39,12 @@
             android:endX="144"
             android:endY="288"
             android:type="linear">
-          <item android:offset="0" android:color="#FFF77053"/>
-          <item android:offset="1" android:color="#FFF77053"/>
+          <item
+              android:color="@color/novix_icon_foreground"
+              android:offset="0" />
+          <item
+              android:color="@color/novix_icon_foreground"
+              android:offset="1" />
         </gradient>
       </aapt:attr>
     </path>
@@ -51,8 +59,12 @@
             android:endX="149.34"
             android:endY="177.79"
             android:type="linear">
-          <item android:offset="0.15" android:color="#FFF77053"/>
-          <item android:offset="0.43" android:color="#FFF77053"/>
+          <item
+              android:color="@color/novix_icon_foreground"
+              android:offset="0.15" />
+          <item
+              android:color="@color/novix_icon_foreground"
+              android:offset="0.43" />
         </gradient>
       </aapt:attr>
     </path>
@@ -68,8 +80,12 @@
             android:endX="149.34"
             android:endY="177.79"
             android:type="linear">
-          <item android:offset="0" android:color="#FFF77053"/>
-          <item android:offset="1" android:color="#FFF77053"/>
+          <item
+              android:color="@color/novix_icon_foreground"
+              android:offset="0" />
+          <item
+              android:color="@color/novix_icon_foreground"
+              android:offset="1" />
         </gradient>
       </aapt:attr>
     </path>
