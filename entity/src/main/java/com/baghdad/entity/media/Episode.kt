@@ -10,6 +10,6 @@ data class Episode(
     val duration: String,
     val releasedDate: LocalDate,
     val currentSeason: Int,
-    val imageUrl: String,
-    val overview: String
+    val overview: String,
+    val headerPictures: List<String>,
 )

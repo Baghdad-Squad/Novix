@@ -1,4 +1,4 @@
-package com.baghdad.remoteDataSource.response
+package com.baghdad.remoteDataSource.response.movie
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,5 +17,6 @@ data class MovieDetailsResponse(
 
 @Serializable
 data class Genre(
-    @SerialName("id") val id: Long? = null, @SerialName("name") val name: String? = null
+    @SerialName("id") val id: Long? = null,
+    @SerialName("name") val name: String? = null
 )

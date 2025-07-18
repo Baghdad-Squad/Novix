@@ -21,6 +21,7 @@ import com.baghdad.design_system.component.LabeledIconRow
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 
 @Composable
 fun MovieDetailsHeader(
@@ -28,9 +29,10 @@ fun MovieDetailsHeader(
     duration: String,
     releaseDate: String,
     rating: Double,
-    categories: List<String>,
-    modifier: Modifier = Modifier,
+    categories: List<MovieDetailsState.GenreUiState>,
     onViewReviewClicked: () -> Unit,
+    onViewCategoryClicked: (id: Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -55,10 +57,11 @@ fun MovieDetailsHeader(
         ) {
             categories.forEachIndexed { index, category ->
                 Text(
-                    text = category,
+                    text = category.name,
                     fontSize = 14.sp,
                     style = Theme.typography.label.medium,
                     color = Theme.color.body,
+                    modifier = Modifier.noRippleClickable {onViewCategoryClicked(category.id)}
                 )
                 if (index < categories.size - 1) {
                     CircleDot(modifier = Modifier.align(Alignment.CenterVertically))

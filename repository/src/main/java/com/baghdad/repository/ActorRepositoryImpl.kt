@@ -11,11 +11,12 @@ import com.baghdad.repository.util.executeSafely
 
 class ActorRepositoryImpl(
     private val remoteActorDataSource: RemoteActorDataSource,
-    private val localActorDataSource: LocalActorDataSource
 ) : ActorRepository {
     override suspend fun getActorInfo(actorId: Long): Actor {
         return executeSafely {
-            remoteActorDataSource.getActorDetails(actorId).toEntity()
+            remoteActorDataSource.getActorDetails(actorId).toEntity().copy(
+                headerPictures = remoteActorDataSource.getActorImages(actorId).take(3)
+            )
         }
 
     }
@@ -34,7 +35,7 @@ class ActorRepositoryImpl(
 
     override suspend fun getActorGallery(actorId: Long): List<String> {
         return executeSafely {
-            remoteActorDataSource.getActorImages(actorId).images
+            remoteActorDataSource.getActorImages(actorId)
         }
     }
 

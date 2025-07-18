@@ -2,17 +2,24 @@ package com.baghdad.domain.repository
 
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
+import com.baghdad.entity.media.Review
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
 
 interface TvShowRepository {
-    suspend fun getTvShowDetails(tvShowId: Long): TvShow
 
-    suspend fun getTvShowCastMembers(tvShowId: Long): List<CastMember>
+    suspend fun getGenres(): List<Genre>
 
-    suspend fun getTvShowSeasonEpisodes(tvShowId: Long, seasonNumber: Int): List<Episode>
+    suspend fun getTvShowDetails(tvId: Long): TvShow
 
-    suspend fun getGenres() : List<Genre>
+    suspend fun getTvShowCastMembers(tvId: Long): List<CastMember>
 
-    suspend fun getTvShowsByGenres(genreId: Long): List<TvShow>
+    suspend fun getTvShowImages(tvId: Long): List<String>
+
+    suspend fun getTvShowsByGenre(genreId: Long, page: Int): List<TvShow>
+
+    suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<Episode>
+
+    suspend fun getTvShowReviews(tvId: Long): List<Review>
+
 }

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class CreditsResponse(
+data class CastMembersResponse(
     @SerialName("id")
     val id: Int? = null,
     @SerialName("cast")
