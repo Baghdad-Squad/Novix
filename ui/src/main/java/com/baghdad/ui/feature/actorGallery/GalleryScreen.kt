@@ -29,6 +29,7 @@ import com.baghdad.islamic_image_loader.component.SafeImage
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
+import com.baghdad.viewmodel.actorGallery.ActorGalleryInteractionListener
 import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenEffect
 import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenState
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
@@ -63,7 +64,8 @@ fun GalleryScreen(
 
 @Composable
 fun ActorGalleryScreenContent(
-    uiState: ActorGalleryScreenState, listner: ActorGalleryViewModel
+    uiState: ActorGalleryScreenState,
+    listner: ActorGalleryInteractionListener
 ) {
     Column(
         modifier = Modifier
