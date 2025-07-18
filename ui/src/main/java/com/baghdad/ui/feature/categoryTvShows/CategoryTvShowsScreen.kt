@@ -62,6 +62,9 @@ private fun handleEffect(
             CategoriesNavEvent.NavigateBack
         )
 
+        is CategoryTvShowsEffect.NavigateToTvShowDetails -> handleNavigation(
+            CategoriesNavEvent.NavigateToTvShowDetails(effect.tvShowId)
+        )
     }
 }
 
@@ -122,7 +125,7 @@ private fun CategoryTvShowsContent(
                     contentDescription = null,
                     isSaved = tvShow.isSaved,
                     onSavedClick = { listener.onSavedClick(tvShow.id) },
-                    onClick = { },
+                    onClick = { listener.onTvShowClicked(tvShow.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }

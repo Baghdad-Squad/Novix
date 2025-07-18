@@ -67,6 +67,9 @@ private fun handleEffect(
             CategoriesNavEvent.NavigateBack
         )
 
+        is CategoryMoviesEffect.NavigateToMovieDetails -> handleNavigation(
+            CategoriesNavEvent.NavigateToMovieDetails(effect.movieId)
+        )
     }
 }
 
@@ -130,7 +133,7 @@ private fun CategoryMoviesContent(
                     contentDescription = null,
                     isSaved = movie.isSaved,
                     onSavedClick = { listener.onSavedClick(movie.id) },
-                    onClick = { },
+                    onClick = { listener.onMovieClicked(movie.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }
