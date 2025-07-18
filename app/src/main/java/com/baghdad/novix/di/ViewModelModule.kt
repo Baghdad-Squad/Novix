@@ -33,7 +33,7 @@ val viewModelModule = module {
         ActorDetailsViewModel(actorId, get(), get(), get(), get())
     }
     viewModel { (tvShowId: Long) ->
-        TvShowDetailsViewModel(tvShowId, get(), get(), get(), get())
+        TvShowDetailsViewModel(tvShowId, get(), get(), get())
     }
     viewModel { (mediaId: Long, mediaType: ContentType) ->
         ReviewViewModel(
