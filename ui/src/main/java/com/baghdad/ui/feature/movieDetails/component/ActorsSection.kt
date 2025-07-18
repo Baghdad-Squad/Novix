@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.movieDetails.component
 
+import android.R.attr.onClick
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,12 +22,14 @@ import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 fun ActorsSection(
     actors: List<MovieDetailsState.ActorCardInfo>,
     modifier: Modifier = Modifier,
+    onClick: (id: Long) -> Unit = {}
 ) {
     Column(modifier = modifier.padding(bottom = 16.dp)) {
         Text(
             text = stringResource(com.baghdad.ui.R.string.cast),
             fontSize = 18.sp,
             style = Theme.typography.title.medium,
+            color = Theme.color.title,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
         )
         LazyRow(
@@ -39,7 +42,7 @@ fun ActorsSection(
                     ActorCard(
                         actorName = actor.name,
                         actorImage = it,
-                        onClick = {},
+                        onClick = {onClick(actor.id.toLong())},
                         characterName = actor.characterName,
                         modifier = Modifier.fillParentMaxWidth(0.92f)
                     )

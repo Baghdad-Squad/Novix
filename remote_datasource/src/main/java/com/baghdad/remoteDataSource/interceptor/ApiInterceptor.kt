@@ -9,14 +9,11 @@ import io.ktor.util.AttributeKey
 
 class ApiInterceptor(
     private val apiKey: String,
-    private val languageProvider: LanguageProvider
+    private val languageProvider: LanguageProvider,
 ) {
-    class Config {
-        var apiKey: String = ""
-        lateinit var languageProvider: LanguageProvider
-    }
 
     companion object Plugin : HttpClientPlugin<Config, ApiInterceptor> {
+
         override val key: AttributeKey<ApiInterceptor> = AttributeKey("ApiKeyInterceptor")
 
         override fun prepare(block: Config.() -> Unit): ApiInterceptor {

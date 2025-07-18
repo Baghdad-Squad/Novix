@@ -1,7 +1,7 @@
 package com.baghdad.remoteDataSource.mapper.actor
 
 import com.baghdad.remoteDataSource.response.actor.ActorDetailsResponse
-import com.baghdad.repository.model.actor.ActorDto
+import com.baghdad.repository.model.ActorDto
 
 fun ActorDetailsResponse.toDto(): ActorDto {
     return ActorDto(
@@ -13,6 +13,6 @@ fun ActorDetailsResponse.toDto(): ActorDto {
         deathDate = this.deathday,
         placeOfBirth = this.placeOfBirth.orEmpty(),
         headerPictures = listOf("https://image.tmdb.org/t/p/w500"+ this.profilePath),
-        department = this.knownForDepartment.orEmpty()
+        department = this.knownForDepartment.orEmpty(),
     )
 }

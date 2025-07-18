@@ -3,8 +3,8 @@ package com.baghdad.viewmodel.movieDetails
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCategoryUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
+import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
 import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
-import com.baghdad.domain.usecase.movieDetails.GetMovieGalleryUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -103,6 +103,23 @@ class MovieDetailsViewModel(
         sendEffect(MovieDetailsEffect.NavigateBack)
     }
 
+
+    override fun onActorClick(id: Long) {
+        sendEffect(MovieDetailsEffect.NavigateToActorDetails(id))
+    }
+
+    override fun onReviewClick(id: Long) {
+        sendEffect(MovieDetailsEffect.NavigateToReviewDetails(id))
+    }
+
+    override fun onMovieLikeClick(id: Long) {
+        sendEffect(MovieDetailsEffect.NavigateToMovie(id))
+    }
+
+    override fun onBackClick() {
+        sendEffect(MovieDetailsEffect.NavigateBack)
+    }
+
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
     }
@@ -161,6 +178,7 @@ class MovieDetailsViewModel(
     }
 
 
+
     private fun getCastMembers() {
         tryToExecute(
             callee = { getCastsInfoUseCase(movieId) },
@@ -180,6 +198,7 @@ class MovieDetailsViewModel(
             onFinally = ::onFinally
         )
     }
+
 
 
     private fun getMoreLikeThisShow() {

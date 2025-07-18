@@ -1,7 +1,8 @@
 package com.baghdad.repository.mapper
 
 import com.baghdad.entity.person.Actor
-import com.baghdad.repository.model.actor.ActorDto
+import com.baghdad.repository.model.ActorDto
+import com.baghdad.repository.model.SearchQueryDto
 import kotlinx.datetime.LocalDate
 
 fun ActorDto.toEntity(): Actor {
@@ -19,6 +20,14 @@ fun ActorDto.toEntity(): Actor {
         },
         placeOfBirth = placeOfBirth,
         headerPictures = headerPictures,
-        department = department
+        department = department,
+    )
+}
+
+fun ActorDto.toSearchQueryDto(query: String): SearchQueryDto {
+    return SearchQueryDto(
+        queryName = query,
+        mediaId = id,
+        mediaType = SearchQueryDto.MediaType.ACTOR,
     )
 }
