@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.actorGallery
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -63,8 +64,10 @@ fun ActorGalleryScreenContent(
     uiState: ActorGalleryScreenState,
     listner: ActorGalleryViewModel
 ) {
-    Column(modifier = Modifier
+    Column(
+        modifier = Modifier
         .fillMaxSize()
+        .background(Theme.color.surface)
         .statusBarsPadding()) {
         TopAppBar(
             onGoBackClick = listner::onBackClick,
