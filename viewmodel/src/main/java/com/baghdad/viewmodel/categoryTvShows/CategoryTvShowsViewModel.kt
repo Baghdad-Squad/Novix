@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.categoryTvShows
 
-import com.baghdad.domain.usecase.category.GetCategoryTvShowsUseCase
+import com.baghdad.domain.usecase.genre.GetGenreTvShowsUseCase
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -8,7 +8,7 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class CategoryTvShowsViewModel(
     private val categoryId: Long,
-    private val getTvShowsCategoryUseCase: GetCategoryTvShowsUseCase,
+    private val getTvShowsCategoryUseCase: GetGenreTvShowsUseCase,
     private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase
 ) : BaseViewModel<CategoryTvShowsState, CategoryTvShowsEffect>(CategoryTvShowsState()),
     CategoryTvShowsInteractionListener {
@@ -43,7 +43,7 @@ class CategoryTvShowsViewModel(
     private fun getTvShowsByCategoryId(categoryId: Long) {
         tryToExecute(
             callee = {
-                getTvShowsCategoryUseCase.invoke(categoryId = categoryId)
+                getTvShowsCategoryUseCase.invoke(genreId = categoryId)
             },
             onSuccess = { onGetTvShowsSuccess(it) },
             onError = { onGetTvShowsError() }
