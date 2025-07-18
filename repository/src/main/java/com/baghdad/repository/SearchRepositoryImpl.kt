@@ -49,8 +49,6 @@ class SearchRepositoryImpl(
             onStart = {
                 deleteInvalidCacheOfMoreThanOneHour()
             },
-            getCachedTotalCount = { localActorDataSource.getActorCountByName(name) },
-            getRemoteTotalCount = { searchRemoteDataSource.getActorsResultCount(name) },
             getCachedPage = { page, pageSize ->
                 localActorDataSource.searchActorsByName(
                     name,
@@ -93,8 +91,6 @@ class SearchRepositoryImpl(
             onStart = {
                 deleteInvalidCacheOfMoreThanOneHour()
             },
-            getCachedTotalCount = { localMovieDataSource.getMovieCountByTitle(title) },
-            getRemoteTotalCount = { searchRemoteDataSource.getMoviesResultCount(title) },
             getCachedPage = { page, pageSize ->
                 localMovieDataSource.searchMoviesByTitle(
                     title,
@@ -139,8 +135,6 @@ class SearchRepositoryImpl(
             onStart = {
                 deleteInvalidCacheOfMoreThanOneHour()
             },
-            getCachedTotalCount = { localTvShowDataSource.getTvShowCountByTitle(title) },
-            getRemoteTotalCount = { searchRemoteDataSource.getTvShowsResultCount(title) },
             getCachedPage = { page, pageSize ->
                 localTvShowDataSource.searchTvShowsByTitle(
                     title,

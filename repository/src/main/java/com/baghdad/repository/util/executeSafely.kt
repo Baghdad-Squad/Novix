@@ -1,6 +1,5 @@
 package com.baghdad.repository.util
 
-import android.util.Log
 import com.baghdad.domain.exception.LocalDataBaseException
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.exception.UnKnownNetworkException
@@ -19,18 +18,17 @@ import com.baghdad.domain.exception.StorageFullException as DomainStorageFullExc
 suspend fun <T> executeSafely(block: suspend () -> T): T {
     return try {
         block()
-    } catch (e: NoInternetNetworkException) {
+    } catch (_: NoInternetNetworkException) {
         throw NoInternetException()
-    } catch (e: SerializationNetworkException) {
+    } catch (_: SerializationNetworkException) {
         throw NetworkException()
-    } catch (e: RequestTimeoutNetworkException) {
+    } catch (_: RequestTimeoutNetworkException) {
         throw NetworkException()
-    } catch (e: TooManyRequestsNetworkException) {
+    } catch (_: TooManyRequestsNetworkException) {
         throw NetworkException()
-    } catch (e: ServerNetworkException) {
+    } catch (_: ServerNetworkException) {
         throw NetworkException()
-    } catch (e: Exception) {
-        Log.e("bla bla", e.message, e)
+    } catch (_: Exception) {
         throw UnKnownNetworkException()
     }
 }
@@ -39,9 +37,9 @@ suspend fun <T> executeSafely(block: suspend () -> T): T {
 fun <T> getFlowSafely(block: () -> Flow<T>): Flow<T> {
     return try {
         block()
-    } catch (e: StorageFullException) {
+    } catch (_: StorageFullException) {
         throw DomainStorageFullException()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         throw LocalDataBaseException()
     }
 }
@@ -50,52 +48,33 @@ suspend fun <TEntity, TDto> executePagedCachedOperation(
     page: Int,
     pageSize: Int = 20,
     onStart: (suspend () -> Unit)? = null,
-    getCachedTotalCount: suspend () -> Int,
-    getRemoteTotalCount: suspend () -> Int,
     getCachedPage: suspend (Int, Int) -> List<TDto>,
     getRemoteData: suspend (Int, Int) -> PagedResultDto<TDto>,
     cacheData: suspend (List<TDto>) -> Unit,
     mapToEntity: (TDto) -> TEntity
 ): PagedResult<TEntity> {
     onStart?.invoke()
-    val totalCachedCount = getCachedTotalCount()
-    if (totalCachedCount >= (page * pageSize)) {
-        val localData = getCachedPage(page, pageSize)
-        if ((page * pageSize) < totalCachedCount) {
-            return PagedResult(
-                data = localData.map(mapToEntity),
-                nextKey = if ((page * pageSize) < totalCachedCount) page + 1 else null,
-                prevKey = if (page > 1) page - 1 else null
-            )
-        } else {
-            val remoteTotalCount = getRemoteTotalCount()
-            return PagedResult(
-                data = localData.map(mapToEntity),
-                nextKey = if (totalCachedCount < remoteTotalCount) page + 1 else null,
-                prevKey = if (page > 1) page - 1 else null
-            )
-        }
+    val localData = getCachedPage(page, pageSize)
+    return if (localData.isNotEmpty()) {
+        PagedResult(
+            data = localData.map(mapToEntity),
+            nextKey = if (localData.size == pageSize) page + 1 else null,
+            prevKey = if (page > 1) page - 1 else null
+        )
     } else {
-        val remoteTotalCount = getRemoteTotalCount()
         val remoteData = getRemoteData(page, pageSize)
-        if (totalCachedCount < remoteTotalCount) {
+        if (remoteData.data.isNotEmpty()) {
             cacheData(remoteData.data)
-        }
-        val localData = getCachedPage(page, pageSize)
-        return if ((page * pageSize) < totalCachedCount) {
+            val localData = getCachedPage(page, pageSize)
             PagedResult(
                 data = localData.map(mapToEntity),
-                nextKey = if ((page * pageSize) < totalCachedCount) page + 1 else null,
-                prevKey = if (page > 1) page - 1 else null
+                nextKey = remoteData.nextKey,
+                prevKey = remoteData.prevKey
             )
         } else {
-            Log.d(
-                "testExecutePagedCachedOperation",
-                "Remote total count: $remoteTotalCount, Cached total count: $totalCachedCount"
-            )
             PagedResult(
-                data = localData.map(mapToEntity),
-                nextKey = if (totalCachedCount < remoteTotalCount) page + 1 else null,
+                data = emptyList(),
+                nextKey = null,
                 prevKey = if (page > 1) page - 1 else null
             )
         }
