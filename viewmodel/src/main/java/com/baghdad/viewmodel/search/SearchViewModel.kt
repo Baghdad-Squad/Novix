@@ -36,6 +36,7 @@ class SearchViewModel(
     SearchInteractionListener {
     private var searchJob: Job? = null
     private var lastSearch: String = ""
+    private var tabChanged = false
     init {
         getRecentSearches()
         getRecentViewed()
@@ -49,15 +50,14 @@ class SearchViewModel(
 
     override fun onSearchTextChanged(text: String) {
         val trimmed = text.trim()
-        updateState { it.copy(searchText = text, isUserTyping = true) }
+        updateState { it.copy(searchText = text) }
 
-        if (trimmed == lastSearch) return
+        if (trimmed == lastSearch && !tabChanged) return
 
         searchJob?.cancel()
         lastSearch = trimmed
 
         if (trimmed.isBlank()) {
-            updateState { it.copy(isUserTyping = false) }
             clearAllPagingFlows()
             return
         }
@@ -74,6 +74,7 @@ class SearchViewModel(
             SearchScreenState.SearchTab.TV_SHOWS -> searchTvShows(text)
             SearchScreenState.SearchTab.ACTORS -> searchActors(text)
         }
+        tabChanged = false
     }
 
     private fun searchMovies(text: String) {
@@ -438,7 +439,8 @@ class SearchViewModel(
     }
 
     override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {
-        updateState { it.copy(selectedSearchTab = selectedTab) }
+        updateState { it.copy(selectedSearchTab = selectedTab, isLoading = true) }
+        tabChanged = true
         performSearchByTab(currentState.searchText)
     }
 

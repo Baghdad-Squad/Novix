@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -107,6 +108,9 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
             onInitialLoadFinished = onInitialLoadFinished
         ).map { pagingData ->
             pagingData.map { entity -> mapEntityToUiState(entity) }
+        }.catch {
+            handleError(it)
+            emit(PagingData.empty())
         }
         onFlowCreated(flow)
     }
