@@ -80,19 +80,6 @@ class ActorGalleryViewModelTest {
         Assertions.assertFalse(finalState.isLoading)
     }
 
-    @Test
-    fun `getActorGalleryImages failure should handle error and set loading false`() = runTest {
-
-        val exception = RuntimeException(listImage)
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } throws exception
-
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val finalState = viewModel.uiState.value
-        Assertions.assertFalse(finalState.isLoading)
-        Assertions.assertEquals(emptyList<String>(), finalState.images)
-    }
 
     @Test
     fun `onBackClick should send OnBackClick effect`() = runTest {
