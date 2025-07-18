@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -48,7 +50,13 @@ import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieDetailsHeader
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
 import com.baghdad.ui.feature.movieDetails.component.TextSection
+import com.baghdad.ui.feature.util.hideNavigationBar
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateBack
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToActorDetails
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToCategoryMovies
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToReviews
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
@@ -96,6 +104,11 @@ private fun MovieDetailsContent(
             Theme.color.surface,
         animationSpec = tween(300)
     )
+    val context = LocalContext.current
+    val view = LocalView.current
+    LaunchedEffect(Unit) {
+        hideNavigationBar(context, view)
+    }
 
     LaunchedEffect(lazyState) {
         snapshotFlow { lazyState.layoutInfo.visibleItemsInfo }
@@ -115,7 +128,7 @@ private fun MovieDetailsContent(
                 .zIndex(1f)
                 .align(Alignment.TopCenter)
                 .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = { },
+            onGoBackClick = { listener.onBackClicked() },
             content = {
                 Crossfade(
                     targetState = state.isSaved,
@@ -163,6 +176,9 @@ private fun MovieDetailsContent(
                     modifier = Modifier
                         .offset(y = (-48).dp)
                         .padding(horizontal = 16.dp),
+                    onCategoryClick = {
+                        listener.onCategoryClick(it)
+                    },
                     onViewReviewClicked = {
                     }
                 )
@@ -302,7 +318,7 @@ private fun handleEffect(
     when (effect) {
         is MovieDetailsEffect.NavigateToActorDetails -> {
             handleNavigation(
-                MovieDetailsNavEvent.NavigateToActorDetails(
+                NavigateToActorDetails(
                     actorId = effect.id
                 )
             )
@@ -310,22 +326,26 @@ private fun handleEffect(
 
         is MovieDetailsEffect.NavigateToCategory -> {
             handleNavigation(
-                MovieDetailsNavEvent.NavigateToCategoryMovies(
+                NavigateToCategoryMovies(
                     categoryId = effect.id
                 )
             )
         }
 
         is MovieDetailsEffect.NavigateToMovie -> handleNavigation(
-            MovieDetailsNavEvent.NavigateToMovieDetails(
+            NavigateToMovieDetails(
                 movieId = effect.id,
             )
         )
 
         is MovieDetailsEffect.NavigateToReviewDetails -> handleNavigation(
-            MovieDetailsNavEvent.NavigateToReviews(
+            NavigateToReviews(
                 movieId = effect.id
             )
+        )
+
+        MovieDetailsEffect.NavigateBack -> handleNavigation(
+            NavigateBack
         )
     }
 }
