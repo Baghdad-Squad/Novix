@@ -12,7 +12,6 @@ fun TvShow.toUiState() = TvShowDetailsScreenState.TvShowInfoUiState(
     releaseDate = releaseDate.toString(),
     seasonCount = numberOfSeasons,
     overView = overview,
-    headerPictures = headerPictures,
     posterPictureURL = posterImageURL
 )
 

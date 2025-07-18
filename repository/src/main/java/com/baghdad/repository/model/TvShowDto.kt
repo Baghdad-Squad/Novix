@@ -11,5 +11,4 @@ data class TvShowDto(
     val overview: String,
     val posterPictureURL: String,
     val numberOfSeasons: Int,
-    val headerPictures: List<String>
 )

@@ -20,7 +20,6 @@ data class TvShow(
     val overview: String,
     val posterPictureURL: String,
     val numberOfSeasons: Int,
-    val headerPictures: List<String>
 )
 
 fun TvShow.toDto(genres: List<GenreDto>): TvShowDto {
@@ -34,7 +33,6 @@ fun TvShow.toDto(genres: List<GenreDto>): TvShowDto {
         overview = this.overview,
         posterPictureURL = this.posterPictureURL,
         numberOfSeasons = this.numberOfSeasons,
-        headerPictures = this.headerPictures
     )
 }
 
@@ -49,7 +47,6 @@ fun TvShowDto.toLocalDto(): TvShow {
         overview = this.overview,
         posterPictureURL = this.posterPictureURL,
         numberOfSeasons = this.numberOfSeasons,
-        headerPictures = this.headerPictures
     )
 }
 

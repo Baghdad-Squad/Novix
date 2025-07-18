@@ -37,4 +37,6 @@
     <string name="reviews">التعليقات</string>
     <string name="an_error_occurred">حدث خطأ ما</string>
     <string name="retry">أعد المحاولة</string>
+    <string name="season">موسم</string>
+    <string name="episode">حلقة %1$s</string>
 </resources>

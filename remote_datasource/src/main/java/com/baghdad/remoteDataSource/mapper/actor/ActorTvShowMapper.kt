@@ -15,6 +15,5 @@ fun ActorTvShowDto.toDto(
         overview = this.overview.orEmpty(),
         posterPictureURL = "https://image.tmdb.org/t/p/w500" + this.posterPath,
         numberOfSeasons = 0,
-        headerPictures = emptyList() /*TODO*/
     )
 }

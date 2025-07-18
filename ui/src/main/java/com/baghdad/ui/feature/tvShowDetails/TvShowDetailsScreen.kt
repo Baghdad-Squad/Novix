@@ -146,7 +146,7 @@ fun TvShowDetailsContent(
             item {
                 Box {
                     AutoSlidingImageCarousel(
-                        imageUrls = uiState.tvShowInfo.headerPictures,
+                        imageUrls = listOf(uiState.tvShowInfo.posterPictureURL),
                         modifier = Modifier.padding(bottom = 128.dp)
                     )
                     TvShowDetailsCard(

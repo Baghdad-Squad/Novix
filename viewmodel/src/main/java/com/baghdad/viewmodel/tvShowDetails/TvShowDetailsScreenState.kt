@@ -21,7 +21,6 @@ data class TvShowDetailsScreenState(
         val releaseDate: String = "",
         val seasonCount: Int = 0,
         val overView: String = "",
-        val headerPictures: List<String> = emptyList(),
         val posterPictureURL: String = ""
     )
 
