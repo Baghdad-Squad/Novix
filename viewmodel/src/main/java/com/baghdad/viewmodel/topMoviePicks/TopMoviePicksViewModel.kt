@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.topMoviePicks
 
-import com.baghdad.domain.usecase.actorDetails.GetActorMoviesUseCase
+import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage

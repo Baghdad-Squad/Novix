@@ -9,6 +9,7 @@ import com.baghdad.viewmodel.review.ReviewViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowViewModel
+import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
@@ -31,7 +32,9 @@ val viewModelModule = module {
     }
     viewModel { (actorId: Long) ->
         ActorDetailsViewModel(actorId, get(), get(), get(), get())
-
+    }
+    viewModel { (tvShowId: Long) ->
+        TvShowDetailsViewModel(tvShowId, get(), get(), get())
     }
     viewModel { (mediaId: Long, mediaType: ContentType) ->
         ReviewViewModel(

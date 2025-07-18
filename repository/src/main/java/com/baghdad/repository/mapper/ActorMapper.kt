@@ -20,7 +20,7 @@ fun ActorDto.toEntity(): Actor {
         },
         placeOfBirth = placeOfBirth,
         headerPictures = headerPictures,
-        department = department
+        department = department,
     )
 }
 
