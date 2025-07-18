@@ -1,21 +1,21 @@
 package com.baghdad.novix.di
 
-import com.baghdad.novix.BuildConfig
-import com.baghdad.remoteDataSource.interceptor.ApiInterceptor
-import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
-import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.local_datasource.language.AppLanguageProvider
+import com.baghdad.novix.BuildConfig
 import com.baghdad.remoteDataSource.RemoteActorDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteEpisodeDataSourceImpl
+import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteMovieDataSourceImpl
+import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteTvShowDataSourceImpl
+import com.baghdad.remoteDataSource.interceptor.ApiInterceptor
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
-import com.baghdad.repository.language.LanguageProvider
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
+import com.baghdad.repository.language.LanguageProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
@@ -35,7 +35,7 @@ val remoteDataSourceModule = module {
                 apiKey = BuildConfig.API_KEY
                 languageProvider = get()
             }
-            install(HttpTimeout){
+            install(HttpTimeout) {
                 requestTimeoutMillis = 20_000
                 connectTimeoutMillis = 20_000
                 socketTimeoutMillis = 20_000
@@ -65,35 +65,29 @@ val remoteDataSourceModule = module {
         )
     }
 
-    single<RemoteGenreDataSource>{
-        RemoteGenreDataSourceImpl(
-            httpClient = get(),
-            baseUrl = get(named("BASE_URL"))
-        )
-    }
 
-    single<RemoteMovieDataSource>{
+    single<RemoteMovieDataSource> {
         RemoteMovieDataSourceImpl(
             httpClient = get(),
             baseUrl = get(named("BASE_URL"))
         )
     }
 
-    single<RemoteActorDataSource>{
+    single<RemoteActorDataSource> {
         RemoteActorDataSourceImpl(
             httpClient = get(),
             baseUrl = get(named("BASE_URL"))
         )
     }
 
-    single<RemoteTvShowDataSource>{
+    single<RemoteTvShowDataSource> {
         RemoteTvShowDataSourceImpl(
             httpClient = get(),
             baseUrl = get(named("BASE_URL"))
         )
     }
 
-    single<RemoteEpisodeDataSource>{
+    single<RemoteEpisodeDataSource> {
         RemoteEpisodeDataSourceImpl(
             httpClient = get(),
             baseUrl = get(named("BASE_URL"))

@@ -15,3 +15,7 @@
 local.properties
 /.idea/
 /app/google-services.json
+/app/keystore.jks
+/app/mapping.txt
+/app/seeds.txt
+/app/unused.txt

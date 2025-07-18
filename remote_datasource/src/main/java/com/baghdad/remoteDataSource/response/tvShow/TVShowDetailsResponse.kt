@@ -1,6 +1,6 @@
 package com.baghdad.remoteDataSource.response.tvShow
 
-import Genre
+import com.baghdad.remoteDataSource.response.movie.Genre
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

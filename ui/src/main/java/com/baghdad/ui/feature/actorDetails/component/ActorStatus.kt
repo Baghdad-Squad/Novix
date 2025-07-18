@@ -15,6 +15,7 @@ import com.baghdad.ui.R
 fun ActorStatus(
     modifier: Modifier = Modifier,
     birthPlace: String,
+    birthDate: String,
     deathDate: String? = null
 ) {
 
@@ -22,7 +23,7 @@ fun ActorStatus(
         modifier = modifier.padding(top = 8.dp)
     ) {
         IconTextInfo(
-            text = birthPlace,
+            text = if (!deathDate.isNullOrEmpty()) "$birthDate  - " else birthDate,
             painter = painterResource(com.baghdad.design_system.R.drawable.ic_birthday_cake),
             contentDescription = stringResource(R.string.birthday),
         )

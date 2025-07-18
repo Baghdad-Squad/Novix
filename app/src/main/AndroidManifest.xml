@@ -8,40 +8,20 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Novix"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Novix" />
-
-        <activity-alias
-            android:name=".MainActivityLight"
-            android:enabled="true"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_light"
+            android:name="com.baghdad.novix.MainActivity"
             android:label="@string/app_name"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
+            android:exported="true"
+            android:theme="@style/Theme.Novix">
+
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name=".MainActivityDark"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
+        </activity>
     </application>
 </manifest>
