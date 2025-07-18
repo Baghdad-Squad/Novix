@@ -54,7 +54,7 @@ class ReviewViewModel(
         sendEffect(ReviewScreenEffect.NavigateBack)
     }
 
-    override fun onExpandedTextChange(id: Long) {
+    override fun onExpandedTextChange(id: String) {
         updateState { currentState ->
             val updatedReviews = currentState.reviews.map { review ->
                 if (review.id == id) {

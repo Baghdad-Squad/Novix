@@ -3,6 +3,7 @@ package com.baghdad.viewmodel.review
 import com.baghdad.entity.media.Review
 
 fun Review.toReviewUi() = ReviewScreenState.ReviewUiState(
+    id = id,
     authorName = authorName,
     authorAvatarUrl = authorAvatarUrl,
     contentTitle = contentTitle,
