@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -85,13 +86,14 @@ fun SearchContent(
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .padding(top = 8.dp)
     ) {
         SearchTextField(
             query = uiState.searchText,
             onQueryChange = { listener.onSearchTextChanged(it) },
             onFilterIconClick = { listener.onFilterIconClick() },
-            searchTab = uiState.selectedSearchTab
+            searchTab = uiState.selectedSearchTab,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
         AnimatedContent(uiState.searchText.isNotBlank()) { it ->
             if (it) {
@@ -105,7 +107,8 @@ fun SearchContent(
                     onMovieClick = { listener.onMovieItemClick(it) },
                     onTvShowClick = { listener.onTvShowItemClick(it) },
                     onActorClick = { listener.onActorItemClick(it) },
-                    isLoading = uiState.isLoading
+                    isLoading = uiState.isLoading,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             } else RecentlyViewsWithSearch(uiState, listener)
         }
@@ -137,7 +140,8 @@ private fun RecentlyViewsWithSearch(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Theme.color.surface)
+            .background(Theme.color.surface),
+        contentPadding = PaddingValues(bottom = 8.dp)
     ) {
         if (uiState.recentSearch.isEmpty() && uiState.recentViewed.isEmpty()) {
             item {
@@ -172,7 +176,9 @@ private fun RecentlyViewsWithSearch(
                 recentSearch = uiState.recentSearch,
                 onClearRecentSearchClick = { listener.onClearRecentSearchClick() },
                 onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) },
-                onRecentSearchClicked = { listener.onRecentSearchItemClick(it) })
+                onRecentSearchClicked = { listener.onRecentSearchItemClick(it) },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
     }
 }
