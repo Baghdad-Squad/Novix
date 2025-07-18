@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.HomeCard
+import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
@@ -126,20 +127,14 @@ private fun MovieDetailsContent(
                 listener.onBackClick()
             },
             content = {
-                Crossfade(
-                    targetState = state.isSaved,
-                    animationSpec = tween(300)
-                ) { isSaved ->
-                    IconButton(
-                        icon = if (isSaved) painterResource(R.drawable.ic_save_fill) else painterResource(
-                            R.drawable.ic_save
-                        ),
-                        tintIcon = Theme.color.title,
-                        onClick = {
-                            listener.onSaveCurrentMovieClick()
-                        }
-                    )
-                }
+                SaveIcon(
+                    size = 40,
+                    backgroundColor = Theme.color.iconBackgroundLow,
+                    isSaved = state.isSaved,
+                    onClick = {
+                        listener.onSaveCurrentMovieClick()
+                    }
+                )
             }
         )
 
@@ -338,10 +333,6 @@ private fun handleEffect(
                 movieId = effect.id
             )
         )
-
-        is MovieDetailsEffect.NavigateBack -> {
-            handleNavigation(NavigateBack)
-        }
 
         MovieDetailsEffect.NavigateBack -> handleNavigation(NavigateBack)
     }
