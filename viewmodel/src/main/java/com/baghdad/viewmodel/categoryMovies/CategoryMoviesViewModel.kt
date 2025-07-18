@@ -1,14 +1,14 @@
 package com.baghdad.viewmodel.categoryMovies
 
-import com.baghdad.domain.usecase.genre.GetGenreMoviesUseCase
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
+import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class CategoryMoviesViewModel(
     private val genreId: Long,
-    private val getGenreMoviesUseCase: GetGenreMoviesUseCase,
+    private val getGenreMoviesUseCase: GetMoviesByGenreUseCase,
     private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase
 ) : BaseViewModel<CategoryMoviesState, CategoryMoviesEffect>(CategoryMoviesState()),
     CategoryMoviesInteractionListener {
@@ -35,7 +35,7 @@ class CategoryMoviesViewModel(
     }
 
     override fun onMovieClicked(movieId: Long) {
-
+        sendEffect(CategoryMoviesEffect.NavigateToMovieDetails(movieId))
     }
 
     private fun getGenreName() {
@@ -56,7 +56,12 @@ class CategoryMoviesViewModel(
 
     private fun getGenreMovies() {
         tryToExecute(
-            callee = { getGenreMoviesUseCase.invoke(genreId) },
+            callee = {
+                getGenreMoviesUseCase.invoke(
+                    genreId = genreId,
+                    page = 1
+                )
+            },
             onSuccess = { onGetGenreMoviesSuccess(it) },
             onError = { onGetGenreMoviesError(it) }
         )

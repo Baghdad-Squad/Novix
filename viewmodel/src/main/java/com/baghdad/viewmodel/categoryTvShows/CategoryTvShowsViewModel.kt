@@ -1,14 +1,14 @@
 package com.baghdad.viewmodel.categoryTvShows
 
-import com.baghdad.domain.usecase.genre.GetGenreTvShowsUseCase
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class CategoryTvShowsViewModel(
     private val categoryId: Long,
-    private val getTvShowsCategoryUseCase: GetGenreTvShowsUseCase,
+    private val getTvShowsCategoryUseCase: GetTvShowsByGenreUseCase,
     private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase
 ) : BaseViewModel<CategoryTvShowsState, CategoryTvShowsEffect>(CategoryTvShowsState()),
     CategoryTvShowsInteractionListener {
@@ -37,13 +37,13 @@ class CategoryTvShowsViewModel(
     }
 
     override fun onTvShowClicked(tvShowId: Long) {
-
+        sendEffect(CategoryTvShowsEffect.NavigateToTvShowDetails(tvShowId))
     }
 
     private fun getTvShowsByCategoryId(categoryId: Long) {
         tryToExecute(
             callee = {
-                getTvShowsCategoryUseCase.invoke(genreId = categoryId)
+                getTvShowsCategoryUseCase.invoke(genreId = categoryId, page = 1)
             },
             onSuccess = { onGetTvShowsSuccess(it) },
             onError = { onGetTvShowsError() }
