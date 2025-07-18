@@ -1,7 +1,7 @@
 package com.baghdad.repository.mapper
 
 import com.baghdad.entity.person.Actor
-import com.baghdad.repository.model.actor.ActorDto
+import com.baghdad.repository.model.ActorDto
 import kotlinx.datetime.LocalDate
 
 fun ActorDto.toEntity(): Actor {

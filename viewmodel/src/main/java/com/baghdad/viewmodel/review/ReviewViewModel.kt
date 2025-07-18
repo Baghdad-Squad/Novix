@@ -1,14 +1,14 @@
 package com.baghdad.viewmodel.review
 
 import com.baghdad.domain.usecase.review.GetMovieReviewsUseCase
-import com.baghdad.domain.usecase.review.GetSeriesReviewsUseCase
+import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
 import com.baghdad.entity.media.Review
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class ReviewViewModel(
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase,
-    private val getSeriesReviewsUseCase: GetSeriesReviewsUseCase,
+    private val getSeriesReviewsUseCase: GetTvShowReviewsUseCase,
     val contentId: Long,
     contentType: ContentType,
 ) : BaseViewModel<ReviewScreenState, ReviewScreenEffect>(ReviewScreenState()),

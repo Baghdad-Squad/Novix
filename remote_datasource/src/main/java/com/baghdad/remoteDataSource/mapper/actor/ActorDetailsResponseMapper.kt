@@ -1,7 +1,7 @@
 package com.baghdad.remoteDataSource.mapper.actor
 
 import com.baghdad.remoteDataSource.response.actor.ActorDetailsResponse
-import com.baghdad.repository.model.actor.ActorDto
+import com.baghdad.repository.model.ActorDto
 
 fun ActorDetailsResponse.toDto(): ActorDto {
     return ActorDto(
