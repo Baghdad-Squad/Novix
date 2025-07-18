@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +19,6 @@ import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
-
 import com.baghdad.viewmodel.search.SearchScreenState
 
 
@@ -42,8 +40,6 @@ fun SearchResultContent(
         modifier = modifier
             .fillMaxSize()
             .background(Theme.color.surface)
-            .padding(bottom = 16.dp),
-
         ) {
         if (isLoading) {
             Box(Modifier.fillMaxSize()) {
@@ -52,8 +48,6 @@ fun SearchResultContent(
         }
 
         Spacer(modifier = Modifier.height(12.dp))
-
-
         Row(
             modifier = Modifier
                 .fillMaxWidth(),

@@ -1,11 +1,13 @@
 package com.baghdad.ui.feature.search.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.baghdad.design_system.component.ActorCard
+import com.baghdad.ui.feature.component.lazyPaging.LazyPagingColumn
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingColumn
 import com.baghdad.viewmodel.search.SearchScreenState
 
@@ -21,6 +23,7 @@ fun ActorCardList(
         items = actors,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         key = { it.id },
+        contentPadding = PaddingValues(vertical = 8.dp)
     ) { actor ->
         ActorCard(
             actorName = actor.name,

@@ -22,7 +22,7 @@ fun Actor.toActorInfoUI() = ActorDetailsScreenState.ActorInfoUiState(
     biography = biography,
     birthdayDate = birthDate.toString(),
     placeOfBirth = placeOfBirth,
-    deathDate = deathDate.toString(),
+    deathDate = deathDate?.toString(),
     headerPictures = headerPictures,
     department = department
 )

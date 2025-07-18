@@ -1,5 +1,6 @@
 package com.baghdad.ui.navigation.route
 
+import com.baghdad.viewmodel.review.ContentType
 import kotlinx.serialization.Serializable
 
 sealed interface Graph : Route {
@@ -34,5 +35,5 @@ sealed interface Graph : Route {
     data class TvShowDetailsGraph(val tvShowId: Long) : Graph
 
     @Serializable
-    data class ReviewsGraph(val mediaId: Long, val mediaType: String) : Graph
+    data class ReviewsGraph(val mediaId: Long, val mediaType: ContentType) : Graph
 }
