@@ -96,6 +96,10 @@ class MovieDetailsViewModel(
         }
     }
 
+    override fun onBackClick() {
+        sendEffect(MovieDetailsEffect.NavigateBack)
+    }
+
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
     }
