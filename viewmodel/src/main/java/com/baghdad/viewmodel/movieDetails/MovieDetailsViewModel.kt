@@ -3,12 +3,11 @@ package com.baghdad.viewmodel.movieDetails
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCategoryUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
-import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
+import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.search.toGenreUI
 import kotlin.math.roundToInt
 
 class MovieDetailsViewModel(
@@ -52,7 +51,6 @@ class MovieDetailsViewModel(
             callee = { currentState.movieId },
             onSuccess = {
                 updateState {
-
                     it.copy(
                         isSaved = !currentState.isSaved,
                         isLoading = false
@@ -66,7 +64,7 @@ class MovieDetailsViewModel(
 
     override fun onSaveMoreLikeThisMedia(id: Long) {
         tryToExecute(
-            callee = { currentState.moreLikeThisMovie.firstOrNull { it.id == id }?.id ?: 1L},
+            callee = { currentState.moreLikeThisMovie.firstOrNull { it.id == id }?.id ?: 1L },
             onSuccess = ::onSaveMoreLikeThisMediaSuccess,
             onStart = ::onLoading,
             onFinally = ::onFinally
@@ -109,12 +107,12 @@ class MovieDetailsViewModel(
         sendEffect(MovieDetailsEffect.NavigateToReviewDetails(id))
     }
 
-    override fun onNavigateBack() {
-        sendEffect(MovieDetailsEffect.NavigateBack)
+    override fun onMovieLikeClick(id: Long) {
+        sendEffect(MovieDetailsEffect.NavigateToMovie(id))
     }
 
-    override fun onMovieLikeClick(id : Long) {
-        sendEffect(MovieDetailsEffect.NavigateToMovie(id))
+    override fun onBackClick() {
+        sendEffect(MovieDetailsEffect.NavigateBack)
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
@@ -185,7 +183,6 @@ class MovieDetailsViewModel(
     }
 
 
-
     private fun getCastMembers() {
         tryToExecute(
             callee = { getCastsInfoUseCase(movieId) },
@@ -205,7 +202,6 @@ class MovieDetailsViewModel(
             onFinally = ::onFinally
         )
     }
-
 
 
     private fun getMoreLikeThisShow() {
