@@ -16,9 +16,9 @@ import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toSearchQueryDto
+import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.TvShowDto
-import com.baghdad.repository.model.actor.ActorDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getFlowSafely
 import com.baghdad.repository.util.getPagedSafely
@@ -205,4 +205,5 @@ class SearchRepositoryImpl(
         }
     }
 }
+
 

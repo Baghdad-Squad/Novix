@@ -1,10 +1,10 @@
 package com.baghdad.repository.datasource.remote
 
+import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
-import com.baghdad.repository.model.actor.ActorDto
 
 interface RemoteSearchDataSource {
     suspend fun searchMovies(

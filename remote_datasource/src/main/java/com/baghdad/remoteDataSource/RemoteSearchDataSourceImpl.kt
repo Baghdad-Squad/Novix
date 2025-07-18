@@ -10,11 +10,11 @@ import com.baghdad.remoteDataSource.response.search.MovieSearchResponse
 import com.baghdad.remoteDataSource.response.search.TvShowSearchResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
+import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
-import com.baghdad.repository.model.actor.ActorDto
 import io.ktor.client.HttpClient
 
 class RemoteSearchDataSourceImpl(
