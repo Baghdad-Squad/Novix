@@ -28,6 +28,7 @@ import androidx.compose.ui.zIndex
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
@@ -79,6 +80,13 @@ fun ActorDetailsContent(
                     shouldShowBackground = scrollValue > 450
                 }
         }
+
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+
         Box(
             modifier = modifier
                 .background(Theme.color.surface)
