@@ -27,7 +27,7 @@
     <string name="novix_description">Born from Nova, Made for Flix.</string>
     <string name="app_bar_icon">App Bar Icon</string>
     <string name="category_image">category image</string>
-    <string name="close_filter_bottomsheet">Close Filter Bottomsheet</string>
+    <string name="close_bottomsheet">Close Filter Bottomsheet</string>
     <string name="clear_all">Clear all</string>">
     <string name="filter">Filter</string>
     <string name="released_year">Released year</string>

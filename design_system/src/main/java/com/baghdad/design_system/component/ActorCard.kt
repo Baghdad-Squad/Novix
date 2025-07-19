@@ -1,6 +1,5 @@
 package com.baghdad.design_system.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,9 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 
@@ -50,8 +51,10 @@ fun ActorCard(
             .background(color = Theme.color.surface)
             .noRippleClickable { onClick() }
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(actorImage),
+        AsyncImage(
+            model = if (actorImage.isBlank()) null else actorImage,
+            placeholder = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
+            fallback = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
             contentDescription =
                 if (characterName.isNullOrBlank())
                     "Portrait of actor $actorName"
@@ -68,6 +71,7 @@ fun ActorCard(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
+                .widthIn(min = 218.dp)
                 .background(Theme.color.surface)
                 .offset(x = (-1).dp)
                 .border(

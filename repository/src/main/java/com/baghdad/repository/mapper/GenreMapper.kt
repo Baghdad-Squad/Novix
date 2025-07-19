@@ -6,3 +6,7 @@ import com.baghdad.repository.model.GenreDto
 fun GenreDto.toEntity(): Genre {
     return Genre(id = id, name = name)
 }
+
+fun List<GenreDto>.toEntities(): List<Genre> {
+    return map { it.toEntity() }
+}

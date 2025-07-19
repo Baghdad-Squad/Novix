@@ -16,7 +16,9 @@ fun TvShowDto.toEntity(): TvShow {
             ?: LocalDate(1990, 1, 1),
         overview = overview,
         posterImageURL = posterPictureURL,
-        numberOfSeasons = numberOfSeasons
+        headerImagesURLs = headerImagesURLs,
+        trailerURL = trailerURL,
+        numberOfSeasons = numberOfSeasons,
     )
 }
 

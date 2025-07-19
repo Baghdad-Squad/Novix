@@ -10,13 +10,17 @@ interface MovieDetailsInteractionListener {
 
     fun onExtendOverviewClick()
 
-    fun onCategoryClick(id: Long)
+    fun onCategoryClick(categoryId: Long)
+
+    fun onBackClicked()
 
     fun onActorClick(id: Long)
 
     fun onReviewClick(id: Long)
 
-    fun onMovieLikeClick(id : Long)
+    fun onMovieClick(id: Long)
 
     fun onBackClick()
+
+    fun onTrailerClick()
 }

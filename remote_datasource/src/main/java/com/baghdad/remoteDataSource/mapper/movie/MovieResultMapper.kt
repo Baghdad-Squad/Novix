@@ -13,6 +13,7 @@ fun MovieResult.toDto(): MovieDto {
         releaseDate = releaseDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
         overview = overview ?: "No overview available.",
         posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
-        runtimeMinutes = 0
+        runtimeMinutes = 0,
+        trailerURL = ""
     )
 }

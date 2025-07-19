@@ -13,6 +13,6 @@ fun ActorDetailsResponse.toDto(): ActorDto {
         deathDate = this.deathday,
         placeOfBirth = this.placeOfBirth.orEmpty(),
         headerPictures = listOf("https://image.tmdb.org/t/p/w500"+ this.profilePath),
-        department = this.knownForDepartment.orEmpty()
+        department = this.knownForDepartment.orEmpty(),
     )
 }

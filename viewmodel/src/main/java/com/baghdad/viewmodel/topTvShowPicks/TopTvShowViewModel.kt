@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.topTvShowPicks
 
-import com.baghdad.domain.usecase.actorDetails.GetActorTvShowUseCase
+import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -37,8 +37,8 @@ class TopTvShowViewModel(
         return BaseSnackBarMessage.UnknownError
     }
 
-    override fun onMovieDetailsClick(movieId: Long) {
-        sendEffect(TopTvShowPicksEffect.NavigateToTvShowDetails(movieId))
+    override fun onTvShowDetailsClick(tvShowId: Long) {
+        sendEffect(TopTvShowPicksEffect.NavigateToTvShowDetails(tvShowId))
     }
 
     override fun onSaveTvShowClick(tvShowId: Long) {

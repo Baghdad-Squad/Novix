@@ -11,5 +11,6 @@ data class Movie(
     val releaseDate: LocalDate,
     val overview: String,
     val posterImageURL: String,
+    val trailerURL: String,
     val runtimeMinutes: Int
 )

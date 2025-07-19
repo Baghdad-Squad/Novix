@@ -1,19 +1,18 @@
 package com.baghdad.viewmodel.movieDetails
 
-import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.base.BaseUiState
-import com.baghdad.viewmodel.search.SearchScreenState
 
 data class MovieDetailsState(
     val movieId: Long = 0L,
     val movieImages: List<String> = emptyList(),
     val movieName: String = "",
-    val categories: List<GenreUiState> = emptyList(),
+    val movieTrailerURL: String = "",
+    val categories: List<CategoryUiState> = emptyList(),
     val rating: Double = 0.0,
     val duration: String = "",
     val date: String = "",
     val overView: String = "",
-    val castes: List<ActorCardInfo> = emptyList(),
+    val castMembers: List<ActorCardInfo> = emptyList(),
     val moreLikeThisMovie: List<MoreLikeThisMovie> = emptyList(),
     val isExtendText: Boolean = false,
     val isStared: Boolean = false,
@@ -35,11 +34,8 @@ data class MovieDetailsState(
         val isSaved: Boolean = false,
     )
 
-    data class GenreUiState(
-        val name: String = "",
+    data class CategoryUiState(
         val id: Long = 0,
+        val name: String = "",
     )
-
 }
-
-

@@ -14,12 +14,19 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.theme.Theme
 
 @Composable
-fun LabeledIconRow(title: String, icon: Painter, modifier: Modifier = Modifier, tint: Color = Theme.color.body) {
+fun LabeledIconRow(
+    title: String,
+    icon: Painter,
+    modifier: Modifier = Modifier,
+    tint: Color = Theme.color.body
+) {
     Row(modifier = modifier) {
         Icon(
             painter = icon,
             contentDescription = "Icon",
-            modifier = Modifier.size(12.dp).align(alignment = Alignment.CenterVertically),
+            modifier = Modifier
+                .size(12.dp)
+                .align(alignment = Alignment.CenterVertically),
             tint = tint
         )
         Text(

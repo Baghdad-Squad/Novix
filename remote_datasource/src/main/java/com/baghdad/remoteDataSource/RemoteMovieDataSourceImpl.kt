@@ -1,13 +1,15 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.mapper.actor.toDto
+import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
-import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
-import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
+import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
+import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
+import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.model.CastMemberDto
@@ -67,6 +69,14 @@ class RemoteMovieDataSourceImpl(
         ).backdrops?.map { it.filePath.orEmpty() }.orEmpty()
     }
 
+    override suspend fun getMovieTrailer(movieId: Long): String {
+        val endpoint = MOVIE_VIDEOS_ENDPOINT.replace("{movie_id}", movieId.toString())
+        return handleRequest<MovieVideosResponse>(
+            client = httpClient,
+            url = "$baseUrl$endpoint"
+        ).mapToYoutubeURL()
+    }
+
     companion object {
         private const val SIMILAR_MOVIES_ENDPOINT = "/movie/{movie_id}/similar"
         private const val MOVIE_DETAILS_ENDPOINT = "/movie/{movie_id}"
@@ -74,5 +84,6 @@ class RemoteMovieDataSourceImpl(
         private const val MOVIE_WITH_GENRE_ENDPOINT = "/discover/movie"
         private const val MOVIE_REVIEWS_ENDPOINT = "/movie/{movie_id}/reviews"
         private const val MOVIE_IMAGES_ENDPOINT = "/movie/{movie_id}/images"
+        private const val MOVIE_VIDEOS_ENDPOINT = "/movie/{movie_id}/videos"
     }
 }

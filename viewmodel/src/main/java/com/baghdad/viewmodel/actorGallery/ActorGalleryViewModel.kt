@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.actorGallery
 
-import com.baghdad.domain.usecase.actorDetails.GetActorGalleryUseCase
+import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 

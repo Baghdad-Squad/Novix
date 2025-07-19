@@ -14,7 +14,7 @@ data class Actor(
     val deathDate: String?,
     val biography: String,
     val headerPictures: List<String>,
-    val department: String
+    val department: String,
 )
 
 fun Actor.toDto(): ActorDto = ActorDto(
@@ -26,7 +26,7 @@ fun Actor.toDto(): ActorDto = ActorDto(
     deathDate = this.deathDate,
     placeOfBirth = this.placeOfBirth,
     headerPictures = this.headerPictures,
-    department = this.department
+    department = this.department,
 )
 
 fun ActorDto.toEntity(): Actor = Actor(
@@ -38,5 +38,5 @@ fun ActorDto.toEntity(): Actor = Actor(
     deathDate = this.deathDate,
     placeOfBirth = this.placeOfBirth,
     headerPictures = this.headerPictures,
-    department = this.department
+    department = this.department,
 )

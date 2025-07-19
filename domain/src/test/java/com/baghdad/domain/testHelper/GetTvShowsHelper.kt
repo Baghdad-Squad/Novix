@@ -12,7 +12,8 @@ fun getTestTvShow(
     releaseDate: kotlinx.datetime.LocalDate = kotlinx.datetime.LocalDate(2020, 1, 1),
     overview: String = "Overview of Test TV Show",
     posterPictureURL: String = "http://example.com/poster.jpg",
-    numberOfSeasons: Int = 3
+    numberOfSeasons: Int = 3,
+    headerImagesURLs: List<String> = emptyList(),
 ) = TvShow(
     id = id,
     title = title,
@@ -22,7 +23,9 @@ fun getTestTvShow(
     releaseDate = releaseDate,
     overview = overview,
     posterImageURL = posterPictureURL,
-    numberOfSeasons = numberOfSeasons
+    numberOfSeasons = numberOfSeasons,
+    headerImagesURLs = headerImagesURLs,
+    trailerURL = ""
 )
 
 fun getTestTvShows(

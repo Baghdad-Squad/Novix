@@ -14,6 +14,8 @@ fun ActorTvShowDto.toDto(
         releaseDate = this.firstAirDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
         overview = this.overview.orEmpty(),
         posterPictureURL = "https://image.tmdb.org/t/p/w500" + this.posterPath,
-        numberOfSeasons = 0
+        numberOfSeasons = 0,
+        trailerURL = "",
+        headerImagesURLs = emptyList()
     )
 }

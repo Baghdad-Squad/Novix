@@ -14,6 +14,7 @@ fun ActorMovieDto.toDto(): MovieDto {
         releaseDate = releaseDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
         overview = this.overview.orEmpty(),
         posterPictureURL = "https://image.tmdb.org/t/p/w500"+this.posterPath.orEmpty(),
-        runtimeMinutes = 0
+        runtimeMinutes = 0,
+        trailerURL = ""
     )
 }

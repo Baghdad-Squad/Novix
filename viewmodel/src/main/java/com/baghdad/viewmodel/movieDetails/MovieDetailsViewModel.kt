@@ -22,7 +22,6 @@ class MovieDetailsViewModel(
 
     init {
         getMovieGallery()
-        onGetMovieCategorySuccess()
         getMovieDetails()
         getCastMembers()
         getMoreLikeThisShow()
@@ -51,6 +50,7 @@ class MovieDetailsViewModel(
             callee = { currentState.movieId },
             onSuccess = {
                 updateState {
+
                     it.copy(
                         isSaved = !currentState.isSaved,
                         isLoading = false
@@ -95,9 +95,14 @@ class MovieDetailsViewModel(
         }
     }
 
-    override fun onCategoryClick(id: Long) {
-        sendEffect(MovieDetailsEffect.NavigateToCategory(id))
+    override fun onCategoryClick(categoryId: Long) {
+        sendEffect(MovieDetailsEffect.NavigateToCategory(categoryId))
     }
+
+    override fun onBackClicked() {
+        sendEffect(MovieDetailsEffect.NavigateBack)
+    }
+
 
     override fun onActorClick(id: Long) {
         sendEffect(MovieDetailsEffect.NavigateToActorDetails(id))
@@ -107,12 +112,16 @@ class MovieDetailsViewModel(
         sendEffect(MovieDetailsEffect.NavigateToReviewDetails(id))
     }
 
-    override fun onMovieLikeClick(id: Long) {
+    override fun onMovieClick(id: Long) {
         sendEffect(MovieDetailsEffect.NavigateToMovie(id))
     }
 
     override fun onBackClick() {
         sendEffect(MovieDetailsEffect.NavigateBack)
+    }
+
+    override fun onTrailerClick() {
+        sendEffect(MovieDetailsEffect.OpenYoutubeLink(currentState.movieTrailerURL))
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
@@ -151,36 +160,26 @@ class MovieDetailsViewModel(
 
     private fun onGetMovieDetailsSuccess(details: Movie) {
         updateState { state ->
-            currentState.copy(
+            state.copy(
                 movieId = details.id,
                 movieName = details.title,
+                movieTrailerURL = details.trailerURL,
                 overView = details.overview,
                 rating = details.averageRating.roundToFirstDecimal(),
                 duration = details.runtimeMinutes.formatDuration(),
                 date = details.releaseDate.day.toString() + "-" + details.releaseDate.month.name.lowercase() + "-" + details.releaseDate.year,
                 isSaved = state.isSaved,
-                isLoading = false
+                isLoading = false,
+                categories = details.genres.map {
+                    MovieDetailsState.CategoryUiState(
+                        id = it.id,
+                        name = it.name
+                    )
+                }
             )
         }
     }
 
-    private fun onGetMovieCategorySuccess() {
-        tryToExecute(
-            callee = { getMovieCategoryUseCase(movieId).map { it.toMoviesDetailsUiState() } },
-            onSuccess = ::onGetMovieCategorySuccess,
-            onStart = ::onLoading,
-            onFinally = ::onFinally
-        )
-    }
-
-    private fun onGetMovieCategorySuccess(genres: List<MovieDetailsState.GenreUiState>) {
-        updateState { state ->
-            state.copy(
-                categories = genres,
-                isLoading = false
-            )
-        }
-    }
 
 
     private fun getCastMembers() {
@@ -202,6 +201,7 @@ class MovieDetailsViewModel(
             onFinally = ::onFinally
         )
     }
+
 
 
     private fun getMoreLikeThisShow() {
@@ -231,7 +231,7 @@ class MovieDetailsViewModel(
     private fun onGetMovieCastSuccess(actors: List<MovieDetailsState.ActorCardInfo>) {
         updateState { state ->
             state.copy(
-                castes = actors,
+                castMembers = actors,
                 isLoading = false
             )
         }

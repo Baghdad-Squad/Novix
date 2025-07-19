@@ -1,6 +1,7 @@
 package com.baghdad.design_system.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +21,7 @@ fun Scaffold(
     snackbar: (@Composable () -> Unit)? = null,
     bottomBar: (@Composable () -> Unit)? = null,
     bottomBarHeight: Int = 70,
-    content: @Composable () -> Unit,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -31,7 +32,9 @@ fun Scaffold(
             modifier = Modifier.matchParentSize()
         ) {
             topBar?.invoke()
-            content()
+            Box {
+                content()
+            }
             bottomBar?.let {
                 Spacer(Modifier.height(bottomBarHeight.dp))
             }

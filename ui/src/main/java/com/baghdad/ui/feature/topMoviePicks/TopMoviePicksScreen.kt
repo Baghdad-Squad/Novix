@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.topMoviePicks
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -23,12 +25,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToMovieDetails
+import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksEffect
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksInteractionListener
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksState
@@ -46,12 +53,14 @@ fun TopMoviePicksScreen(
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
     TopMoviePicksContent(
         uiState = uiState,
-        listener = viewModel
+        listener = viewModel,
+        snackBarState = snackBarState
     )
 }
 
@@ -74,8 +83,13 @@ private fun handleEffect(
 private fun TopMoviePicksContent(
     uiState: TopMoviePicksState,
     listener: TopMoviePicksInteractionListener,
+    snackBarState: SnackBarState
 ) {
     Scaffold(
+        modifier = Modifier
+            .background(Theme.color.surface)
+            .systemBarsPadding()
+            .statusBarsPadding(),
         topBar = {
             Row(
                 modifier = Modifier
@@ -99,8 +113,19 @@ private fun TopMoviePicksContent(
                         .padding(start = 8.dp, bottom = 8.dp)
                 )
             }
-        },
+        }, snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
+        }
     ) {
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             modifier = Modifier
@@ -127,4 +152,9 @@ private fun TopMoviePicksContent(
             }
         }
     }
+}
+
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
 }

@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.baghdad.design_system.R
@@ -29,10 +30,10 @@ fun MovieDetailsHeader(
     duration: String,
     releaseDate: String,
     rating: Double,
-    categories: List<MovieDetailsState.GenreUiState>,
+    categories: List<MovieDetailsState.CategoryUiState>,
+    onCategoryClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
     onViewReviewClicked: () -> Unit,
-    onViewCategoryClicked: (id: Long) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -41,33 +42,40 @@ fun MovieDetailsHeader(
             .border(1.dp, Theme.color.stroke, shape = RoundedCornerShape(16.dp))
             .padding(12.dp)
     ) {
-        Text(
-            text = title,
-            fontSize = 18.sp,
-            style = Theme.typography.title.medium,
-            color = Theme.color.title,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-        FlowRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            categories.forEachIndexed { index, category ->
-                Text(
-                    text = category.name,
-                    fontSize = 14.sp,
-                    style = Theme.typography.label.medium,
-                    color = Theme.color.body,
-                    modifier = Modifier.noRippleClickable {onViewCategoryClicked(category.id)}
-                )
-                if (index < categories.size - 1) {
-                    CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+        if (title.isNotBlank()) {
+            Text(
+                text = title,
+                fontSize = 18.sp,
+                style = Theme.typography.title.medium,
+                color = Theme.color.title,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
+        }
+
+        if (categories.isNotEmpty()) {
+            FlowRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                categories.forEachIndexed { index, category ->
+                    Text(
+                        text = category.name,
+                        fontSize = 14.sp,
+                        style = Theme.typography.label.medium,
+                        color = Theme.color.body,
+                        modifier = Modifier.noRippleClickable { onCategoryClick(category.id) }
+                    )
+                    if (index < categories.size - 1) {
+                        CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+                    }
                 }
             }
         }
+
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,19 +87,26 @@ fun MovieDetailsHeader(
                 icon = painterResource(R.drawable.ic_star_filled),
                 tint = Theme.color.yellowAccent
             )
-            CircleDot()
-            LabeledIconRow(
-                title = duration,
-                icon = painterResource(R.drawable.ic_time_oclock),
-            )
-            CircleDot()
-            LabeledIconRow(
-                title = releaseDate,
-                icon = painterResource(R.drawable.ic_calendar),
-            )
+
+            if (duration.isNotBlank()) {
+                CircleDot()
+                LabeledIconRow(
+                    title = duration,
+                    icon = painterResource(R.drawable.ic_time_oclock),
+                )
+            }
+
+            if (releaseDate.isNotBlank()) {
+                CircleDot()
+                LabeledIconRow(
+                    title = releaseDate,
+                    icon = painterResource(R.drawable.ic_calendar),
+                )
+            }
         }
+
         Text(
-            text = "View reviews",
+            text = stringResource(com.baghdad.ui.R.string.view_reviews),
             fontSize = 12.sp,
             style = Theme.typography.label.medium,
             color = Theme.color.primary,

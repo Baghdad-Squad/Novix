@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,15 +37,18 @@ import com.baghdad.design_system.theme.Theme
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SaveIcon(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSaved: Boolean = false,
-    onClick: () -> Unit
+    backgroundColor: Color = Theme.color.iconBackground,
+    tint: Color = Theme.color.onPrimary,
+    size: Int = 32,
 ) {
     Box(
         modifier = modifier
-            .size(32.dp)
+            .size(size.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(color = Theme.color.iconBackground)
+            .background(color = backgroundColor)
             .border(
                 width = 1.dp,
                 color = Theme.color.stroke,
@@ -61,11 +65,11 @@ fun SaveIcon(
         ) { saved ->
             Icon(
                 painter = painterResource(
-                    if (saved) R.drawable.ic_add_bookmark
+                    if (!saved) R.drawable.ic_add_bookmark
                     else R.drawable.ic_remove_bookmark
                 ),
                 contentDescription = if (saved) stringResource(R.string.saved) else stringResource(R.string.unsaved),
-                tint = Theme.color.onPrimary,
+                tint = tint,
                 modifier = Modifier.size(20.dp)
             )
         }
