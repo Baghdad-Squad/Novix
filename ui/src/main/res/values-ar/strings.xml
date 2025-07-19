@@ -51,5 +51,6 @@
     <string name="create_new_list">إنشاء قائمة جديدة</string>
     <string name="select_how_mush_you_like_it">حدد مدى إعجابك به</string>
     <string name="save_to_list">حفظ الى القائمه</string>
-
+    <string name="guests_of_honor">ضيوف الشرف</string>
+    <string name="season_template">موسم %1$s</string>
 </resources>
