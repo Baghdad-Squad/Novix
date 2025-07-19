@@ -36,4 +36,21 @@
     <string name="top_movies_picks">أفضل الأفلام المختارة</string>
     <string name="reviews">التعليقات</string>
     <string name="there_is_no_review">لا يوجد تعليقات</string>
+    <string name="an_error_occurred">حدث خطأ ما</string>
+    <string name="retry">أعد المحاولة</string>
+    <string name="season">موسم</string>
+    <string name="episode">حلقة %1$s</string>
+    <string name="add_to_list">إضافة إلى القائمة</string>
+    <string name="please_login_to_save_to_list">الرجاء تسجيل الدخول لحفظ القائمه</string>
+    <string name="bottom_sheet_content_description">وصف محتوى الصفحة السفلية</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="rate_it">قيمه</string>
+    <string name="please_login_to_rate_your_favorite_items">الرجاء تسجيل الدخول لتقييم العناصر المفضاه لديك</string>
+    <string name="my_favorite">أُفضله</string>
+    <string name="my_movies">افلامي</string>
+    <string name="add">اضافه</string>
+    <string name="create_new_list">إنشاء قائمة جديدة</string>
+    <string name="select_how_mush_you_like_it">حدد مدى إعجابك به</string>
+    <string name="save_to_list">حفظ الى القائمه</string>
+
 </resources>
