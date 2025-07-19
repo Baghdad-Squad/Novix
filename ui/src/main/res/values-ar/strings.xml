@@ -40,4 +40,6 @@
     <string name="season">موسم</string>
     <string name="episode">حلقة %1$s</string>
     <string name="view_reviews">عرض التقييمات</string>
+    <string name="episodes">%1$d عدد الحلقات</string>
+
 </resources>

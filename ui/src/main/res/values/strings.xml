@@ -40,4 +40,5 @@
     <string name="season">Season</string>
     <string name="episode">Episode %1$s</string>
     <string name="view_reviews">View reviews</string>
+    <string name="episodes">%1$d Episodes</string>
 </resources>
