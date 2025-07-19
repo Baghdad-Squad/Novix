@@ -54,6 +54,7 @@ fun SectionHeader(
                     modifier = Modifier
                         .padding(start = 4.dp)
                         .size(16.dp)
+                        .align(Alignment.CenterVertically)
                 )
             }
         }
