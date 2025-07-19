@@ -91,8 +91,6 @@ private fun MovieDetailsContent(
     state: MovieDetailsState,
     snackBarState: SnackBarState
 ) {
-
-
     val lazyState = rememberLazyGridState()
     var shouldReduceAspectRatio by remember { mutableStateOf(false) }
     val targetAspectRange = 1.38f..1.42f

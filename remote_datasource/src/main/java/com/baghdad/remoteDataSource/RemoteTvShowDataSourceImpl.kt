@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource
 
+import android.util.Log
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.episode.toDto
 import com.baghdad.remoteDataSource.mapper.toDto
@@ -41,10 +42,14 @@ class RemoteTvShowDataSourceImpl(
 
     override suspend fun getTvShowImages(tvId: Long): List<String> {
         val endpoint = TV_SHOW_IMAGES_ENDPOINT.replace("{tv_id}", tvId.toString())
+        Log.d("RemoteTvShowDataSourceImpl", "Fetching TV show images from: $baseUrl$endpoint")
         return handleRequest<TVShowImagesResponse>(
             client = httpClient,
             url = "$baseUrl$endpoint"
-        ).backdrops.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
+        ).let {
+            Log.d("RemoteTvShowDataSourceImpl", "Fetched ${it.backdrops?.size ?: 0} backdrops")
+            it
+        }.backdrops.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
 
     override suspend fun getTvShowsByGenre(genreId: Long, page: Int): List<TvShowDto> {

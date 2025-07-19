@@ -35,7 +35,7 @@ suspend inline fun <reified T> handleRequest(
         response.status.isSuccess() -> {
             try {
                 response.body<T>()
-            } catch (_: IOException) {
+            } catch (e: IOException) {
                 throw SerializationNetworkException()
             }
         }

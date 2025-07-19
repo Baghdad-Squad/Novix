@@ -14,6 +14,7 @@ fun EpisodeResponse.toDto(): EpisodeDto {
         currentSeason = this.seasonNumber ?: 0,
         overview = this.overview.orEmpty(),
         headerPictures = emptyList(),
-        trailerUrl = ""
+        trailerUrl = "",
+        genres = emptyList()
     )
 }

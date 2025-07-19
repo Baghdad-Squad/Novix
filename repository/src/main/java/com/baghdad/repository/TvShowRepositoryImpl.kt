@@ -24,13 +24,15 @@ class TvShowRepositoryImpl(
         }
     }
 
-    override suspend fun getTvShowDetails(tvId: Long): TvShow{
+    override suspend fun getTvShowDetails(tvId: Long): TvShow {
         return executeSafely {
+            val tvShowImages = tvShowRemoteDataSource.getTvShowImages(tvId).take(MAX_IMAGE_COUNT)
             tvShowRemoteDataSource.getTvShowDetails(tvId).toEntity()
+                .copy(headerImagesURLs = tvShowImages)
         }
     }
 
-    override suspend fun getTvShowCastMembers(tvId: Long): List<CastMember>{
+    override suspend fun getTvShowCastMembers(tvId: Long): List<CastMember> {
         return executeSafely {
             tvShowRemoteDataSource.getTvShowCastMembers(tvId).map {
                 it.toEntity()
@@ -38,13 +40,13 @@ class TvShowRepositoryImpl(
         }
     }
 
-    override suspend fun getTvShowImages(tvId: Long): List<String>{
+    override suspend fun getTvShowImages(tvId: Long): List<String> {
         return executeSafely {
             tvShowRemoteDataSource.getTvShowImages(tvId)
         }
     }
 
-    override suspend fun getTvShowsByGenre(genreId: Long, page: Int): List<TvShow>{
+    override suspend fun getTvShowsByGenre(genreId: Long, page: Int): List<TvShow> {
         return executeSafely {
             tvShowRemoteDataSource.getTvShowsByGenre(genreId, page).map {
                 it.toEntity()
@@ -60,7 +62,7 @@ class TvShowRepositoryImpl(
         }
     }
 
-    override suspend fun getTvShowReviews(tvId: Long): List<Review>{
+    override suspend fun getTvShowReviews(tvId: Long): List<Review> {
         return executeSafely {
             tvShowRemoteDataSource.getTvShowReviews(tvId).map {
                 it.toEntity()
@@ -68,5 +70,8 @@ class TvShowRepositoryImpl(
         }
     }
 
+    companion object {
+        private const val MAX_IMAGE_COUNT = 10
+    }
 
 }

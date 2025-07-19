@@ -3,10 +3,8 @@ package com.baghdad.ui.feature.episodeDetails.component
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,50 +29,38 @@ fun EpisodeDetailsBottomBar(
     isLoading: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier) {
-        Box(
-            modifier = Modifier.Companion
-                .zIndex(1f)
-                .fillMaxWidth()
-                .height(112.dp)
-                .background(
-                    brush = Brush.Companion.verticalGradient(
-                        colors = listOf(
-                            Color(0x000D0608),
-                            Color(0xFF000000),
-                        ),
-                    )
+    Row(
+        modifier = modifier
+            .zIndex(1f)
+            .fillMaxWidth()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, Color(0xFF0D0608))
                 )
-        )
-        Row(
-            modifier = modifier
-                .zIndex(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 24.dp),
-            verticalAlignment = Alignment.Companion.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Crossfade(
-                targetState = isRated,
-            ) { isRated ->
-                IconButton(
-                    icon = if (isRated) painterResource(R.drawable.ic_star_filled) else painterResource(
-                        R.drawable.ic_star
-                    ),
-                    tintIcon = Theme.color.onPrimary,
-                    background = Theme.color.primary,
-                    borderStroke = null,
-                    size = Pair(52.dp, 48.dp),
-                    onClick = onRateClicked
-                )
-            }
-            PrimaryButton(
-                stringResource(com.baghdad.ui.R.string.play_trailer),
-                modifier = Modifier.Companion.fillMaxWidth(),
-                isEnabled = hasTrailer,
-                isLoading = isLoading,
-                onClick = onPlayTrailerClicked
+            )
+            .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Crossfade(
+            targetState = isRated,
+        ) { isStared ->
+            IconButton(
+                icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
+                    R.drawable.ic_star
+                ),
+                tintIcon = Theme.color.onPrimary,
+                background = Theme.color.primary,
+                borderStroke = null,
+                size = Pair(52.dp, 48.dp),
+                onClick = onRateClicked
             )
         }
+        PrimaryButton(
+            stringResource(com.baghdad.ui.R.string.play_trailer),
+            modifier = Modifier.fillMaxWidth(),
+            isEnabled = hasTrailer && !isLoading,
+            onClick = onPlayTrailerClicked
+        )
     }
 }

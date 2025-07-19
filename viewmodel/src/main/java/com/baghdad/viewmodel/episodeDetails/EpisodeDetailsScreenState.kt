@@ -3,7 +3,6 @@ package com.baghdad.viewmodel.episodeDetails
 import com.baghdad.viewmodel.base.BaseUiState
 
 data class EpisodeDetailsScreenState(
-    override val isLoading: Boolean = false,
     val isEpisodeDetailsLoading: Boolean = false,
     val isEpisodeCastMembersLoading: Boolean = false,
     val episode: EpisodeUiState = EpisodeUiState(),
@@ -14,6 +13,9 @@ data class EpisodeDetailsScreenState(
     val addToListBottomSheetState: AddToListBottomSheetState = AddToListBottomSheetState(),
     val rateEpisodeBottomSheetState: RateEpisodeBottomSheetState = RateEpisodeBottomSheetState()
 ): BaseUiState {
+    override val isLoading: Boolean
+        get() = isEpisodeDetailsLoading || isEpisodeCastMembersLoading
+
     data class EpisodeUiState(
         val id: Long = 0L,
         val title: String = "",
@@ -24,6 +26,7 @@ data class EpisodeDetailsScreenState(
         val releasedDate: String = "",
         val currentSeason: Int = 0,
         val overview: String = "",
+        val categories: List<CategoryUiState> = emptyList(),
         val headerPictures: List<String> = emptyList(),
     )
 

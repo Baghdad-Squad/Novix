@@ -33,6 +33,7 @@ fun TvShow.toDto(genres: List<GenreDto>): TvShowDto {
         overview = this.overview,
         posterPictureURL = this.posterPictureURL,
         numberOfSeasons = this.numberOfSeasons,
+        headerImagesURLs = emptyList()
     )
 }
 

@@ -1,27 +1,37 @@
 package com.baghdad.ui.feature.episodeDetails
 
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.baghdad.design_system.R
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
+import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
-import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.episodeDetails.component.EpisodeDetailsBottomBar
@@ -62,29 +72,31 @@ fun EpisodeDetailsContent(
     state: EpisodeDetailsScreenState,
     listener: EpisodeDetailsInteractionListener,
 ) {
-    val lazyState = rememberLazyListState()
+    val listState = rememberLazyListState()
+    var shouldShowBackground by remember { mutableStateOf(false) }
+
+    val animatedColor by animateColorAsState(
+        targetValue = if (shouldShowBackground)
+            Theme.color.surface
+        else
+            Color.Transparent,
+        animationSpec = tween(
+            durationMillis = 500,
+            easing = FastOutSlowInEasing
+        ),
+    )
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemScrollOffset }
+            .collect { scrollOffset ->
+                shouldShowBackground = scrollOffset > 450
+            }
+    }
+
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth(),
-//                .background(animatedColor),
-                onGoBackClick = listener::onBackClick,
-                content = {
-                    Crossfade(
-                        targetState = state.isSavedToList,
-                        animationSpec = tween(300)
-                    ) { isSaved ->
-                        IconButton(
-                            icon = painterResource(if (isSaved) R.drawable.ic_save_fill else R.drawable.ic_save),
-                            tintIcon = Theme.color.title,
-                            onClick = listener::onSaveEpisodeClick
-                        )
-                    }
-                }
-            )
-        },
+        modifier = Modifier
+            .background(Theme.color.surface)
+            .fillMaxSize()
+            .navigationBarsPadding(),
         bottomBar = {
             EpisodeDetailsBottomBar(
                 isRated = state.isRated,
@@ -95,52 +107,77 @@ fun EpisodeDetailsContent(
             )
         }
     ) {
-        LazyColumn(
-            state = lazyState,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface),
-        ) {
-
-            item {
-                AutoSlidingImageCarousel(
-                    imageUrls = state.episode.headerPictures,
+        AnimatedContent(state.isLoading) { isLoading ->
+            if (isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    WavyLoadingIndicator()
+                }
+            } else {
+                LazyColumn(
+                    state = listState,
+                    contentPadding = PaddingValues(bottom = 72.dp),
                     modifier = Modifier
-                        .zIndex(-1f)
-                        .fillMaxWidth(),
-                    autoSlideDuration = 7000,
-                    indicatorVisibility = state.episode.headerPictures.size > 1
-                )
-            }
+                        .fillMaxSize()
+                        .background(Theme.color.surface),
+                ) {
 
-            item {
-                EpisodeDetailsHeader(
-                    title = state.episode.title,
-                    releaseDate = state.episode.releasedDate,
-                    rating = state.episode.rating,
-                    //TODO
-                    categories = emptyList(),
-                    onCategoryClicked = { listener.onCategoryClick(it) },
-                    seasonNumber = state.episode.currentSeason,
-                    modifier = Modifier
-                        .offset(y = (-48).dp)
-                        .padding(horizontal = 16.dp),
-                )
-            }
+                    item {
+                        Box {
+                            AutoSlidingImageCarousel(
+                                imageUrls = state.episode.headerPictures,
+                                indicatorVisibility = state.episode.headerPictures.size > 1,
+                                imageAspectRatio = 1.778f,
+                                modifier = Modifier.padding(bottom = 82.dp)
+                            )
+                            EpisodeDetailsHeader(
+                                title = state.episode.title,
+                                releaseDate = state.episode.releasedDate,
+                                rating = state.episode.rating,
+                                categories = state.episode.categories,
+                                onCategoryClicked = { listener.onCategoryClick(it) },
+                                seasonNumber = state.episode.currentSeason,
+                                modifier = Modifier
+                                    .padding(bottom = 16.dp)
+                                    .padding(horizontal = 16.dp)
+                                    .align(Alignment.BottomCenter)
+                            )
+                        }
+                    }
 
-            item {
-                OverviewSection(
-                    overview = state.episode.overview,
-                    isExtended = state.isOverviewExpanded,
-                    onExtendClicked = listener::onReadMoreOverviewClick
-                )
+                    item {
+                        AnimatedVisibility(state.episode.overview.isNotBlank()) {
+                            OverviewSection(
+                                overview = state.episode.overview,
+                                isExtended = state.isOverviewExpanded,
+                                onExtendClicked = listener::onReadMoreOverviewClick,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                        }
+                    }
+                    guestsOfHonorItems(
+                        guestsOfHonor = state.guestsOfHonor,
+                        onClick = listener::onGuestOfHonorClick
+                    )
+                }
             }
-            guestsOfHonorItems(
-                guestsOfHonor = state.guestsOfHonor,
-                onClick = listener::onGuestOfHonorClick
-            )
         }
+        TopAppBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(animatedColor)
+                .zIndex(1f)
+                .align(Alignment.TopCenter)
+                .padding(top = 56.dp, bottom = 8.dp),
+            onGoBackClick = listener::onBackClick,
+            content = {
+                SaveIcon(
+                    size = 40,
+                    backgroundColor = Theme.color.iconBackgroundLow,
+                    isSaved = state.isSavedToList,
+                    onClick = listener::onSaveEpisodeClick
+                )
+            }
+        )
     }
 }
 

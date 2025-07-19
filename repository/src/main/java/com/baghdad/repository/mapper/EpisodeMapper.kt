@@ -15,6 +15,7 @@ fun EpisodeDto.toEntity(): Episode {
         currentSeason = this.currentSeason,
         overview = this.overview,
         headerPictures = this.headerPictures,
-        trailerUrl = this.trailerUrl
+        trailerUrl = this.trailerUrl,
+        genres = this.genres.map { it.toEntity() }
     )
 }
