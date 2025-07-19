@@ -35,4 +35,5 @@
     <string name="top_tv_shows_picks">أفضل المسلسلات المختارة</string>
     <string name="top_movies_picks">أفضل الأفلام المختارة</string>
     <string name="reviews">التعليقات</string>
+    <string name="there_is_no_review">لا يوجد تعليقات</string>
 </resources>

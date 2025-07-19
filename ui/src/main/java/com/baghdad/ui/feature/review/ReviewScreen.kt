@@ -1,6 +1,8 @@
 package com.baghdad.ui.feature.review
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -10,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -19,6 +22,7 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.review.component.ReviewerCard
+import com.baghdad.ui.feature.search.component.EmptySearchState
 import com.baghdad.ui.navigation.graph.reviews.ReviewsNavEvent
 import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewInteractionListener
@@ -53,7 +57,8 @@ fun ReviewScreen(
 
 @Composable
 fun ReviewContent(
-    uiState: ReviewScreenState, listener: ReviewInteractionListener
+    uiState: ReviewScreenState,
+    listener: ReviewInteractionListener
 ) {
     Column(
         modifier = Modifier
@@ -62,18 +67,25 @@ fun ReviewContent(
             .navigationBarsPadding()
             .background(Theme.color.surface)
     ) {
+
         TopAppBar(
             screenTitle = stringResource(R.string.reviews),
             onGoBackClick = { listener.onNavigateBack() },
-            modifier = Modifier.padding(top = 12.dp)
+            modifier = Modifier.padding(vertical = 12.dp)
         ) {}
+
+        if (uiState.reviews.isEmpty()) {
+            EmptyReviewScreen()
+        }
 
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.color.surface)
+                .background(Theme.color.surface),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(uiState.reviews) { review ->
+
+        items(uiState.reviews) { review ->
                 ReviewerCard(
                     title = review.reviewText,
                     rate = review.rating,
@@ -82,11 +94,27 @@ fun ReviewContent(
                     authorAvatar = review.authorAvatarUrl,
                     contentName = review.contentTitle,
                     isExpanded = review.isExpanded,
-                    modifier = Modifier.padding(vertical = 8.dp)
                 ) {
                     listener.onExpandedTextChange(review.id)
                 }
             }
+
         }
+    }
+}
+
+@Composable
+private fun EmptyReviewScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 56.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        EmptySearchState(
+            imagePath = com.baghdad.design_system.R.drawable.ic_empty_review_screen,
+            contentDescription = "No Reviews yet",
+            message = stringResource(R.string.there_is_no_review)
+        )
     }
 }
