@@ -3,11 +3,14 @@ package com.baghdad.remoteDataSource
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.episode.toDto
 import com.baghdad.remoteDataSource.mapper.toDto
+import com.baghdad.remoteDataSource.mapper.tvShow.mapToYoutubeURL
+import com.baghdad.remoteDataSource.mapper.tvShow.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowImagesResponse
+import com.baghdad.remoteDataSource.response.tvShow.TVShowVideosResponse
 import com.baghdad.remoteDataSource.response.tvShow.TvShowResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
@@ -72,6 +75,14 @@ class RemoteTvShowDataSourceImpl(
         ).results.orEmpty().map { it.toDto() }
     }
 
+    override suspend fun getTvShowTrailer(tvId: Long): String {
+        val endpoint = TV_SHOW_VIDEOS_ENDPOINT.replace("{tv_id}", tvId.toString())
+        return handleRequest<TVShowVideosResponse>(
+            client = httpClient,
+            url = "$baseUrl$endpoint"
+        ).mapToYoutubeURL()
+    }
+
 
     companion object {
         private const val TV_SHOW_DETAILS_ENDPOINT = "/tv/{tv_id}"
@@ -80,5 +91,6 @@ class RemoteTvShowDataSourceImpl(
         private const val TV_SHOW_EPISODES_ENDPOINT = "/tv/{tv_id}/season/{season_number}"
         private const val TV_SHOW_WITH_GENRE_ENDPOINT = "/discover/tv"
         private const val TV_SHOW_REVIEWS_ENDPOINT = "/tv/{tv_id}/reviews"
+        private const val TV_SHOW_VIDEOS_ENDPOINT = "/tv/{tv_id}/videos"
 }
 }

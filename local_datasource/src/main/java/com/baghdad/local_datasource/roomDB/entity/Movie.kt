@@ -41,7 +41,8 @@ fun Movie.toDto(genres: List<GenreDto>): MovieDto = MovieDto(
     releaseDate = this.releaseDate,
     overview = this.overview,
     posterPictureURL = this.posterPictureURL,
-    runtimeMinutes = this.runtimeMinutes
+    runtimeMinutes = this.runtimeMinutes,
+    trailerURL = ""
 )
 
 fun List<Movie>.toDtos(genresMap: Map<Long, Genre>): List<MovieDto> {

@@ -28,6 +28,7 @@ private fun TvShowSearchResponse.Result.toTvShowDto(
         overview = this.overview.orEmpty(),
         posterPictureURL = this.posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
         numberOfSeasons = numberOfSeasons,
+        trailerURL = "",
         headerImagesURLs = emptyList()
     )
 }

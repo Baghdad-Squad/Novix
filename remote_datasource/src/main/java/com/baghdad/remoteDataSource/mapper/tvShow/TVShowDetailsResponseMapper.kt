@@ -1,4 +1,4 @@
-package com.baghdad.remoteDataSource.mapper
+package com.baghdad.remoteDataSource.mapper.tvShow
 
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
 import com.baghdad.repository.model.GenreDto
@@ -22,6 +22,7 @@ fun TVShowDetailsResponse.toDto(): TvShowDto {
         overview = this.overview.orEmpty(),
         posterPictureURL = "https://image.tmdb.org/t/p/w500" + this.posterPath.orEmpty(),
         numberOfSeasons = this.numberOfSeasons ?: 0,
+        trailerURL = "",
         headerImagesURLs = emptyList()
     )
 }

@@ -17,6 +17,7 @@ fun TvShowDto.toEntity(): TvShow {
         overview = overview,
         posterImageURL = posterPictureURL,
         headerImagesURLs = headerImagesURLs,
+        trailerURL = trailerURL,
         numberOfSeasons = numberOfSeasons,
     )
 }

@@ -121,7 +121,7 @@ class MovieDetailsViewModel(
     }
 
     override fun onTrailerClick() {
-//        TODO("Not yet implemented")
+        sendEffect(MovieDetailsEffect.OpenYoutubeLink(currentState.movieTrailerURL))
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
@@ -163,14 +163,13 @@ class MovieDetailsViewModel(
             state.copy(
                 movieId = details.id,
                 movieName = details.title,
+                movieTrailerURL = details.trailerURL,
                 overView = details.overview,
                 rating = details.averageRating.roundToFirstDecimal(),
                 duration = details.runtimeMinutes.formatDuration(),
                 date = details.releaseDate.day.toString() + "-" + details.releaseDate.month.name.lowercase() + "-" + details.releaseDate.year,
                 isSaved = state.isSaved,
-                isLoading = false
-            )
-            state.copy(
+                isLoading = false,
                 categories = details.genres.map {
                     MovieDetailsState.CategoryUiState(
                         id = it.id,

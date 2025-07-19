@@ -27,6 +27,7 @@ private fun MovieSearchResponse.Result.toMovieDto(
         releaseDate = this.releaseDate.orEmpty(),
         overview = this.overview.orEmpty(),
         posterPictureURL = this.posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
-        runtimeMinutes = runtimeMinutes
+        runtimeMinutes = runtimeMinutes,
+        trailerURL = ""
     )
 }

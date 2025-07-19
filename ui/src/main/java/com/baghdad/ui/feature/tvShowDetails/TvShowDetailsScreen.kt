@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.tvShowDetails
 
+import android.content.Context
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -50,6 +52,11 @@ import com.baghdad.ui.feature.tvShowDetails.component.SeasonSection
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowDetailsCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
+import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToActorDetails
+import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToCategoryTvShows
+import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToEpisodeDetails
+import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToReviews
+import com.baghdad.ui.util.openYouTubeLink
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsInteractionListener
@@ -67,8 +74,9 @@ fun TvShowDetailsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     ObserveAsEffect(viewModel.uiEffect) { effect ->
-        handleEffect(effect, handleNavigation)
+        handleEffect(effect, context, handleNavigation)
     }
     TvShowDetailsContent(
         tvShowId = tvShowId,
@@ -80,6 +88,7 @@ fun TvShowDetailsScreen(
 
 private fun handleEffect(
     effect: TvShowDetailsScreenEffect,
+    context: Context,
     handleNavigation: (TvShowDetailsNavEvent) -> Unit
 ) {
     when (effect) {
@@ -92,23 +101,25 @@ private fun handleEffect(
         )
 
         is TvShowDetailsScreenEffect.NavigateToActorDetails -> handleNavigation(
-            TvShowDetailsNavEvent.NavigateToActorDetails(effect.actorId)
+            NavigateToActorDetails(effect.actorId)
         )
 
         is TvShowDetailsScreenEffect.NavigateToEpisodeDetails -> handleNavigation(
-            TvShowDetailsNavEvent.NavigateToEpisodeDetails(
+            NavigateToEpisodeDetails(
                 effect.seasonNumber,
                 effect.episodeNumber
             )
         )
 
         is TvShowDetailsScreenEffect.NavigateToGenreScreen -> handleNavigation(
-            TvShowDetailsNavEvent.NavigateToCategoryTvShows(effect.genreId)
+            NavigateToCategoryTvShows(effect.genreId)
         )
 
         is TvShowDetailsScreenEffect.NavigateToReviews -> handleNavigation(
-            TvShowDetailsNavEvent.NavigateToReviews(effect.tvShowId)
+            NavigateToReviews(effect.tvShowId)
         )
+
+        is TvShowDetailsScreenEffect.OpenYoutubeLink -> openYouTubeLink(context, effect.youtubeLink)
     }
 
 }
@@ -182,7 +193,8 @@ fun TvShowDetailsContent(
                 item {
                     Box {
                         AutoSlidingImageCarousel(
-                            imageUrls = listOf(uiState.tvShowInfo.posterImageURL),
+                            imageUrls = uiState.tvShowInfo.headerImagesURLs,
+                            imageAspectRatio = 1.778f,
                             modifier = Modifier.padding(bottom = 128.dp)
                         )
                         TvShowDetailsCard(
@@ -246,7 +258,7 @@ fun TvShowDetailsContent(
                 item {
                     EpisodesSection(
                         episodes = uiState.episodes,
-                        posterPictureUrl = uiState.tvShowInfo.posterImageURL,
+                        posterPictureUrl = uiState.tvShowInfo.posterPictureURL,
                         onClickEpisode = { seasonNumber, episodeNumber ->
                             listener.onClickEpisode(seasonNumber, episodeNumber)
                         },
@@ -277,7 +289,7 @@ fun TvShowDetailsContent(
             )
             FloatingIconsButton(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                hasTrailer = uiState.hasTrailer,
+                hasTrailer = uiState.tvShowInfo.trailerURL.isNotBlank(),
                 onStarClick = { listener.onClickAddRating() },
                 onTrailerClick = { listener.onClickPlayTrailer() },
                 isRated = uiState.isTvShowRated

@@ -114,7 +114,7 @@ class TvShowDetailsViewModel(
     }
 
     override fun onClickPlayTrailer() {
-//        TODO("Not yet implemented")
+        sendEffect(TvShowDetailsScreenEffect.OpenYoutubeLink(currentState.tvShowInfo.trailerURL))
     }
 
     private fun onLoading() {
