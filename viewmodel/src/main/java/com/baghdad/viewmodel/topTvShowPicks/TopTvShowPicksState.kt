@@ -9,6 +9,6 @@ data class TopTvShowPicksState(
     data class TvShowUiState(
         val id: Long,
         val posterPictureURL: String = "",
-        val isSaved: Boolean = false
+        val isSaved: Boolean = true
     )
 }
