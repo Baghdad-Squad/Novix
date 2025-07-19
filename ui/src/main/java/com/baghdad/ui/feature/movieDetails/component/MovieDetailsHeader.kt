@@ -29,10 +29,10 @@ fun MovieDetailsHeader(
     duration: String,
     releaseDate: String,
     rating: Double,
-    categories: List<MovieDetailsState.GenreUiState>,
+    categories: List<MovieDetailsState.CategoryUiState>,
+    onCategoryClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
     onViewReviewClicked: () -> Unit,
-    onViewCategoryClicked: (id: Long) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -61,7 +61,9 @@ fun MovieDetailsHeader(
                     fontSize = 14.sp,
                     style = Theme.typography.label.medium,
                     color = Theme.color.body,
-                    modifier = Modifier.noRippleClickable {onViewCategoryClicked(category.id)}
+                    modifier = Modifier.noRippleClickable {
+                        onCategoryClick(category.id)
+                    }
                 )
                 if (index < categories.size - 1) {
                     CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
