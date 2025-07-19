@@ -24,7 +24,8 @@ fun getTestTvShow(
     overview = overview,
     posterImageURL = posterPictureURL,
     numberOfSeasons = numberOfSeasons,
-    headerImagesURLs = headerImagesURLs
+    headerImagesURLs = headerImagesURLs,
+    trailerURL = ""
 )
 
 fun getTestTvShows(

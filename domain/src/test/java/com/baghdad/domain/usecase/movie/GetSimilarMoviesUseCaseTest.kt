@@ -61,7 +61,8 @@ class GetSimilarMoviesUseCaseTest {
                 releaseDate = LocalDate(2008, 7, 18),
                 overview = "Batman faces the Joker in a battle for Gotham's soul.",
                 posterImageURL = "https://example.com/posters/dark_knight.jpg",
-                runtimeMinutes = 152
+                runtimeMinutes = 152,
+                trailerURL = ""
             ),
             Movie(
                 id = 2L,
@@ -72,7 +73,8 @@ class GetSimilarMoviesUseCaseTest {
                 releaseDate = LocalDate(2010, 7, 16),
                 overview = "A thief enters dreams to steal secrets, but gets caught in a deeper plan.",
                 posterImageURL = "https://example.com/posters/inception.jpg",
-                runtimeMinutes = 148
+                runtimeMinutes = 148,
+                trailerURL = ""
             ),
             Movie(
                 id = 3L,
@@ -83,10 +85,10 @@ class GetSimilarMoviesUseCaseTest {
                 releaseDate = LocalDate(2014, 11, 7),
                 overview = "A group of explorers travel through a wormhole to save humanity.",
                 posterImageURL = "https://example.com/posters/interstellar.jpg",
-                runtimeMinutes = 169
+                runtimeMinutes = 169,
+                trailerURL = ""
             )
         )
-
     }
 }
 
