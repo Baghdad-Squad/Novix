@@ -7,6 +7,7 @@ import com.baghdad.repository.exception.ServerNetworkException
 import com.baghdad.repository.exception.TooManyRequestsNetworkException
 import com.baghdad.repository.exception.UnauthorizedNetworkException
 import com.baghdad.repository.exception.UnknownNetworkException
+import com.baghdad.repository.logger.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -22,12 +23,14 @@ suspend inline fun <reified T> handleRequest(
     client: HttpClient,
     url: String,
     params: Map<String, String> = emptyMap(),
+    logger: Logger
 ): T {
     val response = try {
         client.get(url) {
             configureRequest(params)
         }
-    }catch (e: Throwable) {
+    } catch (e: Exception) {
+        logger.logException(e)
         throw mapToNetworkException(e)
     }
 
@@ -35,7 +38,8 @@ suspend inline fun <reified T> handleRequest(
         response.status.isSuccess() -> {
             try {
                 response.body<T>()
-            } catch (e: IOException) {
+            } catch (e: Exception) {
+                logger.logException(e)
                 throw SerializationNetworkException()
             }
         }

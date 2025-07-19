@@ -10,6 +10,7 @@ import com.baghdad.remoteDataSource.response.search.MovieSearchResponse
 import com.baghdad.remoteDataSource.response.search.TvShowSearchResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
+import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
@@ -19,6 +20,7 @@ import io.ktor.client.HttpClient
 
 class RemoteSearchDataSourceImpl(
     private val httpClient: HttpClient,
+    private val logger: Logger,
     private val baseUrl: String
 ) : RemoteSearchDataSource {
     override suspend fun searchMovies(
@@ -30,6 +32,7 @@ class RemoteSearchDataSourceImpl(
         val searchResponse = handleRequest<MovieSearchResponse>(
             client = httpClient,
             url = "$baseUrl$SEARCH_MOVIES_ENDPOINT",
+            logger = logger,
             params = params.toParams(),
         )
         return searchResponse.toPagedMovieDtos(genres = genres)
@@ -40,6 +43,7 @@ class RemoteSearchDataSourceImpl(
         val searchResponse = handleRequest<MovieSearchResponse>(
             client = httpClient,
             url = "$baseUrl$SEARCH_MOVIES_ENDPOINT",
+            logger = logger,
             params = params.toParams(),
         )
         return searchResponse.totalResults ?: 0
@@ -54,6 +58,7 @@ class RemoteSearchDataSourceImpl(
         val searchResponse = handleRequest<TvShowSearchResponse>(
             client = httpClient,
             url = "$baseUrl$SEARCH_TV_SHOWS_ENDPOINT",
+            logger = logger,
             params = params.toParams(),
         )
         return searchResponse.toPagedTvShowDtos(genres = genres)
@@ -64,6 +69,7 @@ class RemoteSearchDataSourceImpl(
         val searchResponse = handleRequest<TvShowSearchResponse>(
             client = httpClient,
             url = "$baseUrl$SEARCH_TV_SHOWS_ENDPOINT",
+            logger = logger,
             params = params.toParams(),
         )
         return searchResponse.totalResults ?: 0
@@ -77,6 +83,7 @@ class RemoteSearchDataSourceImpl(
         val searchResponse = handleRequest<ActorSearchResponse>(
             client = httpClient,
             url = "$baseUrl$SEARCH_ACTORS_ENDPOINT",
+            logger = logger,
             params = params.toParams(),
         )
         return searchResponse.toPagedActorDtos()
@@ -87,6 +94,7 @@ class RemoteSearchDataSourceImpl(
         val searchResponse = handleRequest<ActorSearchResponse>(
             client = httpClient,
             url = "$baseUrl$SEARCH_ACTORS_ENDPOINT",
+            logger = logger,
             params = params.toParams(),
         )
         return searchResponse.totalResults ?: 0

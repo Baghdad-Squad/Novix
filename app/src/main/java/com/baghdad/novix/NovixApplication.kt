@@ -2,6 +2,7 @@ package com.baghdad.novix
 
 import android.app.Application
 import com.baghdad.novix.di.localDataSourceModule
+import com.baghdad.novix.di.loggerModule
 import com.baghdad.novix.di.remoteDataSourceModule
 import com.baghdad.novix.di.repositoryModule
 import com.baghdad.novix.di.useCaseModule
@@ -17,6 +18,7 @@ class NovixApplication : Application() {
             androidContext(this@NovixApplication)
             modules(
                 listOf<Module>(
+                    loggerModule,
                     localDataSourceModule,
                     remoteDataSourceModule,
                     repositoryModule,
