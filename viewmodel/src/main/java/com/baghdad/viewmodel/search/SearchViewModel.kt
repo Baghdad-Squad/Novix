@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.search
 
+import android.util.Log
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
@@ -51,9 +52,12 @@ class SearchViewModel(
     override fun onSearchTextChanged(text: String) {
         val trimmed = text.trim()
         updateState { it.copy(searchText = text, isUserTyping = true) }
-
-        if (trimmed == lastSearch && !tabChanged) return
-
+        Log.e("SearchViewModel", "onSearchTextChanged: $trimmed")
+        if (trimmed == lastSearch && !tabChanged) {
+            updateState { it.copy(isUserTyping = false) }
+            return
+        }
+        Log.e("SearchViewModel", "Performing search for: $trimmed")
         searchJob?.cancel()
         lastSearch = trimmed
 
