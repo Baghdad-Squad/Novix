@@ -31,7 +31,7 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
-import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToTvShowDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksEffect
@@ -72,7 +72,7 @@ private fun handleEffect(
         )
 
         is TopTvShowPicksEffect.NavigateToTvShowDetails -> handleNavigation(
-            NavigateToMovieDetails(effect.tvShowId)
+            NavigateToTvShowDetails(effect.tvShowId)
         )
     }
 }
@@ -92,21 +92,21 @@ private fun TopTvShowPicksContent(
                     .fillMaxWidth()
                     .background(Theme.color.surface)
                     .statusBarsPadding()
-                    .padding(top = 12.dp, bottom = 17.dp),
+                    .padding(top = 12.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
                     onClick = { listener.onBackClick() },
                     modifier = Modifier
-                        .padding(start = 16.dp, bottom = 8.dp)
+                        .padding(start = 16.dp)
                 )
                 Text(
                     text = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
                     style = Theme.typography.title.large,
                     color = Theme.color.title,
                     modifier = Modifier
-                        .padding(start = 8.dp, bottom = 8.dp)
+                        .padding(start = 8.dp)
                 )
             }
         }, snackbar = {
@@ -137,7 +137,7 @@ private fun TopTvShowPicksContent(
                     contentDescription = null,
                     isSaved = tvShow.isSaved,
                     onSavedClick = { listener.onSaveTvShowClick(tvShow.id) },
-                    onClick = { listener.onMovieDetailsClick(tvShow.id) },
+                    onClick = { listener.onTvShowDetailsClick(tvShow.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }
