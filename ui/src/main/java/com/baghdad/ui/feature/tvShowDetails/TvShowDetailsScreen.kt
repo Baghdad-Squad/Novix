@@ -202,10 +202,12 @@ fun TvShowDetailsContent(
                     )
                 }
 
-
                 item {
                     Text(
-                        text = "${uiState.episodes.size} Episodes",
+                        text = stringResource(
+                            com.baghdad.ui.R.string.episodes,
+                            uiState.episodes.size
+                        ),
                         style = Theme.typography.label.small,
                         color = Theme.color.hint,
                         modifier = Modifier
