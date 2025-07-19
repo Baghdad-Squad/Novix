@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.episodeDetails.component
+package com.baghdad.ui.feature.component
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
@@ -21,7 +21,7 @@ import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.theme.Theme
 
 @Composable
-fun EpisodeDetailsBottomBar(
+fun DetailsScreenBottomBar(
     isRated: Boolean,
     onRateClicked: () -> Unit,
     hasTrailer: Boolean,

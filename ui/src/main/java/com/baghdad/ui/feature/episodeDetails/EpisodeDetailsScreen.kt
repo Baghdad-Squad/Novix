@@ -34,7 +34,7 @@ import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
-import com.baghdad.ui.feature.episodeDetails.component.EpisodeDetailsBottomBar
+import com.baghdad.ui.feature.component.DetailsScreenBottomBar
 import com.baghdad.ui.feature.episodeDetails.component.EpisodeDetailsHeader
 import com.baghdad.ui.feature.episodeDetails.component.guestsOfHonorItems
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
@@ -107,7 +107,7 @@ fun EpisodeDetailsContent(
             .fillMaxSize()
             .navigationBarsPadding(),
         bottomBar = {
-            EpisodeDetailsBottomBar(
+            DetailsScreenBottomBar(
                 isRated = state.isRated,
                 onRateClicked = listener::onRateEpisodeClick,
                 hasTrailer = state.episode.trailerUrl.isNotBlank(),

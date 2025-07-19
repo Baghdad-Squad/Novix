@@ -112,7 +112,7 @@ class MovieDetailsViewModel(
         sendEffect(MovieDetailsEffect.NavigateToReviewDetails(id))
     }
 
-    override fun onMovieLikeClick(id: Long) {
+    override fun onMovieClick(id: Long) {
         sendEffect(MovieDetailsEffect.NavigateToMovie(id))
     }
 
@@ -231,7 +231,7 @@ class MovieDetailsViewModel(
     private fun onGetMovieCastSuccess(actors: List<MovieDetailsState.ActorCardInfo>) {
         updateState { state ->
             state.copy(
-                castes = actors,
+                castMembers = actors,
                 isLoading = false
             )
         }
