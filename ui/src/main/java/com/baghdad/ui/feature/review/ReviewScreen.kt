@@ -86,39 +86,42 @@ fun ReviewContent(
             )
         }
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
                 .background(Theme.color.surface)
+        ) {
 
             if (uiState.reviews.isEmpty()) {
                 EmptyReviewScreen()
             }
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface)
-        ) {
-            items(uiState.reviews) { review ->
-                ReviewerCard(
-                    title = review.reviewText,
-                    rate = review.rating,
-                    authorName = review.authorName,
-                    reviewDate = review.postedDate,
-                    authorAvatar = review.authorAvatarUrl,
-                    contentName = review.contentTitle,
-                    isExpanded = review.isExpanded,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                ) {
-                    listener.onExpandedTextChange(review.id)
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.color.surface)
+            ) {
+                items(uiState.reviews) { review ->
+                    ReviewerCard(
+                        title = review.reviewText,
+                        rate = review.rating,
+                        authorName = review.authorName,
+                        reviewDate = review.postedDate,
+                        authorAvatar = review.authorAvatarUrl,
+                        contentName = review.contentTitle,
+                        isExpanded = review.isExpanded,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    ) {
+                        listener.onExpandedTextChange(review.id)
+                    }
                 }
             }
         }
     }
 }
 
-}
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
