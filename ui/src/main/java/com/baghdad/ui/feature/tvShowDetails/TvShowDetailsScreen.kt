@@ -37,6 +37,7 @@ import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
@@ -161,6 +162,11 @@ fun TvShowDetailsContent(
             )
         }
     ) {
+        if (uiState.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                WavyLoadingIndicator()
+            }
+        }
         Box(
             modifier = modifier
                 .background(Theme.color.surface)
