@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -143,14 +142,8 @@ fun TvShowDetailsContent(
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
-            .systemBarsPadding(),
-        floatingActionButton = {
-            FloatingIconsButton(
-                hasTrailer = uiState.hasTrailer,
-                onStarClick = { listener.onClickAddRating() },
-                onTrailerClick = { listener.onClickPlayTrailer() }
-            )
-        }, snackbar = {
+            .navigationBarsPadding(),
+        snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
@@ -168,7 +161,7 @@ fun TvShowDetailsContent(
                 state = listState,
                 modifier = Modifier
                     .fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 52.dp)
+                contentPadding = PaddingValues(bottom = 60.dp)
             ) {
                 item {
                     Box {
@@ -265,6 +258,12 @@ fun TvShowDetailsContent(
                     )
                 }
             )
+            FloatingIconsButton(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                hasTrailer = uiState.hasTrailer,
+                onStarClick = { listener.onClickAddRating() },
+                onTrailerClick = { listener.onClickPlayTrailer() }
+            )
         }
     }
 
@@ -278,12 +277,12 @@ private fun FloatingIconsButton(
     onStarClick: () -> Unit,
     onTrailerClick: () -> Unit
 ) {
-
     Row(
         modifier = modifier
             .zIndex(1f)
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
