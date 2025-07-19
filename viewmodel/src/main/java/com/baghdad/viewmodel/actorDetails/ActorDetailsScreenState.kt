@@ -8,6 +8,9 @@ data class ActorDetailsScreenState(
     val gallery: List<String> = emptyList(),
     val actorInfo: ActorInfoUiState = ActorInfoUiState(),
     val isTextExpanded: Boolean = false,
+    val isMoviesMoreThanTen: Boolean = false,
+    val isTvShowsMoreThanTen: Boolean = false,
+    val isGalleryMoreThanTen: Boolean = false,
     override val isLoading: Boolean = false,
 ) : BaseUiState {
     data class MovieUiState(

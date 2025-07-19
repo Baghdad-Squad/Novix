@@ -22,13 +22,14 @@ import com.baghdad.ui.R
 @Composable
 fun GallerySection(
     imageUrls: List<String>,
+    isMoreThanTen: Boolean,
     modifier: Modifier = Modifier,
     onClickShowAll: () -> Unit = {}
 ) {
     Column(modifier = modifier) {
         SectionHeader(
             title = stringResource(R.string.gallery),
-            isShowAllVisiable = true,
+            isShowAllVisible = isMoreThanTen,
             onClick = onClickShowAll,
             modifier = Modifier.fillMaxWidth()
         )

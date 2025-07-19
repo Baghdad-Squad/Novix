@@ -36,13 +36,13 @@ fun CardInfo(
             color = Theme.color.body
         )
 
-        if (!birthPlace.isNullOrBlank()) {
+        if (birthPlace.isNotBlank()) {
             CircleDot()
 
             IconTextInfo(
                 text = birthPlace,
                 painter = painterResource(R.drawable.ic_birth_place),
-                contentDescription = "birth place"
+                contentDescription = "birth place",
             )
 
             CircleDot()
