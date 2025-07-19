@@ -1,24 +1,18 @@
 package com.baghdad.ui.feature.tvShowDetails
 
 import android.content.Context
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -36,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
-import com.baghdad.design_system.component.CarousalDot
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -202,39 +194,6 @@ fun TvShowDetailsContent(
                             imageAspectRatio = 1.778f,
                             modifier = Modifier.padding(bottom = 128.dp)
                         )
-
-                        if (uiState.tvShowInfo.headerImagesURLs.size > 1) {
-                            AnimatedVisibility(
-                                visible = true,
-                                modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .padding(bottom = 48.dp)
-                            ) {
-                                val pagerState =
-                                    rememberPagerState(pageCount = { uiState.tvShowInfo.headerImagesURLs.size })
-
-                                Row(
-                                    modifier = Modifier
-
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(Theme.color.iconBackgroundLow)
-                                        .border(
-                                            width = 1.dp,
-                                            color = Theme.color.stroke,
-                                            shape = RoundedCornerShape(8.dp)
-                                        )
-                                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                                    horizontalArrangement = Arrangement.Center,
-                                ) {
-                                    CarousalDot(
-                                        totalDots = uiState.tvShowInfo.headerImagesURLs.size,
-                                        selectedIndex = pagerState.currentPage,
-                                        modifier = Modifier
-                                    )
-                                }
-                            }
-
-                        }
 
                         TvShowDetailsCard(
                             tvShowId = tvShowId,
