@@ -8,6 +8,7 @@ import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
 import kotlin.math.roundToInt
 
 class MovieDetailsViewModel(
@@ -47,31 +48,17 @@ class MovieDetailsViewModel(
 
 
     override fun onSaveCurrentMovieClick() {
-        tryToExecute(
-            callee = { currentState.movieId },
-            onSuccess = {
-                updateState {
-                    it.copy(
-                        isSaved = !currentState.isSaved,
-                        isLoading = false
-                    )
-                }
-            },
-            onStart = ::onLoading,
-            onFinally = ::onFinally
+        updateState {
+            it.copy(
+                isSaved = !currentState.isSaved,
+            )
+        }
+        showSnackBar(
+            message = SearchScreenBaseSnackBarMessages.SavedItemSuccessfully, isSuccess = true
         )
     }
 
     override fun onSaveMoreLikeThisMedia(id: Long) {
-        tryToExecute(
-            callee = { currentState.moreLikeThisMovie.firstOrNull { it.id == id }?.id ?: 1L },
-            onSuccess = ::onSaveMoreLikeThisMediaSuccess,
-            onStart = ::onLoading,
-            onFinally = ::onFinally
-        )
-    }
-
-    private fun onSaveMoreLikeThisMediaSuccess(id: Long) {
         updateState { state ->
             val updatedMovies = state.moreLikeThisMovie.map {
                 if (it.id == id) {
@@ -82,9 +69,11 @@ class MovieDetailsViewModel(
             }
             state.copy(
                 moreLikeThisMovie = updatedMovies,
-                isLoading = false
             )
         }
+        showSnackBar(
+            message = SearchScreenBaseSnackBarMessages.SavedItemSuccessfully, isSuccess = true
+        )
     }
 
     override fun onExtendOverviewClick() {
@@ -216,13 +205,7 @@ class MovieDetailsViewModel(
     private fun onGetMovieMoreLikeThisSuccess(movies: List<Movie>) {
         updateState { state ->
             state.copy(
-                moreLikeThisMovie = movies.map { movie ->
-                    MovieDetailsState.MoreLikeThisMovie(
-                        imageUrl = movie.posterImageURL,
-                        id = movie.id,
-                        isSaved = false
-                    )
-                },
+                moreLikeThisMovie = movies.map { it.toMovieDetailsUiState() },
                 isLoading = false
             )
         }

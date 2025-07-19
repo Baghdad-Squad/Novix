@@ -9,6 +9,6 @@ data class TopMoviePicksState(
     data class MovieUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
-        val isSaved: Boolean = false
+        val isSaved: Boolean = true
     )
 }
