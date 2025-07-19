@@ -22,7 +22,6 @@ class MovieDetailsViewModel(
 
     init {
         getMovieGallery()
-        onGetMovieCategorySuccess()
         getMovieDetails()
         getCastMembers()
         getMoreLikeThisShow()
@@ -51,6 +50,7 @@ class MovieDetailsViewModel(
             callee = { currentState.movieId },
             onSuccess = {
                 updateState {
+
                     it.copy(
                         isSaved = !currentState.isSaved,
                         isLoading = false
@@ -95,9 +95,14 @@ class MovieDetailsViewModel(
         }
     }
 
-    override fun onCategoryClick(id: Long) {
-        sendEffect(MovieDetailsEffect.NavigateToCategory(id))
+    override fun onCategoryClick(categoryId: Long) {
+        sendEffect(MovieDetailsEffect.NavigateToCategory(categoryId))
     }
+
+    override fun onBackClicked() {
+        sendEffect(MovieDetailsEffect.NavigateBack)
+    }
+
 
     override fun onActorClick(id: Long) {
         sendEffect(MovieDetailsEffect.NavigateToActorDetails(id))
@@ -151,7 +156,7 @@ class MovieDetailsViewModel(
 
     private fun onGetMovieDetailsSuccess(details: Movie) {
         updateState { state ->
-            currentState.copy(
+            state.copy(
                 movieId = details.id,
                 movieName = details.title,
                 overView = details.overview,
@@ -161,26 +166,17 @@ class MovieDetailsViewModel(
                 isSaved = state.isSaved,
                 isLoading = false
             )
-        }
-    }
-
-    private fun onGetMovieCategorySuccess() {
-        tryToExecute(
-            callee = { getMovieCategoryUseCase(movieId).map { it.toMoviesDetailsUiState() } },
-            onSuccess = ::onGetMovieCategorySuccess,
-            onStart = ::onLoading,
-            onFinally = ::onFinally
-        )
-    }
-
-    private fun onGetMovieCategorySuccess(genres: List<MovieDetailsState.GenreUiState>) {
-        updateState { state ->
             state.copy(
-                categories = genres,
-                isLoading = false
+                categories = details.genres.map {
+                    MovieDetailsState.CategoryUiState(
+                        id = it.id,
+                        name = it.name
+                    )
+                }
             )
         }
     }
+
 
 
     private fun getCastMembers() {
@@ -202,6 +198,7 @@ class MovieDetailsViewModel(
             onFinally = ::onFinally
         )
     }
+
 
 
     private fun getMoreLikeThisShow() {
