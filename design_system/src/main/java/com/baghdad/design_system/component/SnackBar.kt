@@ -36,7 +36,7 @@ fun SnackBar(
     modifier: Modifier = Modifier,
     isSuccess: Boolean,
     isVisible: Boolean,
-    animationDuration: Int = 3000
+    animationDuration: Int = 1000
 ) {
     AnimatedVisibility(
         visible = isVisible,

@@ -1,13 +1,12 @@
 package com.baghdad.ui.feature.review
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -17,13 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.review.component.ReviewerCard
 import com.baghdad.ui.feature.search.component.EmptySearchState
 import com.baghdad.ui.navigation.graph.reviews.ReviewsNavEvent
+import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
 import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewInteractionListener
 import com.baghdad.viewmodel.review.ReviewScreenEffect
@@ -45,8 +50,9 @@ fun ReviewScreen(
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
 
-    ReviewContent(uiState = uiState, listener = viewModel)
+    ReviewContent(uiState = uiState, listener = viewModel, snackBarState = snackBarState)
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
@@ -57,35 +63,44 @@ fun ReviewScreen(
 
 @Composable
 fun ReviewContent(
-    uiState: ReviewScreenState,
-    listener: ReviewInteractionListener
+    uiState: ReviewScreenState, listener: ReviewInteractionListener, snackBarState: SnackBarState
 ) {
-    Column(
+    Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding()
             .background(Theme.color.surface)
-    ) {
-
-        TopAppBar(
-            screenTitle = stringResource(R.string.reviews),
-            onGoBackClick = { listener.onNavigateBack() },
-            modifier = Modifier.padding(vertical = 12.dp)
-        ) {}
-
-        if (uiState.reviews.isEmpty()) {
-            EmptyReviewScreen()
+            .systemBarsPadding()
+            .statusBarsPadding(),
+        topBar = {
+            TopAppBar(
+                screenTitle = stringResource(R.string.reviews),
+                onGoBackClick = { listener.onNavigateBack() },
+                modifier = Modifier.padding(top = 12.dp)
+            ) {}
+        }, snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
         }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .background(Theme.color.surface)
 
+            if (uiState.reviews.isEmpty()) {
+                EmptyReviewScreen()
+            }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.color.surface),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .background(Theme.color.surface)
         ) {
-
-        items(uiState.reviews) { review ->
+            items(uiState.reviews) { review ->
                 ReviewerCard(
                     title = review.reviewText,
                     rate = review.rating,
@@ -94,12 +109,23 @@ fun ReviewContent(
                     authorAvatar = review.authorAvatarUrl,
                     contentName = review.contentTitle,
                     isExpanded = review.isExpanded,
+                    modifier = Modifier.padding(vertical = 8.dp)
                 ) {
                     listener.onExpandedTextChange(review.id)
                 }
             }
-
         }
+    }
+}
+
+}
+
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return when (type) {
+        SearchScreenBaseSnackBarMessages.RemovedItemSuccessfully -> R.string.snackbar_removed_success
+        SearchScreenBaseSnackBarMessages.SavedItemSuccessfully -> R.string.snackbar_saved_success
+        else -> type.toStringResource()
     }
 }
 
