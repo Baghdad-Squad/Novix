@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.baghdad.design_system.R
@@ -65,7 +66,7 @@ fun MovieDetailsHeader(
                         fontSize = 14.sp,
                         style = Theme.typography.label.medium,
                         color = Theme.color.body,
-                        modifier = Modifier.noRippleClickable { onViewCategoryClicked(category.id) }
+                        modifier = Modifier.noRippleClickable { onCategoryClick(category.id) }
                     )
                     if (index < categories.size - 1) {
                         CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
