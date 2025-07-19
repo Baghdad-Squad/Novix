@@ -8,8 +8,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -26,7 +28,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -36,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
@@ -48,7 +48,7 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
 import com.baghdad.ui.feature.movieDetails.component.ActorsSection
-import com.baghdad.ui.feature.movieDetails.component.MovieDetailsHeader
+import com.baghdad.ui.feature.movieDetails.component.MovieHeaderWithDetailsCard
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateBack
@@ -203,31 +203,15 @@ private fun MovieDetailsContent(
                 contentPadding = PaddingValues(bottom = 80.dp)
 
             ) {
-
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Box {
-                        AutoSlidingImageCarousel(
-                            imageUrls = state.movieImages,
-                            imageAspectRatio = 1.778f,
-                            modifier = Modifier.padding(bottom = 128.dp)
-                        )
+                    MovieHeaderWithDetailsCard(
+                        state = state,
+                        listener = listener
+                    )
+                }
 
-                        MovieDetailsHeader(
-                            title = state.movieName,
-                            releaseDate = state.date,
-                            rating = state.rating,
-                            duration = state.duration,
-                            categories = state.categories,
-                            onViewReviewClicked = {
-                                listener.onReviewClick(state.movieId)
-                            },
-                            onCategoryClick = { listener.onCategoryClick(it) },
-                            modifier = Modifier
-                                .padding(bottom = 16.dp)
-                                .padding(horizontal = 16.dp)
-                                .align(Alignment.BottomCenter),
-                        )
-                    }
+                item {
+                    Spacer(Modifier.height(116.dp))
                 }
 
                 if (state.overView.isNotBlank()) {

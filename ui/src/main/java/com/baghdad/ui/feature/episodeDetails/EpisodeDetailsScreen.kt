@@ -8,8 +8,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.WavyLoadingIndicator
@@ -35,7 +36,7 @@ import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
-import com.baghdad.ui.feature.episodeDetails.component.EpisodeDetailsHeader
+import com.baghdad.ui.feature.episodeDetails.component.EpisodeHeaderWithDetailsCard
 import com.baghdad.ui.feature.episodeDetails.component.guestsOfHonorItems
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
@@ -131,26 +132,14 @@ fun EpisodeDetailsContent(
                 ) {
 
                     item {
-                        Box {
-                            AutoSlidingImageCarousel(
-                                imageUrls = state.episode.headerPictures,
-                                indicatorVisibility = state.episode.headerPictures.size > 1,
-                                imageAspectRatio = 1.778f,
-                                modifier = Modifier.padding(bottom = 82.dp)
-                            )
-                            EpisodeDetailsHeader(
-                                title = state.episode.title,
-                                releaseDate = state.episode.releasedDate,
-                                rating = state.episode.rating,
-                                categories = state.episode.categories,
-                                onCategoryClicked = { listener.onCategoryClick(it) },
-                                seasonNumber = state.episode.currentSeason,
-                                modifier = Modifier
-                                    .padding(bottom = 16.dp)
-                                    .padding(horizontal = 16.dp)
-                                    .align(Alignment.BottomCenter)
-                            )
-                        }
+                        EpisodeHeaderWithDetailsCard(
+                            state = state,
+                            listener = listener
+                        )
+                    }
+
+                    item {
+                        Spacer(Modifier.height(84.dp))
                     }
 
                     item {

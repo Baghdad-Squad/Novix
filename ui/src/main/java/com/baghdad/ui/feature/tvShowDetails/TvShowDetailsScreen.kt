@@ -7,8 +7,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -41,7 +41,7 @@ import com.baghdad.ui.feature.component.DetailsScreenBottomBar
 import com.baghdad.ui.feature.tvShowDetails.component.CastMembersSection
 import com.baghdad.ui.feature.tvShowDetails.component.EpisodesSection
 import com.baghdad.ui.feature.tvShowDetails.component.SeasonSection
-import com.baghdad.ui.feature.tvShowDetails.component.TvShowDetailsCard
+import com.baghdad.ui.feature.tvShowDetails.component.TvShowHeaderWithDetailsCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToActorDetails
@@ -174,7 +174,6 @@ fun TvShowDetailsContent(
             )
         }
     ) {
-
         Box(
             modifier = modifier
                 .background(Theme.color.surface)
@@ -187,31 +186,17 @@ fun TvShowDetailsContent(
                     .fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 60.dp)
             ) {
-                item {
-                    Box {
-                        AutoSlidingImageCarousel(
-                            imageUrls = uiState.tvShowInfo.headerImagesURLs,
-                            imageAspectRatio = 1.778f,
-                            modifier = Modifier.padding(bottom = 128.dp)
-                        )
 
-                        TvShowDetailsCard(
-                            tvShowId = tvShowId,
-                            title = uiState.tvShowInfo.title,
-                            genres = uiState.tvShowInfo.genres,
-                            rating = uiState.tvShowInfo.rating,
-                            date = uiState.tvShowInfo.releaseDate,
-                            seasonsCount = uiState.tvShowInfo.seasonCount,
-                            onReviewClick = { listener.onClickReviews(tvShowId) },
-                            onGenreClick = { genreId ->
-                                genreId?.let { listener.onClickGenre(it) }
-                            },
-                            modifier = Modifier
-                                .padding(bottom = 16.dp)
-                                .padding(horizontal = 16.dp)
-                                .align(Alignment.BottomCenter)
-                        )
-                    }
+                item {
+                    TvShowHeaderWithDetailsCard(
+                        tvShowId = tvShowId,
+                        uiState = uiState,
+                        listener = listener
+                    )
+                }
+
+                item {
+                    Spacer(Modifier.height(136.dp))
                 }
 
                 if (uiState.tvShowInfo.overView.isNotBlank()) {
