@@ -26,27 +26,33 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
+import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.actorDetails.component.ActorBiographySection
 import com.baghdad.ui.feature.actorDetails.component.ActorCardDetails
 import com.baghdad.ui.feature.actorDetails.component.GallerySection
 import com.baghdad.ui.feature.actorDetails.component.TopMediaPicksSection
 import com.baghdad.viewmodel.actorDetails.ActorDetailsInteractionListener
 import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenState
+import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 
 @Composable
 fun ActorDetailsContent(
     uiState: ActorDetailsScreenState,
     listener: ActorDetailsInteractionListener,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    snackBarState: SnackBarState
 ) {
     val scrollState = rememberScrollState()
     var shouldShowBackground by remember { mutableStateOf(false) }
-
     val animatedColor by animateColorAsState(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
@@ -57,102 +63,126 @@ fun ActorDetailsContent(
             easing = FastOutSlowInEasing
         ),
     )
-
-    LaunchedEffect(scrollState) {
-        snapshotFlow { scrollState.value }
-            .collect { scrollValue ->
-                shouldShowBackground = scrollValue > 450
-            }
-    }
-    Box(
-        modifier = modifier
+    Scaffold(
+        modifier = Modifier
             .background(Theme.color.surface)
-            .fillMaxSize()
-            .navigationBarsPadding()
-    ) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(bottom = 24.dp)
-        ) {
-            Box {
-                AutoSlidingImageCarousel(
-                    imageUrls = uiState.actorInfo.headerPictures,
-                    modifier = Modifier.padding(bottom = 104.dp)
-                )
+            .navigationBarsPadding(),
+        snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
+        }) {
+        LaunchedEffect(scrollState) {
+            snapshotFlow { scrollState.value }
+                .collect { scrollValue ->
+                    shouldShowBackground = scrollValue > 450
+                }
+        }
 
-                ActorCardDetails(
-                    fullName = uiState.actorInfo.name,
-                    characterRole = uiState.actorInfo.department,
-                    birthPlace = uiState.actorInfo.placeOfBirth,
-                    birthDate = uiState.actorInfo.birthdayDate,
-                    deathDate = uiState.actorInfo.deathDate,
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
-                        .padding(horizontal = 16.dp)
-                        .align(Alignment.BottomCenter)
-                )
-            }
-
-            if (uiState.actorInfo.biography.isNotBlank()) {
-                ActorBiographySection(
-                    biography = uiState.actorInfo.biography,
-                    onExpandedChange = { listener.onReadMoreBiographyClick() },
-                    isExpanded = uiState.isTextExpanded,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
-
-            if (uiState.gallery.isNotEmpty()) {
-                GallerySection(
-                    imageUrls = uiState.gallery,
-                    isMoreThanTen = uiState.isGalleryMoreThanTen,
-                    onClickShowAll = { listener.onViewAllGalleryClick() },
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
-
-            if (uiState.topMoviesPicks.isNotEmpty()) {
-                TopMediaPicksSection(
-                    title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
-                    items = uiState.topMoviesPicks,
-                    imageUrl = { it.posterPictureURL },
-                    onSavedClick = { listener.onSaveMovieClick(it.id) },
-                    onCardClick = { listener.onMovieCardClick(it.id) },
-                    isSaved = { it.isSaved },
-                    isMoreThanTen = uiState.isMoviesMoreThanTen,
-                    onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
-            if (uiState.topTvShowsPicks.isNotEmpty()) {
-                TopMediaPicksSection(
-                    title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
-                    items = uiState.topTvShowsPicks,
-                    imageUrl = { it.posterPictureURL },
-                    onSavedClick = { listener.onSaveTvShowClick(it.id) },
-                    onCardClick = { listener.onTvShowCardClick(it.id) },
-                    isSaved = { it.isSaved },
-                    isMoreThanTen = uiState.isTvShowsMoreThanTen,
-                    onClickShowAll = { listener.onViewAllTopTvShowsClick() },
-                )
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
-        TopAppBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(animatedColor)
-                .zIndex(1f)
-                .align(Alignment.TopCenter)
-                .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = {
-                listener.onBackIconClick()
-            },
-            content = {}
-        )
+
+        Box(
+            modifier = modifier
+                .background(Theme.color.surface)
+                .fillMaxSize()
+                .navigationBarsPadding()
+        ) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(bottom = 24.dp)
+            ) {
+                Box {
+                    AutoSlidingImageCarousel(
+                        imageUrls = uiState.actorInfo.headerPictures,
+                        modifier = Modifier.padding(bottom = 104.dp)
+                    )
+
+                    ActorCardDetails(
+                        fullName = uiState.actorInfo.name,
+                        characterRole = uiState.actorInfo.department,
+                        birthPlace = uiState.actorInfo.placeOfBirth,
+                        birthDate = uiState.actorInfo.birthdayDate,
+                        deathDate = uiState.actorInfo.deathDate,
+                        modifier = Modifier
+                            .padding(bottom = 16.dp)
+                            .padding(horizontal = 16.dp)
+                            .align(Alignment.BottomCenter)
+                    )
+                }
+
+                if (uiState.actorInfo.biography.isNotBlank()) {
+                    ActorBiographySection(
+                        biography = uiState.actorInfo.biography,
+                        onExpandedChange = { listener.onReadMoreBiographyClick() },
+                        isExpanded = uiState.isTextExpanded,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+
+                if (uiState.gallery.isNotEmpty()) {
+                    GallerySection(
+                        imageUrls = uiState.gallery,
+                        isMoreThanTen = uiState.isGalleryMoreThanTen,
+                        onClickShowAll = { listener.onViewAllGalleryClick() },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+
+                if (uiState.topMoviesPicks.isNotEmpty()) {
+                    TopMediaPicksSection(
+                        title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
+                        items = uiState.topMoviesPicks,
+                        imageUrl = { it.posterPictureURL },
+                        onSavedClick = { listener.onSaveMovieClick(it.id) },
+                        onCardClick = { listener.onMovieCardClick(it.id) },
+                        isSaved = { it.isSaved },
+                        isMoreThanTen = uiState.isMoviesMoreThanTen,
+                        onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+                if (uiState.topTvShowsPicks.isNotEmpty()) {
+                    TopMediaPicksSection(
+                        title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
+                        items = uiState.topTvShowsPicks,
+                        imageUrl = { it.posterPictureURL },
+                        onSavedClick = { listener.onSaveTvShowClick(it.id) },
+                        onCardClick = { listener.onTvShowCardClick(it.id) },
+                        isSaved = { it.isSaved },
+                        isMoreThanTen = uiState.isTvShowsMoreThanTen,
+                        onClickShowAll = { listener.onViewAllTopTvShowsClick() },
+                    )
+                }
+            }
+            TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(animatedColor)
+                    .zIndex(1f)
+                    .align(Alignment.TopCenter)
+                    .padding(top = 56.dp, bottom = 8.dp),
+                onGoBackClick = {
+                    listener.onBackIconClick()
+                },
+                content = {}
+            )
+        }
     }
 }
+
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
+}
+
 @NovixPreviews
 @Composable
 private fun ActorDetailsScreenPrev() {
@@ -169,7 +199,8 @@ private fun ActorDetailsScreenPrev() {
                 override fun onSaveTvShowClick(tvShowId: Long) {}
                 override fun onMovieCardClick(movieId: Long) {}
                 override fun onTvShowCardClick(tvShowId: Long) {}
-            }
+            },
+            snackBarState = SnackBarState()
         )
     }
 }

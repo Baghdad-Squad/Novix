@@ -109,11 +109,7 @@ fun NovixTextField(
                 BasicTextField(
                     value = value,
                     onValueChange = {
-                        if (it.length <= maxLength) {
-                            onValueChange(it)
-                        } else {
-                            onValueChange(it.take(maxLength))
-                        }
+                        onValueChange(it.take(maxLength))
                     },
                     modifier = Modifier
                         .fillMaxWidth()

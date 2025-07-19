@@ -41,6 +41,7 @@ fun SaveIcon(
     modifier: Modifier = Modifier,
     isSaved: Boolean = false,
     backgroundColor: Color = Theme.color.iconBackground,
+    tint: Color = Theme.color.onPrimary,
     size: Int = 32,
 ) {
     Box(
@@ -68,7 +69,7 @@ fun SaveIcon(
                     else R.drawable.ic_remove_bookmark
                 ),
                 contentDescription = if (saved) stringResource(R.string.saved) else stringResource(R.string.unsaved),
-                tint = Theme.color.onPrimary,
+                tint = tint,
                 modifier = Modifier.size(20.dp)
             )
         }

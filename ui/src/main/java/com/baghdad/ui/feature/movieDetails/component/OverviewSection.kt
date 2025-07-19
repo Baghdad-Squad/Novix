@@ -1,7 +1,6 @@
 package com.baghdad.ui.feature.movieDetails.component
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,10 +15,11 @@ import com.baghdad.design_system.theme.Theme
 fun OverviewSection(
     overview: String,
     isExtended: Boolean,
+    modifier: Modifier = Modifier,
     readMoreMaxLines: Int = 4,
     onExtendClicked: () -> Unit,
 ) {
-    Column(modifier = Modifier.offset(y = (-48).dp)) {
+    Column(modifier = modifier) {
         Text(
             text = stringResource(com.baghdad.ui.R.string.overview),
             fontSize = 18.sp,

@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.tvShowDetails
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -23,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,18 +34,24 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.SaveIcon
+import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.tvShowDetails.component.CastMembersSection
 import com.baghdad.ui.feature.tvShowDetails.component.EpisodesSection
 import com.baghdad.ui.feature.tvShowDetails.component.SeasonSection
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowDetailsCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
+import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsInteractionListener
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenEffect
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
@@ -58,13 +66,15 @@ fun TvShowDetailsScreen(
     handleNavigation: (TvShowDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
     TvShowDetailsContent(
         tvShowId = tvShowId,
         uiState = uiState,
-        listener = viewModel
+        listener = viewModel,
+        snackBarState = snackBarState
     )
 }
 
@@ -108,6 +118,7 @@ fun TvShowDetailsContent(
     tvShowId: Long,
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
+    snackBarState: SnackBarState,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -125,48 +136,73 @@ fun TvShowDetailsContent(
     )
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemScrollOffset }
-            .collect { scrollOffset ->
-                shouldShowBackground = scrollOffset > 450
+        snapshotFlow {
+            val firstVisibleItemIndex = listState.firstVisibleItemIndex
+            val firstVisibleItemScrollOffset = listState.firstVisibleItemScrollOffset
+
+            if (firstVisibleItemIndex > 0) {
+                Int.MAX_VALUE
+            } else {
+                firstVisibleItemScrollOffset
             }
+        }.collect { totalScrollPosition ->
+            shouldShowBackground = totalScrollPosition > 450
+        }
     }
 
-    Box(
-        modifier = modifier
+    Scaffold(
+        modifier = Modifier
             .background(Theme.color.surface)
-            .fillMaxSize()
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
+        snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
+        }
     ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 52.dp)
-        ) {
-            item {
-                Box {
-                    AutoSlidingImageCarousel(
-                        imageUrls = listOf(uiState.tvShowInfo.posterPictureURL),
-                        modifier = Modifier.padding(bottom = 128.dp)
-                    )
-                    TvShowDetailsCard(
-                        tvShowId = tvShowId,
-                        title = uiState.tvShowInfo.title,
-                        genres = uiState.tvShowInfo.genres,
-                        rating = uiState.tvShowInfo.rating,
-                        date = uiState.tvShowInfo.releaseDate,
-                        seasonsCount = uiState.tvShowInfo.seasonCount,
-                        onReviewClick = { listener.onClickReviews(tvShowId) },
-                        onGenreClick = { genreId ->
-                            genreId?.let { listener.onClickGenre(it) }
-                        },
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .padding(horizontal = 16.dp)
-                            .align(Alignment.BottomCenter)
-                    )
-                }
+        if (uiState.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                WavyLoadingIndicator()
             }
+        }
+        Box(
+            modifier = modifier
+                .background(Theme.color.surface)
+                .fillMaxSize()
+                .navigationBarsPadding()
+        ) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 60.dp)
+            ) {
+                item {
+                    Box {
+                        AutoSlidingImageCarousel(
+                            imageUrls = listOf(uiState.tvShowInfo.posterImageURL),
+                            modifier = Modifier.padding(bottom = 128.dp)
+                        )
+                        TvShowDetailsCard(
+                            tvShowId = tvShowId,
+                            title = uiState.tvShowInfo.title,
+                            genres = uiState.tvShowInfo.genres,
+                            rating = uiState.tvShowInfo.rating,
+                            date = uiState.tvShowInfo.releaseDate,
+                            seasonsCount = uiState.tvShowInfo.seasonCount,
+                            onReviewClick = { listener.onClickReviews(tvShowId) },
+                            onGenreClick = { genreId ->
+                                genreId?.let { listener.onClickGenre(it) }
+                            },
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                                .padding(horizontal = 16.dp)
+                                .align(Alignment.BottomCenter)
+                        )
+                    }
+                }
 
             if (uiState.tvShowInfo.overView.isEmpty()) {
                 item {
@@ -259,33 +295,46 @@ fun TvShowDetailsContent(
             onTrailerClick = { listener.onClickPlayTrailer() }
         )
     }
+
 }
 
 
 @Composable
 private fun FloatingIconsButton(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     hasTrailer: Boolean,
+    isRated: Boolean,
     onStarClick: () -> Unit,
     onTrailerClick: () -> Unit
 ) {
-
     Row(
         modifier = modifier
             .zIndex(1f)
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, Color(0xFF0D0608))
+                )
+            )
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        IconButton(
-            icon = painterResource(R.drawable.ic_star),
-            tintIcon = Theme.color.onPrimary,
-            background = Theme.color.primary,
-            borderStroke = null,
-            size = Pair(52.dp, 48.dp),
-            onClick = onStarClick
-        )
+        Crossfade(
+            targetState = isRated,
+        ) { isStared ->
+            IconButton(
+                icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
+                    R.drawable.ic_star
+                ),
+                tintIcon = Theme.color.onPrimary,
+                background = Theme.color.primary,
+                borderStroke = null,
+                size = Pair(52.dp, 48.dp),
+                onClick = onStarClick
+            )
+        }
         PrimaryButton(
             stringResource(com.baghdad.ui.R.string.play_trailer),
             modifier = Modifier.fillMaxWidth(),
@@ -293,4 +342,9 @@ private fun FloatingIconsButton(
             onClick = onTrailerClick
         )
     }
+}
+
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
 }

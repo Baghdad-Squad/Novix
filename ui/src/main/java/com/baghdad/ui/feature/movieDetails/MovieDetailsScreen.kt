@@ -6,10 +6,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -43,12 +45,16 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.SaveIcon
+import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieDetailsHeader
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
@@ -60,6 +66,7 @@ import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.Navigat
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToReviews
 import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
@@ -85,16 +92,15 @@ fun MovieDetailsScreen(
         listener = viewModel,
         state = state,
         snackBarState = snackBarState
-        )
+    )
 }
 
 @Composable
 private fun MovieDetailsContent(
     listener: MovieDetailsInteractionListener,
-    state: MovieDetailsState ,
+    state: MovieDetailsState,
     snackBarState: SnackBarState
 ) {
-
 
     val lazyState = rememberLazyGridState()
     var shouldReduceAspectRatio by remember { mutableStateOf(false) }
@@ -123,76 +129,74 @@ private fun MovieDetailsContent(
             }
     }
 
-    Box(Modifier.fillMaxSize()) {
-        TopAppBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(animatedColor)
-                .zIndex(1f)
-                .align(Alignment.TopCenter)
-                .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = {
-                listener.onBackClick()
-            },
-            content = {
-                SaveIcon(
-                    size = 40,
-                    backgroundColor = Theme.color.iconBackgroundLow,
-                    isSaved = state.isSaved,
-                    onClick = {
-                        listener.onSaveCurrentMovieClick()
-                    }
-                )
+    Scaffold(
+        modifier = Modifier
+            .background(Theme.color.surface)
+            .navigationBarsPadding(),
+        bottomBar = {
+            FloatingIconsButton(
+                hasTrailer = state.isHasTrailer,
+                onStarClick = { listener.onStarMovieClick() },
+                onTrailerClick = { listener.onTrailerClick() },
+                isRated = state.isStared
+            )
+        }, snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
+        }
+    ) {
+        if (state.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
             }
-        )
-
-        LazyVerticalGrid(
-            state = lazyState,
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        }
+        Box(Modifier.fillMaxSize()) {
+            LazyVerticalGrid(
+                state = lazyState,
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.color.surface),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(bottom = 40.dp)
 
             ) {
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                HeaderSliderSection(
-                    state.movieImages,
-                    indicatorVisibility = state.movieImages.size > 1
-                )
-            }
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    HeaderSliderSection(
+                        state.movieImages,
+                        indicatorVisibility = state.movieImages.size > 1
+                    )
+                }
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                MovieDetailsHeader(
-                    title = state.movieName,
-                    releaseDate = state.date,
-                    rating = state.rating,
-                    duration = state.duration,
-                    categories = state.categories,
-                    modifier = Modifier
-                        .offset(y = (-48).dp)
-                        .padding(horizontal = 16.dp),
-                    onCategoryClick = {
-                        listener.onCategoryClick(it)
-                    },
-                    onViewReviewClicked = {
-                        listener.onReviewClick(state.movieId)
-                    },
-                )
-            }
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    MovieDetailsHeader(
+                        title = state.movieName,
+                        releaseDate = state.date,
+                        rating = state.rating,
+                        duration = state.duration,
+                        categories = state.categories,
+                        modifier = Modifier
+                            .offset(y = (-48).dp)
+                            .padding(horizontal = 16.dp),
+                        onViewReviewClicked = {
+                            listener.onReviewClick(state.movieId)
+                        },
+                        onCategoryClick = { listener.onCategoryClick(it) }
+                    )
+                }
 
-            if (state.overView.isNotBlank()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     OverviewSection(
                         overview = state.overView,
                         isExtended = state.isExtendText,
                     ) { listener.onExtendOverviewClick() }
                 }
-            }
 
-            if (state.castes.isNotEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     ActorsSection(
                         actors = state.castes,
@@ -200,9 +204,7 @@ private fun MovieDetailsContent(
                         onClick = { listener.onActorClick(id = it) }
                     )
                 }
-            }
 
-            if (state.moreLikeThisMovie.isNotEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Text(
                         text = stringResource(com.baghdad.ui.R.string.more_like_this),
@@ -237,13 +239,28 @@ private fun MovieDetailsContent(
                     )
                 }
             }
+            TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(animatedColor)
+                    .zIndex(1f)
+                    .padding(top = 56.dp, bottom = 8.dp),
+                onGoBackClick = {
+                    listener.onBackClick()
+                },
+                content = {
+                    SaveIcon(
+                        tint = Theme.color.title,
+                        size = 40,
+                        backgroundColor = Theme.color.iconBackgroundLow,
+                        isSaved = state.isSaved,
+                        onClick = {
+                            listener.onSaveCurrentMovieClick()
+                        }
+                    )
+                }
+            )
         }
-        FloatingIconsButton(
-            Modifier.align(Alignment.BottomCenter),
-            listener = listener,
-            state = state
-        )
-
     }
 
 }
@@ -267,57 +284,46 @@ private fun HeaderSliderSection(movieImages: List<String>, indicatorVisibility: 
 
 @Composable
 private fun FloatingIconsButton(
-    modifier: Modifier,
-    listener: MovieDetailsInteractionListener,
-    state: MovieDetailsState,
+    modifier: Modifier = Modifier,
+    hasTrailer: Boolean,
+    isRated: Boolean,
+    onStarClick: () -> Unit,
+    onTrailerClick: () -> Unit
 ) {
-    Box(modifier) {
-        Box(
-            modifier = Modifier
-                .zIndex(1f)
-                .fillMaxWidth()
-                .height(112.dp)
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0x000D0608),
-                            Color(0xFF000000),
-                        ),
-                    )
+    Row(
+        modifier = modifier
+            .zIndex(1f)
+            .fillMaxWidth()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, Color(0xFF0D0608))
                 )
-        )
-        Row(
-            modifier = modifier
-                .zIndex(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Crossfade(
-                targetState = state.isStared,
-            ) { isStared ->
-                IconButton(
-                    icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
-                        R.drawable.ic_star
-                    ),
-                    tintIcon = Theme.color.onPrimary,
-                    background = Theme.color.primary,
-                    borderStroke = null,
-                    size = Pair(52.dp, 48.dp),
-                    onClick = {
-                        listener.onStarMovieClick()
-                    }
-                )
-            }
-            PrimaryButton(
-                stringResource(com.baghdad.ui.R.string.play_trailer),
-                modifier = Modifier.fillMaxWidth(),
-                isEnabled = state.isHasTrailer,
-                isLoading = state.isLoading,
-            ) {
-            }
+            )
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Crossfade(
+            targetState = isRated,
+        ) { isStared ->
+            IconButton(
+                icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
+                    R.drawable.ic_star
+                ),
+                tintIcon = Theme.color.onPrimary,
+                background = Theme.color.primary,
+                borderStroke = null,
+                size = Pair(52.dp, 48.dp),
+                onClick = onStarClick
+            )
         }
+        PrimaryButton(
+            stringResource(com.baghdad.ui.R.string.play_trailer),
+            modifier = Modifier.fillMaxWidth(),
+            isEnabled = hasTrailer,
+            onClick = onTrailerClick
+        )
     }
 }
 
@@ -360,3 +366,7 @@ private fun handleEffect(
     }
 }
 
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
+}

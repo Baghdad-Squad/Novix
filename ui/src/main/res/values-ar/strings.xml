@@ -35,6 +35,7 @@
     <string name="top_tv_shows_picks">أفضل المسلسلات المختارة</string>
     <string name="top_movies_picks">أفضل الأفلام المختارة</string>
     <string name="reviews">التعليقات</string>
+    <string name="there_is_no_review">لا يوجد تعليقات</string>
     <string name="an_error_occurred">حدث خطأ ما</string>
     <string name="retry">أعد المحاولة</string>
     <string name="season">موسم</string>
@@ -54,5 +55,6 @@
     <string name="create_new_list">إنشاء قائمة جديدة</string>
     <string name="select_how_mush_you_like_it">حدد مدى إعجابك به</string>
     <string name="save_to_list">حفظ الى القائمه</string>
-
+    <string name="guests_of_honor">ضيوف الشرف</string>
+    <string name="season_template">موسم %1$s</string>
 </resources>
