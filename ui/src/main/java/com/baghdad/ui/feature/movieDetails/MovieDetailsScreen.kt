@@ -134,6 +134,7 @@ private fun MovieDetailsContent(
             },
             content = {
                 SaveIcon(
+                    tint = Theme.color.title,
                     size = 40,
                     backgroundColor = Theme.color.iconBackgroundLow,
                     isSaved = state.isSaved,

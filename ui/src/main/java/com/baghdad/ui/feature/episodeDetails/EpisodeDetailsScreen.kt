@@ -85,11 +85,20 @@ fun EpisodeDetailsContent(
             easing = FastOutSlowInEasing
         ),
     )
+
     LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemScrollOffset }
-            .collect { scrollOffset ->
-                shouldShowBackground = scrollOffset > 450
+        snapshotFlow {
+            val firstVisibleItemIndex = listState.firstVisibleItemIndex
+            val firstVisibleItemScrollOffset = listState.firstVisibleItemScrollOffset
+
+            if (firstVisibleItemIndex > 0) {
+                Int.MAX_VALUE
+            } else {
+                firstVisibleItemScrollOffset
             }
+        }.collect { totalScrollPosition ->
+            shouldShowBackground = totalScrollPosition > 450
+        }
     }
 
     Scaffold(
@@ -174,6 +183,7 @@ fun EpisodeDetailsContent(
                     size = 40,
                     backgroundColor = Theme.color.iconBackgroundLow,
                     isSaved = state.isSavedToList,
+                    tint = Theme.color.title,
                     onClick = listener::onSaveEpisodeClick
                 )
             }

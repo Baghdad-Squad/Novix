@@ -129,10 +129,18 @@ fun TvShowDetailsContent(
     )
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemScrollOffset }
-            .collect { scrollOffset ->
-                shouldShowBackground = scrollOffset > 450
+        snapshotFlow {
+            val firstVisibleItemIndex = listState.firstVisibleItemIndex
+            val firstVisibleItemScrollOffset = listState.firstVisibleItemScrollOffset
+
+            if (firstVisibleItemIndex > 0) {
+                Int.MAX_VALUE
+            } else {
+                firstVisibleItemScrollOffset
             }
+        }.collect { totalScrollPosition ->
+            shouldShowBackground = totalScrollPosition > 450
+        }
     }
 
     Box(
@@ -244,6 +252,7 @@ fun TvShowDetailsContent(
             },
             content = {
                 SaveIcon(
+                    tint = Theme.color.title,
                     size = 40,
                     backgroundColor = Theme.color.iconBackgroundLow,
                     isSaved = uiState.isTvShowSaved,
