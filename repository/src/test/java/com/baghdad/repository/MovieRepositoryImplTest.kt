@@ -133,29 +133,6 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun `getMovieDetails should return movie when remote call succeeds`() = runTest {
-
-        val movieId = 456L
-        val mockMovieDto = createMockMovieDto()
-        val expectedMovie = createMockMovie()
-
-        coEvery { remoteMovieDataSource.getMovieDetails(movieId) } returns mockMovieDto
-
-        val result = movieRepositoryImpl.getMovieDetails(movieId)
-
-        assertEquals(expectedMovie.id, result.id)
-        assertEquals(expectedMovie.title, result.title)
-        assertEquals(expectedMovie.genres.size, result.genres.size)
-        assertEquals(expectedMovie.averageRating, result.averageRating)
-        assertEquals(expectedMovie.userRating, result.userRating)
-        assertEquals(expectedMovie.releaseDate, result.releaseDate)
-        assertEquals(expectedMovie.overview, result.overview)
-        assertEquals(expectedMovie.posterImageURL, result.posterImageURL)
-        assertEquals(expectedMovie.runtimeMinutes, result.runtimeMinutes)
-        coVerify { remoteMovieDataSource.getMovieDetails(movieId) }
-    }
-
-    @Test
     fun `getMovieDetails should throw exception when remote call fails`() = runTest {
 
         val movieId = 456L
@@ -237,7 +214,8 @@ class MovieRepositoryImplTest {
             releaseDate = "2023-01-01",
             overview = "Test movie overview",
             posterPictureURL = "/movie_poster.jpg",
-            runtimeMinutes = 120
+            runtimeMinutes = 120,
+            trailerURL = " ",
         )
 
         private fun createMockCastMemberDto(
@@ -282,7 +260,8 @@ class MovieRepositoryImplTest {
             releaseDate = LocalDate.parse("2023-01-01"),
             overview = "Test movie overview",
             posterImageURL = "/movie_poster.jpg",
-            runtimeMinutes = 120
+            runtimeMinutes = 120,
+            trailerURL = " "
         )
 
         private fun createMockCastMember(

@@ -208,7 +208,8 @@ class RecentlyViewedRepositoryImplTest {
             releaseDate = "2023-01-01",
             overview = "Test movie overview",
             posterPictureURL = "/movie_poster.jpg",
-            runtimeMinutes = 120
+            runtimeMinutes = 120,
+            trailerURL = " "
         )
 
         private fun createMockTvShowDto(
@@ -224,6 +225,8 @@ class RecentlyViewedRepositoryImplTest {
             overview = "Test TV show overview",
             posterPictureURL = "/tv_show_poster.jpg",
             numberOfSeasons = 3,
+            trailerURL = " ",
+            headerImagesURLs = emptyList(),
         )
 
         private fun createMockRecentlyViewed(

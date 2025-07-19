@@ -201,7 +201,8 @@ class ActorRepositoryImplTest {
             releaseDate = "2023-01-01",
             overview = "Test movie overview",
             posterPictureURL = "/movie_poster.jpg",
-            runtimeMinutes = 120
+            runtimeMinutes = 120,
+            trailerURL = " ",
         )
 
         private fun createMockMovie() = Movie(
@@ -213,7 +214,8 @@ class ActorRepositoryImplTest {
             releaseDate = LocalDate.parse("2023-01-01"),
             overview = "Test movie overview",
             posterImageURL = "/movie_poster.jpg",
-            runtimeMinutes = 120
+            runtimeMinutes = 120,
+            trailerURL = " "
         )
 
         private fun createMockTvShowDto() = TvShowDto(
@@ -228,7 +230,9 @@ class ActorRepositoryImplTest {
             releaseDate = "2023-01-01",
             overview = "Test overview for TV Show",
             posterPictureURL = "/tv_poster.jpg",
-            numberOfSeasons = 3
+            numberOfSeasons = 3,
+            trailerURL = " ",
+            headerImagesURLs = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg", "/header4.jpg")
         )
 
         private fun createMockTvShow() = TvShow(
@@ -240,7 +244,9 @@ class ActorRepositoryImplTest {
             releaseDate = LocalDate.parse("2023-01-01"),
             overview = "Test overview for TV Show",
             posterImageURL = "/tv_poster.jpg",
-            numberOfSeasons = 3
+            numberOfSeasons = 3,
+            trailerURL = " ",
+            headerImagesURLs = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg")
         )
     }
 }

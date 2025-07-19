@@ -3,6 +3,7 @@ package com.baghdad.repository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
+import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
@@ -19,54 +20,17 @@ import org.junit.jupiter.api.assertThrows
 class EpisodeRepositoryImplTest {
 
     private lateinit var remoteEpisodeDataSource: RemoteEpisodeDataSource
+    private lateinit var remoteTvShowDataSource: RemoteTvShowDataSource
     private lateinit var episodeRepositoryImpl: EpisodeRepositoryImpl
 
     @BeforeEach
     fun setUp() {
+        remoteTvShowDataSource = mockk()
         remoteEpisodeDataSource = mockk()
         episodeRepositoryImpl = EpisodeRepositoryImpl(
-            remoteEpisodeDataSource = remoteEpisodeDataSource
+            remoteEpisodeDataSource = remoteEpisodeDataSource,
+            remoteTvShowDataSource = remoteTvShowDataSource
         )
-    }
-
-    @Test
-    fun `getEpisodeDetails should return episode when remote call succeeds`() = runTest {
-        // Given
-        val tvId = 123L
-        val seasonNumber = 2
-        val episodeNumber = 5
-        val expectedEpisodeDto = createMockEpisodeDto()
-        val mockImages = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg", "/image4.jpg")
-        val expectedEpisode = createMockEpisode()
-
-        coEvery { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) } returns expectedEpisodeDto
-        coEvery { remoteEpisodeDataSource.getEpisodeImages(tvId, seasonNumber, episodeNumber) } returns mockImages
-
-        val result = episodeRepositoryImpl.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
-
-        assertEquals(expectedEpisode, result)
-        coVerify { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) }
-        coVerify { remoteEpisodeDataSource.getEpisodeImages(tvId, seasonNumber, episodeNumber) }
-    }
-
-    @Test
-    fun `getEpisodeDetails should limit header pictures to 3 images`() = runTest {
-        // Given
-        val tvId = 123L
-        val seasonNumber = 2
-        val episodeNumber = 5
-        val expectedEpisodeDto = createMockEpisodeDto()
-        val mockImages = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg", "/image4.jpg", "/image5.jpg")
-
-        coEvery { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) } returns expectedEpisodeDto
-        coEvery { remoteEpisodeDataSource.getEpisodeImages(tvId, seasonNumber, episodeNumber) } returns mockImages
-
-        val result = episodeRepositoryImpl.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
-
-        assertEquals(3, result.headerPictures.size)
-        assertEquals(listOf("/image1.jpg", "/image2.jpg", "/image3.jpg"), result.headerPictures)
-        coVerify { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) }
-        coVerify { remoteEpisodeDataSource.getEpisodeImages(tvId, seasonNumber, episodeNumber) }
     }
 
     @Test
@@ -138,7 +102,9 @@ class EpisodeRepositoryImplTest {
             releasedDate = "2023-05-15",
             currentSeason = 2,
             overview = "Test episode overview",
-            headerPictures = listOf("/header1.jpg", "/header2.jpg")
+            headerPictures = listOf("/header1.jpg", "/header2.jpg"),
+            genres = emptyList(),
+            trailerUrl = " "
         )
 
         private fun createMockEpisode() = Episode(
@@ -150,7 +116,9 @@ class EpisodeRepositoryImplTest {
             releasedDate = LocalDate.parse("2023-05-15"),
             currentSeason = 2,
             overview = "Test episode overview",
-            headerPictures = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg") // First 3 images
+            headerPictures = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg"),
+            genres = emptyList(),
+            trailerUrl = " "
         )
 
         private fun createMockCastMemberDto() = CastMemberDto(

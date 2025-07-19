@@ -280,8 +280,8 @@ class SearchRepositoryImplTest {
 
         private fun createMockActorDto(
             id: Long,
-            name: String
-        ) = ActorDto(
+            name: String,
+        ): ActorDto = ActorDto(
             id = id,
             name = name,
             imageUrl = "https://example.com/image.jpg",
@@ -290,7 +290,7 @@ class SearchRepositoryImplTest {
             deathDate = null,
             placeOfBirth = "USA",
             headerPictures = listOf("https://example.com/header.jpg"),
-            department = "Acting"
+            department = "Acting",
         )
 
         private fun createMockMovieDto(
@@ -305,7 +305,8 @@ class SearchRepositoryImplTest {
             releaseDate = "2023-01-01",
             overview = "Overview",
             posterPictureURL = "https://example.com/poster.jpg",
-            runtimeMinutes = 120
+            runtimeMinutes = 120,
+            trailerURL = " "
         )
 
         private fun createMockTvShowDto(
@@ -320,7 +321,9 @@ class SearchRepositoryImplTest {
             releaseDate = "2023-01-01",
             overview = "Overview",
             posterPictureURL = "https://example.com/poster.jpg",
-            numberOfSeasons = 5
+            numberOfSeasons = 5,
+            trailerURL = " ",
+            headerImagesURLs = listOf("https://example.com/header.jpg")
         )
 
         private fun createMockGenreDto(
