@@ -26,12 +26,13 @@ fun AutoSlidingImageCarousel(
     autoSlideDuration: Long = 3000L,
     imageAspectRatio: Float = 1.4f,
 ) {
-
-    LaunchedEffect(imageUrls) {
-        while (true) {
-            delay(autoSlideDuration)
-            val next = (pagerState.currentPage + 1) % imageUrls.size
-            pagerState.animateScrollToPage(next)
+    if (imageUrls.isNotEmpty()) {
+        LaunchedEffect(imageUrls) {
+            while (true) {
+                delay(autoSlideDuration)
+                val next = (pagerState.currentPage + 1) % imageUrls.size
+                pagerState.animateScrollToPage(next)
+            }
         }
     }
 
