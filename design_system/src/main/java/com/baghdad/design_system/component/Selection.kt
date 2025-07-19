@@ -5,7 +5,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -15,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.shared.Selectable
@@ -23,10 +23,11 @@ import com.baghdad.design_system.theme.Theme
 
 
 @Composable
-fun NovixSelection(
+fun Selection(
     option: Selectable<String>,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    trailingText: String? = null,
 ) {
     val transition = updateTransition(
         targetState = option.isSelected,
@@ -49,7 +50,7 @@ fun NovixSelection(
         else Theme.color.stroke
     }
 
-    Box(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .background(animatedBackgroundColor, RoundedCornerShape(8.dp))
@@ -60,23 +61,24 @@ fun NovixSelection(
             )
             .wrapContentHeight()
             .noRippleClickable { onClick() },
-        contentAlignment = Alignment.CenterStart
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
+
         Text(
             text = option.value,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
             color = Theme.color.body,
             style = Theme.typography.label.large
         )
-    }
-}
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun Selection() {
-    NovixSelection(
-        option = Selectable("Option 3", isSelected = false),
-        onClick = { /* Handle click */ },
-        modifier = Modifier.padding(16.dp)
-    )
+        trailingText?.let {
+            Text(
+                text = trailingText,
+                modifier = Modifier.padding(end = 12.dp),
+                color = Theme.color.hint,
+                style = Theme.typography.label.small
+            )
+        }
+    }
 }

@@ -39,4 +39,16 @@
     <string name="cast">Cast</string>
     <string name="season">Season</string>
     <string name="episode">Episode %1$s</string>
+    <string name="add_to_list">Add to list</string>
+    <string name="please_login_to_save_to_list">Please login to save to list</string>
+    <string name="bottom_sheet_content_description">bottom sheet content description</string>
+    <string name="login">Login</string>
+    <string name="rate_it">Rate it</string>
+    <string name="please_login_to_rate_your_favorite_items">Please login to rate your favorite items.</string>
+    <string name="my_favorite">My favorite</string>
+    <string name="my_movies">My movies</string>
+    <string name="add">Add</string>
+    <string name="create_new_list">Create new list</string>
+    <string name="select_how_mush_you_like_it">Select how mush you like it</string>
+    <string name="save_to_list">Save to list</string>
 </resources>

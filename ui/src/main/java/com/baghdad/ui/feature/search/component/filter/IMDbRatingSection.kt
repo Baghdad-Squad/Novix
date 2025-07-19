@@ -40,7 +40,8 @@ fun IMDbRatingSection(
             repeat(10) {
                 Star(
                     isFilled = it < rate,
-                    onClick = { onRatingChanged(it + 1) }
+                    onClick = { onRatingChanged(it + 1) },
+                    starSize = 24.dp,
                 )
             }
         }
