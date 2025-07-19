@@ -204,98 +204,100 @@ fun TvShowDetailsContent(
                     }
                 }
 
-            if (uiState.tvShowInfo.overView.isEmpty()) {
-                item {
-                    TvShowOverviewSection(
-                        overview = uiState.tvShowInfo.overView,
-                        onExpandedChange = { listener.onClickReadMoreOverview() },
-                        isExpanded = uiState.isTextExpanded,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
+                if (uiState.tvShowInfo.overView.isEmpty()) {
+                    item {
+                        TvShowOverviewSection(
+                            overview = uiState.tvShowInfo.overView,
+                            onExpandedChange = { listener.onClickReadMoreOverview() },
+                            isExpanded = uiState.isTextExpanded,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
+                }
+
+                if (uiState.castMembers.isNotEmpty()) {
+                    item {
+                        CastMembersSection(
+                            actors = uiState.castMembers,
+                            onClickCastMember = { actorId ->
+                                actorId?.let { listener.onClickCastMember(it) }
+                            },
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
+                }
+
+
+                if (uiState.episodes.isNotEmpty()) {
+                    item {
+                        SeasonSection(
+                            seasonCount = uiState.tvShowInfo.seasonCount,
+                            selectedSeasonIndex = uiState.selectedSeasonIndex,
+                            onSeasonSelected = { listener.onClickSeasonTab(it) },
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+
+                    item {
+                        Text(
+                            text = stringResource(
+                                com.baghdad.ui.R.string.episodes,
+                                uiState.episodes.size
+                            ),
+                            style = Theme.typography.label.small,
+                            color = Theme.color.hint,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 12.dp)
+                        )
+                    }
+
+                    item {
+                        EpisodesSection(
+                            episodes = uiState.episodes,
+                            posterPictureUrl = uiState.tvShowInfo.posterImageURL,
+                            onClickEpisode = { seasonNumber, episodeNumber ->
+                                listener.onClickEpisode(seasonNumber, episodeNumber)
+                            },
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
                 }
             }
 
-            if (uiState.castMembers.isNotEmpty()) {
-                item {
-                    CastMembersSection(
-                        actors = uiState.castMembers,
-                        onClickCastMember = { actorId ->
-                            actorId?.let { listener.onClickCastMember(it) }
-                        },
-                        modifier = Modifier.padding(bottom = 16.dp)
+
+            TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(animatedColor)
+                    .zIndex(1f)
+                    .align(Alignment.TopCenter)
+                    .padding(top = 56.dp, bottom = 8.dp),
+                onGoBackClick = {
+                    listener.onClickBackIcon()
+                },
+                content = {
+                    SaveIcon(
+                        size = 40,
+                        backgroundColor = Theme.color.iconBackgroundLow,
+                        isSaved = uiState.isTvShowSaved,
+                        onClick = {
+                            listener.onClickSaveTvShow(tvShowId)
+                        }
                     )
                 }
-            }
+            )
 
-
-            if (uiState.episodes.isNotEmpty()) {
-                item {
-                    SeasonSection(
-                        seasonCount = uiState.tvShowInfo.seasonCount,
-                        selectedSeasonIndex = uiState.selectedSeasonIndex,
-                        onSeasonSelected = { listener.onClickSeasonTab(it) },
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
-
-                item {
-                    Text(
-                        text = stringResource(
-                            com.baghdad.ui.R.string.episodes,
-                            uiState.episodes.size
-                        ),
-                        style = Theme.typography.label.small,
-                        color = Theme.color.hint,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .padding(bottom = 12.dp)
-                    )
-                }
-
-                item {
-                    EpisodesSection(
-                        episodes = uiState.episodes,
-                        posterPictureUrl = uiState.tvShowInfo.posterPictureURL,
-                        onClickEpisode = { seasonNumber, episodeNumber ->
-                            listener.onClickEpisode(seasonNumber, episodeNumber)
-                        },
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                }
-            }
+            FloatingIconsButton(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                hasTrailer = uiState.hasTrailer,
+                onStarClick = { listener.onClickAddRating() },
+                onTrailerClick = { listener.onClickPlayTrailer() },
+                isRated = uiState.isTvShowRated
+            )
         }
 
-
-        TopAppBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(animatedColor)
-                .zIndex(1f)
-                .align(Alignment.TopCenter)
-                .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = {
-                listener.onClickBackIcon()
-            },
-            content = {
-                SaveIcon(
-                    size = 40,
-                    backgroundColor = Theme.color.iconBackgroundLow,
-                    isSaved = uiState.isTvShowSaved,
-                    onClick = {
-                        listener.onClickSaveTvShow(tvShowId)
-                    }
-                )
-            }
-        )
-
-        FloatingIconsButton(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            hasTrailer = uiState.hasTrailer,
-            onStarClick = { listener.onClickAddRating() },
-            onTrailerClick = { listener.onClickPlayTrailer() }
-        )
     }
-
 }
 
 
