@@ -16,6 +16,7 @@ fun MovieDto.toEntity(): Movie {
             ?: LocalDate(1990, 1, 1),
         overview = overview,
         posterImageURL = posterPictureURL,
+        trailerURL = trailerURL,
         runtimeMinutes = runtimeMinutes
     )
 }

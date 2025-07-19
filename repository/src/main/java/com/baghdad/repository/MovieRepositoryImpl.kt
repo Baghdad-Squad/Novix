@@ -34,7 +34,10 @@ class MovieRepositoryImpl(
 
     override suspend fun getMovieDetails(movieId: Long): Movie {
         return executeSafely {
+            val movieTrailer = remoteMovieDataSource.getMovieTrailer(movieId)
+            Log.d("MovieRepositoryImpl", "getMovieDetails: $movieTrailer")
             remoteMovieDataSource.getMovieDetails(movieId).toEntity()
+                .copy(trailerURL = movieTrailer)
         }
     }
 

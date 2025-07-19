@@ -6,6 +6,7 @@ data class MovieDetailsState(
     val movieId: Long = 0L,
     val movieImages: List<String> = emptyList(),
     val movieName: String = "",
+    val movieTrailerURL: String = "",
     val categories: List<CategoryUiState> = emptyList(),
     val rating: Double = 0.0,
     val duration: String = "",

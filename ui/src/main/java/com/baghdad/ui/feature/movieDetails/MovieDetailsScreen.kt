@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.movieDetails
 
+import android.content.Context
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -65,6 +66,7 @@ import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.Navigat
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToCategoryMovies
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToReviews
+import com.baghdad.ui.util.openYouTubeLink
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
@@ -83,9 +85,9 @@ fun MovieDetailsScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-
+    val context = LocalContext.current
     ObserveAsEffect(viewModel.uiEffect) { effect ->
-        handleEffect(effect, handleNavigation)
+        handleEffect(effect, context, handleNavigation)
     }
 
     MovieDetailsContent(
@@ -135,7 +137,7 @@ private fun MovieDetailsContent(
             .navigationBarsPadding(),
         bottomBar = {
             FloatingIconsButton(
-                hasTrailer = state.isHasTrailer,
+                hasTrailer = state.movieTrailerURL.isNotBlank(),
                 onStarClick = { listener.onStarMovieClick() },
                 onTrailerClick = { listener.onTrailerClick() },
                 isRated = state.isStared
@@ -189,54 +191,57 @@ private fun MovieDetailsContent(
                         onCategoryClick = { listener.onCategoryClick(it) }
                     )
                 }
-
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    OverviewSection(
-                        overview = state.overView,
-                        isExtended = state.isExtendText,
-                    ) { listener.onExtendOverviewClick() }
+                if (state.overView.isNotBlank()) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        OverviewSection(
+                            overview = state.overView,
+                            isExtended = state.isExtendText,
+                        ) { listener.onExtendOverviewClick() }
+                    }
                 }
-
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    ActorsSection(
-                        actors = state.castes,
-                        modifier = Modifier.offset(y = (-48).dp),
-                        onClick = { listener.onActorClick(id = it) }
-                    )
+                if (state.castes.isNotEmpty()) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        ActorsSection(
+                            actors = state.castes,
+                            modifier = Modifier.offset(y = (-48).dp),
+                            onClick = { listener.onActorClick(id = it) }
+                        )
+                    }
                 }
+                if (state.moreLikeThisMovie.isNotEmpty()) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Text(
+                            text = stringResource(com.baghdad.ui.R.string.more_like_this),
+                            fontSize = 18.sp,
+                            style = Theme.typography.title.medium,
+                            color = Theme.color.title,
+                            modifier = Modifier
+                                .offset(y = (-48).dp)
+                                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                        )
+                    }
 
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Text(
-                        text = stringResource(com.baghdad.ui.R.string.more_like_this),
-                        fontSize = 18.sp,
-                        style = Theme.typography.title.medium,
-                        color = Theme.color.title,
-                        modifier = Modifier
-                            .offset(y = (-48).dp)
-                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                    )
-                }
-
-                itemsIndexed(state.moreLikeThisMovie) { index, movieLikeThis ->
-                    HomeCard(
-                        url = movieLikeThis.imageUrl,
-                        contentDescription = stringResource(com.baghdad.ui.R.string.card_movie_image),
-                        isSaved = movieLikeThis.isSaved,
-                        onSavedClick = {
-                            listener.onSaveMoreLikeThisMedia(movieLikeThis.id)
-                        },
-                        onClick = {
-                            listener.onMovieLikeClick(movieLikeThis.id)
-                        },
-                        modifier = Modifier
-                            .offset(y = (-48).dp)
-                            .height(210.dp)
-                            .then(
-                                if (index % 2 == 0) Modifier.padding(start = 16.dp)
-                                else Modifier.padding(end = 16.dp)
-                            )
-                            .clip(RoundedCornerShape(12.dp))
-                    )
+                    itemsIndexed(state.moreLikeThisMovie) { index, movieLikeThis ->
+                        HomeCard(
+                            url = movieLikeThis.imageUrl,
+                            contentDescription = stringResource(com.baghdad.ui.R.string.card_movie_image),
+                            isSaved = movieLikeThis.isSaved,
+                            onSavedClick = {
+                                listener.onSaveMoreLikeThisMedia(movieLikeThis.id)
+                            },
+                            onClick = {
+                                listener.onMovieLikeClick(movieLikeThis.id)
+                            },
+                            modifier = Modifier
+                                .offset(y = (-48).dp)
+                                .height(210.dp)
+                                .then(
+                                    if (index % 2 == 0) Modifier.padding(start = 16.dp)
+                                    else Modifier.padding(end = 16.dp)
+                                )
+                                .clip(RoundedCornerShape(12.dp))
+                        )
+                    }
                 }
             }
             TopAppBar(
@@ -329,6 +334,7 @@ private fun FloatingIconsButton(
 
 private fun handleEffect(
     effect: MovieDetailsEffect,
+    context: Context,
     handleNavigation: (MovieDetailsNavEvent) -> Unit,
 ) {
     when (effect) {
@@ -363,6 +369,7 @@ private fun handleEffect(
         MovieDetailsEffect.NavigateBack -> handleNavigation(
             NavigateBack
         )
+        is MovieDetailsEffect.OpenYoutubeLink -> openYouTubeLink(context, effect.youtubeLink)
     }
 }
 

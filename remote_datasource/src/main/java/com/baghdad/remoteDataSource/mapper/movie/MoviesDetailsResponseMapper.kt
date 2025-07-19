@@ -15,7 +15,8 @@ fun MovieDetailsResponse.toDto(userRating: Double? = null): MovieDto {
         releaseDate = releaseDate ?: "Unknown",
         overview = overview ?: "No overview available.",
         posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
-        runtimeMinutes = runtime ?: 0
+        runtimeMinutes = runtime ?: 0,
+        trailerURL = ""
     )
 }
 

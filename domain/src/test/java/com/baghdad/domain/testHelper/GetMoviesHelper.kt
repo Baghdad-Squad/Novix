@@ -23,7 +23,8 @@ fun getTestMovie(
     releaseDate = releaseDate,
     overview = overview,
     posterImageURL = posterPictureURL,
-    runtimeMinutes = runtimeMinutes
+    runtimeMinutes = runtimeMinutes,
+    trailerURL = "",
 )
 
 fun getTestMovies(

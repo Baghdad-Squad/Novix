@@ -52,7 +52,8 @@ class GetMovieDetailsUseCaseTest {
             releaseDate = LocalDate(2014, 11, 7),
             overview = "A group of explorers travel through a wormhole to save humanity.",
             posterImageURL = "https://example.com/posters/interstellar.jpg",
-            runtimeMinutes = 169
+            runtimeMinutes = 169,
+            trailerURL = ""
         )
     }
 

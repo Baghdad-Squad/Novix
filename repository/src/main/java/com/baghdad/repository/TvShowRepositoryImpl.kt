@@ -27,8 +27,9 @@ class TvShowRepositoryImpl(
     override suspend fun getTvShowDetails(tvId: Long): TvShow {
         return executeSafely {
             val tvShowImages = tvShowRemoteDataSource.getTvShowImages(tvId).take(MAX_IMAGE_COUNT)
+            val tvShowTrailer = tvShowRemoteDataSource.getTvShowTrailer(tvId)
             tvShowRemoteDataSource.getTvShowDetails(tvId).toEntity()
-                .copy(headerImagesURLs = tvShowImages)
+                .copy(headerImagesURLs = tvShowImages, trailerURL = tvShowTrailer)
         }
     }
 

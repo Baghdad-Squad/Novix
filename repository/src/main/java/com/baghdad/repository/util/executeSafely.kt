@@ -28,7 +28,7 @@ suspend fun <T> executeSafely(block: suspend () -> T): T {
         throw NetworkException()
     } catch (_: ServerNetworkException) {
         throw NetworkException()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         throw UnKnownNetworkException()
     }
 }

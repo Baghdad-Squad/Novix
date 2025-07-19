@@ -10,5 +10,5 @@ sealed class TvShowDetailsScreenEffect : BaseUiEffect {
         TvShowDetailsScreenEffect()
     data class NavigateToGenreScreen(val genreId: Long) : TvShowDetailsScreenEffect()
     data class NavigateToReviews(val tvShowId: Long) : TvShowDetailsScreenEffect()
-
+    data class OpenYoutubeLink(val youtubeLink: String) : TvShowDetailsScreenEffect()
 }
