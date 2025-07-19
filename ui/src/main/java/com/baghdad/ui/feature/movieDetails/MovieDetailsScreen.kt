@@ -267,6 +267,7 @@ private fun MovieDetailsContent(
             )
         }
     }
+
 }
 
 

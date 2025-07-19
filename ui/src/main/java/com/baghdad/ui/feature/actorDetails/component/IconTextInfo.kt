@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.Text
@@ -17,6 +18,8 @@ fun IconTextInfo(
     painter: Painter,
     contentDescription: String,
     text: String,
+    maxLines: Int = 1,
+    textOverflow: TextOverflow = TextOverflow.Ellipsis,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -33,6 +36,8 @@ fun IconTextInfo(
             text = text,
             style = Theme.typography.label.small,
             color = Theme.color.body,
+            maxLines = maxLines,
+            overflow = textOverflow,
             modifier = Modifier.padding(start = 4.dp)
         )
     }

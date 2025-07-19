@@ -40,6 +40,8 @@
     <string name="cast">Cast</string>
     <string name="season">Season</string>
     <string name="episode">Episode %1$s</string>
+    <string name="view_reviews">View reviews</string>
+    <string name="episodes">%1$d Episodes</string>
     <string name="add_to_list">Add to list</string>
     <string name="please_login_to_save_to_list">Please login to save to list</string>
     <string name="bottom_sheet_content_description">bottom sheet content description</string>
