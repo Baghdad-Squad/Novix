@@ -32,18 +32,23 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.SaveIcon
+import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.tvShowDetails.component.CastMembersSection
 import com.baghdad.ui.feature.tvShowDetails.component.EpisodesSection
 import com.baghdad.ui.feature.tvShowDetails.component.SeasonSection
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowDetailsCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
+import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsInteractionListener
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenEffect
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
@@ -58,13 +63,15 @@ fun TvShowDetailsScreen(
     handleNavigation: (TvShowDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
     TvShowDetailsContent(
         tvShowId = tvShowId,
         uiState = uiState,
-        listener = viewModel
+        listener = viewModel,
+        snackBarState = snackBarState
     )
 }
 
@@ -108,6 +115,7 @@ fun TvShowDetailsContent(
     tvShowId: Long,
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
+    snackBarState: SnackBarState,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -131,140 +139,150 @@ fun TvShowDetailsContent(
             }
     }
 
-    Box(
-        modifier = modifier
+    Scaffold(
+        modifier = Modifier
             .background(Theme.color.surface)
-            .fillMaxSize()
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
+        snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
+        }
     ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 52.dp)
+        Box(
+            modifier = modifier
+                .background(Theme.color.surface)
+                .fillMaxSize()
+                .navigationBarsPadding()
         ) {
-            item {
-                Box {
-                    AutoSlidingImageCarousel(
-                        imageUrls = listOf(uiState.tvShowInfo.posterPictureURL),
-                        modifier = Modifier.padding(bottom = 128.dp)
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 60.dp)
+            ) {
+                item {
+                    Box {
+                        AutoSlidingImageCarousel(
+                            imageUrls = listOf(uiState.tvShowInfo.posterPictureURL),
+                            modifier = Modifier.padding(bottom = 128.dp)
+                        )
+                        TvShowDetailsCard(
+                            tvShowId = tvShowId,
+                            title = uiState.tvShowInfo.title,
+                            genres = uiState.tvShowInfo.genres,
+                            rating = uiState.tvShowInfo.rating,
+                            date = uiState.tvShowInfo.releaseDate,
+                            seasonsCount = uiState.tvShowInfo.seasonCount,
+                            onReviewClick = { listener.onClickReviews(tvShowId) },
+                            onGenreClick = { genreId ->
+                                genreId?.let { listener.onClickGenre(it) }
+                            },
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                                .padding(horizontal = 16.dp)
+                                .align(Alignment.BottomCenter)
+                        )
+                    }
+                }
+
+                item {
+                    TvShowOverviewSection(
+                        overview = uiState.tvShowInfo.overView,
+                        onExpandedChange = { listener.onClickReadMoreOverview() },
+                        isExpanded = uiState.isTextExpanded,
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
-                    TvShowDetailsCard(
-                        tvShowId = tvShowId,
-                        title = uiState.tvShowInfo.title,
-                        genres = uiState.tvShowInfo.genres,
-                        rating = uiState.tvShowInfo.rating,
-                        date = uiState.tvShowInfo.releaseDate,
-                        seasonsCount = uiState.tvShowInfo.seasonCount,
-                        onReviewClick = { listener.onClickReviews(tvShowId) },
-                        onGenreClick = { genreId ->
-                            genreId?.let { listener.onClickGenre(it) }
+                }
+
+                item {
+                    CastMembersSection(
+                        actors = uiState.castMembers,
+                        onClickCastMember = { actorId ->
+                            actorId?.let { listener.onClickCastMember(it) }
                         },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+
+                item {
+                    SeasonSection(
+                        seasonCount = uiState.tvShowInfo.seasonCount,
+                        selectedSeasonIndex = uiState.selectedSeasonIndex,
+                        onSeasonSelected = { listener.onClickSeasonTab(it) },
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                item {
+                    Text(
+                        text = "${uiState.episodes.size} Episodes",
+                        style = Theme.typography.label.small,
+                        color = Theme.color.hint,
                         modifier = Modifier
-                            .padding(bottom = 16.dp)
                             .padding(horizontal = 16.dp)
-                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 12.dp)
+                    )
+                }
+
+                item {
+                    EpisodesSection(
+                        episodes = uiState.episodes,
+                        posterPictureUrl = uiState.tvShowInfo.posterPictureURL,
+                        onClickEpisode = { seasonNumber, episodeNumber ->
+                            listener.onClickEpisode(seasonNumber, episodeNumber)
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
                 }
             }
-
-            item {
-                TvShowOverviewSection(
-                    overview = uiState.tvShowInfo.overView,
-                    onExpandedChange = { listener.onClickReadMoreOverview() },
-                    isExpanded = uiState.isTextExpanded,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
-
-            item {
-                CastMembersSection(
-                    actors = uiState.castMembers,
-                    onClickCastMember = { actorId ->
-                        actorId?.let { listener.onClickCastMember(it) }
-                    },
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
-
-            item {
-                SeasonSection(
-                    seasonCount = uiState.tvShowInfo.seasonCount,
-                    selectedSeasonIndex = uiState.selectedSeasonIndex,
-                    onSeasonSelected = { listener.onClickSeasonTab(it) },
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-
-            item {
-                Text(
-                    text = "${uiState.episodes.size} Episodes",
-                    style = Theme.typography.label.small,
-                    color = Theme.color.hint,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 12.dp)
-                )
-            }
-
-            item {
-                EpisodesSection(
-                    episodes = uiState.episodes,
-                    posterPictureUrl = uiState.tvShowInfo.posterPictureURL,
-                    onClickEpisode = { seasonNumber, episodeNumber ->
-                        listener.onClickEpisode(seasonNumber, episodeNumber)
-                    },
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
+            TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(animatedColor)
+                    .zIndex(1f)
+                    .padding(top = 56.dp, bottom = 8.dp),
+                onGoBackClick = {
+                    listener.onClickBackIcon()
+                },
+                content = {
+                    SaveIcon(
+                        size = 40,
+                        backgroundColor = Theme.color.iconBackgroundLow,
+                        isSaved = uiState.isTvShowSaved,
+                        onClick = {
+                            listener.onClickSaveTvShow(tvShowId)
+                        }
+                    )
+                }
+            )
+            FloatingIconsButton(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                hasTrailer = uiState.hasTrailer,
+                onStarClick = { listener.onClickAddRating() },
+                onTrailerClick = { listener.onClickPlayTrailer() }
+            )
         }
-
-
-        TopAppBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(animatedColor)
-                .zIndex(1f)
-                .align(Alignment.TopCenter)
-                .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = {
-                listener.onClickBackIcon()
-            },
-            content = {
-                SaveIcon(
-                    size = 40,
-                    backgroundColor = Theme.color.iconBackgroundLow,
-                    isSaved = uiState.isTvShowSaved,
-                    onClick = {
-                        listener.onClickSaveTvShow(tvShowId)
-                    }
-                )
-            }
-        )
-
-        FloatingIconsButton(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            hasTrailer = uiState.hasTrailer,
-            onStarClick = { listener.onClickAddRating() },
-            onTrailerClick = { listener.onClickPlayTrailer() }
-        )
     }
+
 }
 
 
 @Composable
 private fun FloatingIconsButton(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     hasTrailer: Boolean,
     onStarClick: () -> Unit,
     onTrailerClick: () -> Unit
 ) {
-
     Row(
         modifier = modifier
             .zIndex(1f)
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -283,4 +301,9 @@ private fun FloatingIconsButton(
             onClick = onTrailerClick
         )
     }
+}
+
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
 }

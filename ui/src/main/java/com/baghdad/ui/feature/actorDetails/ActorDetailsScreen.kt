@@ -22,12 +22,14 @@ fun ActorDetailsScreen(
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
     ActorDetailsContent(
         uiState = uiState,
-        listener = viewModel
+        listener = viewModel,
+        snackBarState = snackBarState,
     )
 }
 

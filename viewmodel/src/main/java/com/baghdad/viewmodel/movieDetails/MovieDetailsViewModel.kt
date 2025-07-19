@@ -120,6 +120,10 @@ class MovieDetailsViewModel(
         sendEffect(MovieDetailsEffect.NavigateBack)
     }
 
+    override fun onTrailerClick() {
+//        TODO("Not yet implemented")
+    }
+
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
     }
