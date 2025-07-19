@@ -1,9 +1,8 @@
-package com.baghdad.ui.feature.search.component.filter
+package com.baghdad.ui.feature.component.bottomSheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -13,24 +12,25 @@ import com.baghdad.design_system.component.button.OutlinedButton
 import com.baghdad.design_system.component.button.PrimaryButton
 
 @Composable
-fun FilterBottomSheetFooter(
+fun BottomSheetFooter(
     onApplyClick: () -> Unit,
     onClearClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    applyLabel: String = stringResource(R.string.apply),
+    clearLabel: String = stringResource(R.string.clear),
 ) {
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         PrimaryButton(
-            label = stringResource(R.string.apply),
+            label = applyLabel,
             onClick = onApplyClick,
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedButton(
-            label = stringResource(R.string.clear),
+            label = clearLabel,
             onClick = onClearClick,
             modifier = Modifier.fillMaxWidth()
         )

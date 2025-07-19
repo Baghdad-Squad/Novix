@@ -18,6 +18,8 @@ import com.baghdad.design_system.component.BaseBottomSheet
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.ui.feature.component.bottomSheet.BottomSheetFooter
+import com.baghdad.ui.feature.search.component.BottomSheetHeader
 import com.baghdad.viewmodel.search.SearchScreenState
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
 
@@ -42,7 +44,7 @@ fun FilterBottomSheet(
                 .verticalScroll(rememberScrollState())
                 .padding(top = 16.dp, bottom = 24.dp)
         ) {
-            FilterBottomSheetHeader(
+            BottomSheetHeader(
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
                 onCloseClick = onBottomSheetCloseClick
@@ -72,10 +74,11 @@ fun FilterBottomSheet(
                     .padding(bottom = 24.dp)
             )
 
-            FilterBottomSheetFooter(
+            BottomSheetFooter(
                 onApplyClick = onApplyClick,
                 onClearClick = onClearClick,
                 modifier = Modifier
+                    .padding(horizontal = 16.dp)
                     .padding(bottom = 24.dp)
             )
         }

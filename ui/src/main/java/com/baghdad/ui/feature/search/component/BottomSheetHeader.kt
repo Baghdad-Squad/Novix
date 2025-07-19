@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.search.component.filter
+package com.baghdad.ui.feature.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,7 +24,11 @@ import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 
 @Composable
-fun FilterBottomSheetHeader(onCloseClick: () -> Unit, modifier: Modifier = Modifier) {
+fun BottomSheetHeader(
+    onCloseClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    title: String = stringResource(R.string.filter)
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -33,7 +37,7 @@ fun FilterBottomSheetHeader(onCloseClick: () -> Unit, modifier: Modifier = Modif
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(R.string.filter),
+            text = title,
             style = Theme.typography.title.large,
             color = Theme.color.title
         )
@@ -52,7 +56,7 @@ fun FilterBottomSheetHeader(onCloseClick: () -> Unit, modifier: Modifier = Modif
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_close),
-                contentDescription = stringResource(R.string.close_filter_bottomsheet),
+                contentDescription = stringResource(R.string.close_bottomsheet),
                 tint = Theme.color.title,
                 modifier = Modifier.size(16.dp)
             )

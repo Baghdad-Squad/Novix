@@ -3,6 +3,8 @@ package com.baghdad.novix.di
 import com.baghdad.domain.util.SearchFilterHelper
 import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
+import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
+import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.baghdad.viewmodel.review.ContentType
@@ -31,6 +33,10 @@ val viewModelModule = module {
             getMovieCategoryUseCase = get()
         )
     }
+
+    viewModel { (actorId: Long) ->
+        ActorGalleryViewModel(get(), actorId)
+    }
     viewModel { (actorId: Long) ->
         ActorDetailsViewModel(actorId, get(), get(), get(), get())
     }
@@ -55,5 +61,12 @@ val viewModelModule = module {
     }
     viewModel { (tvShowId: Long, seasonNumber: Int, episodeNumber: Int) ->
         EpisodeDetailsViewModel(tvShowId, seasonNumber, episodeNumber, get(), get())
+    }
+    viewModel { (categoryId: Long) ->
+        CategoryTvShowsViewModel(categoryId, get(), get())
+    }
+
+    viewModel { (categoryId: Long) ->
+        CategoryMoviesViewModel(categoryId, get(), get())
     }
 }
