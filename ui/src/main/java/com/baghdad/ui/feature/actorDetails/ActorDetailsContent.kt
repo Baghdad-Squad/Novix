@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -30,6 +28,7 @@ import androidx.compose.ui.zIndex
 import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
@@ -67,21 +66,8 @@ fun ActorDetailsContent(
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
-            .systemBarsPadding()
-            .statusBarsPadding(),
-        topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(animatedColor)
-                    .zIndex(1f)
-                    .padding(top = 56.dp, bottom = 8.dp),
-                onGoBackClick = {
-                    listener.onBackIconClick()
-                },
-                content = {}
-            )
-        }, snackbar = {
+            .navigationBarsPadding(),
+        snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
@@ -94,6 +80,13 @@ fun ActorDetailsContent(
                     shouldShowBackground = scrollValue > 450
                 }
         }
+
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+
         Box(
             modifier = modifier
                 .background(Theme.color.surface)
@@ -166,6 +159,17 @@ fun ActorDetailsContent(
                     )
                 }
             }
+            TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(animatedColor)
+                    .zIndex(1f)
+                    .padding(top = 56.dp, bottom = 8.dp),
+                onGoBackClick = {
+                    listener.onBackIconClick()
+                },
+                content = {}
+            )
 
         }
     }

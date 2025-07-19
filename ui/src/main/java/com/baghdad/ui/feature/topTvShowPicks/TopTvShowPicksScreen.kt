@@ -2,11 +2,13 @@ package com.baghdad.ui.feature.topTvShowPicks
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -25,12 +27,13 @@ import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
-import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToTvShowDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksEffect
@@ -71,7 +74,7 @@ private fun handleEffect(
         )
 
         is TopTvShowPicksEffect.NavigateToTvShowDetails -> handleNavigation(
-            NavigateToMovieDetails(effect.tvShowId)
+            NavigateToTvShowDetails(effect.tvShowId)
         )
     }
 }
@@ -83,27 +86,29 @@ private fun TopTvShowPicksContent(
     snackBarState: SnackBarState
 ) {
     Scaffold(
+        modifier = Modifier
+            .navigationBarsPadding(),
         topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Theme.color.surface)
                     .statusBarsPadding()
-                    .padding(top = 12.dp, bottom = 17.dp),
+                    .padding(top = 12.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
                     onClick = { listener.onBackClick() },
                     modifier = Modifier
-                        .padding(start = 16.dp, bottom = 8.dp)
+                        .padding(start = 16.dp)
                 )
                 Text(
                     text = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
                     style = Theme.typography.title.large,
                     color = Theme.color.title,
                     modifier = Modifier
-                        .padding(start = 8.dp, bottom = 8.dp)
+                        .padding(start = 8.dp)
                 )
             }
         }, snackbar = {
@@ -114,6 +119,11 @@ private fun TopTvShowPicksContent(
             )
         }
     ) {
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             modifier = Modifier
@@ -134,7 +144,7 @@ private fun TopTvShowPicksContent(
                     contentDescription = null,
                     isSaved = tvShow.isSaved,
                     onSavedClick = { listener.onSaveTvShowClick(tvShow.id) },
-                    onClick = { listener.onMovieDetailsClick(tvShow.id) },
+                    onClick = { listener.onTvShowDetailsClick(tvShow.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }
