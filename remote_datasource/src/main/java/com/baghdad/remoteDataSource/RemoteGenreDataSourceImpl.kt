@@ -4,16 +4,19 @@ import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.GenreListResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
+import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
 import io.ktor.client.HttpClient
 
 class RemoteGenreDataSourceImpl(
     private val httpClient: HttpClient,
+    private val logger: Logger,
     private val baseUrl: String
 ): RemoteGenreDataSource {
     override suspend fun getMovieGenre(language: String): List<GenreDto> {
         return handleRequest<GenreListResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$MOVIE_GENRE_ENDPOINT",
         ).toDto(genreType = GenreDto.GenreType.MOVIE)
     }
@@ -21,6 +24,7 @@ class RemoteGenreDataSourceImpl(
     override suspend fun getTvShowGenre(language: String): List<GenreDto> {
         return handleRequest<GenreListResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$TV_SHOW_GENRE_ENDPOINT",
         ).toDto(genreType = GenreDto.GenreType.TV_SHOW)
     }

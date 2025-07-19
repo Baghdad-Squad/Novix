@@ -9,6 +9,7 @@ import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalSearchQueryDataSource
+import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.SearchQueryDto
 import com.baghdad.repository.model.SearchQueryDto.MediaType
 
@@ -17,15 +18,16 @@ class LocalSearchQueryDataSourceImpl(
     private val movieDao: MovieDao,
     private val tvShowDao: TvShowDao,
     private val actorDao: ActorDao,
+    private val logger: Logger
 ) : LocalSearchQueryDataSource {
     override suspend fun addSearchQuery(searchQuery: SearchQueryDto) {
-        executeWithErrorHandling {
+        executeWithErrorHandling(logger = logger) {
             searchQueryDao.addSearchQuery(searchQuery.toLocalDto())
         }
     }
 
     override suspend fun addSearchQueries(queries: List<SearchQueryDto>) {
-        executeWithErrorHandling {
+        executeWithErrorHandling(logger = logger) {
             searchQueryDao.addSearchQueries(queries.map(SearchQueryDto::toLocalDto))
         }
     }
@@ -33,13 +35,13 @@ class LocalSearchQueryDataSourceImpl(
     override suspend fun getInvalidSearchQueries(
         timestamp: Long
     ): List<SearchQueryDto> {
-        return executeWithErrorHandling {
+        return executeWithErrorHandling(logger = logger) {
             searchQueryDao.getInvalidSearchQueries(timestamp).map { it.toDto() }
         }
     }
 
     override suspend fun getAllSearchQueries(): List<SearchQueryDto> {
-        return executeWithErrorHandling {
+        return executeWithErrorHandling(logger = logger) {
             searchQueryDao.getAllSearchQueries().map { it.toDto() }
         }
     }
@@ -48,13 +50,13 @@ class LocalSearchQueryDataSourceImpl(
         query: String,
         type: MediaType
     ): List<SearchQueryDto> {
-        return executeWithErrorHandling {
+        return executeWithErrorHandling(logger = logger) {
             searchQueryDao.getSearchByQuery(query, type.name).map(SearchQuery::toDto)
         }
     }
 
     override suspend fun deleteInvalidSearchQueries(timestamp: Long) {
-        executeWithErrorHandling {
+        executeWithErrorHandling(logger = logger) {
             val inValidQueries = searchQueryDao.getInvalidSearchQueries(timestamp)
             inValidQueries.forEach {
                 when (it.mediaType) {
@@ -76,7 +78,7 @@ class LocalSearchQueryDataSourceImpl(
     }
 
     override suspend fun deleteAllSearchQueries() {
-        executeWithErrorHandling {
+        executeWithErrorHandling(logger = logger) {
             searchQueryDao.deleteAllSearchQueries()
         }
     }

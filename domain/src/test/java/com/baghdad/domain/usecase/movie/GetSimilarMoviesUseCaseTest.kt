@@ -86,7 +86,6 @@ class GetSimilarMoviesUseCaseTest {
                 runtimeMinutes = 169
             )
         )
-
     }
 }
 
