@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.WavyLoadingIndicator
@@ -35,7 +34,7 @@ import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.actorDetails.component.ActorBiographySection
-import com.baghdad.ui.feature.actorDetails.component.ActorCardDetails
+import com.baghdad.ui.feature.actorDetails.component.ActorHeaderWithDetailsCard
 import com.baghdad.ui.feature.actorDetails.component.GallerySection
 import com.baghdad.ui.feature.actorDetails.component.TopMediaPicksSection
 import com.baghdad.viewmodel.actorDetails.ActorDetailsInteractionListener
@@ -99,24 +98,8 @@ fun ActorDetailsContent(
                     .verticalScroll(scrollState)
                     .padding(bottom = 24.dp)
             ) {
-                Box {
-                    AutoSlidingImageCarousel(
-                        imageUrls = uiState.actorInfo.headerPictures,
-                        modifier = Modifier.padding(bottom = 104.dp)
-                    )
 
-                    ActorCardDetails(
-                        fullName = uiState.actorInfo.name,
-                        characterRole = uiState.actorInfo.department,
-                        birthPlace = uiState.actorInfo.placeOfBirth,
-                        birthDate = uiState.actorInfo.birthdayDate,
-                        deathDate = uiState.actorInfo.deathDate,
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .padding(horizontal = 16.dp)
-                            .align(Alignment.BottomCenter)
-                    )
-                }
+                ActorHeaderWithDetailsCard(uiState = uiState)
 
                 if (uiState.actorInfo.biography.isNotBlank()) {
                     ActorBiographySection(
