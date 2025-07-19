@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.movieDetails
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -30,7 +31,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -54,6 +58,7 @@ import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieDetailsHeader
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
+import com.baghdad.ui.feature.util.hideNavigationBar
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateBack
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToActorDetails
@@ -128,11 +133,12 @@ private fun MovieDetailsContent(
         modifier = Modifier
             .background(Theme.color.surface)
             .navigationBarsPadding(),
-        floatingActionButton = {
+        bottomBar = {
             FloatingIconsButton(
                 hasTrailer = state.isHasTrailer,
                 onStarClick = { listener.onStarMovieClick() },
-                onTrailerClick = { listener.onTrailerClick() }
+                onTrailerClick = { listener.onTrailerClick() },
+                isRated = state.isStared
             )
         }, snackbar = {
             SnackBar(
@@ -244,6 +250,7 @@ private fun MovieDetailsContent(
                 },
                 content = {
                     SaveIcon(
+                        tint = Theme.color.title,
                         size = 40,
                         backgroundColor = Theme.color.iconBackgroundLow,
                         isSaved = state.isSaved,
@@ -276,57 +283,46 @@ private fun HeaderSliderSection(movieImages: List<String>, indicatorVisibility: 
 
 @Composable
 private fun FloatingIconsButton(
-    modifier: Modifier,
-    listener: MovieDetailsInteractionListener,
-    state: MovieDetailsState,
+    modifier: Modifier = Modifier,
+    hasTrailer: Boolean,
+    isRated: Boolean,
+    onStarClick: () -> Unit,
+    onTrailerClick: () -> Unit
 ) {
-    Box(modifier) {
-        Box(
-            modifier = Modifier
-                .zIndex(1f)
-                .fillMaxWidth()
-                .height(112.dp)
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0x000D0608),
-                            Color(0xFF000000),
-                        ),
-                    )
+    Row(
+        modifier = modifier
+            .zIndex(1f)
+            .fillMaxWidth()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, Color(0xFF0D0608))
                 )
-        )
-        Row(
-            modifier = modifier
-                .zIndex(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Crossfade(
-                targetState = state.isStared,
-            ) { isStared ->
-                IconButton(
-                    icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
-                        R.drawable.ic_star
-                    ),
-                    tintIcon = Theme.color.onPrimary,
-                    background = Theme.color.primary,
-                    borderStroke = null,
-                    size = Pair(52.dp, 48.dp),
-                    onClick = {
-                        listener.onStarMovieClick()
-                    }
-                )
-            }
-            PrimaryButton(
-                stringResource(com.baghdad.ui.R.string.play_trailer),
-                modifier = Modifier.fillMaxWidth(),
-                isEnabled = state.isHasTrailer,
-                isLoading = state.isLoading,
-            ) {
-            }
+            )
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Crossfade(
+            targetState = isRated,
+        ) { isStared ->
+            IconButton(
+                icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
+                    R.drawable.ic_star
+                ),
+                tintIcon = Theme.color.onPrimary,
+                background = Theme.color.primary,
+                borderStroke = null,
+                size = Pair(52.dp, 48.dp),
+                onClick = onStarClick
+            )
         }
+        PrimaryButton(
+            stringResource(com.baghdad.ui.R.string.play_trailer),
+            modifier = Modifier.fillMaxWidth(),
+            isEnabled = hasTrailer,
+            onClick = onTrailerClick
+        )
     }
 }
 
@@ -369,3 +365,7 @@ private fun handleEffect(
     }
 }
 
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
+}

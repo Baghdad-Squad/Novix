@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.tvShowDetails
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -38,7 +37,6 @@ import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
-import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
@@ -178,7 +176,7 @@ fun TvShowDetailsContent(
                 item {
                     Box {
                         AutoSlidingImageCarousel(
-                            imageUrls = listOf(uiState.tvShowInfo.posterPictureURL),
+                            imageUrls = listOf(uiState.tvShowInfo.posterImageURL),
                             modifier = Modifier.padding(bottom = 128.dp)
                         )
                         TvShowDetailsCard(
@@ -242,7 +240,7 @@ fun TvShowDetailsContent(
                 item {
                     EpisodesSection(
                         episodes = uiState.episodes,
-                        posterPictureUrl = uiState.tvShowInfo.posterPictureURL,
+                        posterPictureUrl = uiState.tvShowInfo.posterImageURL,
                         onClickEpisode = { seasonNumber, episodeNumber ->
                             listener.onClickEpisode(seasonNumber, episodeNumber)
                         },
@@ -261,6 +259,7 @@ fun TvShowDetailsContent(
                 },
                 content = {
                     SaveIcon(
+                        tint = Theme.color.title,
                         size = 40,
                         backgroundColor = Theme.color.iconBackgroundLow,
                         isSaved = uiState.isTvShowSaved,
@@ -274,7 +273,8 @@ fun TvShowDetailsContent(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 hasTrailer = uiState.hasTrailer,
                 onStarClick = { listener.onClickAddRating() },
-                onTrailerClick = { listener.onClickPlayTrailer() }
+                onTrailerClick = { listener.onClickPlayTrailer() },
+                isRated = uiState.isTvShowRated
             )
         }
     }
@@ -294,14 +294,13 @@ private fun FloatingIconsButton(
         modifier = modifier
             .zIndex(1f)
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-            .padding(bottom = 16.dp),
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(Color.Transparent, Color(0xFF0D0608))
                 )
             )
-            .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 24.dp),
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
