@@ -175,7 +175,7 @@ private fun MovieDetailsContent(
                         onViewReviewClicked = {
                             listener.onReviewClick(state.movieId)
                         },
-                        onViewCategoryClicked = { listener.onCategoryClick(it) }
+                        onCategoryClick = { listener.onCategoryClick(it) }
                     )
                 }
 
