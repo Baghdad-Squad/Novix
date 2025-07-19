@@ -22,5 +22,6 @@ fun TVShowDetailsResponse.toDto(): TvShowDto {
         overview = this.overview.orEmpty(),
         posterPictureURL = "https://image.tmdb.org/t/p/w500" + this.posterPath.orEmpty(),
         numberOfSeasons = this.numberOfSeasons ?: 0,
+        headerImagesURLs = emptyList()
     )
 }

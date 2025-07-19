@@ -5,6 +5,7 @@ import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
+import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewViewModel
@@ -50,11 +51,16 @@ val viewModelModule = module {
             getSeriesReviewsUseCase = get()
         )
     }
-    viewModel { (actorId: Long) ->
+
+    viewModelOf(::EpisodeDetailsViewModel)
+    viewModel{ (actorId: Long) ->
         TopMoviePicksViewModel(actorId, get())
     }
     viewModel { (actorId: Long) ->
         TopTvShowViewModel(actorId, get())
+    }
+    viewModel { (tvShowId: Long, seasonNumber: Int, episodeNumber: Int) ->
+        EpisodeDetailsViewModel(tvShowId, seasonNumber, episodeNumber, get(), get())
     }
     viewModel { (categoryId: Long) ->
         CategoryTvShowsViewModel(categoryId, get(), get())

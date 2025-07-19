@@ -51,4 +51,6 @@
     <string name="create_new_list">Create new list</string>
     <string name="select_how_mush_you_like_it">Select how mush you like it</string>
     <string name="save_to_list">Save to list</string>
+    <string name="guests_of_honor">Guests of honor</string>
+    <string name="season_template">S%1$s</string>
 </resources>

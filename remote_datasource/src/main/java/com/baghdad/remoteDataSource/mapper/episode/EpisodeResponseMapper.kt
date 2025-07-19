@@ -1,4 +1,4 @@
-package com.baghdad.remoteDataSource.mapper
+package com.baghdad.remoteDataSource.mapper.episode
 
 import com.baghdad.remoteDataSource.response.tvShow.EpisodeResponse
 import com.baghdad.repository.model.EpisodeDto
@@ -13,6 +13,8 @@ fun EpisodeResponse.toDto(): EpisodeDto {
         releasedDate = this.airDate ?: "0001-01-01",
         currentSeason = this.seasonNumber ?: 0,
         overview = this.overview.orEmpty(),
-        headerPictures = emptyList()
+        headerPictures = emptyList(),
+        trailerUrl = "",
+        genres = emptyList()
     )
 }

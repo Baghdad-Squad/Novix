@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.tvShowDetails
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -23,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,6 +37,7 @@ import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
@@ -133,10 +136,18 @@ fun TvShowDetailsContent(
     )
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemScrollOffset }
-            .collect { scrollOffset ->
-                shouldShowBackground = scrollOffset > 450
+        snapshotFlow {
+            val firstVisibleItemIndex = listState.firstVisibleItemIndex
+            val firstVisibleItemScrollOffset = listState.firstVisibleItemScrollOffset
+
+            if (firstVisibleItemIndex > 0) {
+                Int.MAX_VALUE
+            } else {
+                firstVisibleItemScrollOffset
             }
+        }.collect { totalScrollPosition ->
+            shouldShowBackground = totalScrollPosition > 450
+        }
     }
 
     Scaffold(
@@ -151,6 +162,11 @@ fun TvShowDetailsContent(
             )
         }
     ) {
+        if (uiState.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                WavyLoadingIndicator()
+            }
+        }
         Box(
             modifier = modifier
                 .background(Theme.color.surface)
@@ -166,7 +182,7 @@ fun TvShowDetailsContent(
                 item {
                     Box {
                         AutoSlidingImageCarousel(
-                            imageUrls = listOf(uiState.tvShowInfo.posterPictureURL),
+                            imageUrls = listOf(uiState.tvShowInfo.posterImageURL),
                             modifier = Modifier.padding(bottom = 128.dp)
                         )
                         TvShowDetailsCard(
@@ -230,7 +246,7 @@ fun TvShowDetailsContent(
                 item {
                     EpisodesSection(
                         episodes = uiState.episodes,
-                        posterPictureUrl = uiState.tvShowInfo.posterPictureURL,
+                        posterPictureUrl = uiState.tvShowInfo.posterImageURL,
                         onClickEpisode = { seasonNumber, episodeNumber ->
                             listener.onClickEpisode(seasonNumber, episodeNumber)
                         },
@@ -249,6 +265,7 @@ fun TvShowDetailsContent(
                 },
                 content = {
                     SaveIcon(
+                        tint = Theme.color.title,
                         size = 40,
                         backgroundColor = Theme.color.iconBackgroundLow,
                         isSaved = uiState.isTvShowSaved,
@@ -262,7 +279,8 @@ fun TvShowDetailsContent(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 hasTrailer = uiState.hasTrailer,
                 onStarClick = { listener.onClickAddRating() },
-                onTrailerClick = { listener.onClickPlayTrailer() }
+                onTrailerClick = { listener.onClickPlayTrailer() },
+                isRated = uiState.isTvShowRated
             )
         }
     }
@@ -274,6 +292,7 @@ fun TvShowDetailsContent(
 private fun FloatingIconsButton(
     modifier: Modifier = Modifier,
     hasTrailer: Boolean,
+    isRated: Boolean,
     onStarClick: () -> Unit,
     onTrailerClick: () -> Unit
 ) {
@@ -281,19 +300,30 @@ private fun FloatingIconsButton(
         modifier = modifier
             .zIndex(1f)
             .fillMaxWidth()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, Color(0xFF0D0608))
+                )
+            )
             .padding(horizontal = 24.dp)
             .padding(bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        IconButton(
-            icon = painterResource(R.drawable.ic_star),
-            tintIcon = Theme.color.onPrimary,
-            background = Theme.color.primary,
-            borderStroke = null,
-            size = Pair(52.dp, 48.dp),
-            onClick = onStarClick
-        )
+        Crossfade(
+            targetState = isRated,
+        ) { isStared ->
+            IconButton(
+                icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
+                    R.drawable.ic_star
+                ),
+                tintIcon = Theme.color.onPrimary,
+                background = Theme.color.primary,
+                borderStroke = null,
+                size = Pair(52.dp, 48.dp),
+                onClick = onStarClick
+            )
+        }
         PrimaryButton(
             stringResource(com.baghdad.ui.R.string.play_trailer),
             modifier = Modifier.fillMaxWidth(),

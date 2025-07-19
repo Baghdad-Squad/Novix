@@ -34,6 +34,7 @@ fun AutoSlidingImageCarousel(
     imageUrls: List<String>,
     modifier: Modifier = Modifier,
     autoSlideDuration: Long = 3000L,
+    imageAspectRatio: Float = 1.4f,
     indicatorVisibility: Boolean = true,
 ) {
     val pagerState = rememberPagerState(pageCount = { imageUrls.size })
@@ -57,7 +58,7 @@ fun AutoSlidingImageCarousel(
             state = pagerState,
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1.4f)
+                .aspectRatio(imageAspectRatio)
                 .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)),
         ) { page ->
             SafeImage(
