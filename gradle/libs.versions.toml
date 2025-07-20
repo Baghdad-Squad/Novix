@@ -6,6 +6,7 @@ appcompat = "1.7.1"
 coilCompose = "3.2.0"
 composeBom = "2025.06.01"
 composeNavigation = "2.9.0"
+converterGson = "3.0.0"
 coreKtx = "1.16.0"
 espressoCore = "3.6.1"
 firebaseBom = "33.16.0"
@@ -21,9 +22,12 @@ kotlinxDatetime = "0.7.0"
 ksp = "2.0.21-1.0.27"
 ktor = "2.3.10"
 lifecycleRuntimeKtx = "2.9.1"
+loggingInterceptor = "4.10.0"
 material = "1.12.0"
 mockk = "1.14.2"
+okhttp = "4.10.0"
 readMoreVersion = "1.6.3"
+retrofit = "2.9.0"
 room = "2.7.2"
 runtimeAndroid = "1.8.3"
 uiGraphicsAndroid = "1.8.3"
@@ -48,6 +52,8 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
 readmore-material3 = { group = "com.webtoonscorp.android", name = "readmore-material3", version.ref = "readMoreVersion" }
 
 # Material3
@@ -89,6 +95,11 @@ ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+
+#Retrofit
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+
 
 # Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
@@ -137,7 +148,7 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics",  version.ref = "crashlytics" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "perf-plugin" }
 
 [bundles]
@@ -217,4 +228,11 @@ coil = [
     "coil",
     "coil-compose",
     "coil-network-okhttp"
+]
+
+retrofit = [
+    "retrofit",
+    "converter-gson",
+    "logging-interceptor",
+    "okhttp"
 ]
