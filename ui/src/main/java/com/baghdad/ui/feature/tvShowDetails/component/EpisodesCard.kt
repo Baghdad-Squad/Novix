@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,48 +18,9 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.CircleDot
 import com.baghdad.design_system.component.LabeledIconRow
 import com.baghdad.design_system.component.Text
-import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.component.SafeImage
 import com.baghdad.ui.R
-import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
-
-@Composable
-fun EpisodesSection(
-    episodes: List<TvShowDetailsScreenState.EpisodeUiState>,
-    posterPictureUrl: String,
-    onClickEpisode: (Int, Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        episodes.forEach { episode ->
-            EpisodeCard(
-                episodeNumber = episode.episodeNumber,
-                imageUrl = posterPictureUrl,
-                episodeName = episode.name,
-                releaseDate = episode.releaseDate,
-                duration = episode.duration,
-                rating = episode.rating,
-                modifier = Modifier
-                    .then(
-                        if (episode != episodes.last()) {
-                            Modifier.padding(bottom = 8.dp)
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .noRippleClickable {
-                        onClickEpisode(episode.currentSeason, episode.episodeNumber)
-                    }
-            )
-        }
-    }
-}
 
 @Composable
 fun EpisodeCard(
@@ -71,7 +30,7 @@ fun EpisodeCard(
     releaseDate: String,
     duration: String,
     rating: Double,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -123,7 +82,7 @@ fun EpisodeCard(
                         .align(Alignment.CenterVertically)
                 )
                 LabeledIconRow(
-                    title = duration.toString(),
+                    title = duration,
                     icon = painterResource(com.baghdad.design_system.R.drawable.ic_clock),
                     tint = Theme.color.hint
                 )
@@ -133,7 +92,7 @@ fun EpisodeCard(
                         .align(Alignment.CenterVertically)
                 )
                 Text(
-                    text = releaseDate.toString(),
+                    text = releaseDate,
                     style = Theme.typography.label.small,
                     color = Theme.color.hint
                 )

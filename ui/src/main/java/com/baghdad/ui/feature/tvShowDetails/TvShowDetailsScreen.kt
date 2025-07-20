@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,12 +35,13 @@ import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
 import com.baghdad.ui.feature.tvShowDetails.component.CastMembersSection
-import com.baghdad.ui.feature.tvShowDetails.component.EpisodesSection
+import com.baghdad.ui.feature.tvShowDetails.component.EpisodeCard
 import com.baghdad.ui.feature.tvShowDetails.component.SeasonSection
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowHeaderWithDetailsCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
@@ -184,7 +186,7 @@ fun TvShowDetailsContent(
                 state = listState,
                 modifier = Modifier
                     .fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 60.dp)
+                contentPadding = PaddingValues(bottom = 72.dp)
             ) {
 
                 item {
@@ -243,14 +245,23 @@ fun TvShowDetailsContent(
                         )
                     }
 
-                    item {
-                        EpisodesSection(
-                            episodes = uiState.episodes,
-                            posterPictureUrl = uiState.tvShowInfo.posterPictureURL,
-                            onClickEpisode = { seasonNumber, episodeNumber ->
-                                listener.onClickEpisode(seasonNumber, episodeNumber)
-                            },
-                            modifier = Modifier.padding(bottom = 16.dp)
+                    items(uiState.episodes) { episode ->
+                        EpisodeCard(
+                            episodeNumber = episode.episodeNumber,
+                            imageUrl = uiState.tvShowInfo.posterPictureURL,
+                            episodeName = episode.name,
+                            releaseDate = episode.releaseDate,
+                            duration = episode.duration,
+                            rating = episode.rating,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 8.dp)
+                                .noRippleClickable {
+                                    listener.onClickEpisode(
+                                        episode.currentSeason,
+                                        episode.episodeNumber
+                                    )
+                                }
                         )
                     }
                 }
