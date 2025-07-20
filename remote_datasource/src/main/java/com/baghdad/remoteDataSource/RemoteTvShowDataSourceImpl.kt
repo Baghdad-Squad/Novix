@@ -87,7 +87,8 @@ class RemoteTvShowDataSourceImpl(
         val endpoint = TV_SHOW_VIDEOS_ENDPOINT.replace("{tv_id}", tvId.toString())
         return handleRequest<TVShowVideosResponse>(
             client = httpClient,
-            url = "$baseUrl$endpoint"
+            url = "$baseUrl$endpoint",
+            logger = logger
         ).mapToYoutubeURL()
     }
 

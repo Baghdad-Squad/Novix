@@ -54,14 +54,16 @@ val remoteDataSourceModule = module {
     single<RemoteSearchDataSource> {
         RemoteSearchDataSourceImpl(
             httpClient = get(),
-            baseUrl = get(named("BASE_URL"))
+            baseUrl = get(named("BASE_URL")),
+            logger = get()
         )
     }
 
     single<RemoteGenreDataSource> {
         RemoteGenreDataSourceImpl(
             httpClient = get(),
-            baseUrl = get(named("BASE_URL"))
+            baseUrl = get(named("BASE_URL")),
+            logger = get()
         )
     }
 
@@ -69,28 +71,32 @@ val remoteDataSourceModule = module {
     single<RemoteMovieDataSource> {
         RemoteMovieDataSourceImpl(
             httpClient = get(),
-            baseUrl = get(named("BASE_URL"))
+            baseUrl = get(named("BASE_URL")),
+            logger = get()
         )
     }
 
     single<RemoteActorDataSource> {
         RemoteActorDataSourceImpl(
             httpClient = get(),
-            baseUrl = get(named("BASE_URL"))
+            baseUrl = get(named("BASE_URL")),
+            logger = get()
         )
     }
 
     single<RemoteTvShowDataSource> {
         RemoteTvShowDataSourceImpl(
             httpClient = get(),
-            baseUrl = get(named("BASE_URL"))
+            baseUrl = get(named("BASE_URL")),
+            logger = get()
         )
     }
 
     single<RemoteEpisodeDataSource> {
         RemoteEpisodeDataSourceImpl(
             httpClient = get(),
-            baseUrl = get(named("BASE_URL"))
+            baseUrl = get(named("BASE_URL")),
+            logger = get()
         )
     }
 

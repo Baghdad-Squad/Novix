@@ -81,6 +81,7 @@ class RemoteMovieDataSourceImpl(
         val endpoint = MOVIE_VIDEOS_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<MovieVideosResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).mapToYoutubeURL()
     }

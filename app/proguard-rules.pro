@@ -27,10 +27,12 @@
 
 -keep class com.baghdad.remoteDataSource.response.** { *; }
 -keep class com.baghdad.ui.navigation.** { *; }
+-keep class com.baghdad.domain.exception.** { *; }
+-keep class com.baghdad.repository.exception.** { *; }
 
-
-# Still obfuscate third-party libraries for size optimization
-# But keep your own code readable
+#Crashlytics
+-keep class com.crashlytics.** { *; }
+-keep class com.crashlytics.android.**
 
 # Kotlin Serialization rules (keep your existing ones)
 -keepattributes *Annotation*, InnerClasses
