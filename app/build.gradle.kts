@@ -74,6 +74,9 @@ android {
             enableAndroidTestCoverage = true
         }
     }
+    firebaseCrashlytics {
+        mappingFileUploadEnabled = true
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

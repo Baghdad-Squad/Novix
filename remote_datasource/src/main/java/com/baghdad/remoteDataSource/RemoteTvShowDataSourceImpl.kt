@@ -14,6 +14,7 @@ import com.baghdad.remoteDataSource.response.tvShow.TVShowVideosResponse
 import com.baghdad.remoteDataSource.response.tvShow.TvShowResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
+import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
 import com.baghdad.repository.model.ReviewDto
@@ -22,6 +23,7 @@ import io.ktor.client.HttpClient
 
 class RemoteTvShowDataSourceImpl(
     private val httpClient: HttpClient,
+    private val logger: Logger,
     private val baseUrl: String
 ) : RemoteTvShowDataSource {
 
@@ -29,6 +31,7 @@ class RemoteTvShowDataSourceImpl(
         val endpoint = TV_SHOW_DETAILS_ENDPOINT.replace("{tv_id}", tvId.toString())
         val response = handleRequest<TVShowDetailsResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         )
         return response.toDto()
@@ -38,6 +41,7 @@ class RemoteTvShowDataSourceImpl(
         val endpoint = TV_SHOW_CREDITS_ENDPOINT.replace("{tv_id}", tvId.toString())
         return handleRequest<CastMembersResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).cast?.map { it.toDto() } ?: emptyList()
     }
@@ -46,6 +50,7 @@ class RemoteTvShowDataSourceImpl(
         val endpoint = TV_SHOW_IMAGES_ENDPOINT.replace("{tv_id}", tvId.toString())
         return handleRequest<TVShowImagesResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).backdrops.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
@@ -54,6 +59,7 @@ class RemoteTvShowDataSourceImpl(
         val endpoint = TV_SHOW_WITH_GENRE_ENDPOINT
         return handleRequest<TvShowResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint?with_genres=$genreId&page=$page"
         ).results.orEmpty().map { it.toDto() }
     }
@@ -64,6 +70,7 @@ class RemoteTvShowDataSourceImpl(
             .replace("{season_number}", seasonNumber.toString())
         return handleRequest<SeasonDetailResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).episodes.orEmpty().map { it.toDto() }
     }
@@ -71,6 +78,7 @@ class RemoteTvShowDataSourceImpl(
         val endpoint = TV_SHOW_REVIEWS_ENDPOINT.replace("{tv_id}", tvId.toString())
         return handleRequest<ReviewsResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).results.orEmpty().map { it.toDto() }
     }
@@ -79,7 +87,8 @@ class RemoteTvShowDataSourceImpl(
         val endpoint = TV_SHOW_VIDEOS_ENDPOINT.replace("{tv_id}", tvId.toString())
         return handleRequest<TVShowVideosResponse>(
             client = httpClient,
-            url = "$baseUrl$endpoint"
+            url = "$baseUrl$endpoint",
+            logger = logger
         ).mapToYoutubeURL()
     }
 

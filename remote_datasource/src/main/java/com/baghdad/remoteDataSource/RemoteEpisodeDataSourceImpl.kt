@@ -9,12 +9,14 @@ import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
+import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
 import io.ktor.client.HttpClient
 
 class RemoteEpisodeDataSourceImpl(
     private val httpClient: HttpClient,
+    private val logger: Logger,
     private val baseUrl: String
 ): RemoteEpisodeDataSource {
 
@@ -25,6 +27,7 @@ class RemoteEpisodeDataSourceImpl(
             .replace("{episode_number}", episodeNumber.toString())
         return handleRequest<EpisodeDetailsResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).toDto()
     }
@@ -36,6 +39,7 @@ class RemoteEpisodeDataSourceImpl(
             .replace("{episode_number}", episodeNumber.toString())
         return handleRequest<CastMembersResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).cast?.map { it.toDto() } ?: emptyList()
 
@@ -48,6 +52,7 @@ class RemoteEpisodeDataSourceImpl(
             .replace("{episode_number}", episodeNumber.toString())
         return handleRequest<EpisodeImageResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).stills.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
@@ -63,6 +68,7 @@ class RemoteEpisodeDataSourceImpl(
             .replace("{episode_number}", episodeNumber.toString())
         return handleRequest<EpisodeVideosResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).mapToYoutubeTrailerUrl()
     }

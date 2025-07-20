@@ -12,6 +12,7 @@ import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
+import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.ReviewDto
@@ -19,12 +20,14 @@ import io.ktor.client.HttpClient
 
 class RemoteMovieDataSourceImpl(
     private val httpClient: HttpClient,
+    private val logger: Logger,
     private val baseUrl: String
 ) : RemoteMovieDataSource {
     override suspend fun getSimilarMovies(movieId: Long): List<MovieDto> {
         val endpoint = SIMILAR_MOVIES_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<SimilarMovieResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).results?.map { it.toDto() } ?: emptyList()
     }
@@ -33,6 +36,7 @@ class RemoteMovieDataSourceImpl(
         val endpoint = MOVIE_DETAILS_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<MovieDetailsResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).toDto()
     }
@@ -41,6 +45,7 @@ class RemoteMovieDataSourceImpl(
         val endpoint = MOVIE_CREDITS_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<CastMembersResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).cast?.map { it.toDto() } ?: emptyList()
     }
@@ -49,6 +54,7 @@ class RemoteMovieDataSourceImpl(
         val endpoint = MOVIE_WITH_GENRE_ENDPOINT
         return handleRequest<SimilarMovieResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint?with_genres=$genreId&page=$page"
         ).results.orEmpty().map { it.toDto() }
     }
@@ -57,6 +63,7 @@ class RemoteMovieDataSourceImpl(
         val endpoint = MOVIE_REVIEWS_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<ReviewsResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).results.orEmpty().map { it.toDto() }
     }
@@ -65,6 +72,7 @@ class RemoteMovieDataSourceImpl(
         val endpoint = MOVIE_IMAGES_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<MovieImageResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).backdrops?.map { it.filePath.orEmpty() }.orEmpty()
     }
@@ -73,6 +81,7 @@ class RemoteMovieDataSourceImpl(
         val endpoint = MOVIE_VIDEOS_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<MovieVideosResponse>(
             client = httpClient,
+            logger = logger,
             url = "$baseUrl$endpoint"
         ).mapToYoutubeURL()
     }
