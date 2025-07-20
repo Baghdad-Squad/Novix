@@ -22,9 +22,12 @@ class HeadersSetupInterceptor(
             chain.request()
                 .newBuilder().apply {
                     if (shouldAttachAuthHeader) {
-                        // Uncomment the following lines if you have a user local data source to get the token
+                        // should replace this static token with saveToken logic
 //                        if (userLocalDataSource.getUserToken().isNotEmpty()) {
-//                            addHeader("Authorization", userLocalDataSource.getHeaderToken())
+                        addHeader(
+                            "Authorization",
+                            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTZkYmRkOTNjMGY5NzdkMjMwOGJjMzM3NmI3YTNmOCIsIm5iZiI6MTc1MzAyOTE3Ni45OSwic3ViIjoiNjg3ZDFhMzgzOTg0OWZmZThkZDk4ZDEzIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.5NDfRH9_oRVtrvQb8Bs11qWGeLzEE5US_e5IcVQWerE"
+                        )
 //                        }
                     }
                     addHeader("Accept", "application/json")
