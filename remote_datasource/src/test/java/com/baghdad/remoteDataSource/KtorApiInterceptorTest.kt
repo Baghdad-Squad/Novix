@@ -1,6 +1,6 @@
 package com.baghdad.remoteDataSource
 
-import com.baghdad.remoteDataSource.interceptor.ApiInterceptor
+import com.baghdad.remoteDataSource.interceptor.KtorApiInterceptor
 import com.baghdad.repository.language.LanguageProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -14,8 +14,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 
-
-class ApiInterceptorTest {
+class KtorApiInterceptorTest {
     @Test
     fun `ApiInterceptor should adds api_key parameter to requests`() = runTest {
         val fakeApiKey = "TEST_KEY"
@@ -31,7 +30,7 @@ class ApiInterceptorTest {
             install(ContentNegotiation) {
                 json(Json)
             }
-            install(ApiInterceptor) {
+            install(KtorApiInterceptor) {
                 apiKey = fakeApiKey
                 languageProvider = mockLanguageProvider
             }
@@ -46,6 +45,6 @@ class ApiInterceptorTest {
         client.get("https://fake.api.com/test")
 
         assertTrue(capturedUrl!!.contains("api_key=$fakeApiKey"))
-        assertTrue(capturedUrl.contains("language=$fakeLanguage"))
+        assertTrue(capturedUrl!!.contains("language=$fakeLanguage"))
     }
 }
