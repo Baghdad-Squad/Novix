@@ -38,7 +38,7 @@ suspend inline fun <reified T> handleRequest(
         response.code() == HttpURLConnection.HTTP_CLIENT_TIMEOUT -> {
             throw RequestTimeoutNetworkException()
         }
-        response.code() == 429 -> { // Too Many Requests
+        response.code() == 429 -> {
             throw TooManyRequestsNetworkException()
         }
         response.code() == HttpURLConnection.HTTP_UNAUTHORIZED -> {
