@@ -61,7 +61,7 @@ fun EpisodeHeaderWithDetailsCard(
             }
 
             EpisodeDetailsHeader(
-                title = state.episode.title,
+                title = "Episode ${state.episode.episodeNumber} - ${state.episode.title}",
                 releaseDate = state.episode.releasedDate,
                 rating = state.episode.rating,
                 categories = state.episode.categories,
