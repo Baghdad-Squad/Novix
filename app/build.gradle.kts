@@ -32,11 +32,18 @@ android {
         properties.load(keystoreFile.inputStream())
 
         val apiKey = properties.getProperty("API_KEY") ?: ""
+        val baseUrl = properties.getProperty("BASE_URL") ?: ""
 
         buildConfigField(
             type = "String",
             name = "API_KEY",
             value = apiKey
+        )
+
+        buildConfigField(
+            type = "String",
+            name = "BASE_URL",
+            value = baseUrl
         )
     }
 
@@ -116,7 +123,7 @@ dependencies {
     implementation(libs.bundles.ktor.client)
     testImplementation(libs.bundles.test.core)
     implementation(libs.bundles.room)
-
+    implementation(libs.bundles.retrofit)
 }
 
 /**
