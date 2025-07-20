@@ -48,6 +48,11 @@ dependencies {
     implementation(libs.bundles.coroutines)
     implementation(libs.bundles.ktor.client)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     testImplementation(libs.bundles.test.core)
     testImplementation(libs.ktor.client.mock)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
 }
