@@ -32,7 +32,6 @@ fun TvShowHeaderWithDetailsCard(
     val pagerState = rememberPagerState(pageCount = { uiState.tvShowInfo.headerImagesURLs.size })
 
     Box(modifier = modifier) {
-        // Background carousel
         AutoSlidingImageCarousel(
             imageUrls = uiState.tvShowInfo.headerImagesURLs,
             imageAspectRatio = 1.778f,
