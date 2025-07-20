@@ -1,6 +1,6 @@
 package com.baghdad.remoteDataSource
 
-import com.baghdad.remoteDataSource.apiServece.GenreApiService
+import com.baghdad.remoteDataSource.apiService.GenreApiService
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.GenreListResponse
 import com.baghdad.remoteDataSource.util.handleRequest

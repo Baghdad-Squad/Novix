@@ -1,4 +1,4 @@
-package com.baghdad.remoteDataSource.apiServece
+package com.baghdad.remoteDataSource.apiService
 
 import com.baghdad.remoteDataSource.response.GenreListResponse
 import retrofit2.Response

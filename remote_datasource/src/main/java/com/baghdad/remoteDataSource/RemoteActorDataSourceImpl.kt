@@ -1,6 +1,6 @@
 package com.baghdad.remoteDataSource
 
-import com.baghdad.remoteDataSource.apiServece.ActorApiService
+import com.baghdad.remoteDataSource.apiService.ActorApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.response.actor.ActorDetailsResponse
 import com.baghdad.remoteDataSource.response.actor.ActorImagesResponse
