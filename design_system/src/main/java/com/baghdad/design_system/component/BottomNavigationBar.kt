@@ -1,5 +1,6 @@
 package com.baghdad.design_system.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -36,27 +37,19 @@ import com.baghdad.design_system.theme.Theme
 
 @Composable
 fun NovixBottomNavigationBar(
+    items: List<BottomNavItem>,
     onClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     selectedIconIndex: Int = 0
 ) {
     val horizontalPadding = 25.dp
-    val icons = remember {
-        listOf(
-            Pair(R.drawable.ic_home_outlined, R.drawable.ic_home_filled),
-            Pair(R.drawable.ic_search_outlined, R.drawable.ic_search_filled),
-            Pair(R.drawable.ic_masks_outlined, R.drawable.ic_masks_filled),
-            Pair(R.drawable.ic_allbookmark_outlined, R.drawable.ic_allbookmark_filled),
-            Pair(R.drawable.ic_user_octagon_outlined, R.drawable.ic_user_octagon_filled),
-        )
-    }
 
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
             .background(Theme.color.surface)
     ) {
-        val iconCount = icons.size
+        val iconCount = items.size
         val availableWidth = maxWidth - (horizontalPadding * 2)
         val slotWidth = availableWidth / iconCount
         val dotWidth = 2.dp
@@ -86,13 +79,13 @@ fun NovixBottomNavigationBar(
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding, vertical = 14.dp),
         ) {
-            icons.forEachIndexed { index, (unfilled, filled) ->
+            items.forEachIndexed { index, item ->
                 Icon(
                     modifier = Modifier
                         .weight(1f)
                         .noRippleClickable { onClick(index) },
                     imageVector = ImageVector.vectorResource(
-                        id = if (selectedIconIndex == index) filled else unfilled
+                        id = if (selectedIconIndex == index) item.selectedIcon else item.unselectedIcon
                     ),
                     contentDescription = stringResource(R.string.nav_bar_icon) + " $index",
                     tint = if (selectedIconIndex == index) Theme.color.primary else Theme.color.hint
@@ -124,12 +117,32 @@ fun NovixBottomNavigationBar(
 }
 
 
+data class BottomNavItem(
+    @DrawableRes
+    val selectedIcon: Int,
+    @DrawableRes
+    val unselectedIcon: Int
+)
+
 @NovixPreviews
 @Composable
 fun NovixBottomNavigationBarPreview() {
     NovixTheme {
         var selected by remember { mutableIntStateOf(0) }
+        val items = remember {
+            listOf(
+                BottomNavItem(R.drawable.ic_home_filled, R.drawable.ic_home_outlined),
+                BottomNavItem(R.drawable.ic_search_filled, R.drawable.ic_search_outlined),
+                BottomNavItem(R.drawable.ic_masks_filled, R.drawable.ic_masks_outlined),
+                BottomNavItem(R.drawable.ic_allbookmark_filled, R.drawable.ic_allbookmark_outlined),
+                BottomNavItem(
+                    R.drawable.ic_user_octagon_filled,
+                    R.drawable.ic_user_octagon_outlined
+                ),
+            )
+        }
         NovixBottomNavigationBar(
+            items = items,
             onClick = {
                 selected = it
             },
