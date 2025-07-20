@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -186,7 +186,7 @@ fun TvShowDetailsContent(
                 state = listState,
                 modifier = Modifier
                     .fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 60.dp)
+                contentPadding = PaddingValues(bottom = 72.dp)
             ) {
 
                 item {
@@ -245,7 +245,7 @@ fun TvShowDetailsContent(
                         )
                     }
 
-                    itemsIndexed(uiState.episodes){index, episode ->
+                    items(uiState.episodes) { episode ->
                         EpisodeCard(
                             episodeNumber = episode.episodeNumber,
                             imageUrl = uiState.tvShowInfo.posterPictureURL,
@@ -253,15 +253,14 @@ fun TvShowDetailsContent(
                             releaseDate = episode.releaseDate,
                             duration = episode.duration,
                             rating = episode.rating,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).then(
-                                    if (uiState.episodes[index] != uiState.episodes.last()) {
-                                        Modifier.padding(bottom = 8.dp)
-                                    } else {
-                                        Modifier
-                                    }
-                                    )
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 8.dp)
                                 .noRippleClickable {
-                                    listener.onClickEpisode(episode.currentSeason, episode.episodeNumber)
+                                    listener.onClickEpisode(
+                                        episode.currentSeason,
+                                        episode.episodeNumber
+                                    )
                                 }
                         )
                     }
