@@ -8,6 +8,7 @@ import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import kotlin.math.roundToInt
 
 class MovieDetailsViewModel(
@@ -167,7 +168,7 @@ class MovieDetailsViewModel(
                 overView = details.overview,
                 rating = details.averageRating.roundToFirstDecimal(),
                 duration = details.runtimeMinutes.formatDuration(),
-                date = details.releaseDate.day.toString() + "-" + details.releaseDate.month.name.lowercase() + "-" + details.releaseDate.year,
+                date = details.releaseDate.toDDMMYYYYFormat(),
                 isSaved = state.isSaved,
                 isLoading = false,
                 categories = details.genres.map {

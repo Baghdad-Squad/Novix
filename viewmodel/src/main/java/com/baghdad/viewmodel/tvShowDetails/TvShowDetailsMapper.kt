@@ -4,12 +4,14 @@ import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
+import com.baghdad.viewmodel.util.toDDMMMYYYYFormat
+import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
 fun TvShow.toUiState() = TvShowDetailsScreenState.TvShowInfoUiState(
     title = title,
     genres = genres.map { it.toUiState() },
     rating = averageRating,
-    releaseDate = releaseDate.toString(),
+    releaseDate = releaseDate.toDDMMYYYYFormat(),
     seasonCount = numberOfSeasons,
     overView = overview,
     trailerURL = trailerURL,
@@ -35,6 +37,6 @@ fun Episode.toUiState() = TvShowDetailsScreenState.EpisodeUiState(
     episodeNumber = episodeNumber,
     rating = rating,
     duration = duration,
-    releaseDate = releasedDate.toString(),
+    releaseDate = releasedDate.toDDMMMYYYYFormat(),
     currentSeason = currentSeason,
 )
