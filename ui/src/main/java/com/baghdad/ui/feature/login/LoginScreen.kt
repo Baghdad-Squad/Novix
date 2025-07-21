@@ -23,6 +23,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.NovixTextField
@@ -33,11 +34,25 @@ import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.component.button.TextButton
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.viewmodel.login.LoginInteractionListener
+import com.baghdad.viewmodel.login.LoginUiState
+import com.baghdad.viewmodel.login.LoginViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
-    var iAnyFieldEmpty = false
-    var isPasswordVisible = false
+fun LoginScreen(modifier: Modifier = Modifier, loginViewModel: LoginViewModel = koinViewModel()) {
+
+    val state = loginViewModel.uiState.collectAsStateWithLifecycle().value
+    LoginScreenContent(state = state, listener = loginViewModel)
+
+}
+
+@Composable
+fun LoginScreenContent(
+    state: LoginUiState,
+    listener: LoginInteractionListener,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -90,26 +105,26 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 
             NovixTextField(
                 label = stringResource(com.baghdad.ui.R.string.user_name),
-                value = "",
-                onValueChange = {},
+                value = state.userName,
+                onValueChange = { listener.onUserNameValueChange(it) },
                 leadingIcon = painterResource(R.drawable.ic_user_guest),
                 singleLine = true,
             )
 
             NovixTextField(
                 label = stringResource(com.baghdad.ui.R.string.password),
-                value = "",
-                onValueChange = {},
+                value = state.password,
+                onValueChange = { listener.onPasswordValueChange(it) },
                 leadingIcon = painterResource(R.drawable.ic_lock_key),
                 singleLine = true,
                 isTextMasked = true,
-                trailingIcon = if (!isPasswordVisible) painterResource(R.drawable.ic_closed_eye) else painterResource(
+                trailingIcon = if (!state.isPasswordVisible) painterResource(R.drawable.ic_closed_eye) else painterResource(
                     R.drawable.ic_opened_eye
                 )
             )
             PrimaryButton(
                 label = stringResource(com.baghdad.ui.R.string.login),
-                isEnabled = !iAnyFieldEmpty,
+                isEnabled = !state.isAnyFieldEmpty,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 32.dp, bottom = 12.dp)
@@ -122,8 +137,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
                 textAlign = TextAlign.Center,
                 label = "Forgot password?",
                 modifier = modifier.fillMaxWidth(),
-                onClick = {}
-            )
+                onClick = {})
 
             Spacer(modifier = Modifier.weight(1f))
             Row(
@@ -138,8 +152,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier.padding(end = 4.dp),
                 )
                 TextButton(
-                    label = stringResource(com.baghdad.ui.R.string.forgot_password),
-                    modifier = modifier.fillMaxWidth(),
+                    label = stringResource(com.baghdad.ui.R.string.create_account),
                     onClick = {})
 
             }
@@ -148,9 +161,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
         }
 
     }
-
 }
-
 
 @Preview
 @Composable

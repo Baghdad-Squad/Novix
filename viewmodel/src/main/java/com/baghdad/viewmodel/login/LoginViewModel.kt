@@ -1,13 +1,14 @@
 package com.baghdad.viewmodel.login
 
+import android.util.Log
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
-class LoginViewModel(initialState: LoginUiState) : BaseViewModel<LoginUiState, LoginUiEffect>(
-    initialState
+class LoginViewModel : BaseViewModel<LoginUiState, LoginUiEffect>(
+    LoginUiState()
 ), LoginInteractionListener {
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        //TODO("Not yet implemented")
+        return BaseSnackBarMessage.UnknownError
     }
 
     override fun onLoginClicked(userName: String, password: String) {
@@ -24,6 +25,36 @@ class LoginViewModel(initialState: LoginUiState) : BaseViewModel<LoginUiState, L
 
     override fun onNavigateBackClicked() {
         //TODO("Not yet implemented")
+    }
+
+    override fun onPasswordValueChange(value: String) {
+        isAnyFieldEmpty()
+        updateState {
+            Log.i("TAG", "password: $value")
+            it.copy(password = value)
+        }
+    }
+
+    override fun onUserNameValueChange(value: String) {
+        isAnyFieldEmpty()
+        updateState {
+            Log.i("TAG", "user name: $value")
+            it.copy(userName = value)
+        }
+    }
+
+    override fun togglePasswordVisibility() {
+        updateState {
+            it.copy(
+                isPasswordVisible = !it.isPasswordVisible
+            )
+        }
+    }
+
+    private fun isAnyFieldEmpty() {
+        updateState {
+            it.copy(isAnyFieldEmpty = it.userName.isEmpty() || it.password.isEmpty())
+        }
     }
 
 }

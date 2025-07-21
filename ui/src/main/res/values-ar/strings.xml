@@ -63,4 +63,5 @@
     <string name="user_name">اسم المستخدم</string>
     <string name="don_t_have_account">لا تملك حساب؟</string>
     <string name="forgot_password">نسيت كلمة المرور؟</string>
+    <string name="create_account">Create account</string>
 </resources>
