@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource.apiService
 
+import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
@@ -10,6 +11,7 @@ import retrofit2.http.Path
 
 interface EpisodeApiService {
 
+    @Authenticated
     @GET(EPISODES_DETAILS_ENDPOINT)
     suspend fun getEpisodeDetails(
         @Path("tv_id") tvId: Long,
@@ -17,6 +19,7 @@ interface EpisodeApiService {
         @Path ("episode_number") episodeNumber: Int
     ): Response<EpisodeDetailsResponse>
 
+    @Authenticated
     @GET(EPISODE_CREDITS_ENDPOINT)
     suspend fun getEpisodeCastMembers(
         @Path("tv_id") tvId: Long,
@@ -24,6 +27,7 @@ interface EpisodeApiService {
         @Path ("episode_number") episodeNumber: Int
     ): Response<CastMembersResponse>
 
+    @Authenticated
     @GET(EPISODE_IMAGES_ENDPOINT)
     suspend fun getEpisodeImages(
         @Path("tv_id") tvId: Long,
@@ -31,6 +35,7 @@ interface EpisodeApiService {
         @Path ("episode_number") episodeNumber: Int
     ): Response<EpisodeImageResponse>
 
+    @Authenticated
     @GET(EPISODE_VIDEOS_ENDPOINT)
     suspend fun getEpisodeTrailer(
         @Path("tv_id") tvId: Long,

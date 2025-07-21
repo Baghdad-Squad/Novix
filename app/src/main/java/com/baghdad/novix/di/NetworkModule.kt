@@ -8,6 +8,12 @@ import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteMovieDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteTvShowDataSourceImpl
+import com.baghdad.remoteDataSource.apiService.ActorApiService
+import com.baghdad.remoteDataSource.apiService.EpisodeApiService
+import com.baghdad.remoteDataSource.apiService.GenreApiService
+import com.baghdad.remoteDataSource.apiService.MovieApiService
+import com.baghdad.remoteDataSource.apiService.SearchApiService
+import com.baghdad.remoteDataSource.apiService.TvShowApiService
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
 import com.baghdad.remoteDataSource.interceptor.KtorApiInterceptor
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
@@ -130,4 +136,28 @@ val remoteDataSourceModule = module {
     }
 
     single<LanguageProvider> { AppLanguageProvider() }
+
+    single<ActorApiService> {
+        get<Retrofit>().create(ActorApiService::class.java)
+    }
+
+    single<EpisodeApiService> {
+        get<Retrofit>().create(EpisodeApiService::class.java)
+    }
+
+    single<GenreApiService> {
+        get<Retrofit>().create(GenreApiService::class.java)
+    }
+
+    single<MovieApiService> {
+        get<Retrofit>().create(MovieApiService::class.java)
+    }
+
+    single<SearchApiService> {
+        get<Retrofit>().create(SearchApiService::class.java)
+    }
+
+    single<TvShowApiService> {
+        get<Retrofit>().create(TvShowApiService::class.java)
+    }
 }

@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource.apiService
 
+import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
@@ -12,37 +13,44 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MovieApiService {
+    @Authenticated
     @GET(SIMILAR_MOVIES_ENDPOINT)
     suspend fun getSimilarMovies(
         @Path("movie_id") movieId: Long
     ): Response<SimilarMovieResponse>
 
+    @Authenticated
     @GET(MOVIE_DETAILS_ENDPOINT)
     suspend fun getMovieDetails(
         @Path("movie_id") movieId: Long
     ): Response<MovieDetailsResponse>
 
+    @Authenticated
     @GET(MOVIE_CREDITS_ENDPOINT)
     suspend fun getMovieCastMembers(
         @Path("movie_id") movieId: Long
     ): Response<CastMembersResponse>
 
+    @Authenticated
     @GET(MOVIE_WITH_GENRE_ENDPOINT)
     suspend fun getMoviesByGenre(
         @Query("genre_id") genreId: Long,
         @Query("page") page: Int
     ): Response<SimilarMovieResponse>
 
+    @Authenticated
     @GET(MOVIE_REVIEWS_ENDPOINT)
     suspend fun getMovieReviews(
         @Path("movie_id") movieId: Long
     ): Response<ReviewsResponse>
 
+    @Authenticated
     @GET(MOVIE_IMAGES_ENDPOINT)
     suspend fun getMovieImages(
         @Path("movie_id") movieId: Long
     ): Response<MovieImageResponse>
 
+    @Authenticated
     @GET(MOVIE_VIDEOS_ENDPOINT)
     suspend fun getMovieTrailer(
         @Path("movie_id") movieId: Long
