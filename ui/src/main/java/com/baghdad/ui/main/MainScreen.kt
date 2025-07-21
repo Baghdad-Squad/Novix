@@ -1,8 +1,16 @@
 package com.baghdad.ui.main
 
-import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -44,38 +52,64 @@ fun MainScreen(modifier: Modifier = Modifier) {
             ),
         )
     }
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    Log.d(
-        "MainScreen",
-        "${navBackStackEntry?.destination?.hierarchy?.joinToString { it.toString() } ?: ""}"
-    )
-    // Get selected index by checking destination hierarchy6
-    val selectedIndex = bottomNavItems.keys.indexOfFirst { graph ->
-        navBackStackEntry?.destination?.hierarchy?.any {
-            it.route == graph::class.qualifiedName
-        } ?: false
-    }.takeIf { it >= 0 } ?: 0
+
+    val isMainGraphRoute by remember(navBackStackEntry) {
+        derivedStateOf {
+            val currentHierarchy = navBackStackEntry?.destination?.hierarchy
+            bottomNavItems.keys.any { graph ->
+                currentHierarchy?.any { destination ->
+                    destination.route == graph::class.qualifiedName
+                } ?: false
+            }
+        }
+    }
+
+    val selectedIndex by remember(navBackStackEntry) {
+        derivedStateOf {
+            val currentHierarchy = navBackStackEntry?.destination?.hierarchy
+            bottomNavItems.keys.indexOfFirst { graph ->
+                currentHierarchy?.any { destination ->
+                    destination.route == graph::class.qualifiedName
+                } ?: false
+            }.takeIf { it >= 0 } ?: 0
+        }
+    }
 
     Scaffold(
-        modifier = Modifier.navigationBarsPadding(),
+        modifier = modifier.navigationBarsPadding(),
         bottomBar = {
-            NovixBottomNavigationBar(
-                items = bottomNavItems.values.toList(),
-                onClick = { index ->
-                    val targetGraph = bottomNavItems.keys.elementAt(index)
-                    navController.navigate(targetGraph) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+            AnimatedVisibility(
+                visible = isMainGraphRoute,
+                enter = slideInVertically(
+                    animationSpec = tween(300, easing = FastOutSlowInEasing),
+                    initialOffsetY = { it }
+                ) + fadeIn(animationSpec = tween(200, 100)),
+                exit = slideOutVertically(
+                    animationSpec = tween(200, easing = FastOutLinearInEasing),
+                    targetOffsetY = { it }
+                ) + fadeOut(animationSpec = tween(150))
+            ) {
+                NovixBottomNavigationBar(
+                    items = bottomNavItems.values.toList(),
+                    onClick = { index ->
+                        val targetGraph = bottomNavItems.keys.elementAt(index)
+                        navController.navigate(targetGraph) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                selectedIconIndex = selectedIndex
-            )
+                    },
+                    selectedIconIndex = selectedIndex
+                )
+            }
         }
     ) {
         NovixNavHost(
+
             navController = navController,
             startDestination = Graph.HomeGraph,
         )
