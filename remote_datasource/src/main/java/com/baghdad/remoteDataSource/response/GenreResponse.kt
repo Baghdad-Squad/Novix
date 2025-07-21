@@ -1,18 +1,15 @@
 package com.baghdad.remoteDataSource.response
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class GenreListResponse(
-    @SerialName("genres")
+    @SerializedName("genres")
     val genres: List<GenreItemDto>
 )
 
-@Serializable
 data class GenreItemDto(
-    @SerialName("id")
+    @SerializedName("id")
     val id: Int,
-    @SerialName("name")
+    @SerializedName("name")
     val name: String
 )
