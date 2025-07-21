@@ -1,4 +1,6 @@
 package com.baghdad.remoteDataSource.util
+
+import android.util.Log
 import com.baghdad.repository.exception.NetworkException
 import com.baghdad.repository.exception.NoInternetNetworkException
 import com.baghdad.repository.exception.RequestTimeoutNetworkException
@@ -28,10 +30,14 @@ suspend inline fun <reified T> handleRequest(
 
     return when {
         response.isSuccessful -> {
+            Log.e("Bla Bla ", "success")
             try {
+                Log.e("Bla Bla ", "success")
                 response.body() ?: throw NullPointerException("Response body is null")
+
             } catch (e: Exception) {
                 logger.logException(e)
+                Log.e("Bla Bla ", "${e.message}")
                 throw SerializationNetworkException()
             }
         }
@@ -48,6 +54,7 @@ suspend inline fun <reified T> handleRequest(
             throw ServerNetworkException()
         }
         else -> {
+            Log.e("Bla Bla ", "failed")
             throw UnknownNetworkException()
         }
     }

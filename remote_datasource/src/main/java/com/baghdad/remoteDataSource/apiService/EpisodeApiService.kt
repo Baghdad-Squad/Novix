@@ -45,11 +45,14 @@ interface EpisodeApiService {
 
 
     companion object{
-        private const val EPISODES_DETAILS_ENDPOINT = "/tv/{tv_id}/season/{season_number}/episode/{episode_number}"
-        private const val EPISODE_CREDITS_ENDPOINT = "/tv/{tv_id}/season/{season_number}/episode/{episode_number}/credits"
-        private const val EPISODE_IMAGES_ENDPOINT = "/tv/{tv_id}/season/{season_number}/episode/{episode_number}/images"
+        private const val EPISODES_DETAILS_ENDPOINT =
+            "tv/{tv_id}/season/{season_number}/episode/{episode_number}"
+        private const val EPISODE_CREDITS_ENDPOINT =
+            "tv/{tv_id}/season/{season_number}/episode/{episode_number}/credits"
+        private const val EPISODE_IMAGES_ENDPOINT =
+            "tv/{tv_id}/season/{season_number}/episode/{episode_number}/images"
         private const val EPISODE_VIDEOS_ENDPOINT =
-            "/tv/{tv_id}/season/{season_number}/episode/{episode_number}/videos"
+            "tv/{tv_id}/season/{season_number}/episode/{episode_number}/videos"
 
     }
 }

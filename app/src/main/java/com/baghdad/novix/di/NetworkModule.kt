@@ -79,7 +79,7 @@ val remoteDataSourceModule = module {
 
     single {
         Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl("https://api.themoviedb.org/3/")
             .client(get())
             .addConverterFactory(GsonConverterFactory.create())
             .build()

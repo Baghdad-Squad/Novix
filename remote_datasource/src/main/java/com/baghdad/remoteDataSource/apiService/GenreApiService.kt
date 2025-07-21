@@ -9,14 +9,14 @@ interface GenreApiService {
 
     @Authenticated
     @GET(MOVIE_GENRE_ENDPOINT)
-    suspend fun getMovieGenre(language: String): Response<GenreListResponse>
+    suspend fun getMovieGenre(): Response<GenreListResponse>
 
     @Authenticated
     @GET(TV_SHOW_GENRE_ENDPOINT)
-    suspend fun getTvShowGenre(language: String): Response<GenreListResponse>
+    suspend fun getTvShowGenre(): Response<GenreListResponse>
 
     companion object {
-        private const val MOVIE_GENRE_ENDPOINT = "/genre/movie/list"
-        private const val TV_SHOW_GENRE_ENDPOINT = "/genre/tv/list"
+        private const val MOVIE_GENRE_ENDPOINT = "genre/movie/list"
+        private const val TV_SHOW_GENRE_ENDPOINT = "genre/tv/list"
     }
 }

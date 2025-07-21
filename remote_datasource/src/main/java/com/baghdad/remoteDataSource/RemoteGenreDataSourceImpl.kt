@@ -14,14 +14,14 @@ class RemoteGenreDataSourceImpl(
 ): RemoteGenreDataSource {
     override suspend fun getMovieGenre(language: String): List<GenreDto> {
         return handleRequest<GenreListResponse>(
-            apiCall = {genreApiService.getMovieGenre(language)},
+            apiCall = { genreApiService.getMovieGenre() },
             logger = logger,
         ).toDto(genreType = GenreDto.GenreType.MOVIE)
     }
 
     override suspend fun getTvShowGenre(language: String): List<GenreDto> {
         return handleRequest<GenreListResponse>(
-            apiCall = {genreApiService.getTvShowGenre(language)},
+            apiCall = { genreApiService.getTvShowGenre() },
             logger = logger,
         ).toDto(genreType = GenreDto.GenreType.TV_SHOW)
     }
