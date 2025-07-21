@@ -57,12 +57,12 @@ interface MovieApiService {
     ): Response<MovieVideosResponse>
 
     companion object {
-        private const val SIMILAR_MOVIES_ENDPOINT = "/movie/{movie_id}/similar"
-        private const val MOVIE_DETAILS_ENDPOINT = "/movie/{movie_id}"
-        private const val MOVIE_CREDITS_ENDPOINT = "/movie/{movie_id}/credits"
-        private const val MOVIE_WITH_GENRE_ENDPOINT = "/discover/movie"
-        private const val MOVIE_REVIEWS_ENDPOINT = "/movie/{movie_id}/reviews"
-        private const val MOVIE_IMAGES_ENDPOINT = "/movie/{movie_id}/images"
-        private const val MOVIE_VIDEOS_ENDPOINT = "/movie/{movie_id}/videos"
+        private const val SIMILAR_MOVIES_ENDPOINT = "movie/{movie_id}/similar"
+        private const val MOVIE_DETAILS_ENDPOINT = "movie/{movie_id}"
+        private const val MOVIE_CREDITS_ENDPOINT = "movie/{movie_id}/credits"
+        private const val MOVIE_WITH_GENRE_ENDPOINT = "discover/movie"
+        private const val MOVIE_REVIEWS_ENDPOINT = "movie/{movie_id}/reviews"
+        private const val MOVIE_IMAGES_ENDPOINT = "movie/{movie_id}/images"
+        private const val MOVIE_VIDEOS_ENDPOINT = "movie/{movie_id}/videos"
     }
 }

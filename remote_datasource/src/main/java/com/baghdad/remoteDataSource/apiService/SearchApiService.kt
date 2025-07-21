@@ -52,8 +52,8 @@ interface SearchApiService {
 
 
     companion object {
-        private const val SEARCH_MOVIES_ENDPOINT = "/search/movie"
-        private const val SEARCH_TV_SHOWS_ENDPOINT = "/search/tv"
-        private const val SEARCH_ACTORS_ENDPOINT = "/search/person"
+        private const val SEARCH_MOVIES_ENDPOINT = "search/movie"
+        private const val SEARCH_TV_SHOWS_ENDPOINT = "search/tv"
+        private const val SEARCH_ACTORS_ENDPOINT = "search/person"
     }
 }

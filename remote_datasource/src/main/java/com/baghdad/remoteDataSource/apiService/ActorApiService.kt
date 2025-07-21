@@ -36,9 +36,9 @@ interface ActorApiService {
     ): Response<ActorTvShowsResponse>
 
     companion object {
-        private const val PERSON_MOVIES_PICK_ENDPOINT = "/person/{person_id}/movie_credits"
-        private const val PERSON_TV_SHOWS_PICK_ENDPOINT = "/person/{person_id}/tv_credits"
-        private const val PERSON_IMAGES_ENDPOINT = "/person/{person_id}/images"
-        private const val PERSON_DETAILS_ENDPOINT = "/person/{person_id}"
+        private const val PERSON_MOVIES_PICK_ENDPOINT = "person/{person_id}/movie_credits"
+        private const val PERSON_TV_SHOWS_PICK_ENDPOINT = "person/{person_id}/tv_credits"
+        private const val PERSON_IMAGES_ENDPOINT = "person/{person_id}/images"
+        private const val PERSON_DETAILS_ENDPOINT = "person/{person_id}"
     }
 }

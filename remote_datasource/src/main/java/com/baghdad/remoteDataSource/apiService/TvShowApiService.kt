@@ -8,9 +8,9 @@ import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowImagesResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowVideosResponse
 import com.baghdad.remoteDataSource.response.tvShow.TvShowResponse
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
-import retrofit2.Response
 import retrofit2.http.Query
 
 
@@ -61,12 +61,12 @@ interface TvShowApiService {
     ): Response<TVShowVideosResponse>
 
     companion object {
-        private const val TV_SHOW_DETAILS_ENDPOINT = "/tv/{tv_id}"
-        private const val TV_SHOW_CREDITS_ENDPOINT = "/tv/{tv_id}/credits"
-        private const val TV_SHOW_IMAGES_ENDPOINT = "/tv/{tv_id}/images"
-        private const val TV_SHOW_EPISODES_ENDPOINT = "/tv/{tv_id}/season/{season_number}"
-        private const val TV_SHOW_WITH_GENRE_ENDPOINT = "/discover/tv"
-        private const val TV_SHOW_REVIEWS_ENDPOINT = "/tv/{tv_id}/reviews"
-        private const val TV_SHOW_VIDEOS_ENDPOINT = "/tv/{tv_id}/videos"
+        private const val TV_SHOW_DETAILS_ENDPOINT = "tv/{tv_id}"
+        private const val TV_SHOW_CREDITS_ENDPOINT = "tv/{tv_id}/credits"
+        private const val TV_SHOW_IMAGES_ENDPOINT = "tv/{tv_id}/images"
+        private const val TV_SHOW_EPISODES_ENDPOINT = "tv/{tv_id}/season/{season_number}"
+        private const val TV_SHOW_WITH_GENRE_ENDPOINT = "discover/tv"
+        private const val TV_SHOW_REVIEWS_ENDPOINT = "tv/{tv_id}/reviews"
+        private const val TV_SHOW_VIDEOS_ENDPOINT = "tv/{tv_id}/videos"
     }
 }
