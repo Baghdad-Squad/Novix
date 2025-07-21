@@ -3,6 +3,7 @@ package com.baghdad.viewmodel.episodeDetails
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.person.CastMember
+import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
 fun Episode.toUiState() = EpisodeDetailsScreenState.EpisodeUiState(
     id = id,
@@ -10,7 +11,7 @@ fun Episode.toUiState() = EpisodeDetailsScreenState.EpisodeUiState(
     episodeNumber = episodeNumber,
     rating = rating,
     duration = duration,
-    releasedDate = releasedDate.toString(),
+    releasedDate = releasedDate.toDDMMYYYYFormat(),
     currentSeason = currentSeason,
     overview = overview,
     headerPictures = headerPictures,
