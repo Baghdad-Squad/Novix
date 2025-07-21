@@ -44,4 +44,7 @@ interface MovieDao {
         offset: Int,
         mediaType: String = SearchQueryDto.MediaType.MOVIE.name
     ): List<Movie>
+
+    @Query("SELECT * FROM Movie LIMIT :pageSize OFFSET :offset")
+    suspend fun getMovies(pageSize: Int,offset: Int): List<Movie>
 }
