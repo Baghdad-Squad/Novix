@@ -86,6 +86,16 @@ class RemoteMovieDataSourceImpl(
         ).mapToYoutubeURL()
     }
 
+    override suspend fun getTopRatedMovies(page: Int): List<MovieDto> {
+        val endpoint = TOP_RATED_MOVIES_ENDPOINT
+        return handleRequest<SimilarMovieResponse>(
+            client = httpClient,
+            logger = logger,
+            url = "$baseUrl$endpoint",
+            params = mapOf("page" to page.toString())
+        ).results.orEmpty().map { it.toDto() }
+    }
+
     companion object {
         private const val SIMILAR_MOVIES_ENDPOINT = "/movie/{movie_id}/similar"
         private const val MOVIE_DETAILS_ENDPOINT = "/movie/{movie_id}"
@@ -94,5 +104,6 @@ class RemoteMovieDataSourceImpl(
         private const val MOVIE_REVIEWS_ENDPOINT = "/movie/{movie_id}/reviews"
         private const val MOVIE_IMAGES_ENDPOINT = "/movie/{movie_id}/images"
         private const val MOVIE_VIDEOS_ENDPOINT = "/movie/{movie_id}/videos"
+        private const val TOP_RATED_MOVIES_ENDPOINT = "/movie/top_rated"
     }
 }

@@ -13,4 +13,5 @@ interface MovieRepository {
     suspend fun getMoviesByGenre(genreId: Long, page: Int): List<Movie>
     suspend fun getMovieReviews(movieId: Long): List<Review>
     suspend fun getMovieImages(movieId: Long): List<String>
+    suspend fun getTopRatedMovies(page: Int): List<Movie>
 }

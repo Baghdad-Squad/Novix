@@ -76,4 +76,12 @@ class MovieRepositoryImpl(
             remoteMovieDataSource.getMovieImages(movieId)
         }
     }
+
+    override suspend fun getTopRatedMovies(page: Int): List<Movie> {
+        return executeSafely {
+            remoteMovieDataSource.getTopRatedMovies(page).map {
+                it.toEntity()
+            }
+        }
+    }
 }
