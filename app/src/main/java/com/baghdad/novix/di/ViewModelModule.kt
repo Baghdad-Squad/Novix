@@ -1,10 +1,12 @@
 package com.baghdad.novix.di
 
+import androidx.lifecycle.ViewModel
 import com.baghdad.domain.util.SearchFilterHelper
 import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
+import com.baghdad.viewmodel.continueWatching.ContinueWatchingViewModel
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.baghdad.viewmodel.review.ContentType
@@ -69,4 +71,9 @@ val viewModelModule = module {
     viewModel { (categoryId: Long) ->
         CategoryMoviesViewModel(categoryId, get(), get())
     }
+
+    viewModel {
+        ContinueWatchingViewModel(get() , get())
+    }
+
 }
