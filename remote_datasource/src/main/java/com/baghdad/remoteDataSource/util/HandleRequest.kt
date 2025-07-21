@@ -30,18 +30,19 @@ suspend inline fun <reified T> handleRequest(
 
     return when {
         response.isSuccessful -> {
-            Log.e("Bla Bla ", "success")
             try {
-                Log.e("Bla Bla ", "success")
+                Log.e("take massage", "success ${response.body()}")
                 response.body() ?: throw NullPointerException("Response body is null")
 
             } catch (e: Exception) {
                 logger.logException(e)
-                Log.e("Bla Bla ", "${e.message}")
+                Log.e("take massage", "${e.message}")
                 throw SerializationNetworkException()
             }
         }
         response.code() == HttpURLConnection.HTTP_CLIENT_TIMEOUT -> {
+            Log.e("take massage", response.body().toString())
+
             throw RequestTimeoutNetworkException()
         }
         response.code() == 429 -> {
@@ -54,7 +55,7 @@ suspend inline fun <reified T> handleRequest(
             throw ServerNetworkException()
         }
         else -> {
-            Log.e("Bla Bla ", "failed")
+            Log.e("take massage", "failed")
             throw UnknownNetworkException()
         }
     }
