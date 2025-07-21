@@ -12,11 +12,12 @@ import com.baghdad.viewmodel.topRating.TopRatingMovieState.GenreUiState
 @Composable
 fun GenresSection(
     allGenres: List<GenreUiState>,
-    selectedGenres: List<GenreUiState>,
+    selectedGenres: GenreUiState,
     onGenreSelected: (GenreUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectedGenreNames = selectedGenres.map { it.name }
+    val selectedGenreNames = selectedGenres
+        .let { if (it.name.isNotEmpty()) listOf(it.name) else emptyList() }
 
     LazyRow(
         modifier = modifier

@@ -11,6 +11,7 @@ import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
+import com.baghdad.viewmodel.topRating.TopRatingViewModel
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowViewModel
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -53,7 +54,7 @@ val viewModelModule = module {
     }
 
     viewModelOf(::EpisodeDetailsViewModel)
-    viewModel{ (actorId: Long) ->
+    viewModel { (actorId: Long) ->
         TopMoviePicksViewModel(actorId, get())
     }
     viewModel { (actorId: Long) ->
@@ -68,5 +69,12 @@ val viewModelModule = module {
 
     viewModel { (categoryId: Long) ->
         CategoryMoviesViewModel(categoryId, get(), get())
+    }
+    viewModel {(actorId: Long) ->
+        TopRatingViewModel(
+            getGenresUseCase = get(),
+            getMovieTopRatingUseCase = get(),
+            genreId = actorId
+        )
     }
 }
