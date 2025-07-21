@@ -57,4 +57,10 @@
     <string name="save_to_list">حفظ الى القائمه</string>
     <string name="guests_of_honor">ضيوف الشرف</string>
     <string name="season_template">موسم %1$s</string>
+    <string name="login_icon">ايقونة تسجيل الدخول</string>
+    <string name="login_to_your_account">تسجيل الدخول</string>
+    <string name="password">كلمة المرور</string>
+    <string name="user_name">اسم المستخدم</string>
+    <string name="don_t_have_account">لا تملك حساب؟</string>
+    <string name="forgot_password">نسيت كلمة المرور؟</string>
 </resources>
