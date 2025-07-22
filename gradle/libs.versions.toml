@@ -8,6 +8,7 @@ composeBom = "2025.06.01"
 composeNavigation = "2.9.0"
 converterGson = "3.0.0"
 coreKtx = "1.16.0"
+datastorePreferences = "1.1.7"
 espressoCore = "3.6.1"
 firebaseBom = "33.16.0"
 foundation = "1.8.3"
@@ -46,6 +47,7 @@ pagingCommonAndroid = "3.3.6"
 # AndroidX
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-foundation-v167 = { module = "androidx.compose.foundation:foundation", version.ref = "foundationVersion" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }

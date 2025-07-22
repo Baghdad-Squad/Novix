@@ -95,6 +95,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        //android.buildFeatures.buildConfig = true
     }
     testOptions {
         unitTests.all {
@@ -124,6 +125,8 @@ dependencies {
     testImplementation(libs.bundles.test.core)
     implementation(libs.bundles.room)
     implementation(libs.bundles.retrofit)
+    implementation(libs.androidx.datastore.preferences)
+
 }
 
 /**

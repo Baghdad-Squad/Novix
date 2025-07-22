@@ -53,4 +53,5 @@ dependencies {
     androidTestImplementation(libs.androidx.room.testing)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.datastore.preferences)
 }
