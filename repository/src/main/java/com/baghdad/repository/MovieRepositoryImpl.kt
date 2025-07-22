@@ -62,7 +62,7 @@ class MovieRepositoryImpl(
 
     override suspend fun getMovieReviews(movieId: Long): List<Review> {
         Log.d("MovieRepositoryImpl", "getMovieReviews: $movieId")
-        val result =  executeSafely {
+        val result = executeSafely {
             remoteMovieDataSource.getMovieReviews(movieId).map {
                 it.toEntity()
             }
@@ -74,6 +74,14 @@ class MovieRepositoryImpl(
     override suspend fun getMovieImages(movieId: Long): List<String> {
         return executeSafely {
             remoteMovieDataSource.getMovieImages(movieId)
+        }
+    }
+
+    override suspend fun getTrendingMovies(page: Int): List<Movie> {
+        return executeSafely {
+            remoteMovieDataSource.getTrendingMovies(page).map {
+                it.toEntity()
+            }
         }
     }
 }
