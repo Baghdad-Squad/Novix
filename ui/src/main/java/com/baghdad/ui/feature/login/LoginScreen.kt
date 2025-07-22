@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.login
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,19 +36,44 @@ import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.component.button.TextButton
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.navigation.graph.authentication.AuthenticationNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.login.LoginInteractionListener
+import com.baghdad.viewmodel.login.LoginUiEffect
 import com.baghdad.viewmodel.login.LoginUiState
 import com.baghdad.viewmodel.login.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, loginViewModel: LoginViewModel = koinViewModel()) {
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    loginViewModel: LoginViewModel = koinViewModel(),
+    handleNavigation: (AuthenticationNavEvent) -> Unit,
+) {
 
     val state = loginViewModel.uiState.collectAsStateWithLifecycle().value
     val snackBarState = loginViewModel.snackBarState.collectAsStateWithLifecycle().value
-    LoginScreenContent(state = state, snackBarState = snackBarState, listener = loginViewModel)
+
+    ObserveAsEffect(loginViewModel.uiEffect) {
+        when (loginViewModel.uiEffect) {
+            LoginUiEffect.NavigateBack -> {}
+            LoginUiEffect.NavigateToForgotPassword -> {}
+            LoginUiEffect.NavigateToHome -> {
+                Log.i("login", "navigate to home")
+                handleNavigation(AuthenticationNavEvent.NavigateToHome)
+            }
+
+            LoginUiEffect.NavigateToRegister -> {}
+        }
+    }
+    LoginScreenContent(
+        modifier = modifier,
+        state = state,
+        snackBarState = snackBarState,
+        listener = loginViewModel
+    )
 
 }
 
@@ -151,7 +177,7 @@ fun LoginScreenContent(
             TextButton(
                 textModifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                label = "Forgot password?",
+                label = stringResource(com.baghdad.ui.R.string.forgot_password),
                 modifier = modifier.fillMaxWidth(),
                 onClick = {})
 
@@ -183,7 +209,9 @@ fun LoginScreenContent(
 @Composable
 private fun PreviewLoginScreen() {
     NovixTheme(isDarkTheme = true) {
-        LoginScreen()
+        LoginScreen(
+            handleNavigation = {}
+        )
 
     }
 }

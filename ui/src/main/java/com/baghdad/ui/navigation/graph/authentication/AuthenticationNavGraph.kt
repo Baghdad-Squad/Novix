@@ -13,7 +13,11 @@ fun NavGraphBuilder.authenticationNavGraph(navController: NavHostController) {
         startDestination = AuthenticationRoute.LoginScreen,
     ) {
         composable<AuthenticationRoute.LoginScreen> {
-            LoginScreen()
+            LoginScreen(
+                handleNavigation = { event ->
+                    handleAuthenticationNavigation(event, navController)
+                }
+            )
         }
     }
 }
