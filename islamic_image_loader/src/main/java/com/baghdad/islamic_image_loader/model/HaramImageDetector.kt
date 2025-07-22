@@ -2,6 +2,7 @@ package com.baghdad.islamic_image_loader.model
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import com.baghdad.islamic_image_loader.ml.ModelNudeDetector
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.common.ops.NormalizeOp
@@ -33,7 +34,9 @@ class HaramImageDetector(private val context: Context) {
         val result = outputBuffer.floatArray
         val notNudeScore = result.getOrNull(0) ?: 0f
         val nudeScore = result.getOrNull(1) ?: 0f
-        return nudeScore > notNudeScore
+        Log.d("HaramImageDetector", "Nude Score: $nudeScore, Not Nude Score: $notNudeScore")
+        Log.d("HaramImageDetector", "Float array: ${outputBuffer.floatArray}")
+        return nudeScore > 0.4
     }
 
     private fun buildImageProcessor(): ImageProcessor {
