@@ -6,6 +6,7 @@ import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
+import com.baghdad.viewmodel.movie.MovieViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewViewModel
@@ -68,5 +69,12 @@ val viewModelModule = module {
 
     viewModel { (categoryId: Long) ->
         CategoryMoviesViewModel(categoryId, get(), get())
+    }
+
+    viewModel {
+        MovieViewModel(
+            getTrendingMoviesUseCase = get(),
+            getGenresUseCase = get()
+        )
     }
 }

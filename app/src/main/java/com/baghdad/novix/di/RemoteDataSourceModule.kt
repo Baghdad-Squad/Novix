@@ -101,4 +101,6 @@ val remoteDataSourceModule = module {
     }
 
     single<LanguageProvider> { AppLanguageProvider() }
+
+
 }
