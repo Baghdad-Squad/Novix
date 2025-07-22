@@ -3,14 +3,17 @@ package com.baghdad.novix.di
 import com.baghdad.local_datasource.language.AppLanguageProvider
 import com.baghdad.novix.BuildConfig
 import com.baghdad.remoteDataSource.RemoteActorDataSourceImpl
+import com.baghdad.remoteDataSource.RemoteAuthenticationImpl
 import com.baghdad.remoteDataSource.RemoteEpisodeDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteMovieDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteTvShowDataSourceImpl
+import com.baghdad.remoteDataSource.api.AuthenticationApi
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
 import com.baghdad.remoteDataSource.interceptor.KtorApiInterceptor
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
+import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
@@ -70,6 +73,7 @@ val remoteDataSourceModule = module {
             .addInterceptor(get<HeadersSetupInterceptor>())
             .build()
     }
+
 
     single {
         Retrofit.Builder()
@@ -136,4 +140,13 @@ val remoteDataSourceModule = module {
     }
 
     single<LanguageProvider> { AppLanguageProvider() }
+    single<AuthenticationApi> {
+        get<Retrofit>().create(AuthenticationApi::class.java)
+    }
+    single<RemoteAuthenticationDataSource> {
+        RemoteAuthenticationImpl(
+            api = get(),
+            logger = get()
+        )
+    }
 }

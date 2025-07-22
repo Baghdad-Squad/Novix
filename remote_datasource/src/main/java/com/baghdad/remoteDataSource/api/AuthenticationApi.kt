@@ -9,13 +9,13 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface AuthenticationApi {
-    @GET("/authentication/token/new")
+    @GET("authentication/token/new")
     suspend fun getRequestToken(): RequestTokenResponse
 
-    @POST("/authentication/token/validate_with_login")
+    @POST("authentication/token/validate_with_login")
     suspend fun validateCredential(@Body body: CredentialDataBody): RequestTokenResponse
 
-    @POST("/authentication/session/new")
+    @POST("authentication/session/new")
     suspend fun createSession(@Body body: RequestTokenBody): SessionResponse
 
 }

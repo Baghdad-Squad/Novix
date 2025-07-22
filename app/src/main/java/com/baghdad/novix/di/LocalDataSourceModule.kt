@@ -1,5 +1,9 @@
 package com.baghdad.novix.di
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.baghdad.local_datasource.LocalActorDataSourceImpl
 import com.baghdad.local_datasource.LocalFavoriteGenreDataSourceImpl
@@ -8,7 +12,9 @@ import com.baghdad.local_datasource.LocalMovieDataSourceImpl
 import com.baghdad.local_datasource.LocalRecentlyViewedDataSourceImpl
 import com.baghdad.local_datasource.LocalSearchDataSourceImpl
 import com.baghdad.local_datasource.LocalSearchQueryDataSourceImpl
+import com.baghdad.local_datasource.LocalSessionDataSourceImpl
 import com.baghdad.local_datasource.LocalTvShowDataSourceImpl
+import com.baghdad.local_datasource.dataStore.AppPreferencesDataStore
 import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.dao.FavoriteGenreDao
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
@@ -25,12 +31,16 @@ import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
 import com.baghdad.repository.datasource.local.LocalSearchQueryDataSource
+import com.baghdad.repository.datasource.local.LocalSessionDataSource
 import com.baghdad.repository.datasource.local.LocalTvShowDataSource
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
+val Context.datastore: DataStore<Preferences> by preferencesDataStore(
+    name = "app-preferences"
+)
 val localDataSourceModule = module {
     single<NovixDatabase> {
         Room.databaseBuilder(
@@ -61,4 +71,18 @@ val localDataSourceModule = module {
     singleOf(::LocalFavoriteGenreDataSourceImpl) { bind<LocalFavoriteGenreDataSource>() }
     singleOf(::LocalSearchQueryDataSourceImpl) { bind<LocalSearchQueryDataSource>() }
 
+    single<DataStore<Preferences>> {
+        androidContext().datastore
+    }
+    single<AppPreferencesDataStore> {
+        AppPreferencesDataStore(
+            dataStore = get()
+        )
+    }
+    single<LocalSessionDataSource> {
+        LocalSessionDataSourceImpl(
+            appPreferencesDataStore = get(),
+            logger = get()
+        )
+    }
 }

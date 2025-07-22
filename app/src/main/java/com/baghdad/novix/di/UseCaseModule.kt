@@ -9,6 +9,7 @@ import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
+import com.baghdad.domain.usecase.login.LoginUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCategoryUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
@@ -66,5 +67,6 @@ val useCaseModule = module {
     singleOf(::GetMovieGalleryUseCase)
     singleOf(::GetTvShowGenreNameByIdUseCase)
     singleOf(::GetMovieGenreNameByIdUseCase)
+    singleOf(::LoginUseCase)
 }
 
