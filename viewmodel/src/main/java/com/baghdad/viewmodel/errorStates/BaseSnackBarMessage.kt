@@ -6,4 +6,6 @@ sealed interface BaseSnackBarMessage {
     data object UnknownError : SearchScreenBaseSnackBarMessages
     data object DataBaseError : SearchScreenBaseSnackBarMessages
     data object DefaultMessage : SearchScreenBaseSnackBarMessages
+    data object LoginSuccessfully : LoginSnackBarMessage()
+    data object InvalidCredential : LoginSnackBarMessage()
 }
