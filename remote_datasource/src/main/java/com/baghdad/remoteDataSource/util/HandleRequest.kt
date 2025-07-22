@@ -1,6 +1,5 @@
 package com.baghdad.remoteDataSource.util
 
-import android.util.Log
 import com.baghdad.repository.exception.NetworkException
 import com.baghdad.repository.exception.NoInternetNetworkException
 import com.baghdad.repository.exception.RequestTimeoutNetworkException
@@ -31,18 +30,14 @@ suspend inline fun <reified T> handleRequest(
     return when {
         response.isSuccessful -> {
             try {
-                Log.e("take massage", "success ${response.body()}")
                 response.body() ?: throw NullPointerException("Response body is null")
 
             } catch (e: Exception) {
                 logger.logException(e)
-                Log.e("take massage", "${e.message}")
                 throw SerializationNetworkException()
             }
         }
         response.code() == HttpURLConnection.HTTP_CLIENT_TIMEOUT -> {
-            Log.e("take massage", response.body().toString())
-
             throw RequestTimeoutNetworkException()
         }
         response.code() == 429 -> {
@@ -55,7 +50,6 @@ suspend inline fun <reified T> handleRequest(
             throw ServerNetworkException()
         }
         else -> {
-            Log.e("take massage", "failed")
             throw UnknownNetworkException()
         }
     }
