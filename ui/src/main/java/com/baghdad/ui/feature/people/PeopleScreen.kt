@@ -27,14 +27,12 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PeopleScreen(
-    viewModel: PeopleViewModel = koinViewModel(),
-    handleNavigation: (PeopleNavEvent) -> Unit
+    viewModel: PeopleViewModel = koinViewModel(), handleNavigation: (PeopleNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     PeopleScreenContent(
-        uiState = uiState,
-        listner = viewModel
+        uiState = uiState, listner = viewModel
     )
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
@@ -53,11 +51,13 @@ fun PeopleScreen(
 
 @Composable
 fun PeopleScreenContent(
-    uiState: PeopleUiState,
-    listner: PeopleInteractionListener
+    uiState: PeopleUiState, listner: PeopleInteractionListener
 ) {
     val peopleItems = uiState.people.collectAsLazyPagingItems()
-    Column(modifier = Modifier.fillMaxSize().background(Theme.color.surface).statusBarsPadding()) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(Theme.color.surface)
+        .statusBarsPadding()) {
         TopAppBar(
             modifier = Modifier.padding(top = 12.dp),
             onGoBackClick = listner::onBackClick,
