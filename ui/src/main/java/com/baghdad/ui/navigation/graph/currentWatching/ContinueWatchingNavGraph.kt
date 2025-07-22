@@ -5,11 +5,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.continueWatching.ContinueWatchingScreen
+import com.baghdad.ui.navigation.route.CurrentWatchingRoute
 import com.baghdad.ui.navigation.route.Graph
 
 fun NavGraphBuilder.continueWatchingNavGraph(navController: NavHostController) {
     navigation<Graph.ContinueWatchingGraph>(
-        startDestination = Graph.ContinueWatchingGraph
+        startDestination = CurrentWatchingRoute.CurrentWatchingScreen
     ){
         composable<Graph.ContinueWatchingGraph> {
             ContinueWatchingScreen(
