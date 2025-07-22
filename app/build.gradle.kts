@@ -1,4 +1,5 @@
-import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Properties
 
@@ -12,7 +13,8 @@ plugins {
     jacoco
 }
 
-val formattedDate: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd HH:mm"))
+val formattedDate: String = ZonedDateTime.now(ZoneId.of("Africa/Cairo"))
+    .format(DateTimeFormatter.ofPattern("dd HH:mm"))
 
 android {
     namespace = "com.baghdad.novix"
@@ -20,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId = "com.baghdad.novix"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 35
         versionName = "1.0-($formattedDate)"
         versionCode = 1

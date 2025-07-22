@@ -3,6 +3,7 @@ package com.baghdad.viewmodel.actorDetails
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
+import com.baghdad.viewmodel.util.toYYYYMMDDFormat
 
 
 fun Movie.toMovieUI() = ActorDetailsScreenState.MovieUiState(
@@ -20,9 +21,9 @@ fun TvShow.toTvShowUI() = ActorDetailsScreenState.TvShowUiState(
 fun Actor.toActorInfoUI() = ActorDetailsScreenState.ActorInfoUiState(
     name = name,
     biography = biography,
-    birthdayDate = birthDate.toString(),
+    birthdayDate = birthDate.toYYYYMMDDFormat(),
     placeOfBirth = placeOfBirth,
-    deathDate = deathDate?.toString(),
+    deathDate = deathDate?.toYYYYMMDDFormat(),
     headerPictures = headerPictures,
     department = department
 )

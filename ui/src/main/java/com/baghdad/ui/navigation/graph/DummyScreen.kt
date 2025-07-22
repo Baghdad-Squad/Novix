@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.theme.Theme
 
 @Composable
 fun DummyScreen(title: String) {
@@ -13,6 +14,6 @@ fun DummyScreen(title: String) {
         modifier = Modifier.Companion.fillMaxSize(),
         contentAlignment = Alignment.Companion.Center
     ) {
-        Text(text = title)
+        Text(text = title, color = Theme.color.title)
     }
 }
