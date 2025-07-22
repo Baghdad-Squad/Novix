@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -135,35 +136,39 @@ fun ContinueWatchingContent(
             )
         }
     ) {
-        if (uiState.isLoading) {
-            Box(Modifier.fillMaxSize()) {
-                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
-        LazyPagingVerticalGrid<ContinueWatchingState.ContinueWatchingMovieUiState>(
-            columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = 8.dp,
-                bottom = 8.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            items = movieItems,
-        ) { movie ->
+        Column {
 
-            HomeCard(
-                url = movie.posterPictureURL,
-                contentDescription = null,
-                isSaved = movie.isSaved,
-                onSavedClick = { listener.onMovieSaveClick(movie.id) },
-                onClick = { listener.onMovieClick(movie.id) },
-                modifier = Modifier.aspectRatio(0.8f)
-            )
+            if (uiState.isLoading) {
+                Log.d("ContinueWatchingScreen", "ContinueWatchingContent: Loading")
+                Box(Modifier.fillMaxSize()) {
+                    WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            }
+            LazyPagingVerticalGrid<ContinueWatchingState.ContinueWatchingMovieUiState>(
+                columns = GridCells.Adaptive(minSize = 150.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.color.surface),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 8.dp,
+                    bottom = 8.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                items = movieItems,
+            ) { movie ->
+
+                HomeCard(
+                    url = movie.posterPictureURL,
+                    contentDescription = null,
+                    isSaved = movie.isSaved,
+                    onSavedClick = { listener.onMovieSaveClick(movie.id) },
+                    onClick = { listener.onMovieClick(movie.id) },
+                    modifier = Modifier.aspectRatio(0.8f)
+                )
+            }
         }
     }
 
