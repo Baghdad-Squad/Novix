@@ -36,7 +36,7 @@ class HaramImageDetector(private val context: Context) {
         val nudeScore = result.getOrNull(1) ?: 0f
         Log.d("HaramImageDetector", "Nude Score: $nudeScore, Not Nude Score: $notNudeScore")
         Log.d("HaramImageDetector", "Float array: ${outputBuffer.floatArray}")
-        return nudeScore > 0.4
+        return nudeScore > NSFW_DETECTION_THRESHOLD
     }
 
     private fun buildImageProcessor(): ImageProcessor {
@@ -48,5 +48,6 @@ class HaramImageDetector(private val context: Context) {
 
     companion object {
         private const val INPUT_IMAGE_SIZE = 224
+        private const val NSFW_DETECTION_THRESHOLD = 0.4
     }
 }
