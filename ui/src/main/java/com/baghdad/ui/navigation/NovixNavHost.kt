@@ -11,6 +11,7 @@ import com.baghdad.ui.navigation.graph.movieDetails.movieDetailsNavGraph
 import com.baghdad.ui.navigation.graph.myAccount.myAccountNavGraph
 import com.baghdad.ui.navigation.graph.myLists.myListsNavGraph
 import com.baghdad.ui.navigation.graph.onBoarding.onBoardingNavGraph
+import com.baghdad.ui.navigation.graph.people.peopleNavGraph
 import com.baghdad.ui.navigation.graph.reviews.reviewsNavGraph
 import com.baghdad.ui.navigation.graph.search.searchNavGraph
 import com.baghdad.ui.navigation.graph.tvShowDetails.tvShowDetailsNavGraph
@@ -36,5 +37,6 @@ fun NovixNavHost(
         movieDetailsNavGraph(navController)
         tvShowDetailsNavGraph(navController)
         reviewsNavGraph(navController)
+        peopleNavGraph(navController)
     }
 }

@@ -1,4 +1,5 @@
 package com.baghdad.remoteDataSource.util
+
 import com.baghdad.repository.exception.NetworkException
 import com.baghdad.repository.exception.NoInternetNetworkException
 import com.baghdad.repository.exception.RequestTimeoutNetworkException
@@ -17,7 +18,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.SerializationException
-
 
 suspend inline fun <reified T> handleRequest(
     client: HttpClient,

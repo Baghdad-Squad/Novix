@@ -6,6 +6,7 @@ import com.baghdad.remoteDataSource.RemoteActorDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteEpisodeDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteMovieDataSourceImpl
+import com.baghdad.remoteDataSource.RemotePeopleDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteTvShowDataSourceImpl
 import com.baghdad.remoteDataSource.interceptor.ApiInterceptor
@@ -13,6 +14,7 @@ import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
+import com.baghdad.repository.datasource.remote.RemotePeopleDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.language.LanguageProvider
@@ -98,6 +100,15 @@ val remoteDataSourceModule = module {
             baseUrl = get(named("BASE_URL")),
             logger = get()
         )
+    }
+
+    single<RemotePeopleDataSource>{
+        RemotePeopleDataSourceImpl(
+            httpClient = get(),
+            logger = get(),
+            baseUrl = get(named("BASE_URL"))
+        )
+
     }
 
     single<LanguageProvider> { AppLanguageProvider() }

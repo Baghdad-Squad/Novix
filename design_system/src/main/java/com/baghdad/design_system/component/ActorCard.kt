@@ -30,7 +30,9 @@ private val ActorImageSize = 78.dp
 private val RoundedShapeValue = 12.dp
 
 private val ImageShape = RoundedCornerShape(
-    topEnd = RoundedShapeValue, topStart = RoundedShapeValue, bottomStart = RoundedShapeValue
+    topEnd = RoundedShapeValue,
+    topStart = RoundedShapeValue,
+    bottomStart = RoundedShapeValue
 )
 private val CardShape = RoundedCornerShape(
     topEnd = RoundedShapeValue,
@@ -41,7 +43,7 @@ private val CardShape = RoundedCornerShape(
 fun ActorCard(
     actorName: String,
     actorImage: String,
-    onClick: () -> Unit ,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     characterName: String? = null
 ) {
@@ -49,17 +51,13 @@ fun ActorCard(
         modifier = modifier
             .fillMaxWidth()
             .background(color = Theme.color.surface)
-            .noRippleClickable { onClick() }
-    ) {
+            .noRippleClickable { onClick() }) {
         AsyncImage(
             model = if (actorImage.isBlank()) null else actorImage,
             placeholder = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
             fallback = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
-            contentDescription =
-                if (characterName.isNullOrBlank())
-                    "Portrait of actor $actorName"
-                else
-                    "Actor $actorName as $characterName",
+            contentDescription = if (characterName.isNullOrBlank()) "Portrait of actor $actorName"
+            else "Actor $actorName as $characterName",
             modifier = Modifier
                 .size(ActorImageSize)
                 .clip(ImageShape)

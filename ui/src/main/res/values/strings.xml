@@ -56,4 +56,5 @@
     <string name="save_to_list">Save to list</string>
     <string name="guests_of_honor">Guests of honor</string>
     <string name="season_template">S%1$s</string>
+    <string name="people">People</string>
 </resources>

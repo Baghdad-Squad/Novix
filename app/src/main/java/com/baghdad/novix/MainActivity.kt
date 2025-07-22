@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NovixNavHost(
                     navController = navController,
-                    startDestination = Graph.SearchGraph
+                    startDestination = Graph.PeopleGraph
                 )
             }
         }

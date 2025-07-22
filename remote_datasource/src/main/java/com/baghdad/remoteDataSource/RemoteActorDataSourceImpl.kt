@@ -17,7 +17,7 @@ class RemoteActorDataSourceImpl(
     private val httpClient: HttpClient,
     private val logger: Logger,
     private val baseUrl: String
-): RemoteActorDataSource {
+) : RemoteActorDataSource {
     override suspend fun getActorDetails(personId: Long): ActorDto {
         return handleRequest<ActorDetailsResponse>(
             client = httpClient,
@@ -40,8 +40,7 @@ class RemoteActorDataSourceImpl(
             logger = logger,
             url = "$baseUrl${
                 PERSON_MOVIES_PICK_ENDPOINT.replace(
-                    "{person_id}",
-                    personId.toString()
+                    "{person_id}", personId.toString()
                 )
             }"
         ).cast?.map { it.toDto() } ?: emptyList()
@@ -53,8 +52,7 @@ class RemoteActorDataSourceImpl(
             logger = logger,
             url = "$baseUrl${
                 PERSON_TV_SHOWS_PICK_ENDPOINT.replace(
-                    "{person_id}",
-                    personId.toString()
+                    "{person_id}", personId.toString()
                 )
             }"
         ).cast?.map { it.toDto() } ?: emptyList()
