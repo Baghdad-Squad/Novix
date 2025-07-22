@@ -119,7 +119,7 @@ fun NovixTextField(
                     enabled = enabled && !readOnly,
                     singleLine = singleLine,
                     maxLines = maxLines,
-                    visualTransformation = if (isTextMasked && !trailingVisibility) PasswordVisualTransformation() else VisualTransformation.None,
+                    visualTransformation = if (isTextMasked) PasswordVisualTransformation() else VisualTransformation.None,
                     textStyle = Theme.typography.body.medium.copy(color = Theme.color.body),
                     cursorBrush = SolidColor(Theme.color.primary),
                     interactionSource = interactionSource,
@@ -144,7 +144,6 @@ fun NovixTextField(
                                 }
                                 innerTextField()
                             }
-                            if (isTextMasked) {
                                 trailingIcon?.let {
                                     Icon(
                                         painter = it,
@@ -169,7 +168,7 @@ fun NovixTextField(
                                     )
                                 }
                             }
-                        }
+
                     }
                 )
             }
