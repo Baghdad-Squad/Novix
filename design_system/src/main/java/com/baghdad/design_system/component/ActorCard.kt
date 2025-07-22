@@ -3,11 +3,11 @@ package com.baghdad.design_system.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -19,10 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.baghdad.design_system.R
 import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.modifier.threeSidedBorder
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
 private val CardHeight = 55.dp
@@ -52,14 +57,10 @@ fun ActorCard(
             .noRippleClickable { onClick() }
     ) {
         AsyncImage(
-            model = if (actorImage.isBlank()) null else actorImage,
+            model = actorImage.ifBlank { null },
             placeholder = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
             fallback = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
-            contentDescription =
-                if (characterName.isNullOrBlank())
-                    "Portrait of actor $actorName"
-                else
-                    "Actor $actorName as $characterName",
+            contentDescription = stringResource(R.string.actor_image),
             modifier = Modifier
                 .size(ActorImageSize)
                 .clip(ImageShape)
@@ -73,9 +74,8 @@ fun ActorCard(
                 .fillMaxWidth()
                 .widthIn(min = 218.dp)
                 .background(Theme.color.surface)
-                .offset(x = (-1).dp)
-                .border(
-                    width = 1.dp, color = Theme.color.stroke, shape = CardShape
+                .threeSidedBorder(
+                    width = 1.dp, color = Theme.color.stroke, cornerRadius = RoundedShapeValue
                 )
                 .clip(CardShape)
                 .height(CardHeight)
@@ -97,6 +97,23 @@ fun ActorCard(
                     style = Theme.typography.title.small.copy(color = Theme.color.hint)
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ActorCardPreview() {
+    NovixTheme(isDarkTheme = true) {
+        Box(
+            modifier = Modifier.background(Theme.color.surface)
+        ) {
+            ActorCard(
+                actorName = "James Gandolfini",
+                actorImage = "https://image.tmdb.org/t/p/w500/vhtsFJZcfHdeDkFBoWMDzOS6xrP.jpg",
+                onClick = {},
+                characterName = "Tony Soprano"
+            )
         }
     }
 }

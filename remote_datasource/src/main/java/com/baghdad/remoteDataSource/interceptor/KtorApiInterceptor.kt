@@ -7,21 +7,21 @@ import io.ktor.client.request.HttpRequestPipeline
 import io.ktor.client.request.parameter
 import io.ktor.util.AttributeKey
 
-class ApiInterceptor(
+class KtorApiInterceptor(
     private val apiKey: String,
     private val languageProvider: LanguageProvider,
 ) {
 
-    companion object Plugin : HttpClientPlugin<Config, ApiInterceptor> {
+    companion object Plugin : HttpClientPlugin<Config, KtorApiInterceptor> {
 
-        override val key: AttributeKey<ApiInterceptor> = AttributeKey("ApiKeyInterceptor")
+        override val key: AttributeKey<KtorApiInterceptor> = AttributeKey("ApiKeyInterceptor")
 
-        override fun prepare(block: Config.() -> Unit): ApiInterceptor {
+        override fun prepare(block: Config.() -> Unit): KtorApiInterceptor {
             val config = Config().apply(block)
-            return ApiInterceptor(config.apiKey, config.languageProvider)
+            return KtorApiInterceptor(config.apiKey, config.languageProvider)
         }
 
-        override fun install(plugin: ApiInterceptor, scope: HttpClient) {
+        override fun install(plugin: KtorApiInterceptor, scope: HttpClient) {
             scope.requestPipeline.intercept(HttpRequestPipeline.Phases.State) {
                 context.parameter("api_key", plugin.apiKey)
                 context.parameter("language", plugin.languageProvider.getCurrentLanguage())
