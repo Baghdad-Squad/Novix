@@ -10,6 +10,7 @@ import com.baghdad.remoteDataSource.response.SimilarMovieResponse
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
+import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
@@ -86,6 +87,15 @@ class RemoteMovieDataSourceImpl(
         ).mapToYoutubeURL()
     }
 
+    override suspend fun getTrendingMovies(page: Int): List<MovieDto> {
+        val endpoint = TRENDING_MOVIE_ENDPOINT
+        return handleRequest<TrendingMovieResponse>(
+            client = httpClient,
+            logger = logger,
+            url = "$baseUrl$endpoint"
+        ).results?.map { it.toDto() }.orEmpty()
+    }
+
     companion object {
         private const val SIMILAR_MOVIES_ENDPOINT = "/movie/{movie_id}/similar"
         private const val MOVIE_DETAILS_ENDPOINT = "/movie/{movie_id}"
@@ -94,5 +104,6 @@ class RemoteMovieDataSourceImpl(
         private const val MOVIE_REVIEWS_ENDPOINT = "/movie/{movie_id}/reviews"
         private const val MOVIE_IMAGES_ENDPOINT = "/movie/{movie_id}/images"
         private const val MOVIE_VIDEOS_ENDPOINT = "/movie/{movie_id}/videos"
+        private const val TRENDING_MOVIE_ENDPOINT = "/trending/movie/day"
     }
 }
