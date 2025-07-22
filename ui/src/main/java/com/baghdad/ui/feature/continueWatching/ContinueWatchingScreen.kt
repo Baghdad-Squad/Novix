@@ -34,10 +34,14 @@ import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
+import com.baghdad.ui.navigation.graph.currentWatching.ContinueWatchingNavEvent
+import com.baghdad.ui.navigation.graph.search.SearchNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingInteractionListener
+import com.baghdad.viewmodel.continueWatching.ContinueWatchingScreenEffect
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -46,13 +50,35 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ContinueWatchingScreen(
-    viewModel: ContinueWatchingViewModel = koinViewModel()
-) {
+    viewModel: ContinueWatchingViewModel = koinViewModel(),
+    handleNavigation: (ContinueWatchingNavEvent) -> Unit,
+
+    ) {
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
     val tvShowItems = uiState.tvShowsFlow.collectAsLazyPagingItems()
     Log.d("ContinueWatchingScreen", "ContinueWatchingScreen: $uiState")
+
+    ObserveAsEffect(viewModel.uiEffect) { effect ->
+        when (effect) {
+            is ContinueWatchingScreenEffect.NavigateBack -> handleNavigation(
+                ContinueWatchingNavEvent.NavigateBack
+            )
+
+            is ContinueWatchingScreenEffect.NavigateToLogin -> handleNavigation(
+                ContinueWatchingNavEvent.NavigateToLogin
+            )
+
+            is ContinueWatchingScreenEffect.NavigateToMovieDetails -> handleNavigation(
+                ContinueWatchingNavEvent.NavigateToMovieDetails(effect.movieId)
+            )
+
+            is ContinueWatchingScreenEffect.NavigateToTvShowDetails -> handleNavigation(
+                ContinueWatchingNavEvent.NavigateToTvShowDetails(effect.tvShowId)
+            )
+        }
+    }
     ContinueWatchingContent(
         uiState = uiState,
         listener = viewModel,

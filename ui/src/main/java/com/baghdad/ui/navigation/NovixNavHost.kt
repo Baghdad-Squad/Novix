@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import com.baghdad.ui.navigation.graph.actorDetails.actorDetailsNavGraph
 import com.baghdad.ui.navigation.graph.authentication.authenticationNavGraph
 import com.baghdad.ui.navigation.graph.categories.categoriesNavGraph
+import com.baghdad.ui.navigation.graph.currentWatching.continueWatchingNavGraph
 import com.baghdad.ui.navigation.graph.home.homeNavGraph
 import com.baghdad.ui.navigation.graph.movieDetails.movieDetailsNavGraph
 import com.baghdad.ui.navigation.graph.myAccount.myAccountNavGraph
@@ -36,5 +37,6 @@ fun NovixNavHost(
         movieDetailsNavGraph(navController)
         tvShowDetailsNavGraph(navController)
         reviewsNavGraph(navController)
+        continueWatchingNavGraph(navController)
     }
 }
