@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -21,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.baghdad.islamic_image_loader.component.SafeImage
+import com.baghdad.islamic_image_loader.ui.SafeImage
 import kotlinx.coroutines.delay
 
 @Composable
@@ -40,7 +41,7 @@ fun AutoSlidingImageCarousel(
                 pagerState.animateScrollToPage(next)
             }
         }
-
+        ButtonDefaults
 
         Log.e("imageUrls", imageUrls.toString())
         HorizontalPager(

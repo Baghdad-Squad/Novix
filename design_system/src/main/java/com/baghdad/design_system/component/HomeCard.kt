@@ -14,7 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.islamic_image_loader.component.SafeImage
+import com.baghdad.islamic_image_loader.ui.SafeImage
 
 @Composable
 fun HomeCard(

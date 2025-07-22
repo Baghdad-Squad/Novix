@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.SectionHeader
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.islamic_image_loader.component.SafeImage
+import com.baghdad.islamic_image_loader.ui.SafeImage
 import com.baghdad.ui.R
 
 @Composable

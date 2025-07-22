@@ -1,5 +1,4 @@
-package com.baghdad.islamic_image_loader
-
+package com.baghdad.islamic_image_loader.transformation
 
 import android.graphics.Bitmap
 import androidx.core.graphics.createBitmap
@@ -18,23 +17,23 @@ import kotlin.math.min
  */
 
 
-class BlurTransformation(
+open class BlurTransformation(
     private val blurRadiusPx: Int,
     private val downscaleFactor: Float = DEFAULT_SCALE,
     private val blurPasses: Int = DEFAULT_PASSES
 ) : Transformation() {
 
     companion object {
-        private const val MIN_RADIUS = 1
-        private const val MAX_RADIUS = 255
-        private const val DEFAULT_SCALE = 0.4f
-        private const val DEFAULT_PASSES = 3
+        const val MIN_RADIUS = 1
+        const val MAX_RADIUS = 255
+        const val DEFAULT_SCALE = 0.4f
+        const val DEFAULT_PASSES = 3
     }
 
     override val cacheKey: String = "blur_${blurRadiusPx}_${downscaleFactor}_${blurPasses}"
 
     /**
-     * Applies a blur transformation to the input [Bitmap].
+     * Applies a blur transformation to the input [android.graphics.Bitmap].
      * This function is called by Coil during image loading and transformation.
      * The input bitmap is never mutated.
      *

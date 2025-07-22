@@ -31,7 +31,7 @@ import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.modifier.dropShadow
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.islamic_image_loader.component.SafeImage
+import com.baghdad.islamic_image_loader.ui.SafeImage
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
