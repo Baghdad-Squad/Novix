@@ -89,6 +89,15 @@ class LocalMovieDataSourceImpl(
             movies.toDtos(genresMap)
         }
 
+    override suspend fun getTrendingMovies(page: Int): List<MovieDto> {
+        return executeWithErrorHandling(logger = logger) {
+            val pageOffset = calculatePageOffset(20, page)
+            val movies = movieDao.getTrendingMovies(20, pageOffset)
+            val genresMap = getGenresMap(movies)
+            movies.toDtos(genresMap)
+        }
+    }
+
     private fun getGenresMap(
         movies: List<Movie>
     ): Map<Long, Genre> {
