@@ -15,10 +15,6 @@ class HeadersSetupInterceptor(
             chain.request().tag(Invocation::class.java) ?: return chain.proceed(chain.request())
         val shouldAttachAuthHeader =
             invocation.method().annotations.any { it.annotationClass == Authenticated::class }
-        val myUrl = chain.request().url.newBuilder().apply {
-            addQueryParameter("api_key", "85a353d1b5dbabfae4dbe5f6fc31d125")
-        }.build()
-
 
         return chain.proceed(chain.request().newBuilder().apply {
             if (shouldAttachAuthHeader) {
@@ -32,9 +28,7 @@ class HeadersSetupInterceptor(
             }
             addHeader("Accept", "application/json")
             addHeader("language", languageProvider.getCurrentLanguage())
-        }
-            .url(myUrl)
-            .build())
+        }.build())
     }
 }
 
