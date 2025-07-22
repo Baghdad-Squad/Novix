@@ -2,8 +2,9 @@ package com.baghdad.repository.util
 
 import com.baghdad.domain.exception.LocalDataBaseException
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.exception.UnKnownNetworkException
+import com.baghdad.domain.exception.UnknownException
 import com.baghdad.domain.model.PagedResult
+import com.baghdad.repository.exception.DatabaseException
 import com.baghdad.repository.exception.NetworkException
 import com.baghdad.repository.exception.NoInternetNetworkException
 import com.baghdad.repository.exception.RequestTimeoutNetworkException
@@ -11,9 +12,11 @@ import com.baghdad.repository.exception.SerializationNetworkException
 import com.baghdad.repository.exception.ServerNetworkException
 import com.baghdad.repository.exception.StorageFullException
 import com.baghdad.repository.exception.TooManyRequestsNetworkException
+import com.baghdad.repository.exception.UnknownNetworkException
 import com.baghdad.repository.model.PagedResultDto
 import kotlinx.coroutines.flow.Flow
 import com.baghdad.domain.exception.StorageFullException as DomainStorageFullException
+import com.baghdad.domain.exception.UnKnownNetworkException as DomainUnKnownNetworkException
 
 suspend fun <T> executeSafely(block: suspend () -> T): T {
     return try {
@@ -28,8 +31,14 @@ suspend fun <T> executeSafely(block: suspend () -> T): T {
         throw NetworkException()
     } catch (_: ServerNetworkException) {
         throw NetworkException()
+    } catch (_: StorageFullException) {
+        throw DomainStorageFullException()
+    } catch (_: UnknownNetworkException) {
+        throw DomainUnKnownNetworkException()
+    } catch (_: DatabaseException) {
+        throw LocalDataBaseException()
     } catch (_: Exception) {
-        throw UnKnownNetworkException()
+        throw UnknownException()
     }
 }
 

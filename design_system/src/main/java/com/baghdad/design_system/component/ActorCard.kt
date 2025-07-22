@@ -23,6 +23,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.modifier.threeSidedBorder
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
 private val CardHeight = 55.dp
@@ -53,11 +55,10 @@ fun ActorCard(
             .background(color = Theme.color.surface)
             .noRippleClickable { onClick() }) {
         AsyncImage(
-            model = if (actorImage.isBlank()) null else actorImage,
+            model = actorImage.ifBlank { null },
             placeholder = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
             fallback = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
-            contentDescription = if (characterName.isNullOrBlank()) "Portrait of actor $actorName"
-            else "Actor $actorName as $characterName",
+            contentDescription = stringResource(R.string.actor_image),
             modifier = Modifier
                 .size(ActorImageSize)
                 .clip(ImageShape)
@@ -71,9 +72,8 @@ fun ActorCard(
                 .fillMaxWidth()
                 .widthIn(min = 218.dp)
                 .background(Theme.color.surface)
-                .offset(x = (-1).dp)
-                .border(
-                    width = 1.dp, color = Theme.color.stroke, shape = CardShape
+                .threeSidedBorder(
+                    width = 1.dp, color = Theme.color.stroke, cornerRadius = RoundedShapeValue
                 )
                 .clip(CardShape)
                 .height(CardHeight)
@@ -95,6 +95,23 @@ fun ActorCard(
                     style = Theme.typography.title.small.copy(color = Theme.color.hint)
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ActorCardPreview() {
+    NovixTheme(isDarkTheme = true) {
+        Box(
+            modifier = Modifier.background(Theme.color.surface)
+        ) {
+            ActorCard(
+                actorName = "James Gandolfini",
+                actorImage = "https://image.tmdb.org/t/p/w500/vhtsFJZcfHdeDkFBoWMDzOS6xrP.jpg",
+                onClick = {},
+                characterName = "Tony Soprano"
+            )
         }
     }
 }

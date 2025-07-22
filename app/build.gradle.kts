@@ -1,4 +1,5 @@
-import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Properties
 
@@ -12,7 +13,8 @@ plugins {
     jacoco
 }
 
-val formattedDate: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd HH:mm"))
+val formattedDate: String = ZonedDateTime.now(ZoneId.of("Africa/Cairo"))
+    .format(DateTimeFormatter.ofPattern("dd HH:mm"))
 
 android {
     namespace = "com.baghdad.novix"
@@ -20,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId = "com.baghdad.novix"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 35
         versionName = "1.0-($formattedDate)"
         versionCode = 1
@@ -32,11 +34,18 @@ android {
         properties.load(keystoreFile.inputStream())
 
         val apiKey = properties.getProperty("API_KEY") ?: ""
+        val baseUrl = properties.getProperty("BASE_URL") ?: ""
 
         buildConfigField(
             type = "String",
             name = "API_KEY",
             value = apiKey
+        )
+
+        buildConfigField(
+            type = "String",
+            name = "BASE_URL",
+            value = baseUrl
         )
     }
 
@@ -116,7 +125,7 @@ dependencies {
     implementation(libs.bundles.ktor.client)
     testImplementation(libs.bundles.test.core)
     implementation(libs.bundles.room)
-
+    implementation(libs.bundles.retrofit)
 }
 
 /**
