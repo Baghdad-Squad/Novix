@@ -4,6 +4,7 @@ import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
+import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
@@ -70,6 +71,7 @@ val useCaseModule = module {
     singleOf(::GetMovieGenreNameByIdUseCase)
     singleOf(::GetAllContinueWatchingUseCase)
     singleOf(::GetAllContinueWatchingByGenreUseCase)
+    singleOf(::AddContinueWatchingUseCase)
 
 }
 

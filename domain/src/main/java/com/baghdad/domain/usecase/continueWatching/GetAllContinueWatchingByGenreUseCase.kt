@@ -1,5 +1,6 @@
 package com.baghdad.domain.usecase.continueWatching
 
+import android.util.Log
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.ContinueWatchingRepository
@@ -12,7 +13,8 @@ class GetAllContinueWatchingByGenreUseCase(
         genreId: Long,
         page: Int
     ): PagedResult<ContinueWatching> {
-        return continueWatchingRepository.getMoviesByGenreId(userId, genreId, page, PAGE_SIZE)
+        val result = continueWatchingRepository.getContinueWatching(userId, page, PAGE_SIZE)
+        return result.copy(result.data.filter { it.genreIds.contains(genreId) })
     }
 
     private companion object {

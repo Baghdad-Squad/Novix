@@ -22,11 +22,4 @@ class LocalContinueWatchingDataSourceImpl(
             continueWatchingDao.getContinueWatching(userId).map { it.toDto() }
         }
 
-    override suspend fun getMoviesByGenreId(
-        userId: Long,
-        genreId: Long
-    ): List<ContinueWatchingDto> =
-        executeWithErrorHandling(logger = logger) {
-            continueWatchingDao.getMoviesByGenreId(userId, genreId).map { it.toDto() }
-        }
 }

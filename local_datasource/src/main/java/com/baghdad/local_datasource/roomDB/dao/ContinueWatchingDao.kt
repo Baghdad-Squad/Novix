@@ -14,7 +14,4 @@ interface ContinueWatchingDao {
     @Query("SELECT * FROM ContinueWatching WHERE userId = :userId")
     suspend fun getContinueWatching(userId: Long): List<ContinueWatching>
 
-    @Query("SELECT * FROM ContinueWatching WHERE userId = :userId And genreIds = :genreId")
-    suspend fun getMoviesByGenreId(userId: Long, genreId: Long): List<ContinueWatching>
-
 }

@@ -28,23 +28,6 @@ class ContinueWatchingRepositoryImpl(
         )
     }
 
-    override suspend fun getMoviesByGenreId(
-        userId: Long,
-        genreId: Long,
-        page: Int,
-        pageSize: Int): PagedResult<ContinueWatching>{
-        return getLocalPaged(
-            page = page,
-            pageSize = pageSize,
-            onStart = { },
-            getCachedPage = { _, _ ->
-                localContinueWatchingDataSource.getMoviesByGenreId(userId, genreId)}
-            ,
-            mapToEntity = ContinueWatchingDto::toEntity
-        )
-
-    }
-
     override suspend fun addContinueWatching(continueWatching: ContinueWatching) {
         localContinueWatchingDataSource.addContinueWatching(continueWatching.toDto())
     }
