@@ -22,7 +22,7 @@ class ContinueWatchingViewModel(
 
     private fun getGenres() {
         tryToExecute(
-            { getGenresUseCase.getMovieGenres() + getGenresUseCase.getTvShowGenres() },
+            { getGenresUseCase.getMovieGenres()},
             ::onGenresFetched,
         )
     }
