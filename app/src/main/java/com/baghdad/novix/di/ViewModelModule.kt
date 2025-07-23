@@ -31,7 +31,7 @@ val viewModelModule = module {
             getCastsInfoUseCase = get(),
             getMovieImagesUseCase = get(),
             getMoreLikeThisPosterImageUseCase = get(),
-            getMovieCategoryUseCase = get()
+            addContinueWatchingUseCase = get()
         )
     }
 
