@@ -71,10 +71,7 @@ val viewModelModule = module {
         CategoryMoviesViewModel(categoryId, get(), get())
     }
 
-    viewModel {
-        ContinueWatchingViewModel(get(), get(), get())
-    }
-//    viewModelOf(::ContinueWatchingViewModel)
+    viewModelOf(::ContinueWatchingViewModel)
 
 
 }
