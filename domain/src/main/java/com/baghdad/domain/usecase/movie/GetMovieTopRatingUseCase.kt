@@ -1,36 +1,37 @@
 package com.baghdad.domain.usecase.movie
 
+import android.util.Log
 import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.search.SearchFilter
-import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.domain.repository.TopRatingRepository
-import com.baghdad.domain.util.SearchFilterHelper
 import com.baghdad.entity.media.Movie
 
 class GetMovieTopRatingUseCase(
     private val topRatingRepository: TopRatingRepository,
-    private val filterHelper: SearchFilterHelper
 ) {
     suspend operator fun invoke(
-        filter: SearchFilter,
-        page: Int
+        page: Int,
+        genreId: Long
     ): PagedResult<Movie> {
-        val searchResults = topRatingRepository.getTopRatedMovies(page)
+        val result = topRatingRepository.getTopRatedMovies(page)
 
-        val filteredMovies = searchResults.data
-            .filter { movie -> matchesAllFilters(movie, filter) }
+        val filteredMovies = if (genreId != 0L) {
+            result.data.filter { movie ->
+                movie.genres.any { genre -> genre.id == genreId }
+            }
+        } else {
+            result.data
+        }
 
-        return searchResults.copy(data = filteredMovies)
-    }
+        Log.d(
+            "GetMovieTopRatingUseCase", "Filtered ${
+                filteredMovies.map {
+                    it.genres.size
+                }
+            }"
+        )
+        Log.d("GetMovieTopRatingUseCase", "Filtered Id is $genreId")
 
-    private fun matchesAllFilters(movie: Movie, filter: SearchFilter): Boolean {
-        return filterHelper.matchesRatingFilter(movie.averageRating, filter.minimumRating) &&
-                filterHelper.matchesYearFilter(
-                    movie.releaseDate.year,
-                    filter.minimumYear,
-                    filter.maximumYear
-                ) &&
-                filterHelper.matchesGenreFilter(movie.genres, filter.selectedGenres)
+        return result.copy(data = filteredMovies)
     }
 
 }

@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.topRating
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,19 +40,18 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun TopRatingMoviesScreen(
-    actorId: Long,
+    genreId: Long,
     viewModel: TopRatingViewModel = koinViewModel(
-        key = actorId.toString(),
-        parameters = { parametersOf(actorId) }
+        key = genreId.toString(),
+        parameters = { parametersOf(genreId) }
     ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val movieItems = uiState.movies.collectAsLazyPagingItems()
+    val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
 
     TopRatingMoviesContent(
         uiState = uiState,
         listener = viewModel,
-        genreFilter = uiState.moviesByGenreFilter.moviesFilter,
         movieItems = movieItems
     )
 }
@@ -63,7 +61,6 @@ fun TopRatingMoviesScreen(
 fun TopRatingMoviesContent(
     uiState: TopRatingMovieState,
     listener: TopRatingInteractionListener,
-    genreFilter: TopRatingMovieState.MovieFilter,
     movieItems: LazyPagingItems<TopRatingMovieState.MovieUiState>
 
 ) {
@@ -92,13 +89,14 @@ fun TopRatingMoviesContent(
                 )
             }
             GenresSection(
-                allGenres = genreFilter.allGenres,
-                selectedGenres = genreFilter.selectedGenres,
+                allGenres = uiState.genres,
+                selectedGenres = uiState.selectedGenreId,
                 onGenreSelected = { listener.onGenreClick(it.id) },
                 modifier = Modifier
                     .background(Theme.color.surface)
                     .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
             )
+            Log.d("TopRatingMoviesContent", "Selected Genre ID: ${uiState.selectedGenreId}")
         }
     ) {
         if (uiState.isLoading) {
@@ -119,7 +117,7 @@ fun TopRatingMoviesContent(
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            items = movieItems
+            items = movieItems,
         ) { movie ->
 
             HomeCard(

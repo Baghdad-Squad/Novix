@@ -70,11 +70,10 @@ val viewModelModule = module {
     viewModel { (categoryId: Long) ->
         CategoryMoviesViewModel(categoryId, get(), get())
     }
-    viewModel {(actorId: Long) ->
+    viewModel {
         TopRatingViewModel(
             getGenresUseCase = get(),
             getMovieTopRatingUseCase = get(),
-            genreId = actorId
         )
     }
 }

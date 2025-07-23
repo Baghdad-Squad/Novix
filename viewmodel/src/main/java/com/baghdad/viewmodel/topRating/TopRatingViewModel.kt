@@ -1,17 +1,12 @@
 package com.baghdad.viewmodel.topRating
 
+import android.util.Log
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
-import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
-import com.baghdad.viewmodel.topRating.TopRatingMovieState.GenreUiState
-import kotlinx.coroutines.flow.map
-import kotlin.collections.map
 
 class TopRatingViewModel(
-    val genreId: Long,
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
     private val getGenresUseCase: GetGenresUseCase,
 ) : BaseViewModel<TopRatingMovieState, TopRatingEffect>(TopRatingMovieState()),
@@ -27,14 +22,10 @@ class TopRatingViewModel(
             callee = { getGenresUseCase.getMovieGenres() },
             onSuccess = { genres ->
                 updateState { state ->
-                    val genreUiStates = genres.map { it.toTopRatingUIState() }
+                    val allGenre = TopRatingMovieState.GenreUiState(id = 0L, name = "All")
+                    val genreUiStates = listOf(allGenre) + genres.map { it.toTopRatingGenreUiState() }
                     state.copy(
                         genres = genreUiStates,
-                        moviesByGenreFilter = state.moviesByGenreFilter.copy(
-                            moviesFilter = state.moviesByGenreFilter.moviesFilter.copy(
-                                allGenres = genreUiStates
-                            )
-                        )
                     )
                 }
             },
@@ -43,60 +34,43 @@ class TopRatingViewModel(
     }
 
     private fun getTopRatedMoviesByGenre() {
-//        tryToExecute(
-//            callee = {
-//                getMovieTopRatingUseCase.invoke(
-//                    filter = currentState.moviesByGenreFilter.moviesFilter.copyForTopRating(),
-//                    page = 1
-//                )
-//            },
-//            onSuccess = { onGetTopRatedMoviesSuccess(it.data) },
-//            onError = { mapThrowableToErrorMessage(it) }
-//        )
         collectPagingFlow(
             loadData = { page ->
                 getMovieTopRatingUseCase.invoke(
-                    filter = currentState.moviesByGenreFilter.moviesFilter.copyForTopRating(),
+                    genreId = currentState.selectedGenreId,
                     page = page
                 )
             },
             onInitialLoadFinished = ::onFinally,
-            mapEntityToUiState = {it.toTopRatingUIState()},
-            onFlowCreated = {moviesFlow -> updateState { it.copy(movies = moviesFlow) }}
+            mapEntityToUiState = { it.toTopRatingMovieUiState() },
+            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } }
         )
     }
-
-//    private fun onGetTopRatedMoviesSuccess(movies: List<Movie>) {
-//        val movieUiStates = movies.map { it.toTopRatingUIState() }
-//
-//        updateState {
-//            it.copy(
-//                allTopRatedMovies = movieUiStates,
-//                movies = movieUiStates
-//            )
-//        }
-//    }
 
     override fun onMovieDetailsClick(movieId: Long) {
         sendEffect(TopRatingEffect.NavigateToMovieDetails(movieId))
     }
+    private fun fetchMoviesByGenre(genreId: Long) {
+        updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
+        collectPagingFlow(
+            loadData = { page ->
+                val xxx =getMovieTopRatingUseCase.invoke(
+                    genreId = currentState.selectedGenreId,
+                    page = page
+                )
+                Log.d("TopRatingViewModel", "genreId = $genreId, result = $xxx")
+                xxx
+            },
+            onInitialLoadFinished = ::onFinally,
+            mapEntityToUiState = { it.toTopRatingMovieUiState() },
+            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } }
+        )
+    }
 
     override fun onGenreClick(genreId: Long) {
-        val genre = currentState.genres.find { it.id == genreId } ?: return
-        val currentSelected = currentState.moviesByGenreFilter.moviesFilter.selectedGenres
-        val updatedSelected = if (currentSelected.id == genre.id) GenreUiState() else genre
-
-        updateState {
-            it.copy(
-                moviesByGenreFilter = it.moviesByGenreFilter.copy(
-                    moviesFilter = it.moviesByGenreFilter.moviesFilter.copy(
-                        selectedGenres = updatedSelected
-                    )
-                )
-            )
-        }
-        getTopRatedMoviesByGenre()
+        fetchMoviesByGenre(genreId)
     }
+
 
     override fun onSaveMovieClick(movieId: Long) {
 //        updateState {
