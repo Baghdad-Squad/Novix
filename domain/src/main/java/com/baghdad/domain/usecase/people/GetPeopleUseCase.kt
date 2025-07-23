@@ -11,8 +11,8 @@ class GetPopularPeopleUseCase(
     suspend operator fun invoke(
         page: Int
     ): PagedResult<People> {
-        val result = peopleRepository.getPopularPeople(page)
-        return result
+       return peopleRepository.getPopularPeople(page)
+
     }
 }
 

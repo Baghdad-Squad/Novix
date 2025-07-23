@@ -20,25 +20,17 @@ class PeopleRepositoryImpl(
             mapToEntity = PeopleDto::toEntity,
             onStart = {},
             getCachedPage = { page, pageSize ->
-                localPopularPeopleDataSource.getPopularPeople(page, pageSize)
+                 localPopularPeopleDataSource.getPopularPeople(page, pageSize)
+
             },
             getRemoteData = { page, _ ->
-                val remoteResult = remotePeopleDataSource.getPopularPeople(page)
+             remotePeopleDataSource.getPopularPeople(page)
 
-                if (remoteResult.data.isNotEmpty()) {
-                    deleteOldPeopleCache()
-                    localPopularPeopleDataSource.addPopularPeople(remoteResult.data)
-                }
-
-                remoteResult
             },
             cacheData = {
-                localPopularPeopleDataSource.addPopularPeople(it)
+                 localPopularPeopleDataSource.addPopularPeople(it)
             }
         )
     }
 
-    private suspend fun deleteOldPeopleCache() {
-        localPopularPeopleDataSource.deletePopularPeople()
-    }
 }

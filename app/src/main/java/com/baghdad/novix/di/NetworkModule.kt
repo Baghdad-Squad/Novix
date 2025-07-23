@@ -27,6 +27,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -58,9 +59,7 @@ val remoteDataSourceModule = module {
         }
     }
 
-    single {
-        HeadersSetupInterceptor(get())
-    }
+    singleOf(::HeadersSetupInterceptor)
 
     single {
         OkHttpClient.Builder()

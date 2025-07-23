@@ -20,7 +20,8 @@ class RemotePeopleDataSourceImpl(
         val response = handleRequest<PopularPeopleResponse>(
             client = httpClient,
             url = "$baseUrl$POPULAR_PEOPLE_ENDPOINT",
-            logger = logger
+            logger = logger,
+            params = mapOf("page" to "$page")
         )
 
         val nextKey = if (page < response.totalPages!!) page + 1 else null
