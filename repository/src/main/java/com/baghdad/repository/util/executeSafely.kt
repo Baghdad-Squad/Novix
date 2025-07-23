@@ -109,7 +109,7 @@ suspend fun <TEntity, TDto> getRemotePagedSafely(
 }
 
 
-suspend fun <TEntity, TDto> getLocalPaged(
+suspend fun <TEntity, TDto> getLocalPagedSafely(
     page: Int,
     pageSize: Int = 20,
     onStart: (suspend () -> Unit)? = null,

@@ -7,7 +7,7 @@ import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.mapper.toDto
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.model.ContinueWatchingDto
-import com.baghdad.repository.util.getLocalPaged
+import com.baghdad.repository.util.getLocalPagedSafely
 
 class ContinueWatchingRepositoryImpl(
     private val localContinueWatchingDataSource: LocalContinueWatchingDataSource
@@ -16,7 +16,7 @@ class ContinueWatchingRepositoryImpl(
         page: Int,
         pageSize: Int
     ): PagedResult<ContinueWatching> {
-        return getLocalPaged(
+        return getLocalPagedSafely(
             page = page,
             pageSize = pageSize,
             onStart = { },
