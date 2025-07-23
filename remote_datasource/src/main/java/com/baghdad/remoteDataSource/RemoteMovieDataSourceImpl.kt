@@ -3,6 +3,7 @@ package com.baghdad.remoteDataSource
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
+import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
@@ -15,6 +16,7 @@ import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import io.ktor.client.HttpClient
 
@@ -50,13 +52,13 @@ class RemoteMovieDataSourceImpl(
         ).cast?.map { it.toDto() } ?: emptyList()
     }
 
-    override suspend fun getMoviesByGenre(genreId: Long, page: Int): List<MovieDto> {
+    override suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto> {
         val endpoint = MOVIE_WITH_GENRE_ENDPOINT
         return handleRequest<SimilarMovieResponse>(
             client = httpClient,
             logger = logger,
             url = "$baseUrl$endpoint?with_genres=$genreId&page=$page"
-        ).results.orEmpty().map { it.toDto() }
+        ).toPagedMovieDtos()
     }
 
     override suspend fun getMovieReviews(movieId: Long): List<ReviewDto> {

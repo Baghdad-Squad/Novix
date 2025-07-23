@@ -80,3 +80,21 @@ suspend fun <TEntity, TDto> getPagedSafely(
         }
     }
 }
+
+suspend fun <TEntity, TDto> getRemotePagedSafely(
+    page: Int,
+    pageSize: Int = 20,
+    onStart: (suspend () -> Unit)? = null,
+    getRemoteData: suspend (Int, Int) -> PagedResultDto<TDto>,
+    mapToEntity: (TDto) -> TEntity
+): PagedResult<TEntity> = executeSafely {
+    onStart?.invoke()
+
+    val remoteData = getRemoteData(page, pageSize)
+
+    PagedResult(
+        data = remoteData.data.map(mapToEntity),
+        nextKey = remoteData.nextKey,
+        prevKey = remoteData.prevKey
+    )
+}
