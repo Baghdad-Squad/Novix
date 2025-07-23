@@ -46,15 +46,17 @@ class LoginViewModel(
     }
 
     override fun onRegisterClicked() {
-        //TODO("Not yet implemented")
+        sendEffect(
+            LoginUiEffect.NavigateToRegister
+        )
     }
 
     override fun onForgotPasswordClicked() {
-        //TODO("Not yet implemented")
+        sendEffect(LoginUiEffect.NavigateToForgotPassword)
     }
 
     override fun onNavigateBackClicked() {
-        //TODO("Not yet implemented")
+        sendEffect(LoginUiEffect.NavigateBack)
     }
 
     override fun onPasswordValueChange(value: String) {

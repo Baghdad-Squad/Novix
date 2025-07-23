@@ -57,15 +57,25 @@ fun LoginScreen(
     val snackBarState = loginViewModel.snackBarState.collectAsStateWithLifecycle().value
 
     ObserveAsEffect(loginViewModel.uiEffect) {
-        when (loginViewModel.uiEffect) {
-            LoginUiEffect.NavigateBack -> {}
-            LoginUiEffect.NavigateToForgotPassword -> {}
+
+        when (it) {
+            LoginUiEffect.NavigateBack -> {
+                handleNavigation(AuthenticationNavEvent.NavigateBack)
+            }
+
+            LoginUiEffect.NavigateToForgotPassword -> {
+                handleNavigation(AuthenticationNavEvent.NavigateToForgotPassword)
+            }
+
             LoginUiEffect.NavigateToHome -> {
-                Log.i("login", "navigate to home")
+                Log.i("login screen", "navigate to home")
                 handleNavigation(AuthenticationNavEvent.NavigateToHome)
             }
 
-            LoginUiEffect.NavigateToRegister -> {}
+            LoginUiEffect.NavigateToRegister -> {
+                Log.i("login screen", "navigate to register")
+                handleNavigation(AuthenticationNavEvent.NavigateToRegister)
+            }
         }
     }
     LoginScreenContent(
@@ -110,7 +120,9 @@ fun LoginScreenContent(
             ) {
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
-                    onClick = {},
+                    onClick = {
+                        listener.onNavigateBackClicked()
+                    },
                     modifier = Modifier.padding(end = 12.dp)
                 )
                 Text(
@@ -179,7 +191,9 @@ fun LoginScreenContent(
                 textAlign = TextAlign.Center,
                 label = stringResource(com.baghdad.ui.R.string.forgot_password),
                 modifier = modifier.fillMaxWidth(),
-                onClick = {})
+                onClick = {
+                    listener.onForgotPasswordClicked()
+                })
 
             Spacer(modifier = Modifier.weight(1f))
             Row(
@@ -195,7 +209,9 @@ fun LoginScreenContent(
                 )
                 TextButton(
                     label = stringResource(com.baghdad.ui.R.string.create_account),
-                    onClick = {})
+                    onClick = {
+                        listener.onRegisterClicked()
+                    })
 
             }
 
