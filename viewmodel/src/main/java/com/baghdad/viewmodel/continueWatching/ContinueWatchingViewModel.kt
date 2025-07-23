@@ -60,16 +60,16 @@ class ContinueWatchingViewModel(
         sendEffect(ContinueWatchingScreenEffect.NavigateBack)
     }
 
-    override fun onMovieClick(movieId: Long) {
-
+    override fun onMediaClick(mediaId: Long, contentType: ContinueWatchingState.ContinueWatchingMovieUiState.ContentType) {
+        if (contentType == ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE){
+            sendEffect(ContinueWatchingScreenEffect.NavigateToMovieDetails(mediaId))
+        }else{
+            sendEffect(ContinueWatchingScreenEffect.NavigateToTvShowDetails(mediaId))
+        }
     }
 
     private fun onFinally() {
         updateState { it.copy(isLoading = false) }
-    }
-
-    override fun onTvShowClick(tvShowId: Long) {
-        TODO("Not yet implemented")
     }
 
     override fun onGenreClick(genreId: Long) {

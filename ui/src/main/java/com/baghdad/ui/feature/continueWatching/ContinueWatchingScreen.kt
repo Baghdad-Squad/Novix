@@ -154,14 +154,14 @@ fun ContinueWatchingContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 items = mediaItems,
-            ) { movie ->
+            ) { media ->
 
                 HomeCard(
-                    url = movie.posterPictureURL,
+                    url = media.posterPictureURL,
                     contentDescription = null,
-                    isSaved = movie.isSaved,
-                    onSavedClick = { listener.onMovieSaveClick(movie.id) },
-                    onClick = { listener.onMovieClick(movie.id) },
+                    isSaved = media.isSaved,
+                    onSavedClick = { listener.onMovieSaveClick(media.id) },
+                    onClick = { listener.onMediaClick(media.id , media.contentType) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }
