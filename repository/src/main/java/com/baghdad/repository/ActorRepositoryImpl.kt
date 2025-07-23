@@ -4,7 +4,6 @@ import com.baghdad.domain.repository.ActorRepository
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
-import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.util.executeSafely
