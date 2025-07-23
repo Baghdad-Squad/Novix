@@ -9,14 +9,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ErrorImageContent(modifier: Modifier = Modifier) {
+fun ErrorImageContent() {
     Box(
         contentAlignment = androidx.compose.ui.Alignment.Center,
     ) {
         Image(
             painter = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
             contentDescription = "Default Image",
-            modifier = modifier.size(56.dp)
+            modifier = Modifier.size(56.dp)
         )
     }
 }

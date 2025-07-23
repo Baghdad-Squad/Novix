@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.islamicImage.IslamicImage
@@ -47,6 +48,7 @@ fun AutoSlidingImageCarousel(
         ) { page ->
             IslamicImage(
                 imageUrl = imageUrls[page],
+                contentScale = ContentScale.Crop,
                 contentDescription = "Image $page",
                 modifier = Modifier
                     .fillMaxSize()

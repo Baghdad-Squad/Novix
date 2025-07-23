@@ -2,27 +2,30 @@ package com.baghdad.design_system.component.islamicImage
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.baghdad.design_system.component.WavyLoadingIndicator
+import androidx.compose.ui.layout.ContentScale
 import com.baghdad.islamic_image_loader.ui.SafeImage
 
 @Composable
 fun IslamicImage(
     imageUrl: String,
     contentDescription: String?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
 ) {
     SafeImage(
         imageUrl = imageUrl,
         contentDescription = contentDescription,
+        modifier = modifier,
         onBlurContent = {
-            BlurImageContent(modifier = modifier)
+            BlurImageContent()
         },
         loadingContent = {
-            WavyLoadingIndicator()
+            LoadingImageContent()
         },
         errorContent = {
-            ErrorImageContent(modifier = modifier)
-        }
+            ErrorImageContent()
+        },
+        contentScale = contentScale
     )
 }
 
