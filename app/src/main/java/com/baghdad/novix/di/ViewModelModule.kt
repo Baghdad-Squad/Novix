@@ -1,6 +1,5 @@
 package com.baghdad.novix.di
 
-import androidx.lifecycle.ViewModel
 import com.baghdad.domain.util.SearchFilterHelper
 import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
@@ -55,7 +54,7 @@ val viewModelModule = module {
     }
 
     viewModelOf(::EpisodeDetailsViewModel)
-    viewModel{ (actorId: Long) ->
+    viewModel { (actorId: Long) ->
         TopMoviePicksViewModel(actorId, get())
     }
     viewModel { (actorId: Long) ->
@@ -73,7 +72,9 @@ val viewModelModule = module {
     }
 
     viewModel {
-        ContinueWatchingViewModel(get() , get())
+        ContinueWatchingViewModel(get(), get(), get())
     }
+//    viewModelOf(::ContinueWatchingViewModel)
+
 
 }

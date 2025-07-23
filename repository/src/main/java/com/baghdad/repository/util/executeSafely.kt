@@ -98,3 +98,20 @@ suspend fun <TEntity, TDto> getRemotePagedSafely(
         prevKey = remoteData.prevKey
     )
 }
+
+
+suspend fun <TEntity, TDto> getLocalPaged(
+    page: Int,
+    pageSize: Int = 20,
+    onStart: (suspend () -> Unit)? = null,
+    getCachedPage: suspend (Int, Int) -> List<TDto>,
+    mapToEntity: (TDto) -> TEntity
+): PagedResult<TEntity> = executeSafely {
+    onStart?.invoke()
+    val localData = getCachedPage(page, pageSize)
+    PagedResult(
+        data = localData.map(mapToEntity),
+        nextKey = if (localData.size == pageSize) page + 1 else null,
+        prevKey = if (page > 1) page - 1 else null
+    )
+}

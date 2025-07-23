@@ -1,7 +1,7 @@
 package com.baghdad.viewmodel.continueWatching
 
-import com.baghdad.domain.usecase.fake.GetMoviesPageByGenreUseCase
-import com.baghdad.domain.usecase.fake.GetTvShowsPageByGenreUseCase
+import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
+import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.flowOf
 
 class ContinueWatchingViewModel(
     private val getGenresUseCase: GetGenresUseCase,
-    private val getMoviesByGenreUseCase: GetMoviesPageByGenreUseCase, // TODO : these should be replace with ones from local datasource
+    private val getAllContinueWatchingUseCase: GetAllContinueWatchingUseCase,
+    private val getAllContinueWatchingByGenreUseCase: GetAllContinueWatchingByGenreUseCase
 ) : BaseViewModel<ContinueWatchingState, ContinueWatchingScreenEffect>(ContinueWatchingState()),
     ContinueWatchingInteractionListener {
     init {
@@ -25,12 +26,18 @@ class ContinueWatchingViewModel(
             ::onGenresFetched,
         )
     }
+
     private fun getMovies(genreId: Long) {
         collectPagingFlow(
-            { page -> getMoviesByGenreUseCase(genreId, page) },
+            { page ->
+                if (genreId == 0L) getAllContinueWatchingUseCase(
+                    1,
+                    page
+                ) else getAllContinueWatchingByGenreUseCase(1, genreId, page)
+            },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toContinueWatchingUiState() },
-            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow) } }
+            onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow) } }
         )
     }
 
@@ -53,20 +60,21 @@ class ContinueWatchingViewModel(
         sendEffect(ContinueWatchingScreenEffect.NavigateBack)
     }
 
-    override  fun onMovieClick(movieId: Long) {
+    override fun onMovieClick(movieId: Long) {
 
     }
+
     private fun onFinally() {
         updateState { it.copy(isLoading = false) }
     }
 
-    override  fun onTvShowClick(tvShowId: Long) {
+    override fun onTvShowClick(tvShowId: Long) {
         TODO("Not yet implemented")
     }
 
     override fun onGenreClick(genreId: Long) {
         updateState {
-            it.copy(selectedTab = genreId , isLoading = true , moviesFlow = flowOf())
+            it.copy(selectedTab = genreId, isLoading = true, mediaFlow = flowOf())
         }
         getMovies(genreId)
     }

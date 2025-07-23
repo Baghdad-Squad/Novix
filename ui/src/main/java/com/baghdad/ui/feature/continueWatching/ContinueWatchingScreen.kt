@@ -56,8 +56,7 @@ fun ContinueWatchingScreen(
     ) {
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
-    val tvShowItems = uiState.tvShowsFlow.collectAsLazyPagingItems()
+    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
     Log.d("ContinueWatchingScreen", "ContinueWatchingScreen: $uiState")
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
@@ -82,8 +81,7 @@ fun ContinueWatchingScreen(
     ContinueWatchingContent(
         uiState = uiState,
         listener = viewModel,
-        movieItems = movieItems,
-        tvShowItems = tvShowItems,
+        mediaItems = mediaItems,
         snackBarState = snackBarState,
     )
 }
@@ -91,8 +89,7 @@ fun ContinueWatchingScreen(
 @Composable
 fun ContinueWatchingContent(
     uiState: ContinueWatchingState,
-    movieItems: LazyPagingItems<ContinueWatchingState.ContinueWatchingMovieUiState>,
-    tvShowItems: LazyPagingItems<ContinueWatchingState.ContinueWatchingTvShowUiState>,
+    mediaItems: LazyPagingItems<ContinueWatchingState.ContinueWatchingMovieUiState>,
     listener: ContinueWatchingInteractionListener,
     snackBarState: SnackBarState,
 ) {
@@ -156,7 +153,7 @@ fun ContinueWatchingContent(
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                items = movieItems,
+                items = mediaItems,
             ) { movie ->
 
                 HomeCard(
