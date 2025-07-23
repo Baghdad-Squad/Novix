@@ -1,22 +1,19 @@
 package com.baghdad.remoteDataSource.response.movie
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class MovieVideosResponse(
-    @SerialName("id") val id: Int? = null,
-    @SerialName("results") val results: List<Result?>? = null
+    @SerializedName("id") val id: Int? = null,
+    @SerializedName("results") val results: List<Result?>? = null
 ) {
-    @Serializable
     data class Result(
-        @SerialName("id") val id: String? = null,
-        @SerialName("key") val key: String? = null,
-        @SerialName("name") val name: String? = null,
-        @SerialName("official") val official: Boolean? = null,
-        @SerialName("published_at") val publishedAt: String? = null,
-        @SerialName("site") val site: String? = null,
-        @SerialName("size") val size: Int? = null,
-        @SerialName("type") val type: String? = null
+        @SerializedName("id") val id: String? = null,
+        @SerializedName("key") val key: String? = null,
+        @SerializedName("name") val name: String? = null,
+        @SerializedName("official") val official: Boolean? = null,
+        @SerializedName("published_at") val publishedAt: String? = null,
+        @SerializedName("site") val site: String? = null,
+        @SerializedName("size") val size: Int? = null,
+        @SerializedName("type") val type: String? = null
     )
 }
