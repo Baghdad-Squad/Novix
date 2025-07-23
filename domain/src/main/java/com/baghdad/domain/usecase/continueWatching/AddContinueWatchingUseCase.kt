@@ -6,7 +6,17 @@ import com.baghdad.domain.repository.ContinueWatchingRepository
 class AddContinueWatchingUseCase(
     private val continueWatchingRepository: ContinueWatchingRepository
 ) {
-    suspend operator fun invoke(continueWatching: ContinueWatching) {
-        continueWatchingRepository.addContinueWatching(continueWatching)
+    suspend operator fun invoke(
+        contentId: Long,
+        genreIds: List<Long>,
+        contentImageUrl: String,
+        contentType: ContinueWatching.ContentType
+    ) {
+        continueWatchingRepository.addContinueWatching(
+            contentId = contentId,
+            genreIds = genreIds,
+            contentImageUrl = contentImageUrl,
+            contentType = contentType
+        )
     }
 }

@@ -11,7 +11,7 @@ import com.baghdad.repository.util.getLocalPaged
 
 class ContinueWatchingRepositoryImpl(
     private val localContinueWatchingDataSource: LocalContinueWatchingDataSource
-): ContinueWatchingRepository {
+) : ContinueWatchingRepository {
     override suspend fun getContinueWatching(
         page: Int,
         pageSize: Int
@@ -27,7 +27,19 @@ class ContinueWatchingRepositoryImpl(
         )
     }
 
-    override suspend fun addContinueWatching(continueWatching: ContinueWatching) {
+    override suspend fun addContinueWatching(
+        contentId: Long,
+        genreIds: List<Long>,
+        contentImageUrl: String,
+        contentType: ContinueWatching.ContentType
+    ) {
+        val continueWatching = ContinueWatching(
+            contentId = contentId,
+            genreIds = genreIds,
+            contentImageUrl = contentImageUrl,
+            contentType = contentType,
+            userId = 1 // TODO : Add Authentication here
+        )
         localContinueWatchingDataSource.addContinueWatching(continueWatching.toDto())
     }
 }
