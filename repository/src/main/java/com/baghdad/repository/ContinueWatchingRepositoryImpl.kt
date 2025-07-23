@@ -21,7 +21,7 @@ class ContinueWatchingRepositoryImpl(
             pageSize = pageSize,
             onStart = { },
             getCachedPage = { _, _ ->
-                localContinueWatchingDataSource.getContinueWatching(1) // TODO : Add Authentication here
+                localContinueWatchingDataSource.getContinueWatching(1, pageSize, page) // TODO : Add Authentication here
             },
             mapToEntity = ContinueWatchingDto::toEntity
         )
