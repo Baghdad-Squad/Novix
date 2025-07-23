@@ -53,7 +53,7 @@ class ContinueWatchingViewModel(
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        TODO("Not yet implemented")
+        return BaseSnackBarMessage.DefaultMessage
     }
 
     override fun onBackClick() {
