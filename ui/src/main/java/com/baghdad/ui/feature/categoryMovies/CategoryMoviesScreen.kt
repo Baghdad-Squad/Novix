@@ -26,7 +26,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
-import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
@@ -34,6 +33,7 @@ import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
+import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.util.hideNavigationBar
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesEffect

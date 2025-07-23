@@ -1,16 +1,14 @@
 package com.baghdad.remoteDataSource.response.tvShow
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class TvShowResponse(
-    @SerialName("page")
+    @SerializedName("page")
     val page: Int? = null,
-    @SerialName("results")
+    @SerializedName("results")
     val results: List<TVShowDetailsResponse>? = null,
-    @SerialName("total_pages")
+    @SerializedName("total_pages")
     val totalPages: Int? = null,
-    @SerialName("total_results")
+    @SerializedName("total_results")
     val totalResults: Int? = null
 )

@@ -23,12 +23,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
-import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.util.hideNavigationBar
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsEffect

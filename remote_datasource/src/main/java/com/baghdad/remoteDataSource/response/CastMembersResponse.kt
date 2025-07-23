@@ -1,28 +1,25 @@
 package com.baghdad.remoteDataSource.response
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
 
-@Serializable
 data class CastMembersResponse(
-    @SerialName("id")
+    @SerializedName("id")
     val id: Int? = null,
-    @SerialName("cast")
+    @SerializedName("cast")
     val cast: List<CastMemberResponse>? = null,
 )
 
-@Serializable
 data class CastMemberResponse(
-    @SerialName("id")
+    @SerializedName("id")
     val id: Int? = null,
-    @SerialName("name")
+    @SerializedName("name")
     val name: String? = null,
-    @SerialName("profile_path")
+    @SerializedName("profile_path")
     val profilePath: String? = null,
-    @SerialName("known_for_department")
+    @SerializedName("known_for_department")
     val knownForDepartment: String? = null,
-    @SerialName("character")
+    @SerializedName("character")
     val character: String? = null
 )
 
