@@ -38,8 +38,7 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
-import com.baghdad.ui.navigation.graph.currentWatching.ContinueWatchingNavEvent
-import com.baghdad.ui.navigation.graph.search.SearchNavEvent
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingInteractionListener
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingScreenEffect
@@ -52,7 +51,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ContinueWatchingScreen(
     viewModel: ContinueWatchingViewModel = koinViewModel(),
-    handleNavigation: (ContinueWatchingNavEvent) -> Unit,
+    handleNavigation: (HomeNavEvent) -> Unit,
 
     ) {
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
@@ -64,19 +63,19 @@ fun ContinueWatchingScreen(
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
             is ContinueWatchingScreenEffect.NavigateBack -> handleNavigation(
-                ContinueWatchingNavEvent.NavigateBack
+                HomeNavEvent.NavigateBack
             )
 
             is ContinueWatchingScreenEffect.NavigateToLogin -> handleNavigation(
-                ContinueWatchingNavEvent.NavigateToLogin
+                HomeNavEvent.NavigateToLogin
             )
 
             is ContinueWatchingScreenEffect.NavigateToMovieDetails -> handleNavigation(
-                ContinueWatchingNavEvent.NavigateToMovieDetails(effect.movieId)
+                HomeNavEvent.NavigateToMovieDetails(effect.movieId)
             )
 
             is ContinueWatchingScreenEffect.NavigateToTvShowDetails -> handleNavigation(
-                ContinueWatchingNavEvent.NavigateToTvShowDetails(effect.tvShowId)
+                HomeNavEvent.NavigateToTvShowDetails(effect.tvShowId)
             )
         }
     }

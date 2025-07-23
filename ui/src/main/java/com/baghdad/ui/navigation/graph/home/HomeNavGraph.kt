@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.baghdad.ui.feature.continueWatching.ContinueWatchingScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.HomeRoute
@@ -22,7 +23,11 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
             DummyScreen(title = "Top Rating Movies Screen")
         }
         composable<HomeRoute.ContinueWatchingScreen> {
-            DummyScreen(title = "Continue Watching Screen")
+            ContinueWatchingScreen(
+                handleNavigation = { event ->
+                    handleHomeNavigation(event, navController)
+                }
+            )
         }
         composable<HomeRoute.MoviesScreen> {
             DummyScreen(title = "Movies Screen")
