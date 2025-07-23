@@ -11,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.islamicImage.IslamicImage
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.islamic_image_loader.ui.SafeImage
 
 private val ReviewerImageSize = 48.dp
 private val ReviewerBarPadding = 12.dp
@@ -35,7 +35,7 @@ fun ReviewerHeader(
         horizontalArrangement = Arrangement.Start
 
     ) {
-        SafeImage(
+        IslamicImage(
             imageUrl = imageUrl,
             contentDescription = null,
             modifier = Modifier

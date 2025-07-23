@@ -31,14 +31,14 @@ fun SafeImage(
     imageUrl: String,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    loadingContent: @Composable () -> Unit = SafeImageDefaults.LoadingContent,
-    errorContent: @Composable () -> Unit = SafeImageDefaults.ErrorContent,
+    loadingContent: (@Composable () -> Unit)? = null,
+    errorContent: (@Composable () -> Unit)? = null,
     onBlurContent: (@Composable () -> Unit)? = null,
     blurRadius: Dp = SafeImageDefaults.BlurRadius,
     contentScale: ContentScale = SafeImageDefaults.ContentScale
 ) {
     val context = LocalContext.current
-    var isBlurred by remember { mutableStateOf(true) }
+    var isBlurred by remember { mutableStateOf(false) }
     val request = ImageRequest.Builder(context)
         .data(imageUrl)
         .transformations(
@@ -74,11 +74,15 @@ fun SafeImage(
             }
 
             is AsyncImagePainter.State.Loading -> {
-                loadingContent()
+                loadingContent?.let { content ->
+                    content()
+                }
             }
 
             is AsyncImagePainter.State.Error -> {
-                errorContent()
+                errorContent?.let { content ->
+                    content()
+                }
             }
 
             else -> Unit

@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.CircleDot
 import com.baghdad.design_system.component.LabeledIconRow
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.islamicImage.IslamicImage
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.islamic_image_loader.ui.SafeImage
 import com.baghdad.ui.R
 
 @Composable
@@ -38,7 +38,7 @@ fun EpisodeCard(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        SafeImage(
+        IslamicImage(
             imageUrl = imageUrl,
             contentDescription = episodeName,
             modifier = Modifier

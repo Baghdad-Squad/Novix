@@ -12,9 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.component.islamicImage.IslamicImage
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.islamic_image_loader.ui.SafeImage
 
 @Composable
 fun HomeCard(
@@ -35,7 +35,7 @@ fun HomeCard(
         contentAlignment = Alignment.Center,
 
     ) {
-        SafeImage(
+        IslamicImage(
             imageUrl = url,
             contentDescription = contentDescription,
             modifier = Modifier
