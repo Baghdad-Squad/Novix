@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -31,7 +31,7 @@ fun SafeImage(
     contentScale: ContentScale = SafeImageDefaults.ContentScale
 ) {
     val context = LocalContext.current
-    var isBlurred by remember { mutableStateOf(false) }
+    var isBlurred by rememberSaveable(imageUrl) { mutableStateOf(false) }
     val request = ImageRequest.Builder(context)
         .data(imageUrl)
         .transformations(
