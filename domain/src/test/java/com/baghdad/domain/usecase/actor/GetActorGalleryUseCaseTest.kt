@@ -61,7 +61,7 @@ class GetActorGalleryUseCaseTest {
     }
 
     @Test
-    fun `invoke returns single image gallery correctly`() = runTest {
+    fun `getActorGalleryUseCase returns single image gallery correctly`() = runTest {
         // Given
         val actorId = 3L
         val singleImageGallery = listOf("single_image.jpg")
@@ -77,7 +77,7 @@ class GetActorGalleryUseCaseTest {
     }
 
     @Test
-    fun `invoke returns gallery with different image formats`() = runTest {
+    fun `getActorGalleryUseCase returns gallery with different image formats`() = runTest {
         // Given
         val actorId = 6L
         val mixedFormatGallery = listOf(
@@ -97,7 +97,7 @@ class GetActorGalleryUseCaseTest {
     }
 
     @Test
-    fun `invoke calls repository exactly once`() = runTest {
+    fun `getActorGalleryUseCase calls repository exactly once`() = runTest {
         // Given
         val actorId = 7L
         val sampleGallery = listOf("simple.jpg")
@@ -112,7 +112,7 @@ class GetActorGalleryUseCaseTest {
     }
 
     @Test
-    fun `invoke with different actor IDs returns different galleries`() = runTest {
+    fun `getActorGalleryUseCase with different actor IDs returns different galleries`() = runTest {
         // Given
         val actorId1 = 8L
         val gallery1 = listOf("actor8_1.jpg", "actor8_2.jpg")
