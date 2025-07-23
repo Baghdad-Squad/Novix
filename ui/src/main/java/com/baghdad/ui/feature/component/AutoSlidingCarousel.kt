@@ -1,4 +1,4 @@
-package com.baghdad.design_system.component
+package com.baghdad.ui.feature.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.baghdad.design_system.component.islamicImage.IslamicImage
+import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 import kotlinx.coroutines.delay
 
 @Composable
@@ -86,7 +86,7 @@ fun AutoSlidingImageCarousel(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
+                painter = painterResource(com.baghdad.ui.R.drawable.img_defualt_image),
                 contentDescription = "Default Image",
                 modifier = Modifier.size(56.dp)
             )

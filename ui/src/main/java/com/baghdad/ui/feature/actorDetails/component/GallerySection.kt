@@ -15,9 +15,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.SectionHeader
-import com.baghdad.design_system.component.islamicImage.IslamicImage
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
+import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 
 @Composable
 fun GallerySection(

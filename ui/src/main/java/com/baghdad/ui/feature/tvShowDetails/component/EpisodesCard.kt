@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.CircleDot
 import com.baghdad.design_system.component.LabeledIconRow
 import com.baghdad.design_system.component.Text
-import com.baghdad.design_system.component.islamicImage.IslamicImage
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
+import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 
 @Composable
 fun EpisodeCard(

@@ -1,4 +1,4 @@
-package com.baghdad.design_system.component
+package com.baghdad.ui.feature.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,9 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.baghdad.design_system.component.islamicImage.IslamicImage
+import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 
 @Composable
 fun HomeCard(

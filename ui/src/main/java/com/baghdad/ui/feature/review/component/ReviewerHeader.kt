@@ -11,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
-import com.baghdad.design_system.component.islamicImage.IslamicImage
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 
 private val ReviewerImageSize = 48.dp
 private val ReviewerBarPadding = 12.dp

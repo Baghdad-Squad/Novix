@@ -1,4 +1,4 @@
-package com.baghdad.design_system.component.islamicImage
+package com.baghdad.ui.feature.component.islamicImage
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

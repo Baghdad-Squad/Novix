@@ -1,4 +1,4 @@
-package com.baghdad.design_system.component.islamicImage
+package com.baghdad.ui.feature.component.islamicImage
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

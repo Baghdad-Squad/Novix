@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.baghdad.design_system.component.HomeCard
 
 @Composable
 fun <T> HorizontalMediaCardList(
