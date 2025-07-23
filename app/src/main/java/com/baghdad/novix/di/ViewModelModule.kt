@@ -70,7 +70,6 @@ val viewModelModule = module {
     viewModel { (categoryId: Long) ->
         CategoryMoviesViewModel(categoryId, get(), get())
     }
-    viewModel {
-        PeopleViewModel(get())
-    }
+
+    viewModelOf(::PeopleViewModel)
 }
