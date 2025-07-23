@@ -1,24 +1,21 @@
 package com.baghdad.remoteDataSource.response.search
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class ActorSearchResponse(
-    @SerialName("page") val page: Int? = null,
-    @SerialName("results") val results: List<Result?>? = null,
-    @SerialName("total_pages") val totalPages: Int? = null,
-    @SerialName("total_results") val totalResults: Int? = null
+    @SerializedName("page") val page: Int? = null,
+    @SerializedName("results") val results: List<Result?>? = null,
+    @SerializedName("total_pages") val totalPages: Int? = null,
+    @SerializedName("total_results") val totalResults: Int? = null
 ) {
-    @Serializable
     data class Result(
-        @SerialName("adult") val adult: Boolean? = null,
-        @SerialName("gender") val gender: Int? = null,
-        @SerialName("id") val id: Int? = null,
-        @SerialName("known_for_department") val knownForDepartment: String? = null,
-        @SerialName("name") val name: String? = null,
-        @SerialName("original_name") val originalName: String? = null,
-        @SerialName("popularity") val popularity: Double? = null,
-        @SerialName("profile_path") val profilePath: String? = null
+        @SerializedName("adult") val adult: Boolean? = null,
+        @SerializedName("gender") val gender: Int? = null,
+        @SerializedName("id") val id: Int? = null,
+        @SerializedName("known_for_department") val knownForDepartment: String? = null,
+        @SerializedName("name") val name: String? = null,
+        @SerializedName("original_name") val originalName: String? = null,
+        @SerializedName("popularity") val popularity: Double? = null,
+        @SerializedName("profile_path") val profilePath: String? = null
     )
 }

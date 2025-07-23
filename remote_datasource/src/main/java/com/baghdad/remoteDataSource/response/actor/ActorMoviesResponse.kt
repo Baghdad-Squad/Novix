@@ -1,28 +1,25 @@
 package com.baghdad.remoteDataSource.response.actor
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class ActorMoviesResponse(
-    @SerialName("cast")
+    @SerializedName("cast")
     val cast: List<ActorMovieDto>? = null,
 )
 
-@Serializable
 data class ActorMovieDto(
-    @SerialName("id")
+    @SerializedName("id")
     val id: Int? = null,
-    @SerialName("title")
+    @SerializedName("title")
     val title: String? = null,
-    @SerialName("genre_ids")
+    @SerializedName("genre_ids")
     val genreIds: List<Int>? = null,
-    @SerialName("vote_average")
+    @SerializedName("vote_average")
     val voteAverage: Double? = null,
-    @SerialName("release_date")
+    @SerializedName("release_date")
     val releaseDate: String? = null,
-    @SerialName("overview")
+    @SerializedName("overview")
     val overview: String? = null,
-    @SerialName("poster_path")
+    @SerializedName("poster_path")
     val posterPath: String? = null,
 )
