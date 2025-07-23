@@ -75,5 +75,11 @@ private fun handleActorDetailsNavigation(
         )
 
         ActorDetailsNavEvent.NavigateToLogin -> navController.navigate(AuthenticationGraph)
+
+        ActorDetailsNavEvent.NavigateBack -> navController.popBackStack()
+
+        is ActorDetailsNavEvent.NavigateToActorDetails -> navController.navigate(
+            ActorDetailsGraph(event.actorId)
+        )
     }
 }

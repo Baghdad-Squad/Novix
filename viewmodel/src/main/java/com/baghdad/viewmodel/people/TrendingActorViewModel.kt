@@ -1,12 +1,12 @@
 package com.baghdad.viewmodel.people
 
-import com.baghdad.domain.usecase.people.GetPopularPeopleUseCase
+import com.baghdad.domain.usecase.actor.GetTrendingActorUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
-class PeopleViewModel(
-    private val getPeopleUseCase: GetPopularPeopleUseCase
-) : BaseViewModel<PeopleUiState, PeopleUiEffect>(PeopleUiState()),
+class TrendingActorViewModel(
+    private val getPeopleUseCase: GetTrendingActorUseCase
+) : BaseViewModel<TrendingActorUiState, PeopleUiEffect>(TrendingActorUiState()),
     PeopleInteractionListener {
 
     init {
@@ -23,9 +23,9 @@ class PeopleViewModel(
                 getPeopleUseCase(page)
             },
             onInitialLoadFinished = ::onFinally,
-            mapEntityToUiState = { it.toPeopleUi() },
+            mapEntityToUiState = { it.toTrendingActorUi() },
             onFlowCreated = { flow ->
-                updateState { it.copy(people = flow) }
+                updateState { it.copy(trendingActor = flow) }
             }
         )
     }

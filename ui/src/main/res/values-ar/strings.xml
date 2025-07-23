@@ -57,5 +57,5 @@
     <string name="save_to_list">حفظ الى القائمه</string>
     <string name="guests_of_honor">ضيوف الشرف</string>
     <string name="season_template">موسم %1$s</string>
-    <string name="people">الاشخاص</string>
+    <string name="actors">الممثلين</string>
 </resources>

@@ -7,7 +7,7 @@ import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
-import com.baghdad.viewmodel.people.PeopleViewModel
+import com.baghdad.viewmodel.people.TrendingActorViewModel
 import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
@@ -71,5 +71,5 @@ val viewModelModule = module {
         CategoryMoviesViewModel(categoryId, get(), get())
     }
 
-    viewModelOf(::PeopleViewModel)
+    viewModelOf(::TrendingActorViewModel)
 }

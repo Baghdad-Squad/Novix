@@ -2,27 +2,33 @@ package com.baghdad.local_datasource.roomDB.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.baghdad.repository.model.PeopleDto
+import com.baghdad.repository.model.ActorDto
 
-@Entity(tableName = "People")
-data class PopularPeopleEntity(
+@Entity(tableName = "trendingActor")
+data class TrendingActorEntity(
     @PrimaryKey val id: Long = 0L,
     val name: String,
     val profilePictureURL: String
 )
 
-fun PopularPeopleEntity.toDto(): PeopleDto {
-    return PeopleDto(
+fun TrendingActorEntity.toDto(): ActorDto {
+    return ActorDto(
         id = this.id,
         name = this.name,
-        profilePictureUrl = this.profilePictureURL
+        imageUrl = this.profilePictureURL,
+        biography = "",
+        birthdayDate = "",
+        deathDate = null,
+        placeOfBirth = "",
+        headerPictures = emptyList(),
+        department = ""
     )
 }
 
-fun PeopleDto.toEntity(): PopularPeopleEntity {
-    return PopularPeopleEntity(
-        id = this.id,
-        name = this.name,
-        profilePictureURL = this.profilePictureUrl
+fun ActorDto.toTrendingActorEntity(): TrendingActorEntity {
+    return TrendingActorEntity(
+        id = id,
+        name = name,
+        profilePictureURL = imageUrl
     )
 }
