@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.topRating
 
-import android.util.Log
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -14,7 +13,7 @@ class TopRatingViewModel(
 
     init {
         getMovieGenres()
-        getTopRatedMoviesByGenre()
+        fetchMoviesByGenre(0L)
     }
 
     private fun getMovieGenres() {
@@ -23,7 +22,8 @@ class TopRatingViewModel(
             onSuccess = { genres ->
                 updateState { state ->
                     val allGenre = TopRatingMovieState.GenreUiState(id = 0L, name = "All")
-                    val genreUiStates = listOf(allGenre) + genres.map { it.toTopRatingGenreUiState() }
+                    val genreUiStates =
+                        listOf(allGenre) + genres.map { it.toTopRatingGenreUiState() }
                     state.copy(
                         genres = genreUiStates,
                     )
@@ -33,7 +33,12 @@ class TopRatingViewModel(
         )
     }
 
-    private fun getTopRatedMoviesByGenre() {
+    override fun onMovieDetailsClick(movieId: Long) {
+        sendEffect(TopRatingEffect.NavigateToMovieDetails(movieId))
+    }
+
+    private fun fetchMoviesByGenre(genreId: Long) {
+        updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
         collectPagingFlow(
             loadData = { page ->
                 getMovieTopRatingUseCase.invoke(
@@ -47,42 +52,12 @@ class TopRatingViewModel(
         )
     }
 
-    override fun onMovieDetailsClick(movieId: Long) {
-        sendEffect(TopRatingEffect.NavigateToMovieDetails(movieId))
-    }
-    private fun fetchMoviesByGenre(genreId: Long) {
-        updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
-        collectPagingFlow(
-            loadData = { page ->
-                val xxx =getMovieTopRatingUseCase.invoke(
-                    genreId = currentState.selectedGenreId,
-                    page = page
-                )
-                Log.d("TopRatingViewModel", "genreId = $genreId, result = $xxx")
-                xxx
-            },
-            onInitialLoadFinished = ::onFinally,
-            mapEntityToUiState = { it.toTopRatingMovieUiState() },
-            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } }
-        )
-    }
-
     override fun onGenreClick(genreId: Long) {
         fetchMoviesByGenre(genreId)
     }
 
 
     override fun onSaveMovieClick(movieId: Long) {
-//        updateState {
-//            it.copy(
-//                movies = it.movies.map { movie ->
-//                    if (movie == movieId) movie.copy(isSaved = movie.isSaved.not()) else movie
-//                }
-//            )
-//        }
-//        showSnackBar(
-//            message = SearchScreenBaseSnackBarMessages.SavedItemSuccessfully, isSuccess = true
-//        )
     }
 
     override fun onBackClick() {

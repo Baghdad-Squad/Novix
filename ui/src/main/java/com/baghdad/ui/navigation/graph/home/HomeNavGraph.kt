@@ -59,6 +59,7 @@ private fun handleHomeNavigation(
         is HomeNavEvent.NavigateToActorDetails -> navController.navigate(
             Graph.ActorDetailsGraph(event.actorId)
         )
+        //is HomeNavEvent.NavigateToTopRatingMovies -> navController.navigate()
 
         HomeNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
     }

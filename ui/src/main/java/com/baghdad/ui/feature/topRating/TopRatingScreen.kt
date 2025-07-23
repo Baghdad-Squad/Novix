@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.topRating
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,23 +28,27 @@ import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.topRating.component.GenresSection
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateBack
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
+import com.baghdad.viewmodel.topRating.TopRatingEffect
 import com.baghdad.viewmodel.topRating.TopRatingInteractionListener
 import com.baghdad.viewmodel.topRating.TopRatingMovieState
 import com.baghdad.viewmodel.topRating.TopRatingViewModel
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 
 @Composable
 fun TopRatingMoviesScreen(
-    genreId: Long,
-    viewModel: TopRatingViewModel = koinViewModel(
-        key = genreId.toString(),
-        parameters = { parametersOf(genreId) }
-    ),
+    viewModel: TopRatingViewModel = koinViewModel(),
+    handleNavigation: (HomeNavEvent) -> Unit
 ) {
+    ObserveAsEffect(viewModel.uiEffect) { effect ->
+        handleEffect(effect, handleNavigation)
+    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
 
@@ -56,13 +59,25 @@ fun TopRatingMoviesScreen(
     )
 }
 
+private fun handleEffect(
+    effect: TopRatingEffect,
+    handleNavigation: (HomeNavEvent) -> Unit
+) {
+    when (effect) {
+        TopRatingEffect.NavigateBack ->  handleNavigation(
+         NavigateBack
+    )
+        is TopRatingEffect.NavigateToMovieDetails -> handleNavigation(
+            NavigateToMovieDetails(effect.movieId)
+        )
+    }
+}
 
 @Composable
 fun TopRatingMoviesContent(
     uiState: TopRatingMovieState,
     listener: TopRatingInteractionListener,
     movieItems: LazyPagingItems<TopRatingMovieState.MovieUiState>
-
 ) {
     Scaffold(
         topBar = {
@@ -96,7 +111,6 @@ fun TopRatingMoviesContent(
                     .background(Theme.color.surface)
                     .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
             )
-            Log.d("TopRatingMoviesContent", "Selected Genre ID: ${uiState.selectedGenreId}")
         }
     ) {
         if (uiState.isLoading) {
