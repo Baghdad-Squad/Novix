@@ -2,13 +2,16 @@ package com.baghdad.ui.feature.component
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
+import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
+import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.webkit.WebSettings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun AppWebView(
@@ -28,11 +31,15 @@ fun AppWebView(
                 settings.apply {
                     javaScriptEnabled = true
                     domStorageEnabled = true
-                    cacheMode = WebSettings.LOAD_DEFAULT
+                    cacheMode = WebSettings.LOAD_NO_CACHE
                     setSupportZoom(true)
                     builtInZoomControls = false
                     displayZoomControls = false
                 }
+                CookieManager.getInstance().removeAllCookies(null)
+                CookieManager.getInstance().flush()
+                WebStorage.getInstance().deleteAllData()
+                clearCache(true)
 
                 webViewClient = AppWebViewClient(
                     allowedDomains = allowedDomains,

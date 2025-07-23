@@ -16,6 +16,7 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.component.AppWebView
 import com.baghdad.ui.navigation.graph.authentication.AuthenticationNavEvent
 import kotlinx.coroutines.delay
+import java.util.Locale
 
 
 @Composable
@@ -24,13 +25,18 @@ fun ForgotPasswordWebViewScreen(
     handleNavigation: (AuthenticationNavEvent) -> Unit,
 ) {
     var shouldNavigate by remember { mutableStateOf(false) }
+    val languageTag = remember {
+        if (Locale.getDefault().language == "ar") "ar-SA" else "en-US"
+    }
+
     LaunchedEffect(shouldNavigate) {
         if (shouldNavigate) {
             delay(5000)
             handleNavigation(AuthenticationNavEvent.NavigateBack)
         }
     }
-    val screenUrl = remember { "https://www.themoviedb.org/reset-password" }
+
+    val screenUrl = remember { "https://www.themoviedb.org/reset-password?language=${languageTag}" }
 
     Scaffold(
         modifier = modifier
