@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.login
+package com.baghdad.ui.feature.authentication
 
 import android.util.Log
 import androidx.compose.foundation.background
