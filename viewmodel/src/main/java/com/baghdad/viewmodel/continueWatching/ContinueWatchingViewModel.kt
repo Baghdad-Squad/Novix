@@ -33,7 +33,7 @@ class ContinueWatchingViewModel(
                 if (genreId == 0L) getAllContinueWatchingUseCase(
                     1,
                     page
-                ) else getAllContinueWatchingByGenreUseCase(1, genreId, page)
+                ) else getAllContinueWatchingByGenreUseCase(genreId, page)
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toContinueWatchingUiState() },

@@ -13,7 +13,6 @@ class ContinueWatchingRepositoryImpl(
     private val localContinueWatchingDataSource: LocalContinueWatchingDataSource
 ): ContinueWatchingRepository {
     override suspend fun getContinueWatching(
-        userId: Long,
         page: Int,
         pageSize: Int
     ): PagedResult<ContinueWatching> {
@@ -22,7 +21,7 @@ class ContinueWatchingRepositoryImpl(
             pageSize = pageSize,
             onStart = { },
             getCachedPage = { _, _ ->
-                localContinueWatchingDataSource.getContinueWatching(userId)
+                localContinueWatchingDataSource.getContinueWatching(1) // TODO : Add Authentication here
             },
             mapToEntity = ContinueWatchingDto::toEntity
         )

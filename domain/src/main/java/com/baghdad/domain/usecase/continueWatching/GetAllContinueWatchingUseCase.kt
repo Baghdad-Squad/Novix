@@ -11,7 +11,7 @@ class GetAllContinueWatchingUseCase(
         userId: Long,
         page: Int,
     ): PagedResult<ContinueWatching> {
-        return continueWatchingRepository.getContinueWatching(userId, page, PAGE_SIZE)
+        return continueWatchingRepository.getContinueWatching(page, PAGE_SIZE)
     }
 
     private companion object {
