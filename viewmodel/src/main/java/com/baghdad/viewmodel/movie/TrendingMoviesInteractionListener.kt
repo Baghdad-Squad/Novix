@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.movie
 
-interface MovieScreenInteractionListener {
+interface TrendingMoviesInteractionListener {
     fun onBackClick()
     fun onMovieClick(movieId: Long)
     fun onToggleSaveMovie(movieId: Long)

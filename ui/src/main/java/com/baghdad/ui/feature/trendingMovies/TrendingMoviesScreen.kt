@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.movie
+package com.baghdad.ui.feature.trendingMovies
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,15 +29,15 @@ import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
-import com.baghdad.viewmodel.movie.MovieScreenInteractionListener
-import com.baghdad.viewmodel.movie.MovieScreenState
-import com.baghdad.viewmodel.movie.MovieViewModel
+import com.baghdad.viewmodel.movie.TrendingMoviesInteractionListener
+import com.baghdad.viewmodel.movie.TrendingMoviesScreenState
+import com.baghdad.viewmodel.movie.TrendingMoviesViewModel
 import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun MoviesScreen(
-    viewModel: MovieViewModel = koinViewModel(),
+    viewModel: TrendingMoviesViewModel = koinViewModel(),
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -53,8 +53,8 @@ fun MoviesScreen(
 
 @Composable
 fun MovieContent(
-    uiState: MovieScreenState,
-    listener: MovieScreenInteractionListener,
+    uiState: TrendingMoviesScreenState,
+    listener: TrendingMoviesInteractionListener,
     lazyState: LazyGridState
 ) {
 
@@ -128,24 +128,24 @@ fun MovieContent(
 @Preview(showSystemUi = true)
 @Composable
 fun MovieContentPreview() {
-    val fakeState = MovieScreenState(
+    val fakeState = TrendingMoviesScreenState(
         categories = listOf(
-            MovieScreenState.CategoryUiState(1, "Action", isSelected = true),
-            MovieScreenState.CategoryUiState(2, "Comedy", isSelected = false),
-            MovieScreenState.CategoryUiState(3, "Drama", isSelected = false),
-            MovieScreenState.CategoryUiState(4, "Horror", isSelected = false),
-            MovieScreenState.CategoryUiState(5, "Thriller ", isSelected = false),
-            MovieScreenState.CategoryUiState(6, "Romance", isSelected = false),
-            MovieScreenState.CategoryUiState(7, "Sience Fiction", isSelected = false),
-            MovieScreenState.CategoryUiState(8, "Western", isSelected = false),
-            MovieScreenState.CategoryUiState(9, "Fantasy", isSelected = false),
-            MovieScreenState.CategoryUiState(10, "Music", isSelected = false),
-            MovieScreenState.CategoryUiState(11, "War", isSelected = false),
-            MovieScreenState.CategoryUiState(12, "Animation", isSelected = false),
-            MovieScreenState.CategoryUiState(13, "Anime", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(1, "Action", isSelected = true),
+            TrendingMoviesScreenState.CategoryUiState(2, "Comedy", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(3, "Drama", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(4, "Horror", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(5, "Thriller ", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(6, "Romance", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(7, "Sience Fiction", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(8, "Western", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(9, "Fantasy", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(10, "Music", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(11, "War", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(12, "Animation", isSelected = false),
+            TrendingMoviesScreenState.CategoryUiState(13, "Anime", isSelected = false),
         ),
         movies = List(40) {
-            MovieScreenState.MovieUiState(
+            TrendingMoviesScreenState.MovieUiState(
                 id = it.toLong(),
                 posterPictureURL = "https://media.themoviedb.org/t/p/w600_and_h900_bestv2/tKhneTl9BL6W1jIgTV43o5duFPx.jpg",
                 isSaved = it == 12 || it == 0 || it == 8 ||
@@ -155,7 +155,7 @@ fun MovieContentPreview() {
         isLoading = false
     )
 
-    val dummyListener = object : MovieScreenInteractionListener {
+    val dummyListener = object : TrendingMoviesInteractionListener {
         override fun onBackClick() {}
         override fun onMovieClick(movieId: Long) {}
         override fun onToggleSaveMovie(movieId: Long) {}

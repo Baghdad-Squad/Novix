@@ -2,7 +2,7 @@ package com.baghdad.viewmodel.movie
 
 import com.baghdad.viewmodel.base.BaseUiState
 
-data class MovieScreenState(
+data class TrendingMoviesScreenState(
     val movies: List<MovieUiState> = emptyList(),
     val categories: List<CategoryUiState> = emptyList(),
     override val isLoading: Boolean = false

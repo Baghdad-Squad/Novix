@@ -8,11 +8,11 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
-class MovieViewModel(
+class TrendingMoviesViewModel(
     private val getTrendingMoviesUseCase: GetTrendingMoviesUseCase,
     private val getGenresUseCase: GetGenresUseCase
-) : BaseViewModel<MovieScreenState, MovieScreenEffect>(MovieScreenState()),
-    MovieScreenInteractionListener {
+) : BaseViewModel<TrendingMoviesScreenState, TrendingMoviesEffect>(TrendingMoviesScreenState()),
+    TrendingMoviesInteractionListener {
 
     init {
         loadGenres()
@@ -50,14 +50,14 @@ class MovieViewModel(
     }
 
     private fun handleGenreSuccess(genres: List<Genre>) {
-        val allCategory = MovieScreenState.CategoryUiState(
+        val allCategory = TrendingMoviesScreenState.CategoryUiState(
             id = 0L,
             name = "All",
             isSelected = true
         )
 
         val categoryList = genres.map {
-            MovieScreenState.CategoryUiState(
+            TrendingMoviesScreenState.CategoryUiState(
                 id = it.id,
                 name = it.name,
                 isSelected = false
@@ -86,11 +86,11 @@ class MovieViewModel(
 
 
     override fun onBackClick() {
-        sendEffect(MovieScreenEffect.NavigateBack)
+        sendEffect(TrendingMoviesEffect.NavigateBack)
     }
 
     override fun onMovieClick(movieId: Long) {
-        sendEffect(MovieScreenEffect.NavigateToDetails(movieId))
+        sendEffect(TrendingMoviesEffect.NavigateToDetails(movieId))
     }
 
     override fun onToggleSaveMovie(movieId: Long) {
