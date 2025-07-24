@@ -11,7 +11,7 @@ interface TrendingTvShowDao {
     suspend fun upsertTvShow(tvShows: List<TrendingTvShow>)
 
     @Query(
-        """ SELECT * from trending_tv_shows LIMIT :pageSize OFFSET :offset"""
+        """ SELECT * FROM trending_tv_shows ORDER BY addedAt ASC LIMIT :pageSize OFFSET :offset"""
     )
     suspend fun getTrendingTvShows(
         pageSize: Int,

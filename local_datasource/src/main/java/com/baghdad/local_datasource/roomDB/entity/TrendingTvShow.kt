@@ -13,6 +13,7 @@ data class TrendingTvShow(
     @PrimaryKey val tvShowId: Long,
     @TypeConverters(Converters::class) val genres: List<Long>,
     val posterPictureURL: String,
+    val addedAt: Long = System.currentTimeMillis()
 )
 
 
