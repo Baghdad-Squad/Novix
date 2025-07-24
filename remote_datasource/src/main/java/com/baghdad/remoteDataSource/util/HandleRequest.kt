@@ -14,7 +14,6 @@ import kotlinx.serialization.SerializationException
 import retrofit2.Response
 import java.net.HttpURLConnection
 
-
 suspend inline fun <reified T> handleRequest(
     apiCall: suspend () -> Response<T>,
     logger: Logger

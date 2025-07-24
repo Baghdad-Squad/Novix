@@ -66,4 +66,8 @@
     <string name="create_account">تسجيل حساب جديد</string>
     <string name="login_successfully">تم تسجيل الدخول بنجاح</string>
     <string name="incorrect_username_or_password">خطأ في كلمة المرور او الاسم</string>
+    <string name="movies">أفلام</string>
+    <string name="tv_shows">مسلسلات</string>
+    <string name="actors">ممثلين</string>
+    <string name="what_do_you_want_to_watch">ماذا تريد أن تشاهد؟</string>
 </resources>

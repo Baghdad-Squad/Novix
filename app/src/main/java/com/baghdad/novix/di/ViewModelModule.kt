@@ -5,9 +5,11 @@ import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
+import com.baghdad.viewmodel.continueWatching.ContinueWatchingViewModel
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
 import com.baghdad.viewmodel.login.LoginViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
+import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
@@ -31,7 +33,7 @@ val viewModelModule = module {
             getCastsInfoUseCase = get(),
             getMovieImagesUseCase = get(),
             getMoreLikeThisPosterImageUseCase = get(),
-            getMovieCategoryUseCase = get()
+            addContinueWatchingUseCase = get()
         )
     }
 
@@ -54,7 +56,7 @@ val viewModelModule = module {
     }
 
     viewModelOf(::EpisodeDetailsViewModel)
-    viewModel{ (actorId: Long) ->
+    viewModel { (actorId: Long) ->
         TopMoviePicksViewModel(actorId, get())
     }
     viewModel { (actorId: Long) ->
@@ -72,4 +74,6 @@ val viewModelModule = module {
     }
 
     viewModelOf(::LoginViewModel)
+    viewModelOf(::ContinueWatchingViewModel)
+    viewModelOf(::TrendingActorViewModel)
 }

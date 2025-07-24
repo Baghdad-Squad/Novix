@@ -8,4 +8,5 @@ sealed interface ActorDetailsNavEvent {
     data object NavigateToActorTopTvShowPicks : ActorDetailsNavEvent
     data class NavigateToMovieDetails(val movieId: Long) : ActorDetailsNavEvent
     data class NavigateToTvShowDetails(val tvShowId: Long) : ActorDetailsNavEvent
+
 }

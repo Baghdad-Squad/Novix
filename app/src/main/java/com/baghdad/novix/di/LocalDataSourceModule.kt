@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.baghdad.local_datasource.LocalActorDataSourceImpl
+import com.baghdad.local_datasource.LocalContinueWatchingDataSourceImpl
 import com.baghdad.local_datasource.LocalFavoriteGenreDataSourceImpl
 import com.baghdad.local_datasource.LocalGenreDataSourceImpl
 import com.baghdad.local_datasource.LocalMovieDataSourceImpl
@@ -18,15 +19,18 @@ import com.baghdad.local_datasource.dataStore.session.LocalSessionDataStoreImpl
 import com.baghdad.local_datasource.dataStore.user.LocalUserDataStoreImpl
 import com.baghdad.local_datasource.dataStore.user.UserSerializer
 import com.baghdad.local_datasource.roomDB.dao.ActorDao
+import com.baghdad.local_datasource.roomDB.dao.ContinueWatchingDao
 import com.baghdad.local_datasource.roomDB.dao.FavoriteGenreDao
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
+import com.baghdad.local_datasource.roomDB.dao.TrendingActorDao
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.repository.datasource.local.LocalActorDataSource
+import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.datasource.local.LocalFavoriteGenreDataSource
 import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.datasource.local.LocalMovieDataSource
@@ -69,6 +73,8 @@ val localDataSourceModule = module {
     single<GenreDao> { get<NovixDatabase>().genreDao() }
     single<FavoriteGenreDao> { get<NovixDatabase>().favoriteGenreDao() }
     single<SearchQueryDao> { get<NovixDatabase>().searchQueryDao() }
+    single<ContinueWatchingDao> { get<NovixDatabase>().continueWatchingDao() }
+    single<TrendingActorDao> { get<NovixDatabase>().trendingActorDao() }
 
 
 
@@ -80,6 +86,8 @@ val localDataSourceModule = module {
     singleOf(::LocalActorDataSourceImpl) { bind<LocalActorDataSource>() }
     singleOf(::LocalFavoriteGenreDataSourceImpl) { bind<LocalFavoriteGenreDataSource>() }
     singleOf(::LocalSearchQueryDataSourceImpl) { bind<LocalSearchQueryDataSource>() }
+    singleOf(::LocalContinueWatchingDataSourceImpl){bind<LocalContinueWatchingDataSource>()}
+
 
     single<DataStore<Preferences>>(named("preferences")) {
         androidContext().datastore
