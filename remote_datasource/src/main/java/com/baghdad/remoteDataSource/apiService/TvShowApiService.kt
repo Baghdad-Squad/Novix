@@ -3,6 +3,7 @@ package com.baghdad.remoteDataSource.apiService
 import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
+import com.baghdad.remoteDataSource.response.tvShow.PopularTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowImagesResponse
@@ -60,6 +61,10 @@ interface TvShowApiService {
         @Path("tv_id") tvId: Long
     ): Response<TVShowVideosResponse>
 
+    @Authenticated
+    @GET(POPULAR_TV_SHOWS_ENDPOINT)
+    suspend fun getPopularTvShows(): Response<PopularTvShowsResponse>
+
     companion object {
         private const val TV_SHOW_DETAILS_ENDPOINT = "tv/{tv_id}"
         private const val TV_SHOW_CREDITS_ENDPOINT = "tv/{tv_id}/credits"
@@ -68,5 +73,6 @@ interface TvShowApiService {
         private const val TV_SHOW_WITH_GENRE_ENDPOINT = "discover/tv"
         private const val TV_SHOW_REVIEWS_ENDPOINT = "tv/{tv_id}/reviews"
         private const val TV_SHOW_VIDEOS_ENDPOINT = "tv/{tv_id}/videos"
+        private const val POPULAR_TV_SHOWS_ENDPOINT = "tv/popular"
     }
 }

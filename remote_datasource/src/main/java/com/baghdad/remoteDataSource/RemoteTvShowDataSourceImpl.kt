@@ -6,8 +6,10 @@ import com.baghdad.remoteDataSource.mapper.episode.toDto
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.mapper.tvShow.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.tvShow.toDto
+import com.baghdad.remoteDataSource.mapper.tvShow.toTvShowDtos
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
+import com.baghdad.remoteDataSource.response.tvShow.PopularTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowImagesResponse
@@ -74,5 +76,12 @@ class RemoteTvShowDataSourceImpl(
             apiCall = { tvShowApiService.getTvShowTrailer(tvId) },
             logger = logger
         ).mapToYoutubeURL()
+    }
+
+    override suspend fun getPopularTvShows(): List<TvShowDto> {
+        return handleRequest<PopularTvShowsResponse>(
+            apiCall = { tvShowApiService.getPopularTvShows() },
+            logger = logger
+        ).toTvShowDtos()
     }
 }

@@ -4,14 +4,17 @@ import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
+import com.baghdad.remoteDataSource.mapper.movie.toMovieDtos
 import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
+import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
+import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
@@ -19,6 +22,13 @@ import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class RemoteMovieDataSourceImpl(
     private val movieApiService: MovieApiService,
@@ -90,6 +100,40 @@ class RemoteMovieDataSourceImpl(
             logger = logger,
         )
         return response.toPagedMovieDtos()
+    }
+
+    @OptIn(ExperimentalTime::class)
+    override suspend fun getUpcomingMovies(page: Int, genreId: Long?): PagedResultDto<MovieDto> {
+        val today: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
+        val thirtyDaysLater: LocalDate = today.plus(
+            value = 30,
+            unit = DateTimeUnit.DAY,
+        )
+
+        val minimumReleaseDate = today.toString()
+        val maximumReleaseDate = thirtyDaysLater.toString()
+        val response = handleRequest<DiscoverMovieResponse>(
+            apiCall = {
+                movieApiService.getUpcomingMovies(
+                    page = page,
+                    genres = genreId?.toString() ?: "",
+                    releaseDateLte = maximumReleaseDate,
+                    releaseDateGte = minimumReleaseDate
+                )
+            },
+            logger = logger,
+        )
+        return response.toPagedMovieDtos()
+    }
+
+    override suspend fun getPopularMovies(): List<MovieDto> {
+        val response = handleRequest<PopularMoviesResponse>(
+            apiCall = {
+                movieApiService.getPopularMovies()
+            },
+            logger = logger,
+        )
+        return response.toMovieDtos()
     }
 
 }
