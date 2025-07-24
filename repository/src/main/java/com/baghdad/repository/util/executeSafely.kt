@@ -16,7 +16,6 @@ import com.baghdad.repository.exception.UnknownNetworkException
 import com.baghdad.repository.model.PagedResultDto
 import kotlinx.coroutines.flow.Flow
 import com.baghdad.domain.exception.StorageFullException as DomainStorageFullException
-import com.baghdad.domain.exception.UnKnownNetworkException as DomainUnKnownNetworkException
 
 suspend fun <T> executeSafely(block: suspend () -> T): T {
     return try {
@@ -34,7 +33,7 @@ suspend fun <T> executeSafely(block: suspend () -> T): T {
     } catch (_: StorageFullException) {
         throw DomainStorageFullException()
     } catch (_: UnknownNetworkException) {
-        throw DomainUnKnownNetworkException()
+        throw NetworkException()
     } catch (_: DatabaseException) {
         throw LocalDataBaseException()
     } catch (_: Exception) {

@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 class PagedResultPagingSource<T : Any>(
     private val loadData: suspend (page: Int) -> PagedResult<T>,
     private val onInitialLoadFinished: suspend () -> Unit,
+    private val onError: (Throwable) -> Unit
 ) : PagingSource<Int, T>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
@@ -32,6 +33,7 @@ class PagedResultPagingSource<T : Any>(
 
         } catch (e: Exception) {
             onInitialLoadFinished()
+            onError(e)
             LoadResult.Error(e)
         }
     }
@@ -47,7 +49,8 @@ class PagedResultPagingSource<T : Any>(
 fun <T : Any> createPagedResultPager(
     pageSize: Int = 20,
     loadData: suspend (page: Int) -> PagedResult<T>,
-    onInitialLoadFinished: suspend () -> Unit
+    onInitialLoadFinished: suspend () -> Unit,
+    onError: (Throwable) -> Unit
 ): Flow<PagingData<T>> {
     return Pager(
         config = PagingConfig(
@@ -56,7 +59,7 @@ fun <T : Any> createPagedResultPager(
             prefetchDistance = 4
         ),
         pagingSourceFactory = {
-            PagedResultPagingSource(loadData, onInitialLoadFinished)
+            PagedResultPagingSource(loadData, onInitialLoadFinished, onError)
         }
     ).flow
 }
