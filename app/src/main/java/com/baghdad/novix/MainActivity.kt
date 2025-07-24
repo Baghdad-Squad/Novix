@@ -18,11 +18,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             NovixTheme {
 
-                val navController = rememberNavController()
-                NovixNavHost(
-                    navController = navController,
-                    startDestination = Graph.HomeGraph
-                )
+               MainScreen()
             }
         }
     }
