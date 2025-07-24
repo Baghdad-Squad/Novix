@@ -13,8 +13,8 @@ data class TopRatingMovieState(
 ) : BaseUiState {
 
     data class GenreUiState(
-        val id: Long,
-        val name: String
+        val id: Long= 0L,
+        val name: String= ""
     )
 
     data class MovieUiState(

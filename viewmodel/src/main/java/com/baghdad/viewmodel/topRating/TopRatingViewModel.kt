@@ -2,6 +2,7 @@ package com.baghdad.viewmodel.topRating
 
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
+import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
@@ -19,20 +20,22 @@ class TopRatingViewModel(
 
     private fun getMovieGenres() {
         tryToExecute(
-            callee = { getGenresUseCase.getMovieGenres() },
-            onSuccess = { genres ->
-                updateState { state ->
-                    val allGenre = TopRatingMovieState.GenreUiState(id = 0L, name = "All")
-                    val genreUiStates =
-                        listOf(allGenre) + genres.map { it.toTopRatingGenreUiState() }
-                    state.copy(
-                        genres = genreUiStates,
-                    )
-                }
-            },
-            onError = { mapThrowableToErrorMessage(it) }
+            { getGenresUseCase.getMovieGenres() },
+            ::onGenresFetched,
         )
     }
+
+    private fun onGenresFetched(
+        genres: List<Genre>
+    ) {
+        updateState {
+            it.copy(
+                genres = listOf(TopRatingMovieState.GenreUiState(name = "All")) + genres
+                    .distinctBy { genre -> genre.id }
+                    .map { genre -> genre.toTopRatingGenreUiState() })
+        }
+    }
+
 
     override fun onMovieDetailsClick(movieId: Long) {
         sendEffect(TopRatingEffect.NavigateToMovieDetails(movieId))
