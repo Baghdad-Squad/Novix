@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    api(project(":islamic_image_loader"))
     implementation(project(":design_system"))
     implementation(project(":viewmodel"))
     implementation(libs.bundles.androidx.core)

@@ -75,5 +75,6 @@ private fun handleActorDetailsNavigation(
         )
 
         ActorDetailsNavEvent.NavigateToLogin -> navController.navigate(AuthenticationGraph)
+
     }
 }

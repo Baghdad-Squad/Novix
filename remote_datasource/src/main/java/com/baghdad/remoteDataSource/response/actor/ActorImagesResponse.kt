@@ -1,18 +1,15 @@
 package com.baghdad.remoteDataSource.response.actor
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class ActorImagesResponse(
-    @SerialName("id")
+    @SerializedName("id")
     val id: Int? = null,
-    @SerialName("profiles")
+    @SerializedName("profiles")
     val profiles: List<ImageResponse>? = null
 )
 
-@Serializable
 data class ImageResponse(
-    @SerialName("file_path")
+    @SerializedName("file_path")
     val filePath: String? = null,
 )

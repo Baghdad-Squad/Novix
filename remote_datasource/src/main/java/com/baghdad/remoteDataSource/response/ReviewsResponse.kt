@@ -1,44 +1,40 @@
 package com.baghdad.remoteDataSource.response
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class ReviewsResponse(
-    @SerialName("id")
+    @SerializedName("id")
     val id: Int? = 0,
-    @SerialName("page")
+    @SerializedName("page")
     val page: Int? = 0,
-    @SerialName("results")
+    @SerializedName("results")
     val results: List<ReviewResponse>? = null,
-    @SerialName("total_pages")
+    @SerializedName("total_pages")
     val totalPages: Int? = 0,
-    @SerialName("total_results")
+    @SerializedName("total_results")
     val totalResults: Int? = 0
 )
 
-@Serializable
 data class ReviewResponse(
-    @SerialName("author")
+    @SerializedName("author")
     val author: String? = null,
-    @SerialName("author_details")
+    @SerializedName("author_details")
     val authorDetails: MovieAuthorDetails? = null,
-    @SerialName("content")
+    @SerializedName("content")
     val content: String? = null,
-    @SerialName("created_at")
+    @SerializedName("created_at")
     val createdAt: String? = null,
-    @SerialName("id")
+    @SerializedName("id")
     val id: String? = null,
 )
 
-@Serializable
 data class MovieAuthorDetails(
-    @SerialName("name")
+    @SerializedName("name")
     val name: String? = null,
-    @SerialName("username")
+    @SerializedName("username")
     val username: String? = null,
-    @SerialName("avatar_path")
+    @SerializedName("avatar_path")
     val avatarPath: String? = null,
-    @SerialName("rating")
+    @SerializedName("rating")
     val rating: Float? = null
 )
