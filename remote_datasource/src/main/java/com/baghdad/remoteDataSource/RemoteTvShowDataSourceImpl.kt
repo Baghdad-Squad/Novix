@@ -6,6 +6,7 @@ import com.baghdad.remoteDataSource.mapper.episode.toDto
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.mapper.tvShow.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.tvShow.toDto
+import com.baghdad.remoteDataSource.mapper.tvShow.toPagedTvShowDtos
 import com.baghdad.remoteDataSource.mapper.tvShow.toTvShowDtos
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
@@ -14,12 +15,14 @@ import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowImagesResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowVideosResponse
+import com.baghdad.remoteDataSource.response.tvShow.TrendingTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TvShowResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 
@@ -76,6 +79,13 @@ class RemoteTvShowDataSourceImpl(
             apiCall = { tvShowApiService.getTvShowTrailer(tvId) },
             logger = logger
         ).mapToYoutubeURL()
+    }
+
+    override suspend fun getTrendingTvShows(page: Int): PagedResultDto<TvShowDto> {
+        return handleRequest<TrendingTvShowsResponse>(
+            apiCall = { tvShowApiService.getTrendingTvShows(page) },
+            logger = logger,
+        ).toPagedTvShowDtos()
     }
 
     override suspend fun getPopularTvShows(): List<TvShowDto> {

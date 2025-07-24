@@ -8,6 +8,8 @@ import com.baghdad.ui.feature.continueWatching.ContinueWatchingScreen
 import com.baghdad.ui.feature.home.HomeScreen
 import com.baghdad.ui.feature.topRating.TopRatingMoviesScreen
 import com.baghdad.ui.feature.trendingActors.TrendingActorsScreen
+import com.baghdad.ui.feature.continueWatching.ContinueWatchingScreen
+import com.baghdad.ui.feature.trendingTvShow.TrendingTvShowScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.HomeRoute
@@ -40,7 +42,9 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
             DummyScreen(title = "Movies Screen")
         }
         composable<HomeRoute.TvShowsScreen> {
-            DummyScreen(title = "TV Shows Screen")
+            TrendingTvShowScreen(handleNavigation = { event ->
+                handleHomeNavigation(event, navController)
+            })
         }
         composable<HomeRoute.TrendingActorsScreen> {
             TrendingActorsScreen {

@@ -1,16 +1,21 @@
 package com.baghdad.repository
 
+import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
+import com.baghdad.repository.datasource.local.LocalGenreDataSource
+import com.baghdad.repository.datasource.local.LocalTrendingTvShowsDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.TvShowDto
 import com.baghdad.repository.util.executeSafely
+import com.baghdad.repository.util.getPagedSafely
 import java.util.Locale
 
 class TvShowRepositoryImpl(
@@ -77,6 +82,15 @@ class TvShowRepositoryImpl(
             tvShowRemoteDataSource.getPopularTvShows().map(TvShowDto::toEntity)
         }
     }
+
+    override suspend fun getTrendingTvShows(page: Int): PagedResult<TvShow> {
+        return executeSafely {
+            tvShowRemoteDataSource.getTrendingTvShows(page).toPagedResult {
+                it.toEntity()
+            }
+        }
+    }
+
 
     companion object {
         private const val MAX_IMAGE_COUNT = 10

@@ -2,6 +2,7 @@ package com.baghdad.repository.datasource.remote
 
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 
@@ -20,5 +21,8 @@ interface RemoteTvShowDataSource {
     suspend fun getTvShowReviews(tvId: Long): List<ReviewDto>
 
     suspend fun getTvShowTrailer(tvId: Long): String
+
     suspend fun getPopularTvShows(): List<TvShowDto>
+
+    suspend fun getTrendingTvShows(page: Int): PagedResultDto<TvShowDto>
 }

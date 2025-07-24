@@ -26,24 +26,29 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
 import com.baghdad.ui.feature.episodeDetails.component.EpisodeHeaderWithDetailsCard
 import com.baghdad.ui.feature.episodeDetails.component.guestsOfHonorItems
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
+import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsInteractionListener
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenEffect
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenState
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -59,12 +64,14 @@ fun EpisodeDetailsScreen(
     handleNavigation: (TvShowDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
     EpisodeDetailsContent(
         state = uiState,
-        listener = viewModel
+        listener = viewModel,
+        snackBarState = snackBarState
     )
 }
 
@@ -72,6 +79,7 @@ fun EpisodeDetailsScreen(
 fun EpisodeDetailsContent(
     state: EpisodeDetailsScreenState,
     listener: EpisodeDetailsInteractionListener,
+    snackBarState: SnackBarState
 ) {
     val listState = rememberLazyListState()
     var shouldShowBackground by remember { mutableStateOf(false) }
@@ -115,6 +123,13 @@ fun EpisodeDetailsContent(
                 isLoading = state.isEpisodeDetailsLoading,
                 onPlayTrailerClicked = listener::onPlayTrailerClick
             )
+        }, snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
+
         }
     ) {
         AnimatedContent(state.isLoading) { isLoading ->
@@ -195,4 +210,9 @@ fun handleEffect(
             TvShowDetailsNavEvent.NavigateToCategoryTvShows(effect.categoryId)
         )
     }
+}
+
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
 }
