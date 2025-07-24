@@ -84,8 +84,8 @@ class LocalActorDataSourceImpl(
             trendingActorDao.getTrendingActorById(id).toDto()
         }
 
-    override suspend fun deleteTrendingActor() = executeWithErrorHandling(logger = logger) {
-        trendingActorDao.deleteAllTrendingActor()
+    override suspend fun deleteTrendingActors() = executeWithErrorHandling(logger = logger) {
+        trendingActorDao.deleteAllTrendingActors()
     }
 }
 

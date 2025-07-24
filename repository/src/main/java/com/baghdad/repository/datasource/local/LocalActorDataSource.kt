@@ -15,7 +15,7 @@ interface LocalActorDataSource {
     suspend fun addTrendingActor(people: List<ActorDto>)
     suspend fun getTrendingActor(page: Int, pageSize: Int = 20): List<ActorDto>
     suspend fun getTrendingActorById(id: Long): ActorDto
-    suspend fun deleteTrendingActor()
+    suspend fun deleteTrendingActors()
 
 
 }

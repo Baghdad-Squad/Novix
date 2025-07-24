@@ -1,26 +1,26 @@
-package com.baghdad.viewmodel.people
+package com.baghdad.viewmodel.trendingActors
 
-import com.baghdad.domain.usecase.actor.GetTrendingActorUseCase
+import com.baghdad.domain.usecase.actor.GetTrendingActorsUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class TrendingActorViewModel(
-    private val getPeopleUseCase: GetTrendingActorUseCase
-) : BaseViewModel<TrendingActorUiState, TrendingActorUiEffect>(TrendingActorUiState()),
+    private val getTrendingActorsUseCase: GetTrendingActorsUseCase
+) : BaseViewModel<TrendingActorsUiState, TrendingActorsUiEffect>(TrendingActorsUiState()),
     TrendingActorsInteractionListener {
 
     init {
-        getPopularPeople()
+        getTrendingActors()
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
     }
 
-    private fun getPopularPeople() {
+    private fun getTrendingActors() {
         collectPagingFlow(
             loadData = { page ->
-                getPeopleUseCase(page)
+                getTrendingActorsUseCase(page)
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toTrendingActorsUi() },
@@ -31,11 +31,11 @@ class TrendingActorViewModel(
     }
 
     override fun onBackClick() {
-        sendEffect(TrendingActorUiEffect.OnBackClick)
+        sendEffect(TrendingActorsUiEffect.OnBackClick)
     }
 
-    override fun onPeopleClick(peopleId: Long) {
-        sendEffect(TrendingActorUiEffect.NavigateToActorDetails(peopleId))
+    override fun onTrendingActorClick(actorId: Long) {
+        sendEffect(TrendingActorsUiEffect.NavigateToActorsDetails(actorId))
     }
 
     private fun onFinally() {

@@ -44,7 +44,7 @@ class ActorRepositoryImpl(
         }
     }
 
-    override suspend fun getTrendingActor(page: Int): PagedResult<Actor> {
+    override suspend fun getTrendingActors(page: Int): PagedResult<Actor> {
         return getPagedSafely(
             page = page,
             mapToEntity = ActorDto::toEntity,

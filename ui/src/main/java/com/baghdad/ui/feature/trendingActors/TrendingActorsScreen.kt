@@ -25,10 +25,10 @@ import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.people.TrendingActorsInteractionListener
-import com.baghdad.viewmodel.people.TrendingActorUiEffect
-import com.baghdad.viewmodel.people.TrendingActorUiState
-import com.baghdad.viewmodel.people.TrendingActorViewModel
+import com.baghdad.viewmodel.trendingActors.TrendingActorsInteractionListener
+import com.baghdad.viewmodel.trendingActors.TrendingActorsUiEffect
+import com.baghdad.viewmodel.trendingActors.TrendingActorsUiState
+import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -46,11 +46,11 @@ fun TrendingActorsScreen(
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
-            is TrendingActorUiEffect.OnBackClick -> {
+            is TrendingActorsUiEffect.OnBackClick -> {
                 handleNavigation(HomeNavEvent.NavigateBack)
             }
 
-            is TrendingActorUiEffect.NavigateToActorDetails -> {
+            is TrendingActorsUiEffect.NavigateToActorsDetails -> {
                 handleNavigation(HomeNavEvent.NavigateToActorDetails(effect.actorId))
             }
         }
@@ -60,7 +60,7 @@ fun TrendingActorsScreen(
 
 @Composable
 fun TrendingActorsContent(
-    uiState: TrendingActorUiState,
+    uiState: TrendingActorsUiState,
     listner: TrendingActorsInteractionListener,
     snackBarState: SnackBarState
 ) {
@@ -102,7 +102,7 @@ fun TrendingActorsContent(
                         ActorCard(
                             actorName = actor.name,
                             actorImage = actor.profilePictureURL,
-                            onClick = { listner.onPeopleClick(actor.id) },
+                            onClick = { listner.onTrendingActorClick(actor.id) },
                             modifier = Modifier.padding(vertical = 12.dp)
                         )
                     }

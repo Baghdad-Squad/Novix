@@ -10,5 +10,5 @@ interface ActorRepository {
     suspend fun getActorMovies(actorId: Long): List<Movie>
     suspend fun getActorTvShows(actorId: Long): List<TvShow>
     suspend fun getActorGallery(actorId: Long): List<String>
-    suspend fun getTrendingActor(page: Int): PagedResult<Actor>
+    suspend fun getTrendingActors(page: Int): PagedResult<Actor>
 }

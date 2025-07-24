@@ -31,7 +31,7 @@ import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowImagesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
-import com.baghdad.domain.usecase.actor.GetTrendingActorUseCase
+import com.baghdad.domain.usecase.actor.GetTrendingActorsUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -67,6 +67,6 @@ val useCaseModule = module {
     singleOf(::GetMovieGalleryUseCase)
     singleOf(::GetTvShowGenreNameByIdUseCase)
     singleOf(::GetMovieGenreNameByIdUseCase)
-    singleOf(::GetTrendingActorUseCase)
+    singleOf(::GetTrendingActorsUseCase)
 }
 

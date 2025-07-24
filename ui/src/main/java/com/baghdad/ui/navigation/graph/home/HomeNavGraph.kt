@@ -31,7 +31,7 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
         composable<HomeRoute.TvShowsScreen> {
             DummyScreen(title = "TV Shows Screen")
         }
-        composable<HomeRoute.ActorsScreen> {
+        composable<HomeRoute.TrendingActorsScreen> {
             TrendingActorsScreen {
                 handleHomeNavigation(it, navController)
             }
@@ -50,7 +50,7 @@ private fun handleHomeNavigation(
         HomeNavEvent.NavigateToContinueWatching -> navController.navigate(HomeRoute.ContinueWatchingScreen)
         HomeNavEvent.NavigateToMovies -> navController.navigate(HomeRoute.MoviesScreen)
         HomeNavEvent.NavigateToTvShows -> navController.navigate(HomeRoute.TvShowsScreen)
-        HomeNavEvent.NavigateToActors -> navController.navigate(HomeRoute.ActorsScreen)
+        HomeNavEvent.NavigateToActors -> navController.navigate(HomeRoute.TrendingActorsScreen)
         is HomeNavEvent.NavigateToMovieDetails -> navController.navigate(
             Graph.MovieDetailsGraph(event.movieId)
         )

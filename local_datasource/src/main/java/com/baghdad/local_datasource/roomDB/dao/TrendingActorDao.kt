@@ -8,7 +8,7 @@ import com.baghdad.local_datasource.roomDB.entity.TrendingActorEntity
 @Dao
 interface TrendingActorDao {
     @Upsert
-    suspend fun upsertTrendingActors(people: List<TrendingActorEntity>)
+    suspend fun upsertTrendingActors(actors: List<TrendingActorEntity>)
 
     @Query(
         """
@@ -26,6 +26,6 @@ interface TrendingActorDao {
     suspend fun getTrendingActorById(personId: Long): TrendingActorEntity
 
     @Query("DELETE FROM trendingActor")
-    suspend fun deleteAllTrendingActor()
+    suspend fun deleteAllTrendingActors()
 
 }
