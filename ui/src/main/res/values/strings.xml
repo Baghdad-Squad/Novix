@@ -56,4 +56,8 @@
     <string name="save_to_list">Save to list</string>
     <string name="guests_of_honor">Guests of honor</string>
     <string name="season_template">S%1$s</string>
+    <string name="popular">Popular</string>
+    <string name="top_rating">Top rating</string>
+    <string name="continue_watching">Continue watching</string>
+    <string name="upcoming">Upcoming</string>
 </resources>

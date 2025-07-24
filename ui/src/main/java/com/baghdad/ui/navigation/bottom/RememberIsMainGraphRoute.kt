@@ -15,9 +15,9 @@ fun rememberIsMainGraphRoute(
 ): State<Boolean> {
     return remember(navBackStackEntry) {
         derivedStateOf {
-            val heirarchy = navBackStackEntry?.destination?.hierarchy
+            val hierarchy = navBackStackEntry?.destination?.hierarchy
             graphRoutes.any { graph ->
-                heirarchy?.any { destination ->
+                hierarchy?.any { destination ->
                     destination.route == graph::class.qualifiedName
                 } ?: false
             }
