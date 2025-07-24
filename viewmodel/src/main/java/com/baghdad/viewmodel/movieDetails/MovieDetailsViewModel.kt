@@ -181,8 +181,6 @@ class MovieDetailsViewModel(
         }
     }
 
-
-
     private fun getCastMembers() {
         tryToExecute(
             callee = { getCastsInfoUseCase(movieId) },
@@ -202,8 +200,6 @@ class MovieDetailsViewModel(
             onFinally = ::onFinally
         )
     }
-
-
 
     private fun getMoreLikeThisShow() {
         tryToExecute(
@@ -238,7 +234,6 @@ class MovieDetailsViewModel(
         }
     }
 
-
     private fun onLoading() {
         updateState { it.copy(isLoading = true) }
     }
@@ -255,9 +250,13 @@ private fun Double.roundToFirstDecimal(): Double {
 private fun Int.formatDuration(): String {
     val hours = this / 60
     val minutes = this % 60
-    return if (hours > 0) {
-        "$hours hr $minutes min"
-    } else {
-        "$minutes min"
+    return when {
+        this <= 0 -> "Unknown"
+        else -> if (hours > 0) {
+            "$hours hr $minutes min"
+        } else {
+            "$minutes min"
+        }
     }
+
 }
