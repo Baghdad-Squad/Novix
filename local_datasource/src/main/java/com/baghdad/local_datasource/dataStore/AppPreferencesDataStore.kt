@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.baghdad.repository.model.UserDto
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
@@ -25,6 +26,16 @@ class AppPreferencesDataStore(
     suspend fun deleteSessionId() {
         dataStore.edit {
             it.remove(SESSION_ID)
+        }
+    }
+    suspend fun getUserDetails(): UserDto? {
+        return null
+
+
+    }
+    suspend fun clearSession() {
+        dataStore.edit {
+            it.clear()
         }
     }
 
