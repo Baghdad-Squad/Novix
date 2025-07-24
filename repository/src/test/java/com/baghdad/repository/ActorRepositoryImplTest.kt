@@ -4,6 +4,7 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
+import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.GenreDto
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.assertThrows
 class ActorRepositoryImplTest {
 
     private lateinit var remoteActorDataSource: RemoteActorDataSource
+    private lateinit var localActorDataSource: LocalActorDataSource
     private lateinit var actorRepositoryImpl: ActorRepositoryImpl
 
     @BeforeEach
@@ -29,6 +31,7 @@ class ActorRepositoryImplTest {
         remoteActorDataSource = mockk()
         actorRepositoryImpl = ActorRepositoryImpl(
             remoteActorDataSource = remoteActorDataSource,
+            localPopularPeopleDataSource = localActorDataSource
         )
     }
 
