@@ -35,7 +35,9 @@ private val ActorImageSize = 78.dp
 private val RoundedShapeValue = 12.dp
 
 private val ImageShape = RoundedCornerShape(
-    topEnd = RoundedShapeValue, topStart = RoundedShapeValue, bottomStart = RoundedShapeValue
+    topEnd = RoundedShapeValue,
+    topStart = RoundedShapeValue,
+    bottomStart = RoundedShapeValue
 )
 private val CardShape = RoundedCornerShape(
     topEnd = RoundedShapeValue,
@@ -46,7 +48,7 @@ private val CardShape = RoundedCornerShape(
 fun ActorCard(
     actorName: String,
     actorImage: String,
-    onClick: () -> Unit ,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     characterName: String? = null
 ) {
