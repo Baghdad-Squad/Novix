@@ -133,9 +133,7 @@ fun ContinueWatchingContent(
         }
     ) {
         Column {
-
             if (uiState.isLoading) {
-                Log.d("ContinueWatchingScreen", "ContinueWatchingContent: Loading")
                 Box(Modifier.fillMaxSize()) {
                     WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
                 }
