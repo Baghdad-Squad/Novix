@@ -37,7 +37,6 @@ import com.baghdad.ui.feature.trendingTvShow.component.GenresSection
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowInteractionListener
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowScreenEffect
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowScreenState
@@ -90,7 +89,7 @@ fun TrendingTvShowContent(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = Modifier
+        modifier = modifier
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
@@ -165,16 +164,10 @@ fun TrendingTvShowContent(
 
             }
         }
-
-
     }
 }
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return when (type) {
-        SearchScreenBaseSnackBarMessages.RemovedItemSuccessfully -> R.string.snackbar_removed_success
-        SearchScreenBaseSnackBarMessages.SavedItemSuccessfully -> R.string.snackbar_saved_success
-        else -> type.toStringResource()
-    }
+    return type.toStringResource()
 }
