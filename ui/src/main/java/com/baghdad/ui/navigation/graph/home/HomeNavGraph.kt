@@ -11,7 +11,7 @@ import com.baghdad.ui.navigation.route.HomeRoute
 
 fun NavGraphBuilder.homeNavGraph(navController: NavController) {
     navigation<Graph.HomeGraph>(
-        startDestination = HomeRoute.HomeScreen
+        startDestination = HomeRoute.TrendingActorsScreen
     ) {
         composable<HomeRoute.HomeScreen> {
             DummyScreen(title = "Home Screen")
