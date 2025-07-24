@@ -13,6 +13,7 @@ import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.dao.FavoriteGenreDao
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
+import com.baghdad.local_datasource.roomDB.dao.TrendingActorDao
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
@@ -49,6 +50,7 @@ val localDataSourceModule = module {
     single<GenreDao> { get<NovixDatabase>().genreDao() }
     single<FavoriteGenreDao> { get<NovixDatabase>().favoriteGenreDao() }
     single<SearchQueryDao> { get<NovixDatabase>().searchQueryDao() }
+    single<TrendingActorDao> { get<NovixDatabase>().trendingActorDao() }
 
 
 
@@ -60,5 +62,6 @@ val localDataSourceModule = module {
     singleOf(::LocalActorDataSourceImpl) { bind<LocalActorDataSource>() }
     singleOf(::LocalFavoriteGenreDataSourceImpl) { bind<LocalFavoriteGenreDataSource>() }
     singleOf(::LocalSearchQueryDataSourceImpl) { bind<LocalSearchQueryDataSource>() }
+
 
 }
