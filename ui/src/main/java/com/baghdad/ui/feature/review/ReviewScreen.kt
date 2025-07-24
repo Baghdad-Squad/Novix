@@ -1,12 +1,14 @@
 package com.baghdad.ui.feature.review
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -68,15 +70,14 @@ fun ReviewContent(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
             .background(Theme.color.surface)
-            .systemBarsPadding()
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .navigationBarsPadding(),
         topBar = {
             TopAppBar(
                 screenTitle = stringResource(R.string.reviews),
                 onGoBackClick = { listener.onNavigateBack() },
-                modifier = Modifier.padding(top = 12.dp)
+                modifier = Modifier.padding(top = 20.dp, bottom = 8.dp)
             ) {}
         }, snackbar = {
             SnackBar(
@@ -90,31 +91,31 @@ fun ReviewContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding()
                 .background(Theme.color.surface)
         ) {
 
             if (uiState.reviews.isEmpty()) {
                 EmptyReviewScreen()
-            }
+            } else {
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface)
-            ) {
-                items(uiState.reviews) { review ->
-                    ReviewerCard(
-                        title = review.reviewText,
-                        rate = review.rating,
-                        authorName = review.authorName,
-                        reviewDate = review.postedDate,
-                        authorAvatar = review.authorAvatarUrl,
-                        contentName = review.contentTitle,
-                        isExpanded = review.isExpanded,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    ) {
-                        listener.onExpandedTextChange(review.id)
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(vertical = 12.dp)
+                ) {
+                    items(uiState.reviews) { review ->
+                        ReviewerCard(
+                            title = review.reviewText,
+                            rate = review.rating,
+                            authorName = review.authorName,
+                            reviewDate = review.postedDate,
+                            authorAvatar = review.authorAvatarUrl,
+                            contentName = review.contentTitle,
+                            isExpanded = review.isExpanded
+                        ) {
+                            listener.onExpandedTextChange(review.id)
+                        }
                     }
                 }
             }

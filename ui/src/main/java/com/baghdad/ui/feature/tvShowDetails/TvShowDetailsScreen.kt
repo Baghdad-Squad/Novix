@@ -224,7 +224,6 @@ fun TvShowDetailsContent(
                     }
                 }
 
-                if (uiState.episodes.isNotEmpty()) {
                     item {
                         SeasonSection(
                             seasonCount = uiState.tvShowInfo.seasonCount,
@@ -245,6 +244,7 @@ fun TvShowDetailsContent(
                         )
                     }
 
+                if (uiState.episodes.isNotEmpty()) {
                     items(uiState.episodes) { episode ->
                         EpisodeCard(
                             episodeNumber = episode.episodeNumber,

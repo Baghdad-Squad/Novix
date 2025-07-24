@@ -15,9 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.baghdad.design_system.component.AutoSlidingImageCarousel
 import com.baghdad.design_system.component.CarousalDot
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.feature.component.AutoSlidingImageCarousel
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsInteractionListener
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenState
 
@@ -61,7 +61,7 @@ fun EpisodeHeaderWithDetailsCard(
             }
 
             EpisodeDetailsHeader(
-                title = state.episode.title,
+                title = "Episode ${state.episode.episodeNumber} - ${state.episode.title}",
                 releaseDate = state.episode.releasedDate,
                 rating = state.episode.rating,
                 categories = state.episode.categories,

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,8 +20,8 @@ import com.baghdad.design_system.component.CircleDot
 import com.baghdad.design_system.component.LabeledIconRow
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.islamic_image_loader.component.SafeImage
 import com.baghdad.ui.R
+import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 
 @Composable
 fun EpisodeCard(
@@ -37,11 +38,11 @@ fun EpisodeCard(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        SafeImage(
+        IslamicImage(
             imageUrl = imageUrl,
             contentDescription = episodeName,
             modifier = Modifier
-                .weight(1f)
+                .width(116.dp)
                 .height(78.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .border(
@@ -52,8 +53,7 @@ fun EpisodeCard(
         )
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(2f),
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
@@ -83,7 +83,7 @@ fun EpisodeCard(
                 )
                 LabeledIconRow(
                     title = duration,
-                    icon = painterResource(com.baghdad.design_system.R.drawable.ic_clock),
+                    icon = painterResource(com.baghdad.design_system.R.drawable.ic_time_oclock),
                     tint = Theme.color.hint
                 )
 
