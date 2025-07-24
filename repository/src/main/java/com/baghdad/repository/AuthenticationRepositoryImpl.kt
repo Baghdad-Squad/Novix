@@ -18,6 +18,7 @@ class AuthenticationRepositoryImpl(
                 requestToken = requestToken
             )
             val sessionId = remoteAuthenticationDataSource.createSession(validatedRequestToken)
+            remoteAuthenticationDataSource.getUserDetails(sessionId)
             localSessionDataSource.saveSessionId(sessionId)
             sessionId
         }
@@ -29,4 +30,14 @@ class AuthenticationRepositoryImpl(
         return localSessionDataSource.getSessionId() != null
     }
 
+    override suspend fun logOut(): Boolean {
+        val sessionId = localSessionDataSource.getSessionId()
+        return if (sessionId != null) {
+            remoteAuthenticationDataSource.deleteSession(sessionId)
+            localSessionDataSource.clearSession()
+            true
+        } else {
+            false
+        }
+    }
 }
