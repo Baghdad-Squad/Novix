@@ -71,10 +71,5 @@ val viewModelModule = module {
         CategoryMoviesViewModel(categoryId, get(), get())
     }
 
-    viewModel {
-        TrendingMoviesViewModel(
-            getTrendingMoviesUseCase = get(),
-            getGenresUseCase = get()
-        )
-    }
+    viewModelOf(::TrendingMoviesViewModel)
 }

@@ -1,6 +1,8 @@
 package com.baghdad.repository.mapper
 
+import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
+import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.SearchQueryDto
 import kotlinx.datetime.LocalDate
@@ -26,5 +28,28 @@ fun MovieDto.toSearchQueryDto(query: String): SearchQueryDto {
         queryName = query,
         mediaId = this.id,
         mediaType = SearchQueryDto.MediaType.MOVIE,
+    )
+}
+
+fun Movie.toDto(): MovieDto {
+    return MovieDto(
+        id = id,
+        title = title,
+        genres = genres.map { it.toDto() },
+        imdbRating = averageRating,
+        userRating = userRating,
+        releaseDate = releaseDate.toString(),
+        overview = overview,
+        posterPictureURL = posterImageURL,
+        trailerURL = trailerURL,
+        runtimeMinutes = runtimeMinutes
+    )
+}
+
+fun Genre.toDto(): GenreDto {
+    return GenreDto(
+        id = id,
+        name = name,
+        type = GenreDto.GenreType.MOVIE
     )
 }

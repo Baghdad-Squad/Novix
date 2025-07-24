@@ -1,12 +1,12 @@
 package com.baghdad.viewmodel.movie
 
-import android.util.Log
+import androidx.paging.map
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
 import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.flow.map
 
 class TrendingMoviesViewModel(
     private val getTrendingMoviesUseCase: GetTrendingMoviesUseCase,
@@ -16,48 +16,45 @@ class TrendingMoviesViewModel(
 
     init {
         loadGenres()
+        loadMoviesByGenres(0L)
     }
-
 
     private fun loadGenres() {
         tryToExecute(
             onStart = { updateState { it.copy(isLoading = true) } },
             callee = { getGenresUseCase.getMovieGenres() },
             onSuccess = ::handleGenreSuccess,
-            onFinally = ::onFinally
+            onFinally = ::stopLoading
         )
     }
-
 
     private fun loadMoviesByGenres(categoryId: Long) {
-        tryToExecute(
-            onStart = { updateState { it.copy(isLoading = true) } },
-            callee = { getTrendingMoviesUseCase(page = 1, genreId = categoryId) },
-            onSuccess = ::onGetMoviesSuccess,
-            onFinally = ::onFinally
+        collectPagingFlow(
+            loadData = { page ->
+                getTrendingMoviesUseCase(page = page, genreId = categoryId)
+            },
+            onInitialLoadFinished = ::stopLoading,
+            mapEntityToUiState = { it.toMovieUiState() },
+            onFlowCreated = { flow ->
+                updateState {
+                    it.copy(
+                        movies = flow,
+                        isLoading = true
+                    )
+                }
+            }
         )
-    }
-
-    private fun onGetMoviesSuccess(movies: List<Movie>) {
-        val filteredMovies = filterMoviesBySelectedGenre(movies)
-
-        Log.d("MovieViewModel", "Filtered movies: ${filteredMovies.size}")
-        Log.d("MovieViewModel", "Movies received: ${movies.size}")
-
-        val uiMovies = filteredMovies.map { it.toMovieUi() }
-
-        updateState { it.copy(movies = uiMovies, isLoading = false) }
     }
 
     private fun handleGenreSuccess(genres: List<Genre>) {
-        val allCategory = TrendingMoviesScreenState.CategoryUiState(
+        val allCategory = TrendingMoviesScreenState.TrendingCategoryUiState(
             id = 0L,
             name = "All",
             isSelected = true
         )
 
         val categoryList = genres.map {
-            TrendingMoviesScreenState.CategoryUiState(
+            TrendingMoviesScreenState.TrendingCategoryUiState(
                 id = it.id,
                 name = it.name,
                 isSelected = false
@@ -68,22 +65,7 @@ class TrendingMoviesViewModel(
 
         updateState { it.copy(categories = finalCategories) }
 
-        loadMoviesByGenres(allCategory.id)
     }
-
-
-    private fun filterMoviesBySelectedGenre(movies: List<Movie>): List<Movie> {
-        val selectedCategoryId = uiState.value.categories.find { it.isSelected }?.id
-
-        return if (selectedCategoryId == null || selectedCategoryId == 0L) {
-            movies
-        } else {
-            movies.filter { movie ->
-                movie.genres.any { genre -> genre.id == selectedCategoryId }
-            }
-        }
-    }
-
 
     override fun onBackClick() {
         sendEffect(TrendingMoviesEffect.NavigateBack)
@@ -94,13 +76,19 @@ class TrendingMoviesViewModel(
     }
 
     override fun onToggleSaveMovie(movieId: Long) {
-        updateState {
-            it.copy(
-                movies = it.movies.map { item ->
-                    if (item.id == movieId) item.copy(isSaved = item.isSaved.not()) else item
+        val currentFlow = uiState.value.movies
+
+        val newFlow = currentFlow.map { pagingData ->
+            pagingData.map { movieUiState ->
+                if (movieUiState.id == movieId) {
+                    movieUiState.copy(isSaved = !movieUiState.isSaved)
+                } else {
+                    movieUiState
                 }
-            )
+            }
         }
+
+        updateState { it.copy(movies = newFlow) }
     }
 
     override fun onCategoryClick(categoryId: Long) {
@@ -111,20 +99,13 @@ class TrendingMoviesViewModel(
                 categories = it.categories.map { item ->
                     item.copy(isSelected = item.id == categoryId)
                 },
-                movies = emptyList(),
                 isLoading = true
             )
         }
-
-        tryToExecute(
-            callee = { getTrendingMoviesUseCase(page = 1, categoryId) },
-            onSuccess = ::onGetMoviesSuccess,
-            onFinally = ::onFinally
-        )
+        loadMoviesByGenres(categoryId)
     }
 
-
-    private fun onFinally() {
+    private fun stopLoading() {
         updateState { it.copy(isLoading = false) }
     }
 
