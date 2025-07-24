@@ -14,8 +14,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 
 class GetSimilarMoviesUseCaseTest {
 
-    lateinit var getSimilarMoviesUseCase: GetSimilarMoviesUseCase
-    lateinit var movieRepository: MovieRepository
 
     @BeforeEach
     fun setup() {
@@ -51,6 +49,10 @@ class GetSimilarMoviesUseCaseTest {
 
 
     private companion object {
+
+        lateinit var getSimilarMoviesUseCase: GetSimilarMoviesUseCase
+        lateinit var movieRepository: MovieRepository
+
         val similarMovies = listOf(
             Movie(
                 id = 1L,
