@@ -24,16 +24,20 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.topRating.component.GenresSection
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateBack
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
+import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.topRating.TopRatingEffect
 import com.baghdad.viewmodel.topRating.TopRatingInteractionListener
 import com.baghdad.viewmodel.topRating.TopRatingMovieState
@@ -50,12 +54,14 @@ fun TopRatingMoviesScreen(
         handleEffect(effect, handleNavigation)
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
 
     TopRatingMoviesContent(
         uiState = uiState,
         listener = viewModel,
-        movieItems = movieItems
+        movieItems = movieItems,
+        snackBarState = snackBarState
     )
 }
 
@@ -64,9 +70,10 @@ private fun handleEffect(
     handleNavigation: (HomeNavEvent) -> Unit
 ) {
     when (effect) {
-        TopRatingEffect.NavigateBack ->  handleNavigation(
-         NavigateBack
-    )
+        TopRatingEffect.NavigateBack -> handleNavigation(
+            NavigateBack
+        )
+
         is TopRatingEffect.NavigateToMovieDetails -> handleNavigation(
             NavigateToMovieDetails(effect.movieId)
         )
@@ -77,6 +84,7 @@ private fun handleEffect(
 fun TopRatingMoviesContent(
     uiState: TopRatingMovieState,
     listener: TopRatingInteractionListener,
+    snackBarState: SnackBarState,
     movieItems: LazyPagingItems<TopRatingMovieState.MovieUiState>
 ) {
     Scaffold(
@@ -111,8 +119,16 @@ fun TopRatingMoviesContent(
                     .background(Theme.color.surface)
                     .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
             )
+        },
+        snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
         }
     ) {
+
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize()) {
                 WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
@@ -145,4 +161,8 @@ fun TopRatingMoviesContent(
 
         }
     }
+}
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
 }
