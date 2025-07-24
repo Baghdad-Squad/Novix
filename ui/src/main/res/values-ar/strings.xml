@@ -41,8 +41,6 @@
     <string name="season">موسم</string>
     <string name="episode">حلقة %1$s</string>
     <string name="view_reviews">عرض التقييمات</string>
-    <string name="episodes">%1$d عدد الحلقات</string>
-
     <string name="add_to_list">إضافة إلى القائمة</string>
     <string name="please_login_to_save_to_list">الرجاء تسجيل الدخول لحفظ القائمه</string>
     <string name="bottom_sheet_content_description">وصف محتوى الصفحة السفلية</string>
@@ -58,4 +56,7 @@
     <string name="guests_of_honor">ضيوف الشرف</string>
     <string name="season_template">موسم %1$s</string>
     <string name="actors">الممثلين</string>
+    <string name="episodes">عدد الحلقات %1$d </string>
+    <string name="s"> الموسم</string>
+
 </resources>
