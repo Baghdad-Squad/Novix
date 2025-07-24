@@ -37,6 +37,7 @@ import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
@@ -235,7 +236,7 @@ fun TvShowDetailsContent(
 
                     item {
                         Text(
-                            text = "${uiState.episodes.size} Episodes",
+                            text = stringResource(R.string.episodes, uiState.episodes.size),
                             style = Theme.typography.label.small,
                             color = Theme.color.hint,
                             modifier = Modifier

@@ -251,7 +251,7 @@ private fun Int.formatDuration(): String {
     val hours = this / 60
     val minutes = this % 60
     return when {
-        this <= 0 -> "Unknown"
+        this <= 0 -> "unknown"
         else -> if (hours > 0) {
             "$hours hr $minutes min"
         } else {
