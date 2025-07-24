@@ -51,7 +51,7 @@ class RemoteActorDataSourceImpl(
 
     override suspend fun getTrendingActors(page: Int): PagedResultDto<ActorDto> {
         val result  = handleRequest<TrendingActorResponse>(
-           apiCall = { actorApiService.getTrendingActors() },
+           apiCall = { actorApiService.getTrendingActors(page) },
             logger = logger
         )
         return result.toPagedActorDtos()

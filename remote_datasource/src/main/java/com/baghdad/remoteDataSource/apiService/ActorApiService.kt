@@ -9,6 +9,7 @@ import com.baghdad.remoteDataSource.response.actor.TrendingActorResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ActorApiService {
 
@@ -39,6 +40,7 @@ interface ActorApiService {
     @Authenticated
     @GET(TRENDING_ACTORS_ENDPOINT)
     suspend fun getTrendingActors(
+        @Query("page") page: Int
     ): Response<TrendingActorResponse>
 
     companion object {
@@ -46,6 +48,6 @@ interface ActorApiService {
         private const val PERSON_TV_SHOWS_PICK_ENDPOINT = "person/{person_id}/tv_credits"
         private const val PERSON_IMAGES_ENDPOINT = "person/{person_id}/images"
         private const val PERSON_DETAILS_ENDPOINT = "person/{person_id}"
-        private const val TRENDING_ACTORS_ENDPOINT = "/trending/person/week"
+        private const val TRENDING_ACTORS_ENDPOINT = "trending/person/week"
     }
 }
