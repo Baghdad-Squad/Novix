@@ -1,13 +1,17 @@
 package com.baghdad.repository
 
 import com.baghdad.domain.repository.AuthenticationRepository
-import com.baghdad.repository.datasource.local.LocalSessionDataSource
+import com.baghdad.entity.User
+import com.baghdad.repository.datasource.local.LocalSessionDataStore
+import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
+import com.baghdad.repository.model.toEntity
 import com.baghdad.repository.util.executeLoginSafely
 
 class AuthenticationRepositoryImpl(
     private val remoteAuthenticationDataSource: RemoteAuthenticationDataSource,
-    private val localSessionDataSource: LocalSessionDataSource
+    private val localSessionDataStore: LocalSessionDataStore,
+    private val localUserDataStore: LocalUserDataStore
 ) : AuthenticationRepository {
     override suspend fun login(userName: String, password: String): String {
         return executeLoginSafely {
@@ -18,23 +22,32 @@ class AuthenticationRepositoryImpl(
                 requestToken = requestToken
             )
             val sessionId = remoteAuthenticationDataSource.createSession(validatedRequestToken)
-            remoteAuthenticationDataSource.getUserDetails(sessionId)
-            localSessionDataSource.saveSessionId(sessionId)
+            val user = remoteAuthenticationDataSource.getUserDetails(sessionId)
+            localSessionDataStore.saveSessionId(sessionId)
+            localUserDataStore.saveUser(
+                id = user.id,
+                userName = user.userName,
+                imageUrl = user.imageUrl.orEmpty()
+            )
             sessionId
         }
 
     }
 
     override suspend fun isUserLoggedIn(): Boolean {
-        // TODO: need to handle error
-        return localSessionDataSource.getSessionId() != null
+        return localSessionDataStore.getSessionId() != null
     }
 
+    override suspend fun getLoggedInUser(): User? {
+        return localUserDataStore.getUser()?.toEntity()
+    }
+
+
     override suspend fun logOut(): Boolean {
-        val sessionId = localSessionDataSource.getSessionId()
+        val sessionId = localSessionDataStore.getSessionId()
         return if (sessionId != null) {
             remoteAuthenticationDataSource.deleteSession(sessionId)
-            localSessionDataSource.clearSession()
+            localSessionDataStore.deleteSessionId()
             true
         } else {
             false

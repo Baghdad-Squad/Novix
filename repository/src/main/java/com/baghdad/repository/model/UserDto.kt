@@ -1,7 +1,17 @@
 package com.baghdad.repository.model
 
-class UserDto(
-    val imageUrl: String? = null,
+import com.baghdad.entity.User
+
+data class UserDto(
     val id: Long,
     val userName: String,
+    val imageUrl: String? = null,
 )
+
+fun UserDto.toEntity(): User {
+    return User(
+        id = id,
+        userName = userName,
+        imageUrl = imageUrl.orEmpty()
+    )
+}
