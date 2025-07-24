@@ -1,26 +1,23 @@
 package com.baghdad.remoteDataSource.response.tvShow
 
 import com.baghdad.remoteDataSource.response.movie.Genre
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
+import com.google.gson.annotations.SerializedName
 data class TVShowDetailsResponse(
-    @SerialName("genres")
+    @SerializedName("genres")
     val genres: List<Genre>? = null,
-    @SerialName("id")
+    @SerializedName("id")
     val id: Int? = null,
-    @SerialName("name")
+    @SerializedName("name")
     val name: String? = null,
-    @SerialName("number_of_seasons")
+    @SerializedName("number_of_seasons")
     val numberOfSeasons: Int? = null,
-    @SerialName("overview")
+    @SerializedName("overview")
     val overview: String? = null,
-    @SerialName("poster_path")
+    @SerializedName("poster_path")
     val posterPath: String? = null,
-    @SerialName("vote_average")
+    @SerializedName("vote_average")
     val voteAverage: Double? = null,
-    @SerialName("first_air_date")
+    @SerializedName("first_air_date")
     val firstAirDate: String? = null,
 )
 
