@@ -48,6 +48,6 @@ interface ActorApiService {
         private const val PERSON_TV_SHOWS_PICK_ENDPOINT = "person/{person_id}/tv_credits"
         private const val PERSON_IMAGES_ENDPOINT = "person/{person_id}/images"
         private const val PERSON_DETAILS_ENDPOINT = "person/{person_id}"
-        private const val TRENDING_ACTORS_ENDPOINT = "trending/person/week"
+        private const val TRENDING_ACTORS_ENDPOINT = "trending/person/day"
     }
 }
