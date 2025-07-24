@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "com.example.application.proto";
+option java_multiple_files = true;
+
+message User {
+  int64 id = 1;
+  string userName = 2;
+  string imageUrl = 3;
+}
