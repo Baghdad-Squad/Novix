@@ -37,16 +37,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
+import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieHeaderWithDetailsCard
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
@@ -246,7 +247,7 @@ private fun MovieDetailsContent(
                     itemsIndexed(state.moreLikeThisMovie) { index, movie ->
                         HomeCard(
                             url = movie.imageUrl,
-                            contentDescription = stringResource(com.baghdad.ui.R.string.card_movie_image),
+                            contentDescription = stringResource(R.string.card_movie_image),
                             isSaved = movie.isSaved,
                             onSavedClick = {
                                 listener.onSaveMoreLikeThisMedia(movie.id)

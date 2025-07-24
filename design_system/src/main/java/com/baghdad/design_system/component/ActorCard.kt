@@ -60,8 +60,8 @@ fun ActorCard(
     ) {
         AsyncImage(
             model = actorImage.ifBlank { null },
-            placeholder = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
-            fallback = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),
+            placeholder = painterResource(R.drawable.img_defualt_image),
+            fallback = painterResource(R.drawable.img_defualt_image),
             contentDescription = stringResource(R.string.actor_image),
             modifier = Modifier
                 .size(ActorImageSize)
