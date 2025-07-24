@@ -87,11 +87,6 @@ val localDataSourceModule = module {
     single<DataStore<User>>(named("user")) {
         androidContext().userDataStore
     }
-//    single<AppPreferencesDataStore> {
-//        AppPreferencesDataStore(
-//            dataStore = get(named("preferences"))
-//        )
-//    }
     single<LocalSessionDataStore> {
         LocalSessionDataStoreImpl(
             dataStore = get(named("preferences")),
