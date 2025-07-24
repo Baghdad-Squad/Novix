@@ -8,21 +8,21 @@ import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.dao.FavoriteGenreDao
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
-import com.baghdad.local_datasource.roomDB.dao.TrendingActorDao
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
 import com.baghdad.local_datasource.roomDB.dao.TopRatedDao
+import com.baghdad.local_datasource.roomDB.dao.TrendingActorDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
 import com.baghdad.local_datasource.roomDB.entity.Actor
 import com.baghdad.local_datasource.roomDB.entity.Genre
 import com.baghdad.local_datasource.roomDB.entity.LocalFavoriteGenreDto
 import com.baghdad.local_datasource.roomDB.entity.Movie
-import com.baghdad.local_datasource.roomDB.entity.TrendingActorEntity
 import com.baghdad.local_datasource.roomDB.entity.RecentSearch
 import com.baghdad.local_datasource.roomDB.entity.RecentlyViewed
 import com.baghdad.local_datasource.roomDB.entity.SearchQuery
 import com.baghdad.local_datasource.roomDB.entity.TopRatedMovie
+import com.baghdad.local_datasource.roomDB.entity.TrendingActorEntity
 import com.baghdad.local_datasource.roomDB.entity.TvShow
 
 @Database(
@@ -35,8 +35,7 @@ import com.baghdad.local_datasource.roomDB.entity.TvShow
         Genre::class,
         LocalFavoriteGenreDto::class,
         SearchQuery::class,
-        TopRatedMovie::class
-        SearchQuery::class,
+        TopRatedMovie::class,
         TrendingActorEntity::class
     ],
     version = 1
