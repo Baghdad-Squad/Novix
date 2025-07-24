@@ -7,6 +7,7 @@ import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.mapper.toDto
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.model.ContinueWatchingDto
+import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getLocalPagedSafely
 
 class ContinueWatchingRepositoryImpl(
@@ -40,6 +41,8 @@ class ContinueWatchingRepositoryImpl(
             contentType = contentType,
             userId = 1 // TODO : Add Authentication here
         )
-        localContinueWatchingDataSource.addContinueWatching(continueWatching.toDto())
+        executeSafely {
+            localContinueWatchingDataSource.addContinueWatching(continueWatching.toDto())
+        }
     }
 }
