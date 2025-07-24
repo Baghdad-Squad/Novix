@@ -45,7 +45,7 @@ class RemoteMovieDataSourceImpl(
         ).cast?.map { it.toDto() } ?: emptyList()
     }
 
-    override suspend fun getMoviesByGenre(genreId: Long, page: Int): List<MovieDto> {
+    override suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto> {
         return handleRequest<SimilarMovieResponse>(
             apiCall = {
                 movieApiService.getMoviesByGenre(
@@ -54,7 +54,7 @@ class RemoteMovieDataSourceImpl(
                 )
             },
             logger = logger,
-        ).results.orEmpty().map { it.toDto() }
+        ).toPagedMovieDtos()
     }
 
     override suspend fun getMovieReviews(movieId: Long): List<ReviewDto> {

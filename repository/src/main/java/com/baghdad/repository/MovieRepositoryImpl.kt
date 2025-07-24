@@ -14,6 +14,7 @@ import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getPagedSafely
+import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
 
 class MovieRepositoryImpl(
@@ -56,13 +57,18 @@ class MovieRepositoryImpl(
 
     override suspend fun getMoviesByGenre(
         genreId: Long,
-        page: Int
-    ): List<Movie> {
-        return executeSafely {
-            remoteMovieDataSource.getMoviesByGenre(genreId, page).map {
-                it.toEntity()
-            }
-        }
+        page: Int,
+        pageSize: Int
+    ): PagedResult<Movie> {
+        return getRemotePagedSafely(
+            page = page,
+            pageSize = pageSize,
+            mapToEntity = MovieDto::toEntity,
+
+            getRemoteData = { page, _ ->
+                remoteMovieDataSource.getMoviesByGenre(genreId, page)
+            },
+        )
     }
 
     override suspend fun getMovieReviews(movieId: Long): List<Review> {
