@@ -9,19 +9,19 @@ class GetTrendingMoviesUseCase(
 ) {
 
     suspend operator fun invoke(page: Int, genreId: Long = 0L): PagedResult<Movie> {
+
         val pagedResult = trendingMovieRepository.getTrendingMovies(page)
 
-        return if (genreId != 0L) {
-            val filteredData = pagedResult.data.filter { movie ->
-                movie.genres.any { genre -> genre.id == genreId }
-            }
-            PagedResult(
-                data = filteredData,
-                nextKey = pagedResult.nextKey,
-                prevKey = pagedResult.prevKey
-            )
-        } else {
-            pagedResult
+        if (genreId == 0L) return pagedResult
+
+        val filteredData = pagedResult.data.filter { movie ->
+            movie.genres.any { genre -> genre.id == genreId }
         }
+
+        return PagedResult(
+            data = filteredData,
+            nextKey = pagedResult.nextKey,
+            prevKey = pagedResult.prevKey
+        )
     }
 }
