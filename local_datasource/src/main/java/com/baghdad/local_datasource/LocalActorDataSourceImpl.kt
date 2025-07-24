@@ -40,13 +40,13 @@ class LocalActorDataSourceImpl(
             actorDao.getActorById(id).toDto()
         }
 
-
     override suspend fun getAllActors(): Flow<List<ActorDto>> =
         executeWithErrorHandling(logger = logger) {
             actorDao.getAllActors().map {
                 it.map { it.toDto() }
             }
         }
+
 
     override suspend fun deleteAllActors() = executeWithErrorHandling(logger = logger) {
         actorDao.deleteAllActors()
