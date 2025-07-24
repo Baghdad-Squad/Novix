@@ -6,7 +6,9 @@ import com.baghdad.entity.person.Actor
 class GetActorInfoUseCase(
     private val actorRepository: ActorRepository
 ) {
+
     suspend operator fun invoke(actorId: Long): Actor {
         return actorRepository.getActorInfo(actorId)
     }
+
 }

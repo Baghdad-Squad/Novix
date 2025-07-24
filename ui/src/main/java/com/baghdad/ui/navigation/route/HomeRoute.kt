@@ -19,7 +19,7 @@ sealed interface HomeRoute : Route {
     data object TvShowsScreen : HomeRoute
 
     @Serializable
-    data object ActorsScreen : HomeRoute
+    data object TrendingActorsScreen : HomeRoute
 
     @Serializable
     data object ContinueWatchingScreen : HomeRoute
