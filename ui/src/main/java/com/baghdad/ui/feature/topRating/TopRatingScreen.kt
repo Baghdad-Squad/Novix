@@ -22,7 +22,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
-import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
@@ -31,6 +30,7 @@ import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.topRating.component.GenresSection
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
@@ -100,6 +100,7 @@ fun TopRatingMoviesContent(
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
                     onClick = { },
+                    size = Pair(40.dp, 40.dp),
                     modifier = Modifier
                         .padding(start = 16.dp, bottom = 8.dp)
                 )

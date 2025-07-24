@@ -1,8 +1,10 @@
 package com.baghdad.remoteDataSource
 
+import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
+import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
@@ -17,7 +19,6 @@ import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
-import io.ktor.client.HttpClient
 
 class RemoteMovieDataSourceImpl(
     private val movieApiService: MovieApiService,
@@ -84,25 +85,11 @@ class RemoteMovieDataSourceImpl(
     override suspend fun getTopRatedMovies(
         page: Int,
     ): PagedResultDto<MovieDto> {
-        val endpoint = TOP_RATED_MOVIES_ENDPOINT
-
         val response = handleRequest<SimilarMovieResponse>(
-            client = httpClient,
+            apiCall = { movieApiService.getTopRatedMovies(page) },
             logger = logger,
-            url = "$baseUrl$endpoint",
-            params = mapOf("page" to page.toString())
         )
         return response.toPagedMovieDtos()
     }
 
-    companion object {
-        private const val SIMILAR_MOVIES_ENDPOINT = "/movie/{movie_id}/similar"
-        private const val MOVIE_DETAILS_ENDPOINT = "/movie/{movie_id}"
-        private const val MOVIE_CREDITS_ENDPOINT = "/movie/{movie_id}/credits"
-        private const val MOVIE_WITH_GENRE_ENDPOINT = "/discover/movie"
-        private const val MOVIE_REVIEWS_ENDPOINT = "/movie/{movie_id}/reviews"
-        private const val MOVIE_IMAGES_ENDPOINT = "/movie/{movie_id}/images"
-        private const val MOVIE_VIDEOS_ENDPOINT = "/movie/{movie_id}/videos"
-        private const val TOP_RATED_MOVIES_ENDPOINT = "/movie/top_rated"
-    }
 }
