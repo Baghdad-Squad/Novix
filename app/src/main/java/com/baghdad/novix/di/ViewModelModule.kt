@@ -16,6 +16,7 @@ import com.baghdad.viewmodel.search.SearchViewModel
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
 import com.baghdad.viewmodel.topRating.TopRatingViewModel
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowViewModel
+import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -78,4 +79,6 @@ val viewModelModule = module {
     viewModelOf(::LoginViewModel)
     viewModelOf(::ContinueWatchingViewModel)
     viewModelOf(::TrendingActorViewModel)
+
+    viewModelOf(::TrendingTvShowViewModel)
 }
