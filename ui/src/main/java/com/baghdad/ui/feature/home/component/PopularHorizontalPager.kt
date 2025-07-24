@@ -21,6 +21,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun PopularCardPager(
     items: List<PopularItemUiState>,
+    onClick: (PopularItemUiState) -> Unit,
+    onSaveClick: (PopularItemUiState) -> Unit,
     modifier: Modifier = Modifier,
     autoSlideDuration: Long = 4000L,
 ) {
@@ -77,13 +79,15 @@ fun PopularCardPager(
                 else -> kotlin.math.abs(currentPageOffset) * 40f
             }
 
+            val item = items[page]
+
             PopularCard(
-                contentName = items[page].name,
-                contentRating = items[page].rating,
-                imageUrl = items[page].imageUrl,
-                onCardClick = { items[page].onClick() },
-                onSavedClick = { items[page].onSavedClick() },
-                isSaved = items[page].isSaved,
+                contentName = item.name,
+                contentRating = item.rating,
+                imageUrl = item.imageUrl,
+                onCardClick = { onClick(item) },
+                onSavedClick = { onSaveClick(item) },
+                isSaved = item.isSaved,
                 modifier = Modifier
                     .graphicsLayer {
                         rotationZ = rotation
