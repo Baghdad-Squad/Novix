@@ -1,9 +1,7 @@
 package com.baghdad.remoteDataSource.response.actor
 
 import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class TrendingActorResponse(
     val page: Int? = null,
     val results: List<TrendingActorDetails>? = null,
@@ -11,7 +9,6 @@ data class TrendingActorResponse(
     @SerializedName("total_results") val totalResults: Int? = null
 )
 
-@Serializable
 data class TrendingActorDetails(
     @SerializedName("adult") val adult: Boolean? = null,
     @SerializedName("id") val id: Int? = null,
