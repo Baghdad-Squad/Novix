@@ -81,4 +81,15 @@ class RemoteMovieDataSourceImpl(
             logger = logger,
         ).mapToYoutubeURL()
     }
+
+    override suspend fun getTopRatedMovies(
+        page: Int,
+    ): PagedResultDto<MovieDto> {
+        val response = handleRequest<SimilarMovieResponse>(
+            apiCall = { movieApiService.getTopRatedMovies(page) },
+            logger = logger,
+        )
+        return response.toPagedMovieDtos()
+    }
+
 }

@@ -59,6 +59,7 @@
     <string name="season_template">موسم %1$s</string>
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>
-    <string name="actors">ممثلين</string>
     <string name="what_do_you_want_to_watch">ماذا تريد أن تشاهد؟</string>
+    <string name="top_rating">الاعلى تقييم</string>
+    <string name="actors">ممثلين</string>
 </resources>
