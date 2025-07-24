@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,21 +37,12 @@ fun SearchResultContent(
     isLoading: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Theme.color.surface)
-        ) {
-        if (isLoading) {
-            Box(Modifier.fillMaxSize()) {
-                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
+    Column {
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -71,73 +63,83 @@ fun SearchResultContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-        when (selectedTab) {
-            SearchScreenState.SearchTab.MOVIES -> {
-                if (movies.itemCount != 0) {
-                    MovieCardList(
-                        movies = movies,
-                        onSavedClick = onSavedClick,
-                        onMovieClick = onMovieClick,
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        EmptySearchState(
-                            imagePath = com.baghdad.design_system.R.drawable.no_search_results,
-                            contentDescription = stringResource(R.string.no_search_result_picture),
-                            message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
-                        )
-                    }
-                }
-
-            }
-
-            SearchScreenState.SearchTab.TV_SHOWS -> {
-                if (tvShows.itemCount != 0) {
-                    TvShowCardList(
-                        tvShows = tvShows,
-                        onSavedClick = onSavedClick,
-                        onTVShowClick = onTvShowClick,
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        EmptySearchState(
-                            imagePath = com.baghdad.design_system.R.drawable.no_search_results,
-                            contentDescription = stringResource(R.string.no_search_result_picture),
-                            message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
-                        )
-                    }
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Theme.color.surface)
+        ) {
+            if (isLoading) {
+                Box(Modifier.fillMaxSize()) {
+                    WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
                 }
             }
 
-            SearchScreenState.SearchTab.ACTORS -> {
-                if (actors.itemCount != 0) {
-                    ActorCardList(
-                        actors = actors,
-                        onActorClick = onActorClick,
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        EmptySearchState(
-                            imagePath = com.baghdad.design_system.R.drawable.no_search_results,
-                            contentDescription = stringResource(R.string.no_search_result_picture),
-                            message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+            Spacer(modifier = Modifier.height(16.dp))
+
+            when (selectedTab) {
+                SearchScreenState.SearchTab.MOVIES -> {
+                    if (movies.itemCount != 0) {
+                        MovieCardList(
+                            movies = movies,
+                            onSavedClick = onSavedClick,
+                            onMovieClick = onMovieClick,
                         )
+                    } else {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            EmptySearchState(
+                                imagePath = com.baghdad.design_system.R.drawable.no_search_results,
+                                contentDescription = stringResource(R.string.no_search_result_picture),
+                                message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                            )
+                        }
+                    }
+
+                }
+
+                SearchScreenState.SearchTab.TV_SHOWS -> {
+                    if (tvShows.itemCount != 0) {
+                        TvShowCardList(
+                            tvShows = tvShows,
+                            onSavedClick = onSavedClick,
+                            onTVShowClick = onTvShowClick,
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            EmptySearchState(
+                                imagePath = com.baghdad.design_system.R.drawable.no_search_results,
+                                contentDescription = stringResource(R.string.no_search_result_picture),
+                                message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                            )
+                        }
+                    }
+                }
+
+                SearchScreenState.SearchTab.ACTORS -> {
+                    if (actors.itemCount != 0) {
+                        ActorCardList(
+                            actors = actors,
+                            onActorClick = onActorClick,
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            EmptySearchState(
+                                imagePath = com.baghdad.design_system.R.drawable.no_search_results,
+                                contentDescription = stringResource(R.string.no_search_result_picture),
+                                message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
+                            )
+                        }
                     }
                 }
             }
         }
     }
-
 }
