@@ -29,11 +29,13 @@ class ActorRepositoryImplTest {
     @BeforeEach
     fun setUp() {
         remoteActorDataSource = mockk()
+        localActorDataSource = mockk()
         actorRepositoryImpl = ActorRepositoryImpl(
             remoteActorDataSource = remoteActorDataSource,
             localPopularPeopleDataSource = localActorDataSource
         )
     }
+
 
     @Test
     fun `getActorInfo should return actor when remote call succeeds`() = runTest {
