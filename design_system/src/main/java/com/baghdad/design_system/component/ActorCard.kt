@@ -56,7 +56,8 @@ fun ActorCard(
         modifier = modifier
             .fillMaxWidth()
             .background(color = Theme.color.surface)
-            .noRippleClickable { onClick() }) {
+            .noRippleClickable { onClick() }
+    ) {
         AsyncImage(
             model = actorImage.ifBlank { null },
             placeholder = painterResource(com.baghdad.islamic_image_loader.R.drawable.img_defualt_image),

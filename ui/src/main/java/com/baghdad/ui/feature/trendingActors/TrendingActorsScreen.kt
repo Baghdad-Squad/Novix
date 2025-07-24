@@ -25,8 +25,8 @@ import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.people.PeopleInteractionListener
-import com.baghdad.viewmodel.people.PeopleUiEffect
+import com.baghdad.viewmodel.people.TrendingActorsInteractionListener
+import com.baghdad.viewmodel.people.TrendingActorUiEffect
 import com.baghdad.viewmodel.people.TrendingActorUiState
 import com.baghdad.viewmodel.people.TrendingActorViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -46,11 +46,11 @@ fun TrendingActorsScreen(
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
-            is PeopleUiEffect.OnBackClick -> {
+            is TrendingActorUiEffect.OnBackClick -> {
                 handleNavigation(HomeNavEvent.NavigateBack)
             }
 
-            is PeopleUiEffect.NavigateToActorDetails -> {
+            is TrendingActorUiEffect.NavigateToActorDetails -> {
                 handleNavigation(HomeNavEvent.NavigateToActorDetails(effect.actorId))
             }
         }
@@ -61,7 +61,7 @@ fun TrendingActorsScreen(
 @Composable
 fun TrendingActorsContent(
     uiState: TrendingActorUiState,
-    listner: PeopleInteractionListener,
+    listner: TrendingActorsInteractionListener,
     snackBarState: SnackBarState
 ) {
     val trendingActors = uiState.trendingActor.collectAsLazyPagingItems()

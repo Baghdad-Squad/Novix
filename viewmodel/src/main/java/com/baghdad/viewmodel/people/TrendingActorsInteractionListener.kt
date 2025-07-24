@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.people
 
-interface PeopleInteractionListener{
+interface TrendingActorsInteractionListener{
     fun onBackClick()
     fun onPeopleClick(peopleId: Long)
 }

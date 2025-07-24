@@ -60,7 +60,7 @@ class RemoteActorDataSourceImpl(
         ).cast?.map { it.toDto() } ?: emptyList()
     }
 
-    override suspend fun getPopularPeople(page: Int): PagedResultDto<ActorDto> {
+    override suspend fun getTrendingActors(page: Int): PagedResultDto<ActorDto> {
         val params = mapOf("page" to page.toString())
 
         val response = handleRequest<TrendingActorResponse>(

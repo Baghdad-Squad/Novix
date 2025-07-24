@@ -43,21 +43,21 @@ class ActorRepositoryImpl(
         }
     }
 
-    override suspend fun getPopularPeople(page: Int): PagedResult<Actor> {
+    override suspend fun getTrendingActor(page: Int): PagedResult<Actor> {
         return getPagedSafely(
             page = page,
             mapToEntity = ActorDto::toEntity,
             onStart = {},
             getCachedPage = { page, pageSize ->
-                localPopularPeopleDataSource.getPopularActor(page, pageSize)
+                localPopularPeopleDataSource.getTrendingActor(page, pageSize)
 
             },
             getRemoteData = { page, _ ->
-                remoteActorDataSource.getPopularPeople(page)
+                remoteActorDataSource.getTrendingActors(page)
 
             },
             cacheData = {
-                localPopularPeopleDataSource.addPopularActor(it)
+                localPopularPeopleDataSource.addTrendingActor(it)
             })
     }
 }

@@ -6,8 +6,8 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class TrendingActorViewModel(
     private val getPeopleUseCase: GetTrendingActorUseCase
-) : BaseViewModel<TrendingActorUiState, PeopleUiEffect>(TrendingActorUiState()),
-    PeopleInteractionListener {
+) : BaseViewModel<TrendingActorUiState, TrendingActorUiEffect>(TrendingActorUiState()),
+    TrendingActorsInteractionListener {
 
     init {
         getPopularPeople()
@@ -23,7 +23,7 @@ class TrendingActorViewModel(
                 getPeopleUseCase(page)
             },
             onInitialLoadFinished = ::onFinally,
-            mapEntityToUiState = { it.toTrendingActorUi() },
+            mapEntityToUiState = { it.toTrendingActorsUi() },
             onFlowCreated = { flow ->
                 updateState { it.copy(trendingActor = flow) }
             }
@@ -31,11 +31,11 @@ class TrendingActorViewModel(
     }
 
     override fun onBackClick() {
-        sendEffect(PeopleUiEffect.OnBackClick)
+        sendEffect(TrendingActorUiEffect.OnBackClick)
     }
 
     override fun onPeopleClick(peopleId: Long) {
-        sendEffect(PeopleUiEffect.NavigateToActorDetails(peopleId))
+        sendEffect(TrendingActorUiEffect.NavigateToActorDetails(peopleId))
     }
 
     private fun onFinally() {

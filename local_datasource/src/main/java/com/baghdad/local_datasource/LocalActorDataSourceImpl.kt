@@ -63,14 +63,14 @@ class LocalActorDataSourceImpl(
             actorDao.getActorsFromSearchQuery(name, pageSize, pageOffset).map(Actor::toDto)
         }
 
-    override suspend fun addPopularActor(people: List<ActorDto>) =
+    override suspend fun addTrendingActor(people: List<ActorDto>) =
         executeWithErrorHandling(logger = logger) {
-            trendingActorDao.upsertPopularActors(people.map(ActorDto::toTrendingActorEntity))
+            trendingActorDao.upsertTrendingActors(people.map(ActorDto::toTrendingActorEntity))
         }
 
-    override suspend fun getPopularActor(page: Int, pageSize: Int): List<ActorDto> =
+    override suspend fun getTrendingActor(page: Int, pageSize: Int): List<ActorDto> =
         executeWithErrorHandling(logger = logger) {
-            trendingActorDao.getAllPopularActors(
+            trendingActorDao.getAllTrendingActors(
                 pageSize, calculatePageOffset(pageSize, page)
             ).map(
                 TrendingActorEntity::toDto
@@ -78,13 +78,13 @@ class LocalActorDataSourceImpl(
         }
 
 
-    override suspend fun getPopularActorById(id: Long): ActorDto =
+    override suspend fun getTrendingActorById(id: Long): ActorDto =
         executeWithErrorHandling(logger = logger) {
-            trendingActorDao.getPopularActorById(id).toDto()
+            trendingActorDao.getTrendingActorById(id).toDto()
         }
 
-    override suspend fun deletePopularActor() = executeWithErrorHandling(logger = logger) {
-        trendingActorDao.deleteAllPopularActor()
+    override suspend fun deleteTrendingActor() = executeWithErrorHandling(logger = logger) {
+        trendingActorDao.deleteAllTrendingActor()
     }
 }
 

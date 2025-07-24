@@ -9,7 +9,7 @@ class GetTrendingActorUseCase(
 
 ) {
     suspend operator fun invoke(page: Int): PagedResult<Actor> {
-        return actorRepository.getPopularPeople(page)
+        return actorRepository.getTrendingActor(page)
 
     }
 }

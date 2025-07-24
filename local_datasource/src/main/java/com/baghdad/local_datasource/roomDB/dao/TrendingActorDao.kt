@@ -8,7 +8,7 @@ import com.baghdad.local_datasource.roomDB.entity.TrendingActorEntity
 @Dao
 interface TrendingActorDao {
     @Upsert
-    suspend fun upsertPopularActors(people: List<TrendingActorEntity>)
+    suspend fun upsertTrendingActors(people: List<TrendingActorEntity>)
 
     @Query(
         """
@@ -16,16 +16,16 @@ interface TrendingActorDao {
     LIMIT :pageSize OFFSET :offset
     """
     )
-    suspend fun getAllPopularActors(
+    suspend fun getAllTrendingActors(
         pageSize: Int,
         offset: Int
     ): List<TrendingActorEntity>
 
 
     @Query("SELECT * FROM trendingActor WHERE id = :personId")
-    suspend fun getPopularActorById(personId: Long): TrendingActorEntity
+    suspend fun getTrendingActorById(personId: Long): TrendingActorEntity
 
     @Query("DELETE FROM trendingActor")
-    suspend fun deleteAllPopularActor()
+    suspend fun deleteAllTrendingActor()
 
 }
