@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.baghdad.ui.feature.trendingTvShow.TrendingTvShowScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.HomeRoute
@@ -28,7 +29,9 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
             DummyScreen(title = "Movies Screen")
         }
         composable<HomeRoute.TvShowsScreen> {
-            DummyScreen(title = "TV Shows Screen")
+            TrendingTvShowScreen(handleNavigation = { event ->
+                handleHomeNavigation(event, navController)
+            })
         }
         composable<HomeRoute.ActorsScreen> {
             DummyScreen(title = "Actors Screen")
