@@ -30,6 +30,7 @@ import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
+import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowImagesUseCase
@@ -71,6 +72,7 @@ val useCaseModule = module {
     singleOf(::GetMovieGalleryUseCase)
     singleOf(::GetTvShowGenreNameByIdUseCase)
     singleOf(::GetMovieGenreNameByIdUseCase)
+    singleOf(::GetTrendingTvShowUseCase)
     singleOf(::GetAllContinueWatchingUseCase)
     singleOf(::GetAllContinueWatchingByGenreUseCase)
     singleOf(::AddContinueWatchingUseCase)
