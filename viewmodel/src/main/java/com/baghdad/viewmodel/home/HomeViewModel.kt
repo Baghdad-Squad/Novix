@@ -1,36 +1,198 @@
 package com.baghdad.viewmodel.home
 
+import androidx.lifecycle.viewModelScope
+import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
+import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
+import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
+import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
+import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
+import com.baghdad.entity.media.Genre
+import com.baghdad.entity.media.Movie
+import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class HomeViewModel(
+    private val getGenresUseCase: GetGenresUseCase,
+    private val getContinueWatchingUseCase: GetAllContinueWatchingUseCase,
+    private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
+    private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
+    private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
+    private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase,
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()), HomeInteractionListener {
     init {
         getPopularItems()
         getTopRatingMovies()
-//        getContinueWatchingItems()
-//        getMovieGenres()
-//        getUpcomingMovies()
-    }
-
-    private fun getTopRatingMovies() {
-        TODO("Not yet implemented")
+        getContinueWatchingItems()
+        getMovieGenres()
+        collectPaginatedUpcomingMovies()
     }
 
     private fun getPopularItems() {
-        TODO("Not yet implemented")
+        viewModelScope.launch(Dispatchers.IO) {
+            updateState {
+                it.copy(isPopularLoading = true)
+            }
+            val popularMovies = async {
+                getPopularMoviesUseCase()
+            }
+            val popularTvShows = async {
+                getPopularTvShowsUseCase()
+            }
+            val movies = popularMovies.await().take(5).map(Movie::toPopularItemUiState)
+            val tvShows = popularTvShows.await().take(5).map(TvShow::toPopularItemUiState)
+            updateState {
+                it.copy(
+                    isPopularLoading = false,
+                    popularItems = (movies + tvShows).shuffled(),
+                )
+            }
+        }
+    }
+
+    private fun getTopRatingMovies() {
+        tryToExecute(
+            callee = { getMovieTopRatingUseCase(1, 0).data },
+            onSuccess = ::onGetTopRatingMoviesSuccess,
+            onStart = ::onStartGetTopRatingMovies,
+            onFinally = ::onFinishGetTopRatingMovies
+        )
+    }
+
+    private fun onGetTopRatingMoviesSuccess(movies: List<Movie>) {
+        updateState {
+            it.copy(
+                topRatingItems = movies.map(Movie::toTopRatingItemUiState)
+            )
+        }
+    }
+
+    private fun onStartGetTopRatingMovies() {
+        updateState {
+            it.copy(isTopRatingLoading = true)
+        }
+    }
+
+    private fun onFinishGetTopRatingMovies() {
+        updateState {
+            it.copy(isTopRatingLoading = false)
+        }
+    }
+
+    private fun getContinueWatchingItems() {
+        tryToExecute(
+            callee = { getContinueWatchingUseCase(1, 1).data },
+            onSuccess = ::onGetContinueWatchingItemsSuccess,
+            onStart = ::onStartGetContinueWatchingItems,
+            onFinally = ::onFinishGetContinueWatchingItems
+        )
+    }
+
+    private fun onGetContinueWatchingItemsSuccess(items: List<ContinueWatching>) {
+        updateState {
+            it.copy(
+                continueWatchingItems = items.map(ContinueWatching::toUiState)
+            )
+        }
+    }
+
+    private fun onStartGetContinueWatchingItems() {
+        updateState {
+            it.copy(isContinueWatchingLoading = true)
+        }
+    }
+
+    private fun onFinishGetContinueWatchingItems() {
+        updateState {
+            it.copy(isContinueWatchingLoading = false)
+        }
+    }
+
+    private fun getMovieGenres() {
+        tryToExecute(
+            callee = getGenresUseCase::getMovieGenres,
+            onSuccess = ::onGetMovieGenresSuccess,
+            onStart = ::onStartGetMovieGenres,
+            onFinally = ::onFinishGetMovieGenres,
+        )
+    }
+
+    private fun onGetMovieGenresSuccess(genres: List<Genre>) {
+        updateState {
+            it.copy(upcomingGenres = genres.map(Genre::toUiState))
+        }
+    }
+
+    private fun onStartGetMovieGenres() {
+        updateState {
+            it.copy(isUpcomingGenresLoading = true)
+        }
+    }
+
+    private fun onFinishGetMovieGenres() {
+        updateState {
+            it.copy(isUpcomingGenresLoading = false)
+        }
+    }
+
+    private fun collectPaginatedUpcomingMovies() {
+        updateState {
+            it.copy(isUpcomingMoviesLoading = true)
+        }
+        collectPagingFlow(
+            loadData = { page ->
+                getUpcomingMoviesUseCase(
+                    page,
+                    currentState.selectedUpcomingGenreId
+                )
+            },
+            onInitialLoadFinished = {
+                updateState {
+                    it.copy(isUpcomingMoviesLoading = false)
+                }
+            },
+            pageSize = 20,
+            mapEntityToUiState = Movie::toUpcomingItemUiState,
+            onFlowCreated = { flow ->
+                updateState {
+                    it.copy(upcomingItems = flow)
+                }
+            }
+        )
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+        return BaseSnackBarMessage.DefaultMessage
     }
 
     override fun onPopularItemClicked(item: HomeScreenState.PopularItemUiState) {
-        TODO("Not yet implemented")
+        if (item.type == HomeScreenState.PopularItemUiState.Type.MOVIE) {
+            sendEffect(HomeScreenEffect.NavigateToMovieDetails(item.id))
+        } else {
+            sendEffect(HomeScreenEffect.NavigateToTvShowDetails(item.id))
+        }
     }
 
     override fun onPopularItemSaveClicked(item: HomeScreenState.PopularItemUiState) {
-        TODO("Not yet implemented")
+//        TODO("Implement when saving lists is implemented")
+    }
+
+    override fun onMoviesClicked() {
+        sendEffect(HomeScreenEffect.NavigateToMovies)
+    }
+
+    override fun onTvShowsClicked() {
+        sendEffect(HomeScreenEffect.NavigateToTvShows)
+    }
+
+    override fun onActorsClicked() {
+        sendEffect(HomeScreenEffect.NavigateToActors)
     }
 
     override fun onTopRatingItemClicked(item: HomeScreenState.TopRatingItemUiState) {
@@ -38,11 +200,11 @@ class HomeViewModel(
     }
 
     override fun onTopRatingItemSaveClicked(item: HomeScreenState.TopRatingItemUiState) {
-        TODO("Not yet implemented")
+//        TODO("Implement when saving lists is implemented")
     }
 
     override fun onViewAllTopRatingClicked() {
-        TODO("Not yet implemented")
+        sendEffect(HomeScreenEffect.NavigateToTopRating)
     }
 
     override fun onContinueWatchingItemClicked(item: HomeScreenState.ContinueWatchingItemUiState) {
@@ -50,15 +212,18 @@ class HomeViewModel(
     }
 
     override fun onContinueWatchingItemSaveClicked(item: HomeScreenState.ContinueWatchingItemUiState) {
-        TODO("Not yet implemented")
+//        TODO("Implement when saving lists is implemented")
     }
 
     override fun onViewAllContinueWatchingClicked() {
-        TODO("Not yet implemented")
+        sendEffect(HomeScreenEffect.NavigateToContinueWatching)
     }
 
-    override fun onUpcomingGenreSelected(genre: HomeScreenState.GenreUiState) {
-        TODO("Not yet implemented")
+    override fun onUpcomingGenreSelected(genre: HomeScreenState.GenreUiState?) {
+        updateState {
+            it.copy(selectedUpcomingGenreId = genre?.id, isUpcomingGenresLoading = true)
+        }
+        collectPaginatedUpcomingMovies()
     }
 
     override fun onUpcomingItemClicked(item: HomeScreenState.UpcomingItemUiState) {
@@ -66,6 +231,6 @@ class HomeViewModel(
     }
 
     override fun onUpcomingItemSaveClicked(item: HomeScreenState.UpcomingItemUiState) {
-        TODO("Not yet implemented")
+//        TODO("Implement when saving lists is implemented")
     }
 }

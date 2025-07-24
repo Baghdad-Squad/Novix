@@ -5,7 +5,7 @@ import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
+import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 
 class TopRatingViewModel(
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
@@ -63,7 +63,7 @@ class TopRatingViewModel(
 
     override fun onSaveMovieClick(movieId: Long) {
         showSnackBar(
-            message = SearchScreenBaseSnackBarMessages.SavedItemSuccessfully, isSuccess = true
+            message = SearchSnackBarMessage.SavedItemSuccessfully, isSuccess = true
         )
     }
 

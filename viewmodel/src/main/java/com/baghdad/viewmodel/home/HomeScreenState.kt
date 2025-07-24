@@ -14,7 +14,8 @@ data class HomeScreenState(
     val continueWatchingItems: List<ContinueWatchingItemUiState> = emptyList(),
     val isUpcomingGenresLoading: Boolean = false,
     val upcomingGenres: List<GenreUiState> = emptyList(),
-    val selectedUpcomingGenreId: Long = 0L,
+    val isUpcomingMoviesLoading: Boolean = false,
+    val selectedUpcomingGenreId: Long? = null,
     val upcomingItems: Flow<PagingData<UpcomingItemUiState>> = flowOf(),
     override val isLoading: Boolean = false,
 ) : BaseUiState {
@@ -23,8 +24,13 @@ data class HomeScreenState(
         val name: String = "",
         val rating: Double = 0.0,
         val imageUrl: String = "",
-        val isSaved: Boolean = false
-    )
+        val isSaved: Boolean = false,
+        val type: Type = Type.MOVIE
+    ) {
+        enum class Type {
+            MOVIE, TV_SHOW
+        }
+    }
 
     data class TopRatingItemUiState(
         val id: Long = 0L,
