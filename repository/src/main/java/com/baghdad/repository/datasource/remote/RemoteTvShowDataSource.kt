@@ -20,4 +20,5 @@ interface RemoteTvShowDataSource {
     suspend fun getTvShowReviews(tvId: Long): List<ReviewDto>
 
     suspend fun getTvShowTrailer(tvId: Long): String
+    suspend fun getPopularTvShows(): List<TvShowDto>
 }

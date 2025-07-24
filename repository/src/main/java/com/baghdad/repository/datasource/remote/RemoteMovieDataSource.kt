@@ -14,4 +14,6 @@ interface RemoteMovieDataSource {
     suspend fun getMovieImages(movieId: Long): List<String>
     suspend fun getMovieTrailer(movieId: Long): String
     suspend fun getTopRatedMovies(page: Int): PagedResultDto<MovieDto>
+    suspend fun getUpcomingMovies(page: Int, genreId: Long?): PagedResultDto<MovieDto>
+    suspend fun getPopularMovies(): List<MovieDto>
 }

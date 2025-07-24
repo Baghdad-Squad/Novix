@@ -9,6 +9,7 @@ import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.model.TvShowDto
 import com.baghdad.repository.util.executeSafely
 import java.util.Locale
 
@@ -68,6 +69,12 @@ class TvShowRepositoryImpl(
             tvShowRemoteDataSource.getTvShowReviews(tvId).map {
                 it.toEntity()
             }
+        }
+    }
+
+    override suspend fun getPopularTvShows(): List<TvShow> {
+        return executeSafely {
+            tvShowRemoteDataSource.getPopularTvShows().map(TvShowDto::toEntity)
         }
     }
 
