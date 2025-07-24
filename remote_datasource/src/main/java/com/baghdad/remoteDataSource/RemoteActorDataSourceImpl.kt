@@ -19,14 +19,14 @@ class RemoteActorDataSourceImpl(
 ): RemoteActorDataSource {
     override suspend fun getActorDetails(personId: Long): ActorDto {
         return handleRequest<ActorDetailsResponse>(
-            apiCall = {actorApiService.getActorDetails(personId)},
+            apiCall = { actorApiService.getActorDetails(personId) },
             logger = logger,
         ).toDto()
     }
 
     override suspend fun getActorImages(personId: Long): List<String> {
         return handleRequest<ActorImagesResponse>(
-            apiCall = {actorApiService.getActorImages(personId = personId)},
+            apiCall = { actorApiService.getActorImages(personId = personId) },
             logger = logger,
 
         ).profiles.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
@@ -41,9 +41,9 @@ class RemoteActorDataSourceImpl(
 
     override suspend fun getActorTvShows(personId: Long): List<TvShowDto> {
         return handleRequest<ActorTvShowsResponse>(
-            apiCall = {actorApiService.getActorTvShows(personId)},
+            apiCall = { actorApiService.getActorTvShows(personId) },
             logger = logger,
 
-        ).cast?.map { it.toDto() } ?: emptyList()
+            ).cast?.map { it.toDto() } ?: emptyList()
     }
 }

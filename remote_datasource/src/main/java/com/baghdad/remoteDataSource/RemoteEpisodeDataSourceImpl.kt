@@ -21,11 +21,13 @@ class RemoteEpisodeDataSourceImpl(
 
     override suspend fun getEpisodeDetails(tvId: Long, seasonNumber: Int, episodeNumber: Int): EpisodeDto {
         return handleRequest<EpisodeDetailsResponse>(
-            apiCall = {episodeApiService.getEpisodeDetails(
-                tvId = tvId,
-                seasonNumber = seasonNumber,
-                episodeNumber = episodeNumber
-            )},
+            apiCall = {
+                episodeApiService.getEpisodeDetails(
+                    tvId = tvId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber
+                )
+            },
             logger = logger,
 
         ).toDto()
@@ -33,11 +35,13 @@ class RemoteEpisodeDataSourceImpl(
 
     override suspend fun getEpisodeCastMembers(tvId: Long, seasonNumber: Int, episodeNumber: Int): List<CastMemberDto> {
         return handleRequest<CastMembersResponse>(
-            apiCall = { episodeApiService.getEpisodeCastMembers(
-                tvId = tvId,
-                seasonNumber = seasonNumber,
-                episodeNumber = episodeNumber
-            ) },
+            apiCall = {
+                episodeApiService.getEpisodeCastMembers(
+                    tvId = tvId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber
+                )
+            },
             logger = logger,
         ).cast?.map { it.toDto() } ?: emptyList()
 
@@ -45,11 +49,13 @@ class RemoteEpisodeDataSourceImpl(
 
     override suspend fun getEpisodeImages(tvId: Long, seasonNumber: Int, episodeNumber: Int): List<String> {
         return handleRequest<EpisodeImageResponse>(
-            apiCall = {episodeApiService.getEpisodeImages(
-                tvId = tvId,
-                seasonNumber = seasonNumber,
-                episodeNumber = episodeNumber
-            )},
+            apiCall = {
+                episodeApiService.getEpisodeImages(
+                    tvId = tvId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber
+                )
+            },
             logger = logger,
         ).stills.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
@@ -60,11 +66,13 @@ class RemoteEpisodeDataSourceImpl(
         episodeNumber: Int
     ): String {
         return handleRequest<EpisodeVideosResponse>(
-            apiCall = {episodeApiService.getEpisodeTrailer(
-                tvId = tvId,
-                seasonNumber = seasonNumber,
-                episodeNumber = episodeNumber
-            )},
+            apiCall = {
+                episodeApiService.getEpisodeTrailer(
+                    tvId = tvId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber
+                )
+            },
             logger = logger,
         ).mapToYoutubeTrailerUrl()
     }

@@ -235,7 +235,7 @@ private fun MovieDetailsContent(
                 if (state.moreLikeThisMovie.isNotEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Text(
-                            text = stringResource(com.baghdad.ui.R.string.more_like_this),
+                            text = stringResource(R.string.more_like_this),
                             fontSize = 18.sp,
                             style = Theme.typography.title.medium,
                             color = Theme.color.title,
