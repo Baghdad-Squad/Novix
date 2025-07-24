@@ -42,5 +42,6 @@
     <string name="read_more">اقرأ المزيد</string>
     <string name="read_less">إخفاء</string>
     <string name="go_back">العودة</string>
+    <string name="unsuitable_image">صورة غير مناسبة</string>
 
 </resources>

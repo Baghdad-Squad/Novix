@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource
 
+import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
@@ -16,83 +17,66 @@ import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.ReviewDto
-import io.ktor.client.HttpClient
 
 class RemoteMovieDataSourceImpl(
-    private val httpClient: HttpClient,
-    private val logger: Logger,
-    private val baseUrl: String
+    private val movieApiService: MovieApiService,
+    private val logger: Logger
 ) : RemoteMovieDataSource {
     override suspend fun getSimilarMovies(movieId: Long): List<MovieDto> {
-        val endpoint = SIMILAR_MOVIES_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<SimilarMovieResponse>(
-            client = httpClient,
+            apiCall = { movieApiService.getSimilarMovies(movieId) },
             logger = logger,
-            url = "$baseUrl$endpoint"
         ).results?.map { it.toDto() } ?: emptyList()
     }
 
     override suspend fun getMovieDetails(movieId: Long): MovieDto {
-        val endpoint = MOVIE_DETAILS_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<MovieDetailsResponse>(
-            client = httpClient,
+            apiCall = { movieApiService.getMovieDetails(movieId) },
             logger = logger,
-            url = "$baseUrl$endpoint"
         ).toDto()
     }
 
     override suspend fun getMovieCastMembers(movieId: Long): List<CastMemberDto> {
-        val endpoint = MOVIE_CREDITS_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<CastMembersResponse>(
-            client = httpClient,
+            apiCall = { movieApiService.getMovieCastMembers(movieId) },
             logger = logger,
-            url = "$baseUrl$endpoint"
         ).cast?.map { it.toDto() } ?: emptyList()
     }
 
     override suspend fun getMoviesByGenre(genreId: Long, page: Int): List<MovieDto> {
-        val endpoint = MOVIE_WITH_GENRE_ENDPOINT
         return handleRequest<SimilarMovieResponse>(
-            client = httpClient,
+            apiCall = {
+                movieApiService.getMoviesByGenre(
+                    genreId = genreId,
+                    page = page
+                )
+            },
             logger = logger,
-            url = "$baseUrl$endpoint?with_genres=$genreId&page=$page"
         ).results.orEmpty().map { it.toDto() }
     }
 
     override suspend fun getMovieReviews(movieId: Long): List<ReviewDto> {
-        val endpoint = MOVIE_REVIEWS_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<ReviewsResponse>(
-            client = httpClient,
+            apiCall = {
+                movieApiService.getMovieReviews(
+                    movieId = movieId
+                )
+            },
             logger = logger,
-            url = "$baseUrl$endpoint"
         ).results.orEmpty().map { it.toDto() }
     }
 
     override suspend fun getMovieImages(movieId: Long): List<String> {
-        val endpoint = MOVIE_IMAGES_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<MovieImageResponse>(
-            client = httpClient,
+            apiCall = { movieApiService.getMovieImages(movieId) },
             logger = logger,
-            url = "$baseUrl$endpoint"
         ).backdrops?.map { it.filePath.orEmpty() }.orEmpty()
     }
 
     override suspend fun getMovieTrailer(movieId: Long): String {
-        val endpoint = MOVIE_VIDEOS_ENDPOINT.replace("{movie_id}", movieId.toString())
         return handleRequest<MovieVideosResponse>(
-            client = httpClient,
+            apiCall = { movieApiService.getMovieTrailer(movieId) },
             logger = logger,
-            url = "$baseUrl$endpoint"
         ).mapToYoutubeURL()
-    }
-
-    companion object {
-        private const val SIMILAR_MOVIES_ENDPOINT = "/movie/{movie_id}/similar"
-        private const val MOVIE_DETAILS_ENDPOINT = "/movie/{movie_id}"
-        private const val MOVIE_CREDITS_ENDPOINT = "/movie/{movie_id}/credits"
-        private const val MOVIE_WITH_GENRE_ENDPOINT = "/discover/movie"
-        private const val MOVIE_REVIEWS_ENDPOINT = "/movie/{movie_id}/reviews"
-        private const val MOVIE_IMAGES_ENDPOINT = "/movie/{movie_id}/images"
-        private const val MOVIE_VIDEOS_ENDPOINT = "/movie/{movie_id}/videos"
     }
 }
