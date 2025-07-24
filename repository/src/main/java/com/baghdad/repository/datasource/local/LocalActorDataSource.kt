@@ -12,10 +12,4 @@ interface LocalActorDataSource {
     suspend fun deleteAllActors()
     suspend fun updateActor(actor: ActorDto)
     suspend fun searchActorsByName(name: String, page: Int, pageSize: Int = 20): List<ActorDto>
-    suspend fun addTrendingActor(people: List<ActorDto>)
-    suspend fun getTrendingActor(page: Int, pageSize: Int = 20): List<ActorDto>
-    suspend fun getTrendingActorById(id: Long): ActorDto
-    suspend fun deleteTrendingActors()
-
-
 }

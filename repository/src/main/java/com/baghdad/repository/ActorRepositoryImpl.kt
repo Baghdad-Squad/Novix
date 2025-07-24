@@ -5,16 +5,13 @@ import com.baghdad.domain.repository.ActorRepository
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
-import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.mapper.toEntity
-import com.baghdad.repository.model.ActorDto
+import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.util.executeSafely
-import com.baghdad.repository.util.getPagedSafely
 
 class ActorRepositoryImpl(
     private val remoteActorDataSource: RemoteActorDataSource,
-    private val localPopularPeopleDataSource: LocalActorDataSource
 ) : ActorRepository {
     override suspend fun getActorInfo(actorId: Long): Actor {
         return executeSafely {
@@ -44,20 +41,10 @@ class ActorRepositoryImpl(
     }
 
     override suspend fun getTrendingActors(page: Int): PagedResult<Actor> {
-        return getPagedSafely(
-            page = page,
-            mapToEntity = ActorDto::toEntity,
-            onStart = {},
-            getCachedPage = { page, pageSize ->
-                localPopularPeopleDataSource.getTrendingActor(page, pageSize)
-
-            },
-            getRemoteData = { page, _ ->
-                remoteActorDataSource.getTrendingActors(page)
-            },
-
-            cacheData = {
-                localPopularPeopleDataSource.addTrendingActor(it)
-            })
+        return executeSafely {
+            remoteActorDataSource.getTrendingActors(page).toPagedResult {
+                it.toEntity()
+            }
+        }
     }
 }
