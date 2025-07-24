@@ -4,6 +4,7 @@ import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
+import com.baghdad.remoteDataSource.mapper.movie.toMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
@@ -17,6 +18,7 @@ import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 
 class RemoteMovieDataSourceImpl(
@@ -81,11 +83,11 @@ class RemoteMovieDataSourceImpl(
         ).mapToYoutubeURL()
     }
 
-    override suspend fun getTrendingMovies(page: Int): List<MovieDto> {
+
+    override suspend fun getTrendingMovies(page: Int): PagedResultDto<MovieDto> {
         return handleRequest<TrendingMovieResponse>(
-            client = httpClient,
-            logger = logger,
-            url = "$baseUrl$endpoint"
-        ).results?.map { it.toDto() }.orEmpty()
+            apiCall = { movieApiService.getTrendingMovies(page) },
+            logger = logger
+        ).toMovieDtos()
     }
 }

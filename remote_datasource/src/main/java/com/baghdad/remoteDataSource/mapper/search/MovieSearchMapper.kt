@@ -13,7 +13,7 @@ fun MovieSearchResponse.toPagedMovieDtos(genres: List<GenreDto>) = PagedResultDt
     prevKey = getPreviousKey(page)
 )
 
-private fun MovieSearchResponse.Result.toMovieDto(
+internal fun MovieSearchResponse.Result.toMovieDto(
     genres: List<GenreDto> = emptyList(),
     userRating: Double? = null,
     runtimeMinutes: Int = 0
