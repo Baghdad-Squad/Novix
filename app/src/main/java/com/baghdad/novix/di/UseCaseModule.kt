@@ -68,6 +68,5 @@ val useCaseModule = module {
     singleOf(::GetTvShowGenreNameByIdUseCase)
     singleOf(::GetMovieGenreNameByIdUseCase)
     singleOf(::GetTrendingMoviesUseCase)
-
 }
 

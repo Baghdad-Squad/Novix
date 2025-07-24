@@ -2,7 +2,7 @@ package com.baghdad.viewmodel.movie
 
 import com.baghdad.entity.media.Movie
 
-fun Movie.toMovieUi() = TrendingMoviesScreenState.MovieUiState(
+fun Movie.toMovieUiState() = TrendingMoviesScreenState.TrendingMovieUiState(
     id = id,
     posterPictureURL = posterImageURL
 )

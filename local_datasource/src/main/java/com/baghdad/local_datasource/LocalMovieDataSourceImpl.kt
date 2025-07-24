@@ -2,6 +2,7 @@ package com.baghdad.local_datasource
 
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
+import com.baghdad.local_datasource.roomDB.dao.TrendingMovieDoa
 import com.baghdad.local_datasource.roomDB.entity.Genre
 import com.baghdad.local_datasource.roomDB.entity.Movie
 import com.baghdad.local_datasource.roomDB.entity.toDto
@@ -19,7 +20,8 @@ import kotlinx.coroutines.flow.map
 class LocalMovieDataSourceImpl(
     private val movieDao: MovieDao,
     private val genreDao: GenreDao,
-    private val logger: Logger
+    private val logger: Logger,
+    private val trendingMovieDoa: TrendingMovieDoa
 ) : LocalMovieDataSource {
     override suspend fun addMovie(movie: MovieDto) =
         executeWithErrorHandling(logger = logger) {
@@ -88,15 +90,6 @@ class LocalMovieDataSourceImpl(
             val genresMap = getGenresMap(movies)
             movies.toDtos(genresMap)
         }
-
-    override suspend fun getTrendingMovies(page: Int): List<MovieDto> {
-        return executeWithErrorHandling(logger = logger) {
-            val pageOffset = calculatePageOffset(20, page)
-            val movies = movieDao.getTrendingMovies(20, pageOffset)
-            val genresMap = getGenresMap(movies)
-            movies.toDtos(genresMap)
-        }
-    }
 
     private fun getGenresMap(
         movies: List<Movie>

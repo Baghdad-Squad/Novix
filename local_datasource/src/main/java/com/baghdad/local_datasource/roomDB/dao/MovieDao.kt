@@ -44,20 +44,4 @@ interface MovieDao {
         offset: Int,
         mediaType: String = SearchQueryDto.MediaType.MOVIE.name
     ): List<Movie>
-
-    @Query(
-        """
-    SELECT m.* FROM Movie m
-    INNER JOIN search_query sq ON m.id = sq.mediaId
-    WHERE sq.queryName = :trendingQueryName AND sq.mediaType = :mediaType
-    LIMIT :pageSize OFFSET :offset
-    """
-    )
-    suspend fun getTrendingMovies(
-        pageSize: Int,
-        offset: Int,
-        trendingQueryName: String = SearchQueryDto.QueryName.TRENDING.name,
-        mediaType: String = SearchQueryDto.MediaType.MOVIE.name
-    ): List<Movie>
-
 }
