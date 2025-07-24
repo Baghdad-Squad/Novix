@@ -4,7 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.baghdad.ui.feature.topRating.TopRatingMoviesScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.HomeRoute
@@ -33,8 +32,10 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
         composable<HomeRoute.TvShowsScreen> {
             DummyScreen(title = "TV Shows Screen")
         }
-        composable<HomeRoute.ActorsScreen> {
-            DummyScreen(title = "Actors Screen")
+        composable<HomeRoute.TrendingActorsScreen> {
+            TrendingActorsScreen {
+                handleHomeNavigation(it, navController)
+            }
         }
     }
 }
@@ -50,7 +51,7 @@ private fun handleHomeNavigation(
         HomeNavEvent.NavigateToContinueWatching -> navController.navigate(HomeRoute.ContinueWatchingScreen)
         HomeNavEvent.NavigateToMovies -> navController.navigate(HomeRoute.MoviesScreen)
         HomeNavEvent.NavigateToTvShows -> navController.navigate(HomeRoute.TvShowsScreen)
-        HomeNavEvent.NavigateToActors -> navController.navigate(HomeRoute.ActorsScreen)
+        HomeNavEvent.NavigateToActors -> navController.navigate(HomeRoute.TrendingActorsScreen)
         is HomeNavEvent.NavigateToMovieDetails -> navController.navigate(
             Graph.MovieDetailsGraph(event.movieId)
         )
@@ -62,7 +63,6 @@ private fun handleHomeNavigation(
         is HomeNavEvent.NavigateToActorDetails -> navController.navigate(
             Graph.ActorDetailsGraph(event.actorId)
         )
-        //is HomeNavEvent.NavigateToTopRatingMovies -> navController.navigate()
 
         HomeNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
     }

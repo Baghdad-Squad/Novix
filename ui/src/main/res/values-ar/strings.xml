@@ -58,4 +58,5 @@
     <string name="guests_of_honor">ضيوف الشرف</string>
     <string name="season_template">موسم %1$s</string>
     <string name="top_rating">الاعلى تقييم</string>
+    <string name="actors">الممثلين</string>
 </resources>
