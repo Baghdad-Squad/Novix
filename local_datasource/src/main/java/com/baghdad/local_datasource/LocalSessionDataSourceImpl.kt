@@ -39,6 +39,7 @@ class LocalSessionDataSourceImpl(
     override suspend fun clearSession() {
         safeDataStoreCall(
             block = { appPreferencesDataStore.clearSession() },
+            logger = logger
         )
     }
 }
