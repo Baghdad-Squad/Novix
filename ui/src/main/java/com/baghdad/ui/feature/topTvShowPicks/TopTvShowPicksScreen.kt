@@ -134,7 +134,7 @@ private fun TopTvShowPicksContent(
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
-                top = 8.dp,
+                top = 17.dp,
                 bottom = 8.dp
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp),

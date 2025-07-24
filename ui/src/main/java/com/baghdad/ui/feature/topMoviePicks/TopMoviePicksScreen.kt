@@ -96,7 +96,7 @@ private fun TopMoviePicksContent(
                     .fillMaxWidth()
                     .background(Theme.color.surface)
                     .statusBarsPadding()
-                    .padding(top = 30.dp, bottom = 17.dp),
+                    .padding(top = 30.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
@@ -136,7 +136,7 @@ private fun TopMoviePicksContent(
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
-                top = 8.dp,
+                top = 17.dp,
                 bottom = 8.dp
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
