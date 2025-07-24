@@ -1,5 +1,6 @@
 package com.baghdad.repository
 
+import android.util.Log
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.entity.User
 import com.baghdad.repository.datasource.local.LocalSessionDataStore
@@ -29,6 +30,10 @@ class AuthenticationRepositoryImpl(
                 userName = user.userName,
                 imageUrl = user.imageUrl.orEmpty()
             )
+            Log.i("login ", "user from local data store ${localUserDataStore.getUser()}")
+            Log.i("login ", "session from local data store ${localSessionDataStore.getSessionId()}")
+            Log.i("login", "delete user ${localUserDataStore.deleteUser()}")
+            Log.i("login", "user after deletion ${localUserDataStore.getUser()}")
             sessionId
         }
 
