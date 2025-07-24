@@ -186,7 +186,6 @@ class MovieDetailsViewModel(
     }
 
 
-
     private fun getCastMembers() {
         tryToExecute(
             callee = { getCastsInfoUseCase(movieId) },
@@ -279,3 +278,4 @@ private fun Int.formatDuration(): String {
             "$minutes min"
         }
     }
+}
