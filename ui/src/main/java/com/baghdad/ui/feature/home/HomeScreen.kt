@@ -26,8 +26,17 @@ import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.home.component.ContinueWatchingSection
 import com.baghdad.ui.feature.home.component.PopularSection
 import com.baghdad.ui.feature.home.component.TopRatingSection
+import com.baghdad.ui.feature.home.component.WhatToWatchSection
 import com.baghdad.ui.feature.home.component.upcomingSection
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToActors
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToContinueWatching
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToLogin
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovies
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTopRatingMovies
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShowDetails
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShows
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.home.HomeInteractionListener
@@ -83,7 +92,7 @@ private fun HomeContent(
             columns = GridCells.Adaptive(minSize = 150.dp),
             contentPadding = PaddingValues(vertical = 16.dp),
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
             item(span = { GridItemSpan(maxLineSpan) }) {
@@ -95,9 +104,18 @@ private fun HomeContent(
                 )
             }
             // What you want to watch section
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                WhatToWatchSection(
+                    modifier = Modifier.padding(top = 8.dp),
+                    onMoviesClicked = interactionListener::onMoviesClicked,
+                    onTvShowsClicked = interactionListener::onTvShowsClicked,
+                    onActorsClicked = interactionListener::onActorsClicked
+                )
+            }
 
             item(span = { GridItemSpan(maxLineSpan) }) {
                 TopRatingSection(
+                    modifier = Modifier.padding(top = 24.dp),
                     isLoading = state.isTopRatingLoading,
                     items = state.topRatingItems,
                     onClick = interactionListener::onTopRatingItemClicked,
@@ -108,6 +126,7 @@ private fun HomeContent(
 
             item(span = { GridItemSpan(maxLineSpan) }) {
                 ContinueWatchingSection(
+                    modifier = Modifier.padding(top = 24.dp),
                     isLoading = state.isContinueWatchingLoading,
                     items = state.continueWatchingItems,
                     onClick = interactionListener::onContinueWatchingItemClicked,
@@ -117,6 +136,7 @@ private fun HomeContent(
             }
 
             upcomingSection(
+                modifier = Modifier.padding(top = 24.dp),
                 selectedGenreId = state.selectedUpcomingGenreId,
                 genres = state.upcomingGenres,
                 isGenresLoading = state.isUpcomingGenresLoading,
@@ -142,11 +162,35 @@ private fun handleEffect(
 ) {
     when (effect) {
         is HomeScreenEffect.NavigateToMovieDetails -> {
-            handleNavigation(HomeNavEvent.NavigateToMovieDetails(effect.movieId))
+            handleNavigation(NavigateToMovieDetails(effect.movieId))
         }
 
         is HomeScreenEffect.NavigateToTvShowDetails -> {
-            handleNavigation(HomeNavEvent.NavigateToTvShowDetails(effect.tvShowId))
+            handleNavigation(NavigateToTvShowDetails(effect.tvShowId))
+        }
+
+        HomeScreenEffect.NavigateToActors -> {
+            handleNavigation(NavigateToActors)
+        }
+
+        HomeScreenEffect.NavigateToContinueWatching -> {
+            handleNavigation(NavigateToContinueWatching)
+        }
+
+        HomeScreenEffect.NavigateToLogin -> {
+            handleNavigation(NavigateToLogin)
+        }
+
+        HomeScreenEffect.NavigateToMovies -> {
+            handleNavigation(NavigateToMovies)
+        }
+
+        HomeScreenEffect.NavigateToTopRating -> {
+            handleNavigation(NavigateToTopRatingMovies)
+        }
+
+        HomeScreenEffect.NavigateToTvShows -> {
+            handleNavigation(NavigateToTvShows)
         }
     }
 }

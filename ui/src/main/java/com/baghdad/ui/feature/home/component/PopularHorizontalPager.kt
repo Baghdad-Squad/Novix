@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.home.component
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun PopularCardPager(
     items: List<PopularItemUiState>,
+    isLoading: Boolean,
     onClick: (PopularItemUiState) -> Unit,
     onSaveClick: (PopularItemUiState) -> Unit,
     modifier: Modifier = Modifier,
@@ -41,69 +43,126 @@ fun PopularCardPager(
         }
     }
 
+    Crossfade(isLoading) { isLoading ->
+        if (isLoading) {
+            LoadingPopularCardPage(modifier = modifier)
+        } else {
+            Column(
+                modifier = modifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    contentPadding = PaddingValues(horizontal = 64.dp),
+                    pageSpacing = 4.dp,
+                    beyondViewportPageCount = 1,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) { page ->
+                    val currentPageOffset =
+                        (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        HorizontalPager(
-            state = pagerState,
-            contentPadding = PaddingValues(horizontal = 64.dp),
-            pageSpacing = 4.dp,
-            beyondViewportPageCount = 1,
-            modifier = Modifier
-                .fillMaxWidth()
-        ) { page ->
-            val currentPageOffset =
-                (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
-
-            val rotation = when {
-                currentPageOffset < -0.5f -> 3f
-                currentPageOffset > 0.5f -> -3f
-                else -> 0f
-            }
-
-            val xScale = when {
-                currentPageOffset == 0f -> 1f
-                else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.1f)
-            }
-
-            val yScale = when {
-                currentPageOffset == 0f -> 1f
-                else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.15f)
-            }
-
-            val yTranslation = when {
-                currentPageOffset == 0f -> 0f
-                else -> kotlin.math.abs(currentPageOffset) * 40f
-            }
-
-            val item = items[page]
-
-            PopularCard(
-                contentName = item.name,
-                contentRating = item.rating,
-                imageUrl = item.imageUrl,
-                onCardClick = { onClick(item) },
-                onSavedClick = { onSaveClick(item) },
-                isSaved = item.isSaved,
-                modifier = Modifier
-                    .graphicsLayer {
-                        rotationZ = rotation
-                        scaleX = xScale
-                        scaleY = yScale
-                        translationY = yTranslation
+                    val rotation = when {
+                        currentPageOffset < -0.5f -> 3f
+                        currentPageOffset > 0.5f -> -3f
+                        else -> 0f
                     }
-                    .fillMaxWidth()
-            )
-        }
-        CarousalDot(
-            totalDots = items.size,
-            selectedIndex = pagerState.currentPage
-        )
-    }
 
+                    val xScale = when {
+                        currentPageOffset == 0f -> 1f
+                        else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.1f)
+                    }
+
+                    val yScale = when {
+                        currentPageOffset == 0f -> 1f
+                        else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.15f)
+                    }
+
+                    val yTranslation = when {
+                        currentPageOffset == 0f -> 0f
+                        else -> kotlin.math.abs(currentPageOffset) * 40f
+                    }
+
+                    val item = items[page]
+
+                    PopularCard(
+                        contentName = item.name,
+                        contentRating = item.rating,
+                        imageUrl = item.imageUrl,
+                        onCardClick = { onClick(item) },
+                        onSavedClick = { onSaveClick(item) },
+                        isSaved = item.isSaved,
+                        modifier = Modifier
+                            .graphicsLayer {
+                                rotationZ = rotation
+                                scaleX = xScale
+                                scaleY = yScale
+                                translationY = yTranslation
+                            }
+                            .fillMaxWidth()
+                    )
+                }
+                CarousalDot(
+                    totalDots = items.size,
+                    selectedIndex = pagerState.currentPage
+                )
+            }
+        }
+    }
 }
 
 
+@Composable
+private fun LoadingPopularCardPager(modifier: Modifier = Modifier) {
+    val pagerState = rememberPagerState(initialPage = 1) { 3 }
+    HorizontalPager(
+        state = pagerState,
+        contentPadding = PaddingValues(horizontal = 64.dp),
+        pageSpacing = 4.dp,
+        beyondViewportPageCount = 1,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) { page ->
+        val currentPageOffset =
+            (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+
+        val rotation = when {
+            currentPageOffset < -0.5f -> 3f
+            currentPageOffset > 0.5f -> -3f
+            else -> 0f
+        }
+
+        val xScale = when {
+            currentPageOffset == 0f -> 1f
+            else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.1f)
+        }
+
+        val yScale = when {
+            currentPageOffset == 0f -> 1f
+            else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.15f)
+        }
+
+        val yTranslation = when {
+            currentPageOffset == 0f -> 0f
+            else -> kotlin.math.abs(currentPageOffset) * 40f
+        }
+
+        PopularCard(
+            contentName = item.name,
+            contentRating = item.rating,
+            imageUrl = item.imageUrl,
+            onCardClick = { onClick(item) },
+            onSavedClick = { onSaveClick(item) },
+            isSaved = item.isSaved,
+            modifier = Modifier
+                .graphicsLayer {
+                    rotationZ = rotation
+                    scaleX = xScale
+                    scaleY = yScale
+                    translationY = yTranslation
+                }
+                .fillMaxWidth()
+        )
+    }
+}

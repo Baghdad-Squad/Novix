@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.baghdad.design_system.component.HomeCard
 import com.baghdad.design_system.component.HorizontalCarousel
 import com.baghdad.design_system.component.SectionHeader
 import com.baghdad.ui.R
+import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.viewmodel.home.HomeScreenState
 
 @Composable

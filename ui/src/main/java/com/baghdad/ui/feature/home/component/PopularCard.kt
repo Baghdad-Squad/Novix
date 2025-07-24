@@ -25,6 +25,7 @@ import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.modifier.shimmerEffect
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
@@ -105,6 +106,23 @@ fun PopularCard(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun LoadingPopularCard(modifier: Modifier = Modifier) {
+    Box(
+        modifier = Modifier
+            .size(width = 188.dp, height = 244.dp)
+            .background(Theme.color.surface)
+            .clip(RoundedCornerShape(12.dp))
+            .shimmerEffect()
+    ) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 8.dp, bottom = 8.dp, end = 8.dp)
+        ) { }
     }
 }
 

@@ -7,14 +7,15 @@ import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingViewModel
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
+import com.baghdad.viewmodel.home.HomeViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
-import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
 import com.baghdad.viewmodel.topRating.TopRatingViewModel
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowViewModel
+import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -78,4 +79,5 @@ val viewModelModule = module {
     viewModelOf(::ContinueWatchingViewModel)
 
     viewModelOf(::TrendingActorViewModel)
+    viewModelOf(::HomeViewModel)
 }

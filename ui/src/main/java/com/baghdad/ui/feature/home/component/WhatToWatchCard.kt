@@ -26,6 +26,7 @@ fun WhatToWatchCard(
     title: String,
     colors: List<Color>,
     imageWidth: Dp,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(

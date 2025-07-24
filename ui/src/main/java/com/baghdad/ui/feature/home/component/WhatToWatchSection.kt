@@ -22,7 +22,12 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.R
 
 @Composable
-fun WhatToWatchSection(modifier: Modifier = Modifier) {
+fun WhatToWatchSection(
+    onMoviesClicked: () -> Unit,
+    onTvShowsClicked: () -> Unit,
+    onActorsClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
 
     val isDark = isSystemInDarkTheme()
 
@@ -67,6 +72,7 @@ fun WhatToWatchSection(modifier: Modifier = Modifier) {
                 title = stringResource(com.baghdad.ui.R.string.movies),
                 colors = gradientMoviesColors,
                 imageWidth = 60.dp,
+                onClick = onMoviesClicked,
                 modifier = Modifier.weight(1f)
             )
 
@@ -75,6 +81,7 @@ fun WhatToWatchSection(modifier: Modifier = Modifier) {
                 title = stringResource(com.baghdad.ui.R.string.tv_shows),
                 colors = gradientTvShowsColors,
                 imageWidth = 88.dp,
+                onClick = onTvShowsClicked,
                 modifier = Modifier.weight(1f)
             )
 
@@ -83,6 +90,7 @@ fun WhatToWatchSection(modifier: Modifier = Modifier) {
                 title = stringResource(com.baghdad.ui.R.string.actors),
                 colors = gradientActorsColors,
                 imageWidth = 56.dp,
+                onClick = onActorsClicked,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -99,7 +107,7 @@ private fun WhatToWatchSectionPrev() {
                 .background(color = Theme.color.surface),
             verticalArrangement = Arrangement.Center
         ) {
-            WhatToWatchSection()
+            WhatToWatchSection({}, {}, {})
         }
     }
 }
