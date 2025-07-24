@@ -1,11 +1,15 @@
 package com.baghdad.viewmodel.categoryMovies
 
+import androidx.paging.PagingData
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseUiState
+import com.baghdad.viewmodel.continueWatching.ContinueWatchingState.ContinueWatchingMovieUiState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 data class CategoryMoviesState(
     override val isLoading: Boolean = false,
-    val movies: List<MovieUiState> = emptyList<MovieUiState>(),
+    val moviesFlow: Flow<PagingData<MovieUiState>> = flowOf(),
     val categoryName: String = ""
 ) : BaseUiState {
     data class MovieUiState(
