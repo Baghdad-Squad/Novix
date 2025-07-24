@@ -9,8 +9,8 @@ import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteMovieDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteTvShowDataSourceImpl
-import com.baghdad.remoteDataSource.api.AuthenticationApi
 import com.baghdad.remoteDataSource.apiService.ActorApiService
+import com.baghdad.remoteDataSource.apiService.AuthenticationApiService
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
 import com.baghdad.remoteDataSource.apiService.GenreApiService
 import com.baghdad.remoteDataSource.apiService.MovieApiService
@@ -163,12 +163,12 @@ val remoteDataSourceModule = module {
     single<TvShowApiService> {
         get<Retrofit>().create(TvShowApiService::class.java)
     }
-    single<AuthenticationApi> {
-        get<Retrofit>().create(AuthenticationApi::class.java)
+    single<AuthenticationApiService> {
+        get<Retrofit>().create(AuthenticationApiService::class.java)
     }
     single<RemoteAuthenticationDataSource> {
         RemoteAuthenticationImpl(
-            api = get(),
+            authenticationApiService = get(),
             logger = get()
         )
     }
