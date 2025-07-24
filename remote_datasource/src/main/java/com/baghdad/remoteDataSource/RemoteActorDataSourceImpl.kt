@@ -2,6 +2,7 @@ package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.ActorApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
+import com.baghdad.remoteDataSource.mapper.actor.toPagedActorDtos
 import com.baghdad.remoteDataSource.response.actor.ActorDetailsResponse
 import com.baghdad.remoteDataSource.response.actor.ActorImagesResponse
 import com.baghdad.remoteDataSource.response.actor.ActorMoviesResponse
@@ -37,53 +38,22 @@ class RemoteActorDataSourceImpl(
     override suspend fun getActorMovies(personId: Long): List<MovieDto> {
         return handleRequest<ActorMoviesResponse>(
             apiCall = { actorApiService.getActorMovies(personId) },
-            logger = logger,
-            url = "$baseUrl${
-                PERSON_MOVIES_PICK_ENDPOINT.replace(
-                    "{person_id}",
-                    personId.toString()
-                )
-            }"
+            logger = logger
         ).cast?.map { it.toDto() } ?: emptyList()
     }
 
     override suspend fun getActorTvShows(personId: Long): List<TvShowDto> {
         return handleRequest<ActorTvShowsResponse>(
             apiCall = {actorApiService.getActorTvShows(personId)},
-            logger = logger,
-            url = "$baseUrl${
-                PERSON_TV_SHOWS_PICK_ENDPOINT.replace(
-                    "{person_id}", personId.toString()
-                )
-            }"
-
+            logger = logger
         ).cast?.map { it.toDto() } ?: emptyList()
     }
 
     override suspend fun getTrendingActors(page: Int): PagedResultDto<ActorDto> {
-        val params = mapOf("page" to page.toString())
-
-        val response = handleRequest<TrendingActorResponse>(
-            client = httpClient,
-            url = "$baseUrl$POPULAR_PEOPLE_ENDPOINT",
-            logger = logger,
-            params = params,
+        val result  = handleRequest<TrendingActorResponse>(
+           apiCall = { actorApiService.getTrendingActors() },
+            logger = logger
         )
-
-        return PagedResultDto(
-            data = response.results?.map { it.toDto() } ?: emptyList(),
-            nextKey = page + 1,
-            prevKey = page - 1
-        )
-    }
-
-
-
-    companion object {
-        private const val PERSON_MOVIES_PICK_ENDPOINT = "/person/{person_id}/movie_credits"
-        private const val PERSON_TV_SHOWS_PICK_ENDPOINT = "/person/{person_id}/tv_credits"
-        private const val PERSON_IMAGES_ENDPOINT = "/person/{person_id}/images"
-        private const val PERSON_DETAILS_ENDPOINT = "/person/{person_id}"
-        private const val POPULAR_PEOPLE_ENDPOINT = "/trending/person/week"
+        return result.toPagedActorDtos()
     }
 }

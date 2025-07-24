@@ -9,6 +9,7 @@ import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.model.ActorDto
+import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getPagedSafely
 
@@ -54,8 +55,8 @@ class ActorRepositoryImpl(
             },
             getRemoteData = { page, _ ->
                 remoteActorDataSource.getTrendingActors(page)
-
             },
+
             cacheData = {
                 localPopularPeopleDataSource.addTrendingActor(it)
             })

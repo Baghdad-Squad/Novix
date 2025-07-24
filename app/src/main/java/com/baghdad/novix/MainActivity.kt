@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.ui.feature.trendingActors.TrendingActorsScreen
+import com.baghdad.ui.main.MainScreen
 import com.baghdad.ui.navigation.NovixNavHost
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.route.Graph
@@ -20,12 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NovixTheme {
-                val navController = rememberNavController()
-                NovixNavHost(
-                    navController = navController,
-                    startDestination = Graph.HomeGraph
-                )
-
+                MainScreen()
             }
         }
     }
