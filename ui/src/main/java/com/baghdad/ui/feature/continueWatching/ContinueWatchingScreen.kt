@@ -39,6 +39,8 @@ import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShowDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingInteractionListener
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingScreenEffect
@@ -60,23 +62,7 @@ fun ContinueWatchingScreen(
     Log.d("ContinueWatchingScreen", "ContinueWatchingScreen: $uiState")
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
-        when (effect) {
-            is ContinueWatchingScreenEffect.NavigateBack -> handleNavigation(
-                HomeNavEvent.NavigateBack
-            )
-
-            is ContinueWatchingScreenEffect.NavigateToLogin -> handleNavigation(
-                HomeNavEvent.NavigateToLogin
-            )
-
-            is ContinueWatchingScreenEffect.NavigateToMovieDetails -> handleNavigation(
-                HomeNavEvent.NavigateToMovieDetails(effect.movieId)
-            )
-
-            is ContinueWatchingScreenEffect.NavigateToTvShowDetails -> handleNavigation(
-                HomeNavEvent.NavigateToTvShowDetails(effect.tvShowId)
-            )
-        }
+        handleEffect(effect, handleNavigation)
     }
     ContinueWatchingContent(
         uiState = uiState,
@@ -85,6 +71,30 @@ fun ContinueWatchingScreen(
         snackBarState = snackBarState,
     )
 }
+
+private fun handleEffect(
+    effect: ContinueWatchingScreenEffect,
+    handleNavigation: (HomeNavEvent) -> Unit,
+) {
+    when (effect) {
+        is ContinueWatchingScreenEffect.NavigateBack -> handleNavigation(
+            HomeNavEvent.NavigateBack
+        )
+
+        is ContinueWatchingScreenEffect.NavigateToLogin -> handleNavigation(
+            HomeNavEvent.NavigateToLogin
+        )
+
+        is ContinueWatchingScreenEffect.NavigateToMovieDetails -> handleNavigation(
+            NavigateToMovieDetails(effect.movieId)
+        )
+
+        is ContinueWatchingScreenEffect.NavigateToTvShowDetails -> handleNavigation(
+            NavigateToTvShowDetails(effect.tvShowId)
+        )
+    }
+}
+
 
 @Composable
 fun ContinueWatchingContent(
@@ -159,7 +169,7 @@ fun ContinueWatchingContent(
                     contentDescription = null,
                     isSaved = media.isSaved,
                     onSavedClick = { listener.onMovieSaveClick(media.id) },
-                    onClick = { listener.onMediaClick(media.id , media.contentType) },
+                    onClick = { listener.onMediaClick(media.id, media.contentType) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }
@@ -170,7 +180,7 @@ fun ContinueWatchingContent(
 
 
 @Composable
-fun GenresTabs(
+private fun GenresTabs(
     genres: List<ContinueWatchingState.GenreUiState>,
     selectedTab: Long,
     onTabClick: (Long) -> Unit,

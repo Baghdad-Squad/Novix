@@ -21,24 +21,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
-import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
+import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.util.hideNavigationBar
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
+import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesEffect
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesState
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -53,6 +58,7 @@ fun CategoryMoviesScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
@@ -61,7 +67,8 @@ fun CategoryMoviesScreen(
     CategoryMoviesContent(
         uiState = uiState,
         listener = viewModel,
-        movieItems
+        movieItems = movieItems,
+        snackBarState = snackBarState
     )
 }
 
@@ -84,7 +91,8 @@ private fun handleEffect(
 private fun CategoryMoviesContent(
     uiState: CategoryMoviesState,
     listener: CategoryMoviesViewModel,
-    movieItems: LazyPagingItems<CategoryMoviesState.MovieUiState>
+    movieItems: LazyPagingItems<CategoryMoviesState.MovieUiState>,
+    snackBarState: SnackBarState
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -117,6 +125,13 @@ private fun CategoryMoviesContent(
                 )
             }
         },
+        snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
+        }
     ) {
         Column {
 
@@ -151,4 +166,9 @@ private fun CategoryMoviesContent(
             }
         }
     }
+}
+
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
 }
