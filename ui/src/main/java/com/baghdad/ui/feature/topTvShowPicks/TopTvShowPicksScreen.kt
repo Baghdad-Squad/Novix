@@ -94,12 +94,13 @@ private fun TopTvShowPicksContent(
                     .fillMaxWidth()
                     .background(Theme.color.surface)
                     .statusBarsPadding()
-                    .padding(top = 12.dp, bottom = 8.dp),
+                    .padding(top = 30.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
                     onClick = { listener.onBackClick() },
+                    size = Pair(40.dp, 40.dp),
                     modifier = Modifier
                         .padding(start = 16.dp)
                 )
@@ -111,7 +112,8 @@ private fun TopTvShowPicksContent(
                         .padding(start = 8.dp)
                 )
             }
-        }, snackbar = {
+        },
+        snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,

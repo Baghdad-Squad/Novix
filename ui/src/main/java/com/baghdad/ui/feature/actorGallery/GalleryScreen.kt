@@ -85,19 +85,21 @@ fun ActorGalleryScreenContent(
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible
             )
-        }, topBar = {
+        },
+        topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClick,
                 screenTitle = stringResource(R.string.gallery),
+                modifier = Modifier.padding(top = 30.dp)
             ) {}
         }
-    )
-    {
+    ) {
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize()) {
                 WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -114,7 +116,8 @@ fun ActorGalleryScreenContent(
                 .navigationBarsPadding()
                 .padding(top = 12.dp)
         ) {
-            LazyVerticalGrid(
+
+        LazyVerticalGrid(
                 columns = GridCells.Adaptive(104.dp),
                 contentPadding = PaddingValues(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),

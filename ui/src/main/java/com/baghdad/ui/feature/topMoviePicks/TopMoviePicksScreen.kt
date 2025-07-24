@@ -96,12 +96,13 @@ private fun TopMoviePicksContent(
                     .fillMaxWidth()
                     .background(Theme.color.surface)
                     .statusBarsPadding()
-                    .padding(top = 12.dp, bottom = 17.dp),
+                    .padding(top = 30.dp, bottom = 17.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
                     onClick = { listener.onBackClick() },
+                    size = Pair(40.dp, 40.dp),
                     modifier = Modifier
                         .padding(start = 16.dp, bottom = 8.dp)
                 )
@@ -113,7 +114,8 @@ private fun TopMoviePicksContent(
                         .padding(start = 8.dp, bottom = 8.dp)
                 )
             }
-        }, snackbar = {
+        },
+        snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
