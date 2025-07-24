@@ -59,7 +59,7 @@ interface MovieApiService {
     @Authenticated
     @GET(TOP_RATED_MOVIES_ENDPOINT)
     suspend fun getTopRatedMovies(
-        @Path("page") page: Int
+        @Query("page") page: Int
     ): Response<SimilarMovieResponse>
 
     companion object {
@@ -70,6 +70,6 @@ interface MovieApiService {
         private const val MOVIE_REVIEWS_ENDPOINT = "movie/{movie_id}/reviews"
         private const val MOVIE_IMAGES_ENDPOINT = "movie/{movie_id}/images"
         private const val MOVIE_VIDEOS_ENDPOINT = "movie/{movie_id}/videos"
-        private const val TOP_RATED_MOVIES_ENDPOINT = "/movie/top_rated"
+        private const val TOP_RATED_MOVIES_ENDPOINT = "movie/top_rated"
     }
 }
