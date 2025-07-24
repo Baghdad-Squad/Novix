@@ -18,7 +18,8 @@ fun AppWebView(
     url: String,
     modifier: Modifier = Modifier,
     allowedDomains: List<String> = emptyList(),
-    onUrlChange: ((String) -> Unit)? = null
+    onUrlChange: ((String) -> Unit)? = null,
+    onReceivedError: ((String) -> Unit)? = null,
 ) {
     AndroidView(
         factory = { context ->
@@ -27,7 +28,6 @@ fun AppWebView(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
-
                 settings.apply {
                     javaScriptEnabled = true
                     domStorageEnabled = true
@@ -36,14 +36,16 @@ fun AppWebView(
                     builtInZoomControls = false
                     displayZoomControls = false
                 }
+                webViewClient = SimpleWebViewClient(
                 CookieManager.getInstance().removeAllCookies(null)
                 CookieManager.getInstance().flush()
                 WebStorage.getInstance().deleteAllData()
                 clearCache(true)
 
-                webViewClient = AppWebViewClient(
+                webViewClient = SimpleWebViewClient(
                     allowedDomains = allowedDomains,
-                    onUrlChange = onUrlChange
+                    onUrlChange = { onUrlChange?.invoke(it) },
+                    onReceivedError = { onReceivedError?.invoke(it) },
                 )
             }
         },
@@ -54,25 +56,37 @@ fun AppWebView(
     )
 }
 
-class AppWebViewClient(
-    private val allowedDomains: List<String>,
-    private val onUrlChange: ((String) -> Unit)?
+class SimpleWebViewClient(
+    private val allowedDomains: List<String> = emptyList(),
+    private val onUrlChange: ((String) -> Unit)? = null,
+    private val onReceivedError: ((String) -> Unit)? = null,
 ) : WebViewClient() {
 
     override fun shouldOverrideUrlLoading(
         view: WebView?,
         request: WebResourceRequest?
     ): Boolean {
-        val currentUrl = request?.url?.toString()
+        val requestUrl = request?.url?.toString()
 
-        currentUrl?.let {
-            onUrlChange?.invoke(it)
-            if (allowedDomains.isEmpty()) return false
-            return !allowedDomains.any { domain ->
-                it.contains(domain, ignoreCase = true)
+        requestUrl?.let { url ->
+            onUrlChange?.invoke(url)
+            if (allowedDomains.isEmpty()) {
+                return false
             }
+            val isAllowed = allowedDomains.any { domain ->
+                url.contains(domain, ignoreCase = true)
+            }
+            return !isAllowed
         }
-
         return super.shouldOverrideUrlLoading(view, request)
+    }
+
+    override fun onReceivedError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        error: android.webkit.WebResourceError?
+    ) {
+        super.onReceivedError(view, request, error)
+        onReceivedError?.invoke(error.toString())
     }
 }

@@ -1,24 +1,21 @@
 package com.baghdad.remoteDataSource.response
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class SimilarMovieResponse(
-    @SerialName("page") val page: Int? = null,
-    @SerialName("results") val results: List<MovieResult>? = null,
-    @SerialName("total_pages") val totalPages: Int? = null,
-    @SerialName("total_results") val totalResults: Int? = null
+    @SerializedName("page") val page: Int? = null,
+    @SerializedName("results") val results: List<MovieResult>? = null,
+    @SerializedName("total_pages") val totalPages: Int? = null,
+    @SerializedName("total_results") val totalResults: Int? = null
 )
 
-@Serializable
 data class MovieResult(
-    @SerialName("id") val id: Int? = null,
-    @SerialName("title") val title: String? = null,
-    @SerialName("genre_ids") val genreIds: List<Int>? = null,
-    @SerialName("vote_average") val voteAverage: Double? = null,
-    @SerialName("release_date") val releaseDate: String? = null,
-    @SerialName("overview") val overview: String? = null,
-    @SerialName("poster_path") val posterPath: String? = null,
+    @SerializedName("id") val id: Int? = null,
+    @SerializedName("title") val title: String? = null,
+    @SerializedName("genre_ids") val genreIds: List<Int>? = null,
+    @SerializedName("vote_average") val voteAverage: Double? = null,
+    @SerializedName("release_date") val releaseDate: String? = null,
+    @SerializedName("overview") val overview: String? = null,
+    @SerializedName("poster_path") val posterPath: String? = null,
 )
 

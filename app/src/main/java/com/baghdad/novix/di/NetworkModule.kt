@@ -9,6 +9,12 @@ import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteMovieDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteTvShowDataSourceImpl
+import com.baghdad.remoteDataSource.apiService.ActorApiService
+import com.baghdad.remoteDataSource.apiService.EpisodeApiService
+import com.baghdad.remoteDataSource.apiService.GenreApiService
+import com.baghdad.remoteDataSource.apiService.MovieApiService
+import com.baghdad.remoteDataSource.apiService.SearchApiService
+import com.baghdad.remoteDataSource.apiService.TvShowApiService
 import com.baghdad.remoteDataSource.api.AuthenticationApi
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
 import com.baghdad.remoteDataSource.interceptor.KtorApiInterceptor
@@ -74,10 +80,9 @@ val remoteDataSourceModule = module {
             .build()
     }
 
-
     single {
         Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl("https://api.themoviedb.org/3/")
             .client(get())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -93,53 +98,71 @@ val remoteDataSourceModule = module {
 
     single<RemoteSearchDataSource> {
         RemoteSearchDataSourceImpl(
-            httpClient = get(),
-            baseUrl = get(named("BASE_URL")),
+            searchApiService = get(),
             logger = get()
         )
     }
 
     single<RemoteGenreDataSource> {
         RemoteGenreDataSourceImpl(
-            httpClient = get(),
-            baseUrl = get(named("BASE_URL")),
+            genreApiService = get(),
             logger = get()
         )
     }
 
     single<RemoteMovieDataSource> {
         RemoteMovieDataSourceImpl(
-            httpClient = get(),
-            baseUrl = get(named("BASE_URL")),
-            logger = get()
+            movieApiService = get(),
+            logger = get(),
         )
     }
 
     single<RemoteActorDataSource> {
         RemoteActorDataSourceImpl(
-            httpClient = get(),
-            baseUrl = get(named("BASE_URL")),
+            actorApiService = get(),
             logger = get()
         )
     }
 
     single<RemoteTvShowDataSource> {
         RemoteTvShowDataSourceImpl(
-            httpClient = get(),
-            baseUrl = get(named("BASE_URL")),
+            tvShowApiService = get(),
             logger = get()
         )
     }
 
     single<RemoteEpisodeDataSource> {
         RemoteEpisodeDataSourceImpl(
-            httpClient = get(),
-            baseUrl = get(named("BASE_URL")),
+            episodeApiService = get(),
             logger = get()
         )
     }
 
     single<LanguageProvider> { AppLanguageProvider() }
+
+    single<ActorApiService> {
+        get<Retrofit>().create(ActorApiService::class.java)
+    }
+
+    single<EpisodeApiService> {
+        get<Retrofit>().create(EpisodeApiService::class.java)
+    }
+
+    single<GenreApiService> {
+        get<Retrofit>().create(GenreApiService::class.java)
+    }
+
+    single<MovieApiService> {
+        get<Retrofit>().create(MovieApiService::class.java)
+    }
+
+    single<SearchApiService> {
+        get<Retrofit>().create(SearchApiService::class.java)
+    }
+
+    single<TvShowApiService> {
+        get<Retrofit>().create(TvShowApiService::class.java)
+    }
     single<AuthenticationApi> {
         get<Retrofit>().create(AuthenticationApi::class.java)
     }

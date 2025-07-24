@@ -1,17 +1,15 @@
 package com.baghdad.remoteDataSource.response.tvShow
 
 import com.baghdad.remoteDataSource.response.actor.ImageResponse
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class TVShowImagesResponse(
-    @SerialName("id")
+    @SerializedName("id")
     val id: Int? = null,
-    @SerialName("backdrops")
+    @SerializedName("backdrops")
     val backdrops: List<ImageResponse>? = null,
-    @SerialName("logos")
+    @SerializedName("logos")
     val logos: List<ImageResponse>? = null,
-    @SerialName("posters")
+    @SerializedName("posters")
     val posters: List<ImageResponse>? = null
 )

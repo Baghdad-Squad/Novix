@@ -1,25 +1,23 @@
 package com.baghdad.remoteDataSource.response.episode
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class EpisodeDetailsResponse(
-    @SerialName("air_date")
+    @SerializedName("air_date")
     val airDate: String? = null,
-    @SerialName("episode_number")
+    @SerializedName("episode_number")
     val episodeNumber: Int = 0,
-    @SerialName("name")
+    @SerializedName("name")
     val name: String? = null,
-    @SerialName("overview")
+    @SerializedName("overview")
     val overview: String? = null,
-    @SerialName("id")
+    @SerializedName("id")
     val id: Int = 0,
-    @SerialName("runtime")
+    @SerializedName("runtime")
     val runtime: Int = 0,
-    @SerialName("season_number")
+    @SerializedName("season_number")
     val seasonNumber: Int = 0,
-    @SerialName("vote_average")
+    @SerializedName("vote_average")
     val voteAverage: Double = 0.0,
 )
 

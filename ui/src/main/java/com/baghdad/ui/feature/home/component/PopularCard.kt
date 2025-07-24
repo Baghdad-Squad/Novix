@@ -28,7 +28,7 @@ import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.islamic_image_loader.component.SafeImage
+import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 
 @Composable
 fun PopularCard(
@@ -50,7 +50,7 @@ fun PopularCard(
         contentAlignment = Alignment.Center,
 
         ) {
-        SafeImage(
+        IslamicImage(
             imageUrl = imageUrl,
             contentDescription = contentName,
             modifier = Modifier

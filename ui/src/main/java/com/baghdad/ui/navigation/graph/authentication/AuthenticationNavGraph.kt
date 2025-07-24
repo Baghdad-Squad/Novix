@@ -1,6 +1,5 @@
 package com.baghdad.ui.navigation.graph.authentication
 
-import android.util.Log
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -59,7 +58,6 @@ private fun handleAuthenticationNavigation(
                 }
             }
         }
-
         AuthenticationNavEvent.NavigateToForgotPassword -> {
             navController.navigate(ForgotPasswordScreen)
         }
@@ -69,7 +67,6 @@ private fun handleAuthenticationNavigation(
         }
 
         AuthenticationNavEvent.NavigateBack -> {
-            Log.i("back", "navigate back")
             navController.popBackStack()
         }
     }
