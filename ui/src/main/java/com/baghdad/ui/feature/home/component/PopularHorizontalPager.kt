@@ -1,10 +1,14 @@
 package com.baghdad.ui.feature.home.component
 
+import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -13,8 +17,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.CarousalDot
+import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.design_system.theme.Theme
 import com.baghdad.viewmodel.home.HomeScreenState.PopularItemUiState
 import kotlinx.coroutines.delay
 
@@ -127,42 +134,49 @@ private fun LoadingPopularCardPager(modifier: Modifier = Modifier) {
         val currentPageOffset =
             (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
-        when {
+        val rotation = when {
             currentPageOffset < -0.5f -> 3f
             currentPageOffset > 0.5f -> -3f
             else -> 0f
         }
 
-        when {
+        val xScale = when {
             currentPageOffset == 0f -> 1f
             else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.1f)
         }
 
-        when {
+        val yScale = when {
             currentPageOffset == 0f -> 1f
             else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.15f)
         }
 
-        when {
+        val yTranslation = when {
             currentPageOffset == 0f -> 0f
             else -> kotlin.math.abs(currentPageOffset) * 40f
         }
 
-//        PopularCard(
-//            contentName = item.name,
-//            contentRating = item.rating,
-//            imageUrl = item.imageUrl,
-//            onCardClick = { onClick(item) },
-//            onSavedClick = { onSaveClick(item) },
-//            isSaved = item.isSaved,
-//            modifier = Modifier
-//                .graphicsLayer {
-//                    rotationZ = rotation
-//                    scaleX = xScale
-//                    scaleY = yScale
-//                    translationY = yTranslation
-//                }
-//                .fillMaxWidth()
-//        )
+        LoadingPopularCard(
+            isCentralCard = currentPageOffset == 0f,
+            modifier = Modifier
+                .graphicsLayer {
+                    rotationZ = rotation
+                    scaleX = xScale
+                    scaleY = yScale
+                    translationY = yTranslation
+                }
+                .fillMaxWidth()
+        )
+    }
+}
+
+@Preview(showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun LoadingPopularCardPagerPreview() {
+    NovixTheme(isDarkTheme = true) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.color.surface)) {
+            LoadingPopularCardPager()
+        }
     }
 }

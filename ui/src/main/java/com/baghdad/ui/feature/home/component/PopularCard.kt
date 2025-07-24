@@ -110,19 +110,40 @@ fun PopularCard(
 }
 
 @Composable
-fun LoadingPopularCard(modifier: Modifier = Modifier) {
+fun LoadingPopularCard(
+    isCentralCard: Boolean,
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(width = 188.dp, height = 244.dp)
             .background(Theme.color.surface)
             .clip(RoundedCornerShape(12.dp))
             .shimmerEffect()
     ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 8.dp, bottom = 8.dp, end = 8.dp)
-        ) { }
+        if (isCentralCard) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = 8.dp, end = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(width = 172.dp, height = 44.dp)
+                        .background(Theme.color.surface, RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(8.dp))
+                        .shimmerEffect()
+                )
+                Box(
+                    modifier = Modifier
+                        .size(width = 43.dp, height = 18.dp)
+                        .background(Theme.color.surface)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
+                )
+            }
+        }
     }
 }
 
