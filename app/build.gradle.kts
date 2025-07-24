@@ -97,7 +97,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-        //android.buildFeatures.buildConfig = true
     }
     testOptions {
         unitTests.all {
