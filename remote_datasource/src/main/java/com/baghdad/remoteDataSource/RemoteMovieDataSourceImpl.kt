@@ -4,6 +4,7 @@ import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
+import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
@@ -16,6 +17,7 @@ import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 
 class RemoteMovieDataSourceImpl(
@@ -43,7 +45,7 @@ class RemoteMovieDataSourceImpl(
         ).cast?.map { it.toDto() } ?: emptyList()
     }
 
-    override suspend fun getMoviesByGenre(genreId: Long, page: Int): List<MovieDto> {
+    override suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto> {
         return handleRequest<SimilarMovieResponse>(
             apiCall = {
                 movieApiService.getMoviesByGenre(
@@ -52,7 +54,7 @@ class RemoteMovieDataSourceImpl(
                 )
             },
             logger = logger,
-        ).results.orEmpty().map { it.toDto() }
+        ).toPagedMovieDtos()
     }
 
     override suspend fun getMovieReviews(movieId: Long): List<ReviewDto> {
@@ -79,4 +81,15 @@ class RemoteMovieDataSourceImpl(
             logger = logger,
         ).mapToYoutubeURL()
     }
+
+    override suspend fun getTopRatedMovies(
+        page: Int,
+    ): PagedResultDto<MovieDto> {
+        val response = handleRequest<SimilarMovieResponse>(
+            apiCall = { movieApiService.getTopRatedMovies(page) },
+            logger = logger,
+        )
+        return response.toPagedMovieDtos()
+    }
+
 }

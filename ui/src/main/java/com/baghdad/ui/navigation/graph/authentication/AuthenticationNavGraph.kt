@@ -28,5 +28,8 @@ private fun handleAuthenticationNavigation(
                 inclusive = true
             }
         }
+        AuthenticationNavEvent.NavigateBack -> {
+            navController.popBackStack()
+        }
     }
 }

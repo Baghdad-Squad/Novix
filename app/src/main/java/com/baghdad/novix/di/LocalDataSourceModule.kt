@@ -2,6 +2,7 @@ package com.baghdad.novix.di
 
 import androidx.room.Room
 import com.baghdad.local_datasource.LocalActorDataSourceImpl
+import com.baghdad.local_datasource.LocalContinueWatchingDataSourceImpl
 import com.baghdad.local_datasource.LocalFavoriteGenreDataSourceImpl
 import com.baghdad.local_datasource.LocalGenreDataSourceImpl
 import com.baghdad.local_datasource.LocalMovieDataSourceImpl
@@ -11,16 +12,20 @@ import com.baghdad.local_datasource.LocalSearchQueryDataSourceImpl
 import com.baghdad.local_datasource.LocalTrendingTvShowDataSourceImpl
 import com.baghdad.local_datasource.LocalTvShowDataSourceImpl
 import com.baghdad.local_datasource.roomDB.dao.ActorDao
+import com.baghdad.local_datasource.roomDB.dao.ContinueWatchingDao
 import com.baghdad.local_datasource.roomDB.dao.FavoriteGenreDao
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
+import com.baghdad.local_datasource.roomDB.dao.TrendingActorDao
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
+import com.baghdad.local_datasource.roomDB.dao.TopRatedDao
 import com.baghdad.local_datasource.roomDB.dao.TrendingTvShowDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.repository.datasource.local.LocalActorDataSource
+import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.datasource.local.LocalFavoriteGenreDataSource
 import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.datasource.local.LocalMovieDataSource
@@ -53,6 +58,9 @@ val localDataSourceModule = module {
     single<FavoriteGenreDao> { get<NovixDatabase>().favoriteGenreDao() }
     single<SearchQueryDao> { get<NovixDatabase>().searchQueryDao() }
     single<TrendingTvShowDao> { get<NovixDatabase>().trendingTvShowDao() }
+    single<TopRatedDao> { get<NovixDatabase>().topRatedDao() }
+    single<ContinueWatchingDao> { get<NovixDatabase>().continueWatchingDao() }
+    single<TrendingActorDao> { get<NovixDatabase>().trendingActorDao() }
 
 
 
@@ -65,4 +73,7 @@ val localDataSourceModule = module {
     singleOf(::LocalFavoriteGenreDataSourceImpl) { bind<LocalFavoriteGenreDataSource>() }
     singleOf(::LocalSearchQueryDataSourceImpl) { bind<LocalSearchQueryDataSource>() }
     singleOf(::LocalTrendingTvShowDataSourceImpl) { bind<LocalTrendingTvShowsDataSource>() }
+    singleOf(::LocalContinueWatchingDataSourceImpl){bind<LocalContinueWatchingDataSource>()}
+
+
 }
