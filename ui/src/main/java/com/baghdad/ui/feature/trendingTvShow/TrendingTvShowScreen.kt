@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.trendingTvShow
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -139,6 +141,13 @@ fun TrendingTvShowContent(
                 onGenreSelected = { listener.onGenreClick(it.id) },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
+
+            if (uiState.isLoading) {
+                Box(Modifier.fillMaxSize()) {
+                    WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            }
+
             LazyPagingVerticalGrid<TrendingTvShowScreenState.TvShowUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier
