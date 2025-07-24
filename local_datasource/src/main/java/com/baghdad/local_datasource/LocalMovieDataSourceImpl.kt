@@ -103,7 +103,7 @@ class LocalMovieDataSourceImpl(
         page: Int,
         pageSize: Int,
     ): List<MovieDto> {
-        val offset = calculatePageOffset(page, pageSize)
+        val offset = calculatePageOffset(page = page, pageSize = pageSize)
         return executeWithErrorHandling(logger = logger) {
             topRatedDao.getTopRatedMoves(pageSize, offset).map {
                 val genresDto = it.genres.map { genreId ->
