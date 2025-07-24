@@ -37,5 +37,4 @@ sealed interface Graph : Route {
     @Serializable
     data class ReviewsGraph(val mediaId: Long, val mediaType: ContentType) : Graph
 
-
 }

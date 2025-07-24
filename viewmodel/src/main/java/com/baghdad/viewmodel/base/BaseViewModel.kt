@@ -1,12 +1,12 @@
 package com.baghdad.viewmodel.base
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.baghdad.domain.exception.LocalDataBaseException
 import com.baghdad.domain.exception.NetworkException
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.domain.exception.UnknownException
 import com.baghdad.domain.model.PagedResult
@@ -106,7 +106,8 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
         val flow = createPagedResultPager(
             pageSize = pageSize,
             loadData = loadData,
-            onInitialLoadFinished = onInitialLoadFinished
+            onInitialLoadFinished = onInitialLoadFinished,
+            onError = ::handleError
         ).map { pagingData ->
             pagingData.map { entity -> mapEntityToUiState(entity) }
         }.catch {
@@ -159,6 +160,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
             is LocalDataBaseException -> BaseSnackBarMessage.DataBaseError
             is UnknownException -> BaseSnackBarMessage.UnknownError
             is UnAuthorizedException -> BaseSnackBarMessage.UnAuthorizedError
+            is NoInternetException -> BaseSnackBarMessage.NetworkError
             is NetworkException -> BaseSnackBarMessage.NetworkError
             else -> mapThrowableToErrorMessage(throwable)
         }

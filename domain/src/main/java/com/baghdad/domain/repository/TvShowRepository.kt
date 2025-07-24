@@ -1,5 +1,6 @@
 package com.baghdad.domain.repository
 
+import com.baghdad.domain.model.PagedResult
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
@@ -22,4 +23,5 @@ interface TvShowRepository {
 
     suspend fun getTvShowReviews(tvId: Long): List<Review>
 
+    suspend fun getTrendingTvShows(page: Int): PagedResult<TvShow>
 }

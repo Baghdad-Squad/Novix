@@ -44,4 +44,5 @@ interface MovieDao {
         offset: Int,
         mediaType: String = SearchQueryDto.MediaType.MOVIE.name
     ): List<Movie>
+
 }

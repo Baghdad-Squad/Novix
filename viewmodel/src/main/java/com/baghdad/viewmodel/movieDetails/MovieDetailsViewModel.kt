@@ -1,7 +1,8 @@
 package com.baghdad.viewmodel.movieDetails
 
+import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
-import com.baghdad.domain.usecase.movie.GetMovieCategoryUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
 import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
@@ -15,8 +16,8 @@ class MovieDetailsViewModel(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
     private val getCastsInfoUseCase: GetMovieCastMembersUseCase,
     private val getMovieImagesUseCase: GetMovieGalleryUseCase,
-    private val getMovieCategoryUseCase: GetMovieCategoryUseCase,
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
+    private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
     private val movieId: Long,
 ) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
     MovieDetailsInteractionListener {
@@ -179,7 +180,12 @@ class MovieDetailsViewModel(
                 }
             )
         }
+        if (!currentState.isLoading) {
+            addToContinueWatching()
+        }
     }
+
+
 
     private fun getCastMembers() {
         tryToExecute(
@@ -200,6 +206,7 @@ class MovieDetailsViewModel(
             onFinally = ::onFinally
         )
     }
+
 
     private fun getMoreLikeThisShow() {
         tryToExecute(
@@ -234,6 +241,7 @@ class MovieDetailsViewModel(
         }
     }
 
+
     private fun onLoading() {
         updateState { it.copy(isLoading = true) }
     }
@@ -241,7 +249,20 @@ class MovieDetailsViewModel(
     private fun onFinally() {
         updateState { it.copy(isLoading = false) }
     }
+
+    private fun addToContinueWatching() {
+        tryToExecute(
+            callee = {
+                addContinueWatchingUseCase(
+                    movieId, currentState.categories.map { it.id },
+                    contentImageUrl = if (!currentState.movieImages.isEmpty()) currentState.movieImages[0] else "",
+                    contentType = ContinueWatching.ContentType.MOVIE,
+                )
+            },
+        )
+    }
 }
+
 
 private fun Double.roundToFirstDecimal(): Double {
     return (this * 10).roundToInt() / 10.0
@@ -258,5 +279,3 @@ private fun Int.formatDuration(): String {
             "$minutes min"
         }
     }
-
-}
