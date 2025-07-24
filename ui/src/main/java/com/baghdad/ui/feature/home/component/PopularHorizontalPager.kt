@@ -45,7 +45,7 @@ fun PopularCardPager(
 
     Crossfade(isLoading) { isLoading ->
         if (isLoading) {
-            LoadingPopularCardPage(modifier = modifier)
+            LoadingPopularCardPager(modifier = modifier)
         } else {
             Column(
                 modifier = modifier,
@@ -127,42 +127,42 @@ private fun LoadingPopularCardPager(modifier: Modifier = Modifier) {
         val currentPageOffset =
             (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
-        val rotation = when {
+        when {
             currentPageOffset < -0.5f -> 3f
             currentPageOffset > 0.5f -> -3f
             else -> 0f
         }
 
-        val xScale = when {
+        when {
             currentPageOffset == 0f -> 1f
             else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.1f)
         }
 
-        val yScale = when {
+        when {
             currentPageOffset == 0f -> 1f
             else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.15f)
         }
 
-        val yTranslation = when {
+        when {
             currentPageOffset == 0f -> 0f
             else -> kotlin.math.abs(currentPageOffset) * 40f
         }
 
-        PopularCard(
-            contentName = item.name,
-            contentRating = item.rating,
-            imageUrl = item.imageUrl,
-            onCardClick = { onClick(item) },
-            onSavedClick = { onSaveClick(item) },
-            isSaved = item.isSaved,
-            modifier = Modifier
-                .graphicsLayer {
-                    rotationZ = rotation
-                    scaleX = xScale
-                    scaleY = yScale
-                    translationY = yTranslation
-                }
-                .fillMaxWidth()
-        )
+//        PopularCard(
+//            contentName = item.name,
+//            contentRating = item.rating,
+//            imageUrl = item.imageUrl,
+//            onCardClick = { onClick(item) },
+//            onSavedClick = { onSaveClick(item) },
+//            isSaved = item.isSaved,
+//            modifier = Modifier
+//                .graphicsLayer {
+//                    rotationZ = rotation
+//                    scaleX = xScale
+//                    scaleY = yScale
+//                    translationY = yTranslation
+//                }
+//                .fillMaxWidth()
+//        )
     }
 }
