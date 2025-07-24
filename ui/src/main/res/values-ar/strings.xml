@@ -62,7 +62,6 @@
     <string name="top_rating">الاعلى تقييم</string>
     <string name="actors">ممثلين</string>
     <string name="episode_header_template">الحلقة %1$d - %2$s</string>
-    <string name="actors">الممثلين</string>
     <string name="episodes">عدد الحلقات %1$d </string>
     <string name="s"> الموسم</string>
 
