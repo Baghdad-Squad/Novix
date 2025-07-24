@@ -3,6 +3,7 @@ package com.baghdad.remoteDataSource
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
+import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
@@ -15,6 +16,7 @@ import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import io.ktor.client.HttpClient
 
@@ -86,14 +88,18 @@ class RemoteMovieDataSourceImpl(
         ).mapToYoutubeURL()
     }
 
-    override suspend fun getTopRatedMovies(page: Int): List<MovieDto> {
+    override suspend fun getTopRatedMovies(
+        page: Int,
+    ): PagedResultDto<MovieDto> {
         val endpoint = TOP_RATED_MOVIES_ENDPOINT
-        return handleRequest<SimilarMovieResponse>(
+
+        val response = handleRequest<SimilarMovieResponse>(
             client = httpClient,
             logger = logger,
             url = "$baseUrl$endpoint",
             params = mapOf("page" to page.toString())
-        ).results.orEmpty().map { it.toDto() }
+        )
+        return response.toPagedMovieDtos()
     }
 
     companion object {

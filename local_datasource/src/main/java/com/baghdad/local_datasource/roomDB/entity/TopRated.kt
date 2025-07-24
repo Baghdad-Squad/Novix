@@ -1,14 +1,15 @@
 package com.baghdad.local_datasource.roomDB.entity
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.baghdad.local_datasource.roomDB.converter.Converters
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 
-@Entity(primaryKeys = ["movieId"])
+@Entity(tableName = "TopRatedMovie")
 data class TopRatedMovie(
-    val movieId: Long,
+    @PrimaryKey val movieId: Long,
     @TypeConverters(Converters::class) val genres: List<Long>,
     val imdbRating: Double,
     val posterPictureURL: String,

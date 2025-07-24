@@ -7,10 +7,9 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.local.LocalGenreDataSource
-import com.baghdad.repository.datasource.local.LocalTopRatingDataSource
+import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
-import com.baghdad.repository.datasource.remote.RemoteTopRatingDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.util.executeSafely
@@ -20,9 +19,8 @@ import java.util.Locale
 class MovieRepositoryImpl(
     private val remoteGenreDataSource: RemoteGenreDataSource,
     private val localGenreDataSource: LocalGenreDataSource,
+    private val localMovieDataSource: LocalMovieDataSource,
     private val remoteMovieDataSource: RemoteMovieDataSource,
-    private val remoteTopRatingDataSource: RemoteTopRatingDataSource,
-    private val localTopRatingDataSource: LocalTopRatingDataSource,
 ) : MovieRepository {
     override suspend fun getGenres(): List<Genre> {
         return executeSafely {
@@ -84,25 +82,22 @@ class MovieRepositoryImpl(
 
     override suspend fun getTopRatedMovies(page: Int): PagedResult<Movie> {
         return getPagedSafely(
-
             page = page,
             pageSize = 20,
             mapToEntity = MovieDto::toEntity,
             onStart = {  },
             getCachedPage = { page, pageSize ->
-                localTopRatingDataSource.getTopRatedMovies(page, pageSize)
+                localMovieDataSource.getTopRatedMovies(page, pageSize)
             },
 
             getRemoteData = { page, _ ->
                 updateGenreCache()
-                remoteTopRatingDataSource.getTopRatedMovies(page)
-
+                remoteMovieDataSource.getTopRatedMovies(page)
             },
 
             cacheData = { data ->
-                localTopRatingDataSource.saveTopRatedMovies(data)
+                localMovieDataSource.saveTopRatedMovies(data)
             }
-
         )
 
     }

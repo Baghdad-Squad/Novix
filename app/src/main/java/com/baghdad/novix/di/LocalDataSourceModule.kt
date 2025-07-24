@@ -8,7 +8,6 @@ import com.baghdad.local_datasource.LocalMovieDataSourceImpl
 import com.baghdad.local_datasource.LocalRecentlyViewedDataSourceImpl
 import com.baghdad.local_datasource.LocalSearchDataSourceImpl
 import com.baghdad.local_datasource.LocalSearchQueryDataSourceImpl
-import com.baghdad.local_datasource.LocalTopRatingDataSourceImpl
 import com.baghdad.local_datasource.LocalTvShowDataSourceImpl
 import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.dao.FavoriteGenreDao
@@ -27,7 +26,6 @@ import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
 import com.baghdad.repository.datasource.local.LocalSearchQueryDataSource
-import com.baghdad.repository.datasource.local.LocalTopRatingDataSource
 import com.baghdad.repository.datasource.local.LocalTvShowDataSource
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.bind
@@ -64,6 +62,4 @@ val localDataSourceModule = module {
     singleOf(::LocalActorDataSourceImpl) { bind<LocalActorDataSource>() }
     singleOf(::LocalFavoriteGenreDataSourceImpl) { bind<LocalFavoriteGenreDataSource>() }
     singleOf(::LocalSearchQueryDataSourceImpl) { bind<LocalSearchQueryDataSource>() }
-    singleOf(::LocalTopRatingDataSourceImpl) { bind<LocalTopRatingDataSource>() }
-
 }

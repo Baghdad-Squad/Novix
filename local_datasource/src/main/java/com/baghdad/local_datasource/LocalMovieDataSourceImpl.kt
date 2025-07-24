@@ -2,11 +2,13 @@ package com.baghdad.local_datasource
 
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
+import com.baghdad.local_datasource.roomDB.dao.TopRatedDao
 import com.baghdad.local_datasource.roomDB.entity.Genre
 import com.baghdad.local_datasource.roomDB.entity.Movie
 import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toDtos
 import com.baghdad.local_datasource.roomDB.entity.toLocalDto
+import com.baghdad.local_datasource.roomDB.entity.toLocalDtos
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.local_datasource.util.calculatePageOffset
 import com.baghdad.repository.datasource.local.LocalMovieDataSource
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.map
 class LocalMovieDataSourceImpl(
     private val movieDao: MovieDao,
     private val genreDao: GenreDao,
+    private val topRatedDao: TopRatedDao,
     private val logger: Logger
 ) : LocalMovieDataSource {
     override suspend fun addMovie(movie: MovieDto) =
@@ -95,4 +98,26 @@ class LocalMovieDataSourceImpl(
         val allGenreIds = movies.flatMap { it.genres }.distinct()
         return genreDao.getGenresByIds(allGenreIds).associateBy { it.id }
     }
+
+    override suspend fun getTopRatedMovies(
+        page: Int,
+        pageSize: Int,
+    ): List<MovieDto> {
+        val offset = calculatePageOffset(page, pageSize)
+        return executeWithErrorHandling(logger = logger) {
+            topRatedDao.getTopRatedMoves(pageSize, offset).map {
+                val genresDto = it.genres.map { genreId ->
+                    genreDao.getGenreById(genreId).toDto()
+                }
+                it.toDto(genresDto)
+            }
+        }
+    }
+
+    override suspend fun saveTopRatedMovies(movieData: List<MovieDto>) {
+        executeWithErrorHandling(logger = logger) {
+            topRatedDao.upsertMovies(movieData.map { it.toLocalDtos() })
+        }
+    }
+
 }
