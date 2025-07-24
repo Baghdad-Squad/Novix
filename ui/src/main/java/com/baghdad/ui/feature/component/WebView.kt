@@ -36,7 +36,7 @@ fun AppWebView(
                     builtInZoomControls = false
                     displayZoomControls = false
                 }
-                webViewClient = SimpleWebViewClient(
+
                 CookieManager.getInstance().removeAllCookies(null)
                 CookieManager.getInstance().flush()
                 WebStorage.getInstance().deleteAllData()
