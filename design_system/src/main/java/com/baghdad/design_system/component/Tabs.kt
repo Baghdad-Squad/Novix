@@ -65,7 +65,8 @@ fun Tab(
                 .padding(horizontal = 24.dp)
                 .animateContentSize(tween(ANIMATION_DURATION))
                 .noRippleClickable { onClick() }
-                .then(underlineModifier),
+                .then(underlineModifier)
+            ,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
             Text(
