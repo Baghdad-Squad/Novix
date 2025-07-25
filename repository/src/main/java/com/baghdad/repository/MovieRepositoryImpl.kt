@@ -11,6 +11,7 @@ import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getPagedSafely
@@ -72,7 +73,7 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun getMovieReviews(movieId: Long): List<Review> {
-        val result =  executeSafely {
+        val result = executeSafely {
             remoteMovieDataSource.getMovieReviews(movieId).map {
                 it.toEntity()
             }
@@ -106,6 +107,14 @@ class MovieRepositoryImpl(
             }
         )
 
+    }
+
+    override suspend fun getTrendingMovies(page: Int): PagedResult<Movie> {
+        return executeSafely {
+            remoteMovieDataSource.getTrendingMovies(page).toPagedResult {
+                it.toEntity()
+            }
+        }
     }
 
     private suspend fun updateGenreCache() {

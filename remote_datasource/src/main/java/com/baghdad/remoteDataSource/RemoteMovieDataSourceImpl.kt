@@ -5,6 +5,7 @@ import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
 import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
+import com.baghdad.remoteDataSource.mapper.movie.toMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
@@ -12,6 +13,7 @@ import com.baghdad.remoteDataSource.response.SimilarMovieResponse
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
+import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
@@ -92,4 +94,12 @@ class RemoteMovieDataSourceImpl(
         return response.toPagedMovieDtos()
     }
 
+
+
+    override suspend fun getTrendingMovies(page: Int): PagedResultDto<MovieDto> {
+        return handleRequest<TrendingMovieResponse>(
+            apiCall = { movieApiService.getTrendingMovies(page) },
+            logger = logger
+        ).toMovieDtos()
+    }
 }
