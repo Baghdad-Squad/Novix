@@ -1,0 +1,77 @@
+package com.baghdad.viewmodel.trendingTvShow
+
+import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
+import com.baghdad.viewmodel.base.BaseViewModel
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+
+class TrendingTvShowViewModel(
+    private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase,
+    private val getGenresUseCase: GetGenresUseCase,
+) :
+    BaseViewModel<TrendingTvShowScreenState, TrendingTvShowScreenEffect>(TrendingTvShowScreenState()),
+    TrendingTvShowInteractionListener {
+
+    init {
+        getTvShowGenres()
+        getTrendingTvShowsByGenre(0L)
+    }
+
+    private fun getTvShowGenres() {
+        tryToExecute(
+            callee = { getGenresUseCase.getTvShowGenres() },
+            onSuccess = { genres ->
+                updateState { state ->
+                    val allGenre = TrendingTvShowScreenState.GenreUiState(id = 0L, name = "All")
+                    val genreUiStates =
+                        listOf(allGenre) + genres.map { it.toUiState() }
+                    state.copy(
+                        genres = genreUiStates,
+                    )
+                }
+            },
+            onError = { mapThrowableToErrorMessage(it) }
+        )
+    }
+
+    private fun getTrendingTvShowsByGenre(genreId: Long) {
+        updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
+        collectPagingFlow(
+            loadData = { page ->
+                getTrendingTvShowUseCase.invoke(
+                    genreId = currentState.selectedGenreId,
+                    page = page
+                )
+            },
+            onInitialLoadFinished = ::onFinally,
+            mapEntityToUiState = { it.toUiState() },
+            onFlowCreated = { tvShowFlow -> updateState { it.copy(trendingTvShows = tvShowFlow) } }
+        )
+    }
+
+
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
+        return BaseSnackBarMessage.UnknownError
+    }
+
+    override fun onTvShowClick(tvShowId: Long) {
+        sendEffect(TrendingTvShowScreenEffect.NavigateToTvShowDetails(tvShowId))
+    }
+
+
+    override fun onBackIconClick() {
+        sendEffect(TrendingTvShowScreenEffect.NavigateBack)
+    }
+
+    override fun onGenreClick(genreId: Long) {
+        getTrendingTvShowsByGenre(genreId)
+    }
+
+    override fun onSaveTvShowClick(tvShowId: Long) {
+//        TODO("Not yet implemented")
+    }
+
+    private fun onFinally() {
+        updateState { it.copy(isLoading = false) }
+    }
+}

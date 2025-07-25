@@ -7,9 +7,9 @@ import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.model.ActorDto
+import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
-import com.baghdad.repository.model.CastMemberDto
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -33,7 +33,9 @@ class MovieRepositoryImplTest {
         remoteMovieDataSource = mockk()
         movieRepositoryImpl = MovieRepositoryImpl(
             remoteGenreDataSource = remoteGenreDataSource,
-            remoteMovieDataSource = remoteMovieDataSource
+            remoteMovieDataSource = remoteMovieDataSource,
+            localGenreDataSource = mockk(),
+            localMovieDataSource = mockk(),
         )
     }
 

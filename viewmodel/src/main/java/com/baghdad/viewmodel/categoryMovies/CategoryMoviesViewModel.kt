@@ -1,10 +1,13 @@
 package com.baghdad.viewmodel.categoryMovies
 
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
 import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
-import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class CategoryMoviesViewModel(
     private val genreId: Long,
@@ -29,7 +32,15 @@ class CategoryMoviesViewModel(
     override fun onSavedClick(movieId: Long) {
         updateState {
             it.copy(
-                movies = it.movies.map { movie -> if (movie.id == movieId) movie.copy(isSaved = movie.isSaved.not()) else movie }
+                moviesFlow = it.moviesFlow.map { pagingData ->
+                    pagingData.map { movie ->
+                        if (movie.id == movieId) {
+                            movie.copy(isSaved = !movie.isSaved)
+                        } else {
+                            movie
+                        }
+                    }
+                }
             )
         }
     }
@@ -55,26 +66,25 @@ class CategoryMoviesViewModel(
     private fun onGetGenreNameError(throwable: Throwable) {}
 
     private fun getGenreMovies() {
-        tryToExecute(
-            callee = {
-                getGenreMoviesUseCase.invoke(
-                    genreId = genreId,
-                    page = 1
-                )
+        collectPagingFlow(
+            loadData = { page ->
+                getGenreMoviesUseCase(genreId, page)
             },
-            onSuccess = { onGetGenreMoviesSuccess(it) },
-            onError = { onGetGenreMoviesError(it) }
+            onInitialLoadFinished = ::onFinally,
+            mapEntityToUiState = { it.toUiState() },
+            onFlowCreated = ::onGetGenreMoviesSuccess
+
         )
+
     }
 
-
-    private fun onGetGenreMoviesSuccess(movies: List<Movie>) {
-        updateState {
-            it.copy(movies = movies.map { it.toUiState() })
-        }
+    private fun onGetGenreMoviesSuccess(moviesFlow: Flow<PagingData<CategoryMoviesState.MovieUiState>>) {
+        updateState { it.copy(moviesFlow = moviesFlow) }
     }
 
     private fun onGetGenreMoviesError(throwable: Throwable) {}
 
-
+    private fun onFinally() {
+        updateState { it.copy(isLoading = false) }
+    }
 }

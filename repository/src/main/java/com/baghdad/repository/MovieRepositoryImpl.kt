@@ -1,20 +1,27 @@
 package com.baghdad.repository
 
-import android.util.Log
+import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
+import com.baghdad.repository.datasource.local.LocalGenreDataSource
+import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.util.executeSafely
+import com.baghdad.repository.util.getPagedSafely
+import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
 
 class MovieRepositoryImpl(
-    val remoteGenreDataSource: RemoteGenreDataSource,
-    val remoteMovieDataSource: RemoteMovieDataSource,
+    private val remoteGenreDataSource: RemoteGenreDataSource,
+    private val localGenreDataSource: LocalGenreDataSource,
+    private val localMovieDataSource: LocalMovieDataSource,
+    private val remoteMovieDataSource: RemoteMovieDataSource,
 ) : MovieRepository {
     override suspend fun getGenres(): List<Genre> {
         return executeSafely {
@@ -35,7 +42,6 @@ class MovieRepositoryImpl(
     override suspend fun getMovieDetails(movieId: Long): Movie {
         return executeSafely {
             val movieTrailer = remoteMovieDataSource.getMovieTrailer(movieId)
-            Log.d("MovieRepositoryImpl", "getMovieDetails: $movieTrailer")
             remoteMovieDataSource.getMovieDetails(movieId).toEntity()
                 .copy(trailerURL = movieTrailer)
         }
@@ -51,23 +57,26 @@ class MovieRepositoryImpl(
 
     override suspend fun getMoviesByGenre(
         genreId: Long,
-        page: Int
-    ): List<Movie> {
-        return executeSafely {
-            remoteMovieDataSource.getMoviesByGenre(genreId, page).map {
-                it.toEntity()
-            }
-        }
+        page: Int,
+        pageSize: Int
+    ): PagedResult<Movie> {
+        return getRemotePagedSafely(
+            page = page,
+            pageSize = pageSize,
+            mapToEntity = MovieDto::toEntity,
+
+            getRemoteData = { page, _ ->
+                remoteMovieDataSource.getMoviesByGenre(genreId, page)
+            },
+        )
     }
 
     override suspend fun getMovieReviews(movieId: Long): List<Review> {
-        Log.d("MovieRepositoryImpl", "getMovieReviews: $movieId")
         val result =  executeSafely {
             remoteMovieDataSource.getMovieReviews(movieId).map {
                 it.toEntity()
             }
         }
-        Log.d("MovieRepositoryImpl", "getMovieReviews: $result")
         return result
     }
 
@@ -75,5 +84,33 @@ class MovieRepositoryImpl(
         return executeSafely {
             remoteMovieDataSource.getMovieImages(movieId)
         }
+    }
+
+    override suspend fun getTopRatedMovies(page: Int): PagedResult<Movie> {
+        return getPagedSafely(
+            page = page,
+            pageSize = 20,
+            mapToEntity = MovieDto::toEntity,
+            onStart = {  },
+            getCachedPage = { page, pageSize ->
+                localMovieDataSource.getTopRatedMovies(page, pageSize)
+            },
+
+            getRemoteData = { page, _ ->
+                updateGenreCache()
+                remoteMovieDataSource.getTopRatedMovies(page)
+            },
+
+            cacheData = { data ->
+                localMovieDataSource.saveTopRatedMovies(data)
+            }
+        )
+
+    }
+
+    private suspend fun updateGenreCache() {
+        val lang = Locale.getDefault().language
+        val movieGenres = remoteGenreDataSource.getMovieGenre(lang)
+        movieGenres.forEach { localGenreDataSource.addGenre(it) }
     }
 }

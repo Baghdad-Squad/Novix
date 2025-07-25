@@ -56,4 +56,11 @@
     <string name="save_to_list">Save to list</string>
     <string name="guests_of_honor">Guests of honor</string>
     <string name="season_template">S%1$s</string>
+    <string name="trending_tv_shows">Trending TV shows</string>
+    <string name="movies">Movies</string>
+    <string name="tv_shows">TV Shows</string>
+    <string name="actors">Actors</string>
+    <string name="top_rating">Top rating</string>
+    <string name="what_do_you_want_to_watch">What do you want to watch?</string>
+    <string name="episode_header_template">Episode %1$d - %2$s</string>
 </resources>
