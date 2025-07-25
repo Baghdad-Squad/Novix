@@ -27,13 +27,15 @@ class ContinueWatchingViewModel(
         )
     }
 
-    private fun getMovies(genreId: Long) {
+    private fun getMovies(genreId: Long?) {
         collectPagingFlow(
             { page ->
-                if (genreId == 0L) getAllContinueWatchingUseCase(
+                if (genreId == null) {
+                    getAllContinueWatchingUseCase(
                     1,
                     page
-                ) else getAllContinueWatchingByGenreUseCase(genreId, page)
+                )
+                } else getAllContinueWatchingByGenreUseCase(genreId, page)
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toContinueWatchingUiState() },
@@ -72,7 +74,7 @@ class ContinueWatchingViewModel(
         updateState { it.copy(isLoading = false) }
     }
 
-    override fun onGenreClick(genreId: Long) {
+    override fun onGenreClick(genreId: Long?) {
         updateState {
             it.copy(selectedTab = genreId, isLoading = true, mediaFlow = flowOf())
         }

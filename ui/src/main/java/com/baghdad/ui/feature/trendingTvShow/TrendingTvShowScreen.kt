@@ -138,7 +138,7 @@ fun TrendingTvShowContent(
             GenresSection(
                 allGenres = uiState.genres,
                 selectedGenre = uiState.selectedGenreId,
-                onGenreSelected = { listener.onGenreClick(it.id) },
+                onGenreSelected = { listener.onGenreClick(it?.id) },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
 

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flowOf
 
 data class TopRatingMovieState(
     val genres: List<GenreUiState> = emptyList(),
-    val selectedGenreId: Long? = 0L,
+    val selectedGenreId: Long? = null,
     val moviesFlow: Flow<PagingData<MovieUiState>> = flowOf(),
     override val isLoading: Boolean = false
 ) : BaseUiState {

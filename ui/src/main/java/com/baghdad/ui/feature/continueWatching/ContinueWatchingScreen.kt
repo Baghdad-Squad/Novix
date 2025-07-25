@@ -182,8 +182,8 @@ fun ContinueWatchingContent(
 @Composable
 private fun GenresTabs(
     genres: List<ContinueWatchingState.GenreUiState>,
-    selectedTab: Long,
-    onTabClick: (Long) -> Unit,
+    selectedTab: Long?,
+    onTabClick: (Long?) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -193,6 +193,13 @@ private fun GenresTabs(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
+        item {
+            Chip(
+                title = stringResource(R.string.all),
+                isSelected = selectedTab == null,
+                onClick = { onTabClick(null) },
+            )
+        }
         items(genres.size) { index ->
             Chip(
                 title = genres[index].name,

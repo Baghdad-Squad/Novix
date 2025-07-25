@@ -34,7 +34,7 @@ class TrendingTvShowViewModel(
         )
     }
 
-    private fun getTrendingTvShowsByGenre(genreId: Long) {
+    private fun getTrendingTvShowsByGenre(genreId: Long?) {
         updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
         collectPagingFlow(
             loadData = { page ->
@@ -63,7 +63,7 @@ class TrendingTvShowViewModel(
         sendEffect(TrendingTvShowScreenEffect.NavigateBack)
     }
 
-    override fun onGenreClick(genreId: Long) {
+    override fun onGenreClick(genreId: Long?) {
         getTrendingTvShowsByGenre(genreId)
     }
 
