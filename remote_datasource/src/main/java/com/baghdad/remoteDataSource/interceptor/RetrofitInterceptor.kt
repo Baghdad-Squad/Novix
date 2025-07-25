@@ -8,6 +8,7 @@ import retrofit2.Invocation
 
 class HeadersSetupInterceptor(
     private val languageProvider: LanguageProvider,
+    private val authorizationToken: String
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -18,13 +19,10 @@ class HeadersSetupInterceptor(
 
         return chain.proceed(chain.request().newBuilder().apply {
             if (shouldAttachAuthHeader) {
-                // should replace this static token with saveToken logic
-//                        if (userLocalDataSource.getUserToken().isNotEmpty()) {
                 addHeader(
                     "Authorization",
-                    "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTZkYmRkOTNjMGY5NzdkMjMwOGJjMzM3NmI3YTNmOCIsIm5iZiI6MTc1MzAyOTE3Ni45OSwic3ViIjoiNjg3ZDFhMzgzOTg0OWZmZThkZDk4ZDEzIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.5NDfRH9_oRVtrvQb8Bs11qWGeLzEE5US_e5IcVQWerE"
+                    "Bearer $authorizationToken"
                 )
-//                        }
             }
             addHeader("Accept", "application/json")
             addHeader("language", languageProvider.getCurrentLanguage())

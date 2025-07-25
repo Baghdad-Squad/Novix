@@ -34,7 +34,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -66,7 +65,14 @@ val remoteDataSourceModule = module {
         }
     }
 
-    singleOf(::HeadersSetupInterceptor)
+    single<LanguageProvider> { AppLanguageProvider() }
+    single<String>(named("AUTHORIZATION_TOKEN")) { BuildConfig.AUTHORIZATION_TOKEN }
+    single<HeadersSetupInterceptor> {
+        HeadersSetupInterceptor(
+            languageProvider = get(),
+            authorizationToken = get(named("AUTHORIZATION_TOKEN"))
+        )
+    }
 
     single {
         OkHttpClient.Builder()
@@ -137,7 +143,6 @@ val remoteDataSourceModule = module {
         )
     }
 
-    single<LanguageProvider> { AppLanguageProvider() }
 
     single<ActorApiService> {
         get<Retrofit>().create(ActorApiService::class.java)
