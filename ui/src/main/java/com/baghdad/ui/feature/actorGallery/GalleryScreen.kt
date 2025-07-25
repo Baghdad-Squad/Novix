@@ -90,7 +90,9 @@ fun ActorGalleryScreenContent(
             TopAppBar(
                 onGoBackClick = listener::onBackClick,
                 screenTitle = stringResource(R.string.gallery),
-                modifier = Modifier.padding(top = 12.dp)
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .padding(top = 12.dp)
             ) {}
         }
     ) {
@@ -116,7 +118,7 @@ fun ActorGalleryScreenContent(
                 .navigationBarsPadding()
         ) {
 
-        LazyVerticalGrid(
+            LazyVerticalGrid(
                 columns = GridCells.Adaptive(104.dp),
                 contentPadding = PaddingValues(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),

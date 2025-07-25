@@ -97,6 +97,7 @@ private fun TopMoviePicksContent(
                 onGoBackClick = listener::onBackClick,
                 screenTitle = stringResource(com.baghdad.ui.R.string.top_movies_picks),
                 modifier = Modifier
+                    .padding(vertical = 8.dp)
                     .padding(top = 12.dp)
             ) {}
         },
