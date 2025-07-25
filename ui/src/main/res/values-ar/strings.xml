@@ -67,7 +67,8 @@
     <string name="popular">شائع</string>
     <string name="continue_watching">متابعة المشاهدة</string>
     <string name="upcoming">قادم</string>
-    <string name="top_rating_item">Top rating item</string>
+    <string name="continue_watching_item">عنصر أكمل المشاهدة</string>
+    <string name="top_rating_item">عنصر الأعلى ترتيبا</string>
     <string name="trending_people">الممثلون الرائجون</string>
 
 </resources>

@@ -8,6 +8,6 @@ class GetUpcomingMoviesUseCase(
     private val movieRepository: MovieRepository
 ) {
     suspend operator fun invoke(page: Int, genreId: Long?): PagedResult<Movie> {
-        return movieRepository.getUpcomingMovies(page, 20, genreId)
+        return movieRepository.getUpcomingMovies(page, genreId)
     }
 }
