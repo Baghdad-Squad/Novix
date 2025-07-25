@@ -102,7 +102,7 @@ class SimpleWebViewClient(
 private fun detect(webView: WebView?, onProblemDetected: (str: String) -> Unit) {
     webView?.evaluateJavascript(
         "(function() { " +
-                "var h2 = document.querySelectorAll('h2')[0]; " +
+                "var h2 = document.querySelector('h2'); " +
                 "return h2 ? h2.textContent : ''; " +
                 "})();"
     ) { value ->
