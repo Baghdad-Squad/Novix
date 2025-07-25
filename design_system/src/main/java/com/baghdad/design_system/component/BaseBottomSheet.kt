@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,7 +33,6 @@ fun BaseBottomSheet(
     LaunchedEffect(isVisible) {
         if (isVisible) {
             sheetState.show()
-            sheetState.expand()
         } else {
             sheetState.hide()
         }
@@ -46,7 +46,10 @@ fun BaseBottomSheet(
             dragHandle = {
                 DragHandle()
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+               .systemBarsPadding()
+
         ) {
             content()
         }
