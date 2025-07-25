@@ -32,7 +32,6 @@ class ActorRepositoryImplTest {
         localActorDataSource = mockk()
         actorRepositoryImpl = ActorRepositoryImpl(
             remoteActorDataSource = remoteActorDataSource,
-            localPopularPeopleDataSource = localActorDataSource
         )
     }
 
