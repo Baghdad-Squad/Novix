@@ -13,14 +13,13 @@ import kotlinx.coroutines.flow.flowOf
 class ContinueWatchingViewModel(
     private val getGenresUseCase: GetGenresUseCase,
     private val getAllContinueWatchingUseCase: GetAllContinueWatchingUseCase,
-    private val getAllContinueWatchingByGenreUseCase: GetAllContinueWatchingByGenreUseCase
+    private val getAllContinueWatchingByGenreUseCase: GetAllContinueWatchingByGenreUseCase,
 ) : BaseViewModel<ContinueWatchingState, ContinueWatchingScreenEffect>(ContinueWatchingState()),
     ContinueWatchingInteractionListener {
     init {
         getGenres()
-        getMedia(0)
+        getMedia(null)
     }
-
 
     private fun getGenres() {
         tryToExecute(
@@ -29,17 +28,21 @@ class ContinueWatchingViewModel(
         )
     }
 
-    private fun getMedia(genreId: Long) {
+    private fun getMedia(genreId: Long?) {
         collectPagingFlow(
             { page -> onGetMedia(genreId, page) },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toContinueWatchingUiState() },
-            onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow) } }
+            onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow) } },
         )
     }
 
-    private suspend fun onGetMedia(genreId: Long, page: Int): PagedResult<ContinueWatching> {
-        val result = if (genreId == 0L) {
+    private suspend fun onGetMedia(
+        genreId: Long?,
+        page: Int,
+    ): PagedResult<ContinueWatching> {
+        val result =
+            if (genreId == null) {
             getAllContinueWatchingUseCase(page)
         } else {
             getAllContinueWatchingByGenreUseCase(genreId, page)
@@ -53,21 +56,18 @@ class ContinueWatchingViewModel(
         return result.copy(data = filteredData)
     }
 
-
-    private fun onGenresFetched(
-        genres: List<Genre>
-    ) {
+    private fun onGenresFetched(genres: List<Genre>) {
         updateState {
             it.copy(
-                genres = listOf(ContinueWatchingState.GenreUiState(name = "All")) + genres
-                    .distinctBy { genre -> genre.id }
-                    .map { genre -> genre.toContinueWatchingUiState() })
+                genres =
+                    genres
+                        .distinctBy { genre -> genre.id }
+                        .map { genre -> genre.toContinueWatchingUiState() },
+            )
         }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.DefaultMessage
-    }
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.DefaultMessage
 
     override fun onBackClick() {
         sendEffect(ContinueWatchingScreenEffect.NavigateBack)
@@ -88,9 +88,9 @@ class ContinueWatchingViewModel(
         updateState { it.copy(isLoading = false) }
     }
 
-    override fun onGenreClick(genreId: Long) {
+    override fun onGenreClick(genreId: Long?) {
         updateState {
-            it.copy(selectedGenreTab = genreId, isLoading = true, mediaFlow = flowOf())
+            it.copy(selectedGenreId = genreId, isLoading = true, mediaFlow = flowOf())
         }
         getMedia(genreId)
     }
@@ -101,10 +101,14 @@ class ContinueWatchingViewModel(
                 selectedMediaTabIsMovie = isMovieTab,
                 isLoading = true,
                 mediaFlow = flowOf(),
-                selectedGenreTab = 0
+                selectedGenreId = 0
             )
         }
         getGenres()
         getMedia(0)
+    }
+
+    override fun onMovieSaveClick(movieId: Long) {
+        // TODO("Implement when save functionality is implemented")
     }
 }

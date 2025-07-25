@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import com.baghdad.design_system.component.ActorCard
+import com.baghdad.ui.feature.component.ActorCard
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingColumn
 import com.baghdad.viewmodel.search.SearchScreenState
 

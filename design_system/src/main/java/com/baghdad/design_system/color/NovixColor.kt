@@ -23,6 +23,7 @@ data class NovixColor(
     val yellowAccent: Color,
     val greenAccent: Color,
     val greenVariant: Color,
+    val shimmer: Color,
 )
 
 val localNovixColor = staticCompositionLocalOf { lightThemeColor }

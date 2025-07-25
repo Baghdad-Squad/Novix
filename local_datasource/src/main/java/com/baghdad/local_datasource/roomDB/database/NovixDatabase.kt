@@ -12,8 +12,6 @@ import com.baghdad.local_datasource.roomDB.dao.MovieDao
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
-import com.baghdad.local_datasource.roomDB.dao.TrendingActorDao
-import com.baghdad.local_datasource.roomDB.dao.TrendingTvShowDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
 import com.baghdad.local_datasource.roomDB.entity.Actor
 import com.baghdad.local_datasource.roomDB.entity.ContinueWatching
@@ -23,8 +21,6 @@ import com.baghdad.local_datasource.roomDB.entity.Movie
 import com.baghdad.local_datasource.roomDB.entity.RecentSearch
 import com.baghdad.local_datasource.roomDB.entity.RecentlyViewed
 import com.baghdad.local_datasource.roomDB.entity.SearchQuery
-import com.baghdad.local_datasource.roomDB.entity.TrendingActorEntity
-import com.baghdad.local_datasource.roomDB.entity.TrendingTvShow
 import com.baghdad.local_datasource.roomDB.entity.TvShow
 
 @Database(
@@ -37,9 +33,7 @@ import com.baghdad.local_datasource.roomDB.entity.TvShow
         Genre::class,
         LocalFavoriteGenreDto::class,
         SearchQuery::class,
-        TrendingTvShow::class,
         ContinueWatching::class,
-        TrendingActorEntity::class
     ],
     version = 1
 )
@@ -55,7 +49,5 @@ abstract class NovixDatabase : RoomDatabase(){
     abstract fun genreDao(): GenreDao
     abstract fun favoriteGenreDao(): FavoriteGenreDao
     abstract fun searchQueryDao(): SearchQueryDao
-    abstract fun trendingTvShowDao(): TrendingTvShowDao
-    abstract fun trendingActorDao(): TrendingActorDao
     abstract fun continueWatchingDao(): ContinueWatchingDao
 }

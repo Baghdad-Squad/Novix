@@ -9,11 +9,12 @@ class GetTvShowTopRatingUseCase(
 ) {
     suspend operator fun invoke(
         page: Int,
-        genreId: Long
+        genreId: Long?,
     ): PagedResult<TvShow> {
         val result = tvShowRepository.getTopRatedTvShows(page)
-        val filteredTvShows = if (genreId != 0L) {
-            result.data.filter { tvShow ->
+        val filteredTvShows =
+            if (genreId != null) {
+                result.data.filter { tvShow ->
                 tvShow.genres.any { genre -> genre.id == genreId }
             }
         } else {

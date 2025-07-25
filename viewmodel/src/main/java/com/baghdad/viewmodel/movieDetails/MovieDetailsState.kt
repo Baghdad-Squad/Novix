@@ -13,6 +13,7 @@ data class MovieDetailsState(
     val date: String = "",
     val overView: String = "",
     val castMembers: List<ActorCardInfo> = emptyList(),
+    val posterImageURL: String = "",
     val moreLikeThisMovie: List<MoreLikeThisMovie> = emptyList(),
     val isExtendText: Boolean = false,
     val isStared: Boolean = false,

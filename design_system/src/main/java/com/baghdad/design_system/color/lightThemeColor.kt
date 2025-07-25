@@ -22,5 +22,6 @@ val lightThemeColor =
         redAccent = Color(0xFFF75662),
         yellowAccent = Color(0xFFFFC74D),
         greenAccent = Color(0xFF19744D),
-        greenVariant = Color(0xFFCFE5DC)
+        greenVariant = Color(0xFFCFE5DC),
+        shimmer = Color(0xFF000000),
     )

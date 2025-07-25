@@ -20,9 +20,7 @@ import java.util.Locale
 
 class TvShowRepositoryImpl(
     val remoteGenreDataSource: RemoteGenreDataSource,
-    val tvShowRemoteDataSource: RemoteTvShowDataSource,
-    val localGenreDataSource: LocalGenreDataSource,
-    val localTrendingTvShowsDataSource: LocalTrendingTvShowsDataSource
+    val tvShowRemoteDataSource: RemoteTvShowDataSource
 ) : TvShowRepository {
     override suspend fun getGenres(): List<Genre> {
         return executeSafely {
@@ -87,31 +85,20 @@ class TvShowRepositoryImpl(
         }
     }
 
+    override suspend fun getPopularTvShows(): List<TvShow> {
+        return executeSafely {
+            tvShowRemoteDataSource.getPopularTvShows().map(TvShowDto::toEntity)
+        }
+    }
+
     override suspend fun getTrendingTvShows(page: Int): PagedResult<TvShow> {
-        return getPagedSafely(
-            page = page,
-            pageSize = 20,
-            getCachedPage = { page, pageSize ->
-                localTrendingTvShowsDataSource.getTrendingTvShows(page, pageSize)
-            },
-            getRemoteData = { page, _ ->
-                updateGenreCache()
-                tvShowRemoteDataSource.getTrendingTvShows(page)
-            },
-            cacheData = { data ->
-                localTrendingTvShowsDataSource.saveTrendingTvShows(data)
-            },
-            mapToEntity = TvShowDto::toEntity
-        )
+        return executeSafely {
+            tvShowRemoteDataSource.getTrendingTvShows(page).toPagedResult {
+                it.toEntity()
+            }
+        }
     }
 
-    private suspend fun updateGenreCache() {
-        val lang = Locale.getDefault().language
-
-        val tvGenres = remoteGenreDataSource.getTvShowGenre(lang)
-
-        tvGenres.forEach { localGenreDataSource.addGenre(it) }
-    }
 
     companion object {
         private const val MAX_IMAGE_COUNT = 10

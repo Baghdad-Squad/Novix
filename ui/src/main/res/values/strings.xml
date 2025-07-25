@@ -61,9 +61,15 @@
     <string name="actors">Actors</string>
     <string name="top_rating">Top rating</string>
     <string name="what_do_you_want_to_watch">What do you want to watch?</string>
+    <string name="popular">Popular</string>
+    <string name="continue_watching">Continue watching</string>
+    <string name="upcoming">Upcoming</string>
     <string name="episode_header_template">Episode %1$d - %2$s</string>
     <string name="movie_card">Movie Card</string>
     <string name="movies">Movies</string>
     <string name="trending_movies">Trending movies</string>
     <string name="all">All</string>
+    <string name="continue_watching_item">Continue watching item</string>
+    <string name="top_rating_item">Top rating item</string>
+    <string name="trending_people">Trending people</string>
 </resources>

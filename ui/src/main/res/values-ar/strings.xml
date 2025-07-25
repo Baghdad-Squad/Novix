@@ -57,7 +57,7 @@
     <string name="save_to_list">حفظ الى القائمه</string>
     <string name="guests_of_honor">ضيوف الشرف</string>
     <string name="season_template">موسم %1$s</string>
-    <string name="trending_tv_shows">Trending TV shows</string>
+    <string name="trending_tv_shows">المسلسلات الرائجة</string>
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>
     <string name="what_do_you_want_to_watch">ماذا تريد أن تشاهد؟</string>
@@ -66,5 +66,12 @@
     <string name="episode_header_template">الحلقة %1$d - %2$s</string>
     <string name="movie_card">بطاقة الفيلم</string>
     <string name="trending_movies">الأفلام الرائجة</string>
+
+    <string name="popular">شائع</string>
+    <string name="continue_watching">متابعة المشاهدة</string>
+    <string name="upcoming">قادم</string>
+    <string name="continue_watching_item">عنصر أكمل المشاهدة</string>
+    <string name="top_rating_item">عنصر الأعلى ترتيبا</string>
+    <string name="trending_people">الممثلون الرائجون</string>
 
 </resources>
