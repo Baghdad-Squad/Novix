@@ -7,21 +7,18 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.local.LocalGenreDataSource
-import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.util.executeSafely
-import com.baghdad.repository.util.getPagedSafely
 import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
 
 class MovieRepositoryImpl(
     private val remoteGenreDataSource: RemoteGenreDataSource,
     private val localGenreDataSource: LocalGenreDataSource,
-    private val localMovieDataSource: LocalMovieDataSource,
     private val remoteMovieDataSource: RemoteMovieDataSource,
 ) : MovieRepository {
     override suspend fun getGenres(): List<Genre> {
@@ -88,24 +85,11 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun getTopRatedMovies(page: Int): PagedResult<Movie> {
-        return getPagedSafely(
-            page = page,
-            pageSize = 20,
-            mapToEntity = MovieDto::toEntity,
-            onStart = {  },
-            getCachedPage = { page, pageSize ->
-                localMovieDataSource.getTopRatedMovies(page, pageSize)
-            },
-
-            getRemoteData = { page, _ ->
-                updateGenreCache()
-                remoteMovieDataSource.getTopRatedMovies(page)
-            },
-
-            cacheData = { data ->
-                localMovieDataSource.saveTopRatedMovies(data)
+        return executeSafely {
+            remoteMovieDataSource.getTopRatedMovies(page).toPagedResult {
+                it.toEntity()
             }
-        )
+        }
 
     }
 

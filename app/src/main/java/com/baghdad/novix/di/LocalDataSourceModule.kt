@@ -19,7 +19,6 @@ import com.baghdad.local_datasource.roomDB.dao.MovieDao
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
-import com.baghdad.local_datasource.roomDB.dao.TopRatedDao
 import com.baghdad.local_datasource.roomDB.dao.TrendingActorDao
 import com.baghdad.local_datasource.roomDB.dao.TrendingTvShowDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
@@ -58,7 +57,6 @@ val localDataSourceModule = module {
     single<FavoriteGenreDao> { get<NovixDatabase>().favoriteGenreDao() }
     single<SearchQueryDao> { get<NovixDatabase>().searchQueryDao() }
     single<TrendingTvShowDao> { get<NovixDatabase>().trendingTvShowDao() }
-    single<TopRatedDao> { get<NovixDatabase>().topRatedDao() }
     single<ContinueWatchingDao> { get<NovixDatabase>().continueWatchingDao() }
     single<TrendingActorDao> { get<NovixDatabase>().trendingActorDao() }
 
@@ -74,6 +72,5 @@ val localDataSourceModule = module {
     singleOf(::LocalSearchQueryDataSourceImpl) { bind<LocalSearchQueryDataSource>() }
     singleOf(::LocalTrendingTvShowDataSourceImpl) { bind<LocalTrendingTvShowsDataSource>() }
     singleOf(::LocalContinueWatchingDataSourceImpl){bind<LocalContinueWatchingDataSource>()}
-
 
 }

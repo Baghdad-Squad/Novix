@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.continueWatching.ContinueWatchingScreen
-import com.baghdad.ui.feature.topRating.TopRatingMoviesScreen
+import com.baghdad.ui.feature.topRating.TopRatingScreen
 import com.baghdad.ui.feature.trendingActors.TrendingActorsScreen
 import com.baghdad.ui.feature.trendingMovies.TrendingMoviesScreen
 import com.baghdad.ui.feature.trendingTvShow.TrendingTvShowScreen
@@ -24,7 +24,7 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
             DummyScreen(title = "Popular Movies Screen")
         }
         composable<HomeRoute.TopRatingMoviesScreen> {
-            TopRatingMoviesScreen {
+            TopRatingScreen {
                 handleHomeNavigation(it, navController)
             }
         }
