@@ -12,13 +12,13 @@ class GetTvShowTopRatingUseCase(
         genreId: Long
     ): PagedResult<TvShow> {
         val result = tvShowRepository.getTopRatedTvShows(page)
-        val filteredMovies = if (genreId != 0L) {
-            result.data.filter { movie ->
-                movie.genres.any { genre -> genre.id == genreId }
+        val filteredTvShows = if (genreId != 0L) {
+            result.data.filter { tvShow ->
+                tvShow.genres.any { genre -> genre.id == genreId }
             }
         } else {
             result.data
         }
-        return result.copy(data = filteredMovies)
+        return result.copy(data = filteredTvShows)
     }
 }
