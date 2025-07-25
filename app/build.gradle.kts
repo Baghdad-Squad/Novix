@@ -35,7 +35,6 @@ android {
 
         val apiKey = properties.getProperty("API_KEY") ?: ""
         val baseUrl = properties.getProperty("BASE_URL") ?: ""
-        val authorizationToken = properties.getProperty("AUTHORIZATION_TOKEN") ?: ""
 
         buildConfigField(
             type = "String",
@@ -48,11 +47,7 @@ android {
             name = "BASE_URL",
             value = baseUrl
         )
-        buildConfigField(
-            type = "String",
-            name = "AUTHORIZATION_TOKEN",
-            value = authorizationToken
-        )
+
     }
 
     signingConfigs {

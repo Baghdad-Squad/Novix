@@ -66,7 +66,7 @@ val remoteDataSourceModule = module {
     }
 
     single<LanguageProvider> { AppLanguageProvider() }
-    single<String>(named("AUTHORIZATION_TOKEN")) { BuildConfig.AUTHORIZATION_TOKEN }
+    single<String>(named("AUTHORIZATION_TOKEN")) { "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTZkYmRkOTNjMGY5NzdkMjMwOGJjMzM3NmI3YTNmOCIsIm5iZiI6MTc1MzAyOTE3Ni45OSwic3ViIjoiNjg3ZDFhMzgzOTg0OWZmZThkZDk4ZDEzIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.5NDfRH9_oRVtrvQb8Bs11qWGeLzEE5US_e5IcVQWerE" }
     single<HeadersSetupInterceptor> {
         HeadersSetupInterceptor(
             languageProvider = get(),
