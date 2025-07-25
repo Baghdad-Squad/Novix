@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":repository"))
     implementation(libs.bundles.coroutines)
     implementation(libs.bundles.ktor.client)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.bundles.test.core)
     testImplementation(libs.ktor.client.mock)

@@ -42,7 +42,7 @@ import com.baghdad.ui.feature.util.rememberSaveableLazyGridState
 import com.baghdad.ui.navigation.graph.search.SearchNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
+import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 import com.baghdad.viewmodel.search.SearchInteractionListener
 import com.baghdad.viewmodel.search.SearchScreenEffect
 import com.baghdad.viewmodel.search.SearchScreenState
@@ -236,8 +236,8 @@ private fun RecentlyViewsWithSearch(
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return when (type) {
-        SearchScreenBaseSnackBarMessages.RemovedItemSuccessfully -> R.string.snackbar_removed_success
-        SearchScreenBaseSnackBarMessages.SavedItemSuccessfully -> R.string.snackbar_saved_success
+        SearchSnackBarMessage.RemovedItemSuccessfully -> R.string.snackbar_removed_success
+        SearchSnackBarMessage.SavedItemSuccessfully -> R.string.snackbar_saved_success
         else -> type.toStringResource()
     }
 }

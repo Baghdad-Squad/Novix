@@ -19,8 +19,10 @@ import com.baghdad.domain.usecase.movie.GetMovieCategoryUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
 import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
+import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
+import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
@@ -34,6 +36,7 @@ import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
 import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.topRated.GetTvShowTopRatingUseCase
+import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
@@ -84,5 +87,8 @@ val useCaseModule = module {
     singleOf(::GetTrendingActorsUseCase)
     singleOf(::GetTvShowTopRatingUseCase)
     singleOf(::GetTrendingMoviesUseCase)
+    singleOf(::GetUpcomingMoviesUseCase)
+    singleOf(::GetPopularMoviesUseCase)
+    singleOf(::GetPopularTvShowsUseCase)
 }
 

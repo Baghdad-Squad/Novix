@@ -86,11 +86,14 @@ class MovieRepositoryImpl(
 
     override suspend fun getTopRatedMovies(page: Int): PagedResult<Movie> {
         return executeSafely {
-            remoteMovieDataSource.getTopRatedMovies(page).toPagedResult {
-                it.toEntity()
-            }
+            remoteMovieDataSource.getTopRatedMovies(page).toPagedResult(MovieDto::toEntity)
         }
+    }
 
+    override suspend fun getPopularMovies(): List<Movie> {
+        return executeSafely {
+            remoteMovieDataSource.getPopularMovies().map(MovieDto::toEntity)
+        }
     }
 
     override suspend fun getTrendingMovies(page: Int): PagedResult<Movie> {
@@ -101,9 +104,12 @@ class MovieRepositoryImpl(
         }
     }
 
-    private suspend fun updateGenreCache() {
-        val lang = Locale.getDefault().language
-        val movieGenres = remoteGenreDataSource.getMovieGenre(lang)
-        movieGenres.forEach { localGenreDataSource.addGenre(it) }
+    override suspend fun getUpcomingMovies(
+        page: Int,
+        genreId: Long?,
+        pageSize: Int,
+    ): PagedResult<Movie> {
+        return remoteMovieDataSource.getUpcomingMovies(page, genreId)
+            .toPagedResult(MovieDto::toEntity)
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,9 +24,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
-import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
-import com.baghdad.design_system.component.button.IconButton
+import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -104,28 +101,17 @@ fun TrendingTvShowContent(
             )
         },
         topBar = {
-            Row(
+            TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    icon = painterResource(com.baghdad.design_system.R.drawable.ic_go_back),
-                    onClick = {
-                        listener.onBackIconClick()
-                    },
-                    size = Pair(40.dp, 40.dp),
-                    modifier = Modifier
-                )
-                Text(
-                    text = stringResource(R.string.trending_tv_shows),
-                    style = Theme.typography.title.large,
-                    color = Theme.color.title,
-                    modifier = Modifier
-                        .padding(start = 12.dp)
-                )
-            }
+                    .statusBarsPadding()
+                    .padding(top = 22.dp, bottom = 8.dp)
+                    .background(Theme.color.surface),
+                onGoBackClick = {
+                    listener.onBackIconClick()
+                },
+                screenTitle = stringResource(R.string.trending_tv_shows),
+            )
         }
     ) {
         Column(
@@ -138,7 +124,7 @@ fun TrendingTvShowContent(
             GenresSection(
                 allGenres = uiState.genres,
                 selectedGenre = uiState.selectedGenreId,
-                onGenreSelected = { listener.onGenreClick(it.id) },
+                onGenreSelected = { listener.onGenreClick(it?.id) },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
 

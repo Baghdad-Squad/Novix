@@ -16,7 +16,7 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
+import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -227,13 +227,13 @@ class SearchViewModel(
                 })
         }
         showSnackBar(
-            message = SearchScreenBaseSnackBarMessages.SavedItemSuccessfully, isSuccess = true
+            message = SearchSnackBarMessage.SavedItemSuccessfully, isSuccess = true
         )
     }
 
     private fun onClearRecentViewedSuccess() {
         showSnackBar(
-            message = SearchScreenBaseSnackBarMessages.RemovedItemSuccessfully, isSuccess = true
+            message = SearchSnackBarMessage.RemovedItemSuccessfully, isSuccess = true
         )
         updateState {
             it.copy(
@@ -253,7 +253,7 @@ class SearchViewModel(
 
     private fun onClearRecentSearchSuccess() {
         showSnackBar(
-            message = SearchScreenBaseSnackBarMessages.RemovedItemSuccessfully, isSuccess = true
+            message = SearchSnackBarMessage.RemovedItemSuccessfully, isSuccess = true
         )
     }
 
@@ -268,7 +268,7 @@ class SearchViewModel(
 
     private fun onRemoveRecentSearchItemSuccess() {
         showSnackBar(
-            message = SearchScreenBaseSnackBarMessages.RemovedItemSuccessfully, isSuccess = true
+            message = SearchSnackBarMessage.RemovedItemSuccessfully, isSuccess = true
         )
     }
 

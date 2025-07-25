@@ -25,6 +25,7 @@ import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.modifier.shimmerEffect
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
@@ -42,7 +43,7 @@ fun PopularCard(
 ) {
     Box(
         modifier
-            .size(width = 188.dp, height = 280.dp)
+            .size(width = 188.dp, height = 244.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Theme.color.surface, shape = RoundedCornerShape(12.dp))
             .border(1.dp, Theme.color.stroke, shape = RoundedCornerShape(12.dp))
@@ -102,6 +103,44 @@ fun PopularCard(
                     text = contentRating.toString(),
                     style = Theme.typography.label.small,
                     color = Theme.color.onPrimary
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LoadingPopularCard(
+    isCentralCard: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(width = 188.dp, height = 244.dp)
+            .background(Theme.color.surface)
+            .clip(RoundedCornerShape(12.dp))
+            .shimmerEffect()
+    ) {
+        if (isCentralCard) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = 8.dp, end = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(width = 172.dp, height = 44.dp)
+                        .background(Theme.color.surface, RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(8.dp))
+                        .shimmerEffect()
+                )
+                Box(
+                    modifier = Modifier
+                        .size(width = 43.dp, height = 18.dp)
+                        .background(Theme.color.surface)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
                 )
             }
         }

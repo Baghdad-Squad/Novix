@@ -10,24 +10,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
-import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
-import com.baghdad.design_system.component.button.IconButton
+import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
@@ -93,34 +91,28 @@ private fun TopRatingContent(
     tvShowItems: LazyPagingItems<TopRatingState.TvShowUiState>
 ) {
     Scaffold(
-        topBar = {
+        modifier =
+            Modifier
+                .background(Theme.color.surface)
+            .systemBarsPadding()
+            .statusBarsPadding(),
+            topBar = {
+            TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(top = 22.dp, bottom = 8.dp)
+                    .background(Theme.color.surface),
+                onGoBackClick = {
+                    listener.onBackClick()
+                },
+                screenTitle = stringResource(com.baghdad.ui.R.string.top_rating),
+            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Theme.color.surface)
-                    .statusBarsPadding()
-                    .padding(top = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    icon = painterResource(R.drawable.ic_go_back),
-                    onClick = { },
-                    size = Pair(40.dp, 40.dp),
-                    modifier = Modifier
-                        .padding(start = 16.dp, bottom = 8.dp)
-                )
-                Text(
-                    text = stringResource(com.baghdad.ui.R.string.top_rating),
-                    style = Theme.typography.title.large,
-                    color = Theme.color.title,
-                    modifier = Modifier
-                        .padding(start = 8.dp, bottom = 8.dp)
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth()
-                    .background(Theme.color.surface)
-                    .padding( top = 4.dp, bottom = 12.dp),
+                    .padding(top = 4.dp, bottom = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             )
             {
@@ -137,11 +129,10 @@ private fun TopRatingContent(
                     modifier = Modifier.weight(1f)
                 )
             }
-
             GenresSection(
                 allGenres = uiState.genres,
                 selectedGenres = uiState.selectedGenreId,
-                onGenreSelected = { listener.onGenreClick(it.id) },
+                onGenreSelected = { listener.onGenreClick(it?.id) },
                 modifier = Modifier
                     .background(Theme.color.surface)
                     .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
@@ -225,6 +216,7 @@ private fun TopRatingContent(
         }
     }
 }
+
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return type.toStringResource()
