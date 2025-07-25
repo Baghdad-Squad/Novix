@@ -12,7 +12,6 @@ class TopRatingViewModel(
     private val getGenresUseCase: GetGenresUseCase,
 ) : BaseViewModel<TopRatingMovieState, TopRatingEffect>(TopRatingMovieState()),
     TopRatingInteractionListener {
-
     init {
         getMovieGenres()
         fetchMoviesByGenre(0L)
@@ -25,45 +24,44 @@ class TopRatingViewModel(
         )
     }
 
-    private fun onGenresFetched(
-        genres: List<Genre>
-    ) {
+    private fun onGenresFetched(genres: List<Genre>) {
         updateState {
             it.copy(
-                genres = listOf(TopRatingMovieState.GenreUiState(name = "All")) + genres
-                    .distinctBy { genre -> genre.id }
-                    .map { genre -> genre.toTopRatingGenreUiState() })
+                genres =
+                    genres.distinctBy { genre -> genre.id }.map { genre ->
+                        genre.toTopRatingGenreUiState()
+                    },
+            )
         }
     }
-
 
     override fun onMovieDetailsClick(movieId: Long) {
         sendEffect(TopRatingEffect.NavigateToMovieDetails(movieId))
     }
 
-    private fun fetchMoviesByGenre(genreId: Long) {
+    private fun fetchMoviesByGenre(genreId: Long?) {
         updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
         collectPagingFlow(
             loadData = { page ->
                 getMovieTopRatingUseCase.invoke(
                     genreId = currentState.selectedGenreId,
-                    page = page
+                    page = page,
                 )
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toTopRatingMovieUiState() },
-            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } }
+            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } },
         )
     }
 
-    override fun onGenreClick(genreId: Long) {
+    override fun onGenreClick(genreId: Long?) {
         fetchMoviesByGenre(genreId)
     }
 
-
     override fun onSaveMovieClick(movieId: Long) {
         showSnackBar(
-            message = SearchSnackBarMessage.SavedItemSuccessfully, isSuccess = true
+            message = SearchSnackBarMessage.SavedItemSuccessfully,
+            isSuccess = true,
         )
     }
 
@@ -75,7 +73,5 @@ class TopRatingViewModel(
         updateState { it.copy(isLoading = false) }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
-    }
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
 }

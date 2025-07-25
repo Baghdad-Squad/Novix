@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Chip
 import com.baghdad.viewmodel.topRating.TopRatingMovieState.GenreUiState
@@ -12,8 +13,8 @@ import com.baghdad.viewmodel.topRating.TopRatingMovieState.GenreUiState
 @Composable
 fun GenresSection(
     allGenres: List<GenreUiState>,
-    selectedGenres: Long,
-    onGenreSelected: (GenreUiState) -> Unit,
+    selectedGenres: Long?,
+    onGenreSelected: (GenreUiState?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
@@ -21,6 +22,13 @@ fun GenresSection(
             .wrapContentSize(),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
+        item {
+            Chip(
+                title = stringResource(com.baghdad.design_system.R.string.all),
+                isSelected = selectedGenres == null,
+                onClick = { onGenreSelected(null) },
+            )
+        }
         items(allGenres.size) { index ->
             val genre = allGenres[index]
             Chip(

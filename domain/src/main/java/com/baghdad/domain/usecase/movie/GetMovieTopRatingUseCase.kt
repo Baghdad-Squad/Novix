@@ -9,11 +9,12 @@ class GetMovieTopRatingUseCase(
 ) {
     suspend operator fun invoke(
         page: Int,
-        genreId: Long
+        genreId: Long?,
     ): PagedResult<Movie> {
         val result = topRatingRepository.getTopRatedMovies(page)
-        val filteredMovies = if (genreId != 0L) {
-            result.data.filter { movie ->
+        val filteredMovies =
+            if (genreId != null) {
+                result.data.filter { movie ->
                 movie.genres.any { genre -> genre.id == genreId }
             }
         } else {
