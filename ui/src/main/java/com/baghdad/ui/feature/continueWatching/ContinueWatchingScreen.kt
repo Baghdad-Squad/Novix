@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -109,14 +110,14 @@ fun ContinueWatchingContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(top = 22.dp, bottom = 12.dp)
+                    .padding(top = 22.dp, bottom = 8.dp)
                     .background(Theme.color.surface),
                 onGoBackClick = {
                     listener.onBackClick()
                 },
                 screenTitle = stringResource(com.baghdad.ui.R.string.continue_watching),
 
-            )
+                )
 
         }, snackbar = {
             SnackBar(
@@ -126,7 +127,13 @@ fun ContinueWatchingContent(
             )
         }
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .background(Theme.color.surface)
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
             if (uiState.isLoading) {
                 Box(Modifier.fillMaxSize()) {
                     WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
@@ -136,6 +143,7 @@ fun ContinueWatchingContent(
                 genres = uiState.genres,
                 selectedTab = uiState.selectedTab,
                 onTabClick = { listener.onGenreClick(it) },
+                modifier = Modifier.padding(vertical = 12.dp)
             )
             LazyPagingVerticalGrid<ContinueWatchingState.ContinueWatchingMovieUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),

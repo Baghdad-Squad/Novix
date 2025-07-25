@@ -105,7 +105,7 @@ fun TrendingTvShowContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(top = 22.dp, bottom = 12.dp)
+                    .padding(top = 22.dp, bottom = 8.dp)
                     .background(Theme.color.surface),
                 onGoBackClick = {
                     listener.onBackIconClick()
