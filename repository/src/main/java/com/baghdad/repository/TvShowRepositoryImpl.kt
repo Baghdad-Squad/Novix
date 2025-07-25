@@ -1,5 +1,6 @@
 package com.baghdad.repository
 
+import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
@@ -69,6 +70,17 @@ class TvShowRepositoryImpl(
                 it.toEntity()
             }
         }
+    }
+
+    override suspend fun getTopRatedTvShows(page: Int): PagedResult<TvShow> {
+        val response = executeSafely {
+            tvShowRemoteDataSource.getTopRatedTvShows(page)
+        }
+        return PagedResult(
+            data = response.data.map { it.toEntity() },
+            nextKey = response.nextKey,
+            prevKey = response.prevKey,
+        )
     }
 
     companion object {
