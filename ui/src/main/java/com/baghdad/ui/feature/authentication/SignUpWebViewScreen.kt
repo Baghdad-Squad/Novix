@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.authentication
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -27,7 +28,9 @@ fun SignUpWebViewScreen(handleNavigation: (AuthenticationNavEvent) -> Unit) {
         screenUrl = screenUrl,
         shouldNavigateBack = shouldNavigateBack
     )
+
 }
+
 
 @Composable
 fun SignUpWebViewContent(
@@ -38,7 +41,7 @@ fun SignUpWebViewContent(
     LaunchedEffect(shouldNavigateBack.value) {
         if (shouldNavigateBack.value) {
             delay(5000)
-            handleNavigation(AuthenticationNavEvent.NavigateBack)
+            handleNavigation(AuthenticationNavEvent.NavigateToHome)
         }
     }
     Box(
@@ -52,9 +55,20 @@ fun SignUpWebViewContent(
             modifier = Modifier.fillMaxSize(),
             allowedDomains = listOf("themoviedb.org"),
             onUrlChange = { url ->
-                shouldNavigateBack.value = screenUrl != url
+                Log.d("Aboud", "onUrlChange: $url")
+                shouldNavigateBack.value = url != screenUrl
             },
-            onReceivedError = { if (it.isNotBlank()) handleNavigation(AuthenticationNavEvent.NavigateBack) }
+            onReceivedError = { if (it.isNotBlank()) handleNavigation(AuthenticationNavEvent.NavigateBack) },
+            onDetected = {
+                when (it.trim('"')) {
+                    "Oops! We can't find the page you're looking for" -> handleNavigation(
+                        AuthenticationNavEvent.NavigateBack
+                    )
+                    "There was a problem" -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    "Login to your account" -> shouldNavigateBack.value = true
+                }
+            }
         )
     }
+
 }

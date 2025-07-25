@@ -21,7 +21,7 @@ import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
-import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
+import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
@@ -81,6 +81,7 @@ val useCaseModule = module {
     singleOf(::AddContinueWatchingUseCase)
     singleOf(::GetMovieTopRatingUseCase)
     singleOf(::GetTrendingActorsUseCase)
+    singleOf(::GetTrendingMoviesUseCase)
     singleOf(::GetUpcomingMoviesUseCase)
     singleOf(::GetPopularMoviesUseCase)
     singleOf(::GetPopularTvShowsUseCase)

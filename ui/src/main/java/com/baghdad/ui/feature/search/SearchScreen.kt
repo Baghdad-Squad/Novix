@@ -37,6 +37,8 @@ import com.baghdad.ui.feature.search.component.SearchResultContent
 import com.baghdad.ui.feature.search.component.SearchTextField
 import com.baghdad.ui.feature.search.component.filter.FilterBottomSheet
 import com.baghdad.ui.feature.search.component.recentSearchSection
+import com.baghdad.ui.feature.util.remeberSaveableLazyListState
+import com.baghdad.ui.feature.util.rememberSaveableLazyGridState
 import com.baghdad.ui.navigation.graph.search.SearchNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -103,6 +105,10 @@ fun SearchContent(
     actorItems: LazyPagingItems<SearchScreenState.ActorUiState>,
     tvShowItems: LazyPagingItems<SearchScreenState.TvShowUiState>
 ) {
+    val moviesState = rememberSaveableLazyGridState(key = "movies_grid")
+    val actorsState = remeberSaveableLazyListState(key = "actors_list")
+    val tvShowsState = rememberSaveableLazyGridState(key = "tv_shows_grid")
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -149,6 +155,9 @@ fun SearchContent(
                         },
                         onActorClick = { listener.onActorItemClick(it) },
                         isLoading = uiState.isLoading,
+                        moviesState = moviesState,
+                        actorsState = actorsState,
+                        tvShowsState = tvShowsState,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 } else RecentlyViewsWithSearch(uiState, listener)

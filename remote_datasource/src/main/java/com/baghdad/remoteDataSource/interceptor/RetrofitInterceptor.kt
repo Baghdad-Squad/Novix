@@ -17,6 +17,7 @@ class HeadersSetupInterceptor(
             .method()
             .annotations
             .any { it.annotationClass == Authenticated::class }
+        val language = languageProvider.getCurrentLanguage()
 
         return chain.proceed(
             chain.request()
@@ -31,7 +32,12 @@ class HeadersSetupInterceptor(
 //                        }
                     }
                     addHeader("Accept", "application/json")
-                    addHeader("language", languageProvider.getCurrentLanguage())
+                    addHeader("language", language)
+                    url(
+                        chain.request().url.newBuilder()
+                            .addQueryParameter("language", language)
+                            .build()
+                    )
                 }
                 .build())
     }

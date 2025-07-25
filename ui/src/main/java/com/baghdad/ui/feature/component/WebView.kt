@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.component
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -18,29 +19,22 @@ fun AppWebView(
     allowedDomains: List<String> = emptyList(),
     onUrlChange: ((String) -> Unit)? = null,
     onReceivedError: ((String) -> Unit)? = null,
+    onDetected: (text: String) -> Unit
 ) {
     AndroidView(
+        modifier = modifier,
         factory = { context ->
             WebView(context).apply {
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
-                settings.apply {
-                    javaScriptEnabled = true
-                    domStorageEnabled = true
-                    cacheMode = WebSettings.LOAD_DEFAULT
-                    setSupportZoom(true)
-                    builtInZoomControls = false
-                    displayZoomControls = false
-                    allowFileAccess = false
-                    allowContentAccess = false
-                    setGeolocationEnabled(false)
-                }
+                settings.configureWebSettings()
                 webViewClient = SimpleWebViewClient(
                     allowedDomains = allowedDomains,
-                    onUrlChange = { onUrlChange?.invoke(it) },
-                    onReceivedError = { onReceivedError?.invoke(it) },
+                    onUrlChange = onUrlChange,
+                    onReceivedError = onReceivedError,
+                    onDetected = { onDetected(it) }
                 )
             }
         },
@@ -48,42 +42,70 @@ fun AppWebView(
             if (webView.url != url) {
                 webView.loadUrl(url)
             }
-        },
-        modifier = modifier
+        }
     )
 }
 
+@SuppressLint("SetJavaScriptEnabled")
+private fun WebSettings.configureWebSettings() {
+    javaScriptEnabled = true
+    domStorageEnabled = true
+    cacheMode = WebSettings.LOAD_DEFAULT
+    setSupportZoom(true)
+    builtInZoomControls = false
+    displayZoomControls = false
+    allowFileAccess = false
+    allowContentAccess = false
+    setGeolocationEnabled(false)
+}
+
 class SimpleWebViewClient(
+    private val onDetected: ((text: String) -> Unit),
     private val allowedDomains: List<String> = emptyList(),
     private val onUrlChange: ((String) -> Unit)? = null,
-    private val onReceivedError: ((String) -> Unit)? = null,
+    private val onReceivedError: ((String) -> Unit)? = null
 ) : WebViewClient() {
 
     override fun shouldOverrideUrlLoading(
         view: WebView?,
         request: WebResourceRequest?
     ): Boolean {
-        val requestUrl = request?.url?.toString()
+        val url = request?.url?.toString() ?: return super.shouldOverrideUrlLoading(view, request)
 
-        requestUrl?.let { url ->
-            onUrlChange?.invoke(url)
-            if (allowedDomains.isEmpty()) {
-                return false
-            }
-            val isAllowed = allowedDomains.any { domain ->
-                url.contains(domain, ignoreCase = true)
-            }
-            return !isAllowed
+        onUrlChange?.invoke(url)
+
+        return if (allowedDomains.isEmpty()) {
+            false
+        } else {
+            !allowedDomains.any { domain -> url.contains(domain, ignoreCase = true) }
         }
-        return super.shouldOverrideUrlLoading(view, request)
     }
 
     override fun onReceivedError(
         view: WebView?,
         request: WebResourceRequest?,
-        error: android.webkit.WebResourceError?
+        error: WebResourceError?
     ) {
         super.onReceivedError(view, request, error)
-        onReceivedError?.invoke(error.toString())
+        error?.toString()?.let { onReceivedError?.invoke(it) }
+    }
+
+    override fun onPageFinished(view: WebView?, url: String?) {
+        super.onPageFinished(view, url)
+
+        detect(view, { onDetected(it) })
+    }
+
+
+}
+
+private fun detect(webView: WebView?, onProblemDetected: (str: String) -> Unit) {
+    webView?.evaluateJavascript(
+        "(function() { " +
+                "var h2 = document.querySelector('h2'); " +
+                "return h2 ? h2.textContent : ''; " +
+                "})();"
+    ) { value ->
+        onProblemDetected(value)
     }
 }

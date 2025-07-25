@@ -21,8 +21,8 @@ import kotlinx.coroutines.flow.map
 class LocalMovieDataSourceImpl(
     private val movieDao: MovieDao,
     private val genreDao: GenreDao,
+    private val logger: Logger,
     private val topRatedDao: TopRatedDao,
-    private val logger: Logger
 ) : LocalMovieDataSource {
     override suspend fun addMovie(movie: MovieDto) =
         executeWithErrorHandling(logger = logger) {
@@ -119,5 +119,4 @@ class LocalMovieDataSourceImpl(
             topRatedDao.upsertMovies(movieData.map { it.toLocalDtos() })
         }
     }
-
 }
