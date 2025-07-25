@@ -54,16 +54,13 @@ fun ForgotPasswordWebViewContent(
             url = screenUrl,
             modifier = Modifier.fillMaxSize(),
             allowedDomains = listOf("themoviedb.org"),
-            onUrlChange = { url ->
-                shouldNavigateBack.value = url == "https://www.themoviedb.org/login"
-            },
             onDetected = {
                 when (it.trim('"')) {
                     "Oops! We can't find the page you're looking for" -> handleNavigation(
                         AuthenticationNavEvent.NavigateBack
                     )
-
                     "There was a problem" -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    "Password Reset" -> shouldNavigateBack.value = true
                 }
             }
         )

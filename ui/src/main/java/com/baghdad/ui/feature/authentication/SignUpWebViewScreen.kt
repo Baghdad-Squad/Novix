@@ -64,7 +64,6 @@ fun SignUpWebViewContent(
                     "Oops! We can't find the page you're looking for" -> handleNavigation(
                         AuthenticationNavEvent.NavigateBack
                     )
-
                     "There was a problem" -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                     "Login to your account" -> handleNavigation(AuthenticationNavEvent.NavigateToHome)
                 }
