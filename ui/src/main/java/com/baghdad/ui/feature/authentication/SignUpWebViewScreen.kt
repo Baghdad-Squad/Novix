@@ -41,7 +41,7 @@ fun SignUpWebViewContent(
     LaunchedEffect(shouldNavigateBack.value) {
         if (shouldNavigateBack.value) {
             delay(5000)
-            handleNavigation(AuthenticationNavEvent.NavigateToHome)
+            handleNavigation(AuthenticationNavEvent.NavigateBack)
         }
     }
     Box(
@@ -61,10 +61,10 @@ fun SignUpWebViewContent(
             onReceivedError = { if (it.isNotBlank()) handleNavigation(AuthenticationNavEvent.NavigateBack) },
             onDetected = {
                 when (it.trim('"')) {
-                    "Oops! We can't find the page you're looking for" -> handleNavigation(
-                        AuthenticationNavEvent.NavigateBack
-                    )
-                    "There was a problem" -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    "Oops! We can't find the page you're looking for" -> shouldNavigateBack.value =
+                        true
+
+                    "There was a problem" -> shouldNavigateBack.value = true
                     "Login to your account" -> shouldNavigateBack.value = true
                 }
             }
