@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.continueWatching
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +29,7 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
+import com.baghdad.design_system.component.Tab
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
@@ -59,7 +59,6 @@ fun ContinueWatchingScreen(
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
-    Log.d("ContinueWatchingScreen", "ContinueWatchingScreen: $uiState")
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
@@ -129,9 +128,32 @@ fun ContinueWatchingContent(
                         .padding(start = 8.dp)
                 )
             }
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .background(Theme.color.surface)
+                    .padding( top = 4.dp, bottom = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            )
+            {
+                Tab(
+                    text = stringResource(com.baghdad.ui.R.string.movies),
+                    onClick = { listener.onSelectedTab(true) },
+                    isSelected = uiState.selectedMediaTabIsMovie,
+                    modifier = Modifier.weight(1f)
+                )
+                Tab(
+                    text = stringResource(com.baghdad.ui.R.string.tv_shows),
+                    onClick = { listener.onSelectedTab(false) },
+                    isSelected = !uiState.selectedMediaTabIsMovie,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+
+
             GenresTabs(
                 genres = uiState.genres,
-                selectedTab = uiState.selectedTab,
+                selectedTab = uiState.selectedGenreTab,
                 onTabClick = { listener.onGenreClick(it) },
             )
         }, snackbar = {

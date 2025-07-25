@@ -1,5 +1,7 @@
 package com.baghdad.viewmodel.continueWatching
 
+import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -16,30 +18,41 @@ class ContinueWatchingViewModel(
     ContinueWatchingInteractionListener {
     init {
         getGenres()
-        getMovies(0)
+        getMedia(0)
     }
 
 
     private fun getGenres() {
         tryToExecute(
-            { getGenresUseCase.getMovieGenres()},
+            { if (currentState.selectedMediaTabIsMovie) getGenresUseCase.getMovieGenres() else getGenresUseCase.getTvShowGenres() },
             ::onGenresFetched,
         )
     }
 
-    private fun getMovies(genreId: Long) {
+    private fun getMedia(genreId: Long) {
         collectPagingFlow(
-            { page ->
-                if (genreId == 0L) getAllContinueWatchingUseCase(
-                    1,
-                    page
-                ) else getAllContinueWatchingByGenreUseCase(genreId, page)
-            },
+            { page -> onGetMedia(genreId, page) },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toContinueWatchingUiState() },
             onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow) } }
         )
     }
+
+    private suspend fun onGetMedia(genreId: Long, page: Int): PagedResult<ContinueWatching> {
+        val result = if (genreId == 0L) {
+            getAllContinueWatchingUseCase(page)
+        } else {
+            getAllContinueWatchingByGenreUseCase(genreId, page)
+        }
+
+        val filteredData = result.data.filter { item ->
+            (item.contentType == ContinueWatching.ContentType.MOVIE && currentState.selectedMediaTabIsMovie) ||
+                    (item.contentType == ContinueWatching.ContentType.TV_SHOW && !currentState.selectedMediaTabIsMovie)
+        }
+
+        return result.copy(data = filteredData)
+    }
+
 
     private fun onGenresFetched(
         genres: List<Genre>
@@ -60,10 +73,13 @@ class ContinueWatchingViewModel(
         sendEffect(ContinueWatchingScreenEffect.NavigateBack)
     }
 
-    override fun onMediaClick(mediaId: Long, contentType: ContinueWatchingState.ContinueWatchingMovieUiState.ContentType) {
-        if (contentType == ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE){
+    override fun onMediaClick(
+        mediaId: Long,
+        contentType: ContinueWatchingState.ContinueWatchingMovieUiState.ContentType
+    ) {
+        if (contentType == ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE) {
             sendEffect(ContinueWatchingScreenEffect.NavigateToMovieDetails(mediaId))
-        }else{
+        } else {
             sendEffect(ContinueWatchingScreenEffect.NavigateToTvShowDetails(mediaId))
         }
     }
@@ -74,8 +90,21 @@ class ContinueWatchingViewModel(
 
     override fun onGenreClick(genreId: Long) {
         updateState {
-            it.copy(selectedTab = genreId, isLoading = true, mediaFlow = flowOf())
+            it.copy(selectedGenreTab = genreId, isLoading = true, mediaFlow = flowOf())
         }
-        getMovies(genreId)
+        getMedia(genreId)
+    }
+
+    override fun onSelectedTab(isMovieTab: Boolean) {
+        updateState {
+            it.copy(
+                selectedMediaTabIsMovie = isMovieTab,
+                isLoading = true,
+                mediaFlow = flowOf(),
+                selectedGenreTab = 0
+            )
+        }
+        getGenres()
+        getMedia(0)
     }
 }
