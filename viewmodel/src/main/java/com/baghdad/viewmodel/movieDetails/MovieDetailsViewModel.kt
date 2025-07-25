@@ -27,7 +27,6 @@ class MovieDetailsViewModel(
         getMovieDetails()
         getCastMembers()
         getMoreLikeThisShow()
-        getCastMembers()
     }
 
     override fun onStarMovieClick() {
@@ -169,6 +168,7 @@ class MovieDetailsViewModel(
                 overView = details.overview,
                 rating = details.averageRating.roundToFirstDecimal(),
                 duration = details.runtimeMinutes.formatDuration(),
+                posterImageURL = details.posterImageURL,
                 date = details.releaseDate.toDDMMYYYYFormat(),
                 isSaved = state.isSaved,
                 isLoading = false,
@@ -254,7 +254,7 @@ class MovieDetailsViewModel(
             callee = {
                 addContinueWatchingUseCase(
                     movieId, currentState.categories.map { it.id },
-                    contentImageUrl = if (!currentState.movieImages.isEmpty()) currentState.movieImages[0] else "",
+                    contentImageUrl = currentState.posterImageURL,
                     contentType = ContinueWatching.ContentType.MOVIE,
                 )
             },
