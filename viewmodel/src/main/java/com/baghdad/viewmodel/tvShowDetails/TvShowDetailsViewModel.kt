@@ -1,5 +1,8 @@
 package com.baghdad.viewmodel.tvShowDetails
 
+import android.util.Log
+import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
@@ -8,12 +11,14 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.delay
 
 class TvShowDetailsViewModel(
     private val tvShowId: Long,
     private val getTvShowDetailsUseCase: GetTvShowDetailsUseCase,
     private val getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase,
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
+    private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
 ) :
     BaseViewModel<TvShowDetailsScreenState, TvShowDetailsScreenEffect>(TvShowDetailsScreenState()),
     TvShowDetailsInteractionListener {
@@ -22,6 +27,7 @@ class TvShowDetailsViewModel(
         getTvShowDetails(tvShowId)
         getTvShowCast(tvShowId)
         onClickSeasonTab(0)
+
     }
 
     private fun getTvShowDetails(tvShowId: Long) {
@@ -29,7 +35,7 @@ class TvShowDetailsViewModel(
             callee = { getTvShowDetailsUseCase(tvShowId) },
             onSuccess = ::onGetTvShowDetailsSuccess,
             onStart = ::onLoading,
-            onFinally = ::onFinally
+            onFinally = ::onFinallyAndAddToContinueWatching
         )
     }
 
@@ -123,6 +129,23 @@ class TvShowDetailsViewModel(
 
     private fun onFinally() {
         updateState { it.copy(isLoading = false) }
+    }
+    private fun onFinallyAndAddToContinueWatching() {
+        onFinally()
+        addToContinueWatching()
+    }
+
+    private fun addToContinueWatching() {
+        Log.d("TAG", "addToContinueWatching: $currentState")
+            tryToExecute(
+                callee = {
+                    addContinueWatchingUseCase(
+                        tvShowId, currentState.tvShowInfo.genres.map { it.id ?: 0 },
+                        contentImageUrl = if(currentState.tvShowInfo.headerImagesURLs.isNotEmpty()) currentState.tvShowInfo.headerImagesURLs[0] else "",
+                        contentType = ContinueWatching.ContentType.TV_SHOW,
+                    )
+                },
+            )
     }
 
 }

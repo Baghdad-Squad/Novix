@@ -8,7 +8,6 @@ class GetAllContinueWatchingUseCase(
     private val continueWatchingRepository: ContinueWatchingRepository
 ) {
     suspend operator fun invoke(
-        userId: Long,
         page: Int,
     ): PagedResult<ContinueWatching> {
         return continueWatchingRepository.getContinueWatching(page, PAGE_SIZE)

@@ -44,9 +44,7 @@ val viewModelModule = module {
     viewModel { (actorId: Long) ->
         ActorDetailsViewModel(actorId, get(), get(), get(), get())
     }
-    viewModel { (tvShowId: Long) ->
-        TvShowDetailsViewModel(tvShowId, get(), get(), get())
-    }
+    viewModelOf(::TvShowDetailsViewModel)
     viewModel { (mediaId: Long, mediaType: ContentType) ->
         ReviewViewModel(
             contentId = mediaId,
