@@ -1,17 +1,17 @@
-package com.baghdad.domain.usecase.movie
+package com.baghdad.domain.usecase.topRated
 
 import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.repository.MovieRepository
-import com.baghdad.entity.media.Movie
+import com.baghdad.domain.repository.TvShowRepository
+import com.baghdad.entity.media.TvShow
 
-class GetMovieTopRatingUseCase(
-    private val topRatingRepository: MovieRepository,
+class GetTvShowTopRatingUseCase(
+    private val tvShowRepository: TvShowRepository
 ) {
     suspend operator fun invoke(
         page: Int,
         genreId: Long
-    ): PagedResult<Movie> {
-        val result = topRatingRepository.getTopRatedMovies(page)
+    ): PagedResult<TvShow> {
+        val result = tvShowRepository.getTopRatedTvShows(page)
         val filteredMovies = if (genreId != 0L) {
             result.data.filter { movie ->
                 movie.genres.any { genre -> genre.id == genreId }
@@ -21,5 +21,4 @@ class GetMovieTopRatingUseCase(
         }
         return result.copy(data = filteredMovies)
     }
-
 }
