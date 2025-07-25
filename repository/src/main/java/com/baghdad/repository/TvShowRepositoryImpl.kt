@@ -18,7 +18,7 @@ import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getPagedSafely
 import java.util.Locale
 
-class ATvShowRepositoryImpl(
+class TvShowRepositoryImpl(
     val remoteGenreDataSource: RemoteGenreDataSource,
     val tvShowRemoteDataSource: RemoteTvShowDataSource,
     val localGenreDataSource: LocalGenreDataSource,
