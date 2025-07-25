@@ -25,6 +25,7 @@ fun PopularSection(
             Text(
                 text = stringResource(R.string.popular),
                 style = Theme.typography.headline.small,
+                color = Theme.color.title,
                 modifier = Modifier.padding(start = 16.dp)
             )
             PopularCardPager(

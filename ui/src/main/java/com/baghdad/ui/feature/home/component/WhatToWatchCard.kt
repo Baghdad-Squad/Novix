@@ -49,10 +49,10 @@ fun WhatToWatchCard(
             contentDescription = title,
             modifier =
                 Modifier
-                    .size(width = imageWidth, height = 64.dp)
+                    .size(width = imageWidth, height = 100.dp)
                     .align(alignment = Alignment.TopStart)
                     .padding(start = 4.dp)
-                    .offset(y = -(16).dp),
+                    .offset(y = -(32).dp),
         )
         Text(
             text = title,

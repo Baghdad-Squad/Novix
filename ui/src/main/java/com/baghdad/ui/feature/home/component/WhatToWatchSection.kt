@@ -19,7 +19,6 @@ import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.islamic_image_loader.R
 
 @Composable
 fun WhatToWatchSection(
@@ -68,7 +67,7 @@ fun WhatToWatchSection(
         ) {
 
             WhatToWatchCard(
-                image = painterResource(id = R.drawable.im_popcorn),
+                image = painterResource(id = com.baghdad.design_system.R.drawable.im_popcorn),
                 title = stringResource(com.baghdad.ui.R.string.movies),
                 colors = gradientMoviesColors,
                 imageWidth = 60.dp,
@@ -77,19 +76,19 @@ fun WhatToWatchSection(
             )
 
             WhatToWatchCard(
-                image = painterResource(id = R.drawable.im_tape),
+                image = painterResource(id = com.baghdad.design_system.R.drawable.im_tape),
                 title = stringResource(com.baghdad.ui.R.string.tv_shows),
                 colors = gradientTvShowsColors,
-                imageWidth = 88.dp,
+                imageWidth = 90.dp,
                 onClick = onTvShowsClick,
                 modifier = Modifier.weight(1f)
             )
 
             WhatToWatchCard(
-                image = painterResource(id = R.drawable.im_cast),
+                image = painterResource(id = com.baghdad.design_system.R.drawable.im_cast),
                 title = stringResource(com.baghdad.ui.R.string.actors),
                 colors = gradientActorsColors,
-                imageWidth = 56.dp,
+                imageWidth = 70.dp,
                 onClick = onActorsClick,
                 modifier = Modifier.weight(1f)
             )

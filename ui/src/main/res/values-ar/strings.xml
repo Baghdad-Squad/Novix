@@ -64,4 +64,8 @@
     <string name="top_rating">الاعلى تقييم</string>
     <string name="actors">ممثلين</string>
     <string name="episode_header_template">الحلقة %1$d - %2$s</string>
+    <string name="popular">شائع</string>
+    <string name="continue_watching">متابعة المشاهدة</string>
+    <string name="upcoming">قادم</string>
+    <string name="top_rating_item">Top rating item</string>
 </resources>

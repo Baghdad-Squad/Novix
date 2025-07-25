@@ -43,7 +43,7 @@ fun PopularCard(
 ) {
     Box(
         modifier
-            .size(width = 188.dp, height = 280.dp)
+            .size(width = 188.dp, height = 244.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Theme.color.surface, shape = RoundedCornerShape(12.dp))
             .border(1.dp, Theme.color.stroke, shape = RoundedCornerShape(12.dp))
@@ -116,7 +116,7 @@ fun LoadingPopularCard(
 ) {
     Box(
         modifier = modifier
-            .size(width = 188.dp, height = 280.dp)
+            .size(width = 188.dp, height = 244.dp)
             .background(Theme.color.surface)
             .clip(RoundedCornerShape(12.dp))
             .shimmerEffect()
