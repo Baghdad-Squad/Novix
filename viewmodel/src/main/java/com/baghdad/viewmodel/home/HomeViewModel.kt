@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.home
 
-import androidx.lifecycle.viewModelScope
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -13,10 +12,6 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -25,64 +20,72 @@ class HomeViewModel(
     private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
     private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase,
-) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()), HomeInteractionListener {
+) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
+    HomeInteractionListener {
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            delay(3000)
-            getPopularItems()
-            getTopRatingMovies()
-            getContinueWatchingItems()
-            getMovieGenres()
-            collectPaginatedUpcomingMovies()
-        }
+        getPopularItems()
+        getTopRatingMovies()
+        getContinueWatchingItems()
+        getMovieGenres()
+        collectPaginatedUpcomingMovies()
     }
 
     private fun getPopularItems() {
-        viewModelScope.launch(Dispatchers.IO) {
-            updateState {
-                it.copy(isPopularLoading = true)
-            }
-            val popularMovies = async {
-                getPopularMoviesUseCase()
-            }
-            val popularTvShows = async {
-                getPopularTvShowsUseCase()
-            }
-            val movies = popularMovies.await().take(5).map(Movie::toPopularItemUiState)
-            val tvShows = popularTvShows.await().take(5).map(TvShow::toPopularItemUiState)
-            updateState {
-                it.copy(
-                    isPopularLoading = false,
-                    popularItems = (movies + tvShows).shuffled(),
-                )
-            }
+        tryToExecute(
+            callee = { getPopularMoviesUseCase() to getPopularTvShowsUseCase() },
+            onSuccess = ::onGetPopularItemsSuccess,
+            onStart = ::onGetPopularItemsStart,
+            onFinally = ::onGetPopularItemsFinished,
+        )
+    }
+
+    private fun onGetPopularItemsSuccess(popularItems: Pair<List<Movie>, List<TvShow>>) {
+        val (movies, tvShows) = popularItems
+        val popularMovies = movies.take(5).map(Movie::toPopularItemUiState)
+        val popularTvShows = tvShows.take(5).map(TvShow::toPopularItemUiState)
+        updateState {
+            it.copy(
+                popularItems = (popularMovies + popularTvShows).shuffled(),
+            )
+        }
+    }
+
+    private fun onGetPopularItemsStart() {
+        updateState {
+            it.copy(isPopularLoading = true)
+        }
+    }
+
+    private fun onGetPopularItemsFinished() {
+        updateState {
+            it.copy(isPopularLoading = false)
         }
     }
 
     private fun getTopRatingMovies() {
         tryToExecute(
-            callee = { getMovieTopRatingUseCase(1, 0).data },
+            callee = { getMovieTopRatingUseCase(1, null).data },
             onSuccess = ::onGetTopRatingMoviesSuccess,
-            onStart = ::onStartGetTopRatingMovies,
-            onFinally = ::onFinishGetTopRatingMovies
+            onStart = ::onGetTopRatingMoviesStart,
+            onFinally = ::onGetTopRatingMoviesFinished,
         )
     }
 
     private fun onGetTopRatingMoviesSuccess(movies: List<Movie>) {
         updateState {
             it.copy(
-                topRatingItems = movies.map(Movie::toTopRatingItemUiState)
+                topRatingItems = movies.map(Movie::toTopRatingItemUiState),
             )
         }
     }
 
-    private fun onStartGetTopRatingMovies() {
+    private fun onGetTopRatingMoviesStart() {
         updateState {
             it.copy(isTopRatingLoading = true)
         }
     }
 
-    private fun onFinishGetTopRatingMovies() {
+    private fun onGetTopRatingMoviesFinished() {
         updateState {
             it.copy(isTopRatingLoading = false)
         }
@@ -92,26 +95,26 @@ class HomeViewModel(
         tryToExecute(
             callee = { getContinueWatchingUseCase(1, 1).data },
             onSuccess = ::onGetContinueWatchingItemsSuccess,
-            onStart = ::onStartGetContinueWatchingItems,
-            onFinally = ::onFinishGetContinueWatchingItems
+            onStart = ::onGetContinueWatchingItemsStart,
+            onFinally = ::onGetContinueWatchingItemsFinished,
         )
     }
 
     private fun onGetContinueWatchingItemsSuccess(items: List<ContinueWatching>) {
         updateState {
             it.copy(
-                continueWatchingItems = items.map(ContinueWatching::toUiState)
+                continueWatchingItems = items.map(ContinueWatching::toUiState),
             )
         }
     }
 
-    private fun onStartGetContinueWatchingItems() {
+    private fun onGetContinueWatchingItemsStart() {
         updateState {
             it.copy(isContinueWatchingLoading = true)
         }
     }
 
-    private fun onFinishGetContinueWatchingItems() {
+    private fun onGetContinueWatchingItemsFinished() {
         updateState {
             it.copy(isContinueWatchingLoading = false)
         }
@@ -121,8 +124,8 @@ class HomeViewModel(
         tryToExecute(
             callee = getGenresUseCase::getMovieGenres,
             onSuccess = ::onGetMovieGenresSuccess,
-            onStart = ::onStartGetMovieGenres,
-            onFinally = ::onFinishGetMovieGenres,
+            onStart = ::onGetMovieGenresStart,
+            onFinally = ::onGetMovieGenresFinished,
         )
     }
 
@@ -132,13 +135,13 @@ class HomeViewModel(
         }
     }
 
-    private fun onStartGetMovieGenres() {
+    private fun onGetMovieGenresStart() {
         updateState {
             it.copy(isUpcomingGenresLoading = true)
         }
     }
 
-    private fun onFinishGetMovieGenres() {
+    private fun onGetMovieGenresFinished() {
         updateState {
             it.copy(isUpcomingGenresLoading = false)
         }
@@ -152,7 +155,7 @@ class HomeViewModel(
             loadData = { page ->
                 getUpcomingMoviesUseCase(
                     page,
-                    currentState.selectedUpcomingGenreId
+                    currentState.selectedUpcomingGenreId,
                 )
             },
             onInitialLoadFinished = {
@@ -166,7 +169,7 @@ class HomeViewModel(
                 updateState {
                     it.copy(upcomingItems = flow)
                 }
-            }
+            },
         )
     }
 
