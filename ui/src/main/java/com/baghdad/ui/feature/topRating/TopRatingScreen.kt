@@ -4,29 +4,27 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
-import com.baghdad.design_system.component.button.IconButton
+import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
@@ -85,33 +83,34 @@ fun TopRatingMoviesContent(
     uiState: TopRatingMovieState,
     listener: TopRatingInteractionListener,
     snackBarState: SnackBarState,
-    movieItems: LazyPagingItems<TopRatingMovieState.MovieUiState>
+    movieItems: LazyPagingItems<TopRatingMovieState.MovieUiState>,
+    modifier: Modifier = Modifier
 ) {
     Scaffold(
+        modifier = modifier
+            .background(Theme.color.surface)
+            .systemBarsPadding()
+            .statusBarsPadding(),
         topBar = {
-            Row(
+            TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Theme.color.surface)
                     .statusBarsPadding()
-                    .padding(top = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    icon = painterResource(R.drawable.ic_go_back),
-                    onClick = { },
-                    size = Pair(40.dp, 40.dp),
-                    modifier = Modifier
-                        .padding(start = 16.dp, bottom = 8.dp)
-                )
-                Text(
-                    text = stringResource(com.baghdad.ui.R.string.top_rating),
-                    style = Theme.typography.title.large,
-                    color = Theme.color.title,
-                    modifier = Modifier
-                        .padding(start = 8.dp, bottom = 8.dp)
-                )
-            }
+                    .padding(top = 22.dp, bottom = 12.dp)
+                    .background(Theme.color.surface),
+                onGoBackClick = {
+                    listener.onBackClick()
+                },
+                content = {
+                    Text(
+                        text = stringResource(com.baghdad.ui.R.string.top_rating),
+                        style = Theme.typography.title.large,
+                        color = Theme.color.title,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                    )
+                }
+            )
             GenresSection(
                 allGenres = uiState.genres,
                 selectedGenres = uiState.selectedGenreId,
@@ -163,6 +162,7 @@ fun TopRatingMoviesContent(
         }
     }
 }
+
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return type.toStringResource()

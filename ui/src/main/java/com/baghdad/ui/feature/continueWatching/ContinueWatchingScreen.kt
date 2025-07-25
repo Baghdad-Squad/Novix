@@ -6,13 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -20,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,7 +30,7 @@ import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
-import com.baghdad.design_system.component.button.IconButton
+import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
@@ -102,38 +100,34 @@ fun ContinueWatchingContent(
     mediaItems: LazyPagingItems<ContinueWatchingState.ContinueWatchingMovieUiState>,
     listener: ContinueWatchingInteractionListener,
     snackBarState: SnackBarState,
+    modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = Modifier
-            .navigationBarsPadding(),
+        modifier = modifier
+            .background(Theme.color.surface)
+            .systemBarsPadding()
+            .statusBarsPadding(),
         topBar = {
-            Row(
+            TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Theme.color.surface)
                     .statusBarsPadding()
-                    .padding(top = 12.dp, bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    icon = painterResource(R.drawable.ic_go_back),
-                    onClick = { listener.onBackClick() },
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                )
-                Text(
-                    text = "Continue watching",
-                    style = Theme.typography.title.large,
-                    color = Theme.color.title,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                )
-            }
-            GenresTabs(
-                genres = uiState.genres,
-                selectedTab = uiState.selectedTab,
-                onTabClick = { listener.onGenreClick(it) },
+                    .padding(top = 22.dp, bottom = 12.dp)
+                    .background(Theme.color.surface),
+                onGoBackClick = {
+                    listener.onBackClick()
+                },
+                content = {
+                    Text(
+                        text = "Continue watching",
+                        style = Theme.typography.title.large,
+                        color = Theme.color.title,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                    )
+                }
             )
+
         }, snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -148,16 +142,19 @@ fun ContinueWatchingContent(
                     WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
                 }
             }
+            GenresTabs(
+                genres = uiState.genres,
+                selectedTab = uiState.selectedTab,
+                onTabClick = { listener.onGenreClick(it) },
+            )
             LazyPagingVerticalGrid<ContinueWatchingState.ContinueWatchingMovieUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Theme.color.surface),
                 contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 8.dp,
-                    bottom = 8.dp
+                    horizontal = 16.dp,
+                    vertical = 8.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
