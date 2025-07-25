@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.authentication
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,16 +7,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -57,27 +60,10 @@ fun LoginScreen(
     val snackBarState = loginViewModel.snackBarState.collectAsStateWithLifecycle().value
 
     ObserveAsEffect(loginViewModel.uiEffect) {
-
-        when (it) {
-            LoginUiEffect.NavigateBack -> {
-                handleNavigation(AuthenticationNavEvent.NavigateBack)
-            }
-
-            LoginUiEffect.NavigateToForgotPassword -> {
-                handleNavigation(AuthenticationNavEvent.NavigateToForgotPassword)
-            }
-
-            LoginUiEffect.NavigateToHome -> {
-                Log.i("login screen", "navigate to home")
-                handleNavigation(AuthenticationNavEvent.NavigateToHome)
-            }
-
-            LoginUiEffect.NavigateToRegister -> {
-                Log.i("login screen", "navigate to register")
-                handleNavigation(AuthenticationNavEvent.NavigateToRegister)
-            }
-        }
+        handleLoginEffect(it, handleNavigation)
     }
+
+
     LoginScreenContent(
         modifier = modifier,
         state = state,
@@ -94,11 +80,12 @@ fun LoginScreenContent(
     listener: LoginInteractionListener,
     modifier: Modifier = Modifier
 ) {
-
+    val screenHeight = LocalWindowInfo.current.containerSize.height.dp
     Scaffold(
         modifier = modifier
-            .fillMaxSize()
-            .background(color = Theme.color.surface)
+            .background(Theme.color.surface)
+            .height(screenHeight)
+            .fillMaxWidth()
             .statusBarsPadding()
             .navigationBarsPadding(),
         snackbar = {
@@ -108,117 +95,143 @@ fun LoginScreenContent(
                 isVisible = snackBarState.isVisible
             )
         },
-
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Theme.color.surface)
-                    .statusBarsPadding()
-                    .padding(vertical = 12.dp, horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    icon = painterResource(R.drawable.ic_go_back),
-                    onClick = {
-                        listener.onNavigateBackClicked()
-                    },
-                    modifier = Modifier.padding(end = 12.dp)
-                )
-                Text(
-                    text = stringResource(com.baghdad.ui.R.string.login),
-                    style = Theme.typography.title.large,
-                    color = Theme.color.title,
-                    modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
-                )
-            }
-        }) {
+            TopBar(listener)
+        },
+    ) {
+
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Top
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .verticalScroll(state = rememberScrollState())
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.logo_design),
-                contentDescription = stringResource(com.baghdad.ui.R.string.login_icon),
-                modifier = Modifier
-                    .size(64.dp)
-                    .padding(top = 12.dp)
-            )
-            Text(
-                stringResource(com.baghdad.ui.R.string.login_to_your_account),
-                modifier.padding(bottom = 40.dp, top = 16.dp),
-                style = Theme.typography.title.medium,
-                color = Theme.color.title
-            )
-
-            NovixTextField(
-                label = stringResource(com.baghdad.ui.R.string.user_name),
-                value = state.userName,
-                onValueChange = { listener.onUserNameValueChange(it) },
-                leadingIcon = painterResource(R.drawable.ic_user_guest),
-                singleLine = true,
-            )
-
-            NovixTextField(
-                label = stringResource(com.baghdad.ui.R.string.password),
-                value = state.password,
-                onValueChange = { listener.onPasswordValueChange(it) },
-                leadingIcon = painterResource(R.drawable.ic_lock_key),
-                singleLine = true,
-                isTextMasked = !state.isPasswordVisible,
-                trailingVisibility = true,
-                trailingIcon = if (!state.isPasswordVisible) painterResource(R.drawable.ic_closed_eye) else painterResource(
-                    R.drawable.ic_opened_eye
-                ),
-                onClickTrailingIcon = listener::togglePasswordVisibility
-            )
-            PrimaryButton(
-                isLoading = state.isLoading,
-                label = stringResource(com.baghdad.ui.R.string.login),
-                isEnabled = !state.isAnyFieldEmpty,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp, bottom = 12.dp)
-                    .clip(RoundedCornerShape(12.dp))
-            ) {
-                listener.onLoginClicked()
-            }
-            TextButton(
-                textModifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                label = stringResource(com.baghdad.ui.R.string.forgot_password),
-                modifier = modifier.fillMaxWidth(),
-                onClick = {
-                    listener.onForgotPasswordClicked()
-                })
-
+            LoginForm(state, listener)
             Spacer(modifier = Modifier.weight(1f))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    stringResource(com.baghdad.ui.R.string.don_t_have_account),
-                    style = Theme.typography.body.small,
-                    color = Theme.color.body,
-                    modifier = Modifier.padding(end = 4.dp),
-                )
-                TextButton(
-                    label = stringResource(com.baghdad.ui.R.string.create_account),
-                    onClick = {
-                        listener.onRegisterClicked()
-                    })
-
-            }
-
-
+            BottomCreateAccount(listener)
         }
 
     }
+}
+
+
+@Composable
+private fun TopBar(listener: LoginInteractionListener) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Theme.color.surface)
+            .statusBarsPadding()
+            .padding(vertical = 12.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            icon = painterResource(R.drawable.ic_go_back),
+            onClick = listener::onNavigateBackClicked,
+            modifier = Modifier.padding(end = 12.dp)
+        )
+        Text(
+            text = stringResource(com.baghdad.ui.R.string.login),
+            style = Theme.typography.title.large,
+            color = Theme.color.title,
+        )
+    }
+}
+
+@Composable
+private fun LoginForm(
+    state: LoginUiState, listener: LoginInteractionListener
+) {
+    Icon(
+        imageVector = ImageVector.vectorResource(R.drawable.logo_design),
+        contentDescription = stringResource(com.baghdad.ui.R.string.login_icon),
+        modifier = Modifier
+            .size(64.dp)
+            .padding(top = 12.dp)
+    )
+
+    Text(
+        stringResource(com.baghdad.ui.R.string.login_to_your_account),
+        modifier = Modifier.padding(bottom = 40.dp, top = 16.dp),
+        style = Theme.typography.title.medium,
+        color = Theme.color.title
+    )
+
+    NovixTextField(
+        label = stringResource(com.baghdad.ui.R.string.user_name),
+        value = state.userName,
+        onValueChange = listener::onUserNameValueChange,
+        leadingIcon = painterResource(R.drawable.ic_user_guest),
+        singleLine = true,
+    )
+
+    NovixTextField(
+        label = stringResource(com.baghdad.ui.R.string.password),
+        value = state.password,
+        onValueChange = listener::onPasswordValueChange,
+        leadingIcon = painterResource(R.drawable.ic_lock_key),
+        singleLine = true,
+        isTextMasked = !state.isPasswordVisible,
+        trailingVisibility = true,
+        trailingIcon = if (!state.isPasswordVisible) painterResource(R.drawable.ic_closed_eye)
+        else painterResource(R.drawable.ic_opened_eye),
+        onClickTrailingIcon = listener::togglePasswordVisibility
+    )
+
+    PrimaryButton(
+        isLoading = state.isLoading,
+        label = stringResource(com.baghdad.ui.R.string.login),
+        isEnabled = !state.isAnyFieldEmpty,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 32.dp, bottom = 12.dp)
+            .clip(RoundedCornerShape(12.dp))
+    ) {
+        listener.onLoginClicked()
+    }
+
+    TextButton(
+        textModifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        label = stringResource(com.baghdad.ui.R.string.forgot_password),
+        modifier = Modifier.fillMaxWidth(),
+        onClick = listener::onForgotPasswordClicked
+    )
+}
+
+@Composable
+private fun BottomCreateAccount(listener: LoginInteractionListener) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            stringResource(com.baghdad.ui.R.string.don_t_have_account),
+            style = Theme.typography.body.small,
+            color = Theme.color.body,
+            modifier = Modifier.padding(end = 4.dp),
+        )
+        TextButton(
+            label = stringResource(com.baghdad.ui.R.string.create_account),
+            onClick = listener::onRegisterClicked
+        )
+    }
+}
+
+private fun handleLoginEffect(
+    effect: LoginUiEffect, handleNavigation: (AuthenticationNavEvent) -> Unit
+) {
+    handleNavigation(effect.toNavEvent())
+}
+
+private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent = when (this) {
+    LoginUiEffect.NavigateBack -> AuthenticationNavEvent.NavigateBack
+    LoginUiEffect.NavigateToForgotPassword -> AuthenticationNavEvent.NavigateToForgotPassword
+    LoginUiEffect.NavigateToHome -> AuthenticationNavEvent.NavigateToHome
+    LoginUiEffect.NavigateToRegister -> AuthenticationNavEvent.NavigateToRegister
 }
 
 @Preview
@@ -228,6 +241,5 @@ private fun PreviewLoginScreen() {
         LoginScreen(
             handleNavigation = {}
         )
-
     }
 }
