@@ -57,7 +57,7 @@ fun WhatToWatchSection(
             text = stringResource(com.baghdad.ui.R.string.what_do_you_want_to_watch),
             style = Theme.typography.headline.small,
             color = Theme.color.title,
-            modifier = Modifier.padding(bottom = 10.dp)
+            modifier = Modifier.padding(bottom = 12.dp),
         )
         Row(
             modifier = modifier

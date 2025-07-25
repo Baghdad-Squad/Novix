@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -73,6 +74,8 @@ private fun HomeContent(
     interactionListener: HomeInteractionListener,
     snackBarState: SnackBarState,
 ) {
+    val lazyGridState = rememberLazyGridState()
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -90,6 +93,7 @@ private fun HomeContent(
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             contentPadding = PaddingValues(vertical = 16.dp),
+            state = lazyGridState,
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {

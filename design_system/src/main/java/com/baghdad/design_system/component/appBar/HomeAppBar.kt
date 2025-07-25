@@ -28,13 +28,14 @@ fun HomeAppBar(
             Theme.color.primary
         ),
     )
-    BasicTopAppBar {
+    BasicTopAppBar(modifier = modifier) {
         Icon(
             painter = painterResource(R.drawable.logo_design),
             contentDescription = stringResource(R.string.home_icon),
             tint = Theme.color.primary,
-            modifier = modifier
-                .graphicsLayer(alpha = 0.99f)
+            modifier =
+                Modifier
+                    .graphicsLayer(alpha = 0.99f)
                 .drawWithCache {
                     onDrawWithContent {
                         drawContent()

@@ -128,7 +128,7 @@ private fun UpcomingSectionHeader(
                 SectionHeader(
                     title = stringResource(R.string.upcoming),
                     isShowAllVisible = false,
-                    modifier = modifier.wrapContentSize(),
+                    modifier = Modifier.wrapContentSize(),
                 )
                 LazyRow(
                     modifier =
@@ -175,7 +175,7 @@ private fun UpcomingSectionHeaderLoadingPlaceHolder(modifier: Modifier = Modifie
             modifier =
                 Modifier
                     .wrapContentSize()
-                .padding(top = 12.dp),
+                    .padding(top = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {

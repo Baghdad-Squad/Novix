@@ -34,7 +34,6 @@ fun WhatToWatchCard(
         modifier =
             modifier
                 .height(140.dp)
-                .padding(top = 16.dp)
                 .noRippleClickable { onClick() },
     ) {
         Box(
