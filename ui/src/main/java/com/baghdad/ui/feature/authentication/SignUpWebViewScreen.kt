@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.authentication
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -15,6 +14,11 @@ import com.baghdad.ui.feature.component.AppWebView
 import com.baghdad.ui.navigation.graph.authentication.AuthenticationNavEvent
 import kotlinx.coroutines.delay
 import java.util.Locale
+
+private const val OOPS_MESSAGE = "Oops! We can't find the page you're looking for"
+private const val ERROR_MESSAGE = "There was a problem"
+private const val LOGIN_MESSAGE = "Login to your account"
+private const val SIGNUP_MESSAGE = "Sign up for an account"
 
 @Composable
 fun SignUpWebViewScreen(handleNavigation: (AuthenticationNavEvent) -> Unit) {
@@ -41,7 +45,7 @@ fun SignUpWebViewContent(
     LaunchedEffect(shouldNavigateBack.value) {
         if (shouldNavigateBack.value) {
             delay(5000)
-            handleNavigation(AuthenticationNavEvent.NavigateToHome)
+            handleNavigation(AuthenticationNavEvent.NavigateBack)
         }
     }
     Box(
@@ -55,17 +59,16 @@ fun SignUpWebViewContent(
             modifier = Modifier.fillMaxSize(),
             allowedDomains = listOf("themoviedb.org"),
             onUrlChange = { url ->
-                Log.d("Aboud", "onUrlChange: $url")
-                shouldNavigateBack.value = url != screenUrl
+                if (url != screenUrl) handleNavigation(AuthenticationNavEvent.NavigateBack)
             },
             onReceivedError = { if (it.isNotBlank()) handleNavigation(AuthenticationNavEvent.NavigateBack) },
             onDetected = {
                 when (it.trim('"')) {
-                    "Oops! We can't find the page you're looking for" -> handleNavigation(
-                        AuthenticationNavEvent.NavigateBack
-                    )
-                    "There was a problem" -> handleNavigation(AuthenticationNavEvent.NavigateBack)
-                    "Login to your account" -> shouldNavigateBack.value = true
+                    OOPS_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    ERROR_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    LOGIN_MESSAGE -> shouldNavigateBack.value = true
+                    SIGNUP_MESSAGE -> Unit
+                    else -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                 }
             }
         )

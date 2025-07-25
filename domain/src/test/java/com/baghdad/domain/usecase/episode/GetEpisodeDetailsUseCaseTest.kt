@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 
 class GetEpisodeDetailsUseCaseTest {
 
-    private lateinit var  episodeRepository : EpisodeRepository
+    private lateinit var episodeRepository: EpisodeRepository
     private lateinit var getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase
     private val expectedEpisode = Episode(
         id = 1L,
@@ -58,7 +58,13 @@ class GetEpisodeDetailsUseCaseTest {
         val tvId = 123L
         val seasonNumber = 1
         val episodeNumber = 1
-        coEvery { episodeRepository.getEpisodeDetails(tvId, seasonNumber, episodeNumber) } returns expectedEpisode
+        coEvery {
+            episodeRepository.getEpisodeDetails(
+                tvId,
+                seasonNumber,
+                episodeNumber
+            )
+        } returns expectedEpisode
 
         // When
         val result = getEpisodeDetailsUseCase(tvId, seasonNumber, episodeNumber)
@@ -67,7 +73,6 @@ class GetEpisodeDetailsUseCaseTest {
         assertThat(result).isEqualTo(expectedEpisode)
         coVerify { episodeRepository.getEpisodeDetails(tvId, seasonNumber, episodeNumber) }
     }
-
 
 
 }

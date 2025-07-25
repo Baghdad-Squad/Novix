@@ -143,11 +143,13 @@ class GetActorMoviesUseCaseTest {
         // Given
         val actorId = 9L
         val multiGenreMovie = listOf(
-            sampleMovies[0].copy(genres = listOf(
-                Genre(id = 1, name = "Drama"),
-                Genre(id = 2, name = "Thriller"),
-                Genre(id = 3, name = "Mystery")
-            ))
+            sampleMovies[0].copy(
+                genres = listOf(
+                    Genre(id = 1, name = "Drama"),
+                    Genre(id = 2, name = "Thriller"),
+                    Genre(id = 3, name = "Mystery")
+                )
+            )
         )
         coEvery { actorRepository.getActorMovies(actorId) } returns multiGenreMovie
 

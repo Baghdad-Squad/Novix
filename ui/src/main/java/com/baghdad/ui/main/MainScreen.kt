@@ -75,7 +75,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         NovixNavHost(
             modifier = Modifier.padding(bottom = animatedBottomPadding),
             navController = navController,
-            startDestination = Graph.HomeGraph,
+            startDestination = Graph.AuthenticationGraph,
         )
     }
 }

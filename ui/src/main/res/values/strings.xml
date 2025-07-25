@@ -57,6 +57,7 @@
     <string name="guests_of_honor">Guests of honor</string>
     <string name="season_template">S%1$s</string>
     <string name="trending_tv_shows">Trending TV shows</string>
+    <string name="movies">Movies</string>
     <string name="tv_shows">TV Shows</string>
     <string name="actors">Actors</string>
     <string name="top_rating">Top rating</string>
@@ -65,8 +66,16 @@
     <string name="continue_watching">Continue watching</string>
     <string name="upcoming">Upcoming</string>
     <string name="episode_header_template">Episode %1$d - %2$s</string>
+    <string name="login_icon">login icon</string>
+    <string name="login_to_your_account">Login to your account</string>
+    <string name="password">Password</string>
+    <string name="user_name">User name</string>
+    <string name="don_t_have_account">Don’t have account?</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="create_account">Create account</string>
+    <string name="login_successfully">Login Successfully</string>
+    <string name="incorrect_username_or_password">Incorrect username or password</string>
     <string name="movie_card">Movie Card</string>
-    <string name="movies">Movies</string>
     <string name="trending_movies">Trending movies</string>
     <string name="all">All</string>
     <string name="continue_watching_item">Continue watching item</string>

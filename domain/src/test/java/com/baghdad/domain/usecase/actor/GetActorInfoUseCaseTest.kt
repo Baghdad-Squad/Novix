@@ -7,7 +7,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -48,6 +48,7 @@ class GetActorInfoUseCaseTest {
         headerPictures = emptyList(),
         department = ""
     )
+
     @Test
     fun `getActorInfoUseCase should return actor info`() = runTest {
         // Given
@@ -142,21 +143,22 @@ class GetActorInfoUseCaseTest {
     }
 
     @Test
-    fun `getActorInfoUseCase returns actor with profile picture but no header pictures`() = runTest {
-        // Given
-        val actorId = 5L
-        val actorWithProfileOnly = minimalActor.copy(
-            profilePictureURL = "https://example.com/profile2.jpg"
-        )
-        coEvery { actorRepository.getActorInfo(actorId) } returns actorWithProfileOnly
+    fun `getActorInfoUseCase returns actor with profile picture but no header pictures`() =
+        runTest {
+            // Given
+            val actorId = 5L
+            val actorWithProfileOnly = minimalActor.copy(
+                profilePictureURL = "https://example.com/profile2.jpg"
+            )
+            coEvery { actorRepository.getActorInfo(actorId) } returns actorWithProfileOnly
 
-        // When
-        val result = getActorInfoUseCase(actorId)
+            // When
+            val result = getActorInfoUseCase(actorId)
 
-        // Then
-        assertThat(result.profilePictureURL).isNotEmpty()
-        assertThat(result.headerPictures).isEmpty()
-    }
+            // Then
+            assertThat(result.profilePictureURL).isNotEmpty()
+            assertThat(result.headerPictures).isEmpty()
+        }
 
     @Test
     fun `getActorInfoUseCase makes exactly one repository call`() = runTest {

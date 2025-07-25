@@ -57,6 +57,15 @@
     <string name="save_to_list">حفظ الى القائمه</string>
     <string name="guests_of_honor">ضيوف الشرف</string>
     <string name="season_template">موسم %1$s</string>
+    <string name="login_icon">ايقونة تسجيل الدخول</string>
+    <string name="login_to_your_account">تسجيل الدخول</string>
+    <string name="password">كلمة المرور</string>
+    <string name="user_name">اسم المستخدم</string>
+    <string name="don_t_have_account">لا تملك حساب؟</string>
+    <string name="forgot_password">نسيت كلمة المرور؟</string>
+    <string name="create_account">تسجيل حساب جديد</string>
+    <string name="login_successfully">تم تسجيل الدخول بنجاح</string>
+    <string name="incorrect_username_or_password">خطأ في كلمة المرور او الاسم</string>
     <string name="trending_tv_shows">المسلسلات الرائجة</string>
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>

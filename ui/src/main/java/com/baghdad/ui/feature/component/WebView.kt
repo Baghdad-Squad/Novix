@@ -2,9 +2,11 @@ package com.baghdad.ui.feature.component
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
+import android.webkit.CookieManager
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
+import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
@@ -30,6 +32,11 @@ fun AppWebView(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
                 settings.configureWebSettings()
+                CookieManager.getInstance().removeAllCookies(null)
+                CookieManager.getInstance().flush()
+                WebStorage.getInstance().deleteAllData()
+                clearCache(true)
+
                 webViewClient = SimpleWebViewClient(
                     allowedDomains = allowedDomains,
                     onUrlChange = onUrlChange,
