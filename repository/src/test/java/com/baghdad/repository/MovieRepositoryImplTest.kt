@@ -34,8 +34,7 @@ class MovieRepositoryImplTest {
         movieRepositoryImpl = MovieRepositoryImpl(
             remoteGenreDataSource = remoteGenreDataSource,
             remoteMovieDataSource = remoteMovieDataSource,
-            localGenreDataSource = mockk(),
-            localMovieDataSource = mockk(),
+            localGenreDataSource = mockk()
         )
     }
 

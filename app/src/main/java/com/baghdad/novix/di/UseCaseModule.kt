@@ -4,6 +4,7 @@ import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
+import com.baghdad.domain.usecase.actor.GetTrendingActorsUseCase
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
@@ -17,9 +18,9 @@ import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCategoryUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
-import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
+import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
@@ -31,13 +32,14 @@ import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
+import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
+import com.baghdad.domain.usecase.topRated.GetTvShowTopRatingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowImagesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
-import com.baghdad.domain.usecase.actor.GetTrendingActorsUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -80,5 +82,7 @@ val useCaseModule = module {
     singleOf(::AddContinueWatchingUseCase)
     singleOf(::GetMovieTopRatingUseCase)
     singleOf(::GetTrendingActorsUseCase)
+    singleOf(::GetTvShowTopRatingUseCase)
+    singleOf(::GetTrendingMoviesUseCase)
 }
 

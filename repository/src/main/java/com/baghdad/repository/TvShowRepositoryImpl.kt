@@ -12,6 +12,7 @@ import com.baghdad.repository.datasource.local.LocalTrendingTvShowsDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.TvShowDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getPagedSafely
@@ -73,6 +74,14 @@ class TvShowRepositoryImpl(
     override suspend fun getTvShowReviews(tvId: Long): List<Review> {
         return executeSafely {
             tvShowRemoteDataSource.getTvShowReviews(tvId).map {
+                it.toEntity()
+            }
+        }
+    }
+
+    override suspend fun getTopRatedTvShows(page: Int): PagedResult<TvShow> {
+        return executeSafely {
+            tvShowRemoteDataSource.getTopRatedTvShows(page).toPagedResult {
                 it.toEntity()
             }
         }
