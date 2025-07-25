@@ -1,13 +1,19 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
 import com.baghdad.remoteDataSource.response.MovieResult
+import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 
-fun MovieResult.toDto(): MovieDto {
+
+fun MovieResult.toDto(
+    genreIds: List<Int>? = null,
+): MovieDto {
+
     return MovieDto(
         id = (id ?: 0).toLong(),
         title = title ?: "Untitled",
-        genres =  emptyList(),
+        genres = genreIds?.map { GenreDto(it.toLong(), "", GenreDto.GenreType.MOVIE) }
+            ?: emptyList(),
         imdbRating = voteAverage ?: 0.0,
         userRating = 0.0,
         releaseDate = releaseDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",

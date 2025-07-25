@@ -20,20 +20,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.util.hideNavigationBar
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
+import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsEffect
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -46,11 +51,12 @@ fun CategoryTvShowsScreen(
     handleNavigation: (CategoriesNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
     CategoryTvShowsContent(
-        uiState = uiState, listener = viewModel
+        uiState = uiState, listener = viewModel, snackBarState = snackBarState
     )
 }
 
@@ -72,6 +78,7 @@ private fun handleEffect(
 private fun CategoryTvShowsContent(
     uiState: CategoryTvShowsState,
     listener: CategoryTvShowsViewModel,
+    snackBarState: SnackBarState
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -96,7 +103,6 @@ private fun CategoryTvShowsContent(
                         start = 16.dp,
                         end = 12.dp,
                     )
-
                 )
                 Text(
                     text = uiState.categoryName,
@@ -105,7 +111,13 @@ private fun CategoryTvShowsContent(
                     modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
                 )
             }
-        },
+        }, snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible
+            )
+        }
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
@@ -131,4 +143,9 @@ private fun CategoryTvShowsContent(
             }
         }
     }
+}
+
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
 }

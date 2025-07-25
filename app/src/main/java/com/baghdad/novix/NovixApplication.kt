@@ -17,7 +17,7 @@ class NovixApplication : Application() {
         startKoin {
             androidContext(this@NovixApplication)
             modules(
-                listOf<Module>(
+                listOf(
                     loggerModule,
                     localDataSourceModule,
                     remoteDataSourceModule,

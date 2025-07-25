@@ -1,0 +1,14 @@
+package com.baghdad.repository.model
+
+data class ContinueWatchingDto(
+    val contentId: Long,
+    val genreIds: List<Long>,
+    val contentImageUrl: String,
+    val contentType: ContentType,
+    val userId: Long
+){
+    enum class ContentType {
+        MOVIE,
+        TV_SHOW
+    }
+}

@@ -5,14 +5,18 @@ import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
+import com.baghdad.viewmodel.continueWatching.ContinueWatchingViewModel
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
 import com.baghdad.viewmodel.movie.TrendingMoviesViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
+import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
+import com.baghdad.viewmodel.topRating.TopRatingViewModel
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowViewModel
+import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -31,7 +35,7 @@ val viewModelModule = module {
             getCastsInfoUseCase = get(),
             getMovieImagesUseCase = get(),
             getMoreLikeThisPosterImageUseCase = get(),
-            getMovieCategoryUseCase = get()
+            addContinueWatchingUseCase = get()
         )
     }
 
@@ -54,7 +58,7 @@ val viewModelModule = module {
     }
 
     viewModelOf(::EpisodeDetailsViewModel)
-    viewModel{ (actorId: Long) ->
+    viewModel { (actorId: Long) ->
         TopMoviePicksViewModel(actorId, get())
     }
     viewModel { (actorId: Long) ->
@@ -70,6 +74,14 @@ val viewModelModule = module {
     viewModel { (categoryId: Long) ->
         CategoryMoviesViewModel(categoryId, get(), get())
     }
+
+    viewModelOf(::TopRatingViewModel)
+
+    viewModelOf(::ContinueWatchingViewModel)
+
+    viewModelOf(::TrendingActorViewModel)
+
+    viewModelOf(::TrendingTvShowViewModel)
 
     viewModelOf(::TrendingMoviesViewModel)
 }

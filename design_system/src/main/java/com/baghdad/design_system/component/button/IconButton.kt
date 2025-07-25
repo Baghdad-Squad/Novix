@@ -33,7 +33,7 @@ fun IconButton(
     tintIcon: Color = Theme.color.title,
     borderStroke: BorderStroke? = BorderStroke(width = 1.dp, Theme.color.stroke),
     shape: Shape = RoundedCornerShape(12.dp),
-    size: Pair<Dp, Dp> = Pair(48.dp, 48.dp),
+    size: Pair<Dp, Dp> = Pair(40.dp, 40.dp),
     onClick: () -> Unit = {},
 ) {
     Box(
