@@ -39,20 +39,18 @@ class ContinueWatchingViewModel(
     }
 
     private suspend fun onGetMedia(genreId: Long, page: Int): PagedResult<ContinueWatching> {
-        return if (genreId == 0L) {
-            val result = getAllContinueWatchingUseCase(page)
-            if (currentState.selectedMediaTabIsMovie) {
-                result.copy(data = result.data.filter { it.contentType == ContinueWatching.ContentType.MOVIE })
-            } else
-                result.copy(data = result.data.filter { it.contentType == ContinueWatching.ContentType.TV_SHOW })
+        val result = if (genreId == 0L) {
+            getAllContinueWatchingUseCase(page)
         } else {
-            val result = getAllContinueWatchingByGenreUseCase(genreId, page)
-
-            if (currentState.selectedMediaTabIsMovie) {
-                result.copy(data = result.data.filter { it.contentType == ContinueWatching.ContentType.MOVIE })
-            } else
-                result.copy(data = result.data.filter { it.contentType == ContinueWatching.ContentType.TV_SHOW })
+            getAllContinueWatchingByGenreUseCase(genreId, page)
         }
+
+        val filteredData = result.data.filter { item ->
+            (item.contentType == ContinueWatching.ContentType.MOVIE && currentState.selectedMediaTabIsMovie) ||
+                    (item.contentType == ContinueWatching.ContentType.TV_SHOW && !currentState.selectedMediaTabIsMovie)
+        }
+
+        return result.copy(data = filteredData)
     }
 
 
@@ -99,7 +97,12 @@ class ContinueWatchingViewModel(
 
     override fun onSelectedTab(isMovieTab: Boolean) {
         updateState {
-            it.copy(selectedMediaTabIsMovie = isMovieTab, isLoading = true, mediaFlow = flowOf(),selectedGenreTab = 0)
+            it.copy(
+                selectedMediaTabIsMovie = isMovieTab,
+                isLoading = true,
+                mediaFlow = flowOf(),
+                selectedGenreTab = 0
+            )
         }
         getGenres()
         getMedia(0)

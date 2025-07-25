@@ -140,7 +140,7 @@ class TvShowDetailsViewModel(
                 callee = {
                     addContinueWatchingUseCase(
                         tvShowId, currentState.tvShowInfo.genres.map { it.id ?: 0 },
-                        contentImageUrl = if(currentState.tvShowInfo.headerImagesURLs.isNotEmpty()) currentState.tvShowInfo.headerImagesURLs[0] else "",
+                        contentImageUrl = currentState.tvShowInfo.posterPictureURL,
                         contentType = ContinueWatching.ContentType.TV_SHOW,
                     )
                 },
