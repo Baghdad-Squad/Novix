@@ -15,6 +15,7 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -26,11 +27,14 @@ class HomeViewModel(
     private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase,
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()), HomeInteractionListener {
     init {
-        getPopularItems()
-        getTopRatingMovies()
-        getContinueWatchingItems()
-        getMovieGenres()
-        collectPaginatedUpcomingMovies()
+        viewModelScope.launch(Dispatchers.IO) {
+            delay(3000)
+            getPopularItems()
+            getTopRatingMovies()
+            getContinueWatchingItems()
+            getMovieGenres()
+            collectPaginatedUpcomingMovies()
+        }
     }
 
     private fun getPopularItems() {
@@ -221,7 +225,7 @@ class HomeViewModel(
 
     override fun onUpcomingGenreSelected(genre: HomeScreenState.GenreUiState?) {
         updateState {
-            it.copy(selectedUpcomingGenreId = genre?.id, isUpcomingGenresLoading = true)
+            it.copy(selectedUpcomingGenreId = genre?.id)
         }
         collectPaginatedUpcomingMovies()
     }

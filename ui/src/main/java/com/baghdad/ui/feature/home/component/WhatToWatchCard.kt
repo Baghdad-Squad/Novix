@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 
 @Composable
@@ -27,35 +28,40 @@ fun WhatToWatchCard(
     colors: List<Color>,
     imageWidth: Dp,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .height(140.dp)
-            .padding(top = 16.dp)
+        modifier =
+            modifier
+                .height(140.dp)
+                .padding(top = 16.dp)
+                .noRippleClickable { onClick() },
     ) {
         Box(
-            modifier = Modifier
-                .matchParentSize()
-                .clip(RoundedCornerShape(12.dp))
-                .background(Brush.linearGradient(colors = colors))
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Brush.linearGradient(colors = colors)),
         )
         Image(
             painter = image,
             contentDescription = title,
-            modifier = Modifier
-                .size(width = imageWidth, height = 64.dp)
-                .align(alignment = Alignment.TopStart)
-                .padding(start = 4.dp)
-                .offset(y = -(16).dp)
+            modifier =
+                Modifier
+                    .size(width = imageWidth, height = 64.dp)
+                    .align(alignment = Alignment.TopStart)
+                    .padding(start = 4.dp)
+                    .offset(y = -(16).dp),
         )
         Text(
             text = title,
             style = Theme.typography.title.medium,
             color = Theme.color.onPrimary,
-            modifier = Modifier
-                .align(alignment = Alignment.BottomStart)
-                .padding(8.dp)
+            modifier =
+                Modifier
+                    .align(alignment = Alignment.BottomStart)
+                    .padding(8.dp),
         )
     }
 }

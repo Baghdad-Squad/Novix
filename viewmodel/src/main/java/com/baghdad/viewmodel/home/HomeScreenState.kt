@@ -6,15 +6,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 data class HomeScreenState(
-    val isPopularLoading: Boolean = false,
+    val isPopularLoading: Boolean = true,
     val popularItems: List<PopularItemUiState> = emptyList(),
-    val isTopRatingLoading: Boolean = false,
+    val isTopRatingLoading: Boolean = true,
     val topRatingItems: List<TopRatingItemUiState> = emptyList(),
-    val isContinueWatchingLoading: Boolean = false,
+    val isContinueWatchingLoading: Boolean = true,
     val continueWatchingItems: List<ContinueWatchingItemUiState> = emptyList(),
-    val isUpcomingGenresLoading: Boolean = false,
+    val isUpcomingGenresLoading: Boolean = true,
     val upcomingGenres: List<GenreUiState> = emptyList(),
-    val isUpcomingMoviesLoading: Boolean = false,
+    val isUpcomingMoviesLoading: Boolean = true,
     val selectedUpcomingGenreId: Long? = null,
     val upcomingItems: Flow<PagingData<UpcomingItemUiState>> = flowOf(),
     override val isLoading: Boolean = false,

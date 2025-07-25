@@ -23,9 +23,9 @@ import com.baghdad.islamic_image_loader.R
 
 @Composable
 fun WhatToWatchSection(
-    onMoviesClicked: () -> Unit,
-    onTvShowsClicked: () -> Unit,
-    onActorsClicked: () -> Unit,
+    onMoviesClick: () -> Unit,
+    onTvShowsClick: () -> Unit,
+    onActorsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -72,7 +72,7 @@ fun WhatToWatchSection(
                 title = stringResource(com.baghdad.ui.R.string.movies),
                 colors = gradientMoviesColors,
                 imageWidth = 60.dp,
-                onClick = onMoviesClicked,
+                onClick = onMoviesClick,
                 modifier = Modifier.weight(1f)
             )
 
@@ -81,7 +81,7 @@ fun WhatToWatchSection(
                 title = stringResource(com.baghdad.ui.R.string.tv_shows),
                 colors = gradientTvShowsColors,
                 imageWidth = 88.dp,
-                onClick = onTvShowsClicked,
+                onClick = onTvShowsClick,
                 modifier = Modifier.weight(1f)
             )
 
@@ -90,7 +90,7 @@ fun WhatToWatchSection(
                 title = stringResource(com.baghdad.ui.R.string.actors),
                 colors = gradientActorsColors,
                 imageWidth = 56.dp,
-                onClick = onActorsClicked,
+                onClick = onActorsClick,
                 modifier = Modifier.weight(1f)
             )
         }

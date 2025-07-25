@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -128,8 +129,10 @@ private fun LoadingPopularCardPager(modifier: Modifier = Modifier) {
         contentPadding = PaddingValues(horizontal = 64.dp),
         pageSpacing = 4.dp,
         beyondViewportPageCount = 1,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
     ) { page ->
         val currentPageOffset =
             (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction

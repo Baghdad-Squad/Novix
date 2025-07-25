@@ -116,7 +116,7 @@ fun LoadingPopularCard(
 ) {
     Box(
         modifier = modifier
-            .size(width = 188.dp, height = 244.dp)
+            .size(width = 188.dp, height = 280.dp)
             .background(Theme.color.surface)
             .clip(RoundedCornerShape(12.dp))
             .shimmerEffect()

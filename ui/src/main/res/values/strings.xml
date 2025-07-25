@@ -66,4 +66,6 @@
     <string name="continue_watching">Continue watching</string>
     <string name="upcoming">Upcoming</string>
     <string name="episode_header_template">Episode %1$d - %2$s</string>
+    <string name="continue_watching_item">Continue watching item</string>
+    <string name="top_rating_item">Top rating item</string>
 </resources>

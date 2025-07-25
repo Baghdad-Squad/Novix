@@ -48,7 +48,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    handleNavigation: (HomeNavEvent) -> Unit
+    handleNavigation: (HomeNavEvent) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val upcomingItems = state.upcomingItems.collectAsLazyPagingItems()
@@ -62,7 +62,7 @@ fun HomeScreen(
         state = state,
         upcomingItems = upcomingItems,
         interactionListener = viewModel,
-        snackBarState = snackBarState.value
+        snackBarState = snackBarState.value,
     )
 }
 
@@ -71,7 +71,7 @@ private fun HomeContent(
     state: HomeScreenState,
     upcomingItems: LazyPagingItems<HomeScreenState.UpcomingItemUiState>,
     interactionListener: HomeInteractionListener,
-    snackBarState: SnackBarState
+    snackBarState: SnackBarState,
 ) {
     Scaffold(
         modifier = Modifier
@@ -83,18 +83,16 @@ private fun HomeContent(
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
             )
-        }
+        },
     ) {
-
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             contentPadding = PaddingValues(vertical = 16.dp),
             modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-
             item(span = { GridItemSpan(maxLineSpan) }) {
                 PopularSection(
                     isLoading = state.isPopularLoading,
@@ -103,13 +101,13 @@ private fun HomeContent(
                     onSaveClick = interactionListener::onPopularItemSaveClicked,
                 )
             }
-            // What you want to watch section
+
             item(span = { GridItemSpan(maxLineSpan) }) {
                 WhatToWatchSection(
                     modifier = Modifier.padding(top = 8.dp),
-                    onMoviesClicked = interactionListener::onMoviesClicked,
-                    onTvShowsClicked = interactionListener::onTvShowsClicked,
-                    onActorsClicked = interactionListener::onActorsClicked
+                    onMoviesClick = interactionListener::onMoviesClicked,
+                    onTvShowsClick = interactionListener::onTvShowsClicked,
+                    onActorsClick = interactionListener::onActorsClicked,
                 )
             }
 
@@ -131,7 +129,7 @@ private fun HomeContent(
                     items = state.continueWatchingItems,
                     onClick = interactionListener::onContinueWatchingItemClicked,
                     onSaveClick = interactionListener::onContinueWatchingItemSaveClicked,
-                    onViewAllClick = interactionListener::onViewAllContinueWatchingClicked
+                    onViewAllClick = interactionListener::onViewAllContinueWatchingClicked,
                 )
             }
 
@@ -142,23 +140,23 @@ private fun HomeContent(
                 isGenresLoading = state.isUpcomingGenresLoading,
                 onGenreSelected = interactionListener::onUpcomingGenreSelected,
                 upcomingItems = upcomingItems,
+                isUpcomingItemsLoading = state.isUpcomingMoviesLoading,
                 onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
-                onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked
+                onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
             )
         }
     }
 }
 
 @Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return when (type) {
+private fun snackBarMessage(type: BaseSnackBarMessage): Int =
+    when (type) {
         else -> type.toStringResource()
     }
-}
 
 private fun handleEffect(
     effect: HomeScreenEffect,
-    handleNavigation: (HomeNavEvent) -> Unit
+    handleNavigation: (HomeNavEvent) -> Unit,
 ) {
     when (effect) {
         is HomeScreenEffect.NavigateToMovieDetails -> {

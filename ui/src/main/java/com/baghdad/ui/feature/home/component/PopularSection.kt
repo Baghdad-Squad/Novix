@@ -20,7 +20,7 @@ fun PopularSection(
     onSaveClick: (PopularItemUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    AnimatedVisibility(isLoading.not() && popularItems.isNotEmpty()) {
+    AnimatedVisibility(isLoading || popularItems.isNotEmpty()) {
         Column(modifier) {
             Text(
                 text = stringResource(R.string.popular),
