@@ -106,10 +106,6 @@ class MovieRepositoryImpl(
         }
     }
 
-    private suspend fun updateGenreCache() {
-        val lang = Locale.getDefault().language
-        val movieGenres = remoteGenreDataSource.getMovieGenre(lang)
-        movieGenres.forEach { localGenreDataSource.addGenre(it) }
     override suspend fun getUpcomingMovies(
         page: Int,
         genreId: Long?,
