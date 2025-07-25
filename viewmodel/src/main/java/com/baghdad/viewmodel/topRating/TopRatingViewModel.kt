@@ -91,6 +91,11 @@ class TopRatingViewModel(
 
 
     override fun onSaveMovieClick(movieId: Long) {
+        updateState {
+            it.copy(
+            )
+        }
+
         showSnackBar(
             message = SearchScreenBaseSnackBarMessages.SavedItemSuccessfully, isSuccess = true
         )
