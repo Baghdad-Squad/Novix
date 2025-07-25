@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.ui.main.MainScreen
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
