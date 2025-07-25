@@ -16,6 +16,10 @@ import com.baghdad.ui.navigation.graph.authentication.AuthenticationNavEvent
 import kotlinx.coroutines.delay
 import java.util.Locale
 
+private const val OOPS_MESSAGE = "Oops! We can't find the page you're looking for"
+private const val ERROR_MESSAGE = "There was a problem"
+private const val LOGIN_MESSAGE = "Login to your account"
+
 @Composable
 fun SignUpWebViewScreen(handleNavigation: (AuthenticationNavEvent) -> Unit) {
     val languageTag = remember {
@@ -61,11 +65,9 @@ fun SignUpWebViewContent(
             onReceivedError = { if (it.isNotBlank()) handleNavigation(AuthenticationNavEvent.NavigateBack) },
             onDetected = {
                 when (it.trim('"')) {
-                    "Oops! We can't find the page you're looking for" -> shouldNavigateBack.value =
-                        true
-
-                    "There was a problem" -> shouldNavigateBack.value = true
-                    "Login to your account" -> shouldNavigateBack.value = true
+                    OOPS_MESSAGE -> shouldNavigateBack.value = true
+                    ERROR_MESSAGE -> shouldNavigateBack.value = true
+                    LOGIN_MESSAGE -> shouldNavigateBack.value = true
                 }
             }
         )
