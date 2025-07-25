@@ -1,7 +1,6 @@
 package com.baghdad.ui.feature.search
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,6 +37,8 @@ import com.baghdad.ui.feature.search.component.SearchResultContent
 import com.baghdad.ui.feature.search.component.SearchTextField
 import com.baghdad.ui.feature.search.component.filter.FilterBottomSheet
 import com.baghdad.ui.feature.search.component.recentSearchSection
+import com.baghdad.ui.feature.util.remeberSaveableLazyListState
+import com.baghdad.ui.feature.util.rememberSaveableLazyGridState
 import com.baghdad.ui.navigation.graph.search.SearchNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -108,7 +105,10 @@ fun SearchContent(
     actorItems: LazyPagingItems<SearchScreenState.ActorUiState>,
     tvShowItems: LazyPagingItems<SearchScreenState.TvShowUiState>
 ) {
-    val moviesState = rememberLazyGridState()
+    val moviesState = rememberSaveableLazyGridState(key = "movies_grid")
+    val actorsState = remeberSaveableLazyListState(key = "actors_list")
+    val tvShowsState = rememberSaveableLazyGridState(key = "tv_shows_grid")
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -156,6 +156,8 @@ fun SearchContent(
                         onActorClick = { listener.onActorItemClick(it) },
                         isLoading = uiState.isLoading,
                         moviesState = moviesState,
+                        actorsState = actorsState,
+                        tvShowsState = tvShowsState,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 } else RecentlyViewsWithSearch(uiState, listener)
@@ -279,31 +281,5 @@ private fun SearchScreenPreview() {
             tvShowItems = flowOf(PagingData.empty<SearchScreenState.TvShowUiState>()).collectAsLazyPagingItems()
 
         )
-    }
-}
-
-
-//fun LazyGridStateSaver(): Saver<LazyGridState, Pair<Int, Int>> = Saver(
-//    save = { state -> state.firstVisibleItemIndex to state.firstVisibleItemScrollOffset },
-//    restore = { LazyGridState(firstVisibleItemIndex = it.first, firstVisibleItemScrollOffset = it.second) }
-//)
-
-//@Composable
-//fun rememberSaveableLazyGridState(): LazyGridState {
-//    return rememberSaveable(saver = LazyGridStateSaver()) {
-//        LazyGridState()
-//    }
-//}
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun rememberPersistentLazyGridState(key: String? = null): LazyGridState {
-    val saver = listSaver(
-        save = { listOf(it.firstVisibleItemIndex, it.firstVisibleItemScrollOffset) },
-        restore = { LazyGridState(it[0], it[1]) }
-    )
-    return if (key == null) {
-        rememberSaveable(saver = saver) { LazyGridState() }
-    } else {
-        rememberSaveable(key, saver = saver) { LazyGridState() }
     }
 }

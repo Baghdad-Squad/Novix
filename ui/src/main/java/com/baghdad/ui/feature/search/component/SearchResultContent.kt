@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,6 +30,8 @@ fun SearchResultContent(
     onTabSelected: (SearchScreenState.SearchTab) -> Unit,
     onSavedClick: (Long) -> Unit,
     moviesState: LazyGridState,
+    tvShowsState: LazyGridState,
+    actorsState: LazyListState,
     movies: LazyPagingItems<SearchScreenState.MovieUiState>,
     tvShows: LazyPagingItems<SearchScreenState.TvShowUiState>,
     actors: LazyPagingItems<SearchScreenState.ActorUiState>,
@@ -103,6 +106,7 @@ fun SearchResultContent(
             SearchScreenState.SearchTab.TV_SHOWS -> {
                 if (tvShows.itemCount != 0) {
                     TvShowCardList(
+                        state = tvShowsState,
                         tvShows = tvShows,
                         onSavedClick = onSavedClick,
                         onTVShowClick = onTvShowClick,
@@ -124,6 +128,7 @@ fun SearchResultContent(
             SearchScreenState.SearchTab.ACTORS -> {
                 if (actors.itemCount != 0) {
                     ActorCardList(
+                        state = actorsState,
                         actors = actors,
                         onActorClick = onActorClick,
                     )
