@@ -46,6 +46,7 @@ fun LazyGridScope.upcomingSection(
     onUpcomingItemSaveClicked: (UpcomingItemUiState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    if (isUpcomingItemsLoading.not() && isGenresLoading.not() && upcomingItems.itemCount == 0) return
     item(span = { GridItemSpan(maxLineSpan) }) {
         UpcomingSectionHeader(
             modifier = modifier,
@@ -69,7 +70,8 @@ fun LazyGridScope.upcomingSection(
                             top = 12.dp,
                             start = if (isFirstInRow) 16.dp else 0.dp,
                             end = if (isLastInRow) 16.dp else 0.dp,
-                        ).background(Theme.color.surface, RoundedCornerShape(12.dp))
+                        )
+                        .background(Theme.color.surface, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
                         .shimmerEffect(),
             )
@@ -133,7 +135,7 @@ private fun UpcomingSectionHeader(
                         Modifier
                             .wrapContentSize()
                             .padding(top = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                 ) {
                     item {
@@ -173,8 +175,8 @@ private fun UpcomingSectionHeaderLoadingPlaceHolder(modifier: Modifier = Modifie
             modifier =
                 Modifier
                     .wrapContentSize()
-                    .padding(top = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(top = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
             items(20) {

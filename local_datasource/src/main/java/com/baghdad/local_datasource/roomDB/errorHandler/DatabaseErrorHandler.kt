@@ -2,6 +2,7 @@ package com.baghdad.local_datasource.roomDB.errorHandler
 
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteFullException
+import android.util.Log
 import com.baghdad.repository.exception.DatabaseCorruptException
 import com.baghdad.repository.exception.DatabaseException
 import com.baghdad.repository.exception.StorageFullException
@@ -13,12 +14,15 @@ suspend fun <T> executeWithErrorHandling(logger: Logger, block: suspend () -> T)
     return try {
         block()
     } catch (e: SQLiteFullException) {
+        Log.e("DatabaseErrorHandler", "Storage is full", e)
         logger.logException(e)
         throw StorageFullException(e.message)
     } catch (e: SQLiteDatabaseCorruptException) {
+        Log.e("DatabaseErrorHandler", "Database is corrupt", e)
         logger.logException(e)
         throw DatabaseCorruptException(e.message)
     } catch (e: Exception) {
+        Log.e("DatabaseErrorHandler", "Unknown error", e)
         logger.logException(e)
         throw DatabaseException(e.message)
     }

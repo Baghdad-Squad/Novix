@@ -14,7 +14,7 @@ class TopRatingViewModel(
     TopRatingInteractionListener {
     init {
         getMovieGenres()
-        fetchMoviesByGenre(0L)
+        fetchMoviesByGenre(null)
     }
 
     private fun getMovieGenres() {

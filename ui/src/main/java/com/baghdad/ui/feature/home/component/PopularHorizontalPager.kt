@@ -47,10 +47,11 @@ fun PopularCardPager(
     val screenWidth = configuration.screenWidthDp.dp
     val cardWidth = 188.dp
 
-    val horizontalPadding = maxOf(
-        16.dp,
-        (screenWidth - cardWidth) / 2 - 2.dp
-    )
+    val horizontalPadding =
+        maxOf(
+            16.dp,
+            (screenWidth - cardWidth) / 2 - 2.dp,
+        )
     if (items.isNotEmpty()) {
         LaunchedEffect(items) {
             while (true) {
@@ -63,44 +64,50 @@ fun PopularCardPager(
 
     Crossfade(isLoading) { isLoading ->
         if (isLoading) {
-            LoadingPopularCardPager(modifier = modifier)
+            LoadingPopularCardPager(
+                contentPadding = PaddingValues(horizontal = horizontalPadding),
+                modifier = modifier,
+            )
         } else {
             Column(
                 modifier = modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     HorizontalPager(
                         state = pagerState,
                         contentPadding = PaddingValues(horizontal = horizontalPadding),
                         beyondViewportPageCount = 1,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) { page ->
                         val currentPageOffset =
                             (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
-                        val rotation = when {
-                            currentPageOffset < -0.5f -> 3f
-                            currentPageOffset > 0.5f -> -3f
-                            else -> 0f
-                        }
+                        val rotation =
+                            when {
+                                currentPageOffset < -0.5f -> 3f
+                                currentPageOffset > 0.5f -> -3f
+                                else -> 0f
+                            }
 
-                        val xScale = when {
-                            currentPageOffset == 0f -> 1f
-                            else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.1f)
-                        }
+                        val xScale =
+                            when {
+                                currentPageOffset == 0f -> 1f
+                                else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.1f)
+                            }
 
-                        val yScale = when {
-                            currentPageOffset == 0f -> 1f
-                            else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.15f)
-                        }
+                        val yScale =
+                            when {
+                                currentPageOffset == 0f -> 1f
+                                else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.15f)
+                            }
 
-                        val yTranslation = when {
-                            currentPageOffset == 0f -> 0f
-                            else -> kotlin.math.abs(currentPageOffset) * 40f
-                        }
+                        val yTranslation =
+                            when {
+                                currentPageOffset == 0f -> 0f
+                                else -> kotlin.math.abs(currentPageOffset) * 40f
+                            }
 
                         val item = items[page]
 
@@ -111,19 +118,18 @@ fun PopularCardPager(
                             onCardClick = { onClick(item) },
                             onSavedClick = { onSaveClick(item) },
                             isSaved = item.isSaved,
-                            modifier = Modifier
-                                .graphicsLayer {
+                            modifier =
+                                Modifier.graphicsLayer {
                                     rotationZ = rotation
                                     scaleX = xScale
                                     scaleY = yScale
                                     translationY = yTranslation
-                                }
+                                },
                         )
-
                     }
                     CarousalDot(
                         totalDots = items.size,
-                        selectedIndex = pagerState.currentPage
+                        selectedIndex = pagerState.currentPage,
                     )
                 }
             }
@@ -131,54 +137,60 @@ fun PopularCardPager(
     }
 }
 
-
 @Composable
-private fun LoadingPopularCardPager(modifier: Modifier = Modifier) {
+private fun LoadingPopularCardPager(
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+) {
     val pagerState = rememberPagerState(initialPage = 1) { 3 }
     HorizontalPager(
         state = pagerState,
-        contentPadding = PaddingValues(horizontal = 64.dp),
-        pageSpacing = 4.dp,
+        contentPadding = contentPadding,
         beyondViewportPageCount = 1,
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
-    ) { page ->
+                .padding(bottom = 16.dp),
+            ) { page ->
         val currentPageOffset =
             (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
-        val rotation = when {
-            currentPageOffset < -0.5f -> 3f
-            currentPageOffset > 0.5f -> -3f
-            else -> 0f
-        }
+        val rotation =
+            when {
+                currentPageOffset < -0.5f -> 3f
+                currentPageOffset > 0.5f -> -3f
+                else -> 0f
+            }
 
-        val xScale = when {
-            currentPageOffset == 0f -> 1f
-            else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.1f)
-        }
+        val xScale =
+            when {
+                currentPageOffset == 0f -> 1f
+                else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.1f)
+            }
 
-        val yScale = when {
-            currentPageOffset == 0f -> 1f
-            else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.15f)
-        }
+        val yScale =
+            when {
+                currentPageOffset == 0f -> 1f
+                else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.15f)
+            }
 
-        val yTranslation = when {
-            currentPageOffset == 0f -> 0f
-            else -> kotlin.math.abs(currentPageOffset) * 40f
-        }
+        val yTranslation =
+            when {
+                currentPageOffset == 0f -> 0f
+                else -> kotlin.math.abs(currentPageOffset) * 40f
+            }
 
         LoadingPopularCard(
             isCentralCard = currentPageOffset == 0f,
-            modifier = Modifier
-                .graphicsLayer {
-                    rotationZ = rotation
-                    scaleX = xScale
-                    scaleY = yScale
-                    translationY = yTranslation
-                }
-                .fillMaxWidth()
+            modifier =
+                Modifier
+                    .graphicsLayer {
+                        rotationZ = rotation
+                        scaleX = xScale
+                        scaleY = yScale
+                        translationY = yTranslation
+                    }
+                    .fillMaxWidth(),
         )
     }
 }
@@ -188,11 +200,12 @@ private fun LoadingPopularCardPager(modifier: Modifier = Modifier) {
 private fun LoadingPopularCardPagerPreview() {
     NovixTheme(isDarkTheme = true) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Theme.color.surface),
         ) {
-            LoadingPopularCardPager()
+            LoadingPopularCardPager(PaddingValues(0.dp))
         }
     }
 }
