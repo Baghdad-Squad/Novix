@@ -42,7 +42,7 @@ import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun MoviesScreen(
+fun TrendingMoviesScreen(
     viewModel: TrendingMoviesViewModel = koinViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit,
 ) {

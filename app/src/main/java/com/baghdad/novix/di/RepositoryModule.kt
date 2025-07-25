@@ -28,6 +28,5 @@ val repositoryModule = module {
     singleOf(::ActorRepositoryImpl) { bind<ActorRepository>() }
     singleOf(::EpisodeRepositoryImpl) { bind<EpisodeRepository>() }
     singleOf(::FavoriteGenreRepositoryImpl) { bind<FavoriteGenreRepository>() }
-    singleOf(::TrendingMovieRepositoryImpl) { bind<TrendingMovieRepository>() }
     singleOf(::ContinueWatchingRepositoryImpl) { bind<ContinueWatchingRepository>() }
 }
