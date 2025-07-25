@@ -93,6 +93,14 @@ class MovieRepositoryImpl(
 
     }
 
+    override suspend fun getTrendingMovies(page: Int): PagedResult<Movie> {
+        return executeSafely {
+            remoteMovieDataSource.getTrendingMovies(page).toPagedResult {
+                it.toEntity()
+            }
+        }
+    }
+
     private suspend fun updateGenreCache() {
         val lang = Locale.getDefault().language
         val movieGenres = remoteGenreDataSource.getMovieGenre(lang)

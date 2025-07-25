@@ -20,6 +20,8 @@ import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
 import com.baghdad.local_datasource.roomDB.dao.TrendingActorDao
+import com.baghdad.local_datasource.roomDB.dao.TopRatedDao
+import com.baghdad.local_datasource.roomDB.dao.TrendingActorDao
 import com.baghdad.local_datasource.roomDB.dao.TrendingTvShowDao
 import com.baghdad.local_datasource.roomDB.dao.TvShowDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase

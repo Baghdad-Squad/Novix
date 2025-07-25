@@ -3,18 +3,19 @@ package com.baghdad.ui.feature.search.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.baghdad.design_system.component.ActorCard
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingColumn
-import com.baghdad.ui.feature.component.lazyPaging.LazyPagingColumn
 import com.baghdad.viewmodel.search.SearchScreenState
 
 
 @Composable
 fun ActorCardList(
+    state: LazyListState,
     actors: LazyPagingItems<SearchScreenState.ActorUiState>,
     onActorClick: (Long) -> Unit,
     modifier: Modifier = Modifier
@@ -24,6 +25,7 @@ fun ActorCardList(
         items = actors,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         key = { it.id },
+        state = state,
         contentPadding = PaddingValues(vertical = 8.dp)
     ) { actor ->
         ActorCard(
