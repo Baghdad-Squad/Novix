@@ -65,7 +65,7 @@ fun SignUpWebViewContent(
                         AuthenticationNavEvent.NavigateBack
                     )
                     "There was a problem" -> handleNavigation(AuthenticationNavEvent.NavigateBack)
-                    "Login to your account" -> handleNavigation(AuthenticationNavEvent.NavigateToHome)
+                    "Login to your account" -> shouldNavigateBack.value = true
                 }
             }
         )
