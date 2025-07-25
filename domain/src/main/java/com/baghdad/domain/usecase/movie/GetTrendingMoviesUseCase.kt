@@ -7,21 +7,16 @@ import com.baghdad.entity.media.Movie
 class GetTrendingMoviesUseCase(
     private val trendingMovieRepository: TrendingMovieRepository
 ) {
-
-    suspend operator fun invoke(page: Int, genreId: Long = 0L): PagedResult<Movie> {
-
+    suspend operator fun invoke(page: Int, genreId: Long? = null): PagedResult<Movie> {
         val pagedResult = trendingMovieRepository.getTrendingMovies(page)
-
-        if (genreId == 0L) return pagedResult
+        if (genreId == null) return pagedResult
 
         val filteredData = pagedResult.data.filter { movie ->
             movie.genres.any { genre -> genre.id == genreId }
         }
 
         return PagedResult(
-            data = filteredData,
-            nextKey = pagedResult.nextKey,
-            prevKey = pagedResult.prevKey
+            data = filteredData, nextKey = pagedResult.nextKey, prevKey = pagedResult.prevKey
         )
     }
 }

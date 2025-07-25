@@ -57,7 +57,6 @@
     <string name="guests_of_honor">Guests of honor</string>
     <string name="season_template">S%1$s</string>
     <string name="trending_tv_shows">Trending TV shows</string>
-    <string name="movies">Movies</string>
     <string name="tv_shows">TV Shows</string>
     <string name="actors">Actors</string>
     <string name="top_rating">Top rating</string>
@@ -65,4 +64,6 @@
     <string name="episode_header_template">Episode %1$d - %2$s</string>
     <string name="movie_card">Movie Card</string>
     <string name="movies">Movies</string>
+    <string name="trending_movies">Trending movies</string>
+    <string name="all">All</string>
 </resources>

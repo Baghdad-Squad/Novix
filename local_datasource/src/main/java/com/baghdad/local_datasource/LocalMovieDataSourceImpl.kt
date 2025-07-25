@@ -2,7 +2,6 @@ package com.baghdad.local_datasource
 
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
-import com.baghdad.local_datasource.roomDB.dao.TrendingMovieDoa
 import com.baghdad.local_datasource.roomDB.dao.TopRatedDao
 import com.baghdad.local_datasource.roomDB.entity.Genre
 import com.baghdad.local_datasource.roomDB.entity.Movie
@@ -23,9 +22,7 @@ class LocalMovieDataSourceImpl(
     private val movieDao: MovieDao,
     private val genreDao: GenreDao,
     private val logger: Logger,
-    private val trendingMovieDoa: TrendingMovieDoa
     private val topRatedDao: TopRatedDao,
-    private val logger: Logger
 ) : LocalMovieDataSource {
     override suspend fun addMovie(movie: MovieDto) =
         executeWithErrorHandling(logger = logger) {
@@ -122,5 +119,4 @@ class LocalMovieDataSourceImpl(
             topRatedDao.upsertMovies(movieData.map { it.toLocalDtos() })
         }
     }
-
 }

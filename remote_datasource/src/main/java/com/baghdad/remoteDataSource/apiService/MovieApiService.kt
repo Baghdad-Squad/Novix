@@ -60,7 +60,7 @@ interface MovieApiService {
     @Authenticated
     @GET(TRENDING_MOVIE_ENDPOINT)
     suspend fun getTrendingMovies(
-        @Path("page") page: Int
+        @Query("page") page: Int
     ): Response<TrendingMovieResponse>
 
     @Authenticated
@@ -77,7 +77,7 @@ interface MovieApiService {
         private const val MOVIE_REVIEWS_ENDPOINT = "movie/{movie_id}/reviews"
         private const val MOVIE_IMAGES_ENDPOINT = "movie/{movie_id}/images"
         private const val MOVIE_VIDEOS_ENDPOINT = "movie/{movie_id}/videos"
-        private const val TRENDING_MOVIE_ENDPOINT = "/trending/movie/day"
+        private const val TRENDING_MOVIE_ENDPOINT = "trending/movie/day"
         private const val TOP_RATED_MOVIES_ENDPOINT = "movie/top_rated"
     }
 }

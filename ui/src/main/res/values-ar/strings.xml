@@ -65,5 +65,6 @@
     <string name="actors">ممثلين</string>
     <string name="episode_header_template">الحلقة %1$d - %2$s</string>
     <string name="movie_card">بطاقة الفيلم</string>
-    <string name="movies">افلام</string>
+    <string name="trending_movies">الأفلام الرائجة</string>
+
 </resources>
