@@ -18,6 +18,7 @@ import java.util.Locale
 private const val OOPS_MESSAGE = "Oops! We can't find the page you're looking for"
 private const val ERROR_MESSAGE = "There was a problem"
 private const val PASSWORD_RESET_MESSAGE = "Password Reset"
+private const val RESET_PASSWORD = "Reset password"
 
 @Composable
 fun ForgotPasswordWebViewScreen(
@@ -60,9 +61,11 @@ fun ForgotPasswordWebViewContent(
             allowedDomains = listOf("themoviedb.org"),
             onDetected = {
                 when (it.trim('"')) {
-                    OOPS_MESSAGE -> shouldNavigateBack.value = true
-                    ERROR_MESSAGE -> shouldNavigateBack.value = true
+                    OOPS_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    ERROR_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                     PASSWORD_RESET_MESSAGE -> shouldNavigateBack.value = true
+                    RESET_PASSWORD -> Unit
+                    else -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                 }
             })
     }
