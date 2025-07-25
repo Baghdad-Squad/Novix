@@ -10,7 +10,4 @@ data class SearchQueryDto(
         TV_SHOW,
         ACTOR
     }
-    enum class QueryName {
-        TRENDING
-    }
 }

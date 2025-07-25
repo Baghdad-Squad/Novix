@@ -1,6 +1,6 @@
 package com.baghdad.repository
 
-import android.util.Log
+import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -11,6 +11,7 @@ import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getPagedSafely
@@ -106,6 +107,14 @@ class MovieRepositoryImpl(
             }
         )
 
+    }
+
+    override suspend fun getTrendingMovies(page: Int): PagedResult<Movie> {
+        return executeSafely {
+            remoteMovieDataSource.getTrendingMovies(page).toPagedResult {
+                it.toEntity()
+            }
+        }
     }
 
     private suspend fun updateGenreCache() {
