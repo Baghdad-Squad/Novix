@@ -73,5 +73,4 @@ val localDataSourceModule = module {
     singleOf(::LocalTrendingTvShowDataSourceImpl) { bind<LocalTrendingTvShowsDataSource>() }
     singleOf(::LocalContinueWatchingDataSourceImpl){bind<LocalContinueWatchingDataSource>()}
 
-
 }

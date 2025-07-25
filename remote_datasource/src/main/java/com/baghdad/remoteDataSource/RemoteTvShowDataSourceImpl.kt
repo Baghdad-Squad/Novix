@@ -21,6 +21,7 @@ import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 

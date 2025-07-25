@@ -28,7 +28,6 @@ import com.baghdad.design_system.component.Tab
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
-import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
@@ -49,9 +48,9 @@ import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun TopRatingMoviesScreen(
+fun TopRatingScreen(
     viewModel: TopRatingViewModel = koinViewModel(),
-    handleNavigation: (HomeNavEvent) -> Unit = {  }
+    handleNavigation: (HomeNavEvent) -> Unit
 ) {
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
@@ -61,7 +60,7 @@ fun TopRatingMoviesScreen(
     val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
     val tvShowItems = uiState.tvShowsFlow.collectAsLazyPagingItems()
 
-    TopRatingMoviesContent(
+    TopRatingContent(
         uiState = uiState,
         listener = viewModel,
         snackBarState = snackBarState,
@@ -86,7 +85,7 @@ private fun handleEffect(
 }
 
 @Composable
-fun TopRatingMoviesContent(
+private fun TopRatingContent(
     uiState: TopRatingState,
     listener: TopRatingInteractionListener,
     snackBarState: SnackBarState,
@@ -229,19 +228,4 @@ fun TopRatingMoviesContent(
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return type.toStringResource()
-}
-
-@Composable
-fun fakeButton(
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    PrimaryButton(
-        onClick = onClick,
-        modifier = modifier,
-        isLoading = false,
-        isEnabled = true,
-        label = "Button",
-    )
 }
