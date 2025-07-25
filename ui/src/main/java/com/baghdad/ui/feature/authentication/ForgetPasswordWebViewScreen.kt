@@ -37,10 +37,10 @@ fun ForgotPasswordWebViewContent(
     languageTag: String,
 ) {
 
-    LaunchedEffect(shouldNavigateBack) {
+    LaunchedEffect(shouldNavigateBack.value) {
         if (shouldNavigateBack.value) {
             delay(5000)
-            handleNavigation(AuthenticationNavEvent.NavigateBack)
+            handleNavigation(AuthenticationNavEvent.NavigateToHome)
         }
     }
     val screenUrl = remember { "https://www.themoviedb.org/reset-password?language=${languageTag}" }
@@ -54,9 +54,15 @@ fun ForgotPasswordWebViewContent(
             url = screenUrl,
             modifier = Modifier.fillMaxSize(),
             allowedDomains = listOf("themoviedb.org"),
-            onUrlChange = { url ->
-                shouldNavigateBack.value = screenUrl != url
-            },
+            onDetected = {
+                when (it.trim('"')) {
+                    "Oops! We can't find the page you're looking for" -> handleNavigation(
+                        AuthenticationNavEvent.NavigateBack
+                    )
+                    "There was a problem" -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    "Password Reset" -> shouldNavigateBack.value = true
+                }
+            }
         )
     }
 }

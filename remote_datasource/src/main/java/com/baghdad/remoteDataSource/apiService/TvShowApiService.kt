@@ -8,6 +8,7 @@ import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowImagesResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowVideosResponse
 import com.baghdad.remoteDataSource.response.tvShow.TopRatedTvShowSearchResponse
+import com.baghdad.remoteDataSource.response.tvShow.TrendingTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TvShowResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -67,6 +68,13 @@ interface TvShowApiService {
         @Query("page") page: Int
     ): Response<TopRatedTvShowSearchResponse>
 
+    @Authenticated
+    @GET(TV_SHOW_TRENDING_ENDPOINT)
+    suspend fun getTrendingTvShows(
+        @Query("page") page: Int
+    ): Response<TrendingTvShowsResponse>
+
+
     companion object {
         private const val TV_SHOW_DETAILS_ENDPOINT = "tv/{tv_id}"
         private const val TV_SHOW_CREDITS_ENDPOINT = "tv/{tv_id}/credits"
@@ -76,5 +84,6 @@ interface TvShowApiService {
         private const val TV_SHOW_REVIEWS_ENDPOINT = "tv/{tv_id}/reviews"
         private const val TV_SHOW_VIDEOS_ENDPOINT = "tv/{tv_id}/videos"
         private const val TV_SHOW_TOP_RATED_ENDPOINT = "tv/top_rated"
+        private const val TV_SHOW_TRENDING_ENDPOINT = "trending/tv/day"
     }
 }

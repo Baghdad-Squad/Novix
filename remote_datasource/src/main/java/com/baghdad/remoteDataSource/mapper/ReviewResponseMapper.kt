@@ -7,7 +7,7 @@ fun ReviewResponse.toDto(): ReviewDto {
     return ReviewDto(
         id = id?.toString() ?: "",
         authorName = (authorDetails?.name.takeIf { !it.isNullOrBlank() }) ?: "Guest",
-        authorAvatarUrl = authorDetails?.avatarPath ?:  "",
+        authorAvatarUrl = ("https://image.tmdb.org/t/p/w500" + authorDetails?.avatarPath.orEmpty()),
         contentTitle = authorDetails?.username ?: "",
         rating = authorDetails?.rating ?: 0f,
         reviewText = content ?: "",
