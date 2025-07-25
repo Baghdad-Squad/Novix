@@ -22,7 +22,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
-import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
@@ -101,15 +100,7 @@ fun TopRatingMoviesContent(
                 onGoBackClick = {
                     listener.onBackClick()
                 },
-                content = {
-                    Text(
-                        text = stringResource(com.baghdad.ui.R.string.top_rating),
-                        style = Theme.typography.title.large,
-                        color = Theme.color.title,
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                    )
-                }
+                screenTitle = stringResource(com.baghdad.ui.R.string.top_rating),
             )
             GenresSection(
                 allGenres = uiState.genres,

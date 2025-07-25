@@ -19,7 +19,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.ActorCard
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
-import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -84,15 +83,7 @@ fun TrendingActorsContent(
                 onGoBackClick = {
                     listener.onBackClick()
                 },
-                content = {
-                    Text(
-                        text = stringResource(R.string.trending_people),
-                        style = Theme.typography.title.large,
-                        color = Theme.color.title,
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                    )
-                }
+                screenTitle = stringResource(R.string.trending_people),
             )
         },
         snackbar = {

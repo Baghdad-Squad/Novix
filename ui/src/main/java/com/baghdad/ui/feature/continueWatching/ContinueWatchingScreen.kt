@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.continueWatching
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,7 +27,6 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
-import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
@@ -57,7 +55,6 @@ fun ContinueWatchingScreen(
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
-    Log.d("ContinueWatchingScreen", "ContinueWatchingScreen: $uiState")
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
@@ -117,15 +114,8 @@ fun ContinueWatchingContent(
                 onGoBackClick = {
                     listener.onBackClick()
                 },
-                content = {
-                    Text(
-                        text = "Continue watching",
-                        style = Theme.typography.title.large,
-                        color = Theme.color.title,
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                    )
-                }
+                screenTitle = stringResource(com.baghdad.ui.R.string.continue_watching),
+
             )
 
         }, snackbar = {
