@@ -1,7 +1,8 @@
 package com.baghdad.viewmodel.topRating
 
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
-import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
+import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
+import com.baghdad.domain.usecase.topRated.GetTvShowTopRatingUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -9,8 +10,9 @@ import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 
 class TopRatingViewModel(
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
+    private val getTvShowTopRatingUseCase: GetTvShowTopRatingUseCase,
     private val getGenresUseCase: GetGenresUseCase,
-) : BaseViewModel<TopRatingMovieState, TopRatingEffect>(TopRatingMovieState()),
+) : BaseViewModel<TopRatingState, TopRatingEffect>(TopRatingState()),
     TopRatingInteractionListener {
     init {
         getMovieGenres()
@@ -24,6 +26,13 @@ class TopRatingViewModel(
         )
     }
 
+    private fun getTvShowGenres() {
+        tryToExecute(
+            { getGenresUseCase.getTvShowGenres() },
+            ::onGenresFetched,
+        )
+    }
+
     private fun onGenresFetched(genres: List<Genre>) {
         updateState {
             it.copy(
@@ -33,10 +42,26 @@ class TopRatingViewModel(
                     },
             )
         }
+
     }
 
     override fun onMovieDetailsClick(movieId: Long) {
         sendEffect(TopRatingEffect.NavigateToMovieDetails(movieId))
+    }
+
+    private fun fetchTvShowsByGenre(genreId: Long?) {
+        updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
+        collectPagingFlow(
+            loadData = { page ->
+                getTvShowTopRatingUseCase.invoke(
+                    page = page,
+                    genreId = genreId
+                )
+            },
+            onInitialLoadFinished = ::onFinally,
+            mapEntityToUiState = { it.toTopRatingTvShowUiState() },
+            onFlowCreated = { tvShowsFlow -> updateState { it.copy(tvShowsFlow = tvShowsFlow) } }
+        )
     }
 
     private fun fetchMoviesByGenre(genreId: Long?) {
@@ -45,7 +70,7 @@ class TopRatingViewModel(
             loadData = { page ->
                 getMovieTopRatingUseCase.invoke(
                     genreId = currentState.selectedGenreId,
-                    page = page,
+                    page = page
                 )
             },
             onInitialLoadFinished = ::onFinally,
@@ -55,10 +80,18 @@ class TopRatingViewModel(
     }
 
     override fun onGenreClick(genreId: Long?) {
-        fetchMoviesByGenre(genreId)
+        when (currentState.selectedTab) {
+            TopRatingTab.MOVIES -> fetchMoviesByGenre(genreId)
+            TopRatingTab.TV_SHOWS -> fetchTvShowsByGenre(genreId)
+        }
     }
 
     override fun onSaveMovieClick(movieId: Long) {
+        updateState {
+            it.copy(
+            )
+        }
+
         showSnackBar(
             message = SearchSnackBarMessage.SavedItemSuccessfully,
             isSuccess = true,
@@ -67,6 +100,25 @@ class TopRatingViewModel(
 
     override fun onBackClick() {
         sendEffect(TopRatingEffect.NavigateBack)
+    }
+
+    override fun onSelectedTab(selectedTab: TopRatingTab) {
+        updateState {
+            it.copy(selectedTab = selectedTab)
+        }
+        when (selectedTab) {
+            TopRatingTab.MOVIES -> {
+
+                getMovieGenres()
+
+                fetchMoviesByGenre(currentState.selectedGenreId)
+            }
+
+            TopRatingTab.TV_SHOWS -> {
+                getTvShowGenres()
+                fetchTvShowsByGenre(currentState.selectedGenreId)
+            }
+        }
     }
 
     private fun onFinally() {

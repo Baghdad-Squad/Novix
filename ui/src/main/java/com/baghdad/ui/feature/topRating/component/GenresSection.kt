@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Chip
-import com.baghdad.viewmodel.topRating.TopRatingMovieState.GenreUiState
+import com.baghdad.viewmodel.topRating.TopRatingState.GenreUiState
 
 @Composable
 fun GenresSection(

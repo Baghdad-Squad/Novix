@@ -77,6 +77,14 @@ class TvShowRepositoryImpl(
         }
     }
 
+    override suspend fun getTopRatedTvShows(page: Int): PagedResult<TvShow> {
+        return executeSafely {
+            tvShowRemoteDataSource.getTopRatedTvShows(page).toPagedResult {
+                it.toEntity()
+            }
+        }
+    }
+
     override suspend fun getPopularTvShows(): List<TvShow> {
         return executeSafely {
             tvShowRemoteDataSource.getPopularTvShows().map(TvShowDto::toEntity)

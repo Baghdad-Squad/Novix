@@ -28,6 +28,8 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
+import com.baghdad.design_system.component.Tab
+import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
@@ -118,8 +120,8 @@ fun ContinueWatchingContent(
                 screenTitle = stringResource(com.baghdad.ui.R.string.continue_watching),
 
                 )
-
-        }, snackbar = {
+        },
+        snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
@@ -138,6 +140,25 @@ fun ContinueWatchingContent(
                 Box(Modifier.fillMaxSize()) {
                     WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
                 }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .background(Theme.color.surface)
+                    .padding( top = 4.dp, bottom = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Tab(
+                    text = stringResource(com.baghdad.ui.R.string.movies),
+                    onClick = { listener.onSelectedTab(true) },
+                    isSelected = uiState.selectedMediaTabIsMovie,
+                    modifier = Modifier.weight(1f)
+                )
+                Tab(
+                    text = stringResource(com.baghdad.ui.R.string.tv_shows),
+                    onClick = { listener.onSelectedTab(false) },
+                    isSelected = !uiState.selectedMediaTabIsMovie,
+                    modifier = Modifier.weight(1f)
+                )
             }
             GenresTabs(
                 genres = uiState.genres,

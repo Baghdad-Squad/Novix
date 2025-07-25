@@ -9,6 +9,7 @@ data class ContinueWatchingState(
     val mediaFlow: Flow<PagingData<ContinueWatchingMovieUiState>> = flowOf(),
     val genres: List<GenreUiState> = emptyList(),
     val selectedTab: Long? = null,
+    val selectedMediaTabIsMovie: Boolean = true,
     override val isLoading: Boolean = false,
 
     ) : BaseUiState {

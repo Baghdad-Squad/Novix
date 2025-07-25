@@ -155,7 +155,7 @@ class MovieDetailsViewModel(
             callee = { getMovieDetailsUseCase(movieId) },
             onSuccess = ::onGetMovieDetailsSuccess,
             onStart = ::onLoading,
-            onFinally = ::onFinally
+            onFinally = ::onFinallyAndAddToContinueWatching
         )
     }
 
@@ -179,9 +179,6 @@ class MovieDetailsViewModel(
                     )
                 }
             )
-        }
-        if (!currentState.isLoading) {
-            addToContinueWatching()
         }
     }
 
@@ -248,6 +245,11 @@ class MovieDetailsViewModel(
     private fun onFinally() {
         updateState { it.copy(isLoading = false) }
     }
+    private fun onFinallyAndAddToContinueWatching() {
+        onFinally()
+        addToContinueWatching()
+    }
+
 
     private fun addToContinueWatching() {
         tryToExecute(
