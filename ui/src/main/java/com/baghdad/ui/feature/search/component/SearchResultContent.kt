@@ -1,5 +1,9 @@
 package com.baghdad.ui.feature.search.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -77,14 +81,26 @@ fun SearchResultContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             when (selectedTab) {
+
                 SearchScreenState.SearchTab.MOVIES -> {
                     if (movies.itemCount != 0) {
-                        MovieCardList(
-                            movies = movies,
-                            onSavedClick = onSavedClick,
-                            onMovieClick = onMovieClick,
-                        )
+                        AnimatedVisibility(
+                            visible = movies.itemCount != 0,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                        ) {
+                            MovieCardList(
+                                movies = movies,
+                                onSavedClick = onSavedClick,
+                                onMovieClick = onMovieClick,
+                            )
+                        }
                     } else {
+                        AnimatedVisibility(
+                            visible = movies.itemCount == 0,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                        ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -95,18 +111,30 @@ fun SearchResultContent(
                                 message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
                             )
                         }
+                        }
                     }
-
                 }
+
 
                 SearchScreenState.SearchTab.TV_SHOWS -> {
                     if (tvShows.itemCount != 0) {
-                        TvShowCardList(
-                            tvShows = tvShows,
-                            onSavedClick = onSavedClick,
-                            onTVShowClick = onTvShowClick,
-                        )
+                        AnimatedVisibility(
+                            visible = tvShows.itemCount != 0,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                        ) {
+                            TvShowCardList(
+                                tvShows = tvShows,
+                                onSavedClick = onSavedClick,
+                                onTVShowClick = onTvShowClick,
+                            )
+                        }
                     } else {
+                        AnimatedVisibility(
+                            visible = tvShows.itemCount != 0,
+                            enter = scaleIn(animationSpec = tween(durationMillis = 1)),
+                            exit = scaleOut(animationSpec = tween(durationMillis = 30)),
+                        ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -116,17 +144,29 @@ fun SearchResultContent(
                                 contentDescription = stringResource(R.string.no_search_result_picture),
                                 message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
                             )
+                        }
                         }
                     }
                 }
 
                 SearchScreenState.SearchTab.ACTORS -> {
                     if (actors.itemCount != 0) {
+                        AnimatedVisibility(
+                            visible = actors.itemCount != 0,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                        ) {
                         ActorCardList(
                             actors = actors,
                             onActorClick = onActorClick,
                         )
+                        }
                     } else {
+                        AnimatedVisibility(
+                            visible = actors.itemCount != 0,
+                            enter = scaleIn(animationSpec = tween(durationMillis = 1)),
+                            exit = scaleOut(animationSpec = tween(durationMillis = 30)),
+                        ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -136,6 +176,7 @@ fun SearchResultContent(
                                 contentDescription = stringResource(R.string.no_search_result_picture),
                                 message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
                             )
+                        }
                         }
                     }
                 }
