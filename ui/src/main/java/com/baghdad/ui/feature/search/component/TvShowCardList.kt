@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -15,12 +16,14 @@ import com.baghdad.viewmodel.search.SearchScreenState
 @Composable
 fun TvShowCardList(
     tvShows: LazyPagingItems<SearchScreenState.TvShowUiState>,
+    state: LazyGridState,
     onSavedClick: (Long) -> Unit,
     onTVShowClick: (id: Long, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyPagingVerticalGrid<SearchScreenState.TvShowUiState>(
         items = tvShows,
+        state = state,
         modifier = modifier,
         columns = GridCells.Adaptive(minSize = 150.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
