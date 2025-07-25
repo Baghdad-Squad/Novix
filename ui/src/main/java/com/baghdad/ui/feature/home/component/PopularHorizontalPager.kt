@@ -54,6 +54,7 @@ fun PopularCardPager(
         )
     if (items.isNotEmpty()) {
         LaunchedEffect(items) {
+            pagerState.animateScrollToPage(items.size / 2)
             while (true) {
                 delay(autoSlideDuration)
                 val next = (pagerState.currentPage + 1) % items.size

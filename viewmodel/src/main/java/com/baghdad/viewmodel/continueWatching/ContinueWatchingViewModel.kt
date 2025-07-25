@@ -37,8 +37,12 @@ class ContinueWatchingViewModel(
         )
     }
 
-    private suspend fun onGetMedia(genreId: Long, page: Int): PagedResult<ContinueWatching> {
-        val result = if (genreId == 0L) {
+    private suspend fun onGetMedia(
+        genreId: Long?,
+        page: Int,
+    ): PagedResult<ContinueWatching> {
+        val result =
+            if (genreId == null) {
             getAllContinueWatchingUseCase(page)
         } else {
             getAllContinueWatchingByGenreUseCase(genreId, page)
@@ -86,7 +90,7 @@ class ContinueWatchingViewModel(
 
     override fun onGenreClick(genreId: Long?) {
         updateState {
-            it.copy(selectedGenreTab = genreId, isLoading = true, mediaFlow = flowOf())
+            it.copy(selectedGenreId = genreId, isLoading = true, mediaFlow = flowOf())
         }
         getMedia(genreId)
     }
@@ -97,10 +101,14 @@ class ContinueWatchingViewModel(
                 selectedMediaTabIsMovie = isMovieTab,
                 isLoading = true,
                 mediaFlow = flowOf(),
-                selectedGenreTab = 0
+                selectedGenreId = 0
             )
         }
         getGenres()
         getMedia(0)
+    }
+
+    override fun onMovieSaveClick(movieId: Long) {
+        // TODO("Implement when save functionality is implemented")
     }
 }

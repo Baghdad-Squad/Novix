@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +24,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
-import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
@@ -91,11 +91,12 @@ private fun TopRatingContent(
     tvShowItems: LazyPagingItems<TopRatingState.TvShowUiState>
 ) {
     Scaffold(
-        modifier = modifier
-            .background(Theme.color.surface)
+        modifier =
+            Modifier
+                .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
-        topBar = {
+            topBar = {
             TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,9 +109,10 @@ private fun TopRatingContent(
                 screenTitle = stringResource(com.baghdad.ui.R.string.top_rating),
             )
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(Theme.color.surface)
-                    .padding( top = 4.dp, bottom = 12.dp),
+                    .padding(top = 4.dp, bottom = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             )
             {

@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.movieDetails.component
 
-import android.R.attr.onClick
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.baghdad.design_system.component.ActorCard
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.feature.component.ActorCard
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 
 @Composable

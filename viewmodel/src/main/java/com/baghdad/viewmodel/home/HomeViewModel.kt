@@ -3,9 +3,9 @@ package com.baghdad.viewmodel.home
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
-import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
+import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -93,7 +93,7 @@ class HomeViewModel(
 
     private fun getContinueWatchingItems() {
         tryToExecute(
-            callee = { getContinueWatchingUseCase(1, 1).data },
+            callee = { getContinueWatchingUseCase(1).data },
             onSuccess = ::onGetContinueWatchingItemsSuccess,
             onStart = ::onGetContinueWatchingItemsStart,
             onFinally = ::onGetContinueWatchingItemsFinished,

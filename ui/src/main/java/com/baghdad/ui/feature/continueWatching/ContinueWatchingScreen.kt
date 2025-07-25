@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,7 +30,6 @@ import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
-import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
@@ -142,9 +142,10 @@ fun ContinueWatchingContent(
                 }
             }
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(Theme.color.surface)
-                    .padding( top = 4.dp, bottom = 12.dp),
+                    .padding(top = 4.dp, bottom = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Tab(
@@ -162,7 +163,7 @@ fun ContinueWatchingContent(
             }
             GenresTabs(
                 genres = uiState.genres,
-                selectedTab = uiState.selectedTab,
+                selectedTab = uiState.selectedGenreId,
                 onTabClick = { listener.onGenreClick(it) },
                 modifier = Modifier.padding(vertical = 12.dp)
             )

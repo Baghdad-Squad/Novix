@@ -1,4 +1,4 @@
-package com.baghdad.design_system.component
+package com.baghdad.ui.feature.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,23 +12,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.baghdad.design_system.R
+import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.modifier.threeSidedBorder
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 
 private val CardHeight = 55.dp
 private val ActorImageSize = 78.dp
@@ -58,10 +57,8 @@ fun ActorCard(
             .background(color = Theme.color.surface)
             .noRippleClickable { onClick() }
     ) {
-        AsyncImage(
-            model = actorImage.ifBlank { null },
-            placeholder = painterResource(R.drawable.img_defualt_image),
-            fallback = painterResource(R.drawable.img_defualt_image),
+        IslamicImage(
+            imageUrl = actorImage,
             contentDescription = stringResource(R.string.actor_image),
             modifier = Modifier
                 .size(ActorImageSize)
