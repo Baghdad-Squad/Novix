@@ -136,7 +136,6 @@ class TvShowDetailsViewModel(
     }
 
     private fun addToContinueWatching() {
-        Log.d("TAG", "addToContinueWatching: $currentState")
             tryToExecute(
                 callee = {
                     addContinueWatchingUseCase(
