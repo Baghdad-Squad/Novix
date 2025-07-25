@@ -18,7 +18,6 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
@@ -38,12 +37,12 @@ fun Modifier.shimmerEffect(): Modifier = composed {
             animation = tween(1000)
         ), label = "start offset"
     )
-
+    val shimmerColor = Theme.color.shimmer
     val shimmerColors = remember {
         listOf(
-            Color(0x3DFFFFFF),
-            Color(0x00FFFFFF),
-            Color(0x14FFFFFF),
+            shimmerColor.copy(alpha = 0.24f),
+            shimmerColor.copy(alpha = 0.0f),
+            shimmerColor.copy(alpha = 0.08f),
         )
     }
     val shimmerBrush = remember(size, startOffsetX) {
