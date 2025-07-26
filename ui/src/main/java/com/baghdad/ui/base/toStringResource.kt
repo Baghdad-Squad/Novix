@@ -12,6 +12,8 @@ fun BaseSnackBarMessage.toStringResource(): Int {
         BaseSnackBarMessage.UnAuthorizedError -> R.string.snackbar_unauthorized_error
         BaseSnackBarMessage.UnknownError -> R.string.snackbar_unknown_error
         BaseSnackBarMessage.DefaultMessage -> R.string.empty_string
+        BaseSnackBarMessage.LoginSuccessfully -> R.string.login_successfully
+        BaseSnackBarMessage.InvalidCredential -> R.string.incorrect_username_or_password
         else -> R.string.empty_string
     }
 }

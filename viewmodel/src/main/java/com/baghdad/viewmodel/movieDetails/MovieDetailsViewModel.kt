@@ -27,7 +27,6 @@ class MovieDetailsViewModel(
         getMovieDetails()
         getCastMembers()
         getMoreLikeThisShow()
-        getCastMembers()
     }
 
     override fun onStarMovieClick() {
@@ -156,7 +155,7 @@ class MovieDetailsViewModel(
             callee = { getMovieDetailsUseCase(movieId) },
             onSuccess = ::onGetMovieDetailsSuccess,
             onStart = ::onLoading,
-            onFinally = ::onFinally
+            onFinally = ::onFinallyAndAddToContinueWatching
         )
     }
 
@@ -169,6 +168,7 @@ class MovieDetailsViewModel(
                 overView = details.overview,
                 rating = details.averageRating.roundToFirstDecimal(),
                 duration = details.runtimeMinutes.formatDuration(),
+                posterImageURL = details.posterImageURL,
                 date = details.releaseDate.toDDMMYYYYFormat(),
                 isSaved = state.isSaved,
                 isLoading = false,
@@ -179,9 +179,6 @@ class MovieDetailsViewModel(
                     )
                 }
             )
-        }
-        if (!currentState.isLoading) {
-            addToContinueWatching()
         }
     }
 
@@ -248,13 +245,18 @@ class MovieDetailsViewModel(
     private fun onFinally() {
         updateState { it.copy(isLoading = false) }
     }
+    private fun onFinallyAndAddToContinueWatching() {
+        onFinally()
+        addToContinueWatching()
+    }
+
 
     private fun addToContinueWatching() {
         tryToExecute(
             callee = {
                 addContinueWatchingUseCase(
                     movieId, currentState.categories.map { it.id },
-                    contentImageUrl = if (!currentState.movieImages.isEmpty()) currentState.movieImages[0] else "",
+                    contentImageUrl = currentState.posterImageURL,
                     contentType = ContinueWatching.ContentType.MOVIE,
                 )
             },

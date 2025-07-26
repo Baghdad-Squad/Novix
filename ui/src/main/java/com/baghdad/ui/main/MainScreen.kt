@@ -25,9 +25,10 @@ import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.navigation.NovixNavHost
 import com.baghdad.ui.navigation.bottom.BOTTOM_NAV_ITEMS
+import com.baghdad.ui.navigation.bottom.TOP_LEVEL_ROUTES
 import com.baghdad.ui.navigation.bottom.navigateToBottomNavDestination
 import com.baghdad.ui.navigation.bottom.rememberBottomNavSelectedIndex
-import com.baghdad.ui.navigation.bottom.rememberIsMainGraphRoute
+import com.baghdad.ui.navigation.bottom.rememberIsTopLevelMainRoute
 import com.baghdad.ui.navigation.route.Graph
 
 @Composable
@@ -36,7 +37,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-    val isMainGraphRoute by rememberIsMainGraphRoute(navBackStackEntry, BOTTOM_NAV_ITEMS.keys)
+    val isMainGraphRoute by rememberIsTopLevelMainRoute(
+        navBackStackEntry,
+        BOTTOM_NAV_ITEMS.keys,
+        TOP_LEVEL_ROUTES,
+    )
 
     val selectedIndex by rememberBottomNavSelectedIndex(navBackStackEntry, BOTTOM_NAV_ITEMS.keys)
 
@@ -70,7 +75,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         NovixNavHost(
             modifier = Modifier.padding(bottom = animatedBottomPadding),
             navController = navController,
-            startDestination = Graph.HomeGraph,
+            startDestination = Graph.AuthenticationGraph,
         )
     }
 }

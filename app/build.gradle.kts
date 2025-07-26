@@ -47,6 +47,7 @@ android {
             name = "BASE_URL",
             value = baseUrl
         )
+
     }
 
     signingConfigs {
@@ -126,6 +127,8 @@ dependencies {
     testImplementation(libs.bundles.test.core)
     implementation(libs.bundles.room)
     implementation(libs.bundles.retrofit)
+    implementation(libs.androidx.datastore.preferences)
+
 }
 
 /**

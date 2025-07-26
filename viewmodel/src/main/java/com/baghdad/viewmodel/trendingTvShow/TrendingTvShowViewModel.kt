@@ -2,68 +2,56 @@ package com.baghdad.viewmodel.trendingTvShow
 
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
+import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class TrendingTvShowViewModel(
     private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase,
     private val getGenresUseCase: GetGenresUseCase,
-) :
-    BaseViewModel<TrendingTvShowScreenState, TrendingTvShowScreenEffect>(TrendingTvShowScreenState()),
+) : BaseViewModel<TrendingTvShowScreenState, TrendingTvShowScreenEffect>(TrendingTvShowScreenState()),
     TrendingTvShowInteractionListener {
-
     init {
         getTvShowGenres()
-        getTrendingTvShowsByGenre(0L)
+        getTrendingTvShowsByGenre(null)
     }
 
     private fun getTvShowGenres() {
-        tryToExecute(
-            callee = { getGenresUseCase.getTvShowGenres() },
-            onSuccess = { genres ->
-                updateState { state ->
-                    val allGenre = TrendingTvShowScreenState.GenreUiState(id = 0L, name = "All")
-                    val genreUiStates =
-                        listOf(allGenre) + genres.map { it.toUiState() }
-                    state.copy(
-                        genres = genreUiStates,
-                    )
-                }
-            },
-            onError = { mapThrowableToErrorMessage(it) }
-        )
+        tryToExecute(callee = { getGenresUseCase.getTvShowGenres() }, onSuccess = { genres ->
+            updateState { state ->
+                state.copy(
+                    genres = genres.map(Genre::toUiState),
+                )
+            }
+        }, onError = { mapThrowableToErrorMessage(it) })
     }
 
-    private fun getTrendingTvShowsByGenre(genreId: Long) {
+    private fun getTrendingTvShowsByGenre(genreId: Long?) {
         updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
         collectPagingFlow(
             loadData = { page ->
                 getTrendingTvShowUseCase.invoke(
                     genreId = currentState.selectedGenreId,
-                    page = page
+                    page = page,
                 )
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toUiState() },
-            onFlowCreated = { tvShowFlow -> updateState { it.copy(trendingTvShows = tvShowFlow) } }
+            onFlowCreated = { tvShowFlow -> updateState { it.copy(trendingTvShows = tvShowFlow) } },
         )
     }
 
-
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
-    }
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
 
     override fun onTvShowClick(tvShowId: Long) {
         sendEffect(TrendingTvShowScreenEffect.NavigateToTvShowDetails(tvShowId))
     }
 
-
     override fun onBackIconClick() {
         sendEffect(TrendingTvShowScreenEffect.NavigateBack)
     }
 
-    override fun onGenreClick(genreId: Long) {
+    override fun onGenreClick(genreId: Long?) {
         getTrendingTvShowsByGenre(genreId)
     }
 

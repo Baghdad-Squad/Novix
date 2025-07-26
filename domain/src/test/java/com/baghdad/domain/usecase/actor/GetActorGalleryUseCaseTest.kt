@@ -13,6 +13,7 @@ class GetActorGalleryUseCaseTest {
 
     private lateinit var actorRepository: ActorRepository
     private lateinit var getActorGalleryUseCase: GetActorGalleryUseCase
+
     @BeforeEach
     fun setUp() {
         actorRepository = mockk(relaxed = true)

@@ -22,8 +22,8 @@ import com.baghdad.design_system.theme.Theme
 fun SectionHeader(
     title: String,
     isShowAllVisible: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier

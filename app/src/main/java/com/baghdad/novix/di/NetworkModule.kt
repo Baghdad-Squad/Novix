@@ -3,12 +3,14 @@ package com.baghdad.novix.di
 import com.baghdad.local_datasource.language.AppLanguageProvider
 import com.baghdad.novix.BuildConfig
 import com.baghdad.remoteDataSource.RemoteActorDataSourceImpl
+import com.baghdad.remoteDataSource.RemoteAuthenticationImpl
 import com.baghdad.remoteDataSource.RemoteEpisodeDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteMovieDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteTvShowDataSourceImpl
 import com.baghdad.remoteDataSource.apiService.ActorApiService
+import com.baghdad.remoteDataSource.apiService.AuthenticationApiService
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
 import com.baghdad.remoteDataSource.apiService.GenreApiService
 import com.baghdad.remoteDataSource.apiService.MovieApiService
@@ -17,6 +19,7 @@ import com.baghdad.remoteDataSource.apiService.TvShowApiService
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
 import com.baghdad.remoteDataSource.interceptor.KtorApiInterceptor
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
+import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
@@ -31,7 +34,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -63,7 +65,14 @@ val remoteDataSourceModule = module {
         }
     }
 
-    singleOf(::HeadersSetupInterceptor)
+    single<LanguageProvider> { AppLanguageProvider() }
+    single<String>(named("AUTHORIZATION_TOKEN")) { "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTZkYmRkOTNjMGY5NzdkMjMwOGJjMzM3NmI3YTNmOCIsIm5iZiI6MTc1MzAyOTE3Ni45OSwic3ViIjoiNjg3ZDFhMzgzOTg0OWZmZThkZDk4ZDEzIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.5NDfRH9_oRVtrvQb8Bs11qWGeLzEE5US_e5IcVQWerE" }
+    single<HeadersSetupInterceptor> {
+        HeadersSetupInterceptor(
+            languageProvider = get(),
+            authorizationToken = get(named("AUTHORIZATION_TOKEN"))
+        )
+    }
 
     single {
         OkHttpClient.Builder()
@@ -134,7 +143,6 @@ val remoteDataSourceModule = module {
         )
     }
 
-    single<LanguageProvider> { AppLanguageProvider() }
 
     single<ActorApiService> {
         get<Retrofit>().create(ActorApiService::class.java)
@@ -158,5 +166,14 @@ val remoteDataSourceModule = module {
 
     single<TvShowApiService> {
         get<Retrofit>().create(TvShowApiService::class.java)
+    }
+    single<AuthenticationApiService> {
+        get<Retrofit>().create(AuthenticationApiService::class.java)
+    }
+    single<RemoteAuthenticationDataSource> {
+        RemoteAuthenticationImpl(
+            authenticationApiService = get(),
+            logger = get()
+        )
     }
 }

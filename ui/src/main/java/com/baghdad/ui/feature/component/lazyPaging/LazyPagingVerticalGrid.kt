@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -25,9 +27,11 @@ fun <T : Any> LazyPagingVerticalGrid(
     key: ((item: T) -> Any)? = null,
     errorContent: @Composable () -> Unit = { DefaultErrorItem { items.retry() } },
     loadingContent: @Composable () -> Unit = { DefaultLoadingItem() },
+    state: LazyGridState = rememberLazyGridState(),
     itemContent: @Composable (item: T) -> Unit,
 ) {
     LazyVerticalGrid(
+        state = state,
         columns = columns,
         contentPadding = contentPadding,
         modifier = modifier.fillMaxSize(),

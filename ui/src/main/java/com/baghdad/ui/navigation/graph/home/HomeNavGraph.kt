@@ -4,9 +4,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.baghdad.ui.feature.topRating.TopRatingMoviesScreen
-import com.baghdad.ui.feature.trendingActors.TrendingActorsScreen
 import com.baghdad.ui.feature.continueWatching.ContinueWatchingScreen
+import com.baghdad.ui.feature.topRating.TopRatingScreen
+import com.baghdad.ui.feature.home.HomeScreen
+import com.baghdad.ui.feature.trendingActors.TrendingActorsScreen
+import com.baghdad.ui.feature.trendingMovies.TrendingMoviesScreen
 import com.baghdad.ui.feature.trendingTvShow.TrendingTvShowScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.Graph
@@ -17,13 +19,15 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
         startDestination = HomeRoute.HomeScreen
     ) {
         composable<HomeRoute.HomeScreen> {
-            DummyScreen(title = "Home Screen")
+            HomeScreen {
+                handleHomeNavigation(it, navController)
+            }
         }
         composable<HomeRoute.PopularMoviesScreen> {
             DummyScreen(title = "Popular Movies Screen")
         }
         composable<HomeRoute.TopRatingMoviesScreen> {
-            TopRatingMoviesScreen {
+            TopRatingScreen {
                 handleHomeNavigation(it, navController)
             }
         }
@@ -35,7 +39,9 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
             )
         }
         composable<HomeRoute.MoviesScreen> {
-            DummyScreen(title = "Movies Screen")
+            TrendingMoviesScreen(handleNavigation = { event ->
+                handleHomeNavigation(event, navController)
+            })
         }
         composable<HomeRoute.TvShowsScreen> {
             TrendingTvShowScreen(handleNavigation = { event ->

@@ -15,6 +15,11 @@ import com.baghdad.ui.navigation.graph.authentication.AuthenticationNavEvent
 import kotlinx.coroutines.delay
 import java.util.Locale
 
+private const val OOPS_MESSAGE = "Oops! We can't find the page you're looking for"
+private const val ERROR_MESSAGE = "There was a problem"
+private const val LOGIN_MESSAGE = "Login to your account"
+private const val SIGNUP_MESSAGE = "Sign up for an account"
+
 @Composable
 fun SignUpWebViewScreen(handleNavigation: (AuthenticationNavEvent) -> Unit) {
     val languageTag = remember {
@@ -27,7 +32,9 @@ fun SignUpWebViewScreen(handleNavigation: (AuthenticationNavEvent) -> Unit) {
         screenUrl = screenUrl,
         shouldNavigateBack = shouldNavigateBack
     )
+
 }
+
 
 @Composable
 fun SignUpWebViewContent(
@@ -52,9 +59,19 @@ fun SignUpWebViewContent(
             modifier = Modifier.fillMaxSize(),
             allowedDomains = listOf("themoviedb.org"),
             onUrlChange = { url ->
-                shouldNavigateBack.value = screenUrl != url
+                if (url != screenUrl) handleNavigation(AuthenticationNavEvent.NavigateBack)
             },
-            onReceivedError = { if (it.isNotBlank()) handleNavigation(AuthenticationNavEvent.NavigateBack) }
+            onReceivedError = { if (it.isNotBlank()) handleNavigation(AuthenticationNavEvent.NavigateBack) },
+            onDetected = {
+                when (it.trim('"')) {
+                    OOPS_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    ERROR_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    LOGIN_MESSAGE -> shouldNavigateBack.value = true
+                    SIGNUP_MESSAGE -> Unit
+                    else -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                }
+            }
         )
     }
+
 }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 data class TrendingTvShowScreenState(
     val trendingTvShows: Flow<PagingData<TvShowUiState>> = flowOf(),
     val genres: List<GenreUiState> = emptyList(),
-    val selectedGenreId: Long = 0L,
+    val selectedGenreId: Long? = null,
     override val isLoading: Boolean = false
 ) : BaseUiState {
 

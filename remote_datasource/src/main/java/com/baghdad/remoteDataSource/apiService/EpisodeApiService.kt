@@ -15,8 +15,8 @@ interface EpisodeApiService {
     @GET(EPISODES_DETAILS_ENDPOINT)
     suspend fun getEpisodeDetails(
         @Path("tv_id") tvId: Long,
-        @Path ("season_number") seasonNumber: Int,
-        @Path ("episode_number") episodeNumber: Int
+        @Path("season_number") seasonNumber: Int,
+        @Path("episode_number") episodeNumber: Int
     ): Response<EpisodeDetailsResponse>
 
     @Authenticated
@@ -24,7 +24,7 @@ interface EpisodeApiService {
     suspend fun getEpisodeCastMembers(
         @Path("tv_id") tvId: Long,
         @Path("season_number") seasonNumber: Int,
-        @Path ("episode_number") episodeNumber: Int
+        @Path("episode_number") episodeNumber: Int
     ): Response<CastMembersResponse>
 
     @Authenticated
@@ -32,7 +32,7 @@ interface EpisodeApiService {
     suspend fun getEpisodeImages(
         @Path("tv_id") tvId: Long,
         @Path("season_number") seasonNumber: Int,
-        @Path ("episode_number") episodeNumber: Int
+        @Path("episode_number") episodeNumber: Int
     ): Response<EpisodeImageResponse>
 
     @Authenticated
@@ -40,11 +40,11 @@ interface EpisodeApiService {
     suspend fun getEpisodeTrailer(
         @Path("tv_id") tvId: Long,
         @Path("season_number") seasonNumber: Int,
-        @Path ("episode_number") episodeNumber: Int
+        @Path("episode_number") episodeNumber: Int
     ): Response<EpisodeVideosResponse>
 
 
-    companion object{
+    companion object {
         private const val EPISODES_DETAILS_ENDPOINT =
             "tv/{tv_id}/season/{season_number}/episode/{episode_number}"
         private const val EPISODE_CREDITS_ENDPOINT =

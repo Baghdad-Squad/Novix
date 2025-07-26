@@ -42,6 +42,8 @@
     <string name="read_more">اقرأ المزيد</string>
     <string name="read_less">إخفاء</string>
     <string name="go_back">العودة</string>
+    <string name="actor_image">صورة الممثل</string>
     <string name="unsuitable_image">صورة غير مناسبة</string>
+    <string name="not_set">غير محدد</string>
 
 </resources>

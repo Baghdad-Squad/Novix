@@ -37,10 +37,12 @@ import com.baghdad.ui.feature.search.component.SearchResultContent
 import com.baghdad.ui.feature.search.component.SearchTextField
 import com.baghdad.ui.feature.search.component.filter.FilterBottomSheet
 import com.baghdad.ui.feature.search.component.recentSearchSection
+import com.baghdad.ui.feature.util.remeberSaveableLazyListState
+import com.baghdad.ui.feature.util.rememberSaveableLazyGridState
 import com.baghdad.ui.navigation.graph.search.SearchNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
+import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 import com.baghdad.viewmodel.search.SearchInteractionListener
 import com.baghdad.viewmodel.search.SearchScreenEffect
 import com.baghdad.viewmodel.search.SearchScreenState
@@ -103,6 +105,10 @@ fun SearchContent(
     actorItems: LazyPagingItems<SearchScreenState.ActorUiState>,
     tvShowItems: LazyPagingItems<SearchScreenState.TvShowUiState>
 ) {
+    val moviesState = rememberSaveableLazyGridState(key = "movies_grid")
+    val actorsState = remeberSaveableLazyListState(key = "actors_list")
+    val tvShowsState = rememberSaveableLazyGridState(key = "tv_shows_grid")
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -149,6 +155,9 @@ fun SearchContent(
                         },
                         onActorClick = { listener.onActorItemClick(it) },
                         isLoading = uiState.isLoading,
+                        moviesState = moviesState,
+                        actorsState = actorsState,
+                        tvShowsState = tvShowsState,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 } else RecentlyViewsWithSearch(uiState, listener)
@@ -227,8 +236,8 @@ private fun RecentlyViewsWithSearch(
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return when (type) {
-        SearchScreenBaseSnackBarMessages.RemovedItemSuccessfully -> R.string.snackbar_removed_success
-        SearchScreenBaseSnackBarMessages.SavedItemSuccessfully -> R.string.snackbar_saved_success
+        SearchSnackBarMessage.RemovedItemSuccessfully -> R.string.snackbar_removed_success
+        SearchSnackBarMessage.SavedItemSuccessfully -> R.string.snackbar_saved_success
         else -> type.toStringResource()
     }
 }

@@ -1,0 +1,118 @@
+package com.baghdad.ui.feature.component
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.R
+import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.modifier.threeSidedBorder
+import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.feature.component.islamicImage.IslamicImage
+
+private val CardHeight = 55.dp
+private val ActorImageSize = 78.dp
+private val RoundedShapeValue = 12.dp
+
+private val ImageShape = RoundedCornerShape(
+    topEnd = RoundedShapeValue,
+    topStart = RoundedShapeValue,
+    bottomStart = RoundedShapeValue
+)
+private val CardShape = RoundedCornerShape(
+    topEnd = RoundedShapeValue,
+    bottomEnd = RoundedShapeValue,
+)
+
+@Composable
+fun ActorCard(
+    actorName: String,
+    actorImage: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    characterName: String? = null
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(color = Theme.color.surface)
+            .noRippleClickable { onClick() }
+    ) {
+        IslamicImage(
+            imageUrl = actorImage,
+            contentDescription = stringResource(R.string.actor_image),
+            modifier = Modifier
+                .size(ActorImageSize)
+                .clip(ImageShape)
+                .border(1.dp, Theme.color.stroke, ImageShape),
+            contentScale = ContentScale.Crop
+        )
+
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(min = 218.dp)
+                .background(Theme.color.surface)
+                .threeSidedBorder(
+                    width = 1.dp, color = Theme.color.stroke, cornerRadius = RoundedShapeValue
+                )
+                .clip(CardShape)
+                .height(CardHeight)
+                .padding(horizontal = 8.dp)
+                .align(alignment = Alignment.Bottom)
+        ) {
+            Text(
+                text = actorName,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = Theme.typography.title.medium.copy(color = Theme.color.body)
+            )
+
+            if (!characterName.isNullOrBlank()) {
+                Text(
+                    text = characterName,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = Theme.typography.title.small.copy(color = Theme.color.hint)
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ActorCardPreview() {
+    NovixTheme(isDarkTheme = true) {
+        Box(
+            modifier = Modifier.background(Theme.color.surface)
+        ) {
+            ActorCard(
+                actorName = "James Gandolfini",
+                actorImage = "https://image.tmdb.org/t/p/w500/vhtsFJZcfHdeDkFBoWMDzOS6xrP.jpg",
+                onClick = {},
+                characterName = "Tony Soprano"
+            )
+        }
+    }
+}

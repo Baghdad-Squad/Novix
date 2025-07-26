@@ -11,10 +11,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.baghdad.design_system.component.ActorCard
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
+import com.baghdad.ui.feature.component.ActorCard
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 
 @Composable
