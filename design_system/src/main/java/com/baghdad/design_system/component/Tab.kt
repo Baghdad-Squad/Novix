@@ -25,8 +25,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
 
@@ -65,8 +67,7 @@ fun Tab(
                 .padding(horizontal = 24.dp)
                 .animateContentSize(tween(ANIMATION_DURATION))
                 .noRippleClickable { onClick() }
-                .then(underlineModifier)
-            ,
+                .then(underlineModifier),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
             Text(
@@ -124,3 +125,11 @@ private fun AnimatedUnderlineWrapper(
 }
 
 private const val ANIMATION_DURATION = 200
+
+@Preview
+@Composable
+private fun TabsPreview() {
+    NovixTheme {
+        Tab(text = "Tab 1", isSelected = true, onClick = {})
+    }
+}
