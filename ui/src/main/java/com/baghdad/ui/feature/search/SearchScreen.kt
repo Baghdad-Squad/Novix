@@ -128,7 +128,7 @@ fun SearchContent(
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding()
-                .padding(top = 8.dp)
+                .padding(top = 24.dp)
         ) {
             SearchTextField(
                 query = uiState.searchText,

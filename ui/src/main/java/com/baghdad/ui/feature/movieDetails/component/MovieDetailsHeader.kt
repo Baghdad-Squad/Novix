@@ -58,12 +58,11 @@ fun MovieDetailsHeader(
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 categories.forEachIndexed { index, category ->
                     Text(
                         text = category.name,
-                        fontSize = 14.sp,
+                        fontSize = 12.sp,
                         style = Theme.typography.label.medium,
                         color = Theme.color.body,
                         modifier = Modifier.noRippleClickable { onCategoryClick(category.id) }

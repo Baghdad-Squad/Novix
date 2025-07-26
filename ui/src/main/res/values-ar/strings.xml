@@ -26,9 +26,9 @@
     <string name="empty_string"> </string>
     <string name="read_less">إخفاء</string>
     <string name="read_more">عرض المزيد</string>
-    <string name="cast">طاقم الممثلين</string>
-    <string name="more_like_this">مشابه</string>
-    <string name="overview">نبذة عامة</string>
+    <string name="cast">طاقم العمل</string>
+    <string name="more_like_this">المزيد مثل هذا</string>
+    <string name="overview">نظرة عامة</string>
     <string name="play_trailer">تشغيل الاعلان</string>
     <string name="card_movie_image">صورة كارد الفلم</string>
     <string name="birth_place">مكان الميلاد</string>
@@ -41,8 +41,6 @@
     <string name="season">موسم</string>
     <string name="episode">حلقة %1$s</string>
     <string name="view_reviews">عرض التقييمات</string>
-    <string name="episodes">%1$d عدد الحلقات</string>
-
     <string name="add_to_list">إضافة إلى القائمة</string>
     <string name="please_login_to_save_to_list">الرجاء تسجيل الدخول لحفظ القائمه</string>
     <string name="bottom_sheet_content_description">وصف محتوى الصفحة السفلية</string>
@@ -82,5 +80,8 @@
     <string name="continue_watching_item">عنصر أكمل المشاهدة</string>
     <string name="top_rating_item">عنصر الأعلى ترتيبا</string>
     <string name="trending_people">الممثلون الرائجون</string>
+
+    <string name="episodes">عدد الحلقات %1$d </string>
+    <string name="s"> الموسم</string>
 
 </resources>

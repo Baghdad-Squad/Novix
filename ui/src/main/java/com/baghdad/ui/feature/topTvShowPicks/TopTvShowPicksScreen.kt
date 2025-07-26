@@ -4,13 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -18,16 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
-import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.WavyLoadingIndicator
-import com.baghdad.design_system.component.button.IconButton
+import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
@@ -87,37 +82,26 @@ private fun TopTvShowPicksContent(
 ) {
     Scaffold(
         modifier = Modifier
-            .navigationBarsPadding(),
-        topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Theme.color.surface)
-                    .statusBarsPadding()
-                    .padding(top = 12.dp, bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    icon = painterResource(R.drawable.ic_go_back),
-                    onClick = { listener.onBackClick() },
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                )
-                Text(
-                    text = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
-                    style = Theme.typography.title.large,
-                    color = Theme.color.title,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                )
-            }
-        }, snackbar = {
+            .background(Theme.color.surface)
+            .systemBarsPadding()
+            .statusBarsPadding(),
+        snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible
             )
+        },
+        topBar = {
+            TopAppBar(
+                onGoBackClick = listener::onBackClick,
+                screenTitle = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .padding(top = 12.dp)
+            ) {}
         }
+
     ) {
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize()) {
@@ -132,7 +116,7 @@ private fun TopTvShowPicksContent(
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
-                top = 8.dp,
+                top = 16.dp,
                 bottom = 8.dp
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp),

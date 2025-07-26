@@ -10,7 +10,6 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
-import kotlin.math.roundToInt
 
 class MovieDetailsViewModel(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
@@ -265,16 +264,3 @@ class MovieDetailsViewModel(
 }
 
 
-private fun Double.roundToFirstDecimal(): Double {
-    return (this * 10).roundToInt() / 10.0
-}
-
-private fun Int.formatDuration(): String {
-    val hours = this / 60
-    val minutes = this % 60
-    return if (hours > 0) {
-        "$hours hr $minutes min"
-    } else {
-        "$minutes min"
-    }
-}
