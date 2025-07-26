@@ -39,7 +39,7 @@ class TopRatingViewModel(
                 genres =
                     genres.distinctBy { genre -> genre.id }.map { genre ->
                         genre.toTopRatingGenreUiState()
-                    },
+                    }
             )
         }
 
@@ -75,7 +75,7 @@ class TopRatingViewModel(
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toTopRatingMovieUiState() },
-            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } },
+            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } }
         )
     }
 
@@ -104,13 +104,11 @@ class TopRatingViewModel(
 
     override fun onSelectedTab(selectedTab: TopRatingTab) {
         updateState {
-            it.copy(selectedTab = selectedTab)
+            it.copy(selectedTab = selectedTab, selectedGenreId = null)
         }
         when (selectedTab) {
             TopRatingTab.MOVIES -> {
-
                 getMovieGenres()
-
                 fetchMoviesByGenre(currentState.selectedGenreId)
             }
 
@@ -125,5 +123,7 @@ class TopRatingViewModel(
         updateState { it.copy(isLoading = false) }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
+
 }

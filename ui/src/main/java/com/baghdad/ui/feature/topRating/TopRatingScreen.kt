@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -91,12 +92,11 @@ private fun TopRatingContent(
     tvShowItems: LazyPagingItems<TopRatingState.TvShowUiState>
 ) {
     Scaffold(
-        modifier =
-            Modifier
-                .background(Theme.color.surface)
+        modifier = Modifier
+            .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
-            topBar = {
+        topBar = {
             TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -129,16 +129,17 @@ private fun TopRatingContent(
                     modifier = Modifier.weight(1f)
                 )
             }
-            GenresSection(
-                allGenres = uiState.genres,
-                selectedGenres = uiState.selectedGenreId,
-                onGenreSelected = { listener.onGenreClick(it?.id) },
-                modifier = Modifier
-                    .background(Theme.color.surface)
-                    .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
-            )
 
-
+            key(uiState.selectedTab) {
+                GenresSection(
+                    allGenres = uiState.genres,
+                    selectedGenres = uiState.selectedGenreId,
+                    onGenreSelected = { listener.onGenreClick(it?.id) },
+                    modifier = Modifier
+                        .background(Theme.color.surface)
+                        .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
+                )
+            }
         },
         snackbar = {
             SnackBar(
