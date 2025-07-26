@@ -109,12 +109,12 @@ class TopRatingViewModel(
         when (selectedTab) {
             TopRatingTab.MOVIES -> {
                 getMovieGenres()
-                fetchMoviesByGenre(null)
+                fetchMoviesByGenre(currentState.selectedGenreId)
             }
 
             TopRatingTab.TV_SHOWS -> {
                 getTvShowGenres()
-                fetchTvShowsByGenre(null)
+                fetchTvShowsByGenre(currentState.selectedGenreId)
             }
         }
     }
