@@ -13,9 +13,6 @@ import org.junit.jupiter.api.Test
 
 class GetMovieCastMembersUseCaseTest {
 
-    lateinit var getMovieCastMembersUseCase: GetMovieCastMembersUseCase
-    lateinit var movieRepository: MovieRepository
-
     @BeforeEach
     fun setup() {
         movieRepository = mockk()
@@ -59,22 +56,10 @@ class GetMovieCastMembersUseCaseTest {
     }
 
     private companion object {
-        val minimalCast = listOf(
-            CastMember(
-                actor = Actor(
-                    id = 104L,
-                    name = "Unknown Actor",
-                    profilePictureURL = "",
-                    birthDate = LocalDate(2000, 1, 1),
-                    placeOfBirth = "",
-                    deathDate = null,
-                    biography = "",
-                    headerPictures = emptyList(),
-                    department = "Unknown"
-                ),
-                characterName = "Background Character"
-            )
-        )
+
+        lateinit var getMovieCastMembersUseCase: GetMovieCastMembersUseCase
+        lateinit var movieRepository: MovieRepository
+
         val castMembers = listOf(
             CastMember(
                 actor = Actor(
