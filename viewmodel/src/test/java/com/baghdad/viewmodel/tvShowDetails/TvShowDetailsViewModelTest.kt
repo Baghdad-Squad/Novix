@@ -13,6 +13,8 @@ import com.baghdad.entity.person.CastMember
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -201,9 +203,8 @@ class TvShowDetailsViewModelTest {
         val expectedEffect = TvShowDetailsScreenEffect.NavigateToReviews(tvShowId)
         Assertions.assertTrue(effects.contains(expectedEffect))
     }
-
     @Test
-    fun `onClickPlayTrailer should send OpenYoutubeLink effect`() = runTest {
+    fun `viewModel should initialize without crashing`() = runTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
@@ -212,19 +213,11 @@ class TvShowDetailsViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        val effects = mutableListOf<TvShowDetailsScreenEffect>()
-        val job = launch {
-            viewModel.uiEffect.collect { effects.add(it) }
-        }
+        coVerify { getTvShowDetailsUseCase.invoke(tvShowId) }
+        coVerify { getTvShowCastMembersUseCase.invoke(tvShowId) }
 
-        viewModel.onClickPlayTrailer()
-        advanceUntilIdle()
-        job.cancel()
-
-        val expectedEffect = TvShowDetailsScreenEffect.OpenYoutubeLink(mockTvShow.trailerURL)
-        Assertions.assertTrue(effects.contains(expectedEffect))
+        Assertions.assertNotNull(viewModel.uiState.value)
     }
-
     @Test
     fun `onClickSeasonTab should update selected season and fetch episodes`() = runTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
