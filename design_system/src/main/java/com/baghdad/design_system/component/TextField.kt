@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
 @Composable
@@ -77,12 +78,12 @@ fun NovixTextField(
             .fillMaxWidth()
     ) {
         if (!label.isNullOrEmpty()) {
-                Text(
-                    text = label,
-                    style = Theme.typography.body.medium,
-                    color = Theme.color.body,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+            Text(
+                text = label,
+                style = Theme.typography.body.medium,
+                color = Theme.color.body,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
         }
 
         Row(
@@ -118,7 +119,7 @@ fun NovixTextField(
                     enabled = enabled && !readOnly,
                     singleLine = singleLine,
                     maxLines = maxLines,
-                    visualTransformation = if (isTextMasked && !trailingVisibility) PasswordVisualTransformation() else VisualTransformation.None,
+                    visualTransformation = if (isTextMasked) PasswordVisualTransformation() else VisualTransformation.None,
                     textStyle = Theme.typography.body.medium.copy(color = Theme.color.body),
                     cursorBrush = SolidColor(Theme.color.primary),
                     interactionSource = interactionSource,
@@ -143,7 +144,6 @@ fun NovixTextField(
                                 }
                                 innerTextField()
                             }
-                            if (isTextMasked) {
                                 trailingIcon?.let {
                                     Icon(
                                         painter = it,
@@ -168,7 +168,7 @@ fun NovixTextField(
                                     )
                                 }
                             }
-                        }
+
                     }
                 )
             }
@@ -202,11 +202,14 @@ fun NovixTextFieldPreview() {
 @Preview
 @Composable
 fun NovixTextFieldPreview2() {
-    NovixTextField(
-        value = "Value",
-        onValueChange = {},
-        label = "Title",
-        hint = "value",
-        leadingIcon = painterResource(R.drawable.ic_user)
-    )
+    NovixTheme(isDarkTheme = true) {
+        NovixTextField(
+            value = "Value",
+            onValueChange = {},
+            label = "Title",
+            hint = "value",
+            leadingIcon = painterResource(R.drawable.ic_user)
+        )
+    }
+
 }

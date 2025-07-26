@@ -1,8 +1,6 @@
 package com.baghdad.repository
 
 import com.baghdad.entity.media.Genre
-import com.baghdad.repository.datasource.local.LocalGenreDataSource
-import com.baghdad.repository.datasource.local.LocalTrendingTvShowsDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.model.GenreDto
@@ -14,8 +12,6 @@ class TvShowRepositoryImplTest {
     private lateinit var remoteGenreDataSource: RemoteGenreDataSource
     private lateinit var tvShowRemoteDataSource: RemoteTvShowDataSource
     private lateinit var tvShowRepositoryImpl: TvShowRepositoryImpl
-    private lateinit var localGenreDataSource: LocalGenreDataSource
-    private lateinit var localTrendingTvShowsDataSource: LocalTrendingTvShowsDataSource
 
 
     @BeforeEach
@@ -25,8 +21,6 @@ class TvShowRepositoryImplTest {
         tvShowRepositoryImpl = TvShowRepositoryImpl(
             remoteGenreDataSource = remoteGenreDataSource,
             tvShowRemoteDataSource = tvShowRemoteDataSource,
-            localGenreDataSource = localGenreDataSource,
-            localTrendingTvShowsDataSource = localTrendingTvShowsDataSource
         )
     }
 

@@ -22,6 +22,9 @@ interface TvShowRepository {
     suspend fun getTvShowSeasonEpisodes(tvId: Long, seasonNumber: Int): List<Episode>
 
     suspend fun getTvShowReviews(tvId: Long): List<Review>
+    suspend fun getPopularTvShows(): List<TvShow>
+
+    suspend fun getTopRatedTvShows(page: Int): PagedResult<TvShow>
 
     suspend fun getTrendingTvShows(page: Int): PagedResult<TvShow>
 }

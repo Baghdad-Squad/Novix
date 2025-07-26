@@ -18,7 +18,7 @@ fun TopAppBar(
     modifier: Modifier = Modifier,
     onGoBackClick: (() -> Unit)? = null,
     screenTitle: String? = null,
-    content: @Composable RowScope.() -> Unit,
+    content: (@Composable RowScope.() -> Unit)? = null
 ) {
 
     BasicTopAppBar(
@@ -42,7 +42,7 @@ fun TopAppBar(
                 modifier = Modifier.weight(1f)
             )
         }
-        content()
+        content?.let { it() }
     }
 }
 

@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.theme.Theme
@@ -23,6 +24,8 @@ fun TextButton(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     isEnabled: Boolean = true,
+    textAlign: TextAlign? = null,
+    textModifier: Modifier = Modifier,
 ) {
     val animatedContentColor by animateColorAsState(
         targetValue = if (isEnabled) Theme.color.primary else Theme.color.disable,
@@ -36,6 +39,8 @@ fun TextButton(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
+            modifier = textModifier,
+            textAlign = textAlign,
             text = label,
             style = Theme.typography.label.large.copy(
                 color = animatedContentColor

@@ -22,5 +22,6 @@ val darkThemeColor =
         redAccent = Color(0xFFF75662),
         yellowAccent = Color(0xFFCFC657),
         greenAccent = Color(0xFF19744D),
-        greenVariant = Color(0xFF1D1F1E)
+        greenVariant = Color(0xFF1D1F1E),
+        shimmer = Color(0xFFFFFFFF),
     )

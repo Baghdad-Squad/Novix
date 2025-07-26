@@ -30,7 +30,7 @@ import com.baghdad.ui.feature.search.component.EmptySearchState
 import com.baghdad.ui.navigation.graph.reviews.ReviewsNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.errorStates.SearchScreenBaseSnackBarMessages
+import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewInteractionListener
 import com.baghdad.viewmodel.review.ReviewScreenEffect
@@ -127,8 +127,8 @@ fun ReviewContent(
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return when (type) {
-        SearchScreenBaseSnackBarMessages.RemovedItemSuccessfully -> R.string.snackbar_removed_success
-        SearchScreenBaseSnackBarMessages.SavedItemSuccessfully -> R.string.snackbar_saved_success
+        SearchSnackBarMessage.RemovedItemSuccessfully -> R.string.snackbar_removed_success
+        SearchSnackBarMessage.SavedItemSuccessfully -> R.string.snackbar_saved_success
         else -> type.toStringResource()
     }
 }

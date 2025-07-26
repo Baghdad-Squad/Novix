@@ -77,25 +77,26 @@ class GetEpisodeCastMembersUseCaseTest {
     }
 
     @Test
-    fun `execute with valid tvId seasonNumber and episodeNumber returns expected cast members`() = runTest {
-        // Given
-        val tvId = 123L
-        val seasonNumber = 2
-        val episodeNumber = 1
+    fun `execute with valid tvId seasonNumber and episodeNumber returns expected cast members`() =
+        runTest {
+            // Given
+            val tvId = 123L
+            val seasonNumber = 2
+            val episodeNumber = 1
 
-        coEvery {
-            episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
-        } returns expectedCastMembers
+            coEvery {
+                episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
+            } returns expectedCastMembers
 
-        // When
-        val result = getEpisodeCastMembersUseCase(tvId, seasonNumber, episodeNumber)
+            // When
+            val result = getEpisodeCastMembersUseCase(tvId, seasonNumber, episodeNumber)
 
-        // Then
-        assertThat(result).isEqualTo(expectedCastMembers)
-        coVerify(exactly = 1) {
-            episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
+            // Then
+            assertThat(result).isEqualTo(expectedCastMembers)
+            coVerify(exactly = 1) {
+                episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
+            }
         }
-    }
 
     @Test
     fun `return empty list when not exist tv show`() = runTest {

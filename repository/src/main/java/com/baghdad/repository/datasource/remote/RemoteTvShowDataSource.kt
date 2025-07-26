@@ -22,5 +22,9 @@ interface RemoteTvShowDataSource {
 
     suspend fun getTvShowTrailer(tvId: Long): String
 
+    suspend fun getTopRatedTvShows(page: Int): PagedResultDto<TvShowDto>
+
+    suspend fun getPopularTvShows(): List<TvShowDto>
+
     suspend fun getTrendingTvShows(page: Int): PagedResultDto<TvShowDto>
 }

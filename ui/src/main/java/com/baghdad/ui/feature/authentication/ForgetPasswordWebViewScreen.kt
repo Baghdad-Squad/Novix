@@ -15,6 +15,11 @@ import com.baghdad.ui.navigation.graph.authentication.AuthenticationNavEvent
 import kotlinx.coroutines.delay
 import java.util.Locale
 
+private const val OOPS_MESSAGE = "Oops! We can't find the page you're looking for"
+private const val ERROR_MESSAGE = "There was a problem"
+private const val PASSWORD_RESET_MESSAGE = "Password Reset"
+private const val RESET_PASSWORD = "Reset password"
+
 @Composable
 fun ForgotPasswordWebViewScreen(
     handleNavigation: (AuthenticationNavEvent) -> Unit
@@ -37,7 +42,7 @@ fun ForgotPasswordWebViewContent(
     languageTag: String,
 ) {
 
-    LaunchedEffect(shouldNavigateBack) {
+    LaunchedEffect(shouldNavigateBack.value) {
         if (shouldNavigateBack.value) {
             delay(5000)
             handleNavigation(AuthenticationNavEvent.NavigateBack)
@@ -54,9 +59,14 @@ fun ForgotPasswordWebViewContent(
             url = screenUrl,
             modifier = Modifier.fillMaxSize(),
             allowedDomains = listOf("themoviedb.org"),
-            onUrlChange = { url ->
-                shouldNavigateBack.value = screenUrl != url
-            },
-        )
+            onDetected = {
+                when (it.trim('"')) {
+                    OOPS_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    ERROR_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    PASSWORD_RESET_MESSAGE -> shouldNavigateBack.value = true
+                    RESET_PASSWORD -> Unit
+                    else -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                }
+            })
     }
 }
