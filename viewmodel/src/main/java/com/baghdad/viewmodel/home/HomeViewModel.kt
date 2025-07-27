@@ -1,7 +1,7 @@
 package com.baghdad.viewmodel.home
 
 import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
+import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
@@ -15,7 +15,7 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class HomeViewModel(
     private val getGenresUseCase: GetGenresUseCase,
-    private val getContinueWatchingUseCase: GetAllContinueWatchingUseCase,
+    private val observeContinueWatchingUseCase: ObserveContinueWatchingUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
     private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
@@ -25,7 +25,7 @@ class HomeViewModel(
     init {
         getPopularItems()
         getTopRatingMovies()
-        getContinueWatchingItems()
+        observeContinueWatchingItems()
         getMovieGenres()
         collectPaginatedUpcomingMovies()
     }
@@ -78,7 +78,7 @@ class HomeViewModel(
                     movies
                         .take(TOP_RATING_MOVIES_LIMIT)
                         .map(Movie::toTopRatingItemUiState),
-                    )
+            )
         }
     }
 
@@ -94,38 +94,24 @@ class HomeViewModel(
         }
     }
 
-    private fun getContinueWatchingItems() {
-        tryToExecute(
-            callee = { getContinueWatchingUseCase(DEFAULT_PAGE).data },
-            onSuccess = ::onGetContinueWatchingItemsSuccess,
-            onStart = ::onGetContinueWatchingItemsStart,
-            onFinally = ::onGetContinueWatchingItemsFinished,
+    private fun observeContinueWatchingItems() {
+        tryToCollect(
+            flowProvider = observeContinueWatchingUseCase::invoke,
+            onNewValue = ::onNewContinueWatchingItems,
         )
     }
 
-    private fun onGetContinueWatchingItemsSuccess(items: List<ContinueWatching>) {
+    private fun onNewContinueWatchingItems(items: List<ContinueWatching>) {
         updateState {
             it.copy(
                 continueWatchingItems =
                     items
                         .take(CONTINUE_WATCHING_LIMIT)
-                    .map(ContinueWatching::toUiState),
-                    )
+                        .map(ContinueWatching::toUiState),
+                isContinueWatchingLoading = false,
+            )
         }
     }
-
-    private fun onGetContinueWatchingItemsStart() {
-        updateState {
-            it.copy(isContinueWatchingLoading = true)
-        }
-    }
-
-    private fun onGetContinueWatchingItemsFinished() {
-        updateState {
-            it.copy(isContinueWatchingLoading = false)
-        }
-    }
-
     private fun getMovieGenres() {
         tryToExecute(
             callee = getGenresUseCase::getMovieGenres,
