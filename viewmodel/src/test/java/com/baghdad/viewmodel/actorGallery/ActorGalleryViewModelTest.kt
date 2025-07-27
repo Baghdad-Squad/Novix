@@ -75,11 +75,10 @@ class ActorGalleryViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(ACTOR_ID) }
-
         viewModel.getActorGalleryImages(DIFFERENT_ACTOR_ID)
         advanceUntilIdle()
 
+        coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(ACTOR_ID) }
         coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(DIFFERENT_ACTOR_ID) }
     }
 
