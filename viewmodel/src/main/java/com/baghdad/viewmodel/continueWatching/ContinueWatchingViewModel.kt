@@ -101,11 +101,11 @@ class ContinueWatchingViewModel(
                 selectedMediaTabIsMovie = isMovieTab,
                 isLoading = true,
                 mediaFlow = flowOf(),
-                selectedGenreId = 0
+                selectedGenreId = null
             )
         }
         getGenres()
-        getMedia(0)
+        getMedia(null)
     }
 
     override fun onMovieSaveClick(movieId: Long) {
