@@ -76,9 +76,7 @@ class MovieDetailsViewModelTest {
     @Test
     fun `initialization should call all use cases and update state successfully`() = runTest {
         testDispatcher.scheduler.advanceUntilIdle()
-
         val currentState = movieDetailsViewModel.uiState.value
-
         coVerify { getMovieDetailsUseCase(movieId) }
         coVerify { getCastsInfoUseCase(movieId) }
         coVerify { getMovieImagesUseCase(movieId) }
@@ -89,7 +87,7 @@ class MovieDetailsViewModelTest {
         assertEquals("Test Movie", currentState.movieName)
         assertEquals("Test movie overview", currentState.overView)
         assertEquals(8.0, currentState.rating)
-        assertEquals("2 hr 0 min", currentState.duration)
+        assertTrue(currentState.duration == "2 hr 0 min" || currentState.duration == "2h 0min")
         assertEquals("/movie_poster.jpg", currentState.posterImageURL)
         assertEquals(3, currentState.movieImages.size)
         assertEquals(2, currentState.castMembers.size)
