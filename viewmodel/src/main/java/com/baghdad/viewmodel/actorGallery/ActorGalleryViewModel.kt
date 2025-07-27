@@ -1,15 +1,21 @@
 package com.baghdad.viewmodel.actorGallery
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 
-class ActorGalleryViewModel(
+@HiltViewModel
+class ActorGalleryViewModel @Inject constructor(
     private val getGalleryImagesUseCase: GetActorGalleryUseCase,
-    private val actorId: Long
+    val savedstateHandler: SavedStateHandle,
 
-) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
+    ) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
     ActorGalleryInteractionListener {
+
+    private val actorId = savedstateHandler.get<Long>("actorId") ?: 0L
 
     init {
         getActorGalleryImages(actorId)

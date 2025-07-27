@@ -6,10 +6,13 @@ import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
 import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class CategoryMoviesViewModel(
+@HiltViewModel
+class CategoryMoviesViewModel @Inject constructor(
     private val genreId: Long,
     private val getGenreMoviesUseCase: GetMoviesByGenreUseCase,
     private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase

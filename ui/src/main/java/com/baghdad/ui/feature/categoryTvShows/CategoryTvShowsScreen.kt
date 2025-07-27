@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Scaffold
@@ -39,16 +40,13 @@ import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsEffect
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 
 @Composable
 fun CategoryTvShowsScreen(
     categoryId: Long,
-    viewModel: CategoryTvShowsViewModel = koinViewModel(
-        key = categoryId.toString(), parameters = { parametersOf(categoryId) }),
-    handleNavigation: (CategoriesNavEvent) -> Unit
+    viewModel: CategoryTvShowsViewModel = hiltViewModel(key = categoryId.toString()),
+    handleNavigation: (CategoriesNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
@@ -61,7 +59,7 @@ fun CategoryTvShowsScreen(
 }
 
 private fun handleEffect(
-    effect: CategoryTvShowsEffect, handleNavigation: (CategoriesNavEvent) -> Unit
+    effect: CategoryTvShowsEffect, handleNavigation: (CategoriesNavEvent) -> Unit,
 ) {
     when (effect) {
         is CategoryTvShowsEffect.NavigateBack -> handleNavigation(
@@ -78,7 +76,7 @@ private fun handleEffect(
 private fun CategoryTvShowsContent(
     uiState: CategoryTvShowsState,
     listener: CategoryTvShowsViewModel,
-    snackBarState: SnackBarState
+    snackBarState: SnackBarState,
 ) {
     val context = LocalContext.current
     val view = LocalView.current

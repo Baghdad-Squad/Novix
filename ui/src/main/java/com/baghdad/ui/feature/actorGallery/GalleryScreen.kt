@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -42,20 +44,19 @@ import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenState
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun GalleryScreen(
     actorId: Long,
-    viewModel: ActorGalleryViewModel = koinViewModel(
-        key = actorId.toString(),
-        parameters = { parametersOf(actorId) }),
+    viewModel: ActorGalleryViewModel = hiltViewModel(key = actorId.toString()),
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(actorId) {
+        viewModel.savedstateHandler["actorId"] = actorId
+    }
     ActorGalleryScreenContent(
         uiState = uiState, listener = viewModel, snackBarState = snackBarState
     )

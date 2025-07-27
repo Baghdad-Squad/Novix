@@ -7,8 +7,11 @@ import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 
-class EpisodeDetailsViewModel(
+@HiltViewModel
+class EpisodeDetailsViewModel @Inject constructor(
     tvShowId: Long,
     seasonNumber: Int,
     episodeNumber: Int,

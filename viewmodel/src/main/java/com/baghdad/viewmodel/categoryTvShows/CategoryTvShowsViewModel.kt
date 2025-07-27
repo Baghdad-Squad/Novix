@@ -5,8 +5,11 @@ import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 
-class CategoryTvShowsViewModel(
+@HiltViewModel
+class CategoryTvShowsViewModel @Inject constructor(
     private val categoryId: Long,
     private val getTvShowsCategoryUseCase: GetTvShowsByGenreUseCase,
     private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase

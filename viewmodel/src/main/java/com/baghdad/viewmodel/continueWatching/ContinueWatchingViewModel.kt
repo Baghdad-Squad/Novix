@@ -8,9 +8,12 @@ import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.flowOf
 
-class ContinueWatchingViewModel(
+@HiltViewModel
+class ContinueWatchingViewModel @Inject constructor(
     private val getGenresUseCase: GetGenresUseCase,
     private val getAllContinueWatchingUseCase: GetAllContinueWatchingUseCase,
     private val getAllContinueWatchingByGenreUseCase: GetAllContinueWatchingByGenreUseCase,
