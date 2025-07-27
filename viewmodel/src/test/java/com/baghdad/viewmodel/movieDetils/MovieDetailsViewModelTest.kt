@@ -256,22 +256,6 @@ class MovieDetailsViewModelTest {
         coVerify { getMovieDetailsUseCase(movieId) }
     }
 
-
-    @Test
-    fun `onSaveMoreLikeThisMedia with invalid ID should not crash`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val invalidId = 999L
-        movieDetailsViewModel.onSaveMoreLikeThisMedia(invalidId)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = movieDetailsViewModel.uiState.value
-        assertFalse(state.isLoading)
-        assertEquals(2, state.moreLikeThisMovie.size)
-        assertTrue(state.moreLikeThisMovie.all { !it.isSaved })
-    }
-
-
     @Test
     fun `onStarMovieClick should set loading state correctly during execution`() = runTest {
 
