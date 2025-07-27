@@ -25,6 +25,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -249,11 +250,55 @@ class MovieDetailsViewModelTest {
 
     @Test
     fun `getMovieDetails failure should handle error gracefully`() = runTest {
-        val exception = RuntimeException("Network error")
+        val exception = RuntimeException()
         coEvery { getMovieDetailsUseCase(any()) } throws exception
         testDispatcher.scheduler.advanceUntilIdle()
         coVerify { getMovieDetailsUseCase(movieId) }
     }
+
+
+    @Test
+    fun `onSaveMoreLikeThisMedia with invalid ID should not crash`() = runTest {
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val invalidId = 999L
+        movieDetailsViewModel.onSaveMoreLikeThisMedia(invalidId)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = movieDetailsViewModel.uiState.value
+        assertFalse(state.isLoading)
+        assertEquals(2, state.moreLikeThisMovie.size)
+        assertTrue(state.moreLikeThisMovie.all { !it.isSaved })
+    }
+
+
+    @Test
+    fun `onStarMovieClick should set loading state correctly during execution`() = runTest {
+
+        testDispatcher.scheduler.advanceUntilIdle()
+
+
+        movieDetailsViewModel.onStarMovieClick()
+
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val finalState = movieDetailsViewModel.uiState.value
+        assertFalse(finalState.isLoading)
+    }
+
+
+    @Test
+    fun `onSaveCurrentMovieClick should set loading state correctly during execution`() = runTest {
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        movieDetailsViewModel.onSaveCurrentMovieClick()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Assert
+        val finalState = movieDetailsViewModel.uiState.value
+        assertFalse(finalState.isLoading)
+    }
+
 
     companion object {
         private fun createMockMovie() = Movie(
