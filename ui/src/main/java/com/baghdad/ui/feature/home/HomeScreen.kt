@@ -81,7 +81,7 @@ private fun HomeContent(
             .fillMaxSize()
             .background(Theme.color.surface)
             .statusBarsPadding(),
-        topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp)) },
+        topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) },
         snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -92,7 +92,7 @@ private fun HomeContent(
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
-            contentPadding = PaddingValues(vertical = 16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp, top = 8.dp),
             state = lazyGridState,
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
