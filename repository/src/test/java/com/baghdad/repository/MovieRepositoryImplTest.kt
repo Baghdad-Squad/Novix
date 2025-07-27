@@ -2,6 +2,7 @@ package com.baghdad.repository
 
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
+import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
@@ -10,6 +11,8 @@ import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.PagedResultDto
+import com.baghdad.repository.model.ReviewDto
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -146,33 +149,34 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun `getMovieCastMembers should return list of cast members when remote call succeeds`() = runTest {
+    fun `getMovieCastMembers should return list of cast members when remote call succeeds`() =
+        runTest {
 
-        val movieId = 456L
-        val mockCastMemberDtos = listOf(
-            createMockCastMemberDto(1L, "John Doe", "Main Character"),
-            createMockCastMemberDto(2L, "Jane Smith", "Supporting Character")
-        )
-        val expectedCastMembers = listOf(
-            createMockCastMember(1L, "John Doe", "Main Character"),
-            createMockCastMember(2L, "Jane Smith", "Supporting Character")
-        )
+            val movieId = 456L
+            val mockCastMemberDtos = listOf(
+                createMockCastMemberDto(1L, "John Doe", "Main Character"),
+                createMockCastMemberDto(2L, "Jane Smith", "Supporting Character")
+            )
+            val expectedCastMembers = listOf(
+                createMockCastMember(1L, "John Doe", "Main Character"),
+                createMockCastMember(2L, "Jane Smith", "Supporting Character")
+            )
 
-        coEvery { remoteMovieDataSource.getMovieCastMembers(movieId) } returns mockCastMemberDtos
+            coEvery { remoteMovieDataSource.getMovieCastMembers(movieId) } returns mockCastMemberDtos
 
-        val result = movieRepositoryImpl.getMovieCastMembers(movieId)
+            val result = movieRepositoryImpl.getMovieCastMembers(movieId)
 
-        assertEquals(expectedCastMembers.size, result.size)
-        assertEquals(expectedCastMembers[0].actor.id, result[0].actor.id)
-        assertEquals(expectedCastMembers[0].actor.name, result[0].actor.name)
-        assertEquals(expectedCastMembers[0].characterName, result[0].characterName)
+            assertEquals(expectedCastMembers.size, result.size)
+            assertEquals(expectedCastMembers[0].actor.id, result[0].actor.id)
+            assertEquals(expectedCastMembers[0].actor.name, result[0].actor.name)
+            assertEquals(expectedCastMembers[0].characterName, result[0].characterName)
 
-        assertEquals(expectedCastMembers[1].actor.id, result[1].actor.id)
-        assertEquals(expectedCastMembers[1].actor.name, result[1].actor.name)
-        assertEquals(expectedCastMembers[1].characterName, result[1].characterName)
+            assertEquals(expectedCastMembers[1].actor.id, result[1].actor.id)
+            assertEquals(expectedCastMembers[1].actor.name, result[1].actor.name)
+            assertEquals(expectedCastMembers[1].characterName, result[1].characterName)
 
-        coVerify { remoteMovieDataSource.getMovieCastMembers(movieId) }
-    }
+            coVerify { remoteMovieDataSource.getMovieCastMembers(movieId) }
+        }
 
     @Test
     fun `getMovieCastMembers should return empty list when no cast members found`() = runTest {
@@ -195,6 +199,267 @@ class MovieRepositoryImplTest {
 
         assertThrows<Exception> {
             movieRepositoryImpl.getMovieCastMembers(movieId)
+        }
+    }
+
+    @Test
+    fun `getMovieDetails should return movie with trailer when remote call succeeds`() = runTest {
+        // Given
+        val movieId = 123L
+        val mockMovieDto = createMockMovieDto()
+        val mockTrailerUrl = "https://youtube.com/watch?v=trailer123"
+        val expectedMovie = createMockMovie().copy(trailerURL = mockTrailerUrl)
+
+        coEvery { remoteMovieDataSource.getMovieDetails(movieId) } returns mockMovieDto
+        coEvery { remoteMovieDataSource.getMovieTrailer(movieId) } returns mockTrailerUrl
+
+        val result = movieRepositoryImpl.getMovieDetails(movieId)
+
+        assertEquals(expectedMovie.id, result.id)
+        assertEquals(expectedMovie.title, result.title)
+        assertEquals(expectedMovie.trailerURL, result.trailerURL)
+        coVerify { remoteMovieDataSource.getMovieDetails(movieId) }
+        coVerify { remoteMovieDataSource.getMovieTrailer(movieId) }
+    }
+
+    @Test
+    fun `getMoviesByGenre should return paged result when remote call succeeds`() = runTest {
+        // Given
+        val genreId = 28L
+        val page = 1
+        val pageSize = 20
+        val mockMovieDtos = listOf(createMockMovieDto())
+        val mockPagedResult = PagedResultDto(mockMovieDtos, nextKey = 2, prevKey = null)
+
+        coEvery { remoteMovieDataSource.getMoviesByGenre(genreId, page) } returns mockPagedResult
+
+        val result = movieRepositoryImpl.getMoviesByGenre(genreId, page, pageSize)
+
+        assertEquals(1, result.data.size)
+        assertEquals(456L, result.data[0].id)
+        assertEquals("Test Movie", result.data[0].title)
+        assertEquals(2, result.nextKey)
+        assertEquals(null, result.prevKey)
+        coVerify { remoteMovieDataSource.getMoviesByGenre(genreId, page) }
+    }
+
+    @Test
+    fun `getMoviesByGenre should return empty paged result when no movies found`() = runTest {
+        // Given
+        val genreId = 28L
+        val page = 1
+        val pageSize = 20
+        val emptyPagedResult = PagedResultDto<MovieDto>(emptyList(), nextKey = null, prevKey = null)
+
+        coEvery { remoteMovieDataSource.getMoviesByGenre(genreId, page) } returns emptyPagedResult
+
+        val result = movieRepositoryImpl.getMoviesByGenre(genreId, page, pageSize)
+
+        assertEquals(0, result.data.size)
+        assertEquals(null, result.nextKey)
+        assertEquals(null, result.prevKey)
+        coVerify { remoteMovieDataSource.getMoviesByGenre(genreId, page) }
+    }
+
+    @Test
+    fun `getMoviesByGenre should throw exception when remote call fails`() = runTest {
+        // Given
+        val genreId = 28L
+        val page = 1
+        val pageSize = 20
+        val exception = RuntimeException("Network error")
+        coEvery { remoteMovieDataSource.getMoviesByGenre(genreId, page) } throws exception
+
+        assertThrows<Exception> {
+            movieRepositoryImpl.getMoviesByGenre(genreId, page, pageSize)
+        }
+    }
+
+    @Test
+    fun `getMovieReviews should return list of reviews when remote call succeeds`() = runTest {
+        // Given
+        val movieId = 123L
+        val mockReviewDtos = listOf(createMockReviewDto())
+        val expectedReviews = listOf(createMockReview())
+
+        coEvery { remoteMovieDataSource.getMovieReviews(movieId) } returns mockReviewDtos
+
+        val result = movieRepositoryImpl.getMovieReviews(movieId)
+
+        assertEquals(expectedReviews.size, result.size)
+        assertEquals(expectedReviews[0].id, result[0].id)
+        assertEquals(expectedReviews[0].contentTitle, result[0].contentTitle)
+        assertEquals(expectedReviews[0].authorName, result[0].authorName)
+        coVerify { remoteMovieDataSource.getMovieReviews(movieId) }
+    }
+
+    @Test
+    fun `getMovieReviews should return empty list when no reviews found`() = runTest {
+        // Given
+        val movieId = 123L
+        coEvery { remoteMovieDataSource.getMovieReviews(movieId) } returns emptyList()
+
+        val result = movieRepositoryImpl.getMovieReviews(movieId)
+
+        assertEquals(emptyList<Review>(), result)
+        coVerify { remoteMovieDataSource.getMovieReviews(movieId) }
+    }
+
+    @Test
+    fun `getMovieImages should return list of image urls when remote call succeeds`() = runTest {
+        // Given
+        val movieId = 123L
+        val mockImages = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg")
+
+        coEvery { remoteMovieDataSource.getMovieImages(movieId) } returns mockImages
+
+        val result = movieRepositoryImpl.getMovieImages(movieId)
+
+        assertEquals(mockImages, result)
+        coVerify { remoteMovieDataSource.getMovieImages(movieId) }
+    }
+
+    @Test
+    fun `getMovieImages should return empty list when no images found`() = runTest {
+        // Given
+        val movieId = 123L
+        coEvery { remoteMovieDataSource.getMovieImages(movieId) } returns emptyList()
+
+        val result = movieRepositoryImpl.getMovieImages(movieId)
+
+        assertEquals(emptyList<String>(), result)
+        coVerify { remoteMovieDataSource.getMovieImages(movieId) }
+    }
+
+    @Test
+    fun `getTopRatedMovies should return paged result when remote call succeeds`() = runTest {
+        // Given
+        val page = 1
+        val mockMovieDtos = listOf(createMockMovieDto())
+        val mockPagedResult = PagedResultDto(mockMovieDtos, nextKey = 2, prevKey = null)
+
+        coEvery { remoteMovieDataSource.getTopRatedMovies(page) } returns mockPagedResult
+
+        val result = movieRepositoryImpl.getTopRatedMovies(page)
+
+        assertEquals(1, result.data.size)
+        assertEquals(456L, result.data[0].id)
+        assertEquals("Test Movie", result.data[0].title)
+        assertEquals(2, result.nextKey)
+        assertEquals(null, result.prevKey)
+        coVerify { remoteMovieDataSource.getTopRatedMovies(page) }
+    }
+
+    @Test
+    fun `getTopRatedMovies should throw exception when remote call fails`() = runTest {
+        // Given
+        val page = 1
+        val exception = RuntimeException("Network error")
+        coEvery { remoteMovieDataSource.getTopRatedMovies(page) } throws exception
+
+        assertThrows<Exception> {
+            movieRepositoryImpl.getTopRatedMovies(page)
+        }
+    }
+
+    @Test
+    fun `getPopularMovies should return list of movies when remote call succeeds`() = runTest {
+        // Given
+        val mockMovieDtos = listOf(createMockMovieDto())
+        val expectedMovies = listOf(createMockMovie())
+
+        coEvery { remoteMovieDataSource.getPopularMovies() } returns mockMovieDtos
+
+        val result = movieRepositoryImpl.getPopularMovies()
+
+        assertEquals(expectedMovies.size, result.size)
+        assertEquals(expectedMovies[0].id, result[0].id)
+        assertEquals(expectedMovies[0].title, result[0].title)
+        coVerify { remoteMovieDataSource.getPopularMovies() }
+    }
+
+    @Test
+    fun `getPopularMovies should return empty list when no popular movies found`() = runTest {
+        // Given
+        coEvery { remoteMovieDataSource.getPopularMovies() } returns emptyList()
+
+        val result = movieRepositoryImpl.getPopularMovies()
+
+        assertEquals(emptyList<Movie>(), result)
+        coVerify { remoteMovieDataSource.getPopularMovies() }
+    }
+
+    @Test
+    fun `getTrendingMovies should return paged result when remote call succeeds`() = runTest {
+        // Given
+        val page = 1
+        val mockMovieDtos = listOf(createMockMovieDto())
+        val mockPagedResult = PagedResultDto(mockMovieDtos, nextKey = 2, prevKey = null)
+
+        coEvery { remoteMovieDataSource.getTrendingMovies(page) } returns mockPagedResult
+
+        val result = movieRepositoryImpl.getTrendingMovies(page)
+
+        assertEquals(1, result.data.size)
+        assertEquals(456L, result.data[0].id)
+        assertEquals("Test Movie", result.data[0].title)
+        assertEquals(2, result.nextKey)
+        assertEquals(null, result.prevKey)
+        coVerify { remoteMovieDataSource.getTrendingMovies(page) }
+    }
+
+
+    @Test
+    fun `getUpcomingMovies should return paged result when remote call succeeds`() = runTest {
+        // Given
+        val page = 1
+        val genreId = 28L
+        val pageSize = 20
+        val mockMovieDtos = listOf(createMockMovieDto())
+        val mockPagedResult = PagedResultDto(mockMovieDtos, nextKey = 2, prevKey = null)
+
+        coEvery { remoteMovieDataSource.getUpcomingMovies(page, genreId) } returns mockPagedResult
+
+        val result = movieRepositoryImpl.getUpcomingMovies(page, genreId, pageSize)
+
+        assertEquals(1, result.data.size)
+        assertEquals(456L, result.data[0].id)
+        assertEquals("Test Movie", result.data[0].title)
+        assertEquals(2, result.nextKey)
+        assertEquals(null, result.prevKey)
+        coVerify { remoteMovieDataSource.getUpcomingMovies(page, genreId) }
+    }
+
+    @Test
+    fun `getUpcomingMovies should return paged result when genreId is null`() = runTest {
+        // Given
+        val page = 1
+        val genreId = null
+        val pageSize = 20
+        val mockMovieDtos = listOf(createMockMovieDto())
+        val mockPagedResult = PagedResultDto(mockMovieDtos, nextKey = 2, prevKey = null)
+
+        coEvery { remoteMovieDataSource.getUpcomingMovies(page, genreId) } returns mockPagedResult
+
+        val result = movieRepositoryImpl.getUpcomingMovies(page, genreId, pageSize)
+
+        assertEquals(1, result.data.size)
+        assertEquals(456L, result.data[0].id)
+        assertEquals("Test Movie", result.data[0].title)
+        coVerify { remoteMovieDataSource.getUpcomingMovies(page, genreId) }
+    }
+
+    @Test
+    fun `getUpcomingMovies should throw exception when remote call fails`() = runTest {
+        // Given
+        val page = 1
+        val genreId = 28L
+        val pageSize = 20
+        val exception = RuntimeException("Network error")
+        coEvery { remoteMovieDataSource.getUpcomingMovies(page, genreId) } throws exception
+
+        assertThrows<Exception> {
+            movieRepositoryImpl.getUpcomingMovies(page, genreId, pageSize)
         }
     }
 
@@ -287,4 +552,25 @@ class MovieRepositoryImplTest {
                 characterName = character
             )
         }
-}   }
+
+        private fun createMockReviewDto() = ReviewDto(
+            id = "review123",
+            contentTitle = "Great movie! Highly recommended.",
+            authorName = "John Reviewer",
+            rating = 9.0f,
+            authorAvatarUrl = "https://example.com/avatar.jpg",
+            reviewText = "This movie was fantastic! The plot was engaging and the acting was top-notch.",
+            postedDate = LocalDate.parse("2023-01-01").toString()
+        )
+
+        private fun createMockReview() = Review(
+            id = "review123",
+            contentTitle = "Great movie! Highly recommended.",
+            authorName = "John Reviewer",
+            rating = 9.0f,
+            authorAvatarUrl = "https://example.com/avatar.jpg",
+            reviewText = "This movie was fantastic! The plot was engaging and the acting was top-notch.",
+            postedDate = LocalDate.parse("2023-01-01")
+        )
+    }
+}
