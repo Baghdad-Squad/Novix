@@ -69,7 +69,7 @@ class GetTrendingMoviesUseCaseTest {
             createMovie(3, listOf(1))
         )
         val expectedResult = PagedResult(
-            data = listOf(movies[0], movies[2]), // only those with genreId = 1
+            data = listOf(movies[0], movies[2]),
             nextKey = 2,
             prevKey = null
         )

@@ -42,8 +42,6 @@ class SearchFilterHelperTest {
         assertFalse(result)
     }
 
-    // --- Year Filter Tests ---
-
     @Test
     fun `matchesYearFilter returns true when within min and max`() {
         val result = helper.matchesYearFilter(2020, 2010, 2022)
@@ -67,8 +65,6 @@ class SearchFilterHelperTest {
         val result = helper.matchesYearFilter(2022, null, null)
         assertTrue(result)
     }
-
-    // --- Rating Filter Tests ---
 
     @Test
     fun `matchesRatingFilter returns true when rating is equal to minimum`() {
