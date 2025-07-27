@@ -18,7 +18,7 @@ class LogOutUseCaseTest {
     }
 
     @Test
-    fun `should return true when Successful logout`() = runTest{
+    fun `should return true when successful logout`() = runTest{
         // Given
         coEvery { authenticationRepository.logOut() } returns true
 
@@ -30,7 +30,7 @@ class LogOutUseCaseTest {
     }
 
     @Test
-    fun `should return false Invalid logout`() = runTest {
+    fun `should return false when invalid logout`() = runTest {
         // Given
         coEvery { authenticationRepository.logOut() } returns false
 
