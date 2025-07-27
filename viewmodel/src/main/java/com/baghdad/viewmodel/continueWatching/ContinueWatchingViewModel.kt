@@ -89,10 +89,12 @@ class ContinueWatchingViewModel(
     }
 
     override fun onGenreClick(genreId: Long?) {
-        updateState {
-            it.copy(selectedGenreId = genreId, isLoading = true, mediaFlow = flowOf())
+        if (genreId != currentState.selectedGenreId) {
+            updateState {
+                it.copy(selectedGenreId = genreId, isLoading = true, mediaFlow = flowOf())
+            }
+            getMedia(genreId)
         }
-        getMedia(genreId)
     }
 
     override fun onSelectedTab(isMovieTab: Boolean) {

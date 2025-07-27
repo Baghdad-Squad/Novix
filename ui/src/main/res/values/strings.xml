@@ -82,4 +82,5 @@
     <string name="trending_people">Trending people</string>
     <string name="episodes">%1$d Episodes</string>
     <string name="s"> S </string>
+    <string name="automatically_redirecting_to_login">Automatically redirecting to login in 5 seconds…</string>
 </resources>
