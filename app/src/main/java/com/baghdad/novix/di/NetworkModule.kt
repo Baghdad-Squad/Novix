@@ -26,30 +26,40 @@ import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.language.LanguageProvider
+import com.baghdad.repository.logger.Logger
+import com.google.firebase.sessions.dagger.Module
+import com.google.firebase.sessions.dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import jakarta.inject.Named
+import jakarta.inject.Singleton
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.core.qualifier.named
-import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-private const val timeOut = 20L
-val remoteDataSourceModule = module {
-    single<HttpClient> {
-        HttpClient(CIO) {
+
+@Module
+@InstallIn(SingletonComponent::class)
+object NetworkModule {
+    private const val timeOut = 20L
+
+    @Provides
+    fun provideHttpClient(): HttpClient {
+        return HttpClient(CIO) {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
             install(KtorApiInterceptor) {
                 apiKey = BuildConfig.API_KEY
-                languageProvider = get()
+                languageProvider = provideLanguageProvider()
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 20_000
@@ -59,121 +69,157 @@ val remoteDataSourceModule = module {
         }
     }
 
-    single {
-        HttpLoggingInterceptor().apply {
+    @Provides
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
     }
 
-    single<LanguageProvider> { AppLanguageProvider() }
-    single<String>(named("AUTHORIZATION_TOKEN")) { "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTZkYmRkOTNjMGY5NzdkMjMwOGJjMzM3NmI3YTNmOCIsIm5iZiI6MTc1MzAyOTE3Ni45OSwic3ViIjoiNjg3ZDFhMzgzOTg0OWZmZThkZDk4ZDEzIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.5NDfRH9_oRVtrvQb8Bs11qWGeLzEE5US_e5IcVQWerE" }
-    single<HeadersSetupInterceptor> {
-        HeadersSetupInterceptor(
-            languageProvider = get(),
-            authorizationToken = get(named("AUTHORIZATION_TOKEN"))
-        )
+    @Provides
+    fun provideLanguageProvider(): LanguageProvider {
+        return AppLanguageProvider()
     }
 
-    single {
-        OkHttpClient.Builder()
+    @Provides
+    @Singleton
+    @Named("AUTHORIZATION_TOKEN")
+    fun provideAuthorizationToken(): String {
+        return "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTZkYmRkOTNjMGY5NzdkMjMwOGJjMzM3NmI3YTNmOCIsIm5iZiI6MTc1MzAyOTE3Ni45OSwic3ViIjoiNjg3ZDFhMzgzOTg0OWZmZThkZDk4ZDEzIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.5NDfRH9_oRVtrvQb8Bs11qWGeLzEE5US_e5IcVQWerE"
+    }
+
+    @Provides
+    fun provideHeadersSetupInterceptor(
+        languageProvider: LanguageProvider,
+        @Named("AUTHORIZATION_TOKEN") authorizationToken: String
+    ): HeadersSetupInterceptor {
+        return HeadersSetupInterceptor(languageProvider, authorizationToken)
+    }
+
+    @Provides
+    fun provideOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        headersSetupInterceptor: HeadersSetupInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
             .callTimeout(timeOut, TimeUnit.SECONDS)
             .connectTimeout(timeOut, TimeUnit.SECONDS)
             .readTimeout(timeOut, TimeUnit.SECONDS)
             .writeTimeout(timeOut, TimeUnit.SECONDS)
-            .addInterceptor(get<HttpLoggingInterceptor>())
-            .addInterceptor(get<HeadersSetupInterceptor>())
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor(headersSetupInterceptor)
             .build()
     }
 
-    single {
-        Retrofit.Builder()
+    @Provides
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
             .baseUrl("https://api.themoviedb.org/3/")
-            .client(get())
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
-    single(named("BASE_URL")) {
-        "https://api.themoviedb.org/3"
+    @Provides
+    @Named("BASE_URL")
+    fun provideBaseUrl(): String {
+        return "https://api.themoviedb.org/3"
     }
 
-    single(named("API_KEY")) {
-        BuildConfig.API_KEY
+    @Provides
+    @Named("API_KEY")
+    fun provideApiKey(): String {
+        return BuildConfig.API_KEY
     }
 
-    single<RemoteSearchDataSource> {
-        RemoteSearchDataSourceImpl(
-            searchApiService = get(),
-            logger = get()
-        )
+    @Provides
+    fun provideActorApiService(retrofit: Retrofit): ActorApiService {
+        return retrofit.create(ActorApiService::class.java)
     }
 
-    single<RemoteGenreDataSource> {
-        RemoteGenreDataSourceImpl(
-            genreApiService = get(),
-            logger = get()
-        )
+    @Provides
+    fun provideEpisodeApiService(retrofit: Retrofit): EpisodeApiService {
+        return retrofit.create(EpisodeApiService::class.java)
     }
 
-    single<RemoteMovieDataSource> {
-        RemoteMovieDataSourceImpl(
-            movieApiService = get(),
-            logger = get(),
-        )
+    @Provides
+    fun provideGenreApiService(retrofit: Retrofit): GenreApiService {
+        return retrofit.create(GenreApiService::class.java)
     }
 
-    single<RemoteActorDataSource> {
-        RemoteActorDataSourceImpl(
-            actorApiService = get(),
-            logger = get()
-        )
+    @Provides
+    fun provideMovieApiService(retrofit: Retrofit): MovieApiService {
+        return retrofit.create(MovieApiService::class.java)
     }
 
-    single<RemoteTvShowDataSource> {
-        RemoteTvShowDataSourceImpl(
-            tvShowApiService = get(),
-            logger = get()
-        )
+    @Provides
+    fun provideSearchApiService(retrofit: Retrofit): SearchApiService {
+        return retrofit.create(SearchApiService::class.java)
     }
 
-    single<RemoteEpisodeDataSource> {
-        RemoteEpisodeDataSourceImpl(
-            episodeApiService = get(),
-            logger = get()
-        )
+    @Provides
+    fun provideTvShowApiService(retrofit: Retrofit): TvShowApiService {
+        return retrofit.create(TvShowApiService::class.java)
     }
 
-
-    single<ActorApiService> {
-        get<Retrofit>().create(ActorApiService::class.java)
+    @Provides
+    fun provideAuthenticationApiService(retrofit: Retrofit): AuthenticationApiService {
+        return retrofit.create(AuthenticationApiService::class.java)
     }
 
-    single<EpisodeApiService> {
-        get<Retrofit>().create(EpisodeApiService::class.java)
+    @Provides
+    fun provideRemoteSearchDataSource(
+        searchApiService: SearchApiService,
+        logger: Logger
+    ): RemoteSearchDataSource {
+        return RemoteSearchDataSourceImpl(searchApiService, logger)
     }
 
-    single<GenreApiService> {
-        get<Retrofit>().create(GenreApiService::class.java)
+    @Provides
+    fun provideRemoteGenreDataSource(
+        genreApiService: GenreApiService,
+        logger: Logger
+    ): RemoteGenreDataSource {
+        return RemoteGenreDataSourceImpl(genreApiService, logger)
     }
 
-    single<MovieApiService> {
-        get<Retrofit>().create(MovieApiService::class.java)
+    @Provides
+    fun provideRemoteMovieDataSource(
+        movieApiService: MovieApiService,
+        logger: Logger
+    ): RemoteMovieDataSource {
+        return RemoteMovieDataSourceImpl(movieApiService, logger)
     }
 
-    single<SearchApiService> {
-        get<Retrofit>().create(SearchApiService::class.java)
+    @Provides
+    fun provideRemoteActorDataSource(
+        actorApiService: ActorApiService,
+        logger: Logger
+    ): RemoteActorDataSource {
+        return RemoteActorDataSourceImpl(actorApiService, logger)
     }
 
-    single<TvShowApiService> {
-        get<Retrofit>().create(TvShowApiService::class.java)
+    @Provides
+    fun provideRemoteTvShowDataSource(
+        tvShowApiService: TvShowApiService,
+        logger: Logger
+    ): RemoteTvShowDataSource {
+        return RemoteTvShowDataSourceImpl(tvShowApiService, logger)
     }
-    single<AuthenticationApiService> {
-        get<Retrofit>().create(AuthenticationApiService::class.java)
+
+    @Provides
+    fun provideRemoteEpisodeDataSource(
+        episodeApiService: EpisodeApiService,
+        logger: Logger
+    ): RemoteEpisodeDataSource {
+        return RemoteEpisodeDataSourceImpl(episodeApiService, logger)
     }
-    single<RemoteAuthenticationDataSource> {
-        RemoteAuthenticationImpl(
-            authenticationApiService = get(),
-            logger = get()
-        )
+
+    @Provides
+    fun provideRemoteAuthenticationDataSource(
+        authenticationApiService: AuthenticationApiService,
+        logger: Logger
+    ): RemoteAuthenticationDataSource {
+        return RemoteAuthenticationImpl(authenticationApiService, logger)
     }
 }
