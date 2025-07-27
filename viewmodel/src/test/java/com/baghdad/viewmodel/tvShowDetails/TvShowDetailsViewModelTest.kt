@@ -13,8 +13,6 @@ import com.baghdad.entity.person.CastMember
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -178,7 +176,8 @@ class TvShowDetailsViewModelTest {
         advanceUntilIdle()
         job.cancel()
 
-        val expectedEffect = TvShowDetailsScreenEffect.NavigateToEpisodeDetails(seasonNumber, episodeNumber)
+        val expectedEffect =
+            TvShowDetailsScreenEffect.NavigateToEpisodeDetails(seasonNumber, episodeNumber)
         Assertions.assertTrue(effects.contains(expectedEffect))
     }
 
@@ -203,6 +202,7 @@ class TvShowDetailsViewModelTest {
         val expectedEffect = TvShowDetailsScreenEffect.NavigateToReviews(tvShowId)
         Assertions.assertTrue(effects.contains(expectedEffect))
     }
+
     @Test
     fun `viewModel should initialize without crashing`() = runTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
@@ -218,6 +218,7 @@ class TvShowDetailsViewModelTest {
 
         Assertions.assertNotNull(viewModel.uiState.value)
     }
+
     @Test
     fun `onClickSeasonTab should update selected season and fetch episodes`() = runTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
@@ -251,7 +252,7 @@ class TvShowDetailsViewModelTest {
             addContinueWatchingUseCase.invoke(
                 tvShowId,
                 any(),
-                mockTvShow.posterImageURL,
+                any(),
                 ContinueWatching.ContentType.TV_SHOW
             )
         }
@@ -297,7 +298,10 @@ class TvShowDetailsViewModelTest {
             placeOfBirth = "Baghdad",
             deathDate = null,
             biography = "This is a test biography.",
-            headerPictures = listOf("https://example.com/header1.jpg", "https://example.com/header2.jpg"),
+            headerPictures = listOf(
+                "https://example.com/header1.jpg",
+                "https://example.com/header2.jpg"
+            ),
             department = "Acting"
         )
 
