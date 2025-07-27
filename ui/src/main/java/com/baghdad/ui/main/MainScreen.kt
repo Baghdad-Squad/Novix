@@ -64,8 +64,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 NovixBottomNavigationBar(
                     items = BOTTOM_NAV_ITEMS.values.toList(),
                     onClick = { index ->
-                        val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
-                        navController.navigateToBottomNavDestination(targetGraph)
+                        if (index != selectedIndex) {
+                            val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
+                            navController.navigateToBottomNavDestination(targetGraph)
+                        }
                     },
                     selectedIconIndex = selectedIndex
                 )
