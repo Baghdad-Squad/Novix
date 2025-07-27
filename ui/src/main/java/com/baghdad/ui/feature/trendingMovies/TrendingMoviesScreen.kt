@@ -113,8 +113,7 @@ private fun TrendingMoviesContent(
                 .background(Theme.color.surface)
         ) {
             LazyRow(
-                contentPadding = PaddingValues(start = 16.dp, end = 8.dp),
-                modifier = Modifier.padding(bottom = 11.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 12.dp),
             ) {
                 item {
                     Chip(

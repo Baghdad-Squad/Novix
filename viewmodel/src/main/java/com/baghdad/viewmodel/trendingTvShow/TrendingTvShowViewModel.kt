@@ -52,7 +52,9 @@ class TrendingTvShowViewModel(
     }
 
     override fun onGenreClick(genreId: Long?) {
-        getTrendingTvShowsByGenre(genreId)
+        if (genreId != currentState.selectedGenreId) {
+            getTrendingTvShowsByGenre(genreId)
+        }
     }
 
     override fun onSaveTvShowClick(tvShowId: Long) {
