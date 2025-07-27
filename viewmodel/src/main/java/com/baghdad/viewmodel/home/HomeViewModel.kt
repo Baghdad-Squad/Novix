@@ -166,8 +166,7 @@ class HomeViewModel(
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-//        TODO("Not yet implemented")
-        return BaseSnackBarMessage.DefaultMessage
+        return BaseSnackBarMessage.UnknownError
     }
 
     override fun onPopularItemClicked(item: HomeScreenState.PopularItemUiState) {
