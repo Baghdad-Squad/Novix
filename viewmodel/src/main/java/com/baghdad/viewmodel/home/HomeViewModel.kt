@@ -41,8 +41,8 @@ class HomeViewModel(
 
     private fun onGetPopularItemsSuccess(popularItems: Pair<List<Movie>, List<TvShow>>) {
         val (movies, tvShows) = popularItems
-        val popularMovies = movies.take(5).map(Movie::toPopularItemUiState)
-        val popularTvShows = tvShows.take(5).map(TvShow::toPopularItemUiState)
+        val popularMovies = movies.take(POPULAR_MOVIES_LIMIT).map(Movie::toPopularItemUiState)
+        val popularTvShows = tvShows.take(POPULAR_TV_SHOWS_LIMIT).map(TvShow::toPopularItemUiState)
         updateState {
             it.copy(
                 popularItems = (popularMovies + popularTvShows).shuffled(),
@@ -64,7 +64,7 @@ class HomeViewModel(
 
     private fun getTopRatingMovies() {
         tryToExecute(
-            callee = { getMovieTopRatingUseCase(1, null).data },
+            callee = { getMovieTopRatingUseCase(DEFAULT_PAGE, null).data },
             onSuccess = ::onGetTopRatingMoviesSuccess,
             onStart = ::onGetTopRatingMoviesStart,
             onFinally = ::onGetTopRatingMoviesFinished,
@@ -74,8 +74,11 @@ class HomeViewModel(
     private fun onGetTopRatingMoviesSuccess(movies: List<Movie>) {
         updateState {
             it.copy(
-                topRatingItems = movies.map(Movie::toTopRatingItemUiState),
-            )
+                topRatingItems =
+                    movies
+                        .take(TOP_RATING_MOVIES_LIMIT)
+                        .map(Movie::toTopRatingItemUiState),
+                    )
         }
     }
 
@@ -93,7 +96,7 @@ class HomeViewModel(
 
     private fun getContinueWatchingItems() {
         tryToExecute(
-            callee = { getContinueWatchingUseCase(1).data },
+            callee = { getContinueWatchingUseCase(DEFAULT_PAGE).data },
             onSuccess = ::onGetContinueWatchingItemsSuccess,
             onStart = ::onGetContinueWatchingItemsStart,
             onFinally = ::onGetContinueWatchingItemsFinished,
@@ -103,8 +106,11 @@ class HomeViewModel(
     private fun onGetContinueWatchingItemsSuccess(items: List<ContinueWatching>) {
         updateState {
             it.copy(
-                continueWatchingItems = items.map(ContinueWatching::toUiState),
-            )
+                continueWatchingItems =
+                    items
+                        .take(CONTINUE_WATCHING_LIMIT)
+                    .map(ContinueWatching::toUiState),
+                    )
         }
     }
 
@@ -163,7 +169,7 @@ class HomeViewModel(
                     it.copy(isUpcomingMoviesLoading = false)
                 }
             },
-            pageSize = 20,
+            pageSize = UPCOMING_PAGE_SIZE,
             mapEntityToUiState = Movie::toUpcomingItemUiState,
             onFlowCreated = { flow ->
                 updateState {
@@ -241,5 +247,14 @@ class HomeViewModel(
 
     override fun onUpcomingItemSaveClicked(item: HomeScreenState.UpcomingItemUiState) {
 //        TODO("Implement when saving lists is implemented")
+    }
+
+    companion object {
+        private const val POPULAR_MOVIES_LIMIT = 5
+        private const val POPULAR_TV_SHOWS_LIMIT = 5
+        private const val TOP_RATING_MOVIES_LIMIT = 10
+        private const val CONTINUE_WATCHING_LIMIT = 10
+        private const val DEFAULT_PAGE = 1
+        private const val UPCOMING_PAGE_SIZE = 1
     }
 }
