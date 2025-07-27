@@ -12,7 +12,7 @@ class TrendingActorMapperTest {
     fun `toDto should map actor details correctly`() {
         val details = TrendingActorDetails(
             id = 123,
-            name = "",
+            name = "carlos sanchez",
             profilePath = "/profile.jpg",
             knownForDepartment = "Acting"
         )
@@ -20,8 +20,8 @@ class TrendingActorMapperTest {
         val dto: ActorDto = details.toDto()
 
         assertThat(dto.id).isEqualTo(123L)
-        assertThat(dto.name).isEqualTo("fara7")
-        assertThat(dto.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/image1.jpg")
+        assertThat(dto.name).isEqualTo("carlos sanchez")
+        assertThat(dto.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/profile.jpg")
         assertThat(dto.biography).isEmpty()
         assertThat(dto.birthdayDate).isEmpty()
         assertThat(dto.deathDate).isNull()
