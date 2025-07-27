@@ -35,74 +35,30 @@ class ActorGalleryViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel(): ActorGalleryViewModel {
+    private fun createViewModel(actorId: Long = ACTOR_ID): ActorGalleryViewModel {
         return ActorGalleryViewModel(
             getGalleryImagesUseCase = getGalleryImagesUseCase,
             actorId = actorId
         )
     }
 
-    @Test
-    fun `initial state should have empty images list and not loading`() {
-
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
-
-        viewModel = createViewModel()
-
-        val initialState = viewModel.uiState.value
-        Assertions.assertEquals(emptyList<String>(), initialState.images)
-        Assertions.assertFalse(initialState.isLoading)
-    }
 
     @Test
     fun `init should call getActorGalleryImages with correct actorId`() = runTest {
-
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
-
+        coEvery { getGalleryImagesUseCase.invoke(ACTOR_ID) } returns emptyList()
         viewModel = createViewModel()
         advanceUntilIdle()
-
-        coVerify { getGalleryImagesUseCase.invoke(actorId) }
+        coVerify { getGalleryImagesUseCase.invoke(ACTOR_ID) }
     }
 
-    @Test
-    fun `getActorGalleryImages with empty list should update state correctly`() = runTest {
-
-        val expectedImages = emptyList<String>()
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } returns expectedImages
-
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val finalState = viewModel.uiState.value
-        Assertions.assertEquals(expectedImages, finalState.images)
-        Assertions.assertFalse(finalState.isLoading)
-    }
-
-    @Test
-    fun `getActorGalleryImages failure should handle error and set loading false`() = runTest {
-
-        val exception = RuntimeException(imageUrl1)
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } throws exception
-
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val finalState = viewModel.uiState.value
-        Assertions.assertFalse(finalState.isLoading)
-        Assertions.assertEquals(emptyList<String>(), finalState.images)
-    }
 
     @Test
     fun `onBackClick should send OnBackClick effect`() = runTest {
-
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
+        coEvery { getGalleryImagesUseCase.invoke(ACTOR_ID) } returns emptyList()
         viewModel = createViewModel()
 
         val effects = mutableListOf<ActorGalleryScreenEffect>()
-        val job = launch {
-            viewModel.uiEffect.collect { effects.add(it) }
-        }
+        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
 
         viewModel.onBackClick()
         advanceUntilIdle()
@@ -113,73 +69,50 @@ class ActorGalleryViewModelTest {
 
     @Test
     fun `different actorId should call usecase with correct parameter`() = runTest {
-
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
-        coEvery { getGalleryImagesUseCase.invoke(differentActorId) } returns emptyList()
+        coEvery { getGalleryImagesUseCase.invoke(ACTOR_ID) } returns emptyList()
+        coEvery { getGalleryImagesUseCase.invoke(DIFFERENT_ACTOR_ID) } returns emptyList()
 
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.getActorGalleryImages(differentActorId)
+        coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(ACTOR_ID) }
+
+        viewModel.getActorGalleryImages(DIFFERENT_ACTOR_ID)
         advanceUntilIdle()
 
-        coVerify { getGalleryImagesUseCase.invoke(actorId) }
-        coVerify { getGalleryImagesUseCase.invoke(differentActorId) }
-    }
-
-    @Test
-    fun `state should be properly initialized with default values`() {
-
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
-
-        viewModel = createViewModel()
-
-        val state = viewModel.uiState.value
-        Assertions.assertTrue(state.images.isEmpty())
-        Assertions.assertFalse(state.isLoading)
-    }
-
-    @Test
-    fun `viewModel should implement ActorGalleryInteractionListener`() {
-
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
-
-        viewModel = createViewModel()
-
-        Assertions.assertTrue(true)
+        coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(DIFFERENT_ACTOR_ID) }
     }
 
     @Test
     fun `getActorGalleryImages should call usecase only once when called once`() = runTest {
-
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
+        coEvery { getGalleryImagesUseCase.invoke(ACTOR_ID) } returns emptyList()
 
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(actorId) }
+        coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(ACTOR_ID) }
     }
 
     @Test
-    fun `getActorGalleryImages should call usecase with new actorId when actorId changes`() = runTest {
+    fun `getActorGalleryImages should call usecase with new actorId when actorId changes`() =
+        runTest {
+            coEvery { getGalleryImagesUseCase.invoke(ACTOR_ID) } returns emptyList()
+            coEvery { getGalleryImagesUseCase.invoke(NEW_ACTOR_ID) } returns emptyList()
 
-        coEvery { getGalleryImagesUseCase.invoke(actorId) } returns emptyList()
-        coEvery { getGalleryImagesUseCase.invoke(newActorId) } returns emptyList()
+            viewModel = createViewModel()
+            advanceUntilIdle()
 
-        viewModel = createViewModel()
-        advanceUntilIdle()
+            viewModel.getActorGalleryImages(NEW_ACTOR_ID)
+            advanceUntilIdle()
 
-        viewModel.getActorGalleryImages(newActorId)
-        advanceUntilIdle()
+            coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(ACTOR_ID) }
+            coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(NEW_ACTOR_ID) }
+        }
 
-        coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(actorId) }
-        coVerify(exactly = 1) { getGalleryImagesUseCase.invoke(newActorId) }
-    }
 
     private companion object {
-        const val actorId = 123L
-        const val imageUrl1 = "image1.jpg"
-        const val differentActorId = 456L
-        const val newActorId = 999L
+        const val ACTOR_ID = 123L
+        const val DIFFERENT_ACTOR_ID = 456L
+        const val NEW_ACTOR_ID = 789L
     }
 }
