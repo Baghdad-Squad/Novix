@@ -21,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,7 +28,6 @@ import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
-import com.baghdad.design_system.modifier.dropShadow
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -106,14 +104,6 @@ fun ActorGalleryScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Theme.color.surface)
-                .dropShadow(
-                    color = Theme.color.primary,
-                    alpha = 0.08f,
-                    offsetX = (-210).dp,
-                    offsetY = (18).dp,
-                    shape = RectangleShape,
-                    blur = 336.dp
-                )
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
@@ -129,7 +119,7 @@ fun ActorGalleryScreenContent(
                         imageUrl = actorItem,
                         contentDescription = stringResource(R.string.gallery),
                         modifier = Modifier
-                            .size(100.dp)
+                            .size(104.dp)
                             .clip(RoundedCornerShape(12))
                             .border(1.dp, Theme.color.stroke)
                     )
