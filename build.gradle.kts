@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.firebase.perf) apply false
     jacoco
+    alias(libs.plugins.hilt.android) apply false
 }
 
 jacoco {

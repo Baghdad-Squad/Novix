@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.Packaging
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -15,7 +17,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
-    packagingOptions {
+    fun Packaging.() {
         resources {
             excludes += "/META-INF/{LICENSE.md,LICENSE-notice.md}"
         }
@@ -51,7 +53,6 @@ dependencies {
     implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.bundles.coroutines)
     implementation(libs.kotlinx.datetime)
-    implementation(libs.bundles.koin)
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.bundles.test.core)
