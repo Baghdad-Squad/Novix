@@ -27,8 +27,8 @@ import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.language.LanguageProvider
 import com.baghdad.repository.logger.Logger
-import com.google.firebase.sessions.dagger.Module
 import com.google.firebase.sessions.dagger.Provides
+import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
