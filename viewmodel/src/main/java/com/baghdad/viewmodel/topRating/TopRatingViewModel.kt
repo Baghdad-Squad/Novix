@@ -84,9 +84,11 @@ class TopRatingViewModel(
     }
 
     override fun onGenreClick(genreId: Long?) {
-        when (currentState.selectedTab) {
-            TopRatingTab.MOVIES -> fetchMoviesByGenre(genreId)
-            TopRatingTab.TV_SHOWS -> fetchTvShowsByGenre(genreId)
+        if (genreId != currentState.selectedGenreId) {
+            when (currentState.selectedTab) {
+                TopRatingTab.MOVIES -> fetchMoviesByGenre(genreId)
+                TopRatingTab.TV_SHOWS -> fetchTvShowsByGenre(genreId)
+            }
         }
     }
 

@@ -77,11 +77,13 @@
     <string name="popular">شائع</string>
     <string name="continue_watching">متابعة المشاهدة</string>
     <string name="upcoming">قادم</string>
+    <string name="all">الكل</string>
     <string name="continue_watching_item">عنصر أكمل المشاهدة</string>
     <string name="top_rating_item">عنصر الأعلى ترتيبا</string>
     <string name="trending_people">الممثلون الرائجون</string>
 
     <string name="episodes">عدد الحلقات %1$d </string>
     <string name="s"> الموسم</string>
+    <string name="automatically_redirecting_to_login">سيتم توجيهك تلقائيا لتسجيل الدخول في ٥ ثواني …</string>
 
 </resources>

@@ -163,6 +163,7 @@ private fun LoginForm(
         onValueChange = listener::onUserNameValueChange,
         leadingIcon = painterResource(R.drawable.ic_user_guest),
         singleLine = true,
+        modifier = Modifier.padding(bottom = 16.dp)
     )
 
     NovixTextField(

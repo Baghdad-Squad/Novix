@@ -142,7 +142,7 @@ private fun TopRatingContent(
                     onGenreSelected = { listener.onGenreClick(it?.id) },
                     modifier = Modifier
                         .background(Theme.color.surface)
-                        .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
+                        .padding(bottom = 12.dp)
                 )
             }
         },
@@ -169,10 +169,9 @@ private fun TopRatingContent(
                         .fillMaxSize()
                         .background(Theme.color.surface),
                     contentPadding = PaddingValues(
-                        start = 16.dp,
+                        bottom = 12.dp,
                         end = 16.dp,
-                        top = 8.dp,
-                        bottom = 8.dp
+                        start = 16.dp,
                     ),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
