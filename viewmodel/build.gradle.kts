@@ -50,5 +50,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.paging.common.android)
     testImplementation(libs.bundles.test.core)
+
+    implementation(libs.bundles.hilt)
     implementation("androidx.paging:paging-runtime:3.3.6")
 }

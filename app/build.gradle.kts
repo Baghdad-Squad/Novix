@@ -129,7 +129,8 @@ dependencies {
     implementation(libs.bundles.room)
     implementation(libs.bundles.retrofit)
     implementation(libs.androidx.datastore.preferences)
-    implementation(libs.bundles.hilt)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     kapt(libs.hilt.android.compiler)
 
 }
