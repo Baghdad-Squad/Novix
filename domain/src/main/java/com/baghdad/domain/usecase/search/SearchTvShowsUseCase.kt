@@ -6,8 +6,9 @@ import com.baghdad.domain.repository.FavoriteGenreRepository
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.util.SearchFilterHelper
 import com.baghdad.entity.media.TvShow
+import javax.inject.Inject
 
-class SearchTvShowsUseCase(
+class SearchTvShowsUseCase @Inject constructor(
     private val searchRepository: SearchRepository,
     private val favoriteGenreRepository: FavoriteGenreRepository,
     private val filterHelper: SearchFilterHelper

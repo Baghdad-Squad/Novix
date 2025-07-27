@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Scaffold
@@ -40,15 +41,12 @@ import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksEffect
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksInteractionListener
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksState
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun TopMoviePicksScreen(
     actorId: Long,
-    viewModel: TopMoviePicksViewModel = koinViewModel(
+    viewModel: TopMoviePicksViewModel = hiltViewModel(
         key = actorId.toString(),
-        parameters = { parametersOf(actorId) }
     ),
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {

@@ -5,8 +5,11 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 
-class TopTvShowViewModel(
+@HiltViewModel
+class TopTvShowViewModel @Inject constructor(
     val actorId: Long,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
 ) : BaseViewModel<TopTvShowPicksState, TopTvShowPicksEffect>

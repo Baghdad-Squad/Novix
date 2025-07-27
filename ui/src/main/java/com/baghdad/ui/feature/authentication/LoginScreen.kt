@@ -27,6 +27,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Icon
@@ -47,12 +48,11 @@ import com.baghdad.viewmodel.login.LoginInteractionListener
 import com.baghdad.viewmodel.login.LoginUiEffect
 import com.baghdad.viewmodel.login.LoginUiState
 import com.baghdad.viewmodel.login.LoginViewModel
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = koinViewModel(),
+    loginViewModel: LoginViewModel = hiltViewModel(),
     handleNavigation: (AuthenticationNavEvent) -> Unit,
 ) {
 

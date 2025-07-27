@@ -13,10 +13,11 @@ import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class LocalMovieDataSourceImpl(
+class LocalMovieDataSourceImpl @Inject constructor(
     private val movieDao: MovieDao,
     private val genreDao: GenreDao,
     private val logger: Logger

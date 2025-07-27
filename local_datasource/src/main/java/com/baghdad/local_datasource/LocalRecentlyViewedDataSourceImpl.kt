@@ -9,10 +9,11 @@ import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.RecentlyViewedDto
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class LocalRecentlyViewedDataSourceImpl(
+class LocalRecentlyViewedDataSourceImpl @Inject constructor(
     private val recentlyViewedDao: RecentlyViewedDao,
     private val logger: Logger
 ) : LocalRecentlyViewedDataSource {

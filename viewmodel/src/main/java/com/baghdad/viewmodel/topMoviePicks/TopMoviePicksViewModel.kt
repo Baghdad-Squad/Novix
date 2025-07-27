@@ -5,8 +5,11 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 
-class TopMoviePicksViewModel(
+@HiltViewModel
+class TopMoviePicksViewModel @Inject constructor(
     val  actorId: Long,
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
 ): BaseViewModel<TopMoviePicksState, TopMoviePicksEffect>

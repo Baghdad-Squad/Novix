@@ -1,11 +1,16 @@
 package com.baghdad.viewmodel.login
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.login.LoginUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 
-class LoginViewModel(
-    private val loginUseCase: LoginUseCase
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel<LoginUiState, LoginUiEffect>(
     LoginUiState()
 ), LoginInteractionListener {

@@ -8,10 +8,11 @@ import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.RecentSearchDto
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class LocalSearchDataSourceImpl(
+class LocalSearchDataSourceImpl @Inject constructor(
     private val recentSearchDao: RecentSearchDao,
     private val logger: Logger
 ) : LocalRecentSearchDataSource {

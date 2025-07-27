@@ -5,8 +5,11 @@ import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 
-class TrendingTvShowViewModel(
+@HiltViewModel
+class TrendingTvShowViewModel @Inject constructor(
     private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase,
     private val getGenresUseCase: GetGenresUseCase,
 ) : BaseViewModel<TrendingTvShowScreenState, TrendingTvShowScreenEffect>(TrendingTvShowScreenState()),

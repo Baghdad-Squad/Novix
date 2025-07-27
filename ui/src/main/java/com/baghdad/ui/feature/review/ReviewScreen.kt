@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -36,19 +37,14 @@ import com.baghdad.viewmodel.review.ReviewInteractionListener
 import com.baghdad.viewmodel.review.ReviewScreenEffect
 import com.baghdad.viewmodel.review.ReviewScreenState
 import com.baghdad.viewmodel.review.ReviewViewModel
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 
 @Composable
 fun ReviewScreen(
     mediaType: ContentType,
     mediaId: Long,
-    viewModel: ReviewViewModel = koinViewModel(
-        key = mediaId.toString(),
-        parameters = { parametersOf(mediaId, mediaType) }
-    ),
-    onNavEvent: (ReviewsNavEvent) -> Unit
+    viewModel: ReviewViewModel = hiltViewModel(key = mediaId.toString()),
+    onNavEvent: (ReviewsNavEvent) -> Unit,
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -65,7 +61,7 @@ fun ReviewScreen(
 
 @Composable
 fun ReviewContent(
-    uiState: ReviewScreenState, listener: ReviewInteractionListener, snackBarState: SnackBarState
+    uiState: ReviewScreenState, listener: ReviewInteractionListener, snackBarState: SnackBarState,
 ) {
     Scaffold(
         modifier = Modifier

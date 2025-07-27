@@ -9,10 +9,11 @@ import com.baghdad.local_datasource.util.calculatePageOffset
 import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ActorDto
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class LocalActorDataSourceImpl(
+class LocalActorDataSourceImpl @Inject constructor(
     private val actorDao: ActorDao,
     private val logger: Logger
 ) : LocalActorDataSource {
@@ -29,7 +30,6 @@ class LocalActorDataSourceImpl(
     override suspend fun deleteActorById(id: Long) = executeWithErrorHandling(logger = logger) {
         actorDao.deleteActorById(id)
     }
-
 
     override suspend fun getActorById(id: Long): ActorDto =
         executeWithErrorHandling(logger = logger) {

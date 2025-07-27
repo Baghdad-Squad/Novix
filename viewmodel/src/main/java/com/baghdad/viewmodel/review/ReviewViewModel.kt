@@ -5,8 +5,11 @@ import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
 import com.baghdad.entity.media.Review
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 
-class ReviewViewModel(
+@HiltViewModel
+class ReviewViewModel @Inject constructor(
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase,
     private val getSeriesReviewsUseCase: GetTvShowReviewsUseCase,
     val contentId: Long,

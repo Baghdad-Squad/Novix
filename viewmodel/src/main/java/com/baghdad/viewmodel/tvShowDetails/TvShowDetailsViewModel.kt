@@ -11,9 +11,12 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.delay
 
-class TvShowDetailsViewModel(
+@HiltViewModel
+class TvShowDetailsViewModel @Inject constructor(
     private val tvShowId: Long,
     private val getTvShowDetailsUseCase: GetTvShowDetailsUseCase,
     private val getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase,
