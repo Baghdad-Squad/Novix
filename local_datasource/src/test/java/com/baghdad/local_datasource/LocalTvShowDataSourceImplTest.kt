@@ -106,7 +106,7 @@ class LocalTvShowDataSourceImplTest {
     }
 
     @Test
-    fun deleteTvShowById() = runTest {
+    fun `should delete tv show when tv show have the same id`() = runTest {
         // Given
         val tvShowId = TV_SHOW.id
         coEvery { tvShowDao.deleteTvShowByID(tvShowId) } just Runs
@@ -120,7 +120,7 @@ class LocalTvShowDataSourceImplTest {
     }
 
     @Test
-    fun deleteAllTvShows() {
+    fun `should delete all tv shows when deleteAllTvShows called`() {
         // Given
         coEvery { tvShowDao.deleteAll() } just Runs
         coEvery { logger.logException(any()) } just Runs
@@ -133,7 +133,7 @@ class LocalTvShowDataSourceImplTest {
     }
 
     @Test
-    fun updateTvShow() {
+    fun `should update tv show when updateTvShow called`() {
         // Given
         val tvShowDto = TV_SHOW_DTO
         val expectedEntity = tvShowDto.toLocalDto()
@@ -148,7 +148,7 @@ class LocalTvShowDataSourceImplTest {
     }
 
     @Test
-    fun searchTvShowsByTitle() = runTest {
+    fun `should return tv shows when search with title`() = runTest {
         // Given
         val title = "Test"
         val pageSize = 10
