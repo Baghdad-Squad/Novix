@@ -43,7 +43,7 @@ fun ReleasedYearSlider(
         )
 
         BaseRangeSlider(
-            value = (minimumYear?.toFloat() ?: 1900f)..(maximumYear?.toFloat() ?: 2035f),
+            value = (minimumYear?.toFloat() ?: 1874f)..(maximumYear?.toFloat() ?: 2035f),
             onValueChange = onValueChange,
             valueRange = 1900f..2035f,
         )
