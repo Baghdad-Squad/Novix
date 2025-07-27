@@ -142,7 +142,7 @@ private fun TopRatingContent(
                     onGenreSelected = { listener.onGenreClick(it?.id) },
                     modifier = Modifier
                         .background(Theme.color.surface)
-                        .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
+                        .padding(bottom = 12.dp)
                 )
             }
         },

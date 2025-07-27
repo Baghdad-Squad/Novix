@@ -54,7 +54,7 @@ class LoginViewModel(
     }
 
     override fun onNavigateBackClicked() {
-        sendEffect(LoginUiEffect.NavigateBack)
+//        sendEffect(LoginUiEffect.NavigateBack)
     }
 
     override fun onPasswordValueChange(value: String) {

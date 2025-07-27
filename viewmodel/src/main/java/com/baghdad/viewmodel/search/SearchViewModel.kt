@@ -150,7 +150,7 @@ class SearchViewModel(
     }
 
     private fun onGetRecentViewedSuccess(recentlyViewed: List<RecentlyViewed>) {
-        val recentViewedUiState = recentlyViewed.map { it.toRecentlyViewedUI() }
+        val recentViewedUiState = recentlyViewed.take(10).map { it.toRecentlyViewedUI() }
         updateState { searchScreenState ->
             searchScreenState.copy(
                 recentViewed = recentViewedUiState.distinctBy { it.id })
@@ -165,7 +165,7 @@ class SearchViewModel(
     }
 
     private fun onGetRecentSearchesSuccess(recentSearches: List<RecentSearch>) {
-        val recentSearchUiState = recentSearches.map { it.toRecentSearchUI() }
+        val recentSearchUiState = recentSearches.take(20).map { it.toRecentSearchUI() }
         updateState { searchScreenState ->
             searchScreenState.copy(
                 recentSearch = recentSearchUiState.distinctBy { it.query })
