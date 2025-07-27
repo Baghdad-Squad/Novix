@@ -37,7 +37,7 @@ interface MovieApiService {
     @Authenticated
     @GET(MOVIE_WITH_GENRE_ENDPOINT)
     suspend fun getMoviesByGenre(
-        @Query("genre_id") genreId: Long,
+        @Query("with_genres") genreId: Long,
         @Query("page") page: Int
     ): Response<SimilarMovieResponse>
 

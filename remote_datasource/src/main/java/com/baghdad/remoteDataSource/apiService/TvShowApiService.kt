@@ -40,7 +40,7 @@ interface TvShowApiService {
     @Authenticated
     @GET(TV_SHOW_WITH_GENRE_ENDPOINT)
     suspend fun getTvShowsByGenre(
-        @Query("genre_id") genreId: Long,
+        @Query("with_genres") genreId: Long,
         @Query("page") page: Int
     ): Response<TvShowResponse>
 
