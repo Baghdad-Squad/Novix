@@ -119,6 +119,7 @@ fun PopularCardPager(
                             onCardClick = { onClick(item) },
                             onSavedClick = { onSaveClick(item) },
                             isSaved = item.isSaved,
+                            isCentralCard = currentPageOffset == 0f,
                             modifier =
                                 Modifier.graphicsLayer {
                                     rotationZ = rotation
@@ -152,7 +153,7 @@ private fun LoadingPopularCardPager(
             modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            ) { page ->
+    ) { page ->
         val currentPageOffset =
             (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
@@ -190,8 +191,7 @@ private fun LoadingPopularCardPager(
                         scaleX = xScale
                         scaleY = yScale
                         translationY = yTranslation
-                    }
-                    .fillMaxWidth(),
+                    }.fillMaxWidth(),
         )
     }
 }
@@ -205,7 +205,7 @@ private fun LoadingPopularCardPagerPreview() {
                 Modifier
                     .fillMaxSize()
                     .background(Theme.color.surface),
-        ) {
+                ) {
             LoadingPopularCardPager(PaddingValues(0.dp))
         }
     }
