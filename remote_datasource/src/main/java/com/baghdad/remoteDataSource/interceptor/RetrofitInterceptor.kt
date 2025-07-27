@@ -1,6 +1,5 @@
 package com.baghdad.remoteDataSource.interceptor
 
-
 import com.baghdad.repository.language.LanguageProvider
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -11,41 +10,37 @@ class HeadersSetupInterceptor(
     private val authorizationToken: String
 ) : Interceptor {
 
+    private val acceptHeaderKey = "Accept"
+    private val acceptHeaderValue = "application/json"
+    private val authorizationHeaderKey = "Authorization"
+    private val authorizationHeaderPrefix = "Bearer "
+    private val languageQueryKey = "language"
+
     override fun intercept(chain: Interceptor.Chain): Response {
-        val invocation = chain.request().tag(Invocation::class.java)
-            ?: return chain.proceed(chain.request())
+        val originalRequest = chain.request()
+        val invocation = originalRequest.tag(Invocation::class.java)
         val shouldAttachAuthHeader = invocation
-            .method()
-            .annotations
-            .any { it.annotationClass == Authenticated::class }
+            ?.method()
+            ?.annotations
+            ?.any { it.annotationClass == Authenticated::class } == true
+
         val language = languageProvider.getCurrentLanguage()
 
-        return chain.proceed(chain.request().newBuilder().apply {
+        val modifiedRequest = originalRequest.newBuilder().apply {
             if (shouldAttachAuthHeader) {
-                addHeader(
-                    "Authorization",
-                    "Bearer $authorizationToken"
-                )
+                addHeader(authorizationHeaderKey, "$authorizationHeaderPrefix$authorizationToken")
             }
-            addHeader("Accept", "application/json")
-        }.build())
-        return chain.proceed(
-            chain.request()
-                .newBuilder().apply {
-                    if (shouldAttachAuthHeader) {
-                        addHeader(
-                            "Authorization",
-                            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTZkYmRkOTNjMGY5NzdkMjMwOGJjMzM3NmI3YTNmOCIsIm5iZiI6MTc1MzAyOTE3Ni45OSwic3ViIjoiNjg3ZDFhMzgzOTg0OWZmZThkZDk4ZDEzIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.5NDfRH9_oRVtrvQb8Bs11qWGeLzEE5US_e5IcVQWerE"
-                        )
-                    }
-                    addHeader("Accept", "application/json")
-                    url(
-                        chain.request().url.newBuilder()
-                            .addQueryParameter("language", language)
-                            .build()
-                    )
-                }
-                .build())
+
+            addHeader(acceptHeaderKey, acceptHeaderValue)
+
+            url(
+                originalRequest.url.newBuilder()
+                    .addQueryParameter(languageQueryKey, language)
+                    .build()
+            )
+        }.build()
+
+        return chain.proceed(modifiedRequest)
     }
 }
 
