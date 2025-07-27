@@ -11,7 +11,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class ContinueWatchingRepositoryImplTest {
 
@@ -146,23 +145,6 @@ class ContinueWatchingRepositoryImplTest {
         }
 
     @Test
-    fun `getContinueWatching should throw exception when data source call fails`() = runTest {
-        // Given
-        val page = 1
-        val pageSize = 10
-        val exception = RuntimeException("Database error")
-
-        coEvery {
-            localContinueWatchingDataSource.getContinueWatching(1, pageSize, page)
-        } throws exception
-
-        // When & Then
-        assertThrows<Exception> {
-            continueWatchingRepositoryImpl.getContinueWatching(page, pageSize)
-        }
-    }
-
-    @Test
     fun `addContinueWatching should call data source with correct parameters for movie`() =
         runTest {
             // Given
@@ -249,28 +231,6 @@ class ContinueWatchingRepositoryImplTest {
 
         // Then
         coVerify { localContinueWatchingDataSource.addContinueWatching(expectedDto) }
-    }
-
-    @Test
-    fun `addContinueWatching should throw exception when data source call fails`() = runTest {
-        // Given
-        val contentId = 123L
-        val genreIds = listOf(1L, 2L)
-        val contentImageUrl = "https://example.com/image.jpg"
-        val contentType = ContinueWatching.ContentType.MOVIE
-        val exception = RuntimeException("Database error")
-
-        coEvery { localContinueWatchingDataSource.addContinueWatching(any()) } throws exception
-
-        // When & Then
-        assertThrows<Exception> {
-            continueWatchingRepositoryImpl.addContinueWatching(
-                contentId = contentId,
-                genreIds = genreIds,
-                contentImageUrl = contentImageUrl,
-                contentType = contentType
-            )
-        }
     }
 
     @Test

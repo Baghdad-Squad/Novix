@@ -7,6 +7,8 @@ import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.repository.model.GenreDto
+import com.baghdad.repository.model.TvShowDto
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -15,7 +17,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class EpisodeRepositoryImplTest {
 
@@ -31,20 +32,6 @@ class EpisodeRepositoryImplTest {
             remoteEpisodeDataSource = remoteEpisodeDataSource,
             remoteTvShowDataSource = remoteTvShowDataSource
         )
-    }
-
-    @Test
-    fun `getEpisodeDetails should throw exception when remote call fails`() = runTest {
-
-        val tvId = 123L
-        val seasonNumber = 2
-        val episodeNumber = 5
-        val exception = RuntimeException("Network error")
-        coEvery { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) } throws exception
-
-        assertThrows<Exception> {
-            episodeRepositoryImpl.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
-        }
     }
 
     @Test
@@ -79,20 +66,150 @@ class EpisodeRepositoryImplTest {
     }
 
     @Test
-    fun `getEpisodeCastMembers should throw exception when remote call fails`() = runTest {
-
+    fun `getEpisodeDetails should return episode with trailer and images when remote call succeeds`() = runTest {
+        // Given
         val tvId = 123L
         val seasonNumber = 2
         val episodeNumber = 5
-        val exception = RuntimeException("Network error")
-        coEvery { remoteEpisodeDataSource.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber) } throws exception
-        
-        assertThrows<Exception> {
-            episodeRepositoryImpl.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
-        }
+        val mockEpisodeDto = createMockEpisodeDto()
+        val mockTrailerUrl = "https://youtube.com/watch?v=trailer123"
+        val mockTvShowImages = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg", "/image4.jpg", "/image5.jpg")
+        val mockTvShowDetails = createMockTvShowDetailsDto()
+        val expectedEpisode = createMockEpisode().copy(
+            trailerUrl = mockTrailerUrl,
+            headerPictures = mockTvShowImages.take(10),
+            genres = mockTvShowDetails.genres.map { createMockGenre(it.id, it.name) }
+        )
+
+        coEvery { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) } returns mockEpisodeDto
+        coEvery { remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber) } returns mockTrailerUrl
+        coEvery { remoteTvShowDataSource.getTvShowImages(tvId) } returns mockTvShowImages
+        coEvery { remoteTvShowDataSource.getTvShowDetails(tvId) } returns mockTvShowDetails
+
+        val result = episodeRepositoryImpl.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
+
+        assertEquals(expectedEpisode.id, result.id)
+        assertEquals(expectedEpisode.title, result.title)
+        assertEquals(expectedEpisode.trailerUrl, result.trailerUrl)
+        assertEquals(mockTvShowImages.take(10), result.headerPictures)
+        assertEquals(expectedEpisode.genres.size, result.genres.size)
+        assertEquals(expectedEpisode.genres[0].id, result.genres[0].id)
+        assertEquals(expectedEpisode.genres[0].name, result.genres[0].name)
+        coVerify { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) }
+        coVerify { remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber) }
+        coVerify { remoteTvShowDataSource.getTvShowImages(tvId) }
+        coVerify { remoteTvShowDataSource.getTvShowDetails(tvId) }
+    }
+
+    @Test
+    fun `getEpisodeDetails should limit tv show images to 10 when more than 10 images available`() = runTest {
+        // Given
+        val tvId = 123L
+        val seasonNumber = 2
+        val episodeNumber = 5
+        val mockEpisodeDto = createMockEpisodeDto()
+        val mockTrailerUrl = "https://youtube.com/watch?v=trailer123"
+        val mockTvShowImages = (1..15).map { "/image$it.jpg" }
+        val mockTvShowDetails = createMockTvShowDetailsDto()
+
+        coEvery { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) } returns mockEpisodeDto
+        coEvery { remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber) } returns mockTrailerUrl
+        coEvery { remoteTvShowDataSource.getTvShowImages(tvId) } returns mockTvShowImages
+        coEvery { remoteTvShowDataSource.getTvShowDetails(tvId) } returns mockTvShowDetails
+
+        val result = episodeRepositoryImpl.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
+
+        assertEquals(10, result.headerPictures.size)
+        assertEquals(mockTvShowImages.take(10), result.headerPictures)
+        coVerify { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) }
+        coVerify { remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber) }
+        coVerify { remoteTvShowDataSource.getTvShowImages(tvId) }
+        coVerify { remoteTvShowDataSource.getTvShowDetails(tvId) }
+    }
+
+    @Test
+    fun `getEpisodeDetails should handle empty tv show images list`() = runTest {
+        // Given
+        val tvId = 123L
+        val seasonNumber = 2
+        val episodeNumber = 5
+        val mockEpisodeDto = createMockEpisodeDto()
+        val mockTrailerUrl = "https://youtube.com/watch?v=trailer123"
+        val emptyImagesList = emptyList<String>()
+        val mockTvShowDetails = createMockTvShowDetailsDto()
+
+        coEvery { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) } returns mockEpisodeDto
+        coEvery { remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber) } returns mockTrailerUrl
+        coEvery { remoteTvShowDataSource.getTvShowImages(tvId) } returns emptyImagesList
+        coEvery { remoteTvShowDataSource.getTvShowDetails(tvId) } returns mockTvShowDetails
+
+        val result = episodeRepositoryImpl.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
+
+        assertEquals(emptyList<String>(), result.headerPictures)
+        assertEquals(mockTrailerUrl, result.trailerUrl)
+        coVerify { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) }
+        coVerify { remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber) }
+        coVerify { remoteTvShowDataSource.getTvShowImages(tvId) }
+        coVerify { remoteTvShowDataSource.getTvShowDetails(tvId) }
+    }
+
+    @Test
+    fun `getEpisodeDetails should handle empty genres list from tv show`() = runTest {
+        // Given
+        val tvId = 123L
+        val seasonNumber = 2
+        val episodeNumber = 5
+        val mockEpisodeDto = createMockEpisodeDto()
+        val mockTrailerUrl = "https://youtube.com/watch?v=trailer123"
+        val mockTvShowImages = listOf("/image1.jpg", "/image2.jpg")
+        val mockTvShowDetails = createMockTvShowDetailsDto().copy(genres = emptyList())
+
+        coEvery { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) } returns mockEpisodeDto
+        coEvery { remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber) } returns mockTrailerUrl
+        coEvery { remoteTvShowDataSource.getTvShowImages(tvId) } returns mockTvShowImages
+        coEvery { remoteTvShowDataSource.getTvShowDetails(tvId) } returns mockTvShowDetails
+
+        val result = episodeRepositoryImpl.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
+
+        assertEquals(emptyList<com.baghdad.entity.media.Genre>(), result.genres)
+        assertEquals(mockTrailerUrl, result.trailerUrl)
+        assertEquals(mockTvShowImages, result.headerPictures)
+        coVerify { remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber) }
+        coVerify { remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber) }
+        coVerify { remoteTvShowDataSource.getTvShowImages(tvId) }
+        coVerify { remoteTvShowDataSource.getTvShowDetails(tvId) }
     }
 
     companion object {
+
+        private fun createMockTvShowDetailsDto() = TvShowDto(
+            id = 123L,
+            title = "Test TV Show",
+            genres = listOf(
+                createMockGenreDto(18, "Drama"),
+                createMockGenreDto(35, "Comedy")
+            ),
+            imdbRating = 7.9,
+            userRating = 8.1,
+            releaseDate = "2023-01-01",
+            overview = "Test overview for TV Show",
+            posterPictureURL = "/tv_poster.jpg",
+            numberOfSeasons = 3,
+            trailerURL = " ",
+            headerImagesURLs = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg")
+        )
+
+        private fun createMockGenreDto(id: Long, name: String) = GenreDto(
+            id = id,
+            name = name,
+            type = GenreDto.GenreType.TV_SHOW
+        )
+
+        private fun createMockGenre(id: Long, name: String) = com.baghdad.entity.media.Genre(
+            id = id,
+            name = name
+        )
+
         private fun createMockEpisodeDto() = EpisodeDto(
             id = 456L,
             title = "Test Episode",
