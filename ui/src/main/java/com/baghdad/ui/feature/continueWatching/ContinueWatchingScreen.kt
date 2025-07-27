@@ -157,7 +157,7 @@ fun ContinueWatchingContent(
                 genres = uiState.genres,
                 selectedTab = uiState.selectedGenreId,
                 onTabClick = { listener.onGenreClick(it) },
-                modifier = Modifier.padding(vertical = 12.dp)
+                modifier = Modifier.padding(bottom = 12.dp)
             )
             LazyPagingVerticalGrid<ContinueWatchingState.ContinueWatchingMovieUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
