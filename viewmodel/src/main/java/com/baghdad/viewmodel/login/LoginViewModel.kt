@@ -1,5 +1,7 @@
 package com.baghdad.viewmodel.login
 
+import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.domain.usecase.login.LoginUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -37,10 +39,22 @@ class LoginViewModel(
     }
 
     fun onLoginError(t: Throwable) {
-        showSnackBar(
-            message = BaseSnackBarMessage.InvalidCredential,
-            isSuccess = false
-        )
+        when (t) {
+            is UnAuthorizedException -> showSnackBar(
+                message = BaseSnackBarMessage.UnAuthorizedError,
+                isSuccess = false
+            )
+
+            is NoInternetException -> showSnackBar(
+                message = BaseSnackBarMessage.NoInternetException,
+                isSuccess = false
+            )
+
+            else -> showSnackBar(
+                message = BaseSnackBarMessage.UnknownError,
+                isSuccess = false
+            )
+        }
     }
 
     override fun onRegisterClicked() {

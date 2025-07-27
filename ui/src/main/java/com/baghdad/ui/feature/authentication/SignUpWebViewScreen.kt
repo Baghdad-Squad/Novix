@@ -23,6 +23,7 @@ import java.util.Locale
 private const val OOPS_MESSAGE = "Oops! We can't find the page you're looking for"
 private const val ERROR_MESSAGE = "There was a problem"
 private const val LOGIN_MESSAGE = "Login to your account"
+private const val LOGIN_MESSAGE_AR = "سجّل للحصول على حساب"
 private const val SIGNUP_MESSAGE = "Sign up for an account"
 
 @Composable
