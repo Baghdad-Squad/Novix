@@ -1,13 +1,11 @@
 package com.baghdad.viewmodel.categoryMovies
 
 import androidx.paging.PagingData
-import androidx.paging.map
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
 import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class CategoryMoviesViewModel(
     private val genreId: Long,
@@ -30,19 +28,7 @@ class CategoryMoviesViewModel(
     }
 
     override fun onSavedClick(movieId: Long) {
-        updateState {
-            it.copy(
-                moviesFlow = it.moviesFlow.map { pagingData ->
-                    pagingData.map { movie ->
-                        if (movie.id == movieId) {
-                            movie.copy(isSaved = !movie.isSaved)
-                        } else {
-                            movie
-                        }
-                    }
-                }
-            )
-        }
+//        TODO("Implement when save feature is available")
     }
 
     override fun onMovieClicked(movieId: Long) {

@@ -73,12 +73,17 @@ private fun handleEffect(
     handleNavigation: (HomeNavEvent) -> Unit
 ) {
     when (effect) {
+
         TopRatingEffect.NavigateBack -> handleNavigation(
             NavigateBack
         )
 
         is TopRatingEffect.NavigateToMovieDetails -> handleNavigation(
             NavigateToMovieDetails(effect.movieId)
+        )
+
+        is TopRatingEffect.NavigateToTvShowDetails -> handleNavigation(
+            HomeNavEvent.NavigateToTvShowDetails(effect.tvShowId)
         )
     }
 }
@@ -208,8 +213,8 @@ private fun TopRatingContent(
                         url = tvShow.posterPictureURL,
                         contentDescription = null,
                         isSaved = tvShow.isSaved,
-                        onSavedClick = { listener.onSaveMovieClick(tvShow.id) },
-                        onClick = { listener.onMovieDetailsClick(tvShow.id) },
+                        onSavedClick = { listener.onSaveTvShowClick(tvShow.id) },
+                        onClick = { listener.onTvShowDetailsClick(tvShow.id) },
                         modifier = Modifier.aspectRatio(0.8f)
                     )
                 }
