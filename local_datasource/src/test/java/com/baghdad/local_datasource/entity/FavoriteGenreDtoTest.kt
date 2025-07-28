@@ -5,7 +5,7 @@ import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 
-class LocalFavoriteGenreDtoTest {
+class FavoriteGenreDtoTest {
 
     @Test
     fun `should create LocalFavoriteGenreDto and check fields`() {

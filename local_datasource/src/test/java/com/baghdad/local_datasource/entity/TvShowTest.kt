@@ -9,7 +9,7 @@ import com.baghdad.repository.model.RecentlyViewedDto
 import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 
-class LocalTvShowTest {
+class TvShowTest {
 
     @Test
     fun `should create TvShow and check fields`() {
