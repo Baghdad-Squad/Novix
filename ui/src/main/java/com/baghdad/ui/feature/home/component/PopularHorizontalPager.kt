@@ -43,7 +43,7 @@ fun PopularCardPager(
     autoSlideDuration: Long = 4000L,
 ) {
     val configuration = LocalConfiguration.current
-    val pagerState = rememberPagerState { items.size }
+    val pagerState = rememberPagerState { items.size.takeIf { it == 0 } ?: Int.MAX_VALUE }
     val screenWidth = configuration.screenWidthDp.dp
     val cardWidth = 188.dp
 
@@ -57,7 +57,7 @@ fun PopularCardPager(
             pagerState.animateScrollToPage(items.size / 2)
             while (true) {
                 delay(autoSlideDuration)
-                val next = (pagerState.currentPage + 1) % items.size
+                val next = (pagerState.currentPage + 1)
                 pagerState.animateScrollToPage(next)
             }
         }
@@ -87,8 +87,8 @@ fun PopularCardPager(
 
                         val rotation =
                             when {
-                                currentPageOffset < -0.5f -> 3f
-                                currentPageOffset > 0.5f -> -3f
+                                currentPageOffset in -1.5f..-0.5f -> 3f
+                                currentPageOffset in 0.5f..1.5f -> -3f
                                 else -> 0f
                             }
 
@@ -110,7 +110,7 @@ fun PopularCardPager(
                                 else -> kotlin.math.abs(currentPageOffset) * 40f
                             }
 
-                        val item = items[page]
+                        val item = items[page % items.size]
 
                         PopularCard(
                             contentName = item.name,
@@ -131,7 +131,7 @@ fun PopularCardPager(
                     }
                     CarousalDot(
                         totalDots = items.size,
-                        selectedIndex = pagerState.currentPage,
+                        selectedIndex = (pagerState.currentPage % items.size),
                     )
                 }
             }
@@ -191,7 +191,8 @@ private fun LoadingPopularCardPager(
                         scaleX = xScale
                         scaleY = yScale
                         translationY = yTranslation
-                    }.fillMaxWidth(),
+                    }
+                    .fillMaxWidth(),
         )
     }
 }
