@@ -54,7 +54,7 @@ fun PopularCardPager(
         )
     if (items.isNotEmpty()) {
         LaunchedEffect(items) {
-            pagerState.animateScrollToPage(items.size / 2)
+            pagerState.animateScrollToPage(items.size + 1)
             while (true) {
                 delay(autoSlideDuration)
                 val next = (pagerState.currentPage + 1)
@@ -87,8 +87,8 @@ fun PopularCardPager(
 
                         val rotation =
                             when {
-                                currentPageOffset in -1.5f..-0.5f -> 3f
-                                currentPageOffset in 0.5f..1.5f -> -3f
+                                currentPageOffset < -0.5f -> 3f
+                                currentPageOffset > 0.5f -> -3f
                                 else -> 0f
                             }
 
@@ -107,7 +107,12 @@ fun PopularCardPager(
                         val yTranslation =
                             when {
                                 currentPageOffset == 0f -> 0f
-                                else -> kotlin.math.abs(currentPageOffset) * 40f
+                                kotlin.math.abs(currentPageOffset) in 0.5f..1.5f ->
+                                    kotlin.math.abs(
+                                        currentPageOffset,
+                                    ) * 40f
+
+                                else -> kotlin.math.abs(currentPageOffset) * 20f
                             }
 
                         val item =

@@ -1,9 +1,12 @@
 package com.baghdad.ui.feature.home.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +39,10 @@ import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 
+private const val ANIMATION_DURATION = 150
+private val ENTER_ANIMATION_SPEC = fadeIn(animationSpec = tween(ANIMATION_DURATION))
+private val EXIT_ANIMATION_SPEC = fadeOut(animationSpec = tween(ANIMATION_DURATION))
+
 @Composable
 fun PopularCard(
     contentName: String,
@@ -49,7 +56,7 @@ fun PopularCard(
 ) {
     val overlayAlpha by animateFloatAsState(
         targetValue = if (isCentralCard) 0.6f else 0.8f,
-        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        animationSpec = tween(durationMillis = ANIMATION_DURATION, easing = FastOutSlowInEasing),
         label = "overlay_alpha",
     )
 
@@ -104,42 +111,54 @@ fun PopularCard(
                         )
                     },
         )
-        SaveIcon(
-            isSaved = isSaved,
-            onClick = { onSavedClick() },
+        AnimatedVisibility(
+            visible = isCentralCard,
+            enter = ENTER_ANIMATION_SPEC,
+            exit = EXIT_ANIMATION_SPEC,
             modifier =
                 Modifier
                     .padding(4.dp)
                     .align(Alignment.TopStart),
-                )
-        Column(
+        ) {
+            SaveIcon(
+                isSaved = isSaved,
+                onClick = { onSavedClick() },
+            )
+        }
+        AnimatedVisibility(
+            visible = isCentralCard,
+            enter = ENTER_ANIMATION_SPEC,
+            exit = EXIT_ANIMATION_SPEC,
             modifier =
                 Modifier
                     .align(Alignment.BottomStart)
-                .padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                    .padding(8.dp),
         ) {
-            Text(
-                text = contentName,
-                style = Theme.typography.label.medium,
-                color = Theme.color.onPrimary,
-            )
-            Row(
-                modifier = Modifier,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_rating_star),
-                    contentDescription = stringResource(R.string.rating_star),
-                    tint = Theme.color.yellowAccent,
-                    modifier = Modifier.size(12.dp),
-                )
                 Text(
-                    text = contentRating.toString(),
-                    style = Theme.typography.label.small,
+                    text = contentName,
+                    style = Theme.typography.label.medium,
                     color = Theme.color.onPrimary,
                 )
+                Row(
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_rating_star),
+                        contentDescription = stringResource(R.string.rating_star),
+                        tint = Theme.color.yellowAccent,
+                        modifier = Modifier.size(12.dp),
+                    )
+                    Text(
+                        text = contentRating.toString(),
+                        style = Theme.typography.label.small,
+                        color = Theme.color.onPrimary,
+                    )
+                }
             }
         }
     }
