@@ -1,11 +1,13 @@
 package com.baghdad.local_datasource
 
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
+import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.RecentlyViewedDto
 import com.baghdad.repository.model.RecentlyViewedDto.ContentType
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -27,18 +29,20 @@ class LocalRecentlyViewedDataSourceImplTest {
     }
 
     @Test
-    fun `should return flow of recently viewed when dao returns data`() {
+    fun `should return flow of recently viewed when dao returns data`() = runTest {
         // Given
-        coEvery { recentlyViewedDao.getAllRecentlyViewed() } returns flowOf(emptyList())
+        val dto = RecentlyViewedDto(1, "url", ContentType.MOVIE, 123L)
+        val entity = dto.toLocalDto()
+        coEvery { recentlyViewedDao.getAllRecentlyViewed() } returns flowOf(listOf(entity))
         coEvery { logger.logException(any()) } returns Unit
 
         // When
-        val result = localRecentlyViewedDataSourceImpl.getAllRecentlyViewed()
+        val result = localRecentlyViewedDataSourceImpl.getAllRecentlyViewed().first()
 
         // Then
-        assertNotNull(result)
+        assert(result.isNotEmpty())
+        assert(result[0].contentId == dto.contentId)
     }
-
 
     @Test
     fun `should clear all recently viewed when invoked`() = runTest {
