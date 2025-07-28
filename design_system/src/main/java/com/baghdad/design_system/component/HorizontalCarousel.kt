@@ -20,7 +20,7 @@ fun <T> HorizontalCarousel(
     itemSpacing: Dp = 8.dp,
     largeItemWidth: Dp = 158.dp,
     smallItemWidth: Dp = 74.dp,
-    itemContent: @Composable (T) -> Unit
+    itemContent: @Composable (T) -> Unit,
 ) {
     val state = rememberCarouselState { items.count() }
     HorizontalMultiBrowseCarousel(

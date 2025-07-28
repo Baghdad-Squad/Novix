@@ -86,6 +86,7 @@ fun LazyGridScope.upcomingSection(
                 url = item.imageUrl,
                 contentDescription = null,
                 isSaved = item.isSaved,
+                isLoadingEnabled = false,
                 onSavedClick = { onUpcomingItemSaveClicked(item) },
                 onClick = {
                     onUpcomingItemClicked(item)
