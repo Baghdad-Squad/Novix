@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.search.component
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,7 +35,6 @@ fun RecentlyViewedSection(
         modifier = Modifier
             .fillMaxWidth()
             .height(210.dp)
-            .padding(bottom = 12.dp, top = 12.dp)
     )
 }
 
