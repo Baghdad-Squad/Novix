@@ -11,11 +11,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -88,10 +86,6 @@ private fun TrendingMoviesContent(
     listener: TrendingMoviesInteractionListener,
     snackBarState: SnackBarState
 ) {
-    val gridState = rememberSaveable(saver = LazyGridState.Saver) {
-        LazyGridState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
-    }
-
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -153,7 +147,6 @@ private fun TrendingMoviesContent(
                     end = 16.dp,
                     bottom = 12.dp
                 ),
-                state = gridState,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) { movie ->
