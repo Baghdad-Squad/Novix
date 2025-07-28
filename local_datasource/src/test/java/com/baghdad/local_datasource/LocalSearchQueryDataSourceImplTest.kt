@@ -187,6 +187,32 @@ class LocalSearchQueryDataSourceImplTest {
         coVerify(exactly = 1) { searchQueryDao.deleteAllSearchQueries() }
     }
 
+    @Test
+    fun `deleteInvalidSearchQueries should handle TV_SHOW and ACTOR`() = runTest {
+        // Given
+        val queries = listOf(
+            INVALID_SEARCH_QUERY.copy(mediaType = "TV_SHOW", mediaId = 100L),
+            INVALID_SEARCH_QUERY.copy(mediaType = "ACTOR", mediaId = 200L)
+        )
+        coEvery { searchQueryDao.getInvalidSearchQueries(TIME_STAMP) } returns queries
+        coEvery { tvShowDao.deleteTvShowByID(any()) } just Runs
+        coEvery { actorDao.deleteActorById(any()) } just Runs
+        coEvery { searchQueryDao.deleteInvalidSearchQueries(any()) } just Runs
+        coEvery { logger.logException(any()) } just Runs
+
+        // When
+        localSearchQueryDataSource.deleteInvalidSearchQueries(TIME_STAMP)
+
+        // Then
+        coVerifySequence {
+            searchQueryDao.getInvalidSearchQueries(TIME_STAMP)
+            tvShowDao.deleteTvShowByID(100)
+            actorDao.deleteActorById(200)
+            searchQueryDao.deleteInvalidSearchQueries(TIME_STAMP)
+        }
+    }
+
+
     companion object {
 
         val SEARCH_QUERY_DTO = SearchQueryDto(
