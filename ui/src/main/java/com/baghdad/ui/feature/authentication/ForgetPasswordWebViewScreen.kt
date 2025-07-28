@@ -42,6 +42,7 @@ fun ForgotPasswordWebViewContent(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val screenUrl = remember { "https://www.themoviedb.org/reset-password?language=$languageTag" }
     val messages = remember {
         mapOf(
             "pageNotFound" to context.getString(R.string.oops_we_can_t_find_the_page),
@@ -65,8 +66,6 @@ fun ForgotPasswordWebViewContent(
             handleNavigation(AuthenticationNavEvent.NavigateBack)
         }
     }
-
-    val screenUrl =  remember { "https://www.themoviedb.org/reset-password?language=$languageTag"}
 
     Box(
         modifier = Modifier
