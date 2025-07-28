@@ -25,7 +25,7 @@ fun ForgotPasswordWebViewScreen(
     handleNavigation: (AuthenticationNavEvent) -> Unit
 ) {
     val shouldNavigateBack = remember { mutableStateOf(false) }
-    val languageTag = if (Locale.getDefault().language == "ar") "ar-SA" else "en-US"
+    val languageTag = remember { if (Locale.getDefault().language == "ar") "ar-SA" else "en-US" }
 
     ForgotPasswordWebViewContent(
         handleNavigation = handleNavigation,
@@ -82,6 +82,7 @@ fun ForgotPasswordWebViewContent(
                 when (it.trim('"')) {
                     messages["pageNotFound"],
                     messages["error"] -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+
                     messages["success"] -> shouldNavigateBack.value = true
                     messages["mainHeader"] -> Unit
                     else -> handleNavigation(AuthenticationNavEvent.NavigateBack)
