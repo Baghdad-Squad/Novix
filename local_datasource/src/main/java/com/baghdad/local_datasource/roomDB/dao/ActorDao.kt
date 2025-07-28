@@ -18,7 +18,7 @@ interface ActorDao {
     @Query("SELECT * FROM Actor")
     fun getAllActors(): Flow<List<Actor>>
 
-    @Query("SELECT * FROM Actor Where name = :id")
+    @Query("SELECT * FROM Actor Where id = :id")
     suspend fun getActorById(id: Long): Actor
 
     @Query("DELETE FROM Actor WHERE id = :id")
