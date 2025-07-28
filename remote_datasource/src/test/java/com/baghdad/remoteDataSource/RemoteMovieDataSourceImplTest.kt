@@ -3,12 +3,19 @@ package com.baghdad.remoteDataSource
 import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.response.CastMemberResponse
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MovieAuthorDetails
 import com.baghdad.remoteDataSource.response.MovieResult
+import com.baghdad.remoteDataSource.response.ReviewResponse
+import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
 import com.baghdad.remoteDataSource.response.actor.ImageResponse
+import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
 import com.baghdad.remoteDataSource.response.movie.Genre
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
+import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
+import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
+import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
 import com.baghdad.repository.logger.Logger
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -167,5 +174,162 @@ class RemoteMovieDataSourceImplTest {
         assertThat(result).hasSize(1)
         assertThat(result[0].actor.name).isEqualTo("Actor")
         assertThat(result[0].characterName).isEqualTo("Hero")
+    }
+
+    @Test
+    fun `getPopularMovies should return mapped list of MovieDto`() = runTest {
+        // Given
+        val response = PopularMoviesResponse(
+            results = listOf(
+                PopularMoviesResponse.Result(
+                    id = 1L,
+                    title = "Popular Movie",
+                    genreIds = listOf(28L),
+                    voteAverage = 7.2,
+                    posterPath = "/popular.jpg",
+                    releaseDate = "2024-01-01",
+                    overview = "A popular movie"
+                )
+            )
+        )
+
+        coEvery { movieApiService.getPopularMovies() } returns Response.success(response)
+
+        // When
+        val result = dataSource.getPopularMovies()
+
+        // Then
+        assertThat(result).hasSize(1)
+        val movie = result[0]
+        assertThat(movie.id).isEqualTo(1L)
+        assertThat(movie.title).isEqualTo("Popular Movie")
+        assertThat(movie.genres).hasSize(1)
+        assertThat(movie.imdbRating).isEqualTo(7.2)
+        assertThat(movie.releaseDate).isEqualTo("2024-01-01")
+        assertThat(movie.posterPictureURL).contains("/popular.jpg")
+    }
+
+    @Test
+    fun `getMovieReviews should return mapped list of ReviewDto`() = runTest {
+        // Given
+        val response = ReviewsResponse(
+            id = 1,
+            page = 1,
+            results = listOf(
+                ReviewResponse(
+                    id = "review_1",
+                    author = "Critic",
+                    authorDetails = MovieAuthorDetails(
+                        name = "Critic",
+                        username = "critic123",
+                        avatarPath = "/avatar.png",
+                        rating = 4.0f
+                    ),
+                    content = "Great movie!",
+                    createdAt = "2024-01-01T10:00:00Z"
+                )
+            ),
+            totalPages = 1,
+            totalResults = 1
+        )
+
+        coEvery { movieApiService.getMovieReviews(movieId = 1L) } returns Response.success(response)
+
+        // When
+        val result = dataSource.getMovieReviews(1L)
+
+        // Then
+        assertThat(result).hasSize(1)
+        val review = result[0]
+        assertThat(review.id).isEqualTo("review_1")
+        assertThat(review.authorName).isEqualTo("Critic")
+        assertThat(review.authorAvatarUrl).contains("/avatar.png")
+        assertThat(review.rating).isEqualTo(4.0f)
+        assertThat(review.reviewText).isEqualTo("Great movie!")
+        assertThat(review.postedDate).isEqualTo("2024-01-01T10:00:00Z")
+    }
+
+
+    @Test
+    fun `getMovieTrailer should return youtube url`() = runTest {
+        // Given
+        val movieId = 1L
+        val videoKey = "abc123"
+        val response = MovieVideosResponse(
+            results = listOf(
+                MovieVideosResponse.Result(
+                    key = videoKey,
+                    site = "YouTube",
+                    type = "Trailer"
+                )
+            )
+        )
+        coEvery { movieApiService.getMovieTrailer(movieId) } returns Response.success(response)
+
+        // When
+        val result = dataSource.getMovieTrailer(movieId)
+
+        // Then
+        assertThat(result).contains(videoKey)
+    }
+
+    @Test
+    fun `getTrendingMovies should return paged result`() = runTest {
+        // Given
+        val page = 1
+        val response = TrendingMovieResponse(
+            results = listOf(
+                TrendingMovieResponse.Result(
+                    id = 1,
+                    title = "Trending",
+                    posterPath = "/trend.jpg"
+                )
+            )
+        )
+        coEvery { movieApiService.getTrendingMovies(page) } returns Response.success(response)
+
+        // When
+        val result = dataSource.getTrendingMovies(page)
+
+        // Then
+        assertThat(result.data).hasSize(1)
+        assertThat(result.data[0].title).isEqualTo("Trending")
+    }
+
+    @Test
+    fun `getUpcomingMovies should return paged result`() = runTest {
+        // Given
+        val page = 1
+        val genreId: Long? = 28
+        val response = DiscoverMovieResponse(
+            results = listOf(
+                DiscoverMovieResponse.Result(
+                    id = 1,
+                    title = "Upcoming Movie",
+                    releaseDate = "2025-08-10",
+                    genreIds = listOf(28)
+                )
+            )
+        )
+        coEvery {
+            movieApiService.getUpcomingMovies(
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        } returns Response.success(response)
+
+        // When
+        val result = dataSource.getUpcomingMovies(page, genreId)
+
+        // Then
+        assertThat(result.data).hasSize(1)
+        assertThat(result.data[0].title).isEqualTo("Upcoming Movie")
     }
 }
