@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -64,7 +64,7 @@ fun TopRatingScreen(
         listener = viewModel,
         snackBarState = snackBarState,
         movieItems = movieItems,
-        tvShowItems = tvShowItems
+        tvShowItems = tvShowItems,
     )
 }
 
@@ -94,8 +94,11 @@ private fun TopRatingContent(
     listener: TopRatingInteractionListener,
     snackBarState: SnackBarState,
     movieItems: LazyPagingItems<TopRatingState.MovieUiState>,
-    tvShowItems: LazyPagingItems<TopRatingState.TvShowUiState>
+    tvShowItems: LazyPagingItems<TopRatingState.TvShowUiState>,
 ) {
+    val movieGenresScrollState = rememberLazyListState()
+    val tvGenresScrollState = rememberLazyListState()
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -135,16 +138,22 @@ private fun TopRatingContent(
                 )
             }
 
-            key(uiState.selectedTab) {
-                GenresSection(
-                    allGenres = uiState.genres,
-                    selectedGenres = uiState.selectedGenreId,
-                    onGenreSelected = { listener.onGenreClick(it?.id) },
-                    modifier = Modifier
-                        .background(Theme.color.surface)
-                        .padding(bottom = 12.dp)
-                )
-            }
+            GenresSection(
+                allGenres = uiState.genres,
+                selectedGenres = when (uiState.selectedTab) {
+                    TopRatingTab.MOVIES -> uiState.selectedMovieGenreId
+                    TopRatingTab.TV_SHOWS -> uiState.selectedTvShowGenreId
+                },
+                listState = when (uiState.selectedTab) {
+                    TopRatingTab.MOVIES -> movieGenresScrollState
+                    TopRatingTab.TV_SHOWS -> tvGenresScrollState
+                },
+                onGenreSelected = { listener.onGenreClick(it?.id) },
+                modifier = Modifier
+                    .background(Theme.color.surface)
+                    .padding(bottom = 12.dp)
+            )
+
         },
         snackbar = {
             SnackBar(
