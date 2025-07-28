@@ -6,7 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.baghdad.local_datasource.roomDB.dao.FavoriteGenreDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
-import com.baghdad.local_datasource.roomDB.entity.LocalFavoriteGenreDto
+import com.baghdad.local_datasource.roomDB.entity.FavoriteGenre
 import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -41,7 +41,7 @@ class FavoriteGenreDaoTest {
     @Test
     fun addFavoriteGenre_insertsGenre() = runBlocking {
         // Given
-        val genre = LocalFavoriteGenreDto(
+        val genre = FavoriteGenre(
             genreId = 1L,
             name = "Action",
             count = 1,
@@ -62,7 +62,7 @@ class FavoriteGenreDaoTest {
     @Test
     fun getFavoriteGenreById_returnsCorrectGenre() = runBlocking {
         // Given
-        val genre = LocalFavoriteGenreDto(
+        val genre = FavoriteGenre(
             genreId = 2L,
             name = "Drama",
             count = 2,
@@ -82,9 +82,9 @@ class FavoriteGenreDaoTest {
     fun getFavoriteGenres_ordersByCountAndTimeStamp() = runBlocking {
         // Given
         val genres = listOf(
-            LocalFavoriteGenreDto(1L, "Comedy", 3, 1L),
-            LocalFavoriteGenreDto(2L, "Drama", 3, 2L),
-            LocalFavoriteGenreDto(3L, "Sci-Fi", 2, 3L)
+            FavoriteGenre(1L, "Comedy", 3, 1L),
+            FavoriteGenre(2L, "Drama", 3, 2L),
+            FavoriteGenre(3L, "Sci-Fi", 2, 3L)
         )
         genres.forEach { favoriteGenreDao.addFavoriteGenre(it) }
 
@@ -116,7 +116,7 @@ class FavoriteGenreDaoTest {
     @Test
     fun updateFavoriteGenreCount_incrementsCountIfExists() = runBlocking {
         // Given
-        val genre = LocalFavoriteGenreDto(
+        val genre = FavoriteGenre(
             genreId = 11L,
             name = "Horror",
             count = 2,
