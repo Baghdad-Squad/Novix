@@ -1,19 +1,19 @@
 package com.baghdad.repository
 
-import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
+import com.baghdad.repository.DummyDataFactory.createMockCastMember
+import com.baghdad.repository.DummyDataFactory.createMockCastMemberDto
+import com.baghdad.repository.DummyDataFactory.createMockEpisode
+import com.baghdad.repository.DummyDataFactory.createMockEpisodeDto
+import com.baghdad.repository.DummyDataFactory.createMockGenre
+import com.baghdad.repository.DummyDataFactory.createMockGenreDto
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
-import com.baghdad.repository.model.ActorDto
-import com.baghdad.repository.model.CastMemberDto
-import com.baghdad.repository.model.EpisodeDto
-import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.TvShowDto
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -199,77 +199,5 @@ class EpisodeRepositoryImplTest {
             headerImagesURLs = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg")
         )
 
-        private fun createMockGenreDto(id: Long, name: String) = GenreDto(
-            id = id,
-            name = name,
-            type = GenreDto.GenreType.TV_SHOW
-        )
-
-        private fun createMockGenre(id: Long, name: String) = com.baghdad.entity.media.Genre(
-            id = id,
-            name = name
-        )
-
-        private fun createMockEpisodeDto() = EpisodeDto(
-            id = 456L,
-            title = "Test Episode",
-            episodeNumber = 5,
-            rating = 8.5,
-            duration = "45 min",
-            releasedDate = "2023-05-15",
-            currentSeason = 2,
-            overview = "Test episode overview",
-            headerPictures = listOf("/header1.jpg", "/header2.jpg"),
-            genres = emptyList(),
-            trailerUrl = " "
-        )
-
-        private fun createMockEpisode() = Episode(
-            id = 456L,
-            title = "Test Episode",
-            episodeNumber = 5,
-            rating = 8.5,
-            duration = "45 min",
-            releasedDate = LocalDate.parse("2023-05-15"),
-            currentSeason = 2,
-            overview = "Test episode overview",
-            headerPictures = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg"),
-            genres = emptyList(),
-            trailerUrl = " "
-        )
-
-        private fun createMockCastMemberDto() = CastMemberDto(
-            actor = createMockActorDto(),
-            characterName = "Test Character"
-        )
-
-        private fun createMockCastMember() = CastMember(
-            actor = createMockActor(),
-            characterName = "Test Character"
-        )
-
-        private fun createMockActorDto() = ActorDto(
-            id = 789L,
-            name = "Test Actor",
-            imageUrl = "/actor_profile.jpg",
-            biography = "Test actor biography",
-            birthdayDate = "1985-03-10",
-            deathDate = null,
-            placeOfBirth = "Los Angeles, USA",
-            headerPictures = listOf("/actor_header1.jpg", "/actor_header2.jpg"),
-            department = "Acting"
-        )
-
-        private fun createMockActor() = com.baghdad.entity.person.Actor(
-            id = 789L,
-            name = "Test Actor",
-            profilePictureURL = "/actor_profile.jpg",
-            birthDate = LocalDate.parse("1985-03-10"),
-            placeOfBirth = "Los Angeles, USA",
-            deathDate = null,
-            biography = "Test actor biography",
-            headerPictures = listOf("/actor_header1.jpg", "/actor_header2.jpg"),
-            department = "Acting"
-        )
     }
 }

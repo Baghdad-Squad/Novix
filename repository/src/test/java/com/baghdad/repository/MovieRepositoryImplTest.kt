@@ -3,12 +3,11 @@ package com.baghdad.repository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
-import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
+import com.baghdad.repository.DummyDataFactory.createMockCastMember
+import com.baghdad.repository.DummyDataFactory.createMockCastMemberDto
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
-import com.baghdad.repository.model.ActorDto
-import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
@@ -154,12 +153,12 @@ class MovieRepositoryImplTest {
 
             val movieId = 456L
             val mockCastMemberDtos = listOf(
-                createMockCastMemberDto(1L, "John Doe", "Main Character"),
-                createMockCastMemberDto(2L, "Jane Smith", "Supporting Character")
+                createMockCastMemberDto(),
+                createMockCastMemberDto()
             )
             val expectedCastMembers = listOf(
-                createMockCastMember(1L, "John Doe", "Main Character"),
-                createMockCastMember(2L, "Jane Smith", "Supporting Character")
+                createMockCastMember(),
+                createMockCastMember()
             )
 
             coEvery { remoteMovieDataSource.getMovieCastMembers(movieId) } returns mockCastMemberDtos
@@ -484,29 +483,6 @@ class MovieRepositoryImplTest {
             trailerURL = " ",
         )
 
-        private fun createMockCastMemberDto(
-            id: Long = 1L,
-            name: String = "Johnny Deep",
-            character: String = "Jack Sparrow"
-        ): CastMemberDto {
-            val actor = ActorDto(
-                id = id,
-                name = name,
-                imageUrl = "/profile_$id.jpg",
-                biography = "Test biography for $name",
-                birthdayDate = "1970-01-01",
-                deathDate = null,
-                placeOfBirth = "USA",
-                headerPictures = listOf("/header_1.jpg", "/header_2.jpg"),
-                department = "Acting"
-            )
-
-            return CastMemberDto(
-                actor = actor,
-                characterName = character
-            )
-        }
-
         private fun createMockGenre(
             id: Long,
             name: String
@@ -529,29 +505,6 @@ class MovieRepositoryImplTest {
             runtimeMinutes = 120,
             trailerURL = " "
         )
-
-        private fun createMockCastMember(
-            id: Long,
-            name: String,
-            character: String
-        ): CastMember {
-            val actor = Actor(
-                id = id,
-                name = name,
-                profilePictureURL = "/profile_$id.jpg",
-                birthDate = LocalDate.parse("1985-06-09"),
-                placeOfBirth = "USA",
-                deathDate = null,
-                biography = "An experienced actor known for various roles.",
-                headerPictures = listOf("/header_1.jpg", "/header_2.jpg"),
-                department = "Acting"
-            )
-
-            return CastMember(
-                actor = actor,
-                characterName = character
-            )
-        }
 
         private fun createMockReviewDto() = ReviewDto(
             id = "review123",
