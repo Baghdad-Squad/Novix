@@ -1,4 +1,4 @@
-package com.baghdad.local_datasource
+package com.baghdad.local_datasource.entity
 
 import com.baghdad.local_datasource.roomDB.entity.Genre
 import com.baghdad.local_datasource.roomDB.entity.TvShow
@@ -6,22 +6,23 @@ import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toDtos
 import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.repository.model.RecentlyViewedDto
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 
-class TvShowTest {
+class LocalTvShowTest {
 
     @Test
     fun `should create TvShow and check fields`() {
         // Then
-        assertThat(TV_SHOW.id).isEqualTo(1L)
-        assertThat(TV_SHOW.title).isEqualTo("Game of Thrones")
-        assertThat(TV_SHOW.genres).isEqualTo(listOf(1L, 2L))
-        assertThat(TV_SHOW.imdbRating).isEqualTo(9.2)
-        assertThat(TV_SHOW.userRating).isEqualTo(8.5)
-        assertThat(TV_SHOW.releaseDate).isEqualTo("2011-04-17")
-        assertThat(TV_SHOW.overview).isEqualTo("Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.")
-        assertThat(TV_SHOW.posterPictureURL).isEqualTo("https://example.com/poster.jpg")
+        Truth.assertThat(TV_SHOW.id).isEqualTo(1L)
+        Truth.assertThat(TV_SHOW.title).isEqualTo("Game of Thrones")
+        Truth.assertThat(TV_SHOW.genres).isEqualTo(listOf(1L, 2L))
+        Truth.assertThat(TV_SHOW.imdbRating).isEqualTo(9.2)
+        Truth.assertThat(TV_SHOW.userRating).isEqualTo(8.5)
+        Truth.assertThat(TV_SHOW.releaseDate).isEqualTo("2011-04-17")
+        Truth.assertThat(TV_SHOW.overview)
+            .isEqualTo("Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.")
+        Truth.assertThat(TV_SHOW.posterPictureURL).isEqualTo("https://example.com/poster.jpg")
     }
 
     @Test
@@ -29,9 +30,9 @@ class TvShowTest {
         // When
         val tvShowDto = TV_SHOW.toDto(GENRES.map { it.toDto() })
         // Then
-        assertThat(tvShowDto.id).isEqualTo(TV_SHOW.id)
-        assertThat(tvShowDto.title).isEqualTo(TV_SHOW.title)
-        assertThat(tvShowDto.genres).isEqualTo(GENRES.map { it.toDto() })
+        Truth.assertThat(tvShowDto.id).isEqualTo(TV_SHOW.id)
+        Truth.assertThat(tvShowDto.title).isEqualTo(TV_SHOW.title)
+        Truth.assertThat(tvShowDto.genres).isEqualTo(GENRES.map { it.toDto() })
     }
 
     @Test
@@ -42,14 +43,14 @@ class TvShowTest {
         // When
         val tvShow = tvShowDto.toLocalDto()
         // Then
-        assertThat(tvShow.id).isEqualTo(tvShowDto.id)
-        assertThat(tvShow.title).isEqualTo(tvShowDto.title)
-        assertThat(tvShow.genres).isEqualTo(tvShowDto.genres.map { it.id })
-        assertThat(tvShow.imdbRating).isEqualTo(tvShowDto.imdbRating)
-        assertThat(tvShow.userRating).isEqualTo(tvShowDto.userRating)
-        assertThat(tvShow.releaseDate).isEqualTo(tvShowDto.releaseDate)
-        assertThat(tvShow.overview).isEqualTo(tvShowDto.overview)
-        assertThat(tvShow.posterPictureURL).isEqualTo(tvShowDto.posterPictureURL)
+        Truth.assertThat(tvShow.id).isEqualTo(tvShowDto.id)
+        Truth.assertThat(tvShow.title).isEqualTo(tvShowDto.title)
+        Truth.assertThat(tvShow.genres).isEqualTo(tvShowDto.genres.map { it.id })
+        Truth.assertThat(tvShow.imdbRating).isEqualTo(tvShowDto.imdbRating)
+        Truth.assertThat(tvShow.userRating).isEqualTo(tvShowDto.userRating)
+        Truth.assertThat(tvShow.releaseDate).isEqualTo(tvShowDto.releaseDate)
+        Truth.assertThat(tvShow.overview).isEqualTo(tvShowDto.overview)
+        Truth.assertThat(tvShow.posterPictureURL).isEqualTo(tvShowDto.posterPictureURL)
     }
 
     @Test
@@ -66,8 +67,8 @@ class TvShowTest {
         val tvShowDtos = tvShows.toDtos(GENRES.associate { it.id to it })
 
         // Then
-        assertThat(tvShowDtos.size).isEqualTo(tvShows.size)
-        assertThat(tvShowDtos).isEqualTo(tvShows.map { it.toDto(GENRES.map { it.toDto() }) })
+        Truth.assertThat(tvShowDtos.size).isEqualTo(tvShows.size)
+        Truth.assertThat(tvShowDtos).isEqualTo(tvShows.map { it.toDto(GENRES.map { it.toDto() }) })
     }
 
 
