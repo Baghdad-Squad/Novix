@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.home.component
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,24 +13,21 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.itemKey
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.SectionHeader
 import com.baghdad.design_system.modifier.shimmerEffect
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.component.HomeCard
-import com.baghdad.ui.feature.component.lazyPaging.DefaultErrorItem
-import com.baghdad.ui.feature.component.lazyPaging.DefaultLoadingItem
 import com.baghdad.viewmodel.home.HomeScreenState.GenreUiState
 import com.baghdad.viewmodel.home.HomeScreenState.UpcomingItemUiState
 
@@ -40,13 +36,13 @@ fun LazyGridScope.upcomingSection(
     genres: List<GenreUiState>,
     isGenresLoading: Boolean,
     onGenreSelected: (GenreUiState?) -> Unit,
-    upcomingItems: LazyPagingItems<UpcomingItemUiState>,
+    upcomingItems: List<UpcomingItemUiState>,
     isUpcomingItemsLoading: Boolean,
     onUpcomingItemClicked: (UpcomingItemUiState) -> Unit,
     onUpcomingItemSaveClicked: (UpcomingItemUiState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (isUpcomingItemsLoading.not() && isGenresLoading.not() && upcomingItems.itemCount == 0) return
+    if (isUpcomingItemsLoading.not() && isGenresLoading.not() && upcomingItems.isEmpty()) return
     item(span = { GridItemSpan(maxLineSpan) }) {
         UpcomingSectionHeader(
             modifier = modifier,
@@ -60,7 +56,7 @@ fun LazyGridScope.upcomingSection(
         items(20) { index ->
             val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 158))
             val isFirstInRow = index % itemsPerRow == 0
-            val isLastInRow = (index + 1) % itemsPerRow == 0 || index == upcomingItems.itemCount - 1
+            val isLastInRow = (index + 1) % itemsPerRow == 0 || index == upcomingItems.size - 1
 
             Box(
                 modifier =
@@ -70,18 +66,16 @@ fun LazyGridScope.upcomingSection(
                             top = 12.dp,
                             start = if (isFirstInRow) 16.dp else 0.dp,
                             end = if (isLastInRow) 16.dp else 0.dp,
-                        )
-                        .background(Theme.color.surface, RoundedCornerShape(12.dp))
+                        ).background(Theme.color.surface, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
                         .shimmerEffect(),
             )
         }
     } else {
-        items(count = upcomingItems.itemCount, key = upcomingItems.itemKey { it.id }) { index ->
-            val item = upcomingItems[index] ?: return@items
-            val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 158))
+        itemsIndexed(items = upcomingItems, key = { _, item -> item.id }) { index, item ->
+            val itemsPerRow = maxOf(1, (LocalWindowInfo.current.containerSize.width / 158))
             val isFirstInRow = index % itemsPerRow == 0
-            val isLastInRow = (index + 1) % itemsPerRow == 0 || index == upcomingItems.itemCount - 1
+            val isLastInRow = (index + 1) % itemsPerRow == 0 || index == upcomingItems.size - 1
             HomeCard(
                 url = item.imageUrl,
                 contentDescription = null,
@@ -100,15 +94,6 @@ fun LazyGridScope.upcomingSection(
                             end = if (isLastInRow) 16.dp else 0.dp,
                         ),
             )
-        }
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            AnimatedContent(upcomingItems.loadState.append) { loadState ->
-                when (loadState) {
-                    is LoadState.Error -> DefaultErrorItem { upcomingItems.retry() }
-                    LoadState.Loading -> DefaultLoadingItem()
-                    else -> {}
-                }
-            }
         }
     }
 }
@@ -136,7 +121,7 @@ private fun UpcomingSectionHeader(
                         Modifier
                             .wrapContentSize()
                             .padding(top = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                 ) {
                     item {
@@ -177,7 +162,7 @@ private fun UpcomingSectionHeaderLoadingPlaceHolder(modifier: Modifier = Modifie
                 Modifier
                     .wrapContentSize()
                     .padding(top = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
             items(20) {

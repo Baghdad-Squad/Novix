@@ -27,7 +27,7 @@ class HomeViewModel(
         getTopRatingMovies()
         observeContinueWatchingItems()
         getMovieGenres()
-        collectPaginatedUpcomingMovies()
+        getUpcomingItems()
     }
 
     private fun getPopularItems() {
@@ -112,6 +112,7 @@ class HomeViewModel(
             )
         }
     }
+
     private fun getMovieGenres() {
         tryToExecute(
             callee = getGenresUseCase::getMovieGenres,
@@ -139,35 +140,34 @@ class HomeViewModel(
         }
     }
 
-    private fun collectPaginatedUpcomingMovies() {
-        updateState {
-            it.copy(isUpcomingMoviesLoading = true)
-        }
-        collectPagingFlow(
-            loadData = { page ->
-                getUpcomingMoviesUseCase(
-                    page,
-                    currentState.selectedUpcomingGenreId,
-                )
-            },
-            onInitialLoadFinished = {
-                updateState {
-                    it.copy(isUpcomingMoviesLoading = false)
-                }
-            },
-            pageSize = UPCOMING_PAGE_SIZE,
-            mapEntityToUiState = Movie::toUpcomingItemUiState,
-            onFlowCreated = { flow ->
-                updateState {
-                    it.copy(upcomingItems = flow)
-                }
-            },
+    private fun getUpcomingItems() {
+        tryToExecute(
+            callee = { getUpcomingMoviesUseCase(currentState.selectedUpcomingGenreId) },
+            onSuccess = ::onGetUpcomingSuccess,
+            onStart = ::onGetUpcomingStarted,
+            onFinally = ::onGetUpcomingFinished,
         )
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
+    private fun onGetUpcomingSuccess(movies: List<Movie>) {
+        updateState {
+            it.copy(upcomingItems = movies.map(Movie::toUpcomingItemUiState))
+        }
     }
+
+    private fun onGetUpcomingStarted() {
+        updateState {
+            it.copy(isUpcomingMoviesLoading = true)
+        }
+    }
+
+    private fun onGetUpcomingFinished() {
+        updateState {
+            it.copy(isUpcomingMoviesLoading = false)
+        }
+    }
+
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
 
     override fun onPopularItemClicked(item: HomeScreenState.PopularItemUiState) {
         if (item.type == HomeScreenState.PopularItemUiState.Type.MOVIE) {
@@ -222,7 +222,7 @@ class HomeViewModel(
             updateState {
                 it.copy(selectedUpcomingGenreId = genre?.id)
             }
-            collectPaginatedUpcomingMovies()
+            getUpcomingItems()
         }
     }
 

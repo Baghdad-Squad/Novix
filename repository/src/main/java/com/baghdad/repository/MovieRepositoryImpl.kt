@@ -97,12 +97,8 @@ class MovieRepositoryImpl(
             }
         }
 
-    override suspend fun getUpcomingMovies(
-        page: Int,
-        genreId: Long?,
-        pageSize: Int,
-    ): PagedResult<Movie> =
+    override suspend fun getUpcomingMovies(genreId: Long?): List<Movie> =
         executeSafely {
-            remoteMovieDataSource.getUpcomingMovies(page, genreId).toPagedResult(MovieDto::toEntity)
+            remoteMovieDataSource.getUpcomingMovies(genreId).map(MovieDto::toEntity)
         }
 }

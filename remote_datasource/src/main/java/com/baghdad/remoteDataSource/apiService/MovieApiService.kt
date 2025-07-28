@@ -74,7 +74,6 @@ interface MovieApiService {
     @Authenticated
     @GET(DISCOVER_MOVIES_ENDPOINT)
     suspend fun getUpcomingMovies(
-        @Query("page") page: Int,
         @Query("with_genres") genres: String? = null,
         @Query("include_adult") includeAdult: Boolean = false,
         @Query("include_video") includeVideo: Boolean = false,
