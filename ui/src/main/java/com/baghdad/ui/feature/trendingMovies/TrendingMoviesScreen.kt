@@ -102,7 +102,7 @@ private fun TrendingMoviesContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(top = 22.dp, bottom = 12.dp)
+                    .padding(top = 22.dp, bottom = 8.dp)
                     .background(Theme.color.surface),
                 onGoBackClick = listener::onBackClick,
                 screenTitle = stringResource(R.string.trending_movies),
@@ -121,7 +121,12 @@ private fun TrendingMoviesContent(
                 .background(Theme.color.surface)
         ) {
             LazyRow(
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 12.dp),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 12.dp,
+                    top = 12.dp
+                ),
             ) {
                 item {
                     Chip(
