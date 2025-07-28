@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -99,6 +101,10 @@ fun ContinueWatchingContent(
     snackBarState: SnackBarState,
     modifier: Modifier = Modifier
 ) {
+
+    val movieGenresScrollState = rememberLazyListState()
+    val tvGenresScrollState = rememberLazyListState()
+
     Scaffold(
         modifier = modifier
             .background(Theme.color.surface)
@@ -155,7 +161,14 @@ fun ContinueWatchingContent(
             }
             GenresTabs(
                 genres = uiState.genres,
-                selectedTab = uiState.selectedGenreId,
+                selectedTab = when (uiState.selectedMediaTabIsMovie) {
+                    true -> uiState.selectedMovieGenreId
+                    false -> uiState.selectedTvShowGenreId
+                },
+                genresScrollState = when (uiState.selectedMediaTabIsMovie) {
+                    true -> movieGenresScrollState
+                    false -> tvGenresScrollState
+                },
                 onTabClick = { listener.onGenreClick(it) },
                 modifier = Modifier.padding(bottom = 12.dp)
             )
@@ -194,12 +207,14 @@ private fun GenresTabs(
     genres: List<ContinueWatchingState.GenreUiState>,
     selectedTab: Long?,
     onTabClick: (Long?) -> Unit,
+    genresScrollState: LazyListState,
     modifier: Modifier = Modifier
 ) {
 
     LazyRow(
         modifier = modifier
             .wrapContentSize(),
+        state = genresScrollState,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
