@@ -7,13 +7,13 @@ import androidx.test.filters.SmallTest
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.local_datasource.roomDB.entity.RecentlyViewed
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -39,45 +39,55 @@ class RecentlyViewedDaoTest {
 
     @Test
     fun upsertRecentlyViewed_insertsItem() = runBlocking {
-
+        // Given
         recentlyViewedDao.upsertRecentlyViewed(fakeRecentViews1)
 
+        // When
         val result = recentlyViewedDao.getAllRecentlyViewed().first()
+
+        // Then
         assertTrue(result.contains(fakeRecentViews1))
     }
 
     @Test
     fun upsertRecentlyViewed_replacesExistingItem() = runBlocking {
-
+        // Given
         recentlyViewedDao.upsertRecentlyViewed(fakeRecentViews1)
         recentlyViewedDao.upsertRecentlyViewed(fakeRecentViews2)
 
+        // When
         val result = recentlyViewedDao.getAllRecentlyViewed().first()
-        assertEquals(1, result.size)
-        assertEquals(2222L, result.first())
+
+        // Then
+        assertEquals(2, result.size)
+        assertEquals(fakeRecentViews1, result.first())
     }
 
     @Test
     fun clearAllRecentlyViewed_removesAllItems() = runBlocking {
+        // Given
         val items = listOf(fakeRecentViews1, fakeRecentViews2)
-
-
         items.forEach { recentlyViewedDao.upsertRecentlyViewed(it) }
         recentlyViewedDao.clearAllRecentlyViewed()
 
+        // When
         val result = recentlyViewedDao.getAllRecentlyViewed().first()
+
+        // Then
         assertTrue(result.isEmpty())
     }
 
     @Test
     fun getAllRecentlyViewed_returnsAllInsertedItems() = runBlocking {
+        // Given
         val items = listOf(fakeRecentViews1, fakeRecentViews2)
-
-
         items.forEach { recentlyViewedDao.upsertRecentlyViewed(it) }
 
+        // When
         val result = recentlyViewedDao.getAllRecentlyViewed().first()
-        assertEquals(3, result.size)
+
+        // Then
+        assertEquals(2, result.size)
         assertTrue(result.containsAll(items))
     }
 

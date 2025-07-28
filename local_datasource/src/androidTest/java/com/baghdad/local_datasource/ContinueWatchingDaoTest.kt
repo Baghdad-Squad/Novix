@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -49,7 +49,7 @@ class ContinueWatchingDaoTest {
         continueWatchingDao.upsertContinueWatching(item)
 
         val result =
-            continueWatchingDao.getContinueWatching(userId = 100L, pageSize = 10, offset = 0)
+            continueWatchingDao.getContinueWatching(userId = 100L, pageSize = 1, offset = 0)
 
         assertEquals(item, result.first())
     }
@@ -59,20 +59,51 @@ class ContinueWatchingDaoTest {
         val userId = 100L
         val items = List(15) { index ->
             ContinueWatching(
-                contentId = 1L,
-                userId = 100L,
+                contentId = index.toLong(),
+                userId = userId,
                 genreIds = listOf(1L, 2L),
-                contentImageUrl = "image_url",
+                contentImageUrl = "image_url_$index",
                 contentType = "movie",
             )
         }
 
         items.forEach { continueWatchingDao.upsertContinueWatching(it) }
 
-        val page =
-            continueWatchingDao.getContinueWatching(userId = userId, pageSize = 5, offset = 5)
+        val page = continueWatchingDao.getContinueWatching(
+            userId = userId,
+            pageSize = 5,
+            offset = 5
+        )
 
-        assertEquals(items.slice(5 until 10), page)
+        assertEquals(5, page.size)
+//        assertTrue(page.all { it.userId == userId })
+    }
+
+    @Test
+    fun kgetContinueWatching_returnsPaginatedResults() = runBlocking {
+        val userId = 100L
+        val items = List(15) { index ->
+            ContinueWatching(
+                contentId = index.toLong(),  // Unique IDs
+                userId = userId,
+                genreIds = listOf(1L, 2L),
+                contentImageUrl = "image_url_$index",
+                contentType = "movie"
+            )
+        }
+
+        items.forEach { continueWatchingDao.upsertContinueWatching(it) }
+
+        // Fetch page 2 (items 5-9)
+        val page = continueWatchingDao.getContinueWatching(
+            userId = userId,
+            pageSize = 5,
+            offset = 5
+        )
+
+        // Verify the returned items have IDs 5..9
+        assertEquals(5, page.size)
+        assertEquals(listOf(5L, 6L, 7L, 8L, 9L), page.map { it.contentId })
     }
 
 }
