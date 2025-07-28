@@ -110,7 +110,8 @@ fun PopularCardPager(
                                 else -> kotlin.math.abs(currentPageOffset) * 40f
                             }
 
-                        val item = items[page % items.size]
+                        val item =
+                            items[if (items.isEmpty()) return@HorizontalPager else page % items.size]
 
                         PopularCard(
                             contentName = item.name,
@@ -131,7 +132,7 @@ fun PopularCardPager(
                     }
                     CarousalDot(
                         totalDots = items.size,
-                        selectedIndex = (pagerState.currentPage % items.size),
+                        selectedIndex = if (items.isEmpty()) return@CompositionLocalProvider else (pagerState.currentPage % items.size),
                     )
                 }
             }
@@ -153,7 +154,7 @@ private fun LoadingPopularCardPager(
             modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-    ) { page ->
+            ) { page ->
         val currentPageOffset =
             (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
