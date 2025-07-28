@@ -11,7 +11,7 @@ fun TVShowDetailsResponse.toDto(): TvShowDto {
         title = this.name.orEmpty(),
         genres = this.genres?.map {
             GenreDto(
-                id = it.id?.toLong() ?: 0L,
+                id = it.id?: 0L,
                 name = it.name.orEmpty(),
                 type = GenreType.TV_SHOW
             )
