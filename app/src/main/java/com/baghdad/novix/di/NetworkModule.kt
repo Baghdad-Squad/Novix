@@ -17,7 +17,6 @@ import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.apiService.SearchApiService
 import com.baghdad.remoteDataSource.apiService.TvShowApiService
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
-import com.baghdad.remoteDataSource.interceptor.KtorApiInterceptor
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
@@ -46,10 +45,6 @@ val remoteDataSourceModule = module {
         HttpClient(CIO) {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
-            }
-            install(KtorApiInterceptor) {
-                apiKey = BuildConfig.API_KEY
-                languageProvider = get()
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 20_000

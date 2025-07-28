@@ -52,4 +52,5 @@ dependencies {
     testImplementation(libs.bundles.test.core)
     testImplementation(libs.ktor.client.mock)
     implementation(libs.bundles.retrofit)
+    testImplementation (libs.mockwebserver)
 }
