@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -34,10 +36,10 @@ import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.movie.TrendingMoviesEffect
-import com.baghdad.viewmodel.movie.TrendingMoviesInteractionListener
-import com.baghdad.viewmodel.movie.TrendingMoviesScreenState
-import com.baghdad.viewmodel.movie.TrendingMoviesViewModel
+import com.baghdad.viewmodel.trendingMovie.TrendingMoviesEffect
+import com.baghdad.viewmodel.trendingMovie.TrendingMoviesInteractionListener
+import com.baghdad.viewmodel.trendingMovie.TrendingMoviesScreenState
+import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -50,6 +52,8 @@ fun TrendingMoviesScreen(
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val movieItems =
         uiState.movies.collectAsLazyPagingItems()
+
+
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
@@ -84,6 +88,10 @@ private fun TrendingMoviesContent(
     listener: TrendingMoviesInteractionListener,
     snackBarState: SnackBarState
 ) {
+    val gridState = rememberSaveable(saver = LazyGridState.Saver) {
+        LazyGridState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
+    }
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -140,6 +148,7 @@ private fun TrendingMoviesContent(
                     end = 16.dp,
                     bottom = 12.dp
                 ),
+                state = gridState,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) { movie ->
