@@ -66,7 +66,7 @@ fun ForgotPasswordWebViewContent(
         }
     }
 
-    val screenUrl = "https://www.themoviedb.org/reset-password?language=$languageTag"
+    val screenUrl =  remember { "https://www.themoviedb.org/reset-password?language=$languageTag"}
 
     Box(
         modifier = Modifier
