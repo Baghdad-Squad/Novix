@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.baghdad.design_system.component.NovixBottomNavigationBar
@@ -30,9 +31,15 @@ import com.baghdad.ui.navigation.bottom.navigateToBottomNavDestination
 import com.baghdad.ui.navigation.bottom.rememberBottomNavSelectedIndex
 import com.baghdad.ui.navigation.bottom.rememberIsTopLevelMainRoute
 import com.baghdad.ui.navigation.route.Graph
+import com.baghdad.viewmodel.main.MainViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel = koinViewModel(),
+) {
+    val state = viewModel.uiState.collectAsStateWithLifecycle()
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -64,8 +71,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 NovixBottomNavigationBar(
                     items = BOTTOM_NAV_ITEMS.values.toList(),
                     onClick = { index ->
-                        val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
-                        navController.navigateToBottomNavDestination(targetGraph)
+                        if (index != selectedIndex) {
+                            val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
+                            navController.navigateToBottomNavDestination(targetGraph)
+                        }
                     },
                     selectedIconIndex = selectedIndex
                 )
@@ -75,7 +84,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         NovixNavHost(
             modifier = Modifier.padding(bottom = animatedBottomPadding),
             navController = navController,
-            startDestination = Graph.AuthenticationGraph,
+            startDestination = if (state.value.isLoggedIn) Graph.HomeGraph else Graph.AuthenticationGraph,
         )
     }
 }

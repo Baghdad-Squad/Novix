@@ -159,8 +159,8 @@ private fun CategoryMoviesContent(
                     url = movie.posterPictureURL,
                     contentDescription = null,
                     isSaved = movie.isSaved,
-                    onSavedClick = { listener.onMovieClicked(movie.id) },
-                    onClick = { listener.onSavedClick(movie.id) },
+                    onSavedClick = { listener.onSavedClick(movie.id) },
+                    onClick = { listener.onMovieClicked(movie.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }

@@ -38,6 +38,7 @@ class SearchViewModel(
     private var searchJob: Job? = null
     private var lastSearch: String = ""
     private var tabChanged = false
+
     init {
         getRecentSearches()
         getRecentViewed()
@@ -149,7 +150,7 @@ class SearchViewModel(
     }
 
     private fun onGetRecentViewedSuccess(recentlyViewed: List<RecentlyViewed>) {
-        val recentViewedUiState = recentlyViewed.map { it.toRecentlyViewedUI() }
+        val recentViewedUiState = recentlyViewed.take(10).map { it.toRecentlyViewedUI() }
         updateState { searchScreenState ->
             searchScreenState.copy(
                 recentViewed = recentViewedUiState.distinctBy { it.id })
@@ -164,7 +165,7 @@ class SearchViewModel(
     }
 
     private fun onGetRecentSearchesSuccess(recentSearches: List<RecentSearch>) {
-        val recentSearchUiState = recentSearches.map { it.toRecentSearchUI() }
+        val recentSearchUiState = recentSearches.take(20).map { it.toRecentSearchUI() }
         updateState { searchScreenState ->
             searchScreenState.copy(
                 recentSearch = recentSearchUiState.distinctBy { it.query })
@@ -226,9 +227,6 @@ class SearchViewModel(
                     if (item.id == id) item.copy(isSaved = item.isSaved.not()) else item
                 })
         }
-        showSnackBar(
-            message = SearchSnackBarMessage.SavedItemSuccessfully, isSuccess = true
-        )
     }
 
     private fun onClearRecentViewedSuccess() {
@@ -290,10 +288,21 @@ class SearchViewModel(
     }
 
     override fun onFilterClearClick() {
-        if (currentState.selectedSearchTab == SearchScreenState.SearchTab.MOVIES) {
-            resetMoviesFilter()
+        if (currentState.searchText.isNotBlank()) {
+            onSearchTextChanged(currentState.searchText)
+            updateState {
+                it.copy(
+                    bottomSheetUiState = it.bottomSheetUiState.copy(
+                        isBottomSheetVisible = false
+                    )
+                )
+            }
         } else {
-            resetTvShowsFilter()
+            if (currentState.selectedSearchTab == SearchScreenState.SearchTab.MOVIES) {
+                resetMoviesFilter()
+            } else {
+                resetTvShowsFilter()
+            }
         }
     }
 
@@ -301,7 +310,13 @@ class SearchViewModel(
         updateState {
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
-                    moviesFilter = SearchScreenState.SearchFilterUiState()
+                    isBottomSheetVisible = false,
+                    moviesFilter = it.bottomSheetUiState.moviesFilter.copy(
+                        minimumRating = 0,
+                        minimumYear = 1874,
+                        maximumYear = 2035,
+                        selectedGenres = emptyList()
+                    )
                 )
             )
         }
@@ -311,13 +326,22 @@ class SearchViewModel(
         updateState {
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
-                    tvShowsFilter = SearchScreenState.SearchFilterUiState()
+                    isBottomSheetVisible = false,
+                    moviesFilter = it.bottomSheetUiState.moviesFilter.copy(
+                        minimumRating = 0,
+                        minimumYear = 1874,
+                        maximumYear = 2035,
+                        selectedGenres = emptyList()
+                    )
                 )
             )
         }
     }
 
     override fun onApplyFilterClick() {
+        if (currentState.searchText.isNotBlank()) {
+            onSearchTextChanged(currentState.searchText)
+        }
         updateState {
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
@@ -325,8 +349,8 @@ class SearchViewModel(
                 )
             )
         }
-        onSearchTextChanged(currentState.searchText)
     }
+
 
     override fun onFilterIconClick() {
         updateState {
@@ -379,7 +403,8 @@ class SearchViewModel(
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
                     moviesFilter = it.bottomSheetUiState.moviesFilter.copy(
-                        minimumYear = range.start.toInt(), maximumYear = range.endInclusive.toInt()
+                        minimumYear = range.start.toInt(),
+                        maximumYear = range.endInclusive.toInt()
                     )
                 )
             )
@@ -391,7 +416,8 @@ class SearchViewModel(
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
                     tvShowsFilter = it.bottomSheetUiState.tvShowsFilter.copy(
-                        minimumYear = range.start.toInt(), maximumYear = range.endInclusive.toInt()
+                        minimumYear = range.start.toInt(),
+                        maximumYear = range.endInclusive.toInt()
                     )
                 )
             )

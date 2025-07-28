@@ -1,6 +1,7 @@
 package com.baghdad.ui.feature.trendingTvShow.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ fun GenresSection(
         modifier = modifier
             .wrapContentSize(),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
+        contentPadding = PaddingValues(horizontal = 12.dp)
     ) {
         item {
             Chip(

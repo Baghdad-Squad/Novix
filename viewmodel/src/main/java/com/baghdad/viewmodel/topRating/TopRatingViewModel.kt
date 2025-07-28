@@ -49,6 +49,10 @@ class TopRatingViewModel(
         sendEffect(TopRatingEffect.NavigateToMovieDetails(movieId))
     }
 
+    override fun onTvShowDetailsClick(tvShowId: Long) {
+        sendEffect(TopRatingEffect.NavigateToTvShowDetails(tvShowId))
+    }
+
     private fun fetchTvShowsByGenre(genreId: Long?) {
         updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
         collectPagingFlow(
@@ -80,10 +84,24 @@ class TopRatingViewModel(
     }
 
     override fun onGenreClick(genreId: Long?) {
-        when (currentState.selectedTab) {
-            TopRatingTab.MOVIES -> fetchMoviesByGenre(genreId)
-            TopRatingTab.TV_SHOWS -> fetchTvShowsByGenre(genreId)
+        if (genreId != currentState.selectedGenreId) {
+            when (currentState.selectedTab) {
+                TopRatingTab.MOVIES -> fetchMoviesByGenre(genreId)
+                TopRatingTab.TV_SHOWS -> fetchTvShowsByGenre(genreId)
+            }
         }
+    }
+
+    override fun onSaveTvShowClick(tvShowId: Long) {
+        updateState {
+            it.copy(
+            )
+        }
+
+        showSnackBar(
+            message = SearchSnackBarMessage.SavedItemSuccessfully,
+            isSuccess = true,
+        )
     }
 
     override fun onSaveMovieClick(movieId: Long) {
