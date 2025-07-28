@@ -1,6 +1,6 @@
 package com.baghdad.local_datasource.entity
 
-import com.baghdad.local_datasource.roomDB.entity.LocalFavoriteGenreDto
+import com.baghdad.local_datasource.roomDB.entity.FavoriteGenre
 import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
@@ -19,7 +19,7 @@ class LocalFavoriteGenreDtoTest {
     @Test
     fun `should show default values are applied correctly`() {
         // Given
-        val dto = LocalFavoriteGenreDto(
+        val dto = FavoriteGenre(
             genreId = 2L,
             name = "Comedy"
         )
@@ -44,7 +44,7 @@ class LocalFavoriteGenreDtoTest {
     }
 
     companion object {
-        val LOCAL_FAVORITE_GENRE_DTO = LocalFavoriteGenreDto(
+        val LOCAL_FAVORITE_GENRE_DTO = FavoriteGenre(
             genreId = 1L,
             name = "Action",
             count = 5,
