@@ -6,14 +6,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.baghdad.local_datasource.roomDB.dao.FavoriteGenreDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
-import com.baghdad.local_datasource.roomDB.entity.LocalFavoriteGenreDto
+import com.baghdad.local_datasource.roomDB.entity.FavoriteGenre
 import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
+import org.junit.Test
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
@@ -34,82 +34,101 @@ class FavoriteGenreDaoTest {
 
     @After
     fun closeDataBase() {
+        database.clearAllTables()
         database.close()
     }
 
     @Test
     fun addFavoriteGenre_insertsGenre() = runBlocking {
-        val genre = LocalFavoriteGenreDto(
+        // Given
+        val genre = FavoriteGenre(
             genreId = 1L,
             name = "Action",
             count = 1,
             timeStamp = System.currentTimeMillis()
         )
-
         favoriteGenreDao.addFavoriteGenre(genre)
 
+        // When
         val result = favoriteGenreDao.getFavoriteGenreById(1L)
+
+        // Then
         assertNotNull(result)
+        assertEquals(genre.name, result?.name)
+        assertEquals(genre.count, result?.count)
+        assertEquals(genre.name, result?.name)
     }
 
     @Test
     fun getFavoriteGenreById_returnsCorrectGenre() = runBlocking {
-        val genre = LocalFavoriteGenreDto(
+        // Given
+        val genre = FavoriteGenre(
             genreId = 2L,
             name = "Drama",
             count = 2,
             timeStamp = System.currentTimeMillis()
         )
-
         favoriteGenreDao.addFavoriteGenre(genre)
 
+        // When
         val result = favoriteGenreDao.getFavoriteGenreById(2L)
+
+        // Then
         assertEquals("Drama", result?.name)
         assertEquals(2, result?.count)
     }
 
     @Test
     fun getFavoriteGenres_ordersByCountAndTimeStamp() = runBlocking {
+        // Given
         val genres = listOf(
-            LocalFavoriteGenreDto(1L, "Comedy", 3, System.currentTimeMillis() - 10000),
-            LocalFavoriteGenreDto(2L, "Drama", 3, System.currentTimeMillis() - 5000),
-            LocalFavoriteGenreDto(3L, "Sci-Fi", 2, System.currentTimeMillis())
+            FavoriteGenre(1L, "Comedy", 3, 1L),
+            FavoriteGenre(2L, "Drama", 3, 2L),
+            FavoriteGenre(3L, "Sci-Fi", 2, 3L)
         )
-
         genres.forEach { favoriteGenreDao.addFavoriteGenre(it) }
 
+        // When
         val result = favoriteGenreDao.getFavoriteGenres()
+
+        // Then
         assertEquals(3, result.size)
-        assertEquals("Drama", result[0].name)
-        assertEquals("Comedy", result[1].name)
-        assertEquals("Sci-Fi", result[2].name)
+        assertEquals("Sci-Fi", result[0].name)
+        assertEquals("Drama", result[1].name)
+        assertEquals("Comedy", result[2].name)
     }
 
     @Test
     fun updateFavoriteGenreCount_insertsNewIfNotExists() = runBlocking {
+        // Given
         val genreId = 10L
         val name = "Thriller"
-
         favoriteGenreDao.updateFavoriteGenreCount(genreId, name)
-        val genre = favoriteGenreDao.getFavoriteGenreById(genreId)
 
-        assertEquals(1, genre?.count)
-        assertEquals("Thriller", genre?.name)
+        // When
+        val result = favoriteGenreDao.getFavoriteGenreById(genreId)
+
+        // Then
+        assertEquals(1, result?.count)
+        assertEquals("Thriller", result?.name)
     }
 
     @Test
     fun updateFavoriteGenreCount_incrementsCountIfExists() = runBlocking {
-        val genre = LocalFavoriteGenreDto(
+        // Given
+        val genre = FavoriteGenre(
             genreId = 11L,
             name = "Horror",
             count = 2,
             timeStamp = System.currentTimeMillis()
         )
-
         favoriteGenreDao.addFavoriteGenre(genre)
         favoriteGenreDao.updateFavoriteGenreCount(11L, "Horror")
 
+        // When
         val result = favoriteGenreDao.getFavoriteGenreById(11L)
+
+        // Then
         assertEquals(3, result?.count)
     }
 }
