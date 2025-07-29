@@ -34,15 +34,15 @@ fun EpisodeDetailsHeader(
     rating: Double,
     releaseDate: String,
     seasonNumber: Int,
-
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Theme.color.surface, shape = RoundedCornerShape(16.dp))
-            .border(1.dp, Theme.color.stroke, shape = RoundedCornerShape(16.dp))
-            .padding(12.dp)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(Theme.color.surface, shape = RoundedCornerShape(16.dp))
+                .border(1.dp, Theme.color.stroke, shape = RoundedCornerShape(16.dp))
+                .padding(12.dp),
     ) {
         Text(
             text = title,
@@ -52,35 +52,42 @@ fun EpisodeDetailsHeader(
             modifier = Modifier.padding(bottom = 44.dp),
         )
         FlowRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             categories.forEachIndexed { index, category ->
-                Text(
-                    text = category.name,
-                    fontSize = 14.sp,
-                    style = Theme.typography.label.medium,
-                    color = Theme.color.body,
-                    modifier = Modifier.noRippleClickable { onCategoryClicked(category.id) }
-                )
-                if (index < categories.size - 1) {
-                    CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    if (index > 0) {
+                        CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+                    }
+                    Text(
+                        text = category.name,
+                        fontSize = 14.sp,
+                        style = Theme.typography.label.medium,
+                        color = Theme.color.body,
+                        modifier = Modifier.noRippleClickable { onCategoryClicked(category.id) },
+                    )
                 }
             }
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             LabeledIconRow(
                 title = rating.toString(),
                 icon = painterResource(com.baghdad.design_system.R.drawable.ic_star_filled),
-                tint = Theme.color.yellowAccent
+                tint = Theme.color.yellowAccent,
             )
             if (releaseDate.isNotBlank()) {
                 CircleDot()
@@ -93,12 +100,11 @@ fun EpisodeDetailsHeader(
             LabeledIconRow(
                 title = stringResource(R.string.season_template, seasonNumber),
                 icon = painterResource(R.drawable.ic_tv),
-                tint = Theme.color.body
+                tint = Theme.color.body,
             )
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -106,10 +112,11 @@ private fun EpisodeDetailsHeaderPreview() {
     NovixTheme {
         EpisodeDetailsHeader(
             title = "Test Episode",
-            categories = listOf(
-                EpisodeDetailsScreenState.CategoryUiState(name = "Action"),
-                EpisodeDetailsScreenState.CategoryUiState(name = "Drama")
-            ),
+            categories =
+                listOf(
+                    EpisodeDetailsScreenState.CategoryUiState(name = "Action"),
+                    EpisodeDetailsScreenState.CategoryUiState(name = "Drama"),
+                ),
             onCategoryClicked = {},
             rating = 7.5,
             releaseDate = "1950-05-13",
