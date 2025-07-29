@@ -1,19 +1,16 @@
 package com.baghdad.viewmodel.actorDetails
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class ActorDetailsScreenStateTest {
 
     @Test
     fun `default ActorDetailsScreenState should have correct initial values`() {
-
+        // Given
+        // When
         val state = ActorDetailsScreenState()
-
+        // Then
         assertEquals(emptyList<ActorDetailsScreenState.MovieUiState>(), state.topMoviesPicks)
         assertEquals(emptyList<ActorDetailsScreenState.TvShowUiState>(), state.topTvShowsPicks)
         assertEquals(emptyList<String>(), state.gallery)
@@ -27,12 +24,12 @@ class ActorDetailsScreenStateTest {
 
     @Test
     fun `ActorDetailsScreenState with custom values should return correct values`() {
-
+        // Given
         val mockMovies = createMockMovieUiStateList()
         val mockTvShows = createMockTvShowUiStateList()
         val mockGallery = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg")
         val mockActorInfo = createMockActorInfoUiState()
-
+        // When
         val state = ActorDetailsScreenState(
             topMoviesPicks = mockMovies,
             topTvShowsPicks = mockTvShows,
@@ -44,7 +41,7 @@ class ActorDetailsScreenStateTest {
             isGalleryMoreThanTen = true,
             isLoading = true
         )
-
+        // Then
         assertEquals(mockMovies, state.topMoviesPicks)
         assertEquals(mockTvShows, state.topTvShowsPicks)
         assertEquals(mockGallery, state.gallery)
@@ -58,28 +55,28 @@ class ActorDetailsScreenStateTest {
 
     @Test
     fun `ActorDetailsScreenState should implement BaseUiState correctly`() {
-
+        // Given + When
         val loadingState = ActorDetailsScreenState(isLoading = true)
         val notLoadingState = ActorDetailsScreenState(isLoading = false)
-
+        // Then
         assertTrue(loadingState.isLoading)
         assertFalse(notLoadingState.isLoading)
     }
 
     @Test
     fun `copy function should work correctly with all parameters`() {
-
+        // Given
         val originalState = ActorDetailsScreenState()
         val newMovies = createMockMovieUiStateList()
         val newActorInfo = createMockActorInfoUiState()
-
+        // When
         val copiedState = originalState.copy(
             topMoviesPicks = newMovies,
             actorInfo = newActorInfo,
             isTextExpanded = true,
             isLoading = true
         )
-
+        // Then
         assertEquals(newMovies, copiedState.topMoviesPicks)
         assertEquals(newActorInfo, copiedState.actorInfo)
         assertTrue(copiedState.isTextExpanded)
@@ -91,9 +88,9 @@ class ActorDetailsScreenStateTest {
 
     @Test
     fun `MovieUiState should have correct default values`() {
-
+        // Given + When
         val movieUiState = ActorDetailsScreenState.MovieUiState()
-
+        // Then
         assertEquals(0L, movieUiState.id)
         assertEquals("", movieUiState.posterPictureURL)
         assertFalse(movieUiState.isSaved)
@@ -101,17 +98,17 @@ class ActorDetailsScreenStateTest {
 
     @Test
     fun `MovieUiState should accept custom values correctly`() {
-
+        // Given
         val movieId = 123L
         val posterUrl = "/movie_poster.jpg"
         val isSaved = true
-
+        // When
         val movieUiState = ActorDetailsScreenState.MovieUiState(
             id = movieId,
             posterPictureURL = posterUrl,
             isSaved = isSaved
         )
-
+        // Then
         assertEquals(movieId, movieUiState.id)
         assertEquals(posterUrl, movieUiState.posterPictureURL)
         assertTrue(movieUiState.isSaved)
@@ -119,9 +116,9 @@ class ActorDetailsScreenStateTest {
 
     @Test
     fun `TvShowUiState should have correct default values`() {
-
+        // Given + When
         val tvShowUiState = ActorDetailsScreenState.TvShowUiState()
-
+        // Then
         assertEquals(0L, tvShowUiState.id)
         assertEquals("", tvShowUiState.posterPictureURL)
         assertFalse(tvShowUiState.isSaved)
@@ -129,17 +126,17 @@ class ActorDetailsScreenStateTest {
 
     @Test
     fun `TvShowUiState should accept custom values correctly`() {
-
+        // Given
         val tvShowId = 456L
         val posterUrl = "/tvshow_poster.jpg"
         val isSaved = true
-
+        // When
         val tvShowUiState = ActorDetailsScreenState.TvShowUiState(
             id = tvShowId,
             posterPictureURL = posterUrl,
             isSaved = isSaved
         )
-
+        // Then
         assertEquals(tvShowId, tvShowUiState.id)
         assertEquals(posterUrl, tvShowUiState.posterPictureURL)
         assertTrue(tvShowUiState.isSaved)
@@ -147,9 +144,9 @@ class ActorDetailsScreenStateTest {
 
     @Test
     fun `ActorInfoUiState should have correct default values`() {
-
+        // Given + When
         val actorInfoUiState = ActorDetailsScreenState.ActorInfoUiState()
-
+        // Then
         assertEquals("", actorInfoUiState.name)
         assertEquals(emptyList<String>(), actorInfoUiState.headerPictures)
         assertEquals("", actorInfoUiState.birthdayDate)
@@ -161,7 +158,7 @@ class ActorDetailsScreenStateTest {
 
     @Test
     fun `ActorInfoUiState should accept custom values correctly`() {
-
+        // Given
         val name = "John Doe"
         val headerPictures = listOf("/header1.jpg", "/header2.jpg")
         val birthdayDate = "1980-01-01"
@@ -169,7 +166,7 @@ class ActorDetailsScreenStateTest {
         val deathDate = "2023-12-31"
         val biography = "Famous actor biography"
         val department = "Acting"
-
+        // When
         val actorInfoUiState = ActorDetailsScreenState.ActorInfoUiState(
             name = name,
             headerPictures = headerPictures,
@@ -179,7 +176,7 @@ class ActorDetailsScreenStateTest {
             biography = biography,
             department = department
         )
-
+        // Then
         assertEquals(name, actorInfoUiState.name)
         assertEquals(headerPictures, actorInfoUiState.headerPictures)
         assertEquals(birthdayDate, actorInfoUiState.birthdayDate)
@@ -191,19 +188,19 @@ class ActorDetailsScreenStateTest {
 
     @Test
     fun `ActorInfoUiState with null deathDate should work correctly`() {
-
+        // Given
         val actorInfoUiState = ActorDetailsScreenState.ActorInfoUiState(
             name = "Living Actor",
             deathDate = null
         )
-
+        // Then
         assertEquals("Living Actor", actorInfoUiState.name)
         assertNull(actorInfoUiState.deathDate)
     }
 
     @Test
     fun `equality should work correctly for ActorDetailsScreenState`() {
-
+        // Given
         val state1 = ActorDetailsScreenState(
             topMoviesPicks = createMockMovieUiStateList(),
             isTextExpanded = true,
@@ -219,14 +216,14 @@ class ActorDetailsScreenStateTest {
             isTextExpanded = false,
             isLoading = false
         )
-
+        // Then
         assertEquals(state1, state2)
         assertTrue(state1 != state3)
     }
 
     @Test
     fun `equality should work correctly for nested data classes`() {
-
+        // Given + Then
         val movie1 = ActorDetailsScreenState.MovieUiState(1L, "/poster1.jpg", true)
         val movie2 = ActorDetailsScreenState.MovieUiState(1L, "/poster1.jpg", true)
         val movie3 = ActorDetailsScreenState.MovieUiState(2L, "/poster2.jpg", false)
@@ -249,24 +246,24 @@ class ActorDetailsScreenStateTest {
 
     @Test
     fun `hashCode should be consistent for equal objects`() {
-
+        // Given
         val state1 = ActorDetailsScreenState(isTextExpanded = true, isLoading = false)
         val state2 = ActorDetailsScreenState(isTextExpanded = true, isLoading = false)
-
+        // Then
         assertEquals(state1.hashCode(), state2.hashCode())
     }
 
     @Test
     fun `toString should work correctly`() {
-
+        // Given
         val state = ActorDetailsScreenState(
             topMoviesPicks = listOf(ActorDetailsScreenState.MovieUiState(1L, "/poster.jpg", true)),
             isTextExpanded = true,
             isLoading = false
         )
-
+        // When
         val result = state.toString()
-
+        // Then
         assertNotNull(result)
         assertTrue(result.contains("ActorDetailsScreenState"))
         assertTrue(result.contains("isTextExpanded=true"))

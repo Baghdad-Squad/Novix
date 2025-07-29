@@ -53,9 +53,10 @@ class ActorDetailsViewModelTest {
             getActorGalleryUseCase = getActorGalleryUseCase
         )
     }
-    @Test
-    fun `init should handle empty gallery list`() = runTest {
 
+    @Test
+    fun `given empty gallery list when init then state should reflect empty gallery`() = runTest {
+        // Given
         val mockActor = createMockActor()
         val mockMovies = createMockMovies()
         val mockTvShows = createMockTvShows()
@@ -66,96 +67,119 @@ class ActorDetailsViewModelTest {
         coEvery { getActorTvShowUseCase(actorId) } returns mockTvShows
         coEvery { getActorGalleryUseCase(actorId) } returns emptyGallery
 
+        // When
         createViewModel()
         advanceUntilIdle()
 
+        // Then
         val currentState = viewModel.uiState.value
         assertEquals(0, currentState.gallery.size)
         assertFalse(currentState.isGalleryMoreThanTen)
     }
 
     @Test
-    fun `onBackIconClick should send NavigateBack effect`() = runTest {
+    fun `given initialized viewModel when onBackIconClick then should send NavigateBack effect`() =
+        runTest {
+            // Given
+            setupSuccessfulMocks()
+            createViewModel()
+            advanceUntilIdle()
 
-        setupSuccessfulMocks()
-        createViewModel()
-        advanceUntilIdle()
+            // When
+            viewModel.onBackIconClick()
 
-        viewModel.onBackIconClick()
-
-    }
-
-    @Test
-    fun `onReadMoreBiographyClick should toggle isTextExpanded state`() = runTest {
-
-        setupSuccessfulMocks()
-        createViewModel()
-        advanceUntilIdle()
-
-        val initialState = viewModel.uiState.value.isTextExpanded
-
-        viewModel.onReadMoreBiographyClick()
-
-        val newState = viewModel.uiState.value.isTextExpanded
-        assertEquals(!initialState, newState)
-    }
+            // Then
+        }
 
     @Test
-    fun `onViewAllGalleryClick should send NavigateToActorGallery effect`() = runTest {
+    fun `given initialized viewModel when onReadMoreBiographyClick then should toggle isTextExpanded state`() =
+        runTest {
+            // Given
+            setupSuccessfulMocks()
+            createViewModel()
+            advanceUntilIdle()
+            val initialState = viewModel.uiState.value.isTextExpanded
 
-        setupSuccessfulMocks()
-        createViewModel()
-        advanceUntilIdle()
+            // When
+            viewModel.onReadMoreBiographyClick()
 
-        viewModel.onViewAllGalleryClick()
-
-    }
-
-    @Test
-    fun `onViewAllTopMoviesPicksClick should send NavigateToActorTopMoviePicks effect`() = runTest {
-
-        setupSuccessfulMocks()
-        createViewModel()
-        advanceUntilIdle()
-
-        viewModel.onViewAllTopMoviesPicksClick()
-
-    }
+            // Then
+            val newState = viewModel.uiState.value.isTextExpanded
+            assertEquals(!initialState, newState)
+        }
 
     @Test
-    fun `onViewAllTopTvShowsClick should send NavigateToActorTopTvShowPicks effect`() = runTest {
+    fun `given initialized viewModel when onViewAllGalleryClick then should send NavigateToActorGallery effect`() =
+        runTest {
+            // Given
+            setupSuccessfulMocks()
+            createViewModel()
+            advanceUntilIdle()
 
-        setupSuccessfulMocks()
-        createViewModel()
-        advanceUntilIdle()
+            // When
+            viewModel.onViewAllGalleryClick()
 
-        viewModel.onViewAllTopTvShowsClick()
-
-    }
-
-    @Test
-    fun `onMovieCardClick should send NavigateToMovieDetails effect with correct movieId`() = runTest {
-
-        setupSuccessfulMocks()
-        createViewModel()
-        advanceUntilIdle()
-        val movieId = 456L
-
-        viewModel.onMovieCardClick(movieId)
-
-    }
+            // Then
+        }
 
     @Test
-    fun `onTvShowCardClick should send NavigateToTvShowDetails effect with correct tvShowId`() = runTest {
+    fun `given initialized viewModel when onViewAllTopMoviesPicksClick then should send NavigateToActorTopMoviePicks effect`() =
+        runTest {
+            // Given
+            setupSuccessfulMocks()
+            createViewModel()
+            advanceUntilIdle()
 
-        setupSuccessfulMocks()
-        createViewModel()
-        advanceUntilIdle()
-        val tvShowId = 789L
+            // When
+            viewModel.onViewAllTopMoviesPicksClick()
 
-        viewModel.onTvShowCardClick(tvShowId)
+            // Then
+        }
 
-    }
+    @Test
+    fun `given initialized viewModel when onViewAllTopTvShowsClick then should send NavigateToActorTopTvShowPicks effect`() =
+        runTest {
+            // Given
+            setupSuccessfulMocks()
+            createViewModel()
+            advanceUntilIdle()
+
+            // When
+            viewModel.onViewAllTopTvShowsClick()
+
+            // Then
+        }
+
+    @Test
+    fun `given initialized viewModel when onMovieCardClick with movieId then should send NavigateToMovieDetails effect with correct id`() =
+        runTest {
+            // Given
+            setupSuccessfulMocks()
+            createViewModel()
+            advanceUntilIdle()
+            val movieId = 456L
+
+            // When
+            viewModel.onMovieCardClick(movieId)
+
+            // Then
+        }
+
+    @Test
+    fun `given initialized viewModel when onTvShowCardClick with tvShowId then should send NavigateToTvShowDetails effect with correct id`() =
+        runTest {
+            // Given
+            setupSuccessfulMocks()
+            createViewModel()
+            advanceUntilIdle()
+            val tvShowId = 789L
+
+            // When
+            viewModel.onTvShowCardClick(tvShowId)
+
+            // Then
+
+        }
 
     private fun setupSuccessfulMocks() {
         coEvery { getActorInfoUseCase(actorId) } returns createMockActor()

@@ -12,9 +12,14 @@ class ActorDetailsScreenMapperTest {
 
     @Test
     fun `toActorInfoUI should map Actor to ActorInfoUiState correctly when deathDate is null`() {
-
+        // Given
         val actor = createMockActorWithoutDeathDate()
-        val expectedActorInfoUiState = ActorDetailsScreenState.ActorInfoUiState(
+
+        // When
+        val result = actor.toActorInfoUI()
+
+        // Then
+        val expected = ActorDetailsScreenState.ActorInfoUiState(
             name = "John Doe",
             biography = "Famous actor biography",
             birthdayDate = "1980-01-01",
@@ -23,17 +28,20 @@ class ActorDetailsScreenMapperTest {
             headerPictures = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg"),
             department = "Acting"
         )
-
-        val result = actor.toActorInfoUI()
-
-        assertEquals(expectedActorInfoUiState, result)
+        assertEquals(expected, result)
     }
+
 
     @Test
     fun `toActorInfoUI should map Actor to ActorInfoUiState correctly when deathDate is not null`() {
-
+        // Given
         val actor = createMockActorWithDeathDate()
-        val expectedActorInfoUiState = ActorDetailsScreenState.ActorInfoUiState(
+
+        // When
+        val result = actor.toActorInfoUI()
+
+        // Then
+        val expected = ActorDetailsScreenState.ActorInfoUiState(
             name = "Jane Smith",
             biography = "Legendary actress biography",
             birthdayDate = "1970-05-15",
@@ -42,47 +50,49 @@ class ActorDetailsScreenMapperTest {
             headerPictures = listOf("/header1.jpg", "/header2.jpg"),
             department = "Acting"
         )
-
-        val result = actor.toActorInfoUI()
-
-        assertEquals(expectedActorInfoUiState, result)
+        assertEquals(expected, result)
     }
 
     @Test
     fun `toMovieUI should handle empty posterImageURL correctly`() {
         // Given
         val movie = createMockMovie().copy(posterImageURL = "")
-        val expectedMovieUiState = ActorDetailsScreenState.MovieUiState(
-            id = 456L,
-            posterPictureURL = "",
-            isSaved = false
-        )
 
+        // When
         val result = movie.toMovieUI()
 
-        assertEquals(expectedMovieUiState, result)
+        // Then
+        val expected = ActorDetailsScreenState.MovieUiState(
+            id = 456L, posterPictureURL = "", isSaved = false
+        )
+        assertEquals(expected, result)
     }
 
     @Test
     fun `toTvShowUI should handle empty posterImageURL correctly`() {
-
+        // Given
         val tvShow = createMockTvShow().copy(posterImageURL = "")
-        val expectedTvShowUiState = ActorDetailsScreenState.TvShowUiState(
-            id = 789L,
-            posterPictureURL = "",
-            isSaved = false
-        )
 
+        // When
         val result = tvShow.toTvShowUI()
 
-        assertEquals(expectedTvShowUiState, result)
+        // Then
+        val expected = ActorDetailsScreenState.TvShowUiState(
+            id = 789L, posterPictureURL = "", isSaved = false
+        )
+        assertEquals(expected, result)
     }
 
     @Test
     fun `toActorInfoUI should handle empty biography correctly`() {
-
+        // Given
         val actor = createMockActorWithoutDeathDate().copy(biography = "")
-        val expectedActorInfoUiState = ActorDetailsScreenState.ActorInfoUiState(
+
+        // When
+        val result = actor.toActorInfoUI()
+
+        // Then
+        val expected = ActorDetailsScreenState.ActorInfoUiState(
             name = "John Doe",
             biography = "",
             birthdayDate = "1980-01-01",
@@ -91,17 +101,20 @@ class ActorDetailsScreenMapperTest {
             headerPictures = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg"),
             department = "Acting"
         )
-
-        val result = actor.toActorInfoUI()
-
-        assertEquals(expectedActorInfoUiState, result)
+        assertEquals(expected, result)
     }
+
 
     @Test
     fun `toActorInfoUI should handle empty headerPictures list correctly`() {
-
+        // Given
         val actor = createMockActorWithoutDeathDate().copy(headerPictures = emptyList())
-        val expectedActorInfoUiState = ActorDetailsScreenState.ActorInfoUiState(
+
+        // When
+        val result = actor.toActorInfoUI()
+
+        // Then
+        val expected = ActorDetailsScreenState.ActorInfoUiState(
             name = "John Doe",
             biography = "Famous actor biography",
             birthdayDate = "1980-01-01",
@@ -110,10 +123,7 @@ class ActorDetailsScreenMapperTest {
             headerPictures = emptyList(),
             department = "Acting"
         )
-
-        val result = actor.toActorInfoUI()
-
-        assertEquals(expectedActorInfoUiState, result)
+        assertEquals(expected, result)
     }
 
     companion object {
