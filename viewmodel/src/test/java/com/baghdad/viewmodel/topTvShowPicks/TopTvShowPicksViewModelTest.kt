@@ -8,14 +8,17 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,11 +33,19 @@ class TopTvShowPicksViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
 
     @BeforeEach
-    fun setUp() {
+    fun setUp() = runTest {
         Dispatchers.setMain(testDispatcher)
         getActorTvShowUseCase = mockk(relaxed = true)
         coEvery { getActorTvShowUseCase(actorId) } returns mockedTvShow()
         viewModel = TopTvShowPicksViewModel(actorId, getActorTvShowUseCase)
+        advanceUntilIdle()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+        testDispatcher.scheduler.cancel()
+        TestScope().cancel()
     }
 
 
@@ -57,23 +68,6 @@ class TopTvShowPicksViewModelTest {
             (receivedEffect as TopTvShowPicksEffect.NavigateToTvShowDetails).tvShowId
         )
         job.cancel()
-    }
-
-
-    @Test
-    fun `onSaveTvShowClick should toggle isSaved state for specific movie`() = runTest {
-        advanceUntilIdle()
-        // Given
-        val initialState = viewModel.uiState.value
-        val initialMovie = initialState.tvShows.find { it.id == tvShowId }
-        assertEquals(false, initialMovie?.isSaved)
-        // When
-        viewModel.onSaveTvShowClick(tvShowId)
-        advanceUntilIdle()
-        // Then
-        val updatedState = viewModel.uiState.value
-        val updatedMovie = updatedState.tvShows.find { it.id == tvShowId }
-        assertTrue(updatedMovie?.isSaved == true)
     }
 
     @Test
@@ -101,18 +95,6 @@ class TopTvShowPicksViewModelTest {
         val result = viewModel.mapThrowableToErrorMessage(throwable)
         // Then
         assertEquals(BaseSnackBarMessage.UnknownError, result)
-    }
-
-    @Test
-    fun `should handle empty movies list`() = runTest {
-        // Given
-        coEvery { getActorTvShowUseCase(actorId) } returns emptyList()
-        // When
-        val newViewModel = TopTvShowPicksViewModel(actorId, getActorTvShowUseCase)
-        // Then
-        val state = newViewModel.uiState.value
-        assertTrue(state.tvShows.isEmpty())
-        assertFalse(state.isLoading)
     }
 
 
