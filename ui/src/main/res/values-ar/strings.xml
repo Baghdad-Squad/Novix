@@ -91,5 +91,6 @@
     <string name="password_reset_main_page_header">اعادة تعيين كلمة المرور</string>
     <string name="sign_up_for_an_account">سجّل للحصول على حساب</string>
     <string name="login_to_your_account_success_message">سجل الدخول لحسابك</string>
+    <string name="min">%1$s دقيقة</string>
 
 </resources>

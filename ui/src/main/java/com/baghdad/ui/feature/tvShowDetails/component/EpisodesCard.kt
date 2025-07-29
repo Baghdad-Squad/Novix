@@ -88,7 +88,7 @@ fun EpisodeCard(
                                 .align(Alignment.CenterVertically)
                         )
                         LabeledIconRow(
-                            title = duration,
+                            title = stringResource(R.string.min, duration),
                             icon = painterResource(com.baghdad.design_system.R.drawable.ic_time_oclock),
                             tint = Theme.color.hint
                         )
