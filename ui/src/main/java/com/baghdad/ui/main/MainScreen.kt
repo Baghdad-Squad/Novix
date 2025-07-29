@@ -10,13 +10,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -25,7 +23,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.baghdad.design_system.component.NovixBottomNavigationBar
 import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.navigation.NovixNavHost
 import com.baghdad.ui.navigation.bottom.BOTTOM_NAV_ITEMS
@@ -59,43 +56,33 @@ fun MainScreen(
         targetValue = if (isMainGraphRoute) BOTTOM_BAR_HEIGHT.dp else 0.dp,
         animationSpec = BOTTOM_BAR_ANIMATION_SPEC
     )
-    if (state.value.isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            WavyLoadingIndicator()
-        }
-    } else {
+
+    state.value.isLoggedIn?.let { isLoggedIn ->
 
         Scaffold(
             modifier = modifier
                 .background(Theme.color.surface)
                 .fillMaxSize()
-                .navigationBarsPadding(),
-            bottomBar = {
+                .navigationBarsPadding(), bottomBar = {
                 AnimatedVisibility(
                     visible = isMainGraphRoute,
                     enter = bottomSheetEnterAnimation,
                     exit = bottomSheetExitAnimation
                 ) {
                     NovixBottomNavigationBar(
-                        items = BOTTOM_NAV_ITEMS.values.toList(),
-                        onClick = { index ->
+                        items = BOTTOM_NAV_ITEMS.values.toList(), onClick = { index ->
                             if (index != selectedIndex) {
                                 val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
                                 navController.navigateToBottomNavDestination(targetGraph)
                             }
-                        },
-                        selectedIconIndex = selectedIndex
+                        }, selectedIconIndex = selectedIndex
                     )
                 }
-            }
-        ) {
+            }) {
             NovixNavHost(
                 modifier = Modifier.padding(bottom = animatedBottomPadding),
                 navController = navController,
-                startDestination = if (state.value.isLoggedIn) Graph.HomeGraph else Graph.AuthenticationGraph,
+                startDestination = if (isLoggedIn == true) Graph.HomeGraph else Graph.AuthenticationGraph
             )
         }
     }
@@ -107,12 +94,12 @@ private const val BOTTOM_BAR_HEIGHT = 70
 private val BOTTOM_BAR_ANIMATION_SPEC = tween<Dp>(300, easing = FastOutSlowInEasing)
 
 private val bottomSheetEnterAnimation = slideInVertically(
-    animationSpec = tween(300, easing = FastOutSlowInEasing),
-    initialOffsetY = { it }
-) + fadeIn(animationSpec = tween(200, 100))
+    animationSpec = tween(300, easing = FastOutSlowInEasing), initialOffsetY = { it }) + fadeIn(
+    animationSpec = tween(200, 100)
+)
 
 private val bottomSheetExitAnimation = slideOutVertically(
-    animationSpec = tween(200, easing = FastOutLinearInEasing),
-    targetOffsetY = { it }
-) + fadeOut(animationSpec = tween(150))
+    animationSpec = tween(200, easing = FastOutLinearInEasing), targetOffsetY = { it }) + fadeOut(
+    animationSpec = tween(150)
+)
 
