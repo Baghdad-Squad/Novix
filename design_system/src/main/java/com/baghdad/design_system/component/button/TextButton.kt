@@ -33,8 +33,10 @@ fun TextButton(
         label = stringResource(R.string.text_button_content_color)
     )
     Row(
-        modifier = modifier.clickable(enabled = isEnabled && !isLoading) {
-            onClick()
+        modifier = modifier.clickable(enabled = isEnabled) {
+
+            if (!isLoading) onClick()
+
         },
         verticalAlignment = Alignment.CenterVertically
     ) {

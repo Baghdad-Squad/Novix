@@ -40,7 +40,9 @@ fun NegativeButton(
     )
     OutlinedButton(
         modifier = modifier.height(48.dp),
-        onClick = onClick,
+        onClick = {
+            if (!isLoading) onClick()
+        },
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = Color.Transparent,
@@ -52,7 +54,7 @@ fun NegativeButton(
             width = 1.dp,
             color = animatedBorderColor
         ),
-        enabled = isEnabled && !isLoading,
+        enabled = isEnabled,
         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
     ) {
         Text(
