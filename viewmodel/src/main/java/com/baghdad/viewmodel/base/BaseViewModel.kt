@@ -3,6 +3,7 @@ package com.baghdad.viewmodel.base
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import com.baghdad.domain.exception.LocalDataBaseException
 import com.baghdad.domain.exception.NetworkException
@@ -124,8 +125,9 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
             onLoadingChanged?.invoke(false)
             emit(PagingData.empty())
         }
-
+            .cachedIn(viewModelScope)
         onFlowCreated(flow)
+
     }
 
 
