@@ -359,7 +359,7 @@ class TrendingActorsCompleteTest {
 
     @Test
     fun `onFinally should update isLoading to false`() = runTest {
-        // Trigger the onFinally method indirectly via initialization
+
         testDispatcher.scheduler.advanceUntilIdle()
         val state = trendingActorViewModel.uiState.value
         Assertions.assertFalse(state.isLoading)
