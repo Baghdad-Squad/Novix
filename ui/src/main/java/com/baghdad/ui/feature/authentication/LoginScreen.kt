@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -105,7 +106,7 @@ fun LoginScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .padding(horizontal = 16.dp)
                 .verticalScroll(state = rememberScrollState())
         ) {
             LoginForm(state, listener)
@@ -149,7 +150,6 @@ private fun LoginForm(
         contentDescription = stringResource(com.baghdad.ui.R.string.login_icon),
         modifier = Modifier
             .size(64.dp)
-            .padding(top = 12.dp)
     )
 
     Text(
@@ -170,7 +170,10 @@ private fun LoginForm(
 
     NovixTextField(
         label = stringResource(com.baghdad.ui.R.string.password),
-        keyBoardOptions = KeyboardOptions(autoCorrectEnabled = false),
+        keyBoardOptions = KeyboardOptions(
+            autoCorrectEnabled = false,
+            keyboardType = KeyboardType.Password
+        ),
         value = state.password,
         onValueChange = listener::onPasswordValueChange,
         leadingIcon = painterResource(R.drawable.ic_lock_key),
