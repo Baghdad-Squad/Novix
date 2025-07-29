@@ -196,6 +196,7 @@ private fun LoginForm(
 
     Box(modifier = Modifier.fillMaxWidth()) {
         TextButton(
+            noRipple = true,
             textAlign = TextAlign.Center,
             label = stringResource(com.baghdad.ui.R.string.forgot_password),
             modifier = Modifier.align(Alignment.Center),
