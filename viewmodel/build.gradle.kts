@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     jacoco
+    kotlin("kapt")
 }
 
 android {
@@ -51,4 +52,11 @@ dependencies {
     implementation(libs.androidx.paging.common.android)
     testImplementation(libs.bundles.test.core)
     implementation("androidx.paging:paging-runtime:3.3.6")
+    implementation(libs.bundles.hilt)
+    kapt(libs.hilt.android.compiler)
+
+}
+
+kapt{
+    correctErrorTypes = true
 }

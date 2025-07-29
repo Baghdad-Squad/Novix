@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    kotlin("kapt")
 }
 
 android {
@@ -51,12 +52,17 @@ dependencies {
     implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.bundles.coroutines)
     implementation(libs.kotlinx.datetime)
-    implementation(libs.bundles.koin)
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.bundles.test.core)
     androidTestImplementation(libs.bundles.test.core)
     androidTestImplementation(libs.bundles.test.ui)
+    implementation(libs.bundles.hilt)
+    kapt(libs.hilt.android.compiler)
     implementation("androidx.paging:paging-compose:3.4.0-alpha01")
 
+}
+
+kapt{
+    correctErrorTypes = true
 }

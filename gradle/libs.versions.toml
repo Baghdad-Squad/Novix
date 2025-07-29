@@ -16,7 +16,6 @@ foundationVersion = "1.6.7"
 junit = "4.13.2"
 junitJupiter = "5.8.2"
 junitVersion = "1.2.1"
-koin = "3.5.6"
 kotlin = "2.1.0"
 kotlinxCoroutines = "1.10.2"
 kotlinxDatetime = "0.7.0"
@@ -45,6 +44,10 @@ perf-plugin = "1.4.2"
 pagingCommonAndroid = "3.3.6"
 tensorflowLiteSupportVersion = "0.1.0"
 tensorflowLiteMetadata = "0.1.0"
+hilt = "2.57"
+hilt-navigation-compose = "1.2.0"
+hilt-compiler = "1.2.0"
+dagger = "2.57"
 
 
 
@@ -87,11 +90,6 @@ androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-andr
 
 # Navigation
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
-
-# Koin
-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
 # Room
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -142,7 +140,6 @@ truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 # tensorflow
 tensorflow-lite-support = { module = "org.tensorflow:tensorflow-lite-support", version.ref = "tensorflowLiteSupport" }
 
-
 # coil
 coil = { module = "io.coil-kt.coil3:coil" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
@@ -151,6 +148,16 @@ androidx-paging-common-android = { group = "androidx.paging", name = "paging-com
 tensorflow-tensorflow-lite-support = { group = "org.tensorflow", name = "tensorflow-lite-support", version.ref = "tensorflowLiteSupportVersion" }
 tensorflow-lite-metadata = { group = "org.tensorflow", name = "tensorflow-lite-metadata", version.ref = "tensorflowLiteMetadata" }
 
+# hilt
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
+hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-compiler" }
+
+# dagger
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -162,6 +169,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "perf-plugin" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
 [bundles]
 
@@ -198,11 +206,12 @@ firebase = [
     "firebase-perf"
 ]
 
-koin = [
-    "koin-core",
-    "koin-android",
-    "koin-androidx-compose"
+hilt = [
+    "hilt-android",
+    "hilt-navigation-compose",
+    "hilt-compiler"
 ]
+
 
 room = [
     "androidx-room-ktx",

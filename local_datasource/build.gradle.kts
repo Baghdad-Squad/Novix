@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     id("com.google.protobuf") version "0.9.4"
     jacoco
+    kotlin("kapt")
 }
 
 android {
@@ -59,6 +60,8 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.protobuf.javalite)
     implementation(libs.protobuf.kotlin.lite)
+    implementation(libs.bundles.hilt)
+    kapt(libs.hilt.compiler)
 }
 protobuf {
     protoc {
@@ -77,4 +80,8 @@ protobuf {
             }
         }
     }
+}
+
+kapt {
+    correctErrorTypes = true
 }

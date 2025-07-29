@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     jacoco
+    kotlin("kapt")
 }
 
 android {
@@ -53,4 +54,10 @@ dependencies {
     testImplementation(libs.ktor.client.mock)
     implementation(libs.bundles.retrofit)
     testImplementation (libs.mockwebserver)
+    implementation(libs.bundles.hilt)
+    kapt(libs.hilt.compiler)
+}
+
+kapt{
+    correctErrorTypes = true
 }
