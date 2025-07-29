@@ -32,7 +32,7 @@ class TopTvShowPicksViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        getActorTvShowUseCase = mockk()
+        getActorTvShowUseCase = mockk(relaxed = true)
         coEvery { getActorTvShowUseCase(actorId) } returns mockedTvShow()
         viewModel = TopTvShowPicksViewModel(actorId, getActorTvShowUseCase)
     }
@@ -59,14 +59,17 @@ class TopTvShowPicksViewModelTest {
         job.cancel()
     }
 
+
     @Test
     fun `onSaveTvShowClick should toggle isSaved state for specific movie`() = runTest {
+        advanceUntilIdle()
         // Given
         val initialState = viewModel.uiState.value
         val initialMovie = initialState.tvShows.find { it.id == tvShowId }
         assertEquals(false, initialMovie?.isSaved)
         // When
         viewModel.onSaveTvShowClick(tvShowId)
+        advanceUntilIdle()
         // Then
         val updatedState = viewModel.uiState.value
         val updatedMovie = updatedState.tvShows.find { it.id == tvShowId }
