@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -43,7 +44,7 @@ fun ActorsSection(
                         actorImage = it,
                         onClick = {onClick(actor.id.toLong())},
                         characterName = actor.characterName,
-                        modifier = Modifier.fillParentMaxWidth(0.92f)
+                        modifier = Modifier.width(296.dp),
                     )
                 }
 
