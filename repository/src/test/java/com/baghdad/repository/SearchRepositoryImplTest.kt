@@ -44,7 +44,7 @@ class SearchRepositoryImplTest {
 
     @BeforeEach
     fun setUp() {
-        searchRemoteDataSource = mockk()
+        searchRemoteDataSource = mockk(relaxed = true)
         remoteGenreDataSource = mockk()
         localRecentSearchDataSource = mockk()
         localActorDataSource = mockk()

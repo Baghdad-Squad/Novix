@@ -13,7 +13,7 @@ class AuthenticationRepositoryImpl(
     private val localSessionDataStore: LocalSessionDataStore,
     private val localUserDataStore: LocalUserDataStore
 ) : AuthenticationRepository {
-    override suspend fun login(userName: String, password: String): String {
+    override suspend fun login(userName: String, password: String) {
         return executeLoginSafely {
             val requestToken = remoteAuthenticationDataSource.getRequestToken()
             val validatedRequestToken = remoteAuthenticationDataSource.validateCredentialWithToken(
@@ -29,10 +29,9 @@ class AuthenticationRepositoryImpl(
                 userName = user.userName,
                 imageUrl = user.imageUrl.orEmpty()
             )
-            sessionId
         }
-
     }
+
 
     override suspend fun isUserLoggedIn(): Boolean {
         return localSessionDataStore.getSessionId() != null

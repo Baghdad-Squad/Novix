@@ -5,6 +5,7 @@ import com.baghdad.remoteDataSource.apiService.EpisodeApiService
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
+import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
 import com.baghdad.repository.logger.Logger
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -136,5 +137,23 @@ class RemoteEpisodeDataSourceImplTest {
         assertThat(result.id).isEqualTo(123L)
         assertThat(result.title).isEmpty()
         assertThat(result.overview).isEmpty()
+    }
+
+    @Test
+    fun `getEpisodeTrailer should return empty string when no valid trailer found`() = runTest {
+        // Given
+        val tvId = 1L
+        val seasonNumber = 1
+        val episodeNumber = 1
+        val response = EpisodeVideosResponse(results = emptyList())
+        coEvery {
+            apiService.getEpisodeTrailer(tvId, seasonNumber, episodeNumber)
+        } returns Response.success(response)
+
+        // When
+        val result = dataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber)
+
+        // Then
+        assertThat(result).isEmpty()
     }
 }
