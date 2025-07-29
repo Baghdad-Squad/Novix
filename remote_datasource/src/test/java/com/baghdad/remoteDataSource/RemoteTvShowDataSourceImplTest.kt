@@ -3,11 +3,17 @@ package com.baghdad.remoteDataSource
 import com.baghdad.remoteDataSource.apiService.TvShowApiService
 import com.baghdad.remoteDataSource.response.CastMemberResponse
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MovieAuthorDetails
+import com.baghdad.remoteDataSource.response.ReviewResponse
+import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.actor.ImageResponse
 import com.baghdad.remoteDataSource.response.tvShow.EpisodeResponse
+import com.baghdad.remoteDataSource.response.tvShow.PopularTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowImagesResponse
+import com.baghdad.remoteDataSource.response.tvShow.TVShowVideosResponse
+import com.baghdad.remoteDataSource.response.tvShow.TopRatedTvShowSearchResponse
 import com.baghdad.remoteDataSource.response.tvShow.TrendingTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TvShowResponse
 import com.baghdad.repository.logger.Logger
@@ -90,7 +96,9 @@ class RemoteTvShowDataSourceImplTest {
                 )
             )
         )
-        coEvery { tvShowApiService.getTvShowsByGenre(genreId, page) } returns Response.success(response)
+        coEvery { tvShowApiService.getTvShowsByGenre(genreId, page) } returns Response.success(
+            response
+        )
 
         // When
         val result = dataSource.getTvShowsByGenre(genreId, page)
@@ -114,7 +122,9 @@ class RemoteTvShowDataSourceImplTest {
                 )
             )
         )
-        coEvery { tvShowApiService.getTvShowEpisodes(tvId, seasonNumber) } returns Response.success(response)
+        coEvery { tvShowApiService.getTvShowEpisodes(tvId, seasonNumber) } returns Response.success(
+            response
+        )
 
         // When
         val result = dataSource.getTvShowEpisodes(tvId, seasonNumber)
@@ -183,7 +193,9 @@ class RemoteTvShowDataSourceImplTest {
         val tvId = 1L
         val seasonNumber = 1
         val response = SeasonDetailResponse(episodes = null)
-        coEvery { tvShowApiService.getTvShowEpisodes(tvId, seasonNumber) } returns Response.success(response)
+        coEvery { tvShowApiService.getTvShowEpisodes(tvId, seasonNumber) } returns Response.success(
+            response
+        )
 
         // When
         val result = dataSource.getTvShowEpisodes(tvId, seasonNumber)
@@ -192,4 +204,133 @@ class RemoteTvShowDataSourceImplTest {
         assertThat(result).isEmpty()
     }
 
+    @Test
+    fun `getPopularTvShows should return list of TvShowDto`() = runTest {
+        // Given
+        val response = PopularTvShowsResponse(
+            results = listOf(
+                PopularTvShowsResponse.Result(
+                    id = 1,
+                    name = "Popular Show"
+                )
+            )
+        )
+        coEvery { tvShowApiService.getPopularTvShows() } returns Response.success(response)
+
+        // When
+        val result = dataSource.getPopularTvShows()
+
+        // Then
+        assertThat(result).hasSize(1)
+        assertThat(result[0].id).isEqualTo(1L)
+    }
+
+    @Test
+    fun `getTopRatedTvShows should return paged result of TvShowDto`() = runTest {
+        // Given
+        val page = 1
+        val response = TopRatedTvShowSearchResponse(
+            page = page,
+            results = listOf(
+                TopRatedTvShowSearchResponse.Result(
+                    id = 1,
+                    title = "Top Rated Show",
+                    voteAverage = 8.5,
+                    genreIds = listOf(1),
+                    releaseDate = "2024-01-01",
+                    overview = "Overview",
+                    posterPath = "/poster.jpg"
+                )
+            ),
+            totalPages = 10,
+            totalResults = 1
+        )
+        coEvery { tvShowApiService.getTopRatedTvShows(page) } returns Response.success(response)
+
+        // When
+        val result = dataSource.getTopRatedTvShows(page)
+
+        // Then
+        assertThat(result.data).hasSize(1)
+        assertThat(result.data[0].id).isEqualTo(1L)
+    }
+
+    @Test
+    fun `getTvShowTrailer should return trailer URL`() = runTest {
+        // Given
+        val tvId = 1L
+        val response = TVShowVideosResponse(
+            results = listOf(
+                TVShowVideosResponse.Result(
+                    site = "YouTube",
+                    key = "abcd1234",
+                    type = "Trailer"
+                )
+            )
+        )
+        coEvery { tvShowApiService.getTvShowTrailer(tvId) } returns Response.success(response)
+
+        // When
+        val result = dataSource.getTvShowTrailer(tvId)
+
+        // Then
+        assertThat(result).contains("youtube.com")
+        assertThat(result).contains("abcd1234")
+    }
+
+    @Test
+    fun `getTvShowReviews should return list of ReviewDto`() = runTest {
+        // Given
+        val tvId = 1L
+        val response = ReviewsResponse(
+            results = listOf(
+                ReviewResponse(
+                    id = "rev1",
+                    author = "Author",
+                    content = "Great Show!",
+                    createdAt = "2024-01-01",
+                    authorDetails = MovieAuthorDetails(
+                        name = "Author Name",
+                        username = "author123",
+                        avatarPath = "/avatar.jpg",
+                        rating = 4.5f
+                    )
+                )
+            )
+        )
+        coEvery { tvShowApiService.getTvShowReviews(tvId) } returns Response.success(response)
+
+        // When
+        val result = dataSource.getTvShowReviews(tvId)
+
+        // Then
+        assertThat(result).hasSize(1)
+        assertThat(result[0].id).isEqualTo("rev1")
+        assertThat(result[0].rating).isEqualTo(4.5f)
+    }
+
+    @Test
+    fun `getTvShowDetails should return TvShowDto`() = runTest {
+        // Given
+        val tvId = 1L
+        val response = TVShowDetailsResponse(
+            id = 1,
+            name = "TV Show",
+            numberOfSeasons = 3,
+            overview = "Description",
+            posterPath = "/poster.jpg",
+            voteAverage = 8.0,
+            firstAirDate = "2022-01-01",
+            genres = listOf()
+        )
+        coEvery { tvShowApiService.getTvShowDetails(tvId) } returns Response.success(response)
+
+        // When
+        val result = dataSource.getTvShowDetails(tvId)
+
+        // Then
+        assertThat(result.id).isEqualTo(1L)
+        assertThat(result.title).isEqualTo("TV Show")
+        assertThat(result.numberOfSeasons).isEqualTo(3)
+    }
 }
