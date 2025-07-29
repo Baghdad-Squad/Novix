@@ -51,6 +51,6 @@ dependencies {
     implementation(libs.androidx.paging.common.android)
     testImplementation(libs.bundles.test.core)
     implementation("androidx.paging:paging-runtime:3.3.6")
-    testImplementation("app.cash.turbine:turbine:1.0.0")
+
 
 }

@@ -1,27 +1,18 @@
 package com.baghdad.viewmodel.movie
 
 import app.cash.turbine.test
-import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.exception.UnknownException
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
-import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -47,12 +38,10 @@ class TrendingMoviesViewModelTest {
             runtimeMinutes = 100 + index * 10
         )
 
-}
+    }
 
     private val pagedResult = PagedResult(
-        data = testMovies,
-        nextKey = 2,
-        prevKey = null
+        data = testMovies, nextKey = 2, prevKey = null
     )
 
     @BeforeEach
@@ -127,6 +116,50 @@ class TrendingMoviesViewModelTest {
             expectNoEvents()
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `loadMoviesByGenres should call getTrendingMoviesUseCase with correct genreId`() = runTest {
+
+        val genreId = 2L
+        val page = 0
+        val fakeMovie = Movie(
+            id = 1L,
+            title = "Test Movie",
+            genres = listOf(Genre(id = 2L, name = "Action")),
+            averageRating = 8.5,
+            userRating = null,
+            releaseDate = LocalDate.parse("2023-01-01"),
+            overview = "Overview",
+            posterImageURL = "",
+            trailerURL = "",
+            runtimeMinutes = 120
+        )
+        coEvery { getTrendingMoviesUseCase(page = page, genreId = genreId) } returns PagedResult(
+            data = listOf(fakeMovie), nextKey = 2, prevKey = null
+        )
+
+    }
+
+    @Test
+    fun `loadMoviesByGenres should update state with flow and isLoading true`() = runTest {
+        val genreId = 2L
+        val movie = Movie(
+            id = 10L,
+            title = "Another Movie",
+            genres = listOf(Genre(id = 2L, name = "Action")),
+            averageRating = 7.0,
+            userRating = 8.0,
+            releaseDate = LocalDate.parse("2023-01-02"),
+            overview = "Test overview",
+            posterImageURL = "",
+            trailerURL = "",
+            runtimeMinutes = 110
+        )
+
+        coEvery { getTrendingMoviesUseCase(any(), genreId) } returns PagedResult(
+            data = listOf(movie), nextKey = 2, prevKey = null
+        )
     }
 
 }
