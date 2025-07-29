@@ -31,7 +31,7 @@ fun <T> HomeHorizontalCarouselSection(
     items: List<T>,
     onViewAllClick: () -> Unit,
     modifier: Modifier = Modifier,
-    itemContent: @Composable (T , showSaveIcon : Boolean) -> Unit,
+    itemContent: @Composable (T) -> Unit,
 ) {
     AnimatedVisibility(modifier = modifier, visible = isLoading || items.isNotEmpty()) {
         Crossfade(isLoading) { isLoading ->
@@ -48,8 +48,8 @@ fun <T> HomeHorizontalCarouselSection(
                     )
                     HorizontalCarousel(
                         items = items,
-                    ) { item , showSaveIcon ->
-                        itemContent(item , showSaveIcon)
+                    ) { item->
+                        itemContent(item)
                     }
                 }
             }
@@ -90,7 +90,7 @@ private fun HomeHorizontalCarouselLoadingPlaceHolder(modifier: Modifier = Modifi
         }
         HorizontalCarousel(
             items = List(20) { },
-        ) { item  , showSaveIcon->
+        ) { item->
             Box(
                 modifier =
                     Modifier

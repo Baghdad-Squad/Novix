@@ -24,7 +24,7 @@ fun <T> HorizontalCarousel(
     largeItemWidth: Dp = 158.dp,
     smallItemWidth: Dp = 74.dp,
     shape : Shape = RoundedCornerShape(12.dp),
-    itemContent: @Composable (T , showSaveIcon : Boolean) -> Unit
+    itemContent: @Composable (T) -> Unit
 ) {
     val state = rememberCarouselState { items.count() }
     HorizontalMultiBrowseCarousel(
@@ -44,7 +44,7 @@ fun <T> HorizontalCarousel(
                 .fillMaxWidth()
                 .maskClip(shape)
         ) {
-            itemContent(item , state.currentItem == i)
+            itemContent(item)
         }
     }
 }
