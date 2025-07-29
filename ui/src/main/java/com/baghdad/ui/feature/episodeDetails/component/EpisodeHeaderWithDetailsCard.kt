@@ -42,8 +42,8 @@ fun EpisodeHeaderWithDetailsCard(
             modifier =
                 Modifier
                     .align(Alignment.BottomCenter)
-                    .offset(y = 82.dp),
-                ) {
+                    .offset(y = 128.dp),
+        ) {
             if (state.episode.headerPictures.size > 1) {
                 Row(
                     modifier =
