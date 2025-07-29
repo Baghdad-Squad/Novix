@@ -10,11 +10,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -23,6 +25,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.baghdad.design_system.component.NovixBottomNavigationBar
 import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.navigation.NovixNavHost
 import com.baghdad.ui.navigation.bottom.BOTTOM_NAV_ITEMS
@@ -56,36 +59,45 @@ fun MainScreen(
         targetValue = if (isMainGraphRoute) BOTTOM_BAR_HEIGHT.dp else 0.dp,
         animationSpec = BOTTOM_BAR_ANIMATION_SPEC
     )
-
-    Scaffold(
-        modifier = modifier
-            .background(Theme.color.surface)
-            .fillMaxSize()
-            .navigationBarsPadding(),
-        bottomBar = {
-            AnimatedVisibility(
-                visible = isMainGraphRoute,
-                enter = bottomSheetEnterAnimation,
-                exit = bottomSheetExitAnimation
-            ) {
-                NovixBottomNavigationBar(
-                    items = BOTTOM_NAV_ITEMS.values.toList(),
-                    onClick = { index ->
-                        if (index != selectedIndex) {
-                            val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
-                            navController.navigateToBottomNavDestination(targetGraph)
-                        }
-                    },
-                    selectedIconIndex = selectedIndex
-                )
-            }
+    if (state.value.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            WavyLoadingIndicator()
         }
-    ) {
-        NovixNavHost(
-            modifier = Modifier.padding(bottom = animatedBottomPadding),
-            navController = navController,
-            startDestination = if (state.value.isLoggedIn) Graph.HomeGraph else Graph.AuthenticationGraph,
-        )
+    } else {
+
+        Scaffold(
+            modifier = modifier
+                .background(Theme.color.surface)
+                .fillMaxSize()
+                .navigationBarsPadding(),
+            bottomBar = {
+                AnimatedVisibility(
+                    visible = isMainGraphRoute,
+                    enter = bottomSheetEnterAnimation,
+                    exit = bottomSheetExitAnimation
+                ) {
+                    NovixBottomNavigationBar(
+                        items = BOTTOM_NAV_ITEMS.values.toList(),
+                        onClick = { index ->
+                            if (index != selectedIndex) {
+                                val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
+                                navController.navigateToBottomNavDestination(targetGraph)
+                            }
+                        },
+                        selectedIconIndex = selectedIndex
+                    )
+                }
+            }
+        ) {
+            NovixNavHost(
+                modifier = Modifier.padding(bottom = animatedBottomPadding),
+                navController = navController,
+                startDestination = if (state.value.isLoggedIn) Graph.HomeGraph else Graph.AuthenticationGraph,
+            )
+        }
     }
 }
 
