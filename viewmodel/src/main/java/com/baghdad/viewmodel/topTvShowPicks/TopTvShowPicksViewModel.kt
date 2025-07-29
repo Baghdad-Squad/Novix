@@ -6,7 +6,7 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 
-class TopTvShowViewModel(
+class TopTvShowPicksViewModel(
     val actorId: Long,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
 ) : BaseViewModel<TopTvShowPicksState, TopTvShowPicksEffect>

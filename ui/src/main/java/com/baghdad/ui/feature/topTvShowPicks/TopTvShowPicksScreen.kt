@@ -34,14 +34,14 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksEffect
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksInteractionListener
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksState
-import com.baghdad.viewmodel.topTvShowPicks.TopTvShowViewModel
+import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun TopTvShowPicksScreen(
     actorId: Long,
-    viewModel: TopTvShowViewModel = koinViewModel(
+    viewModel: TopTvShowPicksViewModel = koinViewModel(
         key = actorId.toString(),
         parameters = { parametersOf(actorId) }
     ),

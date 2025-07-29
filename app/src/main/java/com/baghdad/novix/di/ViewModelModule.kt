@@ -17,7 +17,7 @@ import com.baghdad.viewmodel.review.ReviewViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
 import com.baghdad.viewmodel.topRating.TopRatingViewModel
-import com.baghdad.viewmodel.topTvShowPicks.TopTvShowViewModel
+import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksViewModel
 import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
@@ -63,7 +63,7 @@ val viewModelModule = module {
         TopMoviePicksViewModel(actorId, get())
     }
     viewModel { (actorId: Long) ->
-        TopTvShowViewModel(actorId, get())
+        TopTvShowPicksViewModel(actorId, get())
     }
     viewModel { (tvShowId: Long, seasonNumber: Int, episodeNumber: Int) ->
         EpisodeDetailsViewModel(tvShowId, seasonNumber, episodeNumber, get(), get())

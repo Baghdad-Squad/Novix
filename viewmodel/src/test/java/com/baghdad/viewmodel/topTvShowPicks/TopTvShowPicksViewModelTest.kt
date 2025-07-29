@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test
 class TopTvShowPicksViewModelTest {
 
     private lateinit var getActorTvShowUseCase: GetActorTvShowUseCase
-    private lateinit var viewModel: TopTvShowViewModel
+    private lateinit var viewModel: TopTvShowPicksViewModel
     private val actorId = 123L
     private val tvShowId = 1L
     private val testDispatcher = StandardTestDispatcher()
@@ -34,13 +34,13 @@ class TopTvShowPicksViewModelTest {
         Dispatchers.setMain(testDispatcher)
         getActorTvShowUseCase = mockk()
         coEvery { getActorTvShowUseCase(actorId) } returns mockedMovies()
-        viewModel = TopTvShowViewModel(actorId, getActorTvShowUseCase)
+        viewModel = TopTvShowPicksViewModel(actorId, getActorTvShowUseCase)
     }
 
 
     @Test
     fun `onTvShowDetailsClick should send NavigateToMovieDetails effect`() = runTest {
-
+        // Given
         var receivedEffect: TopTvShowPicksEffect? = null
 
         val job = launch {
@@ -48,10 +48,10 @@ class TopTvShowPicksViewModelTest {
                 receivedEffect = effect
             }
         }
-
+        // When
         viewModel.onTvShowDetailsClick(tvShowId)
         advanceUntilIdle()
-
+        // Then
         assertTrue(receivedEffect is TopTvShowPicksEffect.NavigateToTvShowDetails)
         assertEquals(
             tvShowId,
@@ -62,14 +62,13 @@ class TopTvShowPicksViewModelTest {
 
     @Test
     fun `onSaveTvShowClick should toggle isSaved state for specific movie`() = runTest {
-
+        // Given
         val initialState = viewModel.uiState.value
         val initialMovie = initialState.tvShows.find { it.id == tvShowId }
         assertFalse(initialMovie?.isSaved != false)
-
+        // When
         viewModel.onSaveTvShowClick(tvShowId)
-
-
+        // Then
         val updatedState = viewModel.uiState.value
         val updatedMovie = updatedState.tvShows.find { it.id == tvShowId }
         assertTrue(updatedMovie?.isSaved == true)
@@ -77,36 +76,38 @@ class TopTvShowPicksViewModelTest {
 
     @Test
     fun `onBackClick should send NavigateBack effect`() = runTest {
+        // Given
         var receivedEffect: TopTvShowPicksEffect? = null
-
         val job = launch {
             viewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
-
+        // When
         viewModel.onBackClick()
         advanceUntilIdle()
-
+        // Then
         assertTrue(receivedEffect is TopTvShowPicksEffect.NavigateBack)
         job.cancel()
     }
 
     @Test
     fun `mapThrowableToErrorMessage should return UnknownError`() {
+        // Given
         val throwable = RuntimeException("Test error")
+        // When
         val result = viewModel.mapThrowableToErrorMessage(throwable)
-
+        // Then
         assertEquals(BaseSnackBarMessage.UnknownError, result)
     }
 
     @Test
     fun `should handle empty movies list`() = runTest {
+        // Given
         coEvery { getActorTvShowUseCase(actorId) } returns emptyList()
-
-        val newViewModel = TopTvShowViewModel(actorId, getActorTvShowUseCase)
-
-
+        // When
+        val newViewModel = TopTvShowPicksViewModel(actorId, getActorTvShowUseCase)
+        // Then
         val state = newViewModel.uiState.value
         assertTrue(state.tvShows.isEmpty())
         assertFalse(state.isLoading)
