@@ -1,18 +1,25 @@
 package com.baghdad.viewmodel.categoryTvShows
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class CategoryTvShowsViewModel(
-    private val categoryId: Long,
+@HiltViewModel
+class CategoryTvShowsViewModel @Inject constructor(
+//    private val categoryId: Long,
+    savedStateHandle: SavedStateHandle,
+
     private val getTvShowsCategoryUseCase: GetTvShowsByGenreUseCase,
     private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase
 ) : BaseViewModel<CategoryTvShowsState, CategoryTvShowsEffect>(CategoryTvShowsState()),
     CategoryTvShowsInteractionListener {
 
+    private val categoryId: Long = checkNotNull(savedStateHandle["categoryId"])
     init {
         getTvShowsByCategoryId(categoryId = categoryId)
         getCategoryNameById(categoryId = categoryId)

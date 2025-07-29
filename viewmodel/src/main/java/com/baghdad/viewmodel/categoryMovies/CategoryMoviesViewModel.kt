@@ -1,19 +1,25 @@
 package com.baghdad.viewmodel.categoryMovies
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
 import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class CategoryMoviesViewModel(
-    private val genreId: Long,
+@HiltViewModel
+class CategoryMoviesViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+//    private val genreId: Long,
     private val getGenreMoviesUseCase: GetMoviesByGenreUseCase,
     private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase
 ) : BaseViewModel<CategoryMoviesState, CategoryMoviesEffect>(CategoryMoviesState()),
     CategoryMoviesInteractionListener {
 
+    private val genreId: Long = checkNotNull(savedStateHandle["genreId"])
     init {
         getGenreMovies()
         getGenreName()

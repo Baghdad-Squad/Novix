@@ -3,8 +3,11 @@ package com.baghdad.viewmodel.trendingActors
 import com.baghdad.domain.usecase.actor.GetTrendingActorsUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TrendingActorViewModel(
+@HiltViewModel
+class TrendingActorViewModel @Inject constructor(
     private val getTrendingActorsUseCase: GetTrendingActorsUseCase
 ) : BaseViewModel<TrendingActorsUiState, TrendingActorsUiEffect>(TrendingActorsUiState()),
     TrendingActorsInteractionListener {

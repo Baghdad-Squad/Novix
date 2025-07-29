@@ -1,19 +1,24 @@
 package com.baghdad.viewmodel.review
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.review.GetMovieReviewsUseCase
 import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
 import com.baghdad.entity.media.Review
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ReviewViewModel(
+@HiltViewModel
+class ReviewViewModel @Inject constructor(
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase,
     private val getSeriesReviewsUseCase: GetTvShowReviewsUseCase,
-    val contentId: Long,
-    contentType: ContentType,
-) : BaseViewModel<ReviewScreenState, ReviewScreenEffect>(ReviewScreenState()),
+    savedStateHandle: SavedStateHandle,
+    ) : BaseViewModel<ReviewScreenState, ReviewScreenEffect>(ReviewScreenState()),
     ReviewInteractionListener {
 
+        private val contentId: Long = checkNotNull(savedStateHandle["mediaId"])
+        private val contentType : ContentType = checkNotNull(savedStateHandle["mediaType"])
 
     init {
         when (contentType) {

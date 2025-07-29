@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.actorDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
@@ -9,9 +10,14 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ActorDetailsViewModel(
-    actorId: Long,
+@HiltViewModel
+class ActorDetailsViewModel @Inject constructor(
+//    actorId: Long,
+    savedStateHandle: SavedStateHandle,
+
     private val getActorInfoUseCase: GetActorInfoUseCase,
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
@@ -20,6 +26,7 @@ class ActorDetailsViewModel(
     BaseViewModel<ActorDetailsScreenState, ActorDetailsScreenEffect>(ActorDetailsScreenState()),
     ActorDetailsInteractionListener {
 
+    private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
     init {
         getActorInfo(actorId = actorId)
         getActorMovies(actorId = actorId)

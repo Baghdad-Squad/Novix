@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.movieDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
@@ -10,16 +11,21 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MovieDetailsViewModel(
+@HiltViewModel
+class MovieDetailsViewModel @Inject constructor(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
     private val getCastsInfoUseCase: GetMovieCastMembersUseCase,
     private val getMovieImagesUseCase: GetMovieGalleryUseCase,
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
-    private val movieId: Long,
-) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
+    savedStateHandle: SavedStateHandle,
+    ) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
     MovieDetailsInteractionListener {
+
+        private val movieId: Long = checkNotNull(savedStateHandle["movieId"])
 
     init {
         getMovieGallery()

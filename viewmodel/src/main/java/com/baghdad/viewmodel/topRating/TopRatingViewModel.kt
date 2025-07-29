@@ -7,8 +7,11 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TopRatingViewModel(
+@HiltViewModel
+class TopRatingViewModel @Inject constructor(
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
     private val getTvShowTopRatingUseCase: GetTvShowTopRatingUseCase,
     private val getGenresUseCase: GetGenresUseCase,

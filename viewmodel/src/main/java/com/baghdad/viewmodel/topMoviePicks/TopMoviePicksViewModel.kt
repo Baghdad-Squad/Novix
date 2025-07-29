@@ -1,17 +1,24 @@
 package com.baghdad.viewmodel.topMoviePicks
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TopMoviePicksViewModel(
-    val  actorId: Long,
+@HiltViewModel
+class TopMoviePicksViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+
+//    val  actorId: Long,
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
 ): BaseViewModel<TopMoviePicksState, TopMoviePicksEffect>
     (TopMoviePicksState()), TopMoviePicksInteractionListener {
 
+    private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
      init {
          getActorMovies(actorId)
      }

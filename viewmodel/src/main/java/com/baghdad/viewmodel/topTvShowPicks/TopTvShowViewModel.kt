@@ -1,16 +1,22 @@
 package com.baghdad.viewmodel.topTvShowPicks
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TopTvShowViewModel(
-    val actorId: Long,
+@HiltViewModel
+class TopTvShowViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
 ) : BaseViewModel<TopTvShowPicksState, TopTvShowPicksEffect>
     (TopTvShowPicksState()), TopTvShowPicksInteractionListener {
+
+    private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
 
     init {
         getActorTvShow(actorId)

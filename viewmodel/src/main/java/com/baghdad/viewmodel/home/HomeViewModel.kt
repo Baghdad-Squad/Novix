@@ -12,8 +12,11 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val getGenresUseCase: GetGenresUseCase,
     private val getContinueWatchingUseCase: GetAllContinueWatchingUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,

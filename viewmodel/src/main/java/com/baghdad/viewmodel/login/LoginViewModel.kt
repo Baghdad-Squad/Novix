@@ -5,8 +5,11 @@ import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.domain.usecase.login.LoginUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class LoginViewModel(
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase
 ) : BaseViewModel<LoginUiState, LoginUiEffect>(
     LoginUiState()

@@ -1,25 +1,31 @@
 package com.baghdad.viewmodel.episodeDetails
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class EpisodeDetailsViewModel(
-    tvShowId: Long,
-    seasonNumber: Int,
-    episodeNumber: Int,
+@HiltViewModel
+class EpisodeDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getEpisodeCastMembersUseCase: GetEpisodeCastMembersUseCase,
     private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase
 ) : BaseViewModel<EpisodeDetailsScreenState, EpisodeDetailsScreenEffect>(EpisodeDetailsScreenState()),
     EpisodeDetailsInteractionListener {
 
+    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"])
+    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"])
+//    private val tvShowId: Long = checkNotNull(savedStateHandle["tvShowId"])
+
     init {
-        getEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
-        getEpisodeCastMembers(tvShowId, seasonNumber, episodeNumber)
+        getEpisodeDetails(14L, seasonNumber, episodeNumber)
+        getEpisodeCastMembers(14L, seasonNumber, episodeNumber)
     }
 
     private fun getEpisodeDetails(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {

@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.tvShowDetails
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
@@ -11,10 +12,14 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.review.ContentType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class TvShowDetailsViewModel(
-    private val tvShowId: Long,
+@HiltViewModel
+class TvShowDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getTvShowDetailsUseCase: GetTvShowDetailsUseCase,
     private val getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase,
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
@@ -22,6 +27,9 @@ class TvShowDetailsViewModel(
 ) :
     BaseViewModel<TvShowDetailsScreenState, TvShowDetailsScreenEffect>(TvShowDetailsScreenState()),
     TvShowDetailsInteractionListener {
+
+    private val tvShowId: Long = checkNotNull(savedStateHandle["tvShowId"])
+
 
     init {
         getTvShowDetails(tvShowId)
