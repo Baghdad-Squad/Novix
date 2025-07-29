@@ -31,7 +31,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -147,7 +146,7 @@ private fun MovieDetailsContent(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
         else
-            Color.Transparent,
+            Theme.color.surface.copy(alpha = 0f),
         animationSpec = tween(
             durationMillis = 500,
             easing = FastOutSlowInEasing
