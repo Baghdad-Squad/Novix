@@ -225,25 +225,26 @@ fun TvShowDetailsContent(
                     }
                 }
 
-                    item {
-                        SeasonSection(
-                            seasonCount = uiState.tvShowInfo.seasonCount,
-                            selectedSeasonIndex = uiState.selectedSeasonIndex,
-                            onSeasonSelected = { listener.onClickSeasonTab(it) },
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
+                item {
+                    SeasonSection(
+                        seasonCount = uiState.tvShowInfo.seasonCount,
+                        selectedSeasonIndex = uiState.selectedSeasonIndex,
+                        onSeasonSelected = { listener.onClickSeasonTab(it) },
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
 
-                    item {
-                        Text(
-                            text = stringResource(R.string.episodes, uiState.episodes.size),
-                            style = Theme.typography.label.small,
-                            color = Theme.color.hint,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .padding(bottom = 12.dp)
-                        )
-                    }
+                item {
+                    Text(
+                        text = stringResource(R.string.episodes, uiState.episodes.size),
+                        style = Theme.typography.label.small,
+                        color = Theme.color.hint,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 12.dp)
+                    )
+                }
+
 
                 if (uiState.episodes.isNotEmpty()) {
                     items(uiState.episodes) { episode ->
@@ -267,6 +268,7 @@ fun TvShowDetailsContent(
                     }
                 }
             }
+
             TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -290,9 +292,7 @@ fun TvShowDetailsContent(
             )
         }
     }
-
 }
-
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {

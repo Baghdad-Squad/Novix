@@ -79,7 +79,6 @@ fun FilterBottomSheet(
                 onClearClick = onClearClick,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 24.dp)
             )
         }
     }
