@@ -51,8 +51,8 @@ class RecentlyViewedRepositoryImplTest {
             createMockRecentlyViewedDto(2L, "TV Show Title", RecentlyViewedDto.ContentType.TV_SHOW)
         )
         val expectedRecentlyViewed = listOf(
-            createMockRecentlyViewed(1L, "Movie Title", RecentlyViewed.ContentType.MOVIE),
-            createMockRecentlyViewed(2L, "TV Show Title", RecentlyViewed.ContentType.TV_SHOW)
+            createMockRecentlyViewed(1L, RecentlyViewed.ContentType.MOVIE),
+            createMockRecentlyViewed(2L, RecentlyViewed.ContentType.TV_SHOW)
         )
 
         coEvery { localRecentlyViewedDataSource.getAllRecentlyViewed() } returns flowOf(mockRecentlyViewedDtos)
@@ -108,7 +108,7 @@ class RecentlyViewedRepositoryImplTest {
     fun `addRecentlyViewed should add movie and update favorite genres when content type is movie`() = runTest {
 
         val movieId = 123L
-        val recentlyViewed = createMockRecentlyViewed(movieId, "Test Movie", RecentlyViewed.ContentType.MOVIE)
+        val recentlyViewed = createMockRecentlyViewed(movieId, RecentlyViewed.ContentType.MOVIE)
         val mockMovieDto = createMockMovieDto(movieId)
         val mockGenres = listOf(
             GenreDto(1L, "Action", GenreDto.GenreType.MOVIE),
@@ -132,7 +132,7 @@ class RecentlyViewedRepositoryImplTest {
     fun `addRecentlyViewed should add tv show and update favorite genres when content type is tv show`() = runTest {
 
         val tvShowId = 456L
-        val recentlyViewed = createMockRecentlyViewed(tvShowId, "Test TV Show", RecentlyViewed.ContentType.TV_SHOW)
+        val recentlyViewed = createMockRecentlyViewed(tvShowId, RecentlyViewed.ContentType.TV_SHOW)
         val mockTvShowDto = createMockTvShowDto(tvShowId)
         val mockGenres = listOf(
             GenreDto(3L, "Comedy", GenreDto.GenreType.TV_SHOW),
@@ -156,7 +156,7 @@ class RecentlyViewedRepositoryImplTest {
     fun `addRecentlyViewed should not update favorite genres when media has no genres`() = runTest {
 
         val movieId = 789L
-        val recentlyViewed = createMockRecentlyViewed(movieId, "Test Movie", RecentlyViewed.ContentType.MOVIE)
+        val recentlyViewed = createMockRecentlyViewed(movieId, RecentlyViewed.ContentType.MOVIE)
         val mockMovieDto = createMockMovieDto(movieId).copy(genres = emptyList())
 
         coEvery { localMovieDataSource.getMovieById(movieId) } returns mockMovieDto
@@ -173,7 +173,7 @@ class RecentlyViewedRepositoryImplTest {
     fun `addRecentlyViewed should throw exception when data source fails`() = runTest {
 
         val movieId = 123L
-        val recentlyViewed = createMockRecentlyViewed(movieId, "Test Movie", RecentlyViewed.ContentType.MOVIE)
+        val recentlyViewed = createMockRecentlyViewed(movieId, RecentlyViewed.ContentType.MOVIE)
         val exception = RuntimeException("Database error")
 
         coEvery { localMovieDataSource.getMovieById(movieId) } throws exception
@@ -231,7 +231,6 @@ class RecentlyViewedRepositoryImplTest {
 
         private fun createMockRecentlyViewed(
             contentId: Long,
-            title: String,
             contentType: RecentlyViewed.ContentType
         ) = RecentlyViewed(
             contentId = contentId,
