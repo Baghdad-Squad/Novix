@@ -11,7 +11,7 @@ data class TopRatingState(
     val moviesFlow: Flow<PagingData<MovieUiState>> = flowOf(),
     val tvShowsFlow: Flow<PagingData<TvShowUiState>> = flowOf(),
     val selectedTab: TopRatingTab = TopRatingTab.MOVIES,
-    override val isLoading: Boolean = false
+    val isLoading: Boolean = false
 ) : BaseUiState {
 
     data class GenreUiState(

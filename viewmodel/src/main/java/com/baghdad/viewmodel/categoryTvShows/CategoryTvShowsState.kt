@@ -4,7 +4,7 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseUiState
 
 data class CategoryTvShowsState(
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
     val tvShows: List<TvShowUiState> = emptyList<TvShowUiState>(),
     val categoryName: String = ""
 ) : BaseUiState {

@@ -17,7 +17,7 @@ data class HomeScreenState(
     val isUpcomingMoviesLoading: Boolean = true,
     val selectedUpcomingGenreId: Long? = null,
     val upcomingItems: Flow<PagingData<UpcomingItemUiState>> = flowOf(),
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
 ) : BaseUiState {
     data class PopularItemUiState(
         val id: Long = 0L,
