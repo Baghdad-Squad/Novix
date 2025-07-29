@@ -49,7 +49,7 @@ fun EpisodeDetailsHeader(
             fontSize = 18.sp,
             style = Theme.typography.title.medium,
             color = Theme.color.title,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 44.dp),
         )
         FlowRow(
             modifier = Modifier
