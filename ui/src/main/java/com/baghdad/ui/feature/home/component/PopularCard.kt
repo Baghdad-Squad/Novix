@@ -83,6 +83,7 @@ fun PopularCard(
     ) {
         IslamicImage(
             imageUrl = imageUrl,
+            isLoadingEnabled = false,
             contentDescription = contentName,
             modifier =
                 Modifier
