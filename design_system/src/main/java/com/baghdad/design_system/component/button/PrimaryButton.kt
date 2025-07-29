@@ -31,7 +31,7 @@ fun PrimaryButton(
     Button(
         onClick = onClick,
         modifier = modifier.height(48.dp),
-        enabled = isEnabled,
+        enabled = isEnabled && !isLoading,
         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
         colors = buttonColors(
             containerColor = Theme.color.primary,

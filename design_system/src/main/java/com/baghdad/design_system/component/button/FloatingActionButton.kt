@@ -33,7 +33,7 @@ fun FloatingActionButton(
             disabledContainerColor = Theme.color.disable,
             disabledContentColor = Theme.color.onPrimaryHint
         ),
-        enabled = isEnabled,
+        enabled = isEnabled && !isLoading,
         contentPadding = PaddingValues(16.dp),
         modifier = modifier.size(56.dp)
     ) {

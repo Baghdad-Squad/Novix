@@ -52,7 +52,7 @@ fun OutlinedButton(
             width = 1.dp,
             color = animatedBorderColor
         ),
-        enabled = isEnabled,
+        enabled = isEnabled && !isLoading,
         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
     ) {
         Text(
