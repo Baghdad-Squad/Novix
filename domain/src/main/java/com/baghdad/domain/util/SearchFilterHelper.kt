@@ -1,8 +1,9 @@
 package com.baghdad.domain.util
 
 import com.baghdad.entity.media.Genre
+import javax.inject.Inject
 
-class SearchFilterHelper {
+class SearchFilterHelper @Inject constructor(){
 
     fun matchesGenreFilter(itemGenres: List<Genre>, selectedGenres: List<Genre>): Boolean {
         return selectedGenres.isEmpty() || itemGenres.any { selectedGenres.contains(it) }
