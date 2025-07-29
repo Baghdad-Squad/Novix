@@ -64,7 +64,7 @@ class TopMoviePicksViewModelTest {
         // Given
         val initialState = viewModel.uiState.value
         val initialMovie = initialState.movies.find { it.id == movieId }
-        assertFalse(initialMovie?.isSaved != false)
+        assertEquals(false, initialMovie?.isSaved)
         // When
         viewModel.onSaveMovieClick(movieId)
         // Then

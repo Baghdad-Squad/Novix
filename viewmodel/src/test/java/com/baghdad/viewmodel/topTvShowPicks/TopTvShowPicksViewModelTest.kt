@@ -33,7 +33,7 @@ class TopTvShowPicksViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         getActorTvShowUseCase = mockk()
-        coEvery { getActorTvShowUseCase(actorId) } returns mockedMovies()
+        coEvery { getActorTvShowUseCase(actorId) } returns mockedTvShow()
         viewModel = TopTvShowPicksViewModel(actorId, getActorTvShowUseCase)
     }
 
@@ -42,7 +42,6 @@ class TopTvShowPicksViewModelTest {
     fun `onTvShowDetailsClick should send NavigateToMovieDetails effect`() = runTest {
         // Given
         var receivedEffect: TopTvShowPicksEffect? = null
-
         val job = launch {
             viewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
@@ -65,7 +64,7 @@ class TopTvShowPicksViewModelTest {
         // Given
         val initialState = viewModel.uiState.value
         val initialMovie = initialState.tvShows.find { it.id == tvShowId }
-        assertFalse(initialMovie?.isSaved != false)
+        assertEquals(false, initialMovie?.isSaved)
         // When
         viewModel.onSaveTvShowClick(tvShowId)
         // Then
@@ -115,7 +114,7 @@ class TopTvShowPicksViewModelTest {
 
 
     companion object {
-        private fun mockedMovies(): List<TvShow> = listOf(
+        private fun mockedTvShow(): List<TvShow> = listOf(
             TvShow(
                 id = 1L,
                 title = "Test TvShow 1",
