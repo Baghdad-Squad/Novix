@@ -245,7 +245,7 @@ private fun MovieDetailsContent(
                     }
 
                     itemsIndexed(state.moreLikeThisMovie) { index, movie ->
-                        val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 158))
+                        val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 150))
                         val isItemInFirstRow = index < itemsPerRow
                         val isFirstInRow = index % itemsPerRow == 0
                         val isLastInRow =
