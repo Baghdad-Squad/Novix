@@ -3,7 +3,7 @@ package com.baghdad.local_datasource
 import com.baghdad.local_datasource.dataStore.user.UserSerializer
 import com.example.application.proto.User
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -24,7 +24,7 @@ class UserSerializerTest {
         UserSerializer.writeTo(user, outputStream)
 
         // Then
-        assertTrue(outputStream.size() > 0)
+        Assertions.assertTrue(outputStream.size() > 0)
     }
 
     @Test
@@ -43,7 +43,7 @@ class UserSerializerTest {
         val readUser = UserSerializer.readFrom(inputStream)
 
         // Then
-        assertEquals(user, readUser)
+        Assertions.assertEquals(user, readUser)
     }
 
     @Test
@@ -52,6 +52,6 @@ class UserSerializerTest {
         val defaultUser = UserSerializer.defaultValue
 
         // Then
-        assertEquals(User.getDefaultInstance(), defaultUser)
+        Assertions.assertEquals(User.getDefaultInstance(), defaultUser)
     }
 }

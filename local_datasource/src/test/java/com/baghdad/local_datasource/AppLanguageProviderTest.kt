@@ -1,7 +1,7 @@
 package com.baghdad.local_datasource
 
 import com.baghdad.local_datasource.language.AppLanguageProvider
-import org.junit.Assert.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.Locale
 
@@ -14,7 +14,7 @@ class AppLanguageProviderTest {
         val provider = AppLanguageProvider()
         val language = provider.getCurrentLanguage()
 
-        assertEquals("fr", language)
+        Assertions.assertEquals("fr", language)
 
         Locale.setDefault(originalLocale)
     }
