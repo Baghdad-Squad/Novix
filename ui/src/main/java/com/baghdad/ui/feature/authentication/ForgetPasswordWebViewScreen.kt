@@ -20,21 +20,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-private const val OOPS_MESSAGE = "Oops! We can't find the page you're looking for"
-private const val ERROR_MESSAGE = "There was a problem"
-private const val PASSWORD_RESET_MESSAGE = "Password Reset"
-private const val RESET_PASSWORD = "Reset password"
-
 @Composable
 fun ForgotPasswordWebViewScreen(
     handleNavigation: (AuthenticationNavEvent) -> Unit
 ) {
     val shouldNavigateBack = remember { mutableStateOf(false) }
-    val languageTag = remember {
-        if (Locale.getDefault().language == "ar") "ar-SA" else "en-US"
-    }
+    val languageTag = remember { if (Locale.getDefault().language == "ar") "ar-SA" else "en-US" }
+
     ForgotPasswordWebViewContent(
-        handleNavigation = { handleNavigation(it) },
+        handleNavigation = handleNavigation,
         shouldNavigateBack = shouldNavigateBack,
         languageTag = languageTag
     )
@@ -48,6 +42,16 @@ fun ForgotPasswordWebViewContent(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val screenUrl = remember { "https://www.themoviedb.org/reset-password?language=$languageTag" }
+    val messages = remember {
+        mapOf(
+            "pageNotFound" to context.getString(R.string.oops_we_can_t_find_the_page),
+            "error" to context.getString(R.string.there_was_a_problem),
+            "success" to context.getString(R.string.password_reset_success_message),
+            "mainHeader" to context.getString(R.string.password_reset_main_page_header),
+        )
+    }
+
     LaunchedEffect(shouldNavigateBack.value) {
         if (shouldNavigateBack.value) {
             scope.launch {
@@ -62,7 +66,7 @@ fun ForgotPasswordWebViewContent(
             handleNavigation(AuthenticationNavEvent.NavigateBack)
         }
     }
-    val screenUrl = remember { "https://www.themoviedb.org/reset-password?language=${languageTag}" }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -75,12 +79,14 @@ fun ForgotPasswordWebViewContent(
             allowedDomains = listOf("themoviedb.org"),
             onDetected = {
                 when (it.trim('"')) {
-                    OOPS_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
-                    ERROR_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
-                    PASSWORD_RESET_MESSAGE -> shouldNavigateBack.value = true
-                    RESET_PASSWORD -> Unit
+                    messages["pageNotFound"],
+                    messages["error"] -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+
+                    messages["success"] -> shouldNavigateBack.value = true
+                    messages["mainHeader"] -> Unit
                     else -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                 }
-            })
+            }
+        )
     }
 }
