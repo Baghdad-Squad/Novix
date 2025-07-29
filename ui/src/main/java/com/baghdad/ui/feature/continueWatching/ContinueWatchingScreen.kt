@@ -201,8 +201,8 @@ fun ContinueWatchingContent(
                     end = 16.dp,
                     bottom = 12.dp,
                 ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 items = mediaItems,
             ) { media ->
 
