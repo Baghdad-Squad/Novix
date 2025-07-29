@@ -83,7 +83,7 @@ class RemoteMovieDataSourceImpl(
         return handleRequest<MovieImageResponse>(
             apiCall = { movieApiService.getMovieImages(movieId) },
             logger = logger,
-        ).backdrops?.map { it.filePath.orEmpty() }.orEmpty()
+        ).backdrops?.map { "https://image.tmdb.org/t/p/w500" + it.filePath.orEmpty() }.orEmpty()
     }
 
     override suspend fun getMovieTrailer(movieId: Long): String {
