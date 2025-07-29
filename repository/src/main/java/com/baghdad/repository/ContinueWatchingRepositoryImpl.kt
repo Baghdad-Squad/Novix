@@ -9,8 +9,9 @@ import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.model.ContinueWatchingDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getLocalPagedSafely
+import javax.inject.Inject
 
-class ContinueWatchingRepositoryImpl(
+class ContinueWatchingRepositoryImpl @Inject constructor(
     private val localContinueWatchingDataSource: LocalContinueWatchingDataSource
 ) : ContinueWatchingRepository {
     override suspend fun getContinueWatching(
