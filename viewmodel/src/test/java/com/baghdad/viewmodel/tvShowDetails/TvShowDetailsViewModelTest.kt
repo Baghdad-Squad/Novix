@@ -56,7 +56,8 @@ class TvShowDetailsViewModelTest {
             getTvShowDetailsUseCase = getTvShowDetailsUseCase,
             getTvShowCastMembersUseCase = getTvShowCastMembersUseCase,
             getTvShowSeasonEpisodesUseCase = getTvShowSeasonEpisodesUseCase,
-            addContinueWatchingUseCase = addContinueWatchingUseCase
+            addContinueWatchingUseCase = addContinueWatchingUseCase,
+            defaultDispatcher = testDispatcher
         )
     }
 

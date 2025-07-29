@@ -30,9 +30,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModelOf(::SearchViewModel)
     single { SearchFilterHelper() }
-    viewModel { (actorId: Long) ->
-        ActorGalleryViewModel(get(), actorId)
-    }
+
     viewModel { (id: Long) ->
         MovieDetailsViewModel(
             movieId = id,
@@ -46,18 +44,29 @@ val viewModelModule = module {
     }
 
     viewModel { (actorId: Long) ->
-        ActorGalleryViewModel(get(), actorId)
+        ActorGalleryViewModel(get(), actorId, get())
     }
     viewModel { (actorId: Long) ->
-        ActorDetailsViewModel(actorId, get(), get(), get(), get())
+        ActorDetailsViewModel(actorId, get(), get(), get(), get(), get())
     }
-    viewModelOf(::TvShowDetailsViewModel)
+
+    viewModel{(tvShowId: Long) ->
+        TvShowDetailsViewModel(
+            tvShowId = tvShowId,
+            getTvShowDetailsUseCase = get(),
+            getTvShowCastMembersUseCase = get(),
+            getTvShowSeasonEpisodesUseCase = get(),
+            addContinueWatchingUseCase = get(),
+            defaultDispatcher = get()
+        )
+    }
+
     viewModel { (mediaId: Long, mediaType: ContentType) ->
         ReviewViewModel(
             contentId = mediaId,
             contentType = mediaType,
             getMovieReviewsUseCase = get(),
-            getSeriesReviewsUseCase = get()
+            getSeriesReviewsUseCase = get(),
         )
     }
 

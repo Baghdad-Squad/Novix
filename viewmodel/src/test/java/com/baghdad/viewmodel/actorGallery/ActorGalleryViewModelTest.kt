@@ -38,7 +38,8 @@ class ActorGalleryViewModelTest {
     private fun createViewModel(actorId: Long = ACTOR_ID): ActorGalleryViewModel {
         return ActorGalleryViewModel(
             getGalleryImagesUseCase = getGalleryImagesUseCase,
-            actorId = actorId
+            actorId = actorId,
+            defaultDispatcher = testDispatcher
         )
     }
 

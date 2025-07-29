@@ -50,7 +50,8 @@ class ActorDetailsViewModelTest {
             getActorInfoUseCase = getActorInfoUseCase,
             getActorMoviesUseCase = getActorMoviesUseCase,
             getActorTvShowUseCase = getActorTvShowUseCase,
-            getActorGalleryUseCase = getActorGalleryUseCase
+            getActorGalleryUseCase = getActorGalleryUseCase,
+            defaultDispatcher = testDispatcher
         )
     }
     @Test

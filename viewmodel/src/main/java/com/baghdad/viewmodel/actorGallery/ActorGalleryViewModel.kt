@@ -3,10 +3,12 @@ package com.baghdad.viewmodel.actorGallery
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class ActorGalleryViewModel(
     private val getGalleryImagesUseCase: GetActorGalleryUseCase,
-    private val actorId: Long
+    private val actorId: Long,
+    private val defaultDispatcher: CoroutineDispatcher,
 
 ) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
     ActorGalleryInteractionListener {
@@ -23,6 +25,7 @@ class ActorGalleryViewModel(
 
         tryToExecute(
             callee = { getGalleryImagesUseCase.invoke(actorId) },
+            dispatcher = defaultDispatcher,
             onStart = ::onStart,
             onSuccess = ::onGalleryActorSuccess,
             onFinally = ::onFinally

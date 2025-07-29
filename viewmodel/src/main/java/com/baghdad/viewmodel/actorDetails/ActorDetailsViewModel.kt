@@ -9,14 +9,16 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class ActorDetailsViewModel(
     actorId: Long,
     private val getActorInfoUseCase: GetActorInfoUseCase,
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
-    private val getActorGalleryUseCase: GetActorGalleryUseCase
-) :
+    private val getActorGalleryUseCase: GetActorGalleryUseCase,
+    private val defaultDispatcher: CoroutineDispatcher,
+    ) :
     BaseViewModel<ActorDetailsScreenState, ActorDetailsScreenEffect>(ActorDetailsScreenState()),
     ActorDetailsInteractionListener {
 
@@ -38,6 +40,7 @@ class ActorDetailsViewModel(
             callee = {
                 getActorInfoUseCase(actorId)
             },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetActorInfoSuccess,
             onStart = ::onLoading,
             onFinally = ::onFinally

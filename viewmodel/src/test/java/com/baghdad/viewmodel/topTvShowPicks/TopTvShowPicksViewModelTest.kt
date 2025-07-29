@@ -70,6 +70,23 @@ class TopTvShowPicksViewModelTest {
         job.cancel()
     }
 
+
+    @Test
+    fun `onSaveTvShowClick should toggle isSaved state for specific movie`() = runTest {
+        advanceUntilIdle()
+        // Given
+        val initialState = viewModel.uiState.value
+        val initialMovie = initialState.tvShows.find { it.id == tvShowId }
+        assertEquals(false, initialMovie?.isSaved)
+        // When
+        viewModel.onSaveTvShowClick(tvShowId)
+        advanceUntilIdle()
+        // Then
+        val updatedState = viewModel.uiState.value
+        val updatedMovie = updatedState.tvShows.find { it.id == tvShowId }
+        assertTrue(updatedMovie?.isSaved == true)
+    }
+
     @Test
     fun `onBackClick should send NavigateBack effect`() = runTest {
         // Given

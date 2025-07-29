@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.tvShowDetails
 
-import android.util.Log
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
@@ -11,7 +10,7 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineDispatcher
 
 class TvShowDetailsViewModel(
     private val tvShowId: Long,
@@ -19,7 +18,9 @@ class TvShowDetailsViewModel(
     private val getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase,
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
-) :
+    private val defaultDispatcher: CoroutineDispatcher,
+
+    ) :
     BaseViewModel<TvShowDetailsScreenState, TvShowDetailsScreenEffect>(TvShowDetailsScreenState()),
     TvShowDetailsInteractionListener {
 
@@ -33,6 +34,7 @@ class TvShowDetailsViewModel(
     private fun getTvShowDetails(tvShowId: Long) {
         tryToExecute(
             callee = { getTvShowDetailsUseCase(tvShowId) },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetTvShowDetailsSuccess,
             onStart = ::onLoading,
             onFinally = ::onFinallyAndAddToContinueWatching
