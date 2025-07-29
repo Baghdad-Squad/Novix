@@ -56,10 +56,11 @@ class RecentSearchDaoTest {
     fun deleteRecentSearchById_removesTargetItem() = runBlocking {
         // Given
         val item = RecentSearch(query = "To Delete")
-        val id = recentSearchDao.getAllRecentSearch().first().first().id
+        recentSearchDao.addRecentSearch(item)
+        val id = recentSearchDao.getAllRecentSearch().first().find { it.query == "To Delete" }?.id
+        requireNotNull(id) { "Inserted item not found in database" }
 
         // When
-        recentSearchDao.addRecentSearch(item)
         recentSearchDao.deleteRecentSearchById(id)
         val result = recentSearchDao.getAllRecentSearch().first()
 
