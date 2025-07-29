@@ -78,5 +78,5 @@ class TrendingMoviesViewModel(
     fun stopLoading() {
         updateState { it.copy(isLoading = false) }
     }
-    public override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
 }
