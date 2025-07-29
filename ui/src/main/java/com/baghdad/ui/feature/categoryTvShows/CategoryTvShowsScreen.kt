@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Scaffold
@@ -39,15 +40,11 @@ import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsEffect
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 
 @Composable
 fun CategoryTvShowsScreen(
-    categoryId: Long,
-    viewModel: CategoryTvShowsViewModel = koinViewModel(
-        key = categoryId.toString(), parameters = { parametersOf(categoryId) }),
+    viewModel: CategoryTvShowsViewModel = hiltViewModel(),
     handleNavigation: (CategoriesNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

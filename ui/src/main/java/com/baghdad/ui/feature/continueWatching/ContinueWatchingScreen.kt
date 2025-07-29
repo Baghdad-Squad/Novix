@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -43,12 +44,11 @@ import com.baghdad.viewmodel.continueWatching.ContinueWatchingScreenEffect
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun ContinueWatchingScreen(
-    viewModel: ContinueWatchingViewModel = koinViewModel(),
+    viewModel: ContinueWatchingViewModel = hiltViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit,
 
     ) {

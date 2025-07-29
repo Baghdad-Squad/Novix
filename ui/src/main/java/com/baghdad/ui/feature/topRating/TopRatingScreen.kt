@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -43,12 +44,11 @@ import com.baghdad.viewmodel.topRating.TopRatingInteractionListener
 import com.baghdad.viewmodel.topRating.TopRatingState
 import com.baghdad.viewmodel.topRating.TopRatingTab
 import com.baghdad.viewmodel.topRating.TopRatingViewModel
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun TopRatingScreen(
-    viewModel: TopRatingViewModel = koinViewModel(),
+    viewModel: TopRatingViewModel = hiltViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit
 ) {
     ObserveAsEffect(viewModel.uiEffect) { effect ->
