@@ -131,7 +131,7 @@ private fun TopBar(listener: LoginInteractionListener) {
         IconButton(
             icon = painterResource(R.drawable.ic_go_back),
             onClick = listener::onNavigateBackClicked,
-            modifier = Modifier.padding(end = 12.dp)
+            modifier = Modifier.padding(end = 12.dp, top = 8.dp, bottom = 8.dp)
         )
         Text(
             text = stringResource(com.baghdad.ui.R.string.login),
@@ -148,6 +148,7 @@ private fun LoginForm(
     Icon(
         imageVector = ImageVector.vectorResource(R.drawable.logo_design),
         contentDescription = stringResource(com.baghdad.ui.R.string.login_icon),
+        tint = Theme.color.primary,
         modifier = Modifier
             .size(64.dp)
     )
