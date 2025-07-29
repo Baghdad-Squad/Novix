@@ -8,7 +8,6 @@ import com.baghdad.ui.feature.actorDetails.ActorDetailsScreen
 import com.baghdad.ui.feature.actorGallery.GalleryScreen
 import com.baghdad.ui.feature.topMoviePicks.TopMoviePicksScreen
 import com.baghdad.ui.feature.topTvShowPicks.TopTvShowPicksScreen
-import com.baghdad.ui.navigation.graph.util.toGraph
 import com.baghdad.ui.navigation.route.ActorDetailsRoute
 import com.baghdad.ui.navigation.route.Graph.ActorDetailsGraph
 import com.baghdad.ui.navigation.route.Graph.AuthenticationGraph
@@ -20,28 +19,22 @@ fun NavGraphBuilder.actorDetailsNavGraph(navController: NavHostController) {
         startDestination = ActorDetailsRoute.ActorDetailsScreen
     ) {
         composable<ActorDetailsRoute.ActorDetailsScreen> { backStackEntry ->
-            val actorId = backStackEntry.toGraph<ActorDetailsGraph>(navController).actorId
-            ActorDetailsScreen(actorId = actorId) { event ->
+            ActorDetailsScreen{ event ->
                 handleActorDetailsNavigation(event, navController)
             }
         }
         composable<ActorDetailsRoute.ActorGalleryScreen> { backStackEntry ->
-            val actorId = backStackEntry.toGraph<ActorDetailsGraph>(navController).actorId
-            GalleryScreen(actorId) { event ->
+            GalleryScreen { event ->
                 handleActorDetailsNavigation(event, navController)
             }
         }
         composable<ActorDetailsRoute.ActorTopMoviePicksScreen> { backStackEntry ->
-            val actorId = backStackEntry.toGraph<ActorDetailsGraph>(navController).actorId
-            TopMoviePicksScreen(actorId = actorId) { event ->
+            TopMoviePicksScreen { event ->
                 handleActorDetailsNavigation(event, navController)
             }
         }
         composable<ActorDetailsRoute.ActorTopTvShowPicksScreen> { backStackEntry ->
-            val actorId = backStackEntry.toGraph<ActorDetailsGraph>(navController).actorId
-            TopTvShowPicksScreen(
-                actorId = actorId
-            ) { event ->
+            TopTvShowPicksScreen { event ->
                 handleActorDetailsNavigation(event, navController)
             }
         }
