@@ -48,18 +48,18 @@ fun EpisodeHeaderWithDetailsCard(
                 Row(
                     modifier =
                         Modifier
+                            .padding(bottom = 8.dp)
                             .align(Alignment.CenterHorizontally)
-                            .padding(bottom = 12.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .background(Theme.color.iconBackgroundLow)
                             .border(1.dp, Theme.color.stroke, RoundedCornerShape(8.dp))
-                            .padding(horizontal = 12.dp),
-                    horizontalArrangement = Arrangement.Center,
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.Center,
                 ) {
                     CarousalDot(
                         totalDots = state.episode.headerPictures.size,
                         selectedIndex = pagerState.currentPage,
-                        modifier = Modifier,
+                        modifier = Modifier
                     )
                 }
             }
