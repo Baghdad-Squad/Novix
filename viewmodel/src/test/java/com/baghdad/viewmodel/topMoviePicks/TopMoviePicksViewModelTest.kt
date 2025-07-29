@@ -34,7 +34,7 @@ class TopMoviePicksViewModelTest {
         Dispatchers.setMain(testDispatcher)
         getActorMoviesUseCase = mockk()
         coEvery { getActorMoviesUseCase(actorId) } returns mockedMovies()
-        viewModel = TopMoviePicksViewModel(actorId, getActorMoviesUseCase)
+        viewModel = TopMoviePicksViewModel(actorId, getActorMoviesUseCase, testDispatcher)
     }
 
 
@@ -105,7 +105,7 @@ class TopMoviePicksViewModelTest {
         // Given
         coEvery { getActorMoviesUseCase(actorId) } returns emptyList()
         // When
-        val newViewModel = TopMoviePicksViewModel(actorId, getActorMoviesUseCase)
+        val newViewModel = TopMoviePicksViewModel(actorId, getActorMoviesUseCase, testDispatcher)
         // Then
         val state = newViewModel.uiState.value
         assertTrue(state.movies.isEmpty())

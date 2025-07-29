@@ -10,6 +10,7 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
+import kotlinx.coroutines.CoroutineDispatcher
 
 class MovieDetailsViewModel(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
@@ -18,6 +19,7 @@ class MovieDetailsViewModel(
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
     private val movieId: Long,
+    private val defaultDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
     MovieDetailsInteractionListener {
 
@@ -31,6 +33,7 @@ class MovieDetailsViewModel(
     override fun onStarMovieClick() {
         tryToExecute(
             callee = { currentState.movieId },
+            dispatcher = defaultDispatcher,
             onSuccess = {
                 updateState {
                     it.copy(
@@ -48,6 +51,7 @@ class MovieDetailsViewModel(
     override fun onSaveCurrentMovieClick() {
         tryToExecute(
             callee = { currentState.movieId },
+            dispatcher = defaultDispatcher,
             onSuccess = {
                 updateState {
 
@@ -67,6 +71,7 @@ class MovieDetailsViewModel(
             callee = { currentState.moreLikeThisMovie.firstOrNull { it.id == id }?.id ?: 1L },
             onSuccess = ::onSaveMoreLikeThisMediaSuccess,
             onStart = ::onLoading,
+            dispatcher = defaultDispatcher,
             onFinally = ::onFinally
         )
     }
@@ -135,6 +140,7 @@ class MovieDetailsViewModel(
                 getMovieImagesUseCase(movieId = movieId)
             },
             onSuccess = ::onGetMovieGallerySuccess,
+            dispatcher = defaultDispatcher,
             onStart = ::onLoading,
             onFinally = ::onFinally
         )
@@ -153,6 +159,7 @@ class MovieDetailsViewModel(
         tryToExecute(
             callee = { getMovieDetailsUseCase(movieId) },
             onSuccess = ::onGetMovieDetailsSuccess,
+            dispatcher = defaultDispatcher,
             onStart = ::onLoading,
             onFinally = ::onFinallyAndAddToContinueWatching
         )
@@ -198,7 +205,8 @@ class MovieDetailsViewModel(
                 )
             },
             onStart = ::onLoading,
-            onFinally = ::onFinally
+            onFinally = ::onFinally,
+            dispatcher = defaultDispatcher,
         )
     }
 
@@ -208,6 +216,7 @@ class MovieDetailsViewModel(
             callee = { getMoreLikeThisPosterImageUseCase(movieId) },
             onSuccess = ::onGetMovieMoreLikeThisSuccess,
             onStart = ::onLoading,
+            dispatcher = defaultDispatcher,
             onFinally = ::onFinally
         )
     }
@@ -252,6 +261,7 @@ class MovieDetailsViewModel(
 
     private fun addToContinueWatching() {
         tryToExecute(
+            dispatcher = defaultDispatcher,
             callee = {
                 addContinueWatchingUseCase(
                     movieId, currentState.categories.map { it.id },

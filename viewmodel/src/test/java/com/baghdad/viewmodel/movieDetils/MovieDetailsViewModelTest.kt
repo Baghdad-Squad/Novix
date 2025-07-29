@@ -64,7 +64,8 @@ class MovieDetailsViewModelTest {
             getMovieImagesUseCase = getMovieImagesUseCase,
             getMoreLikeThisPosterImageUseCase = getMoreLikeThisPosterImageUseCase,
             addContinueWatchingUseCase = addContinueWatchingUseCase,
-            movieId = movieId
+            movieId = movieId,
+            defaultDispatcher = testDispatcher,
         )
     }
 

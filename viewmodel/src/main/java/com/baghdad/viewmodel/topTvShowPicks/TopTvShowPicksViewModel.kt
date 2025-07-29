@@ -5,10 +5,12 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class TopTvShowPicksViewModel(
     val actorId: Long,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
+    private val defaultDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<TopTvShowPicksState, TopTvShowPicksEffect>
     (TopTvShowPicksState()), TopTvShowPicksInteractionListener {
 
@@ -19,6 +21,7 @@ class TopTvShowPicksViewModel(
     private fun getActorTvShow(actorId: Long) {
         tryToExecute(
             callee = { getActorTvShowUseCase(actorId) },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetActorTvShowSuccess,
             onStart = ::onLoading,
             onFinally = ::onFinally

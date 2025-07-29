@@ -37,7 +37,7 @@ class TopTvShowPicksViewModelTest {
         Dispatchers.setMain(testDispatcher)
         getActorTvShowUseCase = mockk(relaxed = true)
         coEvery { getActorTvShowUseCase(actorId) } returns mockedTvShow()
-        viewModel = TopTvShowPicksViewModel(actorId, getActorTvShowUseCase)
+        viewModel = TopTvShowPicksViewModel(actorId, getActorTvShowUseCase, testDispatcher)
         advanceUntilIdle()
     }
 

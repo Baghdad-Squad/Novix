@@ -5,11 +5,13 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class TopMoviePicksViewModel(
     val  actorId: Long,
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
-): BaseViewModel<TopMoviePicksState, TopMoviePicksEffect>
+    private val defaultDispatcher: CoroutineDispatcher,
+) : BaseViewModel<TopMoviePicksState, TopMoviePicksEffect>
     (TopMoviePicksState()), TopMoviePicksInteractionListener {
 
      init {
@@ -19,6 +21,7 @@ class TopMoviePicksViewModel(
     private fun getActorMovies(actorId: Long) {
         tryToExecute(
             callee = { getActorMoviesUseCase(actorId) },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetActorMoviesSuccess,
             onStart = ::onLoading,
             onFinally = ::onFinally

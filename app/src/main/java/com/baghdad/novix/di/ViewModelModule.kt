@@ -21,6 +21,8 @@ import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksViewModel
 import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
@@ -38,7 +40,8 @@ val viewModelModule = module {
             getCastsInfoUseCase = get(),
             getMovieImagesUseCase = get(),
             getMoreLikeThisPosterImageUseCase = get(),
-            addContinueWatchingUseCase = get()
+            addContinueWatchingUseCase = get(),
+            defaultDispatcher = get(),
         )
     }
 
@@ -59,11 +62,12 @@ val viewModelModule = module {
     }
 
     viewModelOf(::EpisodeDetailsViewModel)
+    single<CoroutineDispatcher> { Dispatchers.IO }
     viewModel { (actorId: Long) ->
-        TopMoviePicksViewModel(actorId, get())
+        TopMoviePicksViewModel(actorId, get(), get())
     }
     viewModel { (actorId: Long) ->
-        TopTvShowPicksViewModel(actorId, get())
+        TopTvShowPicksViewModel(actorId, get(), get())
     }
     viewModel { (tvShowId: Long, seasonNumber: Int, episodeNumber: Int) ->
         EpisodeDetailsViewModel(tvShowId, seasonNumber, episodeNumber, get(), get())
