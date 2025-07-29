@@ -21,7 +21,7 @@ private fun TvShowSearchResponse.Result.toTvShowDto(
     return TvShowDto(
         id = this.id?.toLong() ?: 0L,
         title = this.title.orEmpty(),
-        genres = genres,
+        genres = filterGenres(this.genreIds ?: emptyList<Int>(), genres),
         imdbRating = this.voteAverage ?: 0.0,
         userRating = userRating,
         releaseDate = this.releaseDate.orEmpty(),
@@ -31,4 +31,13 @@ private fun TvShowSearchResponse.Result.toTvShowDto(
         trailerURL = "",
         headerImagesURLs = emptyList()
     )
+}
+
+private fun filterGenres(
+    genreIds: List<Int?>,
+    genres: List<GenreDto>
+): List<GenreDto> {
+    return genres.filter { genre ->
+        genreIds.contains(genre.id.toInt())
+    }
 }

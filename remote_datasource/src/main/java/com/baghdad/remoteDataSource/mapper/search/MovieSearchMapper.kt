@@ -21,7 +21,7 @@ internal fun MovieSearchResponse.Result.toMovieDto(
     return MovieDto(
         id = this.id?.toLong() ?: 0L,
         title = this.title.orEmpty(),
-        genres = genres,
+        genres = filterGenres(this.genreIds ?: emptyList<Int>(), genres),
         imdbRating = this.voteAverage ?: 0.0,
         userRating = userRating,
         releaseDate = this.releaseDate.orEmpty(),
@@ -30,4 +30,13 @@ internal fun MovieSearchResponse.Result.toMovieDto(
         runtimeMinutes = runtimeMinutes,
         trailerURL = ""
     )
+}
+
+private fun filterGenres(
+    genreIds: List<Int?>,
+    genres: List<GenreDto>
+): List<GenreDto> {
+    return genres.filter { genre ->
+        genreIds.contains(genre.id.toInt())
+    }
 }
