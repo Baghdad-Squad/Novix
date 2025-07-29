@@ -1,7 +1,8 @@
 package com.baghdad.viewmodel.login
 
+import com.baghdad.domain.exception.InValidUserCredentialException
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.exception.UnAuthorizedException
+import com.baghdad.domain.exception.UnKnownNetworkException
 import com.baghdad.domain.usecase.login.LoginUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -16,43 +17,49 @@ class LoginViewModel(
     }
 
     override fun onLoginClicked() {
-        tryToExecute(
-            onStart = { startLoading() },
-            callee = {
-                loginUseCase.invoke(
-                    userName = uiState.value.userName,
-                    password = uiState.value.password
-                )
-            },
-            onSuccess = { onLoginSuccess() },
-            onError = { onLoginError(it) },
-            onFinally = { endLoading() }
-        )
+        if (uiState.value.userName.length in 4..32 && uiState.value.password.length >= 4) {
+            tryToExecute(
+                onStart = { startLoading() },
+                callee = {
+                    loginUseCase.invoke(
+                        userName = uiState.value.userName,
+                        password = uiState.value.password
+                    )
+                },
+                onSuccess = { onLoginSuccess() },
+                onError = { onLoginError(it) },
+                onFinally = { endLoading() })
+        } else {
+            showSnackBar(
+                message = BaseSnackBarMessage.InvalidCredential, isSuccess = false
+            )
+        }
     }
+
 
     fun onLoginSuccess() {
         showSnackBar(
-            message = BaseSnackBarMessage.LoginSuccessfully,
-            isSuccess = true
+            message = BaseSnackBarMessage.LoginSuccessfully, isSuccess = true
         )
         sendEffect(LoginUiEffect.NavigateToHome)
     }
 
     fun onLoginError(t: Throwable) {
         when (t) {
-            is UnAuthorizedException -> showSnackBar(
-                message = BaseSnackBarMessage.UnAuthorizedError,
-                isSuccess = false
+            is InValidUserCredentialException -> showSnackBar(
+                message = BaseSnackBarMessage.InvalidCredential, isSuccess = false
             )
 
             is NoInternetException -> showSnackBar(
-                message = BaseSnackBarMessage.NoInternetException,
-                isSuccess = false
+                message = BaseSnackBarMessage.NoInternetException, isSuccess = false
+            )
+
+            is UnKnownNetworkException -> showSnackBar(
+                message = BaseSnackBarMessage.NetworkError, isSuccess = false
             )
 
             else -> showSnackBar(
-                message = BaseSnackBarMessage.UnknownError,
-                isSuccess = false
+                message = BaseSnackBarMessage.UnknownError, isSuccess = false
             )
         }
     }
@@ -72,16 +79,21 @@ class LoginViewModel(
     }
 
     override fun onPasswordValueChange(value: String) {
-        updateState {
-            it.copy(password = value)
+        if (value.length < 20) {
+            updateState {
+                it.copy(password = value)
+            }
         }
+
         isAnyFieldEmpty()
 
     }
 
     override fun onUserNameValueChange(value: String) {
-        updateState {
-            it.copy(userName = value)
+        if (value.length < 20) {
+            updateState {
+                it.copy(userName = value)
+            }
         }
         isAnyFieldEmpty()
     }
@@ -115,5 +127,4 @@ class LoginViewModel(
             )
         }
     }
-
 }

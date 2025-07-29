@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.authentication
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -168,6 +170,7 @@ private fun LoginForm(
 
     NovixTextField(
         label = stringResource(com.baghdad.ui.R.string.password),
+        keyBoardOptions = KeyboardOptions(autoCorrectEnabled = false),
         value = state.password,
         onValueChange = listener::onPasswordValueChange,
         leadingIcon = painterResource(R.drawable.ic_lock_key),
@@ -191,13 +194,14 @@ private fun LoginForm(
         listener.onLoginClicked()
     }
 
-    TextButton(
-        textModifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        label = stringResource(com.baghdad.ui.R.string.forgot_password),
-        modifier = Modifier.fillMaxWidth(),
-        onClick = listener::onForgotPasswordClicked
-    )
+    Box(modifier = Modifier.fillMaxWidth()) {
+        TextButton(
+            textAlign = TextAlign.Center,
+            label = stringResource(com.baghdad.ui.R.string.forgot_password),
+            modifier = Modifier.align(Alignment.Center),
+            onClick = listener::onForgotPasswordClicked
+        )
+    }
 }
 
 @Composable
@@ -217,7 +221,8 @@ private fun BottomCreateAccount(listener: LoginInteractionListener) {
         )
         TextButton(
             label = stringResource(com.baghdad.ui.R.string.create_account),
-            onClick = listener::onRegisterClicked
+            onClick = listener::onRegisterClicked,
+            noRipple = true
         )
     }
 }
