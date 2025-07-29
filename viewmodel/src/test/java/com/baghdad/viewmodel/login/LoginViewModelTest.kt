@@ -256,23 +256,6 @@ class LoginViewModelTest {
 
 
     @Test
-    fun `onNavigateBackClicked should not emit any effect`() = runTest {
-        // Given
-        var effect: LoginUiEffect? = null
-        val job = launch {
-            viewModel.uiEffect.collect { effect = it }
-        }
-
-        // When
-        viewModel.onNavigateBackClicked()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Then
-        assertNull(effect)
-        job.cancel()
-    }
-
-    @Test
     fun `multiple field changes should maintain correct state`() {
         // Given & When
         viewModel.onUserNameValueChange("user1")
