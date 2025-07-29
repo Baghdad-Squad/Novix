@@ -20,12 +20,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-private const val OOPS_MESSAGE = "Oops! We can't find the page you're looking for"
-private const val ERROR_MESSAGE = "There was a problem"
-private const val LOGIN_MESSAGE = "Login to your account"
-private const val LOGIN_MESSAGE_AR = "سجّل للحصول على حساب"
-private const val SIGNUP_MESSAGE = "Sign up for an account"
-
 @Composable
 fun SignUpWebViewScreen(handleNavigation: (AuthenticationNavEvent) -> Unit) {
     val languageTag = remember {
@@ -49,6 +43,16 @@ fun SignUpWebViewContent(
     shouldNavigateBack: MutableState<Boolean>
 ) {
     val context = LocalContext.current
+
+    val messages = remember {
+        mapOf(
+            "pageNotFound" to context.getString(R.string.oops_we_can_t_find_the_page),
+            "error" to context.getString(R.string.there_was_a_problem),
+            "success" to context.getString(R.string.login_to_your_account_success_message),
+            "mainHeader" to context.getString(R.string.sign_up_for_an_account),
+        )
+    }
+
     val scope = rememberCoroutineScope()
     LaunchedEffect(shouldNavigateBack.value) {
         if (shouldNavigateBack.value) {
@@ -77,12 +81,14 @@ fun SignUpWebViewContent(
             onUrlChange = { url ->
                 if (url != screenUrl) handleNavigation(AuthenticationNavEvent.NavigateBack)
             },
+            onReceivedError = { if (it.isNotBlank()) handleNavigation(AuthenticationNavEvent.NavigateBack) },
             onDetected = {
                 when (it.trim('"')) {
-                    OOPS_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
-                    ERROR_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
-                    LOGIN_MESSAGE -> shouldNavigateBack.value = true
-
+                    messages["pageNotFound"] -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    messages["error"] -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    messages["success"] -> shouldNavigateBack.value = true
+                    messages["mainHeader"] -> Unit
+                    else -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                 }
             }
         )
