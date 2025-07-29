@@ -77,14 +77,12 @@ fun SignUpWebViewContent(
             onUrlChange = { url ->
                 if (url != screenUrl) handleNavigation(AuthenticationNavEvent.NavigateBack)
             },
-            onReceivedError = { if (it.isNotBlank()) handleNavigation(AuthenticationNavEvent.NavigateBack) },
             onDetected = {
                 when (it.trim('"')) {
                     OOPS_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                     ERROR_MESSAGE -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                     LOGIN_MESSAGE -> shouldNavigateBack.value = true
-                    SIGNUP_MESSAGE -> Unit
-                    else -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+
                 }
             }
         )
