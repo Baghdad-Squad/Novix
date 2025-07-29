@@ -24,7 +24,7 @@ fun DiscoverMovieResponse.Result.toDto(
         title = title ?: "Untitled",
         genres = genreIds?.map {
             com.baghdad.repository.model.GenreDto(
-                it?.toLong() ?: 0L,
+                it?: 0L,
                 "",
                 com.baghdad.repository.model.GenreDto.GenreType.MOVIE
             )

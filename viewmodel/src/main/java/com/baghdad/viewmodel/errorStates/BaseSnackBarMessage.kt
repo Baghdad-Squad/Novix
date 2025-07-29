@@ -8,4 +8,5 @@ sealed interface BaseSnackBarMessage {
     data object UnknownError : SearchSnackBarMessage
     data object DataBaseError : SearchSnackBarMessage
     data object DefaultMessage : SearchSnackBarMessage
+    data object NoInternetException : LoginSnackBarMessage()
 }

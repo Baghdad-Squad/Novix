@@ -227,10 +227,12 @@ class HomeViewModel(
     }
 
     override fun onUpcomingGenreSelected(genre: HomeScreenState.GenreUiState?) {
-        updateState {
-            it.copy(selectedUpcomingGenreId = genre?.id)
+        if (genre?.id != currentState.selectedUpcomingGenreId) {
+            updateState {
+                it.copy(selectedUpcomingGenreId = genre?.id)
+            }
+            collectPaginatedUpcomingMovies()
         }
-        collectPaginatedUpcomingMovies()
     }
 
     override fun onUpcomingItemClicked(item: HomeScreenState.UpcomingItemUiState) {
