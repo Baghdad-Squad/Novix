@@ -140,15 +140,15 @@ private fun TrendingMoviesContent(
             LazyPagingVerticalGrid(
                 items = movieItems,
                 key = { it.id },
-                columns = GridCells.Adaptive(minSize = 158.dp),
+                columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
                     bottom = 12.dp
                 ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) { movie ->
                 HomeCard(
                     url = movie.posterPictureURL,
