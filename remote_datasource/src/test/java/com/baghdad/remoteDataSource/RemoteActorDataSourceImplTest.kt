@@ -4,6 +4,8 @@ import com.baghdad.remoteDataSource.apiService.ActorApiService
 import com.baghdad.remoteDataSource.response.actor.ActorDetailsResponse
 import com.baghdad.remoteDataSource.response.actor.ActorImagesResponse
 import com.baghdad.remoteDataSource.response.actor.ActorMoviesResponse
+import com.baghdad.remoteDataSource.response.actor.ActorTvShowDto
+import com.baghdad.remoteDataSource.response.actor.ActorTvShowsResponse
 import com.baghdad.remoteDataSource.response.actor.ImageResponse
 import com.baghdad.remoteDataSource.response.actor.TrendingActorResponse
 import com.baghdad.repository.exception.NoInternetNetworkException
@@ -152,4 +154,38 @@ class RemoteActorDataSourceImplTest {
         assertThat(result.headerPictures.isEmpty())
     }
 
+    @Test
+    fun `getActorTvShows should return mapped TV shows`() = runTest {
+        // Given
+        val personId = 101L
+        val response = ActorTvShowsResponse(
+            cast = listOf(
+                ActorTvShowDto(id = 1, name = "Show 1"),
+                ActorTvShowDto(id = 2, name = "Show 2")
+            )
+        )
+        coEvery { apiService.getActorTvShows(personId) } returns Response.success(response)
+
+        // When
+        val result = dataSource.getActorTvShows(personId)
+
+        // Then
+        assertEquals(2, result.size)
+        assertEquals("Show 1", result[0].title)
+        assertEquals("Show 2", result[1].title)
+    }
+
+    @Test
+    fun `getActorTvShows should return empty list when cast is null`() = runTest {
+        // Given
+        val personId = 101L
+        val response = ActorTvShowsResponse(cast = null)
+        coEvery { apiService.getActorTvShows(personId) } returns Response.success(response)
+
+        // When
+        val result = dataSource.getActorTvShows(personId)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
 }
