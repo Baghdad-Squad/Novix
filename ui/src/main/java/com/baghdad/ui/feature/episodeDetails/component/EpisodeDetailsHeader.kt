@@ -82,11 +82,13 @@ fun EpisodeDetailsHeader(
                 icon = painterResource(com.baghdad.design_system.R.drawable.ic_star_filled),
                 tint = Theme.color.yellowAccent
             )
-            CircleDot()
-            LabeledIconRow(
-                title = releaseDate,
-                icon = painterResource(com.baghdad.design_system.R.drawable.ic_calendar),
-            )
+            if (releaseDate.isNotBlank()) {
+                CircleDot()
+                LabeledIconRow(
+                    title = releaseDate,
+                    icon = painterResource(com.baghdad.design_system.R.drawable.ic_calendar),
+                )
+            }
             CircleDot()
             LabeledIconRow(
                 title = stringResource(R.string.season_template, seasonNumber),
