@@ -26,8 +26,9 @@ import com.baghdad.repository.model.EpisodeDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
+import javax.inject.Inject
 
-class RemoteTvShowDataSourceImpl(
+class RemoteTvShowDataSourceImpl @Inject constructor(
     private val tvShowApiService: TvShowApiService,
     private val logger: Logger,
 ) : RemoteTvShowDataSource {

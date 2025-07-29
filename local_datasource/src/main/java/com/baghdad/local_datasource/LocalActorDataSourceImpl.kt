@@ -11,8 +11,9 @@ import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ActorDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class LocalActorDataSourceImpl(
+class LocalActorDataSourceImpl @Inject constructor(
     private val actorDao: ActorDao,
     private val logger: Logger
 ) : LocalActorDataSource {

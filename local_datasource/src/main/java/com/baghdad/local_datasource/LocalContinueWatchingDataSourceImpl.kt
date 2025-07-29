@@ -8,8 +8,9 @@ import com.baghdad.local_datasource.util.calculatePageOffset
 import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ContinueWatchingDto
+import javax.inject.Inject
 
-class LocalContinueWatchingDataSourceImpl(
+class LocalContinueWatchingDataSourceImpl @Inject constructor(
     private val continueWatchingDao: ContinueWatchingDao,
     private val logger: Logger
 ) : LocalContinueWatchingDataSource {
