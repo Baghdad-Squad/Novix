@@ -198,8 +198,8 @@ private fun TopRatingContent(
                         end = 16.dp,
                         start = 16.dp,
                     ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     items = movieItems,
                 ) { movie ->
                     Box(contentAlignment = Alignment.TopCenter) {
