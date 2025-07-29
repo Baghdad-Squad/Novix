@@ -93,10 +93,6 @@ class TopRatingViewModel(
     }
 
     override fun onSaveTvShowClick(tvShowId: Long) {
-        updateState {
-            it.copy(
-            )
-        }
 
         showSnackBar(
             message = SearchSnackBarMessage.SavedItemSuccessfully,
@@ -105,10 +101,6 @@ class TopRatingViewModel(
     }
 
     override fun onSaveMovieClick(movieId: Long) {
-        updateState {
-            it.copy(
-            )
-        }
 
         showSnackBar(
             message = SearchSnackBarMessage.SavedItemSuccessfully,
