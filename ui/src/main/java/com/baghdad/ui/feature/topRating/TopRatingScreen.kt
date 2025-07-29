@@ -40,6 +40,7 @@ import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateBack
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 import com.baghdad.viewmodel.topRating.TopRatingEffect
 import com.baghdad.viewmodel.topRating.TopRatingInteractionListener
 import com.baghdad.viewmodel.topRating.TopRatingState
@@ -249,5 +250,8 @@ private fun TopRatingContent(
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
+    return when (type) {
+        SearchSnackBarMessage.SavedItemSuccessfully -> com.baghdad.ui.R.string.snackbar_saved_success
+        else -> type.toStringResource()
+    }
 }
