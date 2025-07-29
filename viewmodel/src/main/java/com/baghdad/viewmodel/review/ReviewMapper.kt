@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.review
 
 import com.baghdad.entity.media.Review
+import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
 fun Review.toReviewUi() = ReviewScreenState.ReviewUiState(
@@ -10,5 +11,5 @@ fun Review.toReviewUi() = ReviewScreenState.ReviewUiState(
     contentTitle = contentTitle,
     reviewText = reviewText,
     postedDate = postedDate.toDDMMYYYYFormat(),
-    rating = rating
+    rating = rating.toDouble().roundToFirstDecimal()
 )

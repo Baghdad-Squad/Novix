@@ -1,18 +1,22 @@
 package com.baghdad.ui.feature.review.component
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
+import com.baghdad.ui.feature.component.islamicImage.PlaceHolderReviewerImage
 
 private val ReviewerImageSize = 48.dp
 private val ReviewerBarPadding = 12.dp
@@ -23,7 +27,7 @@ fun ReviewerHeader(
     imageUrl: String,
     name: String,
     contentName: String,
-    rate: Float,
+    rate: Double,
     modifier: Modifier = Modifier
 ) {
 
@@ -37,8 +41,15 @@ fun ReviewerHeader(
     ) {
         IslamicImage(
             imageUrl = imageUrl,
+            errorContent = { PlaceHolderReviewerImage() },
             contentDescription = null,
             modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .border(
+                    width = 1.dp,
+                    color = Theme.color.stroke,
+                    shape = RoundedCornerShape(12.dp)
+                )
                 .size(ReviewerImageSize)
                 .align(Alignment.CenterVertically)
         )
