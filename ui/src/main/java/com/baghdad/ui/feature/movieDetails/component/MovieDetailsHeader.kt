@@ -60,15 +60,19 @@ fun MovieDetailsHeader(
                 verticalArrangement = Arrangement.Center,
             ) {
                 categories.forEachIndexed { index, category ->
-                    Text(
-                        text = category.name,
-                        fontSize = 12.sp,
-                        style = Theme.typography.label.medium,
-                        color = Theme.color.body,
-                        modifier = Modifier.noRippleClickable { onCategoryClick(category.id) }
-                    )
-                    if (index < categories.size - 1) {
-                        CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        if (index != 0) {
+                            CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+                        }
+                        Text(
+                            text = category.name,
+                            fontSize = 12.sp,
+                            style = Theme.typography.label.medium,
+                            color = Theme.color.body,
+                            modifier = Modifier.noRippleClickable { onCategoryClick(category.id) },
+                        )
                     }
                 }
             }

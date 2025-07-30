@@ -6,7 +6,7 @@ data class EpisodeDto(
     val episodeNumber: Int,
     val rating: Double,
     val duration: String,
-    val releasedDate: String,
+    val releasedDate: String?,
     val trailerUrl: String,
     val currentSeason: Int,
     val overview: String,

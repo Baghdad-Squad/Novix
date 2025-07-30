@@ -102,6 +102,11 @@ private fun SliderThumb(modifier: Modifier = Modifier) {
             .clip(CircleShape)
             .size(16.dp)
             .background(Theme.color.primary)
+            .border(
+                width = 1.dp,
+                color = Theme.color.stroke,
+                shape = CircleShape
+            )
     )
 }
 

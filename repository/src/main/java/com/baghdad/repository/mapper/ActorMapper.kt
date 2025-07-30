@@ -11,10 +11,9 @@ fun ActorDto.toEntity(): Actor {
         name = name,
         profilePictureURL = imageUrl,
         biography = biography,
-        birthDate = birthdayDate
-            .takeIf { it.isNotBlank() }
-            ?.let { LocalDate.parse(it) }
-            ?: LocalDate(1990, 1, 1),
+        birthDate = birthdayDate?.let {
+            LocalDate.parse(it)
+        },
         deathDate = deathDate?.let {
             LocalDate.parse(it)
         },

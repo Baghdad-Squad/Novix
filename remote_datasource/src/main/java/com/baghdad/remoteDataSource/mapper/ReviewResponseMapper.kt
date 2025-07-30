@@ -9,7 +9,7 @@ fun ReviewResponse.toDto(): ReviewDto {
         authorName = (authorDetails?.name.takeIf { !it.isNullOrBlank() }) ?: "Guest",
         authorAvatarUrl = ("https://image.tmdb.org/t/p/w500" + authorDetails?.avatarPath.orEmpty()),
         contentTitle = authorDetails?.username ?: "",
-        rating = authorDetails?.rating ?: 0f,
+        rating = authorDetails?.rating ?: 0.0,
         reviewText = content ?: "",
         postedDate = createdAt.takeIf { !it.isNullOrBlank() } ?: "0001-01-01"
     )

@@ -1,11 +1,14 @@
 package com.baghdad.viewmodel.categoryTvShows
 
+import androidx.paging.PagingData
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseUiState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 data class CategoryTvShowsState(
-    override val isLoading: Boolean = false,
-    val tvShows: List<TvShowUiState> = emptyList<TvShowUiState>(),
+    val isLoading: Boolean = false,
+    val tvShowsFlow: Flow<PagingData<TvShowUiState>> = emptyFlow<PagingData<TvShowUiState>>(),
     val categoryName: String = ""
 ) : BaseUiState {
     data class TvShowUiState(

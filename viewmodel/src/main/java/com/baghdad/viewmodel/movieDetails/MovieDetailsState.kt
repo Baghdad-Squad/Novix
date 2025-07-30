@@ -9,7 +9,7 @@ data class MovieDetailsState(
     val movieTrailerURL: String = "",
     val categories: List<CategoryUiState> = emptyList(),
     val rating: Double = 0.0,
-    val duration: String = "",
+    val duration: Int = 0,
     val date: String = "",
     val overView: String = "",
     val castMembers: List<ActorCardInfo> = emptyList(),
@@ -19,7 +19,7 @@ data class MovieDetailsState(
     val isStared: Boolean = false,
     val isSaved: Boolean = false,
     val isHasTrailer: Boolean = true,
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
 ) : BaseUiState {
 
     data class ActorCardInfo(

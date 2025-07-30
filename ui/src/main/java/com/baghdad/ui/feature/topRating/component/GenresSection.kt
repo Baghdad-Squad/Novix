@@ -3,6 +3,7 @@ package com.baghdad.ui.feature.topRating.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,11 +17,13 @@ fun GenresSection(
     allGenres: List<GenreUiState>,
     selectedGenres: Long?,
     onGenreSelected: (GenreUiState?) -> Unit,
+    listState: LazyListState,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
         modifier = modifier
             .wrapContentSize(),
+        state = listState,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         contentPadding = PaddingValues(horizontal = 12.dp)
     ) {

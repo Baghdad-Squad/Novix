@@ -23,7 +23,7 @@ class TrendingActorMapperTest {
         assertThat(dto.name).isEqualTo("carlos sanchez")
         assertThat(dto.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/profile.jpg")
         assertThat(dto.biography).isEmpty()
-        assertThat(dto.birthdayDate).isEmpty()
+        assertThat(dto.birthdayDate).isNull()
         assertThat(dto.deathDate).isNull()
         assertThat(dto.placeOfBirth).isEmpty()
         assertThat(dto.headerPictures).isEmpty()
