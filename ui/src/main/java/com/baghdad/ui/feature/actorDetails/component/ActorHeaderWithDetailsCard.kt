@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +23,6 @@ import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenState
 @Composable
 fun ActorHeaderWithDetailsCard(
     uiState: ActorDetailsScreenState,
-    carouselModifier: Modifier,
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { uiState.actorInfo.headerPictures.size })
@@ -32,12 +32,12 @@ fun ActorHeaderWithDetailsCard(
             imageUrls = uiState.actorInfo.headerPictures,
             pagerState = pagerState,
             imageAspectRatio = 1.778f,
-            modifier = carouselModifier,
         )
 
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .offset(y = 84.dp)
         ) {
             if (uiState.actorInfo.headerPictures.size > 1) {
                 Row(
