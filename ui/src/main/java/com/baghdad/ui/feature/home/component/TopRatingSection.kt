@@ -23,14 +23,15 @@ fun TopRatingSection(
         items = items,
         onViewAllClick = onViewAllClick,
         modifier = modifier,
-    ) { item ->
+    ) { item, showSaveIcon ->
         HomeCard(
             url = item.imageUrl,
             contentDescription = stringResource(R.string.top_rating_item),
             isSaved = item.isSaved,
             onSavedClick = { onSaveClick(item) },
             onClick = { onClick(item) },
-            modifier = Modifier.aspectRatio(0.8f),
+            showSaveIcon = showSaveIcon,
+            modifier = Modifier.aspectRatio(0.8f)
         )
     }
 }

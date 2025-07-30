@@ -21,10 +21,13 @@ import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 fun HomeCard(
     url: String,
     contentDescription: String?,
+
     isSaved: Boolean,
     onSavedClick: () -> Unit,
     onClick:() -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLoadingEnabled: Boolean = true,
+    showSaveIcon: Boolean = true
 ) {
     Box(
         modifier
@@ -35,22 +38,24 @@ fun HomeCard(
             .noRippleClickable { onClick() },
         contentAlignment = Alignment.Center,
 
-    ) {
+        ) {
         IslamicImage(
             imageUrl = url,
             contentDescription = contentDescription,
+            isLoadingEnabled = isLoadingEnabled,
             modifier = Modifier
                 .fillMaxSize()
                 .align(alignment = Alignment.Center),
         )
-
-        SaveIcon(
-            isSaved = isSaved,
-            onClick = { onSavedClick() },
-            modifier = Modifier
-                .padding(8.dp)
-                .align(Alignment.TopStart)
-        )
+        if (showSaveIcon) {
+            SaveIcon(
+                isSaved = isSaved,
+                onClick = { onSavedClick() },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.TopStart)
+            )
+        }
 
     }
 }

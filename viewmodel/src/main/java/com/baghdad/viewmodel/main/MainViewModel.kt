@@ -18,19 +18,32 @@ class MainViewModel(
     }
 
     override fun checkIsLoggedIn() {
-        tryToExecute(
-            callee = {
-                isLoggedInUseCase.invoke()
-            },
-            onSuccess = { result ->
-                updateState {
-                    it.copy(
-                        isLoggedIn = result
-                    )
-                }
-            },
-            onError = {},
-        )
+        tryToExecute(callee = {
+            isLoggedInUseCase.invoke()
+        }, onSuccess = {
+            onSuccess(result = it)
+        }, onError = {
+            onError(it)
+        }, onFinally = {
+            updateState { it.copy(isLoading = false) }
+        })
+    }
+
+    private fun onSuccess(result: Boolean) {
+        updateState {
+            it.copy(
+                isLoggedIn = result,
+                isLoading = false,
+            )
+        }
+    }
+
+    private fun onError(throwable: Throwable) {
+        updateState {
+            it.copy(
+                isLoading = false,
+            )
+        }
     }
 
 }
