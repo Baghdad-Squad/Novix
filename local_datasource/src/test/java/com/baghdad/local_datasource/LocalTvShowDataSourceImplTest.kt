@@ -8,6 +8,7 @@ import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
+import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -39,7 +40,7 @@ class LocalTvShowDataSourceImplTest {
     }
 
     @Test
-    fun `should add single tv show to database`() = runTest {
+    fun `should add single TV show to database when addTvShow is called`() = runTest {
         // Given
         val tvShowDto = TV_SHOW_DTO
         val expectedEntity = tvShowDto.toLocalDto()
@@ -55,7 +56,7 @@ class LocalTvShowDataSourceImplTest {
 
 
     @Test
-    fun `should add tv shows to database`() = runTest {
+    fun `should add TV shows to database when addTvShows is called`() = runTest {
         // Given
         val tvShowsDto = TV_SHOWS
         val expectedEntity = tvShowsDto.map { it.toLocalDto() }
@@ -84,7 +85,7 @@ class LocalTvShowDataSourceImplTest {
 
         // Then
         coVerify { tvShowDao.getTvShowById(tvShowId) }
-        assert(result.id == expectedTvShow.id)
+        assertThat(result.id).isEqualTo(expectedTvShow.id)
     }
 
 
@@ -101,7 +102,7 @@ class LocalTvShowDataSourceImplTest {
 
         // Then
         coVerify { tvShowDao.getAllTvShow() }
-        assert(result.first().size == expectedTvShows.size)
+        assertThat(result.first().size == expectedTvShows.size)
 
     }
 
@@ -166,7 +167,7 @@ class LocalTvShowDataSourceImplTest {
         // Then
         coVerify { tvShowDao.getTvShowsFromSearchQuery(title, pageSize, any()) }
         coVerify { genreDao.getGenresByIds(any()) }
-        assert(result.size == expectedTvShows.size)
+        assertThat(result.size).isEqualTo(expectedTvShows.size)
     }
 
     companion object {
