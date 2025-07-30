@@ -29,19 +29,7 @@ class MovieDetailsViewModel(
     }
 
     override fun onStarMovieClick() {
-        tryToExecute(
-            callee = { currentState.movieId },
-            onSuccess = {
-                updateState {
-                    it.copy(
-                        isStared = !currentState.isStared,
-                        isLoading = false,
-                    )
-                }
-            },
-            onStart = ::onLoading,
-            onFinally = ::onFinally
-        )
+        // TODO("Not yet implemented")
     }
 
 

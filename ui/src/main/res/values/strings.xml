@@ -88,5 +88,6 @@
     <string name="password_reset_success_message">Password Reset</string>
     <string name="password_reset_main_page_header">Reset password</string>
     <string name="sign_up_for_an_account">Sign up for an account</string>
-    <string name="login_to_your_account_success_message">Login to your account</string>x
+    <string name="login_to_your_account_success_message">Login to your account</string>
+    <string name="min">%1$s min</string>x
 </resources>
