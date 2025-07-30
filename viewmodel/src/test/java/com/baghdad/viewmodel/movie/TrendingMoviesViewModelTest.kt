@@ -169,12 +169,4 @@ class TrendingMoviesViewModelTest {
         assertThat(toStringResult.isEmpty()).isEqualTo(false)
     }
 
-    @Test
-    fun `should distinguish between different effect types`() {
-        val navigateBack = TrendingMoviesEffect.NavigateBack
-        val navigateToMovie = TrendingMoviesEffect.NavigateToMovieDetails(123L)
-
-        assertThat(true).isTrue()
-        assertThat(true).isTrue()
-    }
 }
