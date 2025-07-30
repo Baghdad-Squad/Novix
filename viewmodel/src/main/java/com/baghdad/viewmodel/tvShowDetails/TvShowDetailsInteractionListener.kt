@@ -10,5 +10,6 @@ interface TvShowDetailsInteractionListener {
     fun onClickSaveTvShow(tvShowId: Long)
     fun onClickAddRating()
     fun onClickSeasonTab(seasonIndex: Int)
-    fun onClickPlayTrailer() /*TODO*/
+
+    fun onClickPlayTrailer()
 }

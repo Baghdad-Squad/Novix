@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -35,8 +36,10 @@ fun GallerySection(
         )
 
         LazyRow(
+            modifier = Modifier
+                .padding(top = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(top = 12.dp, start = 16.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
 
             items(imageUrls) {

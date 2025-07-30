@@ -18,8 +18,11 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.CarousalDot
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.component.AutoSlidingImageCarousel
+import com.baghdad.ui.util.arabicDuration
+import com.baghdad.ui.util.isArabicSystemLocale
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
+import com.baghdad.viewmodel.movieDetails.formatDuration
 
 @Composable
 fun MovieHeaderWithDetailsCard(
@@ -39,7 +42,7 @@ fun MovieHeaderWithDetailsCard(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .offset(y = 128.dp)
+                .offset(y = 116.dp)
         ) {
             if (state.movieImages.size > 1) {
                 Row(
@@ -64,7 +67,7 @@ fun MovieHeaderWithDetailsCard(
                 title = state.movieName,
                 releaseDate = state.date,
                 rating = state.rating,
-                duration = state.duration,
+                duration = if(isArabicSystemLocale()) arabicDuration(state.duration) else state.duration.formatDuration(),
                 categories = state.categories,
                 onViewReviewClicked = {
                     listener.onReviewClick(state.movieId)
@@ -74,6 +77,13 @@ fun MovieHeaderWithDetailsCard(
                     .padding(bottom = 16.dp)
                     .padding(horizontal = 16.dp)
                     .align(Alignment.CenterHorizontally)
+                    .then(
+                        if (state.categories.isEmpty()) {
+                            Modifier.padding(bottom = 24.dp)
+                        } else {
+                            Modifier.padding(bottom = 0.dp)
+                        }
+                    )
             )
         }
     }

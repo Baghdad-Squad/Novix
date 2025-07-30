@@ -2,4 +2,5 @@
 <resources>
     <color name="novix_icon_foreground">#FFC65A42</color>
     <color name="novix_icon_background">#FF0D0608</color>
+    <color name="splash_background">#FF0D0608</color>
 </resources>

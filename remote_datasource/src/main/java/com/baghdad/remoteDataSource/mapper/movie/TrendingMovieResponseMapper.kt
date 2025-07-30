@@ -8,7 +8,7 @@ import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 
 fun TrendingMovieResponse.toMovieDtos() = PagedResultDto(
-    data = results?.mapNotNull { it?.toDto() } ?: emptyList(),
+    data = results?.mapNotNull { it?.takeIf { it.id != null }?.toDto() } ?: emptyList(),
     nextKey = getNextKey(page, this.totalPages),
     prevKey = getPreviousKey(page)
 )

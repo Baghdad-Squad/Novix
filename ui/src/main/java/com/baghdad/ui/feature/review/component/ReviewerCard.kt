@@ -22,7 +22,7 @@ import com.baghdad.design_system.theme.Theme
 @Composable
 fun ReviewerCard(
     title: String,
-    rate: Float,
+    rate: Double,
     authorName: String,
     reviewDate: String,
     authorAvatar: String,
@@ -69,7 +69,7 @@ fun ReviewerCardPreview() {
         ReviewerCard(
             authorAvatar = "https://via.placeholder.com/150",
             title = "The show explores life's complexities through a whimsical metaphor involving a mouse in a man's pocket, which might perplex younger audiences. One episode poignantly addresses  experiences her first period im sical metaphor involving a mouse in a man's pocket, which might perplex younger audiences. One episode poignantly addresses  experiences her first period ",
-            rate = 9.8f,
+            rate = 9.8,
             authorName = "CinephileHub",
             contentName = "MovieBuff1967",
             reviewDate = "03-12-2001",

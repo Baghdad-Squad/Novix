@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.authentication
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +26,7 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -103,7 +106,7 @@ fun LoginScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .padding(horizontal = 16.dp)
                 .verticalScroll(state = rememberScrollState())
         ) {
             LoginForm(state, listener)
@@ -128,7 +131,7 @@ private fun TopBar(listener: LoginInteractionListener) {
         IconButton(
             icon = painterResource(R.drawable.ic_go_back),
             onClick = listener::onNavigateBackClicked,
-            modifier = Modifier.padding(end = 12.dp)
+            modifier = Modifier.padding(end = 12.dp, top = 8.dp, bottom = 8.dp)
         )
         Text(
             text = stringResource(com.baghdad.ui.R.string.login),
@@ -145,9 +148,9 @@ private fun LoginForm(
     Icon(
         imageVector = ImageVector.vectorResource(R.drawable.logo_design),
         contentDescription = stringResource(com.baghdad.ui.R.string.login_icon),
+        tint = Theme.color.primary,
         modifier = Modifier
             .size(64.dp)
-            .padding(top = 12.dp)
     )
 
     Text(
@@ -168,6 +171,10 @@ private fun LoginForm(
 
     NovixTextField(
         label = stringResource(com.baghdad.ui.R.string.password),
+        keyBoardOptions = KeyboardOptions(
+            autoCorrectEnabled = false,
+            keyboardType = KeyboardType.Password
+        ),
         value = state.password,
         onValueChange = listener::onPasswordValueChange,
         leadingIcon = painterResource(R.drawable.ic_lock_key),
@@ -191,13 +198,15 @@ private fun LoginForm(
         listener.onLoginClicked()
     }
 
-    TextButton(
-        textModifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        label = stringResource(com.baghdad.ui.R.string.forgot_password),
-        modifier = Modifier.fillMaxWidth(),
-        onClick = listener::onForgotPasswordClicked
-    )
+    Box(modifier = Modifier.fillMaxWidth()) {
+        TextButton(
+            noRipple = true,
+            textAlign = TextAlign.Center,
+            label = stringResource(com.baghdad.ui.R.string.forgot_password),
+            modifier = Modifier.align(Alignment.Center),
+            onClick = listener::onForgotPasswordClicked
+        )
+    }
 }
 
 @Composable
@@ -205,7 +214,7 @@ private fun BottomCreateAccount(listener: LoginInteractionListener) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp),
+            .padding(top = 20.dp, bottom = 16.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -217,7 +226,8 @@ private fun BottomCreateAccount(listener: LoginInteractionListener) {
         )
         TextButton(
             label = stringResource(com.baghdad.ui.R.string.create_account),
-            onClick = listener::onRegisterClicked
+            onClick = listener::onRegisterClicked,
+            noRipple = true
         )
     }
 }

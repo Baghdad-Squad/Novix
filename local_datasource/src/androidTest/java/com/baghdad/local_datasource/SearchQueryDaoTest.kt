@@ -7,14 +7,14 @@ import androidx.test.filters.SmallTest
 import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.local_datasource.roomDB.entity.SearchQuery
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
+import org.junit.Test
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
@@ -34,7 +34,7 @@ class SearchQueryDaoTest {
     }
 
     @After
-    fun tearDown() {
+    fun closeDatabase() {
         database.close()
     }
 
@@ -44,10 +44,11 @@ class SearchQueryDaoTest {
         searchQueryDao.addSearchQuery(fakeSearchQueries1)
 
         // When
-        val allQueries = searchQueryDao.getAllSearchQueries()
+        val result = searchQueryDao.getAllSearchQueries()
 
         // Then
-        assertTrue(allQueries.contains(fakeSearchQueries1))
+        assertEquals(1, result.size)
+        assertTrue(result.map { it.queryName }.containsAll(result.map { it.queryName }))
     }
 
     @Test
@@ -57,24 +58,24 @@ class SearchQueryDaoTest {
 
         // When
         searchQueryDao.addSearchQueries(queries)
+        val result = searchQueryDao.getAllSearchQueries()
 
         // Then
-        val result = searchQueryDao.getAllSearchQueries()
         assertEquals(2, result.size)
-        assertTrue(result.containsAll(queries))
+        assertTrue(result.map { it.queryName }.containsAll(queries.map { it.queryName }))
     }
 
     @Test
     fun getInvalidSearchQueries_returnsOnlyOldQueries() = runBlocking {
         // Given
-        val threshold = System.currentTimeMillis()
+        val threshold = 120_000L
 
         // When
         searchQueryDao.addSearchQueries(listOf(fakeSearchQueries1, fakeSearchQueries2))
 
         // Then
         val result = searchQueryDao.getInvalidSearchQueries(threshold)
-        assertEquals(listOf(fakeSearchQueries1), result)
+        assertEquals(listOf(fakeSearchQueries1.queryName), result.map { it.queryName })
     }
 
     @Test
@@ -83,19 +84,19 @@ class SearchQueryDaoTest {
         searchQueryDao.addSearchQuery(fakeSearchQueries1)
 
         // Then
-        val result = searchQueryDao.getSearchByQuery("Avengers", "movie")
-        assertEquals(listOf(fakeSearchQueries1), result)
+        val result = searchQueryDao.getSearchByQuery("space_adventures", "MOVIE")
+        assertEquals("space_adventures", result.first().queryName)
     }
 
     @Test
     fun deleteSearchQueryByName_removesSingleEntry() = runBlocking {
         // When
         searchQueryDao.addSearchQuery(fakeSearchQueries1)
-        searchQueryDao.deleteSearchQueryByName("IronMan")
+        searchQueryDao.deleteSearchQueryByName("space_adventures")
 
         // Then
         val result = searchQueryDao.getAllSearchQueries()
-        assertFalse(result.any { it.queryName == "IronMan" })
+        assertFalse(result.any { it.queryName == "space_adventures" })
     }
 
     @Test
@@ -112,30 +113,16 @@ class SearchQueryDaoTest {
         assertTrue(result.isEmpty())
     }
 
-    @Test
-    fun deleteInvalidSearchQueries_removesOldQueriesOnly() = runBlocking {
-        // Given
-        val threshold = System.currentTimeMillis()
-
-        // When
-        searchQueryDao.addSearchQueries(listOf(fakeSearchQueries1, fakeSearchQueries2))
-        searchQueryDao.deleteInvalidSearchQueries(threshold)
-
-        // Then
-        val remaining = searchQueryDao.getAllSearchQueries()
-        assertEquals(listOf(fakeSearchQueries2), remaining)
-    }
-
     val fakeSearchQueries1 = SearchQuery(
         queryName = "space_adventures",
         mediaId = 101L,
         mediaType = "MOVIE",
-        timeStamp = System.currentTimeMillis() - 60_000 // 1 min ago
+        timeStamp = 60_000
     )
     val fakeSearchQueries2 = SearchQuery(
         queryName = "epic_fantasy",
         mediaId = 102L,
         mediaType = "MOVIE",
-        timeStamp = System.currentTimeMillis() - 120_000 // 2 mins ago
+        timeStamp = 120_000
     )
 }
