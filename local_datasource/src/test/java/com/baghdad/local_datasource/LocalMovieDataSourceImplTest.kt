@@ -8,6 +8,7 @@ import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toDtos
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
@@ -43,7 +44,7 @@ class LocalMovieDataSourceImplTest {
         val result = localMovieDataSourceImpl.addMovie(MOVIE.toDto(listOf(GENRE.toDto())))
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
@@ -56,7 +57,7 @@ class LocalMovieDataSourceImplTest {
         val result = localMovieDataSourceImpl.addMovies(MOVIES.toDtos(mapOf()))
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
@@ -70,7 +71,7 @@ class LocalMovieDataSourceImplTest {
         val result = localMovieDataSourceImpl.getMovieById(1)
 
         // Then
-        assert(result.id == MOVIE.id)
+        assertThat(result.id).isEqualTo(MOVIE.id)
     }
 
     @Test
@@ -84,8 +85,8 @@ class LocalMovieDataSourceImplTest {
         val result = localMovieDataSourceImpl.getMoviesByIds(listOf(1, 2, 3))
 
         // Then
-        assert(result.size == MOVIES.size)
-        assert(result[0].id == MOVIES[0].id)
+        assertThat(result.size).isEqualTo(MOVIES.size)
+        assertThat(result[0].id).isEqualTo(MOVIES[0].id)
     }
 
     @Test
@@ -99,8 +100,8 @@ class LocalMovieDataSourceImplTest {
         val result = localMovieDataSourceImpl.getAllMovies().first()
 
         // Then
-        assert(result.size == MOVIES.size)
-        assert(result[0].id == MOVIES[0].id)
+        assertThat(result.size).isEqualTo(MOVIES.size)
+        assertThat(result[0].id).isEqualTo(MOVIES[0].id)
     }
 
 
@@ -114,7 +115,7 @@ class LocalMovieDataSourceImplTest {
         val result = localMovieDataSourceImpl.deleteMovieById(1)
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
@@ -127,7 +128,7 @@ class LocalMovieDataSourceImplTest {
         val result = localMovieDataSourceImpl.deleteAllMovies()
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
@@ -154,8 +155,8 @@ class LocalMovieDataSourceImplTest {
         val result = localMovieDataSourceImpl.searchMoviesByTitle("title", 1, 10)
 
         // Then
-        assert(result.size == MOVIES.size)
-        assert(result[0].id == MOVIES[0].id)
+        assertThat(result.size).isEqualTo(MOVIES.size)
+        assertThat(result[0].id).isEqualTo(MOVIES[0].id)
     }
 
 
@@ -166,7 +167,6 @@ class LocalMovieDataSourceImplTest {
             name = "Action",
             type = GenreDto.GenreType.MOVIE.name
         )
-
 
         val MOVIE = Movie(
             id = 1,
