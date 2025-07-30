@@ -4,6 +4,7 @@ import com.baghdad.local_datasource.roomDB.dao.ContinueWatchingDao
 import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ContinueWatchingDto
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -36,7 +37,7 @@ class LocalContinueWatchingDataSourceImplTest {
         val result = localContinueWatchingDataSourceImpl.addContinueWatching(CONTINUE_WATCHING)
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
@@ -45,11 +46,14 @@ class LocalContinueWatchingDataSourceImplTest {
         coEvery { continueWatchingDao.getContinueWatching(1, any(), any()) } returns listOf(
             CONTINUE_WATCHING.toLocalDto()
         )
+
         coEvery { logger.logException(any()) } returns Unit
         // When
+
         val result = localContinueWatchingDataSourceImpl.getContinueWatching(1, 10, 0)
+
         // Then
-        assert(result == listOf(CONTINUE_WATCHING))
+        assertThat(result).isEqualTo(listOf(CONTINUE_WATCHING))
     }
 
     companion object {
