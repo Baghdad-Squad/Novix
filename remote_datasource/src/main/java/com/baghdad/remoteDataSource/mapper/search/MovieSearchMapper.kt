@@ -8,7 +8,7 @@ import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 
 fun MovieSearchResponse.toPagedMovieDtos(genres: List<GenreDto>) = PagedResultDto(
-    data = results?.mapNotNull { it?.toMovieDto(genres) } ?: emptyList(),
+    data = results?.mapNotNull { it?.takeIf { it.id != null }?.toMovieDto(genres) } ?: emptyList(),
     nextKey = getNextKey(page, this.totalPages),
     prevKey = getPreviousKey(page)
 )

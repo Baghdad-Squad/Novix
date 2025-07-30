@@ -39,7 +39,7 @@ class RemoteMovieDataSourceImpl(
         return handleRequest<SimilarMovieResponse>(
             apiCall = { movieApiService.getSimilarMovies(movieId) },
             logger = logger,
-        ).results?.map { it.toDto() } ?: emptyList()
+        ).results?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
     }
 
     override suspend fun getMovieDetails(movieId: Long): MovieDto {
@@ -53,7 +53,7 @@ class RemoteMovieDataSourceImpl(
         return handleRequest<CastMembersResponse>(
             apiCall = { movieApiService.getMovieCastMembers(movieId) },
             logger = logger,
-        ).cast?.map { it.toDto() } ?: emptyList()
+        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
     }
 
     override suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto> {
@@ -76,7 +76,7 @@ class RemoteMovieDataSourceImpl(
                 )
             },
             logger = logger,
-        ).results.orEmpty().map { it.toDto() }
+        ).results.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
     }
 
     override suspend fun getMovieImages(movieId: Long): List<String> {

@@ -10,7 +10,7 @@ import com.baghdad.repository.model.PagedResultDto
 
 fun TrendingActorResponse.toPagedActorDtos(): PagedResultDto<ActorDto> {
     return PagedResultDto(
-        data = results?.map { it.toDto() } ?: emptyList(),
+        data = results?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList(),
         nextKey = getNextKey(page, totalPages),
         prevKey = getPreviousKey(page)
     )
