@@ -8,7 +8,6 @@ import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.io.OutputStream
 
-
 object UserSerializer : Serializer<User> {
 
     override val defaultValue: User

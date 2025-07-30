@@ -10,7 +10,6 @@ import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
 import com.baghdad.viewmodel.home.HomeViewModel
 import com.baghdad.viewmodel.login.LoginViewModel
 import com.baghdad.viewmodel.main.MainViewModel
-import com.baghdad.viewmodel.movie.TrendingMoviesViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewViewModel
@@ -19,6 +18,7 @@ import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
 import com.baghdad.viewmodel.topRating.TopRatingViewModel
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksViewModel
 import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
+import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
 import kotlinx.coroutines.CoroutineDispatcher

@@ -31,27 +31,13 @@ class MovieDetailsViewModel(
     }
 
     override fun onStarMovieClick() {
-        tryToExecute(
-            callee = { currentState.movieId },
-            dispatcher = defaultDispatcher,
-            onSuccess = {
-                updateState {
-                    it.copy(
-                        isStared = !currentState.isStared,
-                        isLoading = false,
-                    )
-                }
-            },
-            onStart = ::onLoading,
-            onFinally = ::onFinally
-        )
+        // TODO("Not yet implemented")
     }
 
 
     override fun onSaveCurrentMovieClick() {
         tryToExecute(
             callee = { currentState.movieId },
-            dispatcher = defaultDispatcher,
             onSuccess = {
                 updateState {
 
@@ -173,7 +159,7 @@ class MovieDetailsViewModel(
                 movieTrailerURL = details.trailerURL,
                 overView = details.overview,
                 rating = details.averageRating.roundToFirstDecimal(),
-                duration = details.runtimeMinutes.formatDuration(),
+                duration = details.runtimeMinutes,
                 posterImageURL = details.posterImageURL,
                 date = details.releaseDate.toDDMMYYYYFormat(),
                 isSaved = state.isSaved,
@@ -205,8 +191,7 @@ class MovieDetailsViewModel(
                 )
             },
             onStart = ::onLoading,
-            onFinally = ::onFinally,
-            dispatcher = defaultDispatcher,
+            onFinally = ::onFinally
         )
     }
 

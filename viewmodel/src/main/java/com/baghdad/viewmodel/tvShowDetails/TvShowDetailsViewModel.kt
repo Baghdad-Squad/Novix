@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.tvShowDetails
 
+import android.util.Log
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
@@ -19,7 +20,6 @@ class TvShowDetailsViewModel(
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
     private val defaultDispatcher: CoroutineDispatcher,
-
     ) :
     BaseViewModel<TvShowDetailsScreenState, TvShowDetailsScreenEffect>(TvShowDetailsScreenState()),
     TvShowDetailsInteractionListener {
@@ -28,7 +28,6 @@ class TvShowDetailsViewModel(
         getTvShowDetails(tvShowId)
         getTvShowCast(tvShowId)
         onClickSeasonTab(0)
-
     }
 
     private fun getTvShowDetails(tvShowId: Long) {

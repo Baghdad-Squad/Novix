@@ -64,7 +64,7 @@
     <string name="popular">Popular</string>
     <string name="continue_watching">Continue watching</string>
     <string name="upcoming">Upcoming</string>
-    <string name="episode_header_template">Episode %1$d - %2$s</string>
+    <string name="episode_title_template">Episode %1$d %2$s</string>
     <string name="login_icon">login icon</string>
     <string name="login_to_your_account">Login to your account</string>
     <string name="password">Password</string>
@@ -73,7 +73,7 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="create_account">Create account</string>
     <string name="login_successfully">Login Successfully</string>
-    <string name="incorrect_username_or_password">Incorrect username or password</string>
+    <string name="incorrect_username_or_password">Invalid Credentials</string>
     <string name="movie_card">Movie Card</string>
     <string name="trending_movies">Trending movies</string>
     <string name="all">All</string>
@@ -81,6 +81,25 @@
     <string name="top_rating_item">Top rating item</string>
     <string name="trending_people">Trending people</string>
     <string name="episodes">%1$d Episodes</string>
-    <string name="s"> S </string>
+    <string name="season_number_template">S%1$d</string>
     <string name="automatically_redirecting_to_login">Automatically redirecting to login in 5 seconds…</string>
+    <string name="oops_we_can_t_find_the_page">Oops! We can\'t find the page you\'re looking for</string>
+    <string name="there_was_a_problem">There was a problem</string>
+    <string name="password_reset_success_message">Password Reset</string>
+    <string name="password_reset_main_page_header">Reset password</string>
+    <string name="sign_up_for_an_account">Sign up for an account</string>
+    <string name="login_to_your_account_success_message">Login to your account</string>
+    <string name="min">%1$s min</string>
+    <string name="one_minute">Minute</string>
+    <string name="default_image">Default Image</string>
+    <string name="reviewer_avatar">Reviewer Avatar</string>x
+
+    <string name ="unknown">Unknown</string>
+    <string name="hour">hour</string>
+    <string name="two_hour">hours</string>
+    <string name="hours">hours</string>
+    <string name="two_minute">Two minutes</string>
+    <string name="minutes">Minutes</string>
+    <string name="duration_combined">%1$s %2$s</string>
+
 </resources>

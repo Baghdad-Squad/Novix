@@ -7,7 +7,7 @@ import com.baghdad.repository.model.PagedResultDto
 
 fun SimilarMovieResponse.toPagedMovieDtos() = PagedResultDto(
     data = results?.mapNotNull {
-        it.toDto(
+        it.takeIf { it.id != null }?.toDto(
             genreIds = it.genreIds
         )
     } ?: emptyList(),

@@ -21,7 +21,7 @@ fun ActorCardDetails(
     fullName: String,
     characterRole: String,
     birthPlace: String,
-    birthDate: String,
+    birthDate: String? = null,
     deathDate: String? = null
 ) {
 

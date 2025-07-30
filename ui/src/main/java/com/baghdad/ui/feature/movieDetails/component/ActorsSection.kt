@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -29,7 +30,7 @@ fun ActorsSection(
             fontSize = 18.sp,
             style = Theme.typography.title.medium,
             color = Theme.color.title,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         )
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
@@ -43,7 +44,7 @@ fun ActorsSection(
                         actorImage = it,
                         onClick = {onClick(actor.id.toLong())},
                         characterName = actor.characterName,
-                        modifier = Modifier.fillParentMaxWidth(0.92f)
+                        modifier = Modifier.width(296.dp),
                     )
                 }
 

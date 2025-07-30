@@ -23,8 +23,5 @@ interface MovieRepository {
     suspend fun getTrendingMovies(page: Int): PagedResult<Movie>
     suspend fun getPopularMovies(): List<Movie>
 
-    suspend fun getUpcomingMovies(
-        page: Int,
-        genreId: Long?,
-        pageSize: Int = 20): PagedResult<Movie>
+    suspend fun getUpcomingMovies(genreId: Long?): List<Movie>
 }
