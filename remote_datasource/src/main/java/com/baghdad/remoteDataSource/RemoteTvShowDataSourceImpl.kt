@@ -54,11 +54,11 @@ class RemoteTvShowDataSourceImpl(
         ).backdrops.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
 
-    override suspend fun getTvShowsByGenre(genreId: Long, page: Int): List<TvShowDto> {
+    override suspend fun getTvShowsByGenre(genreId: Long, page: Int): PagedResultDto<TvShowDto> {
         return handleRequest<TvShowResponse>(
             apiCall = { tvShowApiService.getTvShowsByGenre(genreId, page) },
             logger = logger,
-        ).results.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
+        ).toPagedTvShowDtos()
     }
 
     override suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<EpisodeDto> {

@@ -252,16 +252,16 @@ class TvShowRepositoryImplTest {
         // Given
         val genreId = 18L
         val page = 1
-        val mockTvShowDtos = listOf(createMockTvShowDto())
-        val expectedTvShows = listOf(createMockTvShow())
+        listOf(createMockTvShowDto())
+        val expectedTvShows = createMockPagedTvShowDto()
 
-        coEvery { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) } returns mockTvShowDtos
+        coEvery { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) } returns expectedTvShows
 
-        val result = tvShowRepositoryImpl.getTvShowsByGenre(genreId, page)
+        val result = tvShowRepositoryImpl.getTvShowsByGenre(genreId, page, 20)
 
-        assertEquals(expectedTvShows.size, result.size)
-        assertEquals(expectedTvShows[0].id, result[0].id)
-        assertEquals(expectedTvShows[0].title, result[0].title)
+        assertEquals(expectedTvShows.data.size, result.data.size)
+        assertEquals(expectedTvShows.data[0].id, result.data[0].id)
+        assertEquals(expectedTvShows.data[0].title, result.data[0].title)
         coVerify { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) }
     }
 
@@ -270,11 +270,15 @@ class TvShowRepositoryImplTest {
         // Given
         val genreId = 18L
         val page = 1
-        coEvery { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) } returns emptyList()
+        coEvery { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) } returns PagedResultDto(
+            emptyList<TvShowDto>(),
+            nextKey = null,
+            prevKey = 10
+        )
 
-        val result = tvShowRepositoryImpl.getTvShowsByGenre(genreId, page)
+        val result = tvShowRepositoryImpl.getTvShowsByGenre(genreId, page, pageSize = 20)
 
-        assertEquals(emptyList<TvShow>(), result)
+        assertEquals(emptyList<TvShowDto>(), result.data)
         coVerify { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) }
     }
 
@@ -427,6 +431,13 @@ class TvShowRepositoryImplTest {
             id = id,
             name = name
         )
+
+        private fun createMockPagedTvShowDto() = PagedResultDto(
+            listOf(createMockTvShowDto()),
+            nextKey = 2,
+            prevKey = null
+        )
+
 
         private fun createMockTvShowDto() = TvShowDto(
             id = 789L,
