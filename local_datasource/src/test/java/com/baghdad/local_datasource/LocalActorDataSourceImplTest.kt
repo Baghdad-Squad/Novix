@@ -4,6 +4,7 @@ import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.entity.toEntity
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ActorDto
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.count
@@ -29,20 +30,18 @@ class LocalActorDataSourceImplTest {
     }
 
     @Test
-    fun `should log exception when dao throws exception`() = runTest {
+    fun `should log an exception when dao throws an exception`() = runTest {
         // Given
         val exception = Exception("DB error")
         coEvery { actorDao.getActorById(10) } throws exception
         coEvery { logger.logException(exception) } returns Unit
 
         // When & Then
-        assertThrows<Exception> {
-            localActorDataSourceImpl.getActorById(10)
-        }
+        assertThrows<Exception> { localActorDataSourceImpl.getActorById(10) }
     }
 
     @Test
-    fun `should add a new Actor when call addActor`() = runTest {
+    fun `should add a new actor when addActor is called`() = runTest {
         // Given
         coEvery { actorDao.upsertActor(ACTOR.toEntity()) } returns Unit
         coEvery { logger.logException(any()) } returns Unit
@@ -51,11 +50,11 @@ class LocalActorDataSourceImplTest {
         val result = localActorDataSourceImpl.addActor(ACTOR)
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
-    fun `should add Actors when call addActors`() = runTest {
+    fun `should add actors when addActors is called`() = runTest {
         // Given
         coEvery { actorDao.upsertActors(ACTORS.map(ActorDto::toEntity)) } returns Unit
         coEvery { logger.logException(any()) } returns Unit
@@ -68,7 +67,7 @@ class LocalActorDataSourceImplTest {
     }
 
     @Test
-    fun `should delete Actor by id when call deleteActorById`() = runTest {
+    fun `should delete actor by id when deleteActorById is called`() = runTest {
         // Given
         coEvery { actorDao.deleteActorById(1) } returns Unit
         coEvery { logger.logException(any()) } returns Unit
@@ -77,11 +76,11 @@ class LocalActorDataSourceImplTest {
         val result = localActorDataSourceImpl.deleteActorById(1)
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
-    fun `should get Actor by id when call getActorById`() = runTest {
+    fun `should get actor by id when getActorById is called`() = runTest {
         // Given
         coEvery { actorDao.getActorById(1) } returns ACTOR.toEntity()
         coEvery { logger.logException(any()) } returns Unit
@@ -90,11 +89,11 @@ class LocalActorDataSourceImplTest {
         val result = localActorDataSourceImpl.getActorById(1)
 
         // Then
-        assert(result == ACTOR)
+        assertThat(result).isEqualTo(ACTOR)
     }
 
     @Test
-    fun `should get all Actors from database when call getAllActors`() = runTest {
+    fun `should get all actors from database when getAllActors is called`() = runTest {
         // Given
         coEvery { actorDao.getAllActors() } returns flowOf(ACTORS.map { it.toEntity() })
         coEvery { logger.logException(any()) } returns Unit
@@ -103,11 +102,11 @@ class LocalActorDataSourceImplTest {
         val result = localActorDataSourceImpl.getAllActors()
 
         // Then
-        assert(result.count() == flowOf(ACTORS).count())
+        assertThat(result.count()).isEqualTo(flowOf(ACTORS).count())
     }
 
     @Test
-    fun `should clear all Actors from database when call deleteAllActors`() = runTest {
+    fun `should clear all actors from database when deleteAllActors is called`() = runTest {
         // Given
         coEvery { actorDao.deleteAllActors() } returns Unit
         coEvery { logger.logException(any()) } returns Unit
@@ -116,11 +115,11 @@ class LocalActorDataSourceImplTest {
         val result = localActorDataSourceImpl.deleteAllActors()
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
-    fun `should update Actor when call updateActor`() = runTest {
+    fun `should update actor when updateActor is called`() = runTest {
         // Given
         coEvery { actorDao.upsertActor(ACTOR.toEntity()) } returns Unit
         coEvery { logger.logException(any()) } returns Unit
@@ -129,11 +128,11 @@ class LocalActorDataSourceImplTest {
         val result = localActorDataSourceImpl.updateActor(ACTOR)
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
-    fun `should get Actor by name when call searchActorsByName`() = runTest {
+    fun `should get actor by name when searchActorsByName is called`() = runTest {
         // Given
         coEvery {
             actorDao.getActorsFromSearchQuery(any(), any(), any())
@@ -144,7 +143,7 @@ class LocalActorDataSourceImplTest {
         val result = localActorDataSourceImpl.searchActorsByName("Mahmoud", 1, 10)
 
         // Then
-        assert(result == ACTORS)
+        assertThat(result).isEqualTo(ACTORS)
     }
 
     companion object {
