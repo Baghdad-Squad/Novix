@@ -61,9 +61,9 @@
     <string name="user_name">اسم المستخدم</string>
     <string name="don_t_have_account">لا تملك حساب؟</string>
     <string name="forgot_password">نسيت كلمة المرور؟</string>
-    <string name="create_account">تسجيل حساب جديد</string>
+    <string name="create_account">انشاء حساب جديد</string>
     <string name="login_successfully">تم تسجيل الدخول بنجاح</string>
-    <string name="incorrect_username_or_password">خطأ في كلمة المرور او الاسم</string>
+    <string name="incorrect_username_or_password">البيانات غير صحيحة</string>
     <string name="trending_tv_shows">المسلسلات الرائجة</string>
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>
