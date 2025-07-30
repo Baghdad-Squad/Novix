@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.movieDetails
 
-import android.content.res.Resources
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
@@ -170,7 +169,7 @@ class MovieDetailsViewModel(
                 movieTrailerURL = details.trailerURL,
                 overView = details.overview,
                 rating = details.averageRating.roundToFirstDecimal(),
-                duration = if(isArabicSystemLocale()) convertDurationMinutesToArabic(details.runtimeMinutes) else details.runtimeMinutes.formatDuration(),
+                duration = details.runtimeMinutes,
                 posterImageURL = details.posterImageURL,
                 date = details.releaseDate.toDDMMYYYYFormat(),
                 isSaved = state.isSaved,
@@ -238,49 +237,6 @@ class MovieDetailsViewModel(
                 isLoading = false
             )
         }
-    }
-
-    private fun convertDurationMinutesToArabic(minutes: Int): String {
-        val hours = minutes / 60
-        val remainingMinutes = minutes % 60
-
-        val hoursPart = convertHourToArabic(hours)
-        val minutesPart = convertMinutesToArabic(remainingMinutes)
-
-        return when {
-            hours > 0 && remainingMinutes > 0 -> "$hoursPart و $minutesPart"
-            hours > 0 -> hoursPart
-            remainingMinutes > 0 -> minutesPart
-            else -> "غير معروف"
-        }
-
-    }
-
-    private fun convertHourToArabic(hours: Int): String {
-        return when (hours) {
-            0 -> ""
-            1 -> "ساعة"
-            2 -> "ساعتين"
-            in 3..10 -> "$hours ساعات"
-            else -> "$hours ساعة"
-        }
-    }
-
-    private fun convertMinutesToArabic(minutes: Int): String {
-        return when (minutes) {
-            0 -> "غير معروف"
-            1 -> "دقيقة واحدة"
-            2 -> "دقيقتين"
-            in 3..10 -> "$minutes دقائق"
-            else -> "$minutes دقيقة"
-        }
-    }
-
-
-
-    private fun isArabicSystemLocale(): Boolean {
-        val locale = Resources.getSystem().configuration.locales[0]
-        return locale.language == "ar"
     }
 
     private fun onLoading() {
