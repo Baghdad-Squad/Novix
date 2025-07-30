@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Chip
@@ -71,7 +70,7 @@ fun LazyGridScope.upcomingSection(
         }
     } else {
         itemsIndexed(items = upcomingItems, key = { _, item -> item.id }) { index, item ->
-            val itemsPerRow = maxOf(1, (LocalWindowInfo.current.containerSize.width / 158))
+            val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 150))
             val isInFirstRow = index < itemsPerRow
             val isFirstInRow = index % itemsPerRow == 0
             val isLastInRow = (index + 1) % itemsPerRow == 0 || index == upcomingItems.size - 1
@@ -165,7 +164,7 @@ private fun UpcomingSectionHeaderLoadingPlaceHolder(modifier: Modifier = Modifie
             modifier =
                 Modifier
                     .wrapContentSize()
-                .padding(top = 12.dp),
+                    .padding(top = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
