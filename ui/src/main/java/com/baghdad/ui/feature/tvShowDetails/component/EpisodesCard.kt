@@ -84,7 +84,7 @@ fun EpisodeCard(
                     tint = Theme.color.yellowAccent,
                 )
 
-                if (duration[0] != '0') {
+                if (duration.isNotBlank()) {
                     Row {
                         CircleDot(
                             modifier = Modifier.align(Alignment.CenterVertically),
