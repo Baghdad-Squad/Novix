@@ -90,4 +90,13 @@
     <string name="sign_up_for_an_account">Sign up for an account</string>
     <string name="login_to_your_account_success_message">Login to your account</string>
     <string name="min">%1$s min</string>x
+
+    <string name ="unknown">Unknown</string>
+    <string name="hour">hour</string>
+    <string name="two_hour">hours</string>
+    <string name="hours">hours</string>
+    <string name="two_minute">دقيقتين</string>
+    <string name="minutes">دقائق</string>
+    <string name="duration_combined">%s و %s</string>
+
 </resources>

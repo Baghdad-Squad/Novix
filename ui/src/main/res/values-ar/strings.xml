@@ -91,6 +91,22 @@
     <string name="password_reset_main_page_header">اعادة تعيين كلمة المرور</string>
     <string name="sign_up_for_an_account">سجّل للحصول على حساب</string>
     <string name="login_to_your_account_success_message">سجل الدخول لحسابك</string>
+
+    <!-- Corrected string resources for Arabic duration formatting -->
+    <string name="unknown">غير معروف</string>
+
+    <!-- Hours -->
+    <string name="hour">ساعة</string>
+    <string name="two_hour"> ساعتين</string>
+    <string name="hours">%1$s ساعات</string>
+
+    <!-- Minutes -->
     <string name="min">%1$s دقيقة</string>
+    <string name="two_minute"> دقيقتين</string>
+    <string name="minutes">%1$s دقائق</string>
+
+    <!-- Combined duration -->
+    <string name="duration_combined">%1$s  و %2$s</string>
 
 </resources>
+
