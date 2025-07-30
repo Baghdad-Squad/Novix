@@ -212,7 +212,7 @@ private fun MovieDetailsContent(
                 }
 
                 item {
-                    Spacer(Modifier.height(116.dp))
+                    Spacer(Modifier.height(104.dp))
                 }
 
                 if (state.overView.isNotBlank()) {
@@ -232,6 +232,7 @@ private fun MovieDetailsContent(
                         )
                     }
                 }
+
                 if (state.moreLikeThisMovie.isNotEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Text(
