@@ -1,6 +1,5 @@
 package com.baghdad.repository
 
-import android.util.Log
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.entity.media.Movie
@@ -103,19 +102,13 @@ class SearchRepositoryImpl(
             getRemoteData = { page, _ ->
                 updateGenreCache()
                 val genres = localGenreDataSource.getMovieGenre(Locale.getDefault().language)
-                val a = searchRemoteDataSource.searchMovies(query = title, page = page, genres)
-                Log.e("SearchRepositoryImpl", "genres: $genres, result: $a")
-                a
+                searchRemoteDataSource.searchMovies(query = title, page = page, genres)
             },
             cacheData = {
                 cacheMovieSearchResult(
                     isFirstSearch = page == 1,
                     query = title,
                     movies = it
-                )
-                Log.e(
-                    "SearchRepositoryImpl",
-                    "searchMoviesByTitle: cached ${it}"
                 )
             }
         )
