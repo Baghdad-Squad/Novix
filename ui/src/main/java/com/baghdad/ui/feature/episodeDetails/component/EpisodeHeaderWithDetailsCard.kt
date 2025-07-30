@@ -27,7 +27,7 @@ import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenState
 fun EpisodeHeaderWithDetailsCard(
     state: EpisodeDetailsScreenState,
     listener: EpisodeDetailsInteractionListener,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { state.episode.headerPictures.size })
 
@@ -35,24 +35,26 @@ fun EpisodeHeaderWithDetailsCard(
         AutoSlidingImageCarousel(
             imageUrls = state.episode.headerPictures,
             imageAspectRatio = 1.778f,
-            pagerState = pagerState
+            pagerState = pagerState,
         )
 
         Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .offset(y = 82.dp)
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .offset(y = 128.dp),
         ) {
             if (state.episode.headerPictures.size > 1) {
                 Row(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 12.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Theme.color.iconBackgroundLow)
-                        .border(1.dp, Theme.color.stroke, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 12.dp),
-                    horizontalArrangement = Arrangement.Center,
+                    modifier =
+                        Modifier
+                            .padding(bottom = 8.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Theme.color.iconBackgroundLow)
+                            .border(1.dp, Theme.color.stroke, RoundedCornerShape(8.dp))
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.Center,
                 ) {
                     CarousalDot(
                         totalDots = state.episode.headerPictures.size,
@@ -63,20 +65,24 @@ fun EpisodeHeaderWithDetailsCard(
             }
 
             EpisodeDetailsHeader(
-                title = stringResource(
-                    R.string.episode_header_template,
-                    state.episode.episodeNumber,
-                    state.episode.title
-                ),
+                title =
+                    stringResource(
+                        R.string.episode_title_template,
+                        state.episode.episodeNumber,
+                        state.episode.title
+                            .takeIf { it.isNotBlank() }
+                            ?.let { "- $it" } ?: "",
+                    ),
                 releaseDate = state.episode.releasedDate,
                 rating = state.episode.rating,
                 categories = state.episode.categories,
                 onCategoryClicked = { listener.onCategoryClick(it) },
                 seasonNumber = state.episode.currentSeason,
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .padding(horizontal = 16.dp)
-                    .align(Alignment.CenterHorizontally)
+                modifier =
+                    Modifier
+                        .padding(bottom = 16.dp)
+                        .padding(horizontal = 16.dp)
+                        .align(Alignment.CenterHorizontally),
             )
         }
     }
