@@ -42,6 +42,7 @@ class TrendingMoviesViewModelTest {
         data = testMovies, nextKey = 2, prevKey = null
     )
 
+
     @BeforeEach
     fun setUp() {
         coEvery { getGenresUseCase.getMovieGenres() } returns testGenres
