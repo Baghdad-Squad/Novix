@@ -4,6 +4,7 @@ import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.entity.Genre
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -37,7 +38,7 @@ class LocalGenreDataSourceImplTest {
         val result = localGenreDataSourceImpl.getMovieGenre("en")
 
         //Then
-        assert(result == MOVIE_GENRES)
+        assertThat(result).isEqualTo(MOVIE_GENRES)
     }
 
     @Test
@@ -51,7 +52,7 @@ class LocalGenreDataSourceImplTest {
         val result = localGenreDataSourceImpl.getTvShowGenre("en")
 
         // Then
-        assert(result == TV_SHOW_GENRES)
+        assertThat(result).isEqualTo(TV_SHOW_GENRES)
     }
 
     @Test
@@ -64,7 +65,7 @@ class LocalGenreDataSourceImplTest {
         val result = localGenreDataSourceImpl.addGenre(GENRE)
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
@@ -78,7 +79,7 @@ class LocalGenreDataSourceImplTest {
         val result = localGenreDataSourceImpl.getAllGenres()
 
         // Then
-        assert(result == (MOVIE_GENRES + TV_SHOW_GENRES))
+        assertThat(result).isEqualTo(MOVIE_GENRES + TV_SHOW_GENRES)
     }
 
     @Test
@@ -92,7 +93,7 @@ class LocalGenreDataSourceImplTest {
         val result = localGenreDataSourceImpl.getGenreById(1)
 
         // Then
-        assert(result == GENRE)
+        assertThat(result).isEqualTo(GENRE)
     }
 
     @Test
@@ -105,7 +106,7 @@ class LocalGenreDataSourceImplTest {
         val result = localGenreDataSourceImpl.deleteGenreById(1)
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     @Test
@@ -118,7 +119,7 @@ class LocalGenreDataSourceImplTest {
         val result = localGenreDataSourceImpl.deleteAllGenres()
 
         // Then
-        assert(result == Unit)
+        assertThat(result).isEqualTo(Unit)
     }
 
     companion object {
