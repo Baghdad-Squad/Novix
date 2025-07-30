@@ -89,5 +89,7 @@
     <string name="password_reset_main_page_header">Reset password</string>
     <string name="sign_up_for_an_account">Sign up for an account</string>
     <string name="login_to_your_account_success_message">Login to your account</string>
-    <string name="min">%1$s min</string>x
+    <string name="min">%1$s min</string>
+    <string name="default_image">Default Image</string>
+    <string name="reviewer_avatar">Reviewer Avatar</string>x
 </resources>

@@ -11,5 +11,5 @@ fun Review.toReviewUi() = ReviewScreenState.ReviewUiState(
     contentTitle = contentTitle,
     reviewText = reviewText,
     postedDate = postedDate.toDDMMYYYYFormat(),
-    rating = rating.toDouble().roundToFirstDecimal()
+    rating = rating.roundToFirstDecimal()
 )

@@ -12,11 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
-import com.baghdad.ui.feature.component.islamicImage.PlaceHolderReviewerImage
 
 private val ReviewerImageSize = 48.dp
 private val ReviewerBarPadding = 12.dp
@@ -42,7 +43,7 @@ fun ReviewerHeader(
         IslamicImage(
             imageUrl = imageUrl,
             errorContent = { PlaceHolderReviewerImage() },
-            contentDescription = null,
+            contentDescription = stringResource(R.string.reviewer_avatar),
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .border(
