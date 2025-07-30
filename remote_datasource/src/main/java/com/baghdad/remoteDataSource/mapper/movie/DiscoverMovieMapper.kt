@@ -5,7 +5,7 @@ import com.baghdad.repository.model.MovieDto
 
 fun DiscoverMovieResponse.toMovieDtos() =
     results?.mapNotNull {
-        it?.toDto(
+        it?.takeIf { it.id != null }?.toDto(
             genreIds = it.genreIds,
         )
     } ?: emptyList()

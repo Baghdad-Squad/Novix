@@ -8,7 +8,7 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
 
 fun TvShowSearchResponse.toPagedTvShowDtos(genres: List<GenreDto>) = PagedResultDto(
-    data = results?.mapNotNull { it?.toTvShowDto(genres) } ?: emptyList(),
+    data = results?.mapNotNull { it?.takeIf { it.id != null }?.toTvShowDto(genres) } ?: emptyList(),
     nextKey = getNextKey(page, this.totalPages),
     prevKey = getPreviousKey(page)
 )
