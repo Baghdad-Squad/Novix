@@ -74,15 +74,14 @@ interface MovieApiService {
     @Authenticated
     @GET(DISCOVER_MOVIES_ENDPOINT)
     suspend fun getUpcomingMovies(
-        @Query("page") page: Int,
         @Query("with_genres") genres: String? = null,
         @Query("include_adult") includeAdult: Boolean = false,
         @Query("include_video") includeVideo: Boolean = false,
         @Query("language") language: String = "en-US",
         @Query("sort_by") sortBy: String = "popularity.desc",
         @Query("with_release_type") releaseType: String = "2|3",
-        @Query("release_date.gte") releaseDateGte: String,
-        @Query("release_date.lte") releaseDateLte: String
+        @Query("primary_release_date.gte") releaseDateGte: String,
+        @Query("primary_release_date.lte") releaseDateLte: String,
     ): Response<DiscoverMovieResponse>
 
     @Authenticated

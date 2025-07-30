@@ -1,9 +1,16 @@
 package com.baghdad.repository.datasource.local
 
-import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.repository.model.ContinueWatchingDto
+import kotlinx.coroutines.flow.Flow
 
-interface LocalContinueWatchingDataSource{
+interface LocalContinueWatchingDataSource {
     suspend fun addContinueWatching(continueWatching: ContinueWatchingDto)
-    suspend fun getContinueWatching(userId: Long , pageSize: Int , page: Int): List<ContinueWatchingDto>
+
+    suspend fun getContinueWatching(
+        userId: Long,
+        pageSize: Int,
+        page: Int,
+    ): List<ContinueWatchingDto>
+
+    fun observeContinueWatching(userId: Long): Flow<List<ContinueWatchingDto>>
 }
