@@ -9,7 +9,7 @@ data class MovieDetailsState(
     val movieTrailerURL: String = "",
     val categories: List<CategoryUiState> = emptyList(),
     val rating: Double = 0.0,
-    val duration: String = "",
+    val duration: Int = 0,
     val date: String = "",
     val overView: String = "",
     val castMembers: List<ActorCardInfo> = emptyList(),

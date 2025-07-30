@@ -58,7 +58,7 @@ fun SeasonTabs(
     ) {
         items(seasonCount) {
             Chip(
-                title = stringResource(R.string.s) + (it + 1).toString(),
+                title = stringResource(R.string.season_number_template, it + 1),
                 isSelected = selectedSeasonIndex == it,
                 onClick = { onSeasonSelected(it) }
             )

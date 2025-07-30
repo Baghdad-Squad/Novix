@@ -28,6 +28,9 @@ class MovieDetailsViewModel(
         getMoreLikeThisShow()
     }
 
+
+
+
     override fun onStarMovieClick() {
         // TODO("Not yet implemented")
     }
@@ -154,7 +157,7 @@ class MovieDetailsViewModel(
                 movieTrailerURL = details.trailerURL,
                 overView = details.overview,
                 rating = details.averageRating.roundToFirstDecimal(),
-                duration = details.runtimeMinutes.formatDuration(),
+                duration = details.runtimeMinutes,
                 posterImageURL = details.posterImageURL,
                 date = details.releaseDate.toDDMMYYYYFormat(),
                 isSaved = state.isSaved,
@@ -223,7 +226,6 @@ class MovieDetailsViewModel(
             )
         }
     }
-
 
     private fun onLoading() {
         updateState { it.copy(isLoading = true) }
