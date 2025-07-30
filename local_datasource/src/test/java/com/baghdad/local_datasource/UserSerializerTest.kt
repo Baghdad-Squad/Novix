@@ -2,8 +2,8 @@ package com.baghdad.local_datasource
 
 import com.baghdad.local_datasource.dataStore.user.UserSerializer
 import com.example.application.proto.User
+import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream
 class UserSerializerTest {
 
     @Test
-    fun `UserSerializer should write user data correctly`() = runTest {
+    fun `should write user data correctly when UserSerializer is used`() = runTest {
         // Given
         val user = User.newBuilder()
             .setId(1L)
@@ -24,11 +24,11 @@ class UserSerializerTest {
         UserSerializer.writeTo(user, outputStream)
 
         // Then
-        Assertions.assertTrue(outputStream.size() > 0)
+        assertThat(outputStream.size() > 0).isTrue()
     }
 
     @Test
-    fun `UserSerializer should read user data correctly`() = runTest {
+    fun `should read user data correctly when UserSerializer is used`() = runTest {
         // Given
         val user = User.newBuilder()
             .setId(1L)
@@ -43,15 +43,15 @@ class UserSerializerTest {
         val readUser = UserSerializer.readFrom(inputStream)
 
         // Then
-        Assertions.assertEquals(user, readUser)
+        assertThat(readUser).isEqualTo(user)
     }
 
     @Test
-    fun `UserSerializer defaultValue should return User default instance`() {
+    fun `should return user default instance when defaultValue is called in UserSerializer`() {
         // When
         val defaultUser = UserSerializer.defaultValue
 
         // Then
-        Assertions.assertEquals(User.getDefaultInstance(), defaultUser)
+        assertThat(defaultUser).isEqualTo(User.getDefaultInstance())
     }
 }
