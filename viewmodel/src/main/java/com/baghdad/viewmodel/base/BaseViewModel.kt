@@ -130,7 +130,6 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
 
     }
 
-
     private suspend fun <T> runWithErrorCheck(
         callee: suspend () -> T,
         onSuccess: ((T) -> Unit)?,

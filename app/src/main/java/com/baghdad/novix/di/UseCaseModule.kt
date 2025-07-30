@@ -8,6 +8,7 @@ import com.baghdad.domain.usecase.actor.GetTrendingActorsUseCase
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
+import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -82,6 +83,7 @@ val useCaseModule = module {
     singleOf(::GetTrendingTvShowUseCase)
     singleOf(::LoginUseCase)
     singleOf(::GetAllContinueWatchingUseCase)
+    singleOf(::ObserveContinueWatchingUseCase)
     singleOf(::GetAllContinueWatchingByGenreUseCase)
     singleOf(::AddContinueWatchingUseCase)
     singleOf(::GetMovieTopRatingUseCase)

@@ -36,7 +36,6 @@ import com.baghdad.repository.datasource.local.LocalMovieDataSource
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
 import com.baghdad.repository.datasource.local.LocalSearchQueryDataSource
-import com.baghdad.repository.datasource.local.LocalTrendingTvShowsDataSource
 import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.local.LocalTvShowDataSource
 import com.baghdad.repository.datasource.local.LocalUserDataStore
