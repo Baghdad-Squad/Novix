@@ -5,12 +5,12 @@ import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.RecentlyViewedDto
 import com.baghdad.repository.model.RecentlyViewedDto.ContentType
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -40,8 +40,8 @@ class LocalRecentlyViewedDataSourceImplTest {
         val result = localRecentlyViewedDataSourceImpl.getAllRecentlyViewed().first()
 
         // Then
-        assert(result.isNotEmpty())
-        assert(result[0].contentId == dto.contentId)
+        assertThat(result).isNotEmpty()
+        assertThat(result[0].contentId).isEqualTo(dto.contentId)
     }
 
     @Test
@@ -54,7 +54,7 @@ class LocalRecentlyViewedDataSourceImplTest {
         val result = localRecentlyViewedDataSourceImpl.deleteAllRecentlyViewed()
 
         // Then
-        assertNotNull(result)
+        assertThat(result).isNotNull()
     }
 
     @Test
@@ -73,6 +73,6 @@ class LocalRecentlyViewedDataSourceImplTest {
         val result = localRecentlyViewedDataSourceImpl.addMediaToRecentlyViewed(resentViewedDto)
 
         // Then
-        assertNotNull(result)
+        assertThat(result).isNotNull()
     }
 }
