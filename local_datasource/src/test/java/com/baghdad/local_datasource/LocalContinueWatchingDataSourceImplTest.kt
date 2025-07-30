@@ -31,6 +31,7 @@ class LocalContinueWatchingDataSourceImplTest {
         // Given
         coEvery { continueWatchingDao.upsertContinueWatching(CONTINUE_WATCHING.toLocalDto()) } returns Unit
         coEvery { logger.logException(any()) } returns Unit
+        coEvery { continueWatchingDao.upsertContinueWatching(any()) } returns Unit
 
         // When
         val result = localContinueWatchingDataSourceImpl.addContinueWatching(CONTINUE_WATCHING)
