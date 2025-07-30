@@ -38,11 +38,15 @@ fun TextButton(
         modifier = modifier.then(
             if (noRipple) {
                 Modifier.noRippleClickable(
-                    onClick = onClick,
+                    onClick = {
+                        if (!isLoading) onClick()
+                    },
                 )
             } else {
                 Modifier.clickable(
-                    onClick = onClick,
+                    onClick = {
+                        if (!isLoading) onClick()
+                    },
                 )
             }
         ),
