@@ -211,7 +211,7 @@ private fun MovieDetailsContent(
                 }
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Spacer(Modifier.height(116.dp))
+                    Spacer(Modifier.height(104.dp))
                 }
 
                 if (state.overView.isNotBlank()) {
@@ -231,6 +231,7 @@ private fun MovieDetailsContent(
                         )
                     }
                 }
+
                 if (state.moreLikeThisMovie.isNotEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Text(
