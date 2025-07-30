@@ -38,6 +38,6 @@ fun Episode.toUiState() = TvShowDetailsScreenState.EpisodeUiState(
     episodeNumber = episodeNumber,
     rating = rating.roundToFirstDecimal(),
     duration = duration,
-    releaseDate = releasedDate.toDDMMMYYYYFormat(),
+    releaseDate = releasedDate?.toDDMMMYYYYFormat().orEmpty(),
     currentSeason = currentSeason,
 )

@@ -89,25 +89,61 @@ class ContinueWatchingViewModel(
     }
 
     override fun onGenreClick(genreId: Long?) {
-        if (genreId != currentState.selectedGenreId) {
-            updateState {
-                it.copy(selectedGenreId = genreId, isLoading = true, mediaFlow = flowOf())
-            }
-            getMedia(genreId)
+        if (currentState.selectedMediaTabIsMovie) {
+            handleGenreSelection(
+                currentSelectedId = currentState.selectedMovieGenreId,
+                newGenreId = genreId,
+                update = { id ->
+                    updateState {
+                        it.copy(
+                            selectedMovieGenreId = id,
+                            isLoading = true,
+                            mediaFlow = flowOf()
+                        )
+                    }
+                }
+            )
+        } else {
+            handleGenreSelection(
+                currentSelectedId = currentState.selectedTvShowGenreId,
+                newGenreId = genreId,
+                update = { id ->
+                    updateState {
+                        it.copy(
+                            selectedTvShowGenreId = id,
+                            isLoading = true,
+                            mediaFlow = flowOf()
+                        )
+                    }
+                }
+            )
+        }
+    }
+
+    private fun handleGenreSelection(
+        currentSelectedId: Long?,
+        newGenreId: Long?,
+        update: (Long?) -> Unit
+    ) {
+        if (newGenreId != currentSelectedId) {
+            update(newGenreId)
+            getMedia(newGenreId)
         }
     }
 
     override fun onSelectedTab(isMovieTab: Boolean) {
+        val genreId =
+            if (isMovieTab) currentState.selectedMovieGenreId else currentState.selectedTvShowGenreId
+
         updateState {
             it.copy(
                 selectedMediaTabIsMovie = isMovieTab,
                 isLoading = true,
                 mediaFlow = flowOf(),
-                selectedGenreId = null
             )
         }
         getGenres()
-        getMedia(null)
+        getMedia(genreId)
     }
 
     override fun onMovieSaveClick(movieId: Long) {

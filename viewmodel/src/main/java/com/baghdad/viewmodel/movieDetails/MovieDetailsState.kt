@@ -19,7 +19,7 @@ data class MovieDetailsState(
     val isStared: Boolean = false,
     val isSaved: Boolean = false,
     val isHasTrailer: Boolean = true,
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
 ) : BaseUiState {
 
     data class ActorCardInfo(

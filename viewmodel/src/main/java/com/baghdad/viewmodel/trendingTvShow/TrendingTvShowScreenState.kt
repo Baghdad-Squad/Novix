@@ -9,7 +9,7 @@ data class TrendingTvShowScreenState(
     val trendingTvShows: Flow<PagingData<TvShowUiState>> = flowOf(),
     val genres: List<GenreUiState> = emptyList(),
     val selectedGenreId: Long? = null,
-    override val isLoading: Boolean = false
+    val isLoading: Boolean = false
 ) : BaseUiState {
 
     data class GenreUiState(
