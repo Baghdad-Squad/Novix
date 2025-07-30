@@ -45,8 +45,6 @@ perf-plugin = "1.4.2"
 pagingCommonAndroid = "3.3.6"
 tensorflowLiteSupportVersion = "0.1.0"
 tensorflowLiteMetadata = "0.1.0"
-turbine = "1.0.0"
-
 
 
 [libraries]
@@ -137,9 +135,6 @@ junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.r
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 
-# Turbine
-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-
 # Truth
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 
@@ -227,7 +222,6 @@ test-core = [
     "mockk-android",
     "truth",
     "kotlinx-coroutines-test",
-    "turbine"
 ]
 
 test-ui = [
