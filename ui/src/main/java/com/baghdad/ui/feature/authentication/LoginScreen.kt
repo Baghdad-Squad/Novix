@@ -214,7 +214,7 @@ private fun BottomCreateAccount(listener: LoginInteractionListener) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp),
+            .padding(top = 20.dp, bottom = 16.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
