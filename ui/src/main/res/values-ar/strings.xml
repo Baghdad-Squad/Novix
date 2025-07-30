@@ -61,16 +61,16 @@
     <string name="user_name">اسم المستخدم</string>
     <string name="don_t_have_account">لا تملك حساب؟</string>
     <string name="forgot_password">نسيت كلمة المرور؟</string>
-    <string name="create_account">تسجيل حساب جديد</string>
+    <string name="create_account">انشاء حساب جديد</string>
     <string name="login_successfully">تم تسجيل الدخول بنجاح</string>
-    <string name="incorrect_username_or_password">خطأ في كلمة المرور او الاسم</string>
+    <string name="incorrect_username_or_password">البيانات غير صحيحة</string>
     <string name="trending_tv_shows">المسلسلات الرائجة</string>
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>
     <string name="what_do_you_want_to_watch">ماذا تريد أن تشاهد؟</string>
     <string name="top_rating">الاعلى تقييم</string>
     <string name="actors">ممثلين</string>
-    <string name="episode_header_template">الحلقة %1$d - %2$s</string>
+    <string name="episode_title_template">الحلقة %1$d %2$s</string>
     <string name="movie_card">بطاقة الفيلم</string>
     <string name="trending_movies">الأفلام الرائجة</string>
 

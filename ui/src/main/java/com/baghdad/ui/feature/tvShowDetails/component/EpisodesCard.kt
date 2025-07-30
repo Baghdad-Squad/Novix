@@ -95,7 +95,7 @@ fun EpisodeCard(
                     }
                 }
 
-                if (releaseDate != "1 Jan 0001") {
+                if (releaseDate.isNotBlank()) {
                     Row {
                         CircleDot(
                             modifier = Modifier

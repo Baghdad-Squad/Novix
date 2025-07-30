@@ -44,7 +44,7 @@ class RemoteTvShowDataSourceImpl(
         return handleRequest<CastMembersResponse>(
             apiCall = { tvShowApiService.getTvShowCastMembers(tvId) },
             logger = logger,
-        ).cast?.map { it.toDto() } ?: emptyList()
+        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
     }
 
     override suspend fun getTvShowImages(tvId: Long): List<String> {
@@ -58,21 +58,21 @@ class RemoteTvShowDataSourceImpl(
         return handleRequest<TvShowResponse>(
             apiCall = { tvShowApiService.getTvShowsByGenre(genreId, page) },
             logger = logger,
-        ).results.orEmpty().map { it.toDto() }
+        ).results.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
     }
 
     override suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<EpisodeDto> {
         return handleRequest<SeasonDetailResponse>(
             apiCall = { tvShowApiService.getTvShowEpisodes(tvId, seasonNumber) },
             logger = logger,
-        ).episodes.orEmpty().map { it.toDto() }
+        ).episodes.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
     }
 
     override suspend fun getTvShowReviews(tvId: Long): List<ReviewDto> {
         return handleRequest<ReviewsResponse>(
             apiCall = { tvShowApiService.getTvShowReviews(tvId) },
             logger = logger,
-        ).results.orEmpty().map { it.toDto() }
+        ).results.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
     }
 
     override suspend fun getTvShowTrailer(tvId: Long): String {

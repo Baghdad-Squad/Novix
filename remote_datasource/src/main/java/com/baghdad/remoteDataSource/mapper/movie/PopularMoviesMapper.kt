@@ -5,7 +5,7 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 
 fun PopularMoviesResponse.toMovieDtos(): List<MovieDto> {
-    return results?.mapNotNull { it?.toDto() } ?: emptyList()
+    return results?.mapNotNull { it?.takeIf { it.id != null }?.toDto() } ?: emptyList()
 }
 
 fun PopularMoviesResponse.Result.toDto(): MovieDto {

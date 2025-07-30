@@ -11,7 +11,7 @@ data class ActorDetailsScreenState(
     val isMoviesMoreThanTen: Boolean = false,
     val isTvShowsMoreThanTen: Boolean = false,
     val isGalleryMoreThanTen: Boolean = false,
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
 ) : BaseUiState {
     data class MovieUiState(
         val id: Long = 0,
