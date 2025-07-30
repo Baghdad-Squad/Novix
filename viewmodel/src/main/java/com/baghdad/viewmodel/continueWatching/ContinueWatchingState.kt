@@ -11,7 +11,7 @@ data class ContinueWatchingState(
     val selectedMovieGenreId: Long? = null,
     val selectedTvShowGenreId: Long? = null,
     val selectedMediaTabIsMovie: Boolean = true,
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
 
     ) : BaseUiState {
     data class ContinueWatchingMovieUiState(

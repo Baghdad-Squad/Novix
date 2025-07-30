@@ -97,6 +97,7 @@ class SearchRepositoryImpl(
                     page,
                     pageSize
                 )
+
             },
             getRemoteData = { page, _ ->
                 updateGenreCache()

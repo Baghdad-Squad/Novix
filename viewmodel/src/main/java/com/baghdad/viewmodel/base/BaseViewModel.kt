@@ -102,23 +102,33 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
         onInitialLoadFinished: suspend () -> Unit,
         pageSize: Int = 20,
         mapEntityToUiState: (Entity) -> UiState,
-        onFlowCreated: (Flow<PagingData<UiState>>) -> Unit
+        onFlowCreated: (Flow<PagingData<UiState>>) -> Unit,
+        onLoadingChanged: ((Boolean) -> Unit)? = null
     ) {
+        onLoadingChanged?.invoke(true)
+
         val flow = createPagedResultPager(
             pageSize = pageSize,
             loadData = loadData,
-            onInitialLoadFinished = onInitialLoadFinished,
-            onError = ::handleError
+            onInitialLoadFinished = {
+                onInitialLoadFinished()
+                onLoadingChanged?.invoke(false)
+            },
+            onError = {
+                handleError(it)
+                onLoadingChanged?.invoke(false)
+            }
         ).map { pagingData ->
             pagingData.map { entity -> mapEntityToUiState(entity) }
         }.catch {
             handleError(it)
+            onLoadingChanged?.invoke(false)
             emit(PagingData.empty())
         }
             .cachedIn(viewModelScope)
         onFlowCreated(flow)
-    }
 
+    }
 
     private suspend fun <T> runWithErrorCheck(
         callee: suspend () -> T,

@@ -27,7 +27,7 @@ fun BaseBottomSheet(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = false
+        skipPartiallyExpanded = true
     )
 
     LaunchedEffect(isVisible) {
@@ -48,7 +48,7 @@ fun BaseBottomSheet(
             },
             modifier = Modifier
                 .fillMaxWidth()
-               .systemBarsPadding()
+                .systemBarsPadding()
 
         ) {
             content()

@@ -1,6 +1,9 @@
 package com.baghdad.viewmodel.home
 
+import androidx.paging.PagingData
 import com.baghdad.viewmodel.base.BaseUiState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 data class HomeScreenState(
     val isPopularLoading: Boolean = true,
@@ -14,7 +17,7 @@ data class HomeScreenState(
     val isUpcomingMoviesLoading: Boolean = true,
     val selectedUpcomingGenreId: Long? = null,
     val upcomingItems: List<UpcomingItemUiState> = emptyList(),
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
 ) : BaseUiState {
     data class PopularItemUiState(
         val id: Long = 0L,
