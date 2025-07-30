@@ -153,7 +153,7 @@ fun EpisodeDetailsContent(
                     }
 
                     item {
-                        Spacer(Modifier.height(84.dp))
+                        Spacer(Modifier.height(128.dp))
                     }
 
                     item {

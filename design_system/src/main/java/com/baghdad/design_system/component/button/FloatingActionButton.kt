@@ -25,7 +25,9 @@ fun FloatingActionButton(
     isEnabled: Boolean = true,
 ) {
     Button(
-        onClick = onClick,
+        onClick = {
+            if (!isLoading) onClick()
+        },
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Theme.color.primary,
@@ -33,7 +35,7 @@ fun FloatingActionButton(
             disabledContainerColor = Theme.color.disable,
             disabledContentColor = Theme.color.onPrimaryHint
         ),
-        enabled = isEnabled,
+        enabled = isEnabled ,
         contentPadding = PaddingValues(16.dp),
         modifier = modifier.size(56.dp)
     ) {
