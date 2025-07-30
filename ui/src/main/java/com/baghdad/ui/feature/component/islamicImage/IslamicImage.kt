@@ -10,9 +10,9 @@ fun IslamicImage(
     imageUrl: String,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    onBlurContent: @Composable () -> Unit = { BlurImageContent() },
-    loadingContent: @Composable () -> Unit = { LoadingImageContent() },
-    errorContent: @Composable () -> Unit = { ErrorImageContent() },
+    onBlurContent: (@Composable () -> Unit)? = { BlurImageContent() },
+    loadingContent: (@Composable () -> Unit)? = { LoadingImageContent() },
+    errorContent: (@Composable () -> Unit)? = { ErrorImageContent() },
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     SafeImage(

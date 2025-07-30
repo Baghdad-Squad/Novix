@@ -42,7 +42,7 @@ fun HomeCard(
         IslamicImage(
             imageUrl = url,
             contentDescription = contentDescription,
-            isLoadingEnabled = isLoadingEnabled,
+            loadingContent = null,
             modifier = Modifier
                 .fillMaxSize()
                 .align(alignment = Alignment.Center),
