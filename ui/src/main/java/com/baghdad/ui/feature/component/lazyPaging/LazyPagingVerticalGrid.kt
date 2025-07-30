@@ -49,7 +49,7 @@ fun <T : Any> LazyPagingVerticalGrid(
             AnimatedContent(items.loadState.append) { loadState ->
                 when (loadState) {
                     is LoadState.Error -> errorContent()
-                    LoadState.Loading -> loadingContent()
+                    is LoadState.Loading -> loadingContent()
                     else -> {}
                 }
             }
