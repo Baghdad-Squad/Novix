@@ -26,7 +26,7 @@ fun ActorCardList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         key = { it.id },
         state = state,
-        contentPadding = PaddingValues(vertical = 8.dp)
+        contentPadding = PaddingValues(top = 4.dp, bottom = 8.dp)
     ) { actor ->
         ActorCard(
             actorName = actor.name,

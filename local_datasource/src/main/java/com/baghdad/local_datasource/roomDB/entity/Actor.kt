@@ -9,7 +9,7 @@ data class Actor(
     @PrimaryKey val id: Long = 0L,
     val name: String,
     val profilePictureURL: String,
-    val birthDate: String,
+    val birthDate: String?,
     val placeOfBirth: String,
     val deathDate: String?,
     val biography: String,

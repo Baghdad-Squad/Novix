@@ -7,7 +7,7 @@ import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.PagedResultDto
 
 fun ActorSearchResponse.toPagedActorDtos() = PagedResultDto(
-    data = results?.mapNotNull { it?.toActorDto() } ?: emptyList(),
+    data = results?.mapNotNull { it?.takeIf { it.id != null }?.toActorDto() } ?: emptyList(),
     nextKey = getNextKey(page, this.totalPages),
     prevKey = getPreviousKey(page)
 )
@@ -18,7 +18,7 @@ private fun ActorSearchResponse.Result.toActorDto(): ActorDto {
         name = this.name.orEmpty(),
         imageUrl = this.profilePath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
         biography = "",
-        birthdayDate = "",
+        birthdayDate = null,
         deathDate = null,
         placeOfBirth = "",
         headerPictures = emptyList(),

@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.actorDetails.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,46 +19,48 @@ import com.baghdad.design_system.theme.Theme
 fun CardInfo(
     characterRole: String,
     birthPlace: String,
-    birthDate: String,
+    birthDate: String?,
     deathDate: String?,
 ) {
     FlowRow(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         if (characterRole.isNotBlank()) {
             Text(
                 text = characterRole,
                 style = Theme.typography.label.small,
-                color = Theme.color.body
+                color = Theme.color.body,
             )
         }
 
         if (birthPlace.isNotBlank()) {
-            CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
-            IconTextInfo(
-                text = birthPlace,
-                painter = painterResource(R.drawable.ic_birth_place),
-                contentDescription = "birth place",
-            )
+            Row {
+                CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+                IconTextInfo(
+                    text = birthPlace,
+                    painter = painterResource(R.drawable.ic_birth_place),
+                    contentDescription = "birth place",
+                )
+            }
         }
 
-        if (birthDate.isNotBlank()) {
-            CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
-            IconTextInfo(
-                text = birthDate,
-                painter = painterResource(R.drawable.ic_birthday_cake),
-                contentDescription = stringResource(com.baghdad.ui.R.string.birthday),
-            )
-        }
-
-        if (!deathDate.isNullOrEmpty()) {
-            Text(
-                text = " - $deathDate",
-                style = Theme.typography.label.small,
-                color = Theme.color.body
-            )
+        if (!birthDate.isNullOrEmpty()) {
+            Row {
+                CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+                IconTextInfo(
+                    text = birthDate,
+                    painter = painterResource(R.drawable.ic_birthday_cake),
+                    contentDescription = stringResource(com.baghdad.ui.R.string.birthday),
+                )
+                if (!deathDate.isNullOrEmpty()) {
+                    Text(
+                        text = " - $deathDate",
+                        style = Theme.typography.label.small,
+                        color = Theme.color.body,
+                    )
+                }
+            }
         }
     }
 }

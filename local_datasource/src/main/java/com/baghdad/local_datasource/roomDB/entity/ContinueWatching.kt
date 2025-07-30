@@ -10,25 +10,26 @@ data class ContinueWatching(
     val genreIds: List<Long>,
     val contentImageUrl: String,
     val contentType: String,
-    val userId: Long
+    val userId: Long,
+    val viewedAt: Long = System.currentTimeMillis(),
 )
 
-fun ContinueWatching.toDto(): ContinueWatchingDto {
-    return ContinueWatchingDto(
+fun ContinueWatching.toDto(): ContinueWatchingDto =
+    ContinueWatchingDto(
         contentId = this.contentId,
         genreIds = this.genreIds,
         contentImageUrl = this.contentImageUrl,
         contentType = ContinueWatchingDto.ContentType.valueOf(contentType),
-        userId = this.userId
+        userId = this.userId,
     )
-}
 
-fun ContinueWatchingDto.toLocalDto(): ContinueWatching {
-    return ContinueWatching(
+fun List<ContinueWatching>.toDtos(): List<ContinueWatchingDto> = this.map(ContinueWatching::toDto)
+
+fun ContinueWatchingDto.toLocalDto(): ContinueWatching =
+    ContinueWatching(
         contentId = this.contentId,
         genreIds = this.genreIds,
         contentImageUrl = this.contentImageUrl,
         contentType = contentType.name,
-        userId = this.userId
+        userId = this.userId,
     )
-}
