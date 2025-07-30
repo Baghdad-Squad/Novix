@@ -20,6 +20,7 @@ class HomeMapperKtTest {
     fun `should map Genre to GenreUiState when toUiState is called`() {
         // When
         val genreUiState = GENRE.toUiState()
+
         // Then
         assertThat(GENRE.id).isEqualTo(genreUiState.id)
         assertThat(GENRE.name).isEqualTo(genreUiState.name)
