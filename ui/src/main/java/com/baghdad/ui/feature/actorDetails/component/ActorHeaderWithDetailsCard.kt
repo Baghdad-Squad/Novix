@@ -22,7 +22,8 @@ import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenState
 @Composable
 fun ActorHeaderWithDetailsCard(
     uiState: ActorDetailsScreenState,
-    modifier: Modifier = Modifier
+    carouselModifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { uiState.actorInfo.headerPictures.size })
 
@@ -31,7 +32,7 @@ fun ActorHeaderWithDetailsCard(
             imageUrls = uiState.actorInfo.headerPictures,
             pagerState = pagerState,
             imageAspectRatio = 1.778f,
-            modifier = Modifier.padding(bottom = 104.dp)
+            modifier = carouselModifier,
         )
 
         Column(

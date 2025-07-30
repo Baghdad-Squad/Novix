@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.WavyLoadingIndicator
@@ -163,7 +164,13 @@ fun ActorDetailsContent(
                     .padding(bottom = 24.dp)
             ) {
 
-                ActorHeaderWithDetailsCard(uiState = uiState)
+                ActorHeaderWithDetailsCard(
+                    uiState = uiState,
+                    carouselModifier = if (uiState.actorInfo.biography.isBlank()) Modifier.padding(
+                        bottom = 80.dp
+                    ) else Modifier.padding(bottom = 104.dp)
+                )
+
 
                 if (uiState.actorInfo.biography.isNotBlank()) {
                     ActorBiographySection(
