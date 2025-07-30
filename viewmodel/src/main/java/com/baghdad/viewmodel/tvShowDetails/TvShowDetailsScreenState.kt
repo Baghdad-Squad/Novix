@@ -44,7 +44,7 @@ data class TvShowDetailsScreenState(
         val name: String = "",
         val episodeNumber: Int = 0,
         val rating: Double = 0.0,
-        val duration: String = "",
+        val duration: Int = 0,
         val releaseDate: String = "",
         val currentSeason: Int = 0,
     )

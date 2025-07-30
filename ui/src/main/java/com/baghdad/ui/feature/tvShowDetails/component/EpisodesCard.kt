@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.CircleDot
 import com.baghdad.design_system.component.LabeledIconRow
@@ -37,37 +40,37 @@ fun EpisodeCard(
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         IslamicImage(
             imageUrl = imageUrl,
             contentDescription = episodeName,
-            modifier = Modifier
-                .width(116.dp)
-                .height(78.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .border(
-                    width = 1.dp,
-                    color = Theme.color.stroke,
-                    shape = RoundedCornerShape(12.dp)
-                )
+            modifier =
+                Modifier
+                    .width(116.dp)
+                    .height(78.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .border(
+                        width = 1.dp,
+                        color = Theme.color.stroke,
+                        shape = RoundedCornerShape(12.dp),
+                    ),
         )
         Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Text(
                 text = stringResource(R.string.episode, episodeNumber),
                 style = Theme.typography.label.large,
-                color = Theme.color.title
+                color = Theme.color.title,
             )
             Text(
                 text = episodeName,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = Theme.typography.label.small,
-                color = Theme.color.hint
+                color = Theme.color.hint,
             )
 
             FlowRow(
@@ -78,19 +81,18 @@ fun EpisodeCard(
                 LabeledIconRow(
                     title = rating.toString(),
                     icon = painterResource(com.baghdad.design_system.R.drawable.ic_star_filled),
-                    tint = Theme.color.yellowAccent
+                    tint = Theme.color.yellowAccent,
                 )
 
                 if (duration[0] != '0') {
                     Row {
                         CircleDot(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
+                            modifier = Modifier.align(Alignment.CenterVertically),
                         )
                         LabeledIconRow(
-                            title = stringResource(R.string.min, duration),
+                            title = duration,
                             icon = painterResource(com.baghdad.design_system.R.drawable.ic_time_oclock),
-                            tint = Theme.color.hint
+                            tint = Theme.color.hint,
                         )
                     }
                 }
@@ -98,14 +100,15 @@ fun EpisodeCard(
                 if (releaseDate.isNotBlank()) {
                     Row {
                         CircleDot(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
+                            modifier = Modifier.align(Alignment.CenterVertically),
                         )
-                        Text(
-                            text = releaseDate,
-                            style = Theme.typography.label.small,
-                            color = Theme.color.hint
-                        )
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                            Text(
+                                text = releaseDate,
+                                style = Theme.typography.label.small,
+                                color = Theme.color.hint,
+                            )
+                        }
                     }
                 }
             }

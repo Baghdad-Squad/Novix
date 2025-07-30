@@ -50,9 +50,12 @@ import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.Navig
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToCategoryTvShows
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToEpisodeDetails
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToReviews
+import com.baghdad.ui.util.arabicDuration
+import com.baghdad.ui.util.isArabicSystemLocale
 import com.baghdad.ui.util.openYouTubeLink
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.movieDetails.formatDuration
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsInteractionListener
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenEffect
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
@@ -252,7 +255,7 @@ fun TvShowDetailsContent(
                             imageUrl = uiState.tvShowInfo.posterPictureURL,
                             episodeName = episode.name,
                             releaseDate = episode.releaseDate,
-                            duration = episode.duration,
+                            duration = if (isArabicSystemLocale()) arabicDuration(episode.duration) else episode.duration.formatDuration(),
                             rating = episode.rating,
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)

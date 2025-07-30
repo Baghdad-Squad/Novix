@@ -43,7 +43,7 @@ private fun convertHourToArabic(hours: Int): String {
 private fun convertMinutesToArabic(minutes: Int): String {
     return when (minutes) {
         0 -> stringResource(R.string.unknown)
-        1 -> stringResource(R.string.min)
+        1 -> stringResource(R.string.one_minute)
         2 -> stringResource(R.string.two_minute)
         in 3..10 -> stringResource(R.string.minutes, minutes)
         else -> stringResource(R.string.min, minutes)
