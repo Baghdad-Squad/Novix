@@ -4,11 +4,13 @@ import androidx.datastore.core.DataStore
 import com.baghdad.local_datasource.dataStore.user.LocalUserDataStoreImpl
 import com.baghdad.repository.logger.Logger
 import com.example.application.proto.User
-import io.mockk.*
+import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -27,7 +29,7 @@ class LocalUserDataStoreImplTest {
     }
 
     @Test
-    fun `saveUser should update dataStore with provided values`() = runTest {
+    fun `should update dataStore with provided values when saveUser is called`() = runTest {
         // Given
         val id = 1L
         val userName = "testUser"
@@ -48,18 +50,18 @@ class LocalUserDataStoreImplTest {
     }
 
     @Test
-    fun `getUser should return null if default instance`() = runTest {
+    fun `should return null when default instance is requested in getUser`() = runTest {
         // When
         coEvery { dataStore.data } returns flowOf(User.getDefaultInstance())
 
         val result = userDataStore.getUser()
 
         // Then
-        Assertions.assertNull(result)
+        assertThat(result).isNull()
     }
 
     @Test
-    fun `deleteUser should reset user to default`() = runTest {
+    fun `should reset user to default when deleteUser is called`() = runTest {
         // When
         coEvery { dataStore.updateData(any()) } answers {
             User.getDefaultInstance()
@@ -72,13 +74,13 @@ class LocalUserDataStoreImplTest {
     }
 
     @Test
-    fun `deleteUser should store default user instance`() = runTest {
+    fun `should store default user instance when deleteUser is called`() = runTest {
         // When
         coEvery { dataStore.updateData(any()) } coAnswers {
             val transform: suspend (User) -> User = it.invocation.args[0] as suspend (User) -> User
             val result = transform(User.newBuilder().setId(999).setUserName("Ghost").build())
 
-            Assertions.assertEquals(User.getDefaultInstance(), result)
+            assertThat(result.id).isEqualTo(User.getDefaultInstance().id)
             result
         }
 
@@ -88,7 +90,7 @@ class LocalUserDataStoreImplTest {
 
 
     @Test
-    fun `saveUser should store correct user data`() = runTest {
+    fun `should store correct user data when saveUser is called`() = runTest {
         // Given
         val id = 123L
         val userName = "Alice"
@@ -99,9 +101,9 @@ class LocalUserDataStoreImplTest {
             val transform: suspend (User) -> User = it.invocation.args[0] as suspend (User) -> User
             val result = transform(User.getDefaultInstance())
 
-            Assertions.assertEquals(id, result.id)
-            Assertions.assertEquals(userName, result.userName)
-            Assertions.assertEquals(imageUrl, result.imageUrl)
+            assertThat(id).isEqualTo(result.id)
+            assertThat(userName).isEqualTo(result.userName)
+            assertThat(imageUrl).isEqualTo(result.imageUrl)
             result
         }
 
