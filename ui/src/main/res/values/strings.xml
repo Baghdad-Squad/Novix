@@ -73,7 +73,7 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="create_account">Create account</string>
     <string name="login_successfully">Login Successfully</string>
-    <string name="incorrect_username_or_password">Incorrect username or password</string>
+    <string name="incorrect_username_or_password">Invalid Credentials</string>
     <string name="movie_card">Movie Card</string>
     <string name="trending_movies">Trending movies</string>
     <string name="all">All</string>

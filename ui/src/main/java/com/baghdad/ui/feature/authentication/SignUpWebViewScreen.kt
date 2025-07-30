@@ -88,7 +88,6 @@ fun SignUpWebViewContent(
                     messages["error"] -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                     messages["success"] -> shouldNavigateBack.value = true
                     messages["mainHeader"] -> Unit
-                    else -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                 }
             }
         )
