@@ -1,14 +1,15 @@
 package com.baghdad.local_datasource.roomDB.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.baghdad.repository.model.GenreDto
 
-@Entity(tableName = "Genre")
+@Entity(
+    tableName = "Genre",
+    primaryKeys = ["id", "type"]
+)
 data class Genre(
-    @PrimaryKey
-    var id: Long,
-    var name: String,
+    val id: Long,
+    val name: String,
     val type: String
 )
 

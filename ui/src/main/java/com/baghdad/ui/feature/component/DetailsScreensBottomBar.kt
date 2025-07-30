@@ -1,6 +1,6 @@
 package com.baghdad.ui.feature.component
 
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -30,37 +30,36 @@ fun DetailsScreenBottomBar(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .zIndex(1f)
-            .fillMaxWidth()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Color.Transparent, Color(0xFF0D0608))
-                )
-            )
-            .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 24.dp),
+        modifier =
+            modifier
+                .zIndex(1f)
+                .fillMaxWidth()
+                .background(
+                    brush =
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, Color(0xFF0D0608)),
+                        ),
+                ).padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Crossfade(
-            targetState = isRated,
-        ) { isStared ->
+        AnimatedVisibility(
+            visible = isRated.not(),
+        ) {
             IconButton(
-                icon = if (isStared) painterResource(R.drawable.ic_star_filled) else painterResource(
-                    R.drawable.ic_star
-                ),
+                icon = painterResource(R.drawable.ic_star),
                 tintIcon = Theme.color.onPrimary,
                 background = Theme.color.primary,
                 borderStroke = null,
                 size = Pair(52.dp, 48.dp),
-                onClick = onRateClicked
+                onClick = onRateClicked,
             )
         }
         PrimaryButton(
             stringResource(com.baghdad.ui.R.string.play_trailer),
             modifier = Modifier.fillMaxWidth(),
             isEnabled = hasTrailer && !isLoading,
-            onClick = onPlayTrailerClicked
+            onClick = onPlayTrailerClicked,
         )
     }
 }

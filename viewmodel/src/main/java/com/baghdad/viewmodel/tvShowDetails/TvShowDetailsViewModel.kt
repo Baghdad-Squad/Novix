@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.tvShowDetails
 
-import android.util.Log
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
@@ -11,7 +10,6 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import kotlinx.coroutines.delay
 
 class TvShowDetailsViewModel(
     private val tvShowId: Long,
@@ -27,7 +25,6 @@ class TvShowDetailsViewModel(
         getTvShowDetails(tvShowId)
         getTvShowCast(tvShowId)
         onClickSeasonTab(0)
-
     }
 
     private fun getTvShowDetails(tvShowId: Long) {

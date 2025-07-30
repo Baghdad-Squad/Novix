@@ -10,7 +10,7 @@ import com.baghdad.repository.model.TvShowDto
 
 
 fun TopRatedTvShowSearchResponse.toPagedTvShowDtos() = PagedResultDto(
-    data = results?.mapNotNull { it?.toTvShowDto() } ?: emptyList(),
+    data = results?.mapNotNull { it?.takeIf { it.id != null }?.toTvShowDto() } ?: emptyList(),
     nextKey = getNextKey(page, this.totalPages),
     prevKey = getPreviousKey(page)
 )

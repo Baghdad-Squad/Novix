@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
 data class CategoryTvShowsState(
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
     val tvShowsFlow: Flow<PagingData<TvShowUiState>> = emptyFlow<PagingData<TvShowUiState>>(),
     val categoryName: String = ""
 ) : BaseUiState {

@@ -3,7 +3,6 @@ package com.baghdad.ui.feature.home.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,7 +32,6 @@ fun WhatToWatchCard(
     Box(
         modifier =
             modifier
-                .height(140.dp)
                 .noRippleClickable { onClick() },
     ) {
         Box(
@@ -57,9 +55,11 @@ fun WhatToWatchCard(
             text = title,
             style = Theme.typography.title.medium,
             color = Theme.color.onPrimary,
+            maxLines = 1,
             modifier =
                 Modifier
                     .align(alignment = Alignment.BottomStart)
+                    .padding(top = 81.dp, bottom = 7.dp)
                     .padding(8.dp),
         )
     }

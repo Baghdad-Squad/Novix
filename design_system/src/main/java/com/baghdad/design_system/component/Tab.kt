@@ -42,10 +42,10 @@ fun Tab(
     val selectedTitleStyle = Theme.typography.label.medium.copy(
         color = Theme.color.title, textAlign = TextAlign.Center
     )
-    val unSelectedTitleStyle = Theme.typography.label.small.copy(
+    val unSelectedTitleStyle = Theme.typography.label.medium.copy(
         color = Theme.color.hint, textAlign = TextAlign.Center
     )
-    val titleStyle by remember(isSelected) {
+    val titleColor by remember(isSelected) {
         derivedStateOf {
             if (isSelected) {
                 selectedTitleStyle
@@ -72,7 +72,7 @@ fun Tab(
             horizontalArrangement = Arrangement.Center) {
             Text(
                 text = text,
-                style = titleStyle,
+                style = titleColor,
                 maxLines = 1
             )
         }

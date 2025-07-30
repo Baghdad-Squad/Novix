@@ -17,13 +17,17 @@ class TrendingTvShowViewModel(
     }
 
     private fun getTvShowGenres() {
-        tryToExecute(callee = { getGenresUseCase.getTvShowGenres() }, onSuccess = { genres ->
-            updateState { state ->
-                state.copy(
-                    genres = genres.map(Genre::toUiState),
-                )
-            }
-        }, onError = { mapThrowableToErrorMessage(it) })
+        tryToExecute(
+            callee = { getGenresUseCase.getTvShowGenres() },
+            onSuccess = ::handleGenreSuccess,
+            onError = { mapThrowableToErrorMessage(it) })
+    }
+
+    private fun handleGenreSuccess(genres: List<Genre>) {
+        val genreList =
+            genres.map(Genre::toUiState)
+
+        updateState { it.copy(genres = genreList) }
     }
 
     private fun getTrendingTvShowsByGenre(genreId: Long?) {
@@ -41,7 +45,8 @@ class TrendingTvShowViewModel(
         )
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     override fun onTvShowClick(tvShowId: Long) {
         sendEffect(TrendingTvShowScreenEffect.NavigateToTvShowDetails(tvShowId))
