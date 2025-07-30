@@ -9,7 +9,7 @@ fun EpisodeDetailsResponse.toDto(): EpisodeDto {
         title = this.name.orEmpty(),
         episodeNumber = this.episodeNumber,
         rating = this.voteAverage,
-        duration = "${this.runtime} min",
+        duration = "${this.runtime}",
         releasedDate = this.airDate.orEmpty(),
         currentSeason = this.seasonNumber,
         overview = this.overview.orEmpty(),

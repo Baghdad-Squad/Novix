@@ -83,7 +83,7 @@
     <string name="trending_people">الممثلون الرائجون</string>
 
     <string name="episodes">عدد الحلقات %1$d </string>
-    <string name="s"> الموسم</string>
+    <string name="s"> الموسم </string>
     <string name="automatically_redirecting_to_login">سيتم توجيهك تلقائيا لتسجيل الدخول في ٥ ثواني …</string>
     <string name="oops_we_can_t_find_the_page">Oops! We can\'t find the page you\'re looking for</string>
     <string name="there_was_a_problem">There was a problem</string>
@@ -91,5 +91,6 @@
     <string name="password_reset_main_page_header">اعادة تعيين كلمة المرور</string>
     <string name="sign_up_for_an_account">سجّل للحصول على حساب</string>
     <string name="login_to_your_account_success_message">سجل الدخول لحسابك</string>
+    <string name="min">%1$s دقيقة</string>
 
 </resources>

@@ -4,6 +4,7 @@ import com.baghdad.local_datasource.roomDB.dao.ActorDao
 import com.baghdad.local_datasource.roomDB.entity.Actor
 import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toEntity
+import com.baghdad.local_datasource.roomDB.errorHandler.executeFlowWithErrorHandling
 import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.local_datasource.util.calculatePageOffset
 import com.baghdad.repository.datasource.local.LocalActorDataSource
@@ -38,7 +39,7 @@ class LocalActorDataSourceImpl(
 
 
     override suspend fun getAllActors(): Flow<List<ActorDto>> =
-        executeWithErrorHandling(logger = logger) {
+        executeFlowWithErrorHandling(logger = logger) {
             actorDao.getAllActors().map {
                 it.map { it.toDto() }
             }
