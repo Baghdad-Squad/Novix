@@ -24,13 +24,14 @@ fun CardInfo(
 ) {
     FlowRow(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
         if (characterRole.isNotBlank()) {
             Text(
                 text = characterRole,
                 style = Theme.typography.label.small,
-                color = Theme.color.body,
+                color = Theme.color.body
             )
         }
 
