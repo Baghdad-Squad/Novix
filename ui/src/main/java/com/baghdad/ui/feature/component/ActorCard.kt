@@ -17,14 +17,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.modifier.threeSidedBorder
+import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
@@ -34,9 +36,7 @@ private val ActorImageSize = 78.dp
 private val RoundedShapeValue = 12.dp
 
 private val ImageShape = RoundedCornerShape(
-    topEnd = RoundedShapeValue,
-    topStart = RoundedShapeValue,
-    bottomStart = RoundedShapeValue
+    topEnd = RoundedShapeValue, topStart = RoundedShapeValue, bottomStart = RoundedShapeValue
 )
 private val CardShape = RoundedCornerShape(
     topEnd = RoundedShapeValue,
@@ -51,12 +51,12 @@ fun ActorCard(
     modifier: Modifier = Modifier,
     characterName: String? = null
 ) {
+    val isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(color = Theme.color.surface)
-            .noRippleClickable { onClick() }
-    ) {
+            .noRippleClickable { onClick() }) {
         IslamicImage(
             imageUrl = actorImage,
             contentDescription = stringResource(R.string.actor_image),
@@ -74,7 +74,10 @@ fun ActorCard(
                 .widthIn(min = 218.dp)
                 .background(Theme.color.surface)
                 .threeSidedBorder(
-                    width = 1.dp, color = Theme.color.stroke, cornerRadius = RoundedShapeValue
+                    width = 1.dp,
+                    color = Theme.color.stroke,
+                    cornerRadius = RoundedShapeValue,
+                    isRTL = isRTL
                 )
                 .clip(CardShape)
                 .height(CardHeight)
@@ -100,10 +103,10 @@ fun ActorCard(
     }
 }
 
-@Preview
+@NovixPreviews
 @Composable
 private fun ActorCardPreview() {
-    NovixTheme(isDarkTheme = true) {
+    NovixTheme(isDarkTheme = false) {
         Box(
             modifier = Modifier.background(Theme.color.surface)
         ) {

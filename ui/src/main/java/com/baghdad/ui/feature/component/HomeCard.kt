@@ -23,6 +23,7 @@ fun HomeCard(
     contentDescription: String?,
     isSaved: Boolean,
     onSavedClick: () -> Unit,
+    isLoadingEnabled: Boolean = true,
     onClick:() -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -39,6 +40,7 @@ fun HomeCard(
         IslamicImage(
             imageUrl = url,
             contentDescription = contentDescription,
+            isLoadingEnabled = isLoadingEnabled,
             modifier = Modifier
                 .fillMaxSize()
                 .align(alignment = Alignment.Center),

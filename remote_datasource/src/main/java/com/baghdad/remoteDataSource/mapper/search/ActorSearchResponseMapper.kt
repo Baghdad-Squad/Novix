@@ -18,7 +18,7 @@ private fun ActorSearchResponse.Result.toActorDto(): ActorDto {
         name = this.name.orEmpty(),
         imageUrl = this.profilePath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
         biography = "",
-        birthdayDate = "",
+        birthdayDate = null,
         deathDate = null,
         placeOfBirth = "",
         headerPictures = emptyList(),

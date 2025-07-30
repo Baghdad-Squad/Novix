@@ -26,7 +26,7 @@ fun TrendingActorDetails.toDto(): ActorDto {
             name = actorName,
             imageUrl = imageUrl,
             biography = "",
-            birthdayDate = "",
+            birthdayDate = null,
             deathDate = null,
             placeOfBirth = "",
             headerPictures = emptyList(),

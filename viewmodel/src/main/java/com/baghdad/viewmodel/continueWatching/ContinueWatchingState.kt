@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.flowOf
 data class ContinueWatchingState(
     val mediaFlow: Flow<PagingData<ContinueWatchingMovieUiState>> = flowOf(),
     val genres: List<GenreUiState> = emptyList(),
-    val selectedGenreId: Long? = null,
+    val selectedMovieGenreId: Long? = null,
+    val selectedTvShowGenreId: Long? = null,
     val selectedMediaTabIsMovie: Boolean = true,
     override val isLoading: Boolean = false,
 

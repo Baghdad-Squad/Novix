@@ -28,7 +28,7 @@ data class ActorDetailsScreenState(
     data class ActorInfoUiState(
         val name: String = "",
         val headerPictures: List<String> = emptyList(),
-        val birthdayDate: String = "",
+        val birthdayDate: String? = null,
         val placeOfBirth: String = "",
         val deathDate: String? = null,
         val biography: String = "",

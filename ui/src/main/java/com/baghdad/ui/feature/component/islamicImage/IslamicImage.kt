@@ -25,5 +25,3 @@ fun IslamicImage(
         contentScale = contentScale
     )
 }
-
-
