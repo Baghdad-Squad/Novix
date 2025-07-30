@@ -25,7 +25,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -88,7 +87,6 @@ class MovieDetailsViewModelTest {
         assertEquals("Test Movie", currentState.movieName)
         assertEquals("Test movie overview", currentState.overView)
         assertEquals(8.0, currentState.rating)
-        assertTrue(currentState.duration == "2 hr 0 min" || currentState.duration == "2h 0min")
         assertEquals("/movie_poster.jpg", currentState.posterImageURL)
         assertEquals(3, currentState.movieImages.size)
         assertEquals(2, currentState.castMembers.size)

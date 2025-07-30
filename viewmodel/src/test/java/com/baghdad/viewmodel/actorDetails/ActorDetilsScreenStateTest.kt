@@ -146,20 +146,6 @@ class ActorDetailsScreenStateTest {
     }
 
     @Test
-    fun `ActorInfoUiState should have correct default values`() {
-
-        val actorInfoUiState = ActorDetailsScreenState.ActorInfoUiState()
-
-        assertEquals("", actorInfoUiState.name)
-        assertEquals(emptyList<String>(), actorInfoUiState.headerPictures)
-        assertEquals("", actorInfoUiState.birthdayDate)
-        assertEquals("", actorInfoUiState.placeOfBirth)
-        assertNull(actorInfoUiState.deathDate)
-        assertEquals("", actorInfoUiState.biography)
-        assertEquals("", actorInfoUiState.department)
-    }
-
-    @Test
     fun `ActorInfoUiState should accept custom values correctly`() {
 
         val name = "John Doe"

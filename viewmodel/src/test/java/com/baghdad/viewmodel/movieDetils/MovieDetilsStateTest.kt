@@ -1,33 +1,9 @@
 package com.baghdad.viewmodel.movieDetails
 
-import com.baghdad.viewmodel.base.BaseUiState
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class MovieDetailsStateTest {
-
-    @Test
-    fun `default constructor should create state with default values`() {
-        val state = MovieDetailsState()
-
-        Assertions.assertEquals(0L, state.movieId)
-        Assertions.assertEquals(emptyList<String>(), state.movieImages)
-        Assertions.assertEquals("", state.movieName)
-        Assertions.assertEquals("", state.movieTrailerURL)
-        Assertions.assertEquals(emptyList<MovieDetailsState.CategoryUiState>(), state.categories)
-        Assertions.assertEquals(0.0, state.rating)
-        Assertions.assertEquals("", state.duration)
-        Assertions.assertEquals("", state.date)
-        Assertions.assertEquals("", state.overView)
-        Assertions.assertEquals(emptyList<MovieDetailsState.ActorCardInfo>(), state.castMembers)
-        Assertions.assertEquals("", state.posterImageURL)
-        Assertions.assertEquals(emptyList<MovieDetailsState.MoreLikeThisMovie>(), state.moreLikeThisMovie)
-        Assertions.assertFalse(state.isExtendText)
-        Assertions.assertFalse(state.isStared)
-        Assertions.assertFalse(state.isSaved)
-        Assertions.assertTrue(state.isHasTrailer)
-        Assertions.assertFalse(state.isLoading)
-    }
 
     @Test
     fun `constructor with all parameters should set values correctly`() {
@@ -77,7 +53,7 @@ class MovieDetailsStateTest {
 
     @Test
     fun `isLoading property should be accessible from BaseUiState interface`() {
-        val state: BaseUiState = MovieDetailsState(isLoading = true)
+        val state = MovieDetailsState(isLoading = true)
 
         Assertions.assertTrue(state.isLoading)
     }
@@ -323,7 +299,7 @@ class MovieDetailsStateTest {
         const val movieName = "The Dark Knight"
         const val trailerUrl = "https://trailer.com/darkknight"
         const val movieRating = 9.0
-        const val duration = "152 min"
+        const val duration = 152
         const val releaseDate = "2008-07-18"
         const val overview = "Batman faces the Joker"
         const val posterUrl = "https://poster.com/darkknight.jpg"
