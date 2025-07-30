@@ -42,13 +42,6 @@ fun TvShowHeaderWithDetailsCard(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .offset(y = 128.dp)
-                .then(
-                    if (uiState.tvShowInfo.genres.isNotEmpty()) {
-                        Modifier.padding(top = 0.dp)
-                    } else {
-                        Modifier.padding(top = 24.dp)
-                    }
-                )
         ) {
             if (uiState.tvShowInfo.headerImagesURLs.size > 1) {
                 Row(
