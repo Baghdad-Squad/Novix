@@ -1,10 +1,8 @@
-package com.baghdad.viewmodel.movie
+package com.baghdad.viewmodel.trendingMovie
 
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
 import com.baghdad.entity.media.Genre
-import com.baghdad.viewmodel.trendingMovie.TrendingMoviesEffect
-import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
