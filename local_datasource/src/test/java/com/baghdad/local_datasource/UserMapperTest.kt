@@ -2,13 +2,13 @@ package com.baghdad.local_datasource
 
 import com.baghdad.local_datasource.dataStore.user.toDto
 import com.example.application.proto.User
-import org.junit.jupiter.api.Assertions
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class UserMapperTest {
 
     @Test
-    fun `toDto should correctly map User to UserDto`() {
+    fun `should correctly map user to UserDto when toDto is called`() {
         // Given
         val user = User.newBuilder()
             .setId(101L)
@@ -18,9 +18,9 @@ class UserMapperTest {
         val dto = user.toDto()
 
         // When & Then
-        Assertions.assertEquals(user.id, dto.id)
-        Assertions.assertEquals(user.userName, dto.userName)
-        Assertions.assertEquals(user.imageUrl, dto.imageUrl)
+        assertThat(user.id).isEqualTo(dto.id)
+        assertThat(user.imageUrl).isEqualTo(dto.imageUrl)
+        assertThat(user.userName).isEqualTo(dto.userName)
     }
 
 }
