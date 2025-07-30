@@ -1,4 +1,4 @@
-package com.baghdad.viewmodel.movie
+package com.baghdad.viewmodel.trendingMovie
 
 import androidx.paging.PagingData
 import com.baghdad.viewmodel.base.BaseUiState
@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 data class TrendingMoviesScreenState(
     val movies: Flow<PagingData<TrendingMovieUiState>> = flowOf(),
     val categories: List<TrendingCategoryUiState> = emptyList(),
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
     val selectedGenreId: Long? = null,
 ) : BaseUiState {
 

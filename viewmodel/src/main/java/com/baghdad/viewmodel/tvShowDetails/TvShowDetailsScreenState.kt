@@ -13,7 +13,7 @@ data class TvShowDetailsScreenState(
     val hasTrailer: Boolean = true,
     val isTvShowRated: Boolean = false,
     val isTvShowSaved: Boolean = false,
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
 ) : BaseUiState {
     data class TvShowInfoUiState(
         val title: String = "",

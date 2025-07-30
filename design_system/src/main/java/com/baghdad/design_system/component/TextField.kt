@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -49,6 +50,7 @@ import com.baghdad.design_system.theme.Theme
 @Composable
 fun NovixTextField(
     value: String,
+    keyBoardOptions: KeyboardOptions = KeyboardOptions.Default,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: String? = null,
@@ -123,6 +125,7 @@ fun NovixTextField(
                     )
             ) {
                 BasicTextField(
+                    keyboardOptions = keyBoardOptions,
                     value = internalValue,
                     onValueChange = { newValue ->
                         if (newValue.text.length <= maxLength) {

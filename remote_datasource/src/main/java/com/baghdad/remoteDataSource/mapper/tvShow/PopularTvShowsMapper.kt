@@ -5,7 +5,7 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.TvShowDto
 
 fun PopularTvShowsResponse.toTvShowDtos(): List<TvShowDto> {
-    return results?.mapNotNull { it?.toDto() } ?: emptyList()
+    return results?.mapNotNull { it?.takeIf { it.id != null }?.toDto() } ?: emptyList()
 }
 
 fun PopularTvShowsResponse.Result.toDto(): TvShowDto {

@@ -54,7 +54,7 @@ class TopRatingViewModel(
     }
 
     private fun fetchTvShowsByGenre(genreId: Long?) {
-        updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
+        updateState { it.copy(isLoading = true, selectedTvShowGenreId = genreId) }
         collectPagingFlow(
             loadData = { page ->
                 getTvShowTopRatingUseCase.invoke(
@@ -69,11 +69,11 @@ class TopRatingViewModel(
     }
 
     private fun fetchMoviesByGenre(genreId: Long?) {
-        updateState { it.copy(isLoading = true, selectedGenreId = genreId) }
+        updateState { it.copy(isLoading = true, selectedMovieGenreId = genreId) }
         collectPagingFlow(
             loadData = { page ->
                 getMovieTopRatingUseCase.invoke(
-                    genreId = currentState.selectedGenreId,
+                    genreId = genreId,
                     page = page
                 )
             },
@@ -84,19 +84,24 @@ class TopRatingViewModel(
     }
 
     override fun onGenreClick(genreId: Long?) {
-        if (genreId != currentState.selectedGenreId) {
-            when (currentState.selectedTab) {
-                TopRatingTab.MOVIES -> fetchMoviesByGenre(genreId)
-                TopRatingTab.TV_SHOWS -> fetchTvShowsByGenre(genreId)
+        when (currentState.selectedTab) {
+            TopRatingTab.MOVIES -> {
+                if (genreId != currentState.selectedMovieGenreId) {
+                    updateState { it.copy(selectedMovieGenreId = genreId) }
+                    fetchMoviesByGenre(genreId)
+                }
+            }
+
+            TopRatingTab.TV_SHOWS -> {
+                if (genreId != currentState.selectedTvShowGenreId) {
+                    updateState { it.copy(selectedTvShowGenreId = genreId) }
+                    fetchTvShowsByGenre(genreId)
+                }
             }
         }
     }
 
     override fun onSaveTvShowClick(tvShowId: Long) {
-        updateState {
-            it.copy(
-            )
-        }
 
         showSnackBar(
             message = SearchSnackBarMessage.SavedItemSuccessfully,
@@ -105,10 +110,6 @@ class TopRatingViewModel(
     }
 
     override fun onSaveMovieClick(movieId: Long) {
-        updateState {
-            it.copy(
-            )
-        }
 
         showSnackBar(
             message = SearchSnackBarMessage.SavedItemSuccessfully,
@@ -122,17 +123,17 @@ class TopRatingViewModel(
 
     override fun onSelectedTab(selectedTab: TopRatingTab) {
         updateState {
-            it.copy(selectedTab = selectedTab, selectedGenreId = null)
+            it.copy(selectedTab = selectedTab)
         }
         when (selectedTab) {
             TopRatingTab.MOVIES -> {
                 getMovieGenres()
-                fetchMoviesByGenre(currentState.selectedGenreId)
+                fetchMoviesByGenre(currentState.selectedMovieGenreId)
             }
 
             TopRatingTab.TV_SHOWS -> {
                 getTvShowGenres()
-                fetchTvShowsByGenre(currentState.selectedGenreId)
+                fetchTvShowsByGenre(currentState.selectedTvShowGenreId)
             }
         }
     }

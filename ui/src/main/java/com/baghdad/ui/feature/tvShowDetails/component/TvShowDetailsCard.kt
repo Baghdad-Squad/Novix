@@ -62,15 +62,17 @@ fun TvShowDetailsCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 genres.forEachIndexed { index, genre ->
-                    Text(
-                        text = genre.name,
-                        style = Theme.typography.label.small,
-                        color = Theme.color.body,
-                        modifier = Modifier
-                            .noRippleClickable { onGenreClick(genre.id) }
-                    )
-                    if (index < genres.size - 1) {
-                        CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+                    Row {
+                        if (index > 0) {
+                            CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
+                        }
+                        Text(
+                            text = genre.name,
+                            style = Theme.typography.label.small,
+                            color = Theme.color.body,
+                            modifier = Modifier
+                                .noRippleClickable { onGenreClick(genre.id) }
+                        )
                     }
                 }
             }
@@ -98,7 +100,7 @@ fun TvShowDetailsCard(
 
             CircleDot()
             LabeledIconRow(
-                title = seasonsCount.toString(),
+                title = "$seasonsCount " + stringResource(com.baghdad.ui.R.string.season),
                 icon = painterResource(R.drawable.ic_tv),
             )
         }

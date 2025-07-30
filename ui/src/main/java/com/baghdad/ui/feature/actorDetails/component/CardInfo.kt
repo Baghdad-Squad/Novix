@@ -18,7 +18,7 @@ import com.baghdad.design_system.theme.Theme
 fun CardInfo(
     characterRole: String,
     birthPlace: String,
-    birthDate: String,
+    birthDate: String?,
     deathDate: String?,
 ) {
     FlowRow(
@@ -43,7 +43,7 @@ fun CardInfo(
             )
         }
 
-        if (birthDate.isNotBlank()) {
+        if (!birthDate.isNullOrEmpty()) {
             CircleDot(modifier = Modifier.align(Alignment.CenterVertically))
             IconTextInfo(
                 text = birthDate,

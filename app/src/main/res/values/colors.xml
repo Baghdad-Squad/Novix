@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="novix_icon_foreground">#FFF77053</color>
     <color name="novix_icon_background">#FFF7FBF2</color>
+    <color name="splash_background">#FFFCF9F5</color>
 </resources>

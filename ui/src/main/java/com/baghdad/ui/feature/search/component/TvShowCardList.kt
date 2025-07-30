@@ -21,15 +21,15 @@ fun TvShowCardList(
     onTVShowClick: (id: Long, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyPagingVerticalGrid<SearchScreenState.TvShowUiState>(
+    LazyPagingVerticalGrid(
         items = tvShows,
         state = state,
         modifier = modifier,
         columns = GridCells.Adaptive(minSize = 150.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         key = { it.id },
-        contentPadding = PaddingValues(bottom = 8.dp)
+        contentPadding = PaddingValues(top = 4.dp, bottom = 8.dp)
     ) { tvShow ->
         HomeCard(
             url = tvShow.posterPictureURL,

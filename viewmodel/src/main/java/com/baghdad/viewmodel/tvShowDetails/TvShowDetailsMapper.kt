@@ -4,13 +4,14 @@ import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
+import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMMYYYYFormat
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
 fun TvShow.toUiState() = TvShowDetailsScreenState.TvShowInfoUiState(
     title = title,
     genres = genres.map { it.toUiState() },
-    rating = averageRating,
+    rating = averageRating.roundToFirstDecimal(),
     releaseDate = releaseDate.toDDMMYYYYFormat(),
     seasonCount = numberOfSeasons,
     overView = overview,
@@ -35,8 +36,8 @@ fun Episode.toUiState() = TvShowDetailsScreenState.EpisodeUiState(
     id = id,
     name = title,
     episodeNumber = episodeNumber,
-    rating = rating,
+    rating = rating.roundToFirstDecimal(),
     duration = duration,
-    releaseDate = releasedDate.toDDMMMYYYYFormat(),
+    releaseDate = releasedDate?.toDDMMMYYYYFormat().orEmpty(),
     currentSeason = currentSeason,
 )
