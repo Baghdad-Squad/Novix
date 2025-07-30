@@ -14,7 +14,7 @@ data class ReviewScreenState(
         val contentTitle: String = "",
         val reviewText: String = "",
         val postedDate: String = "",
-        val rating: Float = 0.0f,
+        val rating: Double = 0.0,
         val isExpanded: Boolean = false
     )
 }

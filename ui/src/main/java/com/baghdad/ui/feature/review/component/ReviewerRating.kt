@@ -26,7 +26,7 @@ private val elementsPaddingVertical = 12.dp
 
 @Composable
 fun ReviewerRating(
-    rating: Float,
+    rating: Double,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -47,7 +47,7 @@ fun ReviewerRating(
         )
 
         Text(
-            text = String.format("%.1f", rating),
+            text = rating.toString(),
             style = Theme.typography.label.small,
             color = Theme.color.title
         )
@@ -66,7 +66,7 @@ private fun ReviewRattingPreview() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            ReviewerRating(rating = 9.9111f)
+            ReviewerRating(rating = 9.9111)
         }
     }
 }

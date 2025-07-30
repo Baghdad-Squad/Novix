@@ -9,28 +9,19 @@ import com.baghdad.islamic_image_loader.ui.SafeImage
 fun IslamicImage(
     imageUrl: String,
     contentDescription: String?,
-    isLoadingEnabled: Boolean = true,
     modifier: Modifier = Modifier,
+    onBlurContent: (@Composable () -> Unit)? = { BlurImageContent() },
+    loadingContent: (@Composable () -> Unit)? = { LoadingImageContent() },
+    errorContent: (@Composable () -> Unit)? = { ErrorImageContent() },
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     SafeImage(
         imageUrl = imageUrl,
         contentDescription = contentDescription,
         modifier = modifier,
-        onBlurContent = {
-            BlurImageContent()
-        },
-        loadingContent =
-            if (isLoadingEnabled) {
-                {
-                    LoadingImageContent()
-                }
-            } else {
-                null
-            },
-        errorContent = {
-            ErrorImageContent()
-        },
-        contentScale = contentScale,
+        onBlurContent = onBlurContent,
+        loadingContent = loadingContent,
+        errorContent = errorContent,
+        contentScale = contentScale
     )
 }

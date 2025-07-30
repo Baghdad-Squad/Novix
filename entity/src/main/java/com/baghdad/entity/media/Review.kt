@@ -7,7 +7,7 @@ data class Review(
     val authorName: String,
     val authorAvatarUrl: String,
     val contentTitle: String,
-    val rating: Float,
+    val rating: Double,
     val reviewText: String,
     val postedDate: LocalDate
 )
