@@ -4,6 +4,7 @@ import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
+import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
 
 fun Genre.toUiState(): HomeScreenState.GenreUiState {
     return HomeScreenState.GenreUiState(
@@ -24,7 +25,7 @@ fun Movie.toPopularItemUiState(): HomeScreenState.PopularItemUiState {
     return HomeScreenState.PopularItemUiState(
         id = id,
         name = title,
-        rating = averageRating,
+        rating = averageRating.roundToFirstDecimal(),
         imageUrl = posterImageURL,
         isSaved = false,
         type = HomeScreenState.PopularItemUiState.Type.MOVIE
@@ -35,7 +36,7 @@ fun TvShow.toPopularItemUiState(): HomeScreenState.PopularItemUiState {
     return HomeScreenState.PopularItemUiState(
         id = id,
         name = title,
-        rating = averageRating,
+        rating = averageRating.roundToFirstDecimal(),
         imageUrl = posterImageURL,
         isSaved = false,
         type = HomeScreenState.PopularItemUiState.Type.TV_SHOW

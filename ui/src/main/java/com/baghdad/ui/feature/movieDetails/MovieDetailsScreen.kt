@@ -30,7 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -146,7 +146,7 @@ private fun MovieDetailsContent(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
         else
-            Color.Transparent,
+            Theme.color.surface.copy(alpha = 0f),
         animationSpec = tween(
             durationMillis = 500,
             easing = FastOutSlowInEasing
@@ -196,13 +196,12 @@ private fun MovieDetailsContent(
         ) {
             LazyVerticalGrid(
                 state = lazyState,
-                columns = GridCells.Fixed(2),
+                columns = GridCells.Adaptive(150.dp),
                 modifier = Modifier
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(bottom = 80.dp)
-
             ) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     MovieHeaderWithDetailsCard(
@@ -211,7 +210,7 @@ private fun MovieDetailsContent(
                     )
                 }
 
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     Spacer(Modifier.height(104.dp))
                 }
 
@@ -246,6 +245,11 @@ private fun MovieDetailsContent(
                     }
 
                     itemsIndexed(state.moreLikeThisMovie) { index, movie ->
+                        val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 150))
+                        val isItemInFirstRow = index < itemsPerRow
+                        val isFirstInRow = index % itemsPerRow == 0
+                        val isLastInRow =
+                            (index + 1) % itemsPerRow == 0 || index == state.moreLikeThisMovie.size - 1
                         HomeCard(
                             url = movie.imageUrl,
                             contentDescription = stringResource(R.string.card_movie_image),
@@ -257,9 +261,10 @@ private fun MovieDetailsContent(
                                 listener.onMovieClick(movie.id)
                             },
                             modifier = Modifier
-                                .then(
-                                    if (index % 2 == 0) Modifier.padding(start = 16.dp)
-                                    else Modifier.padding(end = 16.dp)
+                                .padding(
+                                    top = if (isItemInFirstRow) 0.dp else 4.dp,
+                                    start = if (isFirstInRow) 16.dp else 0.dp,
+                                    end = if (isLastInRow) 16.dp else 0.dp,
                                 )
                                 .clip(RoundedCornerShape(12.dp))
                         )

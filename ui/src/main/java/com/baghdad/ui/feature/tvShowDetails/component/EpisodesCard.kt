@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.CircleDot
 import com.baghdad.design_system.component.LabeledIconRow
@@ -63,9 +64,12 @@ fun EpisodeCard(
             )
             Text(
                 text = episodeName,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = Theme.typography.label.small,
                 color = Theme.color.hint
             )
+
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -77,25 +81,33 @@ fun EpisodeCard(
                     tint = Theme.color.yellowAccent
                 )
 
-                CircleDot(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                )
-                LabeledIconRow(
-                    title = duration,
-                    icon = painterResource(com.baghdad.design_system.R.drawable.ic_time_oclock),
-                    tint = Theme.color.hint
-                )
+                if (duration[0] != '0') {
+                    Row {
+                        CircleDot(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                        )
+                        LabeledIconRow(
+                            title = stringResource(R.string.min, duration),
+                            icon = painterResource(com.baghdad.design_system.R.drawable.ic_time_oclock),
+                            tint = Theme.color.hint
+                        )
+                    }
+                }
 
-                CircleDot(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                )
-                Text(
-                    text = releaseDate,
-                    style = Theme.typography.label.small,
-                    color = Theme.color.hint
-                )
+                if (releaseDate.isNotBlank()) {
+                    Row {
+                        CircleDot(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                        )
+                        Text(
+                            text = releaseDate,
+                            style = Theme.typography.label.small,
+                            color = Theme.color.hint
+                        )
+                    }
+                }
             }
         }
     }

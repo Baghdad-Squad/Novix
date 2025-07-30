@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.button.TextButton
+import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 
@@ -36,4 +37,10 @@ fun DefaultErrorItem(
             onClick = onRetry
         )
     }
+}
+
+@NovixPreviews
+@Composable
+private fun DefaultErrorItemPreview() {
+    DefaultErrorItem(onRetry = {})
 }

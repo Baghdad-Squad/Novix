@@ -6,7 +6,7 @@ data class Actor(
     val id: Long,
     val name: String,
     val profilePictureURL: String,
-    val birthDate: LocalDate,
+    val birthDate: LocalDate?,
     val placeOfBirth: String,
     val deathDate: LocalDate?,
     val biography: String,
