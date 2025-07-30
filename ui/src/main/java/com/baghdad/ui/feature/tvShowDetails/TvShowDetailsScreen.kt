@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -134,7 +133,7 @@ fun TvShowDetailsContent(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
         else
-            Color.Transparent,
+            Theme.color.surface.copy(alpha = 0f),
         animationSpec = tween(
             durationMillis = 500,
             easing = FastOutSlowInEasing
@@ -225,25 +224,26 @@ fun TvShowDetailsContent(
                     }
                 }
 
-                    item {
-                        SeasonSection(
-                            seasonCount = uiState.tvShowInfo.seasonCount,
-                            selectedSeasonIndex = uiState.selectedSeasonIndex,
-                            onSeasonSelected = { listener.onClickSeasonTab(it) },
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
+                item {
+                    SeasonSection(
+                        seasonCount = uiState.tvShowInfo.seasonCount,
+                        selectedSeasonIndex = uiState.selectedSeasonIndex,
+                        onSeasonSelected = { listener.onClickSeasonTab(it) },
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
 
-                    item {
-                        Text(
-                            text = stringResource(R.string.episodes, uiState.episodes.size),
-                            style = Theme.typography.label.small,
-                            color = Theme.color.hint,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .padding(bottom = 12.dp)
-                        )
-                    }
+                item {
+                    Text(
+                        text = stringResource(R.string.episodes, uiState.episodes.size),
+                        style = Theme.typography.label.small,
+                        color = Theme.color.hint,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 12.dp)
+                    )
+                }
+
 
                 if (uiState.episodes.isNotEmpty()) {
                     items(uiState.episodes) { episode ->
@@ -267,6 +267,7 @@ fun TvShowDetailsContent(
                     }
                 }
             }
+
             TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -290,9 +291,7 @@ fun TvShowDetailsContent(
             )
         }
     }
-
 }
-
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {

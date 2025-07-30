@@ -9,6 +9,7 @@ import com.baghdad.islamic_image_loader.ui.SafeImage
 fun IslamicImage(
     imageUrl: String,
     contentDescription: String?,
+    isLoadingEnabled: Boolean = true,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
@@ -19,14 +20,17 @@ fun IslamicImage(
         onBlurContent = {
             BlurImageContent()
         },
-        loadingContent = {
-            LoadingImageContent()
-        },
+        loadingContent =
+            if (isLoadingEnabled) {
+                {
+                    LoadingImageContent()
+                }
+            } else {
+                null
+            },
         errorContent = {
             ErrorImageContent()
         },
-        contentScale = contentScale
+        contentScale = contentScale,
     )
 }
-
-

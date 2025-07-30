@@ -1,4 +1,4 @@
-package com.baghdad.viewmodel.movie
+package com.baghdad.viewmodel.trendingMovie
 
 import com.baghdad.viewmodel.base.BaseUiEffect
 
