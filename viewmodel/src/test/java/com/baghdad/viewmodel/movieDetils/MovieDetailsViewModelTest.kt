@@ -53,6 +53,7 @@ class MovieDetailsViewModelTest {
         coEvery { getMovieImagesUseCase(any()) } returns createMockImages()
         coEvery { getMoreLikeThisPosterImageUseCase(any()) } returns createMockSimilarMovies()
         coEvery { addContinueWatchingUseCase(any(), any(), any(), any()) } returns Unit
+
         movieDetailsViewModel = MovieDetailsViewModel(
             getMovieDetailsUseCase = getMovieDetailsUseCase,
             getCastsInfoUseCase = getCastsInfoUseCase,
@@ -81,6 +82,7 @@ class MovieDetailsViewModelTest {
         // Given
         val categoryId = 28L
         var receivedEffect: MovieDetailsEffect? = null
+
         val job = launch {
             movieDetailsViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
@@ -209,10 +211,9 @@ class MovieDetailsViewModelTest {
         advanceUntilIdle()
         // Then
         val expectedUrl = movieDetailsViewModel.uiState.value.movieTrailerURL
-        assertThat(MovieDetailsEffect.OpenYoutubeLink(expectedUrl) == receivedEffect).isTrue()
+        assertEquals(MovieDetailsEffect.OpenYoutubeLink(expectedUrl), receivedEffect)
         job.cancel()
     }
-
 
     @Test
     fun `onSaveCurrentMovieClick should set loading state correctly during execution when clicked`() =
@@ -224,17 +225,6 @@ class MovieDetailsViewModelTest {
             val finalState = movieDetailsViewModel.uiState.value
             assertThat(finalState.isLoading).isFalse()
         }
-
-//    @Test
-//    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
-//        // Given
-//        val throwable = RuntimeException("Test error")
-//        // When
-//        val result = movieDetailsViewModel.mapThrowableToErrorMessage(throwable)
-//        // Then
-//        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
-//    }
-
 
     companion object {
         private fun createMockMovie() = Movie(
