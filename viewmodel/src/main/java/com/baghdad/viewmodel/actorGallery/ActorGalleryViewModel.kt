@@ -12,7 +12,7 @@ class ActorGalleryViewModel(
     private val actorId: Long,
     private val defaultDispatcher: CoroutineDispatcher,
 
-) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
+    ) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
     ActorGalleryInteractionListener {
 
     init {
@@ -23,7 +23,8 @@ class ActorGalleryViewModel(
         getActorGalleryImages(actorId)
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     fun getActorGalleryImages(actorId: Long) {
         tryToExecute(
@@ -41,6 +42,7 @@ class ActorGalleryViewModel(
             is NoInternetException -> showNoInternetSnackBar()
             else -> handleError(throwable)
         }
+    }
 
 
     private fun showNoInternetSnackBar() {

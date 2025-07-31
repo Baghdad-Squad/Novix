@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.actorGallery
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.dummyData.DummyDataFactory.createMockGallery
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -49,15 +50,42 @@ class ActorGalleryViewModelTest {
     }
 
     @Test
-    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
+    fun `onSnackBarActionLabelClick should load data when it is clicked`() = runTest {
         // Given
-        val throwable = RuntimeException("Test error")
+        val expectedImages = createMockGallery()
+        coEvery { getGalleryImagesUseCase.invoke(ACTOR_ID) } returns createMockGallery()
+        val effects = mutableListOf<ActorGalleryScreenEffect>()
+        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
         // When
-        val result = viewModel.mapThrowableToErrorMessage(throwable)
+        viewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+        job.cancel()
         // Then
-        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
+        val actualState = viewModel.uiState.value
+        assertThat(actualState.images).isEqualTo(expectedImages)
+        assertThat(actualState.isLoading).isFalse()
     }
 
+    @Test
+    fun `getActorGalleryImages should show no internet snackbar when NoInternetException is thrown`() = runTest {
+        // Given
+        coEvery { getGalleryImagesUseCase.invoke(ACTOR_ID) } throws NoInternetException()
+        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+
+        val job = launch {
+            viewModel.snackBarState.collect {
+                emittedSnackBarMessages.add(it.message)
+            }
+        }
+
+        // When
+        viewModel.loadData()
+        advanceUntilIdle()
+        job.cancel()
+
+        // Then
+        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+    }
 
     private companion object {
         const val ACTOR_ID = 123L

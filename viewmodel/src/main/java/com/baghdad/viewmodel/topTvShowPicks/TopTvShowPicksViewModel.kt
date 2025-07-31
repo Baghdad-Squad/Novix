@@ -36,9 +36,8 @@ class TopTvShowPicksViewModel(
         }
     }
 
-    public override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
-    }
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     override fun onTvShowDetailsClick(tvShowId: Long) {
         sendEffect(TopTvShowPicksEffect.NavigateToTvShowDetails(tvShowId))

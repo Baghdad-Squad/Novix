@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.base
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -71,10 +70,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
                     isVisible = true
                 )
             }
-            Log.d(
-                "BaseViewModel",
-                "showSnackBar: $message, isSuccess: $isSuccess, duration: $durationMillis, actionLabelRes: $actionLabelRes",
-            )
+
             delay(durationMillis)
             _snackBarState.update {
                 it.copy(

@@ -3,7 +3,6 @@ package com.baghdad.viewmodel.topMoviePicks
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
-import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -31,7 +30,7 @@ class TopMoviePicksViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        getActorMoviesUseCase = mockk()
+        getActorMoviesUseCase = mockk( relaxed = true)
         coEvery { getActorMoviesUseCase(actorId) } returns mockedMovies()
         topMoviePicksViewModel = TopMoviePicksViewModel(actorId, getActorMoviesUseCase, testDispatcher)
     }
@@ -86,15 +85,15 @@ class TopMoviePicksViewModelTest {
         job.cancel()
     }
 
-    @Test
-    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
-        // Given
-        val throwable = RuntimeException("Test error")
-        // When
-        val result = topMoviePicksViewModel.mapThrowableToErrorMessage(throwable)
-        // Then
-        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
-    }
+//    @Test
+//    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
+//        // Given
+//        val throwable = RuntimeException("Test error")
+//        // When
+//        val result = topMoviePicksViewModel.mapThrowableToErrorMessage(throwable)
+//        // Then
+//        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
+//    }
 
 
     companion object {

@@ -36,9 +36,8 @@ class TopMoviePicksViewModel(
         }
     }
 
-    public override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
-    }
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     override fun onMovieDetailsClick(movieId: Long) {
         sendEffect(TopMoviePicksEffect.NavigateToMovieDetails(movieId))

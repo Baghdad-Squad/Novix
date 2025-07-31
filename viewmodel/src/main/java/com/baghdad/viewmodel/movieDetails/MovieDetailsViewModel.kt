@@ -116,9 +116,9 @@ class MovieDetailsViewModel(
         sendEffect(MovieDetailsEffect.OpenYoutubeLink(currentState.movieTrailerURL))
     }
 
-    public override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
-    }
+
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
 
     private fun getMovieGallery() {

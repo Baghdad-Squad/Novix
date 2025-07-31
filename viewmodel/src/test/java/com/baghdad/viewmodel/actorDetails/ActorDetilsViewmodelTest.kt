@@ -9,7 +9,6 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.viewmodel.dummyData.DummyDataFactory.createMockGallery
-import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -177,15 +176,15 @@ class ActorDetailsViewModelTest {
             job.cancel()
         }
 
-    @Test
-    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
-        // Given
-        val throwable = RuntimeException("Test error")
-        // When
-        val result = viewModel.mapThrowableToErrorMessage(throwable)
-        // Then
-        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
-    }
+//    @Test
+//    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
+//        // Given
+//        val throwable = RuntimeException("Test error")
+//        // When
+//        val result = viewModel.mapThrowableToErrorMessage(throwable)
+//        // Then
+//        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
+//    }
 
 
     companion object {

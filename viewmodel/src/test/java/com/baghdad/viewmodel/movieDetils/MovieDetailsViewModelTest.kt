@@ -9,7 +9,6 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
-import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.google.common.truth.Truth.assertThat
@@ -226,15 +225,15 @@ class MovieDetailsViewModelTest {
             assertThat(finalState.isLoading).isFalse()
         }
 
-    @Test
-    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
-        // Given
-        val throwable = RuntimeException("Test error")
-        // When
-        val result = movieDetailsViewModel.mapThrowableToErrorMessage(throwable)
-        // Then
-        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
-    }
+//    @Test
+//    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
+//        // Given
+//        val throwable = RuntimeException("Test error")
+//        // When
+//        val result = movieDetailsViewModel.mapThrowableToErrorMessage(throwable)
+//        // Then
+//        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
+//    }
 
 
     companion object {

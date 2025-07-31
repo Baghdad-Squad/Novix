@@ -29,7 +29,7 @@ class ActorDetailsViewModel(
         getActorGallery(actorId = actorId)
     }
 
-    public override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
     }
 

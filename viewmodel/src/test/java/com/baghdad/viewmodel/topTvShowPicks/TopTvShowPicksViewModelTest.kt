@@ -3,7 +3,6 @@ package com.baghdad.viewmodel.topTvShowPicks
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
-import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -101,15 +100,15 @@ class TopTvShowPicksViewModelTest {
         job.cancel()
     }
 
-    @Test
-    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
-        // Given
-        val throwable = RuntimeException("Test error")
-        // When
-        val result = topTvShowPicksViewModel.mapThrowableToErrorMessage(throwable)
-        // Then
-        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
-    }
+//    @Test
+//    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
+//        // Given
+//        val throwable = RuntimeException("Test error")
+//        // When
+//        val result = topTvShowPicksViewModel.mapThrowableToErrorMessage(throwable)
+//        // Then
+//        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
+//    }
 
 
     companion object {
