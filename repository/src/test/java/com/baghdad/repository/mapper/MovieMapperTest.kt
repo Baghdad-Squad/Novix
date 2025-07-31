@@ -3,7 +3,9 @@ package com.baghdad.repository.mapper
 import com.baghdad.entity.media.Movie
 import com.baghdad.repository.dummyData.DummyDataFactory.createMockGenre
 import com.baghdad.repository.dummyData.DummyDataFactory.createMockGenreDto
+import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.SearchQueryDto
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
@@ -43,6 +45,59 @@ class MovieMapperTest {
 
         // Then
         assertThat(result.userRating).isNull()
+    }
+
+    @Test
+    fun `MovieDto toSearchQueryDto should map correctly when it is provided`() {
+        // Given
+        val movieDto = createMockMovieDto()
+        val query = "test query"
+
+        // When
+        val result = movieDto.toSearchQueryDto(query)
+
+        // Then
+        assertThat(result.queryName).isEqualTo(query)
+        assertThat(result.mediaId).isEqualTo(movieDto.id)
+        assertThat(result.mediaType).isEqualTo(SearchQueryDto.MediaType.MOVIE)
+    }
+
+    @Test
+    fun `Movie toDto should map correctly when it is provided`() {
+        // Given
+        val movie = createMockMovie()
+
+        // When
+        val result = movie.toDto()
+
+        // Then
+        assertThat(result.id).isEqualTo(456L)
+        assertThat(result.title).isEqualTo("Test Movie")
+        assertThat(result.genres.size).isEqualTo(1)
+        assertThat(result.genres[0].id).isEqualTo(28L)
+        assertThat(result.genres[0].name).isEqualTo("Action")
+        assertThat(result.genres[0].type).isEqualTo(GenreDto.GenreType.MOVIE)
+        assertThat(result.imdbRating).isEqualTo(8.0)
+        assertThat(result.userRating).isEqualTo(7.5)
+        assertThat(result.releaseDate).isEqualTo("2023-01-01")
+        assertThat(result.overview).isEqualTo("Test movie overview")
+        assertThat(result.posterPictureURL).isEqualTo("/movie_poster.jpg")
+        assertThat(result.trailerURL).isEqualTo(" ")
+        assertThat(result.runtimeMinutes).isEqualTo(120)
+    }
+
+    @Test
+    fun `Genre toDto should map correctly`() {
+        // Given
+        val genre = createMockGenre(28L, "Action")
+
+        // When
+        val result = genre.toDto()
+
+        // Then
+        assertThat(result.id).isEqualTo(28L)
+        assertThat(result.name).isEqualTo("Action")
+        assertThat(result.type).isEqualTo(GenreDto.GenreType.MOVIE)
     }
 
     companion object {
