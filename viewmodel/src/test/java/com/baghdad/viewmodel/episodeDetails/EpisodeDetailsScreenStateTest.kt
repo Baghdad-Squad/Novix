@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test
 
 class EpisodeDetailsScreenStateTest {
 
-
-
     @Test
     fun `default constructor should create state with default values`() {
         // When

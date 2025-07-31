@@ -27,14 +27,6 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class EpisodeDetailsViewModelTest {
 
-    private lateinit var getEpisodeCastMembersUseCase: GetEpisodeCastMembersUseCase
-    private lateinit var getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase
-    private lateinit var episodeDetailsViewModel: EpisodeDetailsViewModel
-
-    private val testDispatcher = StandardTestDispatcher()
-    private val tvShowId = 123L
-    private val seasonNumber = 1
-    private val episodeNumber = 1
 
     @BeforeEach
     fun setUp() {
@@ -368,5 +360,15 @@ class EpisodeDetailsViewModelTest {
             )
         )
     }
+
+    private lateinit var getEpisodeCastMembersUseCase: GetEpisodeCastMembersUseCase
+    private lateinit var getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase
+    private lateinit var episodeDetailsViewModel: EpisodeDetailsViewModel
+
+    private val testDispatcher = StandardTestDispatcher()
+    private val tvShowId = 123L
+    private val seasonNumber = 1
+    private val episodeNumber = 1
+
 
 }
