@@ -74,11 +74,14 @@ fun ActorGalleryScreenContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
+        isLoading = uiState.isLoading,
         snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
         topBar = {
