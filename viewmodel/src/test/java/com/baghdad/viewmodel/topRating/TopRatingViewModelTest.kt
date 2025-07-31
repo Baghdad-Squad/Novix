@@ -14,7 +14,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -42,74 +41,76 @@ class TopRatingViewModelTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `onMovieDetailsClick navigation should navigate to movie details`() = runTest {
-        // Given
-        var receivedEffect: TopRatingEffect? = null
-        val movieId = 123L
-        val job = launch {
-            topRatingViewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
+    fun `should return updated effect to navigate to movie details when onMovieDetailsClick`() =
+        runTest {
+            // Given
+            var receivedEffect: TopRatingEffect? = null
+            val movieId = 123L
+            val job = launch {
+                topRatingViewModel.uiEffect.collect { effect ->
+                    receivedEffect = effect
+                }
             }
-        }
-        // When
-        topRatingViewModel.onMovieDetailsClick(movieId)
+            // When
+            topRatingViewModel.onMovieDetailsClick(movieId)
 
-        advanceUntilIdle()
-        // Then
-        assertTrue(
-            receivedEffect is TopRatingEffect.NavigateToMovieDetails,
-        )
-        job.cancel()
-    }
+            advanceUntilIdle()
+            // Then
+            assertThat(
+                receivedEffect is TopRatingEffect.NavigateToMovieDetails,
+            ).isTrue()
+            job.cancel()
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `onTvShowDetailsClick navigation should navigate to tv show details`() = runTest {
-        // Given
-        var receivedEffect: TopRatingEffect? = null
-        val tvShowId = 123L
-        val job = launch {
-            topRatingViewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
+    fun `should return updated effect to navigate to tv show details when onTvShowDetailsClick`() =
+        runTest {
+            // Given
+            var receivedEffect: TopRatingEffect? = null
+            val tvShowId = 123L
+            val job = launch {
+                topRatingViewModel.uiEffect.collect { effect ->
+                    receivedEffect = effect
+                }
             }
+            // When
+            topRatingViewModel.onTvShowDetailsClick(tvShowId)
+            advanceUntilIdle()
+            // Then
+            assertThat(
+                receivedEffect is TopRatingEffect.NavigateToTvShowDetails,
+            ).isTrue()
+            job.cancel()
         }
-        // When
-        topRatingViewModel.onTvShowDetailsClick(tvShowId)
-        advanceUntilIdle()
-        // Then
-        assertTrue(
-            receivedEffect is TopRatingEffect.NavigateToTvShowDetails,
-        )
-        job.cancel()
-    }
 
     @Test
-    fun `onGenreClick movies tab with new genre`() = runTest {
+    fun `should return updated genre tab when onGenreClick`() = runTest {
         // Given
         val genreId = 1L
         // When
         topRatingViewModel.onGenreClick(genreId)
         // Then
-        assertTrue(
+        assertThat(
             topRatingViewModel.uiState.value.selectedMovieGenreId == genreId
-        )
+        ).isTrue()
     }
 
     @Test
-    fun `onGenreClick tv shows tab with new genre should update tab state when selected tab is tv shows`() {
+    fun `should return updated tv show genre tab when onTvShowGenreClick`() {
         // Given
         val genreId = 1L
         topRatingViewModel.onSelectedTab(TopRatingTab.TV_SHOWS)
         // When
         topRatingViewModel.onGenreClick(genreId)
         // Then
-        assertTrue(
+        assertThat(
             topRatingViewModel.uiState.value.selectedTvShowGenreId == genreId
-        )
+        ).isTrue()
     }
 
     @Test
-    fun `onBackClick navigation should navigate back`() = runTest {
+    fun `should return updated effect to navigate back when onBackClick`() = runTest {
         // Given
         var receivedEffect: TopRatingEffect? = null
         val job = launch() {
@@ -123,38 +124,38 @@ class TopRatingViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertTrue(
+        assertThat(
             receivedEffect is TopRatingEffect.NavigateBack
-        )
+        ).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `onSelectedTab movies tab should update tab state when selected tab is movies`() {
+    fun `should return updated tab state to movies when selected tab is movies`() {
         // Given
         val selectedTab = TopRatingTab.MOVIES
         // When
         topRatingViewModel.onSelectedTab(selectedTab)
         // Then
-        assertTrue(
+        assertThat(
             topRatingViewModel.uiState.value.selectedTab == selectedTab
-        )
+        ).isTrue()
     }
 
     @Test
-    fun `onSelectedTab tv shows tab should update tab state when selected tab is tv shows`() {
+    fun `should return updated tab state to tv show when selected tab is tv show`() {
         // Given
         val selectedTab = TopRatingTab.TV_SHOWS
         // When
         topRatingViewModel.onSelectedTab(selectedTab)
         // Then
-        assertTrue(
+        assertThat(
             topRatingViewModel.uiState.value.selectedTab == selectedTab
-        )
+        ).isTrue()
     }
 
     @Test
-    fun `onSaveTvShowClick snackbar`() = runTest {
+    fun `should not throw exceptions when onSaveTvShowClick`() = runTest {
         // Given
         val tvShowId = 1L
         // When
@@ -162,7 +163,7 @@ class TopRatingViewModelTest {
     }
 
     @Test
-    fun `onSaveMovieClick snackbar`() = runTest {
+    fun `should not throw exception when onSaveMovieClick`() = runTest {
         // Given
         val movieId = 1L
         // When
@@ -171,7 +172,7 @@ class TopRatingViewModelTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `getMovieGenres should update uiState with genres when selected tab is movies`() = runTest {
+    fun `should return updated ui state with genres when selected tab is movies`() = runTest {
         // Given
         val genres = listOf(
             Genre(10, "Drama"),
@@ -191,7 +192,7 @@ class TopRatingViewModelTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `getTvShowGenres should update uiState with genres when selected tab is tv shows`() = runTest {
+    fun `should return updated ui state with genres when selected tab is tv shows`() = runTest {
         // Given
         val genres = listOf(
             Genre(10, "Drama"),
