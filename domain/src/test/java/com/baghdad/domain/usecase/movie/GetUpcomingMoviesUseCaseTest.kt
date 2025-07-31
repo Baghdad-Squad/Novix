@@ -43,22 +43,15 @@ class GetUpcomingMoviesUseCaseTest {
     @Test
     fun `invoke should return upcoming movies from repository`() = runTest {
         // Given
-        val page = 1
         val genreId = 1L
         val movies = listOf(createMovie(1), createMovie(2))
-        val expectedResult = PagedResult(
-            data = movies,
-            nextKey = 2,
-            prevKey = null
-        )
-
-        coEvery { movieRepository.getUpcomingMovies(page, genreId) } returns expectedResult
+        coEvery { movieRepository.getUpcomingMovies(genreId) } returns movies
 
         // When
-        val result = useCase(page, genreId)
+        val result = useCase(genreId)
 
         // Then
-        assertEquals(expectedResult, result)
-        coVerify(exactly = 1) { movieRepository.getUpcomingMovies(page, genreId) }
+        assertEquals(movies, result)
+        coVerify(exactly = 1) { movieRepository.getUpcomingMovies(genreId) }
     }
 }
