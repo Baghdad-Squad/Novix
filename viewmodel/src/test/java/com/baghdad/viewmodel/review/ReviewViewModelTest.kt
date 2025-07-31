@@ -39,116 +39,107 @@ class ReviewViewModelTest {
         clearAllMocks()
     }
 
-    // ============ Movie Reviews Tests ============
+    @Test
+    fun `should call movie reviews use case when content type is movie`() = runTest {
+        // Given
+        coEvery { mockGetMovieReviewsUseCase(contentId) } returns emptyList()
+
+        // When
+        ReviewViewModel(
+            getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
+            getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
+            contentId = contentId,
+            contentType = ContentType.MOVIE
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Then
+        coVerify(exactly = 1) { mockGetMovieReviewsUseCase(contentId) }
+        coVerify(exactly = 0) { mockGetTvShowReviewsUseCase(any()) }
+    }
 
     @Test
-    fun `GIVEN movie content type WHEN viewModel is initialized THEN movie reviews use case is called`() =
-        runTest {
-            // Given
-            coEvery { mockGetMovieReviewsUseCase(contentId) } returns emptyList()
+    fun `should show empty state when movie reviews list is empty`() = runTest {
+        // Given
+        coEvery { mockGetMovieReviewsUseCase(contentId) } returns emptyList()
 
-            // When
-            ReviewViewModel(
-                getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
-                getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-                contentId = contentId,
-                contentType = ContentType.MOVIE
-            )
-            testDispatcher.scheduler.advanceUntilIdle()
+        // When
+        val viewModel = ReviewViewModel(
+            getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
+            getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
+            contentId = contentId,
+            contentType = ContentType.MOVIE
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            // Then
-            coVerify(exactly = 1) { mockGetMovieReviewsUseCase(contentId) }
-            coVerify(exactly = 0) { mockGetTvShowReviewsUseCase(any()) }
-        }
-
-    @Test
-    fun `GIVEN empty movie reviews list WHEN reviews are loaded successfully THEN state shows empty list`() =
-        runTest {
-            // Given
-            coEvery { mockGetMovieReviewsUseCase(contentId) } returns emptyList()
-
-            // When
-            val viewModel = ReviewViewModel(
-                getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
-                getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-                contentId = contentId,
-                contentType = ContentType.MOVIE
-            )
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            // Then
-            val state = viewModel.uiState.value
-            assertFalse(state.isLoading)
-            assertTrue(state.reviews.isEmpty())
-        }
-
+        // Then
+        val state = viewModel.uiState.value
+        assertFalse(state.isLoading)
+        assertTrue(state.reviews.isEmpty())
+    }
 
     @Test
-    fun `GIVEN series content type WHEN viewModel is initialized THEN series reviews use case is called`() =
-        runTest {
-            // Given
-            coEvery { mockGetTvShowReviewsUseCase(contentId) } returns emptyList()
+    fun `should call series reviews use case when content type is series`() = runTest {
+        // Given
+        coEvery { mockGetTvShowReviewsUseCase(contentId) } returns emptyList()
 
-            // When
-            ReviewViewModel(
-                getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
-                getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-                contentId = contentId,
-                contentType = ContentType.SERIES
-            )
-            testDispatcher.scheduler.advanceUntilIdle()
+        // When
+        ReviewViewModel(
+            getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
+            getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
+            contentId = contentId,
+            contentType = ContentType.SERIES
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            // Then
-            coVerify(exactly = 1) { mockGetTvShowReviewsUseCase(contentId) }
-            coVerify(exactly = 0) { mockGetMovieReviewsUseCase(any()) }
-        }
-
-    @Test
-    fun `GIVEN empty series reviews list WHEN reviews are loaded successfully THEN state shows empty list`() =
-        runTest {
-            // Given
-            coEvery { mockGetTvShowReviewsUseCase(contentId) } returns emptyList()
-
-            // When
-            val viewModel = ReviewViewModel(
-                getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
-                getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-                contentId = contentId,
-                contentType = ContentType.SERIES
-            )
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            // Then
-            val state = viewModel.uiState.value
-            assertFalse(state.isLoading)
-            assertTrue(state.reviews.isEmpty())
-        }
-
+        // Then
+        coVerify(exactly = 1) { mockGetTvShowReviewsUseCase(contentId) }
+        coVerify(exactly = 0) { mockGetMovieReviewsUseCase(any()) }
+    }
 
     @Test
-    fun `GIVEN series reviews loading fails WHEN exception is thrown THEN loading state is set to false`() =
-        runTest {
-            // Given
-            val exception = RuntimeException("API error")
-            coEvery { mockGetTvShowReviewsUseCase(contentId) } throws exception
+    fun `should show empty state when series reviews list is empty`() = runTest {
+        // Given
+        coEvery { mockGetTvShowReviewsUseCase(contentId) } returns emptyList()
 
-            // When
-            val viewModel = ReviewViewModel(
-                getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
-                getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-                contentId = contentId,
-                contentType = ContentType.SERIES
-            )
-            testDispatcher.scheduler.advanceUntilIdle()
+        // When
+        val viewModel = ReviewViewModel(
+            getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
+            getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
+            contentId = contentId,
+            contentType = ContentType.SERIES
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            // Then
-            val state = viewModel.uiState.value
-            assertFalse(state.isLoading)
-            assertTrue(state.reviews.isEmpty())
-        }
+        // Then
+        val state = viewModel.uiState.value
+        assertFalse(state.isLoading)
+        assertTrue(state.reviews.isEmpty())
+    }
 
     @Test
-    fun `GIVEN series viewModel WHEN loadReviewsForSeries is called manually THEN series reviews use case is called again`() =
+    fun `should stop loading and show empty list when series reviews loading fails`() = runTest {
+        // Given
+        val exception = RuntimeException("API error")
+        coEvery { mockGetTvShowReviewsUseCase(contentId) } throws exception
+
+        // When
+        val viewModel = ReviewViewModel(
+            getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
+            getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
+            contentId = contentId,
+            contentType = ContentType.SERIES
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Then
+        val state = viewModel.uiState.value
+        assertFalse(state.isLoading)
+        assertTrue(state.reviews.isEmpty())
+    }
+
+    @Test
+    fun `should call series reviews use case again when loadReviewsForSeries is triggered manually`() =
         runTest {
             // Given
             coEvery { mockGetTvShowReviewsUseCase(contentId) } returns emptyList()
@@ -168,9 +159,8 @@ class ReviewViewModelTest {
             coVerify(exactly = 2) { mockGetTvShowReviewsUseCase(contentId) }
         }
 
-
     @Test
-    fun `GIVEN viewModel WHEN onNavigateBack is called multiple times THEN multiple NavigateBack effects are sent`() =
+    fun `should emit NavigateBack effect multiple times when onNavigateBack is called repeatedly`() =
         runTest {
             // Given
             coEvery { mockGetMovieReviewsUseCase(contentId) } returns emptyList()
@@ -200,6 +190,4 @@ class ReviewViewModelTest {
 
             job.cancel()
         }
-
-
 }
