@@ -10,14 +10,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ActorGalleryViewModel @Inject constructor(
     private val getGalleryImagesUseCase: GetActorGalleryUseCase,
-//    private val actorId: Long
     savedStateHandle: SavedStateHandle,
-
-
-    ) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
+) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
     ActorGalleryInteractionListener {
 
     private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
+
     init {
         getActorGalleryImages(actorId)
     }
@@ -36,7 +34,6 @@ class ActorGalleryViewModel @Inject constructor(
         )
 
     }
-
 
     private fun onGalleryActorSuccess(images: List<String>) {
 
