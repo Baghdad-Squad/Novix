@@ -1,13 +1,11 @@
 package com.baghdad.domain.usecase.movie
 
 import com.baghdad.domain.repository.MovieRepository
-import com.baghdad.entity.media.Movie
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -20,10 +18,10 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns list containing poster URL for standard movie`() = runTest {
+    fun `getMovieGalleryUseCase returns list containing poster URL`() = runTest {
         // Given
         val movieId = 1L
-        coEvery { movieRepository.getMovieDetails(movieId) } returns sampleMovie
+        coEvery { movieRepository.getMovieImages(movieId) } returns listOf("https://example.com/shawshank.jpg")
 
         // When
         val result = getMovieGalleryUseCase(movieId)
@@ -34,46 +32,38 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns empty string in list when no poster available`() = runTest {
+    fun `getMovieGalleryUseCase returns empty list when no images available`() = runTest {
         // Given
         val movieId = 2L
-        coEvery { movieRepository.getMovieDetails(movieId) } returns minimalMovie
+        coEvery { movieRepository.getMovieImages(movieId) } returns emptyList()
 
         // When
         val result = getMovieGalleryUseCase(movieId)
 
         // Then
-        assertThat(result).hasSize(1)
-        assertThat(result[0]).isEmpty()
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns list with special character URLs`() = runTest {
+    fun `getMovieGalleryUseCase returns URLs with special characters`() = runTest {
+        // Given
+        val movieId = 3L
+        val specialUrls = listOf("https://example.com/ポスター.jpg")
+        coEvery { movieRepository.getMovieImages(movieId) } returns specialUrls
+
+        // When
+        val result = getMovieGalleryUseCase(movieId)
+
+        // Then
+        assertThat(result).containsExactly("https://example.com/ポスター.jpg")
+    }
+
+    @Test
+    fun `getMovieGalleryUseCase returns long URL`() = runTest {
         // Given
         val movieId = 4L
-        val specialCharMovie = sampleMovie.copy(
-            id = movieId,
-            posterImageURL = "https://example.com/movies/戦争と平和.jpg"
-        )
-        coEvery { movieRepository.getMovieDetails(movieId) } returns specialCharMovie
-
-        // When
-        val result = getMovieGalleryUseCase(movieId)
-
-        // Then
-        assertThat(result[0]).isEqualTo("https://example.com/movies/戦争と平和.jpg")
-    }
-
-    @Test
-    fun `getMovieGalleryUseCase returns list with long URL`() = runTest {
-        // Given
-        val movieId = 5L
-        val longUrlMovie = sampleMovie.copy(
-            id = movieId,
-            posterImageURL = "https://example.com/very/long/path/to/the/movie/poster/image" +
-                    "/with/many/subdirectories/and/parameters?query=123&param=abc"
-        )
-        coEvery { movieRepository.getMovieDetails(movieId) } returns longUrlMovie
+        val longUrl = "https://example.com/images/poster/with/a/very/long/path?param=value"
+        coEvery { movieRepository.getMovieImages(movieId) } returns listOf(longUrl)
 
         // When
         val result = getMovieGalleryUseCase(movieId)
@@ -85,27 +75,23 @@ class GetMovieGalleryUseCaseTest {
     @Test
     fun `getMovieGalleryUseCase makes exactly one repository call`() = runTest {
         // Given
-        val movieId = 1L
-        coEvery { movieRepository.getMovieDetails(movieId) } returns sampleMovie
+        val movieId = 5L
+        coEvery { movieRepository.getMovieImages(movieId) } returns listOf("https://example.com/1.jpg")
 
         // When
         getMovieGalleryUseCase(movieId)
 
         // Then
-        coVerify(exactly = 1) { movieRepository.getMovieDetails(movieId) }
+        coVerify(exactly = 1) { movieRepository.getMovieImages(movieId) }
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns different URLs for different movies`() = runTest {
+    fun `getMovieGalleryUseCase returns different images for different movies`() = runTest {
         // Given
-        val movieId1 = 1L
-        val movieId2 = 6L
-        val anotherMovie = sampleMovie.copy(
-            id = movieId2,
-            posterImageURL = "https://example.com/another.jpg"
-        )
-        coEvery { movieRepository.getMovieDetails(movieId1) } returns sampleMovie
-        coEvery { movieRepository.getMovieDetails(movieId2) } returns anotherMovie
+        val movieId1 = 6L
+        val movieId2 = 7L
+        coEvery { movieRepository.getMovieImages(movieId1) } returns listOf("https://example.com/1.jpg")
+        coEvery { movieRepository.getMovieImages(movieId2) } returns listOf("https://example.com/2.jpg")
 
         // When
         val result1 = getMovieGalleryUseCase(movieId1)
@@ -113,19 +99,13 @@ class GetMovieGalleryUseCaseTest {
 
         // Then
         assertThat(result1).isNotEqualTo(result2)
-        assertThat(result1[0]).endsWith("shawshank.jpg")
-        assertThat(result2[0]).endsWith("another.jpg")
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns secure HTTPS URLs`() = runTest {
+    fun `getMovieGalleryUseCase returns HTTPS URLs`() = runTest {
         // Given
-        val movieId = 7L
-        val httpsMovie = sampleMovie.copy(
-            id = movieId,
-            posterImageURL = "https://secure.example.com/poster.jpg"
-        )
-        coEvery { movieRepository.getMovieDetails(movieId) } returns httpsMovie
+        val movieId = 8L
+        coEvery { movieRepository.getMovieImages(movieId) } returns listOf("https://secure.example.com/poster.jpg")
 
         // When
         val result = getMovieGalleryUseCase(movieId)
@@ -135,14 +115,11 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns URL with query parameters when present`() = runTest {
+    fun `getMovieGalleryUseCase returns URLs with query parameters`() = runTest {
         // Given
-        val movieId = 8L
-        val parameterizedMovie = sampleMovie.copy(
-            id = movieId,
-            posterImageURL = "https://example.com/poster.jpg?width=500&quality=80"
-        )
-        coEvery { movieRepository.getMovieDetails(movieId) } returns parameterizedMovie
+        val movieId = 9L
+        val urlWithParams = "https://example.com/poster.jpg?width=500&quality=80"
+        coEvery { movieRepository.getMovieImages(movieId) } returns listOf(urlWithParams)
 
         // When
         val result = getMovieGalleryUseCase(movieId)
@@ -151,34 +128,8 @@ class GetMovieGalleryUseCaseTest {
         assertThat(result[0]).contains("?width=500")
     }
 
-    companion object{
+    companion object {
         private lateinit var movieRepository: MovieRepository
         private lateinit var getMovieGalleryUseCase: GetMovieGalleryUseCase
-
-        private val sampleMovie = Movie(
-            id = 1L,
-            title = "The Shawshank Redemption",
-            posterImageURL = "https://example.com/shawshank.jpg",
-            overview = "Two imprisoned men bond...",
-            averageRating = 9.3,
-            releaseDate = LocalDate(1994, 9, 23),
-            genres = emptyList(),
-            userRating = 9.3,
-            trailerURL = "https://example.com/trailer.mp4",
-            runtimeMinutes = 142,
-        )
-
-        private val minimalMovie = Movie(
-            id = 2L,
-            title = "Minimal Movie",
-            posterImageURL = "",
-            overview = "",
-            averageRating = 0.0,
-            releaseDate = LocalDate(2020, 1, 1),
-            genres = emptyList(),
-            userRating = 0.0,
-            trailerURL = "",
-            runtimeMinutes = 0,
-        )
     }
 }
