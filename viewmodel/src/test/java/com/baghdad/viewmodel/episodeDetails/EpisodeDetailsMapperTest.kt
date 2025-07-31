@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 class EpisodeExtensionsTest {
 
     @Test
-    fun `Given Episode with null releasedDate, When toUiState, Then should use empty string`() {
+    fun `toUiState should use empty string for releasedDate when Episode has null releasedDate`() {
         // Given
         val episode = Episode(
             id = 1L,
@@ -35,7 +35,7 @@ class EpisodeExtensionsTest {
     }
 
     @Test
-    fun `Given Episode with rating, When toUiState, Then should round to first decimal`() {
+    fun `toUiState should round rating to first decimal when Episode has rating`() {
         // Given
         val episode = Episode(
             id = 1L,
@@ -59,7 +59,7 @@ class EpisodeExtensionsTest {
     }
 
     @Test
-    fun `Given empty genres list, When toUiStates, Then should return empty list`() {
+    fun `toUiStates should return empty list when genres list is empty`() {
         // Given
         val genres = emptyList<Genre>()
 
@@ -71,7 +71,7 @@ class EpisodeExtensionsTest {
     }
 
     @Test
-    fun `Given genres list, When toUiStates, Then should map all genres correctly`() {
+    fun `toUiStates should map all genres correctly when genres list has items`() {
         // Given
         val genres = listOf(
             Genre(1L, "Action"),
@@ -89,7 +89,7 @@ class EpisodeExtensionsTest {
     }
 
     @Test
-    fun `Given CastMember, When toUiState, Then should map all fields correctly`() {
+    fun `toUiState should map all fields correctly when CastMember has complete data`() {
         // Given
         val castMember = CastMember(
             actor = Actor(
@@ -121,7 +121,7 @@ class EpisodeExtensionsTest {
     }
 
     @Test
-    fun `Given CastMember with empty fields, When toUiState, Then should handle empty values`() {
+    fun `toUiState should handle empty values when CastMember has empty fields`() {
         // Given
         val castMember = CastMember(
             actor = Actor(
