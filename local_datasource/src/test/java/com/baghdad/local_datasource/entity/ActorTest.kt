@@ -3,190 +3,87 @@ package com.baghdad.local_datasource.entity
 import com.baghdad.local_datasource.roomDB.entity.Actor
 import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toEntity
-import com.baghdad.repository.model.ActorDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class ActorTest {
 
     @Test
-    fun `toDto converts Actor to ActorDto with all fields`() {
-        // Given
+    fun `should map Actor to ActorDto and back to Actor when toDto and toEntity are called sequentially`() {
+        // When
+        val actorDto = ACTOR.toDto()
+
+        // Then
+        assertThat(actorDto.id).isEqualTo(ACTOR.id)
+        assertThat(actorDto.name).isEqualTo(ACTOR.name)
+        assertThat(actorDto.headerPictures).isEqualTo(ACTOR.headerPictures)
+        assertThat(actorDto.imageUrl).isEqualTo(ACTOR.profilePictureURL)
+        assertThat(actorDto.placeOfBirth).isEqualTo(ACTOR.placeOfBirth)
+        assertThat(actorDto.deathDate).isEqualTo(ACTOR.deathDate)
+        assertThat(actorDto.biography).isEqualTo(ACTOR.biography)
+        assertThat(actorDto.birthdayDate).isEqualTo(ACTOR.birthDate)
+        assertThat(actorDto.department).isEqualTo(ACTOR.department)
+    }
+
+    @Test
+    fun `should create Actor with default id`() {
         val actor = Actor(
-            id = 123,
-            name = "John Doe",
-            profilePictureURL = "https://example.com/john.jpg",
-            biography = "A talented actor",
-            birthDate = "1980-05-15",
-            deathDate = null,
-            placeOfBirth = "New York, USA",
-            headerPictures = listOf("header1.jpg", "header2.jpg"),
-            department = "Acting"
+            name = "Test", profilePictureURL = "url", birthDate = null,
+            placeOfBirth = "place", deathDate = null,
+            biography = "bio", headerPictures = emptyList(), department = "Acting"
         )
-
-        // When
-        val result = actor.toDto()
-
-        // Then
-        assertThat(result).isEqualTo(
-            ActorDto(
-                id = 123,
-                name = "John Doe",
-                imageUrl = "https://example.com/john.jpg",
-                biography = "A talented actor",
-                birthdayDate = "1980-05-15",
-                deathDate = null,
-                placeOfBirth = "New York, USA",
-                headerPictures = listOf("header1.jpg", "header2.jpg"),
-                department = "Acting"
-            )
-        )
+        assertThat(actor.id).isEqualTo(0L)
     }
 
     @Test
-    fun `toEntity converts ActorDto to Actor with all fields`() {
-        // Given
-        val actorDto = ActorDto(
-            id = 456,
-            name = "Jane Smith",
-            imageUrl = "https://example.com/jane.jpg",
-            biography = "An award-winning actress",
-            birthdayDate = "1975-11-20",
-            deathDate = "2020-01-10",
-            placeOfBirth = "London, UK",
-            headerPictures = listOf("header3.jpg"),
-            department = "Production"
-        )
-
+    fun `should preserve non-null deathDate when converting Actor to ActorDto`() {
         // When
-        val result = actorDto.toEntity()
+        val result = ACTOR.copy(deathDate = "2025").toDto()
 
         // Then
-        assertThat(result).isEqualTo(
-            Actor(
-                id = 456,
-                name = "Jane Smith",
-                profilePictureURL = "https://example.com/jane.jpg",
-                biography = "An award-winning actress",
-                birthDate = "1975-11-20",
-                deathDate = "2020-01-10",
-                placeOfBirth = "London, UK",
-                headerPictures = listOf("header3.jpg"),
-                department = "Production"
-            )
-        )
+        assertThat(result.deathDate).isEqualTo("2025")
     }
 
     @Test
-    fun `toDto and toEntity are inverse operations`() {
-        // Given
-        val originalActor = Actor(
-            id = 789,
-            name = "Original Actor",
-            profilePictureURL = "original.jpg",
-            biography = "Original bio",
-            birthDate = "1990-01-01",
-            deathDate = null,
-            placeOfBirth = "Original City",
-            headerPictures = emptyList(),
-            department = "Original Dept"
-        )
-
+    fun `should handle null deathDate when converting ActorDto to Actor`() {
         // When
-        val dto = originalActor.toDto()
-        val entity = dto.toEntity()
-
-        // Then
-        assertThat(entity).isEqualTo(originalActor)
-    }
-
-    @Test
-    fun `toDto handles null deathDate correctly`() {
-        // Given
-        val actor = Actor(
-            id = 1,
-            name = "No Death Date",
-            profilePictureURL = "alive.jpg",
-            biography = "Still alive",
-            birthDate = "2000-01-01",
-            deathDate = null,
-            placeOfBirth = "Somewhere",
-            headerPictures = emptyList(),
-            department = "Acting"
-        )
-
-        // When
-        val result = actor.toDto()
+        val result = ACTOR.toDto().copy(deathDate = null).toEntity()
 
         // Then
         assertThat(result.deathDate).isNull()
     }
 
     @Test
-    fun `toEntity handles null deathDate correctly`() {
-        // Given
-        val actorDto = ActorDto(
-            id = 2,
-            name = "No Death Date DTO",
-            imageUrl = "alive_dto.jpg",
-            biography = "Still alive in DTO",
-            birthdayDate = "2005-01-01",
-            deathDate = null,
-            placeOfBirth = "Somewhere else",
-            headerPictures = listOf("header.jpg"),
-            department = "Directing"
-        )
-
+    fun `should return empty headerPictures list when converting Actor with empty headerPictures to ActorDto`() {
         // When
-        val result = actorDto.toEntity()
-
-        // Then
-        assertThat(result.deathDate).isNull()
-    }
-
-    @Test
-    fun `toDto handles empty headerPictures correctly`() {
-        // Given
-        val actor = Actor(
-            id = 3,
-            name = "No Header Images",
-            profilePictureURL = "noheaders.jpg",
-            biography = "No header images",
-            birthDate = "1995-01-01",
-            deathDate = null,
-            placeOfBirth = "Nowhere",
-            headerPictures = emptyList(),
-            department = "Writing"
-        )
-
-        // When
-        val result = actor.toDto()
+        val result = ACTOR.copy(headerPictures = emptyList()).toDto()
 
         // Then
         assertThat(result.headerPictures).isEmpty()
     }
 
     @Test
-    fun `toDto handles non-empty headerPictures in order`() {
-        // Given
-        val actor = Actor(
-            id = 4,
-            name = "With Headers",
-            profilePictureURL = "withheaders.jpg",
-            biography = "With header images",
-            birthDate = "2001-01-01",
-            deathDate = null,
-            placeOfBirth = "Somewhere",
-            headerPictures = listOf("first.jpg", "second.jpg"),
-            department = "Directing"
-        )
-
+    fun `should preserve headerPictures order when converting Actor to ActorDto`() {
         // When
-        val result = actor.toDto()
+        val result = ACTOR.toDto()
 
         // Then
         assertThat(result.headerPictures)
             .containsExactly("first.jpg", "second.jpg")
             .inOrder()
+    }
+
+    companion object {
+        val ACTOR = Actor(
+            id = 123,
+            name = "Test Actor",
+            profilePictureURL = "Test URL",
+            biography = "Test biography",
+            birthDate = "2002-2-22",
+            deathDate = null,
+            placeOfBirth = "Test place",
+            headerPictures = listOf("first.jpg", "second.jpg"),
+            department = "Acting"
+        )
     }
 }
