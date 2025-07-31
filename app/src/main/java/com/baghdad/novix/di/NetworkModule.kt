@@ -37,7 +37,7 @@ abstract class NetworkModule {
         @Provides
         @Named("AUTHORIZATION_TOKEN")
         fun provideAuthorizationToken(): String {
-            return "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTZkYmRkOTNjMGY5NzdkMjMwOGJjMzM3NmI3YTNmOCIsIm5iZiI6MTc1MzAyOTE3Ni45OSwic3ViIjoiNjg3ZDFhMzgzOTg0OWZmZThkZDk4ZDEzIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.5NDfRH9_oRVtrvQb8Bs11qWGeLzEE5US_e5IcVQWerE"
+            return BuildConfig.AUTHORIZATION_TOKEN
         }
 
         @Provides
@@ -66,7 +66,7 @@ abstract class NetworkModule {
         @Provides
         fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
             return Retrofit.Builder()
-                .baseUrl("https://api.themoviedb.org/3/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -75,7 +75,7 @@ abstract class NetworkModule {
         @Provides
         @Named("BASE_URL")
         fun provideBaseUrl(): String {
-            return "https://api.themoviedb.org/3"
+            return BuildConfig.BASE_URL
         }
 
         @Provides

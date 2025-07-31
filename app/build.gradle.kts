@@ -37,6 +37,7 @@ android {
 
         val apiKey = properties.getProperty("API_KEY") ?: ""
         val baseUrl = properties.getProperty("BASE_URL") ?: ""
+        val token = properties.getProperty("AUTHORIZATION_TOKEN") ?: ""
 
         buildConfigField(
             type = "String",
@@ -48,6 +49,12 @@ android {
             type = "String",
             name = "BASE_URL",
             value = baseUrl
+        )
+
+        buildConfigField(
+            type = "String",
+            name = "AUTHORIZATION_TOKEN",
+            value = token
         )
 
     }
