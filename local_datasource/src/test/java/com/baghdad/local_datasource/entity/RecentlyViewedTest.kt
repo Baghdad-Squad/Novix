@@ -10,37 +10,58 @@ import org.junit.jupiter.api.Test
 class RecentlyViewedTest {
 
     @Test
-    fun `should create RecentlyViewed and check fields`() {
-        // Then
+    fun `should create RecentlyViewed with correct field values when using predefined instance`() {
         assertThat(RECENTLY_VIEWED.contentId).isEqualTo(1L)
         assertThat(RECENTLY_VIEWED.contentType).isEqualTo("TV_SHOW")
         assertThat(RECENTLY_VIEWED.contentImageURL).isEqualTo("https://example.com/poster.jpg")
-        assertThat(RECENTLY_VIEWED.viewedAt).isGreaterThan(0L)
+        assertThat(RECENTLY_VIEWED.viewedAt).isEqualTo(123456789L)
     }
 
     @Test
-    fun `should map RecentlyViewed to RecentlyViewedDto`() {
-        // Given
-        val recentlyViewedDto = RECENTLY_VIEWED.toDto()
+    fun `should map to RecentlyViewedDto when calling toDto`() {
+        // When
+        val dto = RECENTLY_VIEWED.toDto()
 
         // Then
-        assertThat(recentlyViewedDto.contentId).isEqualTo(RECENTLY_VIEWED.contentId)
-        assertThat(recentlyViewedDto.contentType)
-            .isEqualTo(RecentlyViewedDto.ContentType.valueOf(RECENTLY_VIEWED.contentType))
+        assertThat(dto.contentId).isEqualTo(RECENTLY_VIEWED.contentId)
+        assertThat(dto.contentType).isEqualTo(RecentlyViewedDto.ContentType.TV_SHOW)
+        assertThat(dto.contentImageUrl).isEqualTo(RECENTLY_VIEWED.contentImageURL)
+        assertThat(dto.viewedAtEpochMillis).isEqualTo(RECENTLY_VIEWED.viewedAt)
     }
 
     @Test
-    fun `should map RecentlyViewedDto to RecentlyViewed`() {
+    fun `should map back to RecentlyViewed when converting from RecentlyViewedDto`() {
+        // When
+        val entity = RECENTLY_VIEWED.toDto().toLocalDto()
+
+        // Then
+        assertThat(entity).isEqualTo(RECENTLY_VIEWED)
+    }
+
+    @Test
+    fun `should throw IllegalArgumentException when contentType is invalid`() {
         // Given
-        val recentlyViewedDto = RECENTLY_VIEWED.toDto()
+        val invalidEntity = RECENTLY_VIEWED.copy(contentType = "INVALID_TYPE")
 
         // When
-        val recentlyViewed = recentlyViewedDto.toLocalDto()
+        val result = runCatching { invalidEntity.toDto() }
 
         // Then
-        assertThat(recentlyViewed.contentId).isEqualTo(recentlyViewedDto.contentId)
-        assertThat(recentlyViewed.contentType).isEqualTo(recentlyViewedDto.contentType.name)
-        assertThat(recentlyViewed.contentImageURL).isEqualTo(recentlyViewedDto.contentImageUrl)
+        assertThat(result.exceptionOrNull())
+            .isInstanceOf(IllegalArgumentException::class.java)
+    }
+
+    @Test
+    fun `should create RecentlyViewed with default viewedAt when not provided`() {
+        // When
+        val entity = RecentlyViewed(
+            contentId = 10L,
+            contentType = "MOVIE",
+            contentImageURL = "poster.jpg"
+        )
+
+        // Then
+        assertThat(entity.viewedAt).isGreaterThan(0L)
     }
 
     companion object {

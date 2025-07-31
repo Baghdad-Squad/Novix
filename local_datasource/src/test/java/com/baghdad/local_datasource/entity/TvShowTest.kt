@@ -6,55 +6,56 @@ import com.baghdad.local_datasource.roomDB.entity.toDto
 import com.baghdad.local_datasource.roomDB.entity.toDtos
 import com.baghdad.local_datasource.roomDB.entity.toLocalDto
 import com.baghdad.repository.model.RecentlyViewedDto
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class TvShowTest {
 
     @Test
-    fun `should create TvShow and check fields`() {
+    fun `should create TvShow with correct fields when all values are provided`() {
+
         // Then
-        Truth.assertThat(TV_SHOW.id).isEqualTo(1L)
-        Truth.assertThat(TV_SHOW.title).isEqualTo("Game of Thrones")
-        Truth.assertThat(TV_SHOW.genres).isEqualTo(listOf(1L, 2L))
-        Truth.assertThat(TV_SHOW.imdbRating).isEqualTo(9.2)
-        Truth.assertThat(TV_SHOW.userRating).isEqualTo(8.5)
-        Truth.assertThat(TV_SHOW.releaseDate).isEqualTo("2011-04-17")
-        Truth.assertThat(TV_SHOW.overview)
-            .isEqualTo("Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.")
-        Truth.assertThat(TV_SHOW.posterPictureURL).isEqualTo("https://example.com/poster.jpg")
+        assertThat(TV_SHOW.id).isEqualTo(1L)
+        assertThat(TV_SHOW.title).isEqualTo("IDK")
+        assertThat(TV_SHOW.genres).containsExactly(1L, 2L)
+        assertThat(TV_SHOW.imdbRating).isEqualTo(9.2)
+        assertThat(TV_SHOW.userRating).isEqualTo(8.5)
+        assertThat(TV_SHOW.releaseDate).isEqualTo("2011-04-17")
+        assertThat(TV_SHOW.overview).startsWith("Test overview")
+        assertThat(TV_SHOW.posterPictureURL).isEqualTo("Test posterPictureURL")
+        assertThat(TV_SHOW.numberOfSeasons).isEqualTo(8)
     }
 
     @Test
-    fun `should map TvShow to TvShowDto`() {
-        // When
-        val tvShowDto = TV_SHOW.toDto(GENRES.map { it.toDto() })
-        // Then
-        Truth.assertThat(tvShowDto.id).isEqualTo(TV_SHOW.id)
-        Truth.assertThat(tvShowDto.title).isEqualTo(TV_SHOW.title)
-        Truth.assertThat(tvShowDto.genres).isEqualTo(GENRES.map { it.toDto() })
-    }
-
-    @Test
-    fun `should map TvShowDto to TvShow`() {
+    fun `should map TvShow to TvShowDto when calling toDto`() {
         // Given
-        val tvShowDto = TV_SHOW.toDto(GENRES.map { it.toDto() })
+        val genres = GENRES.map { it.toDto() }
 
         // When
-        val tvShow = tvShowDto.toLocalDto()
+        val dto = TV_SHOW.toDto(genres)
+
         // Then
-        Truth.assertThat(tvShow.id).isEqualTo(tvShowDto.id)
-        Truth.assertThat(tvShow.title).isEqualTo(tvShowDto.title)
-        Truth.assertThat(tvShow.genres).isEqualTo(tvShowDto.genres.map { it.id })
-        Truth.assertThat(tvShow.imdbRating).isEqualTo(tvShowDto.imdbRating)
-        Truth.assertThat(tvShow.userRating).isEqualTo(tvShowDto.userRating)
-        Truth.assertThat(tvShow.releaseDate).isEqualTo(tvShowDto.releaseDate)
-        Truth.assertThat(tvShow.overview).isEqualTo(tvShowDto.overview)
-        Truth.assertThat(tvShow.posterPictureURL).isEqualTo(tvShowDto.posterPictureURL)
+        assertThat(dto.id).isEqualTo(TV_SHOW.id)
+        assertThat(dto.title).isEqualTo(TV_SHOW.title)
+        assertThat(dto.genres).isEqualTo(genres)
+        assertThat(dto.trailerURL).isEmpty()
     }
 
     @Test
-    fun `should map list of TvShow to list of TvShowDto`() {
+    fun `should map TvShowDto back to TvShow when calling toLocalDto`() {
+        // Given
+        val dto = TV_SHOW.toDto(GENRES.map { it.toDto() })
+
+        // When
+        val entity = dto.toLocalDto()
+
+        // Then
+        assertThat(entity).isEqualTo(TV_SHOW)
+    }
+
+    @Test
+    fun `should map list of TvShow to list of TvShowDto when genres are provided`() {
         // Given
         val tvShows = listOf(
             TV_SHOW,
@@ -62,26 +63,50 @@ class TvShowTest {
             TV_SHOW.copy(id = 3L),
             TV_SHOW.copy(id = 4L)
         )
+        val genresMap = GENRES.associate { it.id to it }
 
         // When
-        val tvShowDtos = tvShows.toDtos(GENRES.associate { it.id to it })
+        val dtos = tvShows.toDtos(genresMap)
 
         // Then
-        Truth.assertThat(tvShowDtos.size).isEqualTo(tvShows.size)
-        Truth.assertThat(tvShowDtos).isEqualTo(tvShows.map { it.toDto(GENRES.map { it.toDto() }) })
+        assertThat(dtos).hasSize(tvShows.size)
+        assertThat(dtos).isEqualTo(tvShows.map { it.toDto(GENRES.map { it.toDto() }) })
     }
 
+    @Test
+    fun `should handle missing genres gracefully when some genreIds are not in the map`() {
+        // Given
+        val tvShowWithMissingGenre = TV_SHOW.copy(genres = listOf(1L, 999L))
+        val genresMap = mapOf(1L to GENRES[0]) // 999L not provided
+
+        // When
+        val dtos = listOf(tvShowWithMissingGenre).toDtos(genresMap)
+
+        // Then
+        assertThat(dtos[0].genres).containsExactly(GENRES[0].toDto())
+    }
+
+    @Test
+    fun `should throw IllegalArgumentException when genre type is invalid`() {
+        // Given
+        val invalidGenre = GENRES[0].copy(type = "INVALID")
+
+        // When / Then
+        assertThrows<IllegalArgumentException> {
+            TV_SHOW.toDto(listOf(invalidGenre.toDto()))
+        }
+    }
 
     companion object {
         val TV_SHOW = TvShow(
             id = 1L,
-            title = "Game of Thrones",
+            title = "IDK",
             genres = listOf(1L, 2L),
             imdbRating = 9.2,
             userRating = 8.5,
             releaseDate = "2011-04-17",
-            overview = "Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.",
-            posterPictureURL = "https://example.com/poster.jpg",
+            overview = "Test overview",
+            posterPictureURL = "Test posterPictureURL",
             numberOfSeasons = 8
         )
 
@@ -97,8 +122,5 @@ class TvShowTest {
                 type = RecentlyViewedDto.ContentType.TV_SHOW.name
             )
         )
-
-
     }
-
 }
