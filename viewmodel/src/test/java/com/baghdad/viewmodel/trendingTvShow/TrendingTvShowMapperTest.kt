@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 class TrendingTvShowMappersTest {
 
     @Test
-    fun `when genre mapped to ui state then should return correct GenreUiState`() {
+    fun `should return correct GenreUiState when genre mapped to ui state`() {
         val genre = Genre(id = 100L, name = "Fantasy")
         val uiState = genre.toUiState()
 
@@ -18,7 +18,7 @@ class TrendingTvShowMappersTest {
     }
 
     @Test
-    fun `when genre has empty name then should return GenreUiState with empty name`() {
+    fun `should return GenreUiState with empty name when genre has empty name`() {
         val genre = Genre(id = 1L, name = "")
         val uiState = genre.toUiState()
 
@@ -27,7 +27,7 @@ class TrendingTvShowMappersTest {
     }
 
     @Test
-    fun `when tvShow mapped to ui state then should return correct TvShowUiState`() {
+    fun `should return correct TvShowUiState when tvShow mapped to ui state`() {
         val tvShow = TvShow(
             id = 10L,
             title = "Sample Show",
@@ -50,7 +50,7 @@ class TrendingTvShowMappersTest {
     }
 
     @Test
-    fun `when tvShow has empty poster URL then should return TvShowUiState with empty URL`() {
+    fun `should return TvShowUiState with empty URL when tvShow has empty poster URL`() {
         val tvShow = TvShow(
             id = 50L,
             title = "No Poster Show",

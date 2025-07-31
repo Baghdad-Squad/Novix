@@ -22,8 +22,7 @@ class TrendingTvShowViewModelTest {
     private lateinit var viewModel: TrendingTvShowViewModel
 
     private val genres = listOf(
-        Genre(id = 1L, name = "Action"),
-        Genre(id = 2L, name = "Drama")
+        Genre(id = 1L, name = "Action"), Genre(id = 2L, name = "Drama")
     )
 
     private val tvShows = listOf(
@@ -45,12 +44,16 @@ class TrendingTvShowViewModelTest {
     @BeforeEach
     fun setUp() {
         coEvery { getGenresUseCase.getTvShowGenres() } returns genres
-        coEvery { getTrendingTvShowUseCase(any(), any()) } returns PagedResult(tvShows, nextKey = null, prevKey = null)
+        coEvery { getTrendingTvShowUseCase(any(), any()) } returns PagedResult(
+            tvShows,
+            nextKey = null,
+            prevKey = null
+        )
         viewModel = TrendingTvShowViewModel(getTrendingTvShowUseCase, getGenresUseCase)
     }
 
     @Test
-    fun `when viewModel initialized then genres and trendingTvShows loaded`() = runTest {
+    fun `should load genres and trendingTvShows when viewModel initialized`() = runTest {
         val states = mutableListOf<TrendingTvShowScreenState>()
         val job = launch {
             viewModel.uiState.collect { states.add(it) }
@@ -65,7 +68,7 @@ class TrendingTvShowViewModelTest {
     }
 
     @Test
-    fun `when genre clicked then trendingTvShows updated and selectedGenreId changes`() = runTest {
+    fun `should update trendingTvShows and selectedGenreId when genre clicked`() = runTest {
         val states = mutableListOf<TrendingTvShowScreenState>()
         val job = launch {
             viewModel.uiState.collect { states.add(it) }
@@ -81,7 +84,7 @@ class TrendingTvShowViewModelTest {
     }
 
     @Test
-    fun `when genre clicked with same ID then state not updated again`() = runTest {
+    fun `should not update state when genre clicked with same ID`() = runTest {
         val states = mutableListOf<TrendingTvShowScreenState>()
         val job = launch {
             viewModel.uiState.collect { states.add(it) }
@@ -100,16 +103,15 @@ class TrendingTvShowViewModelTest {
         job.cancel()
     }
 
-
     @Test
-    fun `when genre mapped to ui state then correct GenreUiState returned`() {
+    fun `should return correct GenreUiState when genre mapped to ui state`() {
         val genreUi = genres[0].toUiState()
         assertThat(genreUi.id).isEqualTo(1L)
         assertThat(genreUi.name).isEqualTo("Action")
     }
 
     @Test
-    fun `when tvShow mapped to ui state then correct TvShowUiState returned`() {
+    fun `should return correct TvShowUiState when tvShow mapped to ui state`() {
         val tvShowUi = tvShows[0].toUiState()
         assertThat(tvShowUi.id).isEqualTo(10L)
         assertThat(tvShowUi.posterPictureURL).isEqualTo("poster.jpg")
@@ -117,8 +119,7 @@ class TrendingTvShowViewModelTest {
     }
 
     @Test
-    fun `when onSaveTvShowClick called then does nothing`() {
+    fun `should do nothing when onSaveTvShowClick called`() {
         viewModel.onSaveTvShowClick(1L)
     }
-
 }
