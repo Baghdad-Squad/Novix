@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 class MainStateTest {
 
     @Test
-    fun `default constructor should create state with default values`() {
+    fun `MainState should create state with default values when constructor called`() {
         // When
         val state = MainState()
 
@@ -16,7 +16,7 @@ class MainStateTest {
     }
 
     @Test
-    fun `constructor with parameters should set values correctly`() {
+    fun `MainState should set values correctly when assign new parameter`() {
         // Given
         val isLoggedIn = true
         val isLoading = false
@@ -33,7 +33,7 @@ class MainStateTest {
     }
 
     @Test
-    fun `copy function should work correctly with isLoggedIn change`() {
+    fun `MainState should create new state with updated isLoggedIn when copy is called`() {
         // Given
         val originalState = MainState(isLoggedIn = null)
         val newLoggedInStatus = true
@@ -43,11 +43,11 @@ class MainStateTest {
 
         // Then
         assertThat(newState.isLoggedIn).isTrue()
-        assertThat(originalState.isLoggedIn).isNull() // Original unchanged
+        assertThat(originalState.isLoggedIn).isNull()
     }
 
     @Test
-    fun `copy function should work correctly with isLoading change`() {
+    fun `MainState should create new state with updated isLoading when copy is called`() {
         // Given
         val originalState = MainState(isLoading = true)
         val newLoadingStatus = false
@@ -57,11 +57,11 @@ class MainStateTest {
 
         // Then
         assertThat(newState.isLoading).isFalse()
-        assertThat(originalState.isLoading).isTrue() // Original unchanged
+        assertThat(originalState.isLoading).isTrue()
     }
 
     @Test
-    fun `equals should return true for identical states`() {
+    fun `MainState should be equal when all properties are identical`() {
         // Given
         val state1 = MainState(isLoggedIn = true, isLoading = false)
         val state2 = MainState(isLoggedIn = true, isLoading = false)
@@ -71,7 +71,7 @@ class MainStateTest {
     }
 
     @Test
-    fun `equals should return false for different states`() {
+    fun `MainState should not be equal when properties differ`() {
         // Given
         val state1 = MainState(isLoggedIn = true)
         val state2 = MainState(isLoggedIn = false)
@@ -84,7 +84,7 @@ class MainStateTest {
     }
 
     @Test
-    fun `hashCode should be equal for identical states`() {
+    fun `MainState should have same hashCode when properties are identical`() {
         // Given
         val state1 = MainState(isLoggedIn = true, isLoading = false)
         val state2 = MainState(isLoggedIn = true, isLoading = false)
@@ -94,7 +94,7 @@ class MainStateTest {
     }
 
     @Test
-    fun `hashCode should differ for different states`() {
+    fun `MainState should have different hashCode when properties differ`() {
         // Given
         val state1 = MainState(isLoggedIn = true)
         val state2 = MainState(isLoggedIn = false)
@@ -106,7 +106,7 @@ class MainStateTest {
     }
 
     @Test
-    fun `toString should contain all properties`() {
+    fun `MainState should include all properties in toString`() {
         // Given
         val state = MainState(isLoggedIn = true, isLoading = false)
 
@@ -119,7 +119,7 @@ class MainStateTest {
     }
 
     @Test
-    fun `should handle null isLoggedIn in equals comparison`() {
+    fun `MainState should be equal when isLoggedIn is null in both states`() {
         // Given
         val state1 = MainState(isLoggedIn = null)
         val state2 = MainState(isLoggedIn = null)
@@ -131,7 +131,7 @@ class MainStateTest {
     }
 
     @Test
-    fun `should handle null isLoggedIn in hashCode calculation`() {
+    fun `MainState should have same hashCode when isLoggedIn is null in both states`() {
         // Given
         val state1 = MainState(isLoggedIn = null)
         val state2 = MainState(isLoggedIn = null)

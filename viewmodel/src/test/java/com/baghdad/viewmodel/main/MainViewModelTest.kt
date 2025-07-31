@@ -37,7 +37,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `should initialize with loading state and null login status`() = runTest {
+    fun `uiState should have isLoading true and isLoggedIn null when ViewModel is initialized`() = runTest {
         // When
         viewModel = MainViewModel(isLoggedInUseCase)
 
@@ -51,7 +51,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `should check login status on initialization`() = runTest {
+    fun `isUserLoggedIn should be called when ViewModel starts`() = runTest {
         // Given
         coEvery { mockAuthRepository.isUserLoggedIn() } returns true
 
@@ -64,20 +64,18 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `should show loading while authentication check is in progress`() = runTest {
+    fun `isLoading should remain true when authentication check is not yet complete`() = runTest {
         // Given
         coEvery { mockAuthRepository.isUserLoggedIn() } coAnswers {
-            delay(1000) // Simulate long-running operation
+            delay(1000)
             true
         }
 
         // When
         viewModel = MainViewModel(isLoggedInUseCase)
-        testDispatcher.scheduler.advanceTimeBy(500) // Advance partially
+        testDispatcher.scheduler.advanceTimeBy(500)
 
         // Then
         assertThat(viewModel.uiState.value.isLoading).isTrue()
     }
-
-
 }

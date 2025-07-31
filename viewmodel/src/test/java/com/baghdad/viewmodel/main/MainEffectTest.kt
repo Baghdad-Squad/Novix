@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class MainEffectTest {
 
     @Test
-    fun `should be a subclass of BaseUiEffect`() {
+    fun `MainEffect should inherit from BaseUiEffect when instantiated`() {
         // Given
         val effect = MainEffect()
 
@@ -16,7 +16,7 @@ class MainEffectTest {
     }
 
     @Test
-    fun `should have meaningful toString representation`() {
+    fun `toString should include class name when called on MainEffect`() {
         // Given
         val effect = MainEffect()
 
@@ -25,7 +25,7 @@ class MainEffectTest {
     }
 
     @Test
-    fun `should be usable in sealed class hierarchies`() {
+    fun `MainEffect should be assignable to BaseUiEffect when used in sealed hierarchy`() {
         // Given
         val effect: BaseUiEffect = MainEffect()
 
@@ -34,12 +34,11 @@ class MainEffectTest {
     }
 
     @Test
-    fun `should be data class if it needs value equality`() {
+    fun `MainEffect should not be a data class when value equality is not needed`() {
         // Given
         val effectClass = MainEffect::class
 
         // Then
         assertThat(effectClass.isData).isFalse()
     }
-
 }
