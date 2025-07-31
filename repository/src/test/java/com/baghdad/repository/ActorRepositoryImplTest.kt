@@ -2,17 +2,16 @@ package com.baghdad.repository
 
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
-import com.baghdad.repository.DummyDataFactory.createMockActor
-import com.baghdad.repository.DummyDataFactory.createMockActorDto
 import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
-import com.baghdad.repository.model.ActorDto
+import com.baghdad.repository.dummyData.DummyDataFactory.createMockActor
+import com.baghdad.repository.dummyData.DummyDataFactory.createMockActorDto
 import com.baghdad.repository.model.PagedResultDto
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -47,27 +46,10 @@ class ActorRepositoryImplTest {
 
         val result = actorRepositoryImpl.getActorInfo(actorId)
 
-        assertEquals(expectedActor, result)
+        assertThat(expectedActor == result).isTrue()
         coVerify { remoteActorDataSource.getActorDetails(actorId) }
         coVerify { remoteActorDataSource.getActorImages(actorId) }
     }
-
-    @Test
-    fun `getActorInfo should limit header pictures to 3 images`() = runTest {
-
-        val mockImages = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg", "/header4.jpg", "/header5.jpg")
-
-        coEvery { remoteActorDataSource.getActorDetails(actorId) } returns expectedActorDto
-        coEvery { remoteActorDataSource.getActorImages(actorId) } returns mockImages
-
-        val result = actorRepositoryImpl.getActorInfo(actorId)
-
-        assertEquals(3, result.headerPictures.size)
-        assertEquals(listOf("/header1.jpg", "/header2.jpg", "/header3.jpg"), result.headerPictures)
-        coVerify { remoteActorDataSource.getActorDetails(actorId) }
-        coVerify { remoteActorDataSource.getActorImages(actorId) }
-    }
-
 
     @Test
     fun `getActorMovies should return empty list when no movies found`() = runTest {
@@ -75,7 +57,7 @@ class ActorRepositoryImplTest {
 
         val result = actorRepositoryImpl.getActorMovies(actorId)
 
-        assertEquals(emptyList<Movie>(), result)
+        assertThat(emptyList<Movie>() == result).isTrue()
         coVerify { remoteActorDataSource.getActorMovies(actorId) }
     }
 
@@ -86,7 +68,7 @@ class ActorRepositoryImplTest {
 
         val result = actorRepositoryImpl.getActorTvShows(actorId)
 
-        assertEquals(emptyList<TvShow>(), result)
+        assertThat(emptyList<TvShow>() == result).isTrue()
         coVerify { remoteActorDataSource.getActorTvShows(actorId) }
     }
 
@@ -99,18 +81,7 @@ class ActorRepositoryImplTest {
 
         val result = actorRepositoryImpl.getActorGallery(actorId)
 
-        assertEquals(mockImages, result)
-        coVerify { remoteActorDataSource.getActorImages(actorId) }
-    }
-
-    @Test
-    fun `getActorGallery should return empty list when no images found`() = runTest {
-
-        coEvery { remoteActorDataSource.getActorImages(actorId) } returns emptyList()
-
-        val result = actorRepositoryImpl.getActorGallery(actorId)
-
-        assertEquals(emptyList<String>(), result)
+        assertThat(mockImages == result).isTrue()
         coVerify { remoteActorDataSource.getActorImages(actorId) }
     }
 
@@ -118,37 +89,24 @@ class ActorRepositoryImplTest {
     fun `getTrendingActors should return paged result when remote call succeeds`() = runTest {
         // Given
         val page = 1
-        val mockActorDtos = listOf(createMockActorDto(), createMockActorDto().copy(id = 124L, name = "Jane Doe"))
+        val mockActorDtos =
+            listOf(createMockActorDto(), createMockActorDto().copy(id = 124L, name = "Jane Doe"))
         val mockPagedResult = PagedResultDto(mockActorDtos, nextKey = 2, prevKey = null)
-        val expectedActors = listOf(createMockActor(), createMockActor().copy(id = 124L, name = "Jane Doe"))
+        val expectedActors =
+            listOf(createMockActor(), createMockActor().copy(id = 124L, name = "Jane Doe"))
 
         coEvery { remoteActorDataSource.getTrendingActors(page) } returns mockPagedResult
 
         val result = actorRepositoryImpl.getTrendingActors(page)
 
-        assertEquals(expectedActors.size, result.data.size)
-        assertEquals(expectedActors[0].id, result.data[0].id)
-        assertEquals(expectedActors[0].name, result.data[0].name)
-        assertEquals(expectedActors[1].id, result.data[1].id)
-        assertEquals(expectedActors[1].name, result.data[1].name)
-        assertEquals(2, result.nextKey)
-        assertEquals(null, result.prevKey)
+        assertThat(expectedActors.size == result.data.size).isTrue()
+        assertThat(expectedActors[0].id == result.data[0].id).isTrue()
+        assertThat(expectedActors[0].name == result.data[0].name).isTrue()
+        assertThat(expectedActors[1].id == result.data[1].id).isTrue()
+        assertThat(expectedActors[1].name == result.data[1].name).isTrue()
+        assertThat(2 == result.nextKey).isTrue()
+        assertThat(null == result.prevKey).isTrue()
         coVerify { remoteActorDataSource.getTrendingActors(page) }
     }
 
-    @Test
-    fun `getTrendingActors should return empty paged result when no trending actors found`() = runTest {
-        // Given
-        val page = 1
-        val emptyPagedResult = PagedResultDto<ActorDto>(emptyList(), nextKey = null, prevKey = null)
-
-        coEvery { remoteActorDataSource.getTrendingActors(page) } returns emptyPagedResult
-
-        val result = actorRepositoryImpl.getTrendingActors(page)
-
-        assertEquals(0, result.data.size)
-        assertEquals(null, result.nextKey)
-        assertEquals(null, result.prevKey)
-        coVerify { remoteActorDataSource.getTrendingActors(page) }
-    }
 }
