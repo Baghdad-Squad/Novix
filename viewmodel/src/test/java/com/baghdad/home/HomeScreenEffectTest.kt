@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class HomeScreenEffectTest {
 
     @Test
-    fun `NavigateToMovieDetails should hold correct movieId`() {
+    fun `should hold correct movieId when NavigateToMovieDetails is used`() {
         // Given
         val effect = HomeScreenEffect.NavigateToMovieDetails(movieId = 42L)
 
@@ -17,7 +17,7 @@ class HomeScreenEffectTest {
     }
 
     @Test
-    fun `NavigateToTvShowDetails should hold correct tvShowId`() {
+    fun `should hold correct tvShowId when NavigateToTvShowDetails is created`() {
         // Given
         val effect = HomeScreenEffect.NavigateToTvShowDetails(tvShowId = 99L)
 
@@ -27,7 +27,7 @@ class HomeScreenEffectTest {
     }
 
     @Test
-    fun `NavigateToContinueWatching should be correct type`() {
+    fun `should be of correct type when NavigateToContinueWatching is created`() {
         // Given
         val effect = HomeScreenEffect.NavigateToContinueWatching
 
@@ -36,7 +36,7 @@ class HomeScreenEffectTest {
     }
 
     @Test
-    fun `NavigateToTopRating should be correct type`() {
+    fun `should be of correct type when NavigateToTopRating is created`() {
         // Given
         val effect = HomeScreenEffect.NavigateToTopRating
 
@@ -45,7 +45,7 @@ class HomeScreenEffectTest {
     }
 
     @Test
-    fun `NavigateToMovies should be correct type`() {
+    fun `should be of correct type when NavigateToMovies is created`() {
         // Given
         val effect = HomeScreenEffect.NavigateToMovies
 
@@ -54,7 +54,7 @@ class HomeScreenEffectTest {
     }
 
     @Test
-    fun `NavigateToTvShows should be correct type`() {
+    fun `should be of correct type when NavigateToTvShows is created`() {
         // Given
         val effect = HomeScreenEffect.NavigateToTvShows
 
@@ -63,7 +63,7 @@ class HomeScreenEffectTest {
     }
 
     @Test
-    fun `NavigateToActors should be correct type`() {
+    fun `should be of correct type when NavigateToActors is created`() {
         // Given
         val effect = HomeScreenEffect.NavigateToActors
 
@@ -72,7 +72,7 @@ class HomeScreenEffectTest {
     }
 
     @Test
-    fun `NavigateToLogin should be correct type`() {
+    fun `should be of correct type when NavigateToLogin is created`() {
         // Given
         val effect = HomeScreenEffect.NavigateToLogin
 
