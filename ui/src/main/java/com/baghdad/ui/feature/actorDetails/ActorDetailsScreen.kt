@@ -27,7 +27,6 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
-import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
@@ -150,12 +149,6 @@ fun ActorDetailsContent(
         LaunchedEffect(scrollState) {
             snapshotFlow { scrollState.value }.collect { scrollValue ->
                 shouldShowBackground = scrollValue > 450
-            }
-        }
-
-        if (uiState.isLoading) {
-            Box(Modifier.fillMaxSize()) {
-                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
 
