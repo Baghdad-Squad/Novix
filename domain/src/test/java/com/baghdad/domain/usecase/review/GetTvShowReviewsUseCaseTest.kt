@@ -152,8 +152,8 @@ class GetTvShowReviewsUseCaseTest {
         // Given
         val tvId = 11L
         val variedRatings = listOf(
-            sampleReviews[0].copy(rating = 1f),
-            sampleReviews[1].copy(rating = 10f)
+            sampleReviews[0].copy(rating = 1.0),
+            sampleReviews[1].copy(rating = 10.0)
         )
         coEvery { tvShowRepository.getTvShowReviews(tvId) } returns variedRatings
 
@@ -161,8 +161,8 @@ class GetTvShowReviewsUseCaseTest {
         val result = getTvShowReviewsUseCase(tvId)
 
         // Then
-        assertThat(result[0].rating).isEqualTo(1f)
-        assertThat(result[1].rating).isEqualTo(10f)
+        assertThat(result[0].rating).isEqualTo(1.0)
+        assertThat(result[1].rating).isEqualTo(10.0)
     }
 
     companion object {
@@ -177,7 +177,7 @@ class GetTvShowReviewsUseCaseTest {
                 contentTitle = "Bingeworthy!",
                 reviewText = "Couldn't stop watching this amazing series.",
                 postedDate = LocalDate(2023, 9, 15),
-                rating = 9.5f
+                rating = 9.5
             ),
             Review(
                 id = "tv_rev2",
@@ -186,7 +186,7 @@ class GetTvShowReviewsUseCaseTest {
                 contentTitle = "Strong First Season",
                 reviewText = "Excellent character development throughout the season.",
                 postedDate = LocalDate(2023, 9, 20),
-                rating = 8.5f
+                rating = 8.5
             )
         )
 
@@ -197,7 +197,7 @@ class GetTvShowReviewsUseCaseTest {
             contentTitle = "",
             reviewText = "It was okay",
             postedDate = LocalDate(2023, 9, 25),
-            rating = 5f
+            rating = 5.0
         )
     }
 }
