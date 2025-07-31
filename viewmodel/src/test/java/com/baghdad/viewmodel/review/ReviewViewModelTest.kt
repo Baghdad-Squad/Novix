@@ -2,6 +2,7 @@ package com.baghdad.viewmodel.review
 
 import com.baghdad.domain.usecase.review.GetMovieReviewsUseCase
 import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
+import com.google.common.truth.Truth.assertThat
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -14,9 +15,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -74,8 +72,8 @@ class ReviewViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertFalse(state.isLoading)
-        assertTrue(state.reviews.isEmpty())
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.reviews).isEmpty()
     }
 
     @Test
@@ -113,14 +111,14 @@ class ReviewViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertFalse(state.isLoading)
-        assertTrue(state.reviews.isEmpty())
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.reviews).isEmpty()
     }
 
     @Test
     fun `should stop loading and show empty list when series reviews loading fails`() = runTest {
         // Given
-        val exception = RuntimeException("API error")
+        val exception = RuntimeException()
         coEvery { mockGetTvShowReviewsUseCase(contentId) } throws exception
 
         // When
@@ -134,8 +132,8 @@ class ReviewViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertFalse(state.isLoading)
-        assertTrue(state.reviews.isEmpty())
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.reviews).isEmpty()
     }
 
     @Test
@@ -185,8 +183,11 @@ class ReviewViewModelTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Then
-            assertEquals(2, capturedEffects.size)
-            assertTrue(capturedEffects.all { it is ReviewScreenEffect.NavigateBack })
+            assertThat(capturedEffects).hasSize(2)
+            assertThat(capturedEffects).containsExactly(
+                ReviewScreenEffect.NavigateBack,
+                ReviewScreenEffect.NavigateBack
+            )
 
             job.cancel()
         }
