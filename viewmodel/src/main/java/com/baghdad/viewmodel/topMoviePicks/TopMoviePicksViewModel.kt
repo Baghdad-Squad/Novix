@@ -32,6 +32,7 @@ class TopMoviePicksViewModel(
     }
 
     private fun onGetActorMoviesSuccess(movies: List<Movie>) {
+        hideSnackBar()
         updateState { topMoviePicksState ->
             topMoviePicksState.copy(movies = movies.map { it.toUIState() })
         }
