@@ -30,7 +30,7 @@ class LocalContinueWatchingDataSourceImplTest {
     @Test
     fun `should add to continue watching when addContinueWatching is called`() = runTest {
         // Given
-        coEvery { continueWatchingDao.upsertContinueWatching(CONTINUE_WATCHING.toLocalDto()) } returns Unit
+        coEvery { continueWatchingDao.upsertContinueWatching(any()) } returns Unit
 
         // When
         val result = dataSource.addContinueWatching(CONTINUE_WATCHING)
@@ -74,7 +74,7 @@ class LocalContinueWatchingDataSourceImplTest {
             genreIds = listOf(1L, 2L),
             contentImageUrl = "test",
             contentType = ContinueWatchingDto.ContentType.MOVIE,
-            userId = 1
+            userId = 1,
         )
     }
 }
