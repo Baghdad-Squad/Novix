@@ -211,7 +211,7 @@ class MovieDetailsViewModelTest {
         advanceUntilIdle()
         // Then
         val expectedUrl = movieDetailsViewModel.uiState.value.movieTrailerURL
-        assertEquals(MovieDetailsEffect.OpenYoutubeLink(expectedUrl), receivedEffect)
+        assertThat(MovieDetailsEffect.OpenYoutubeLink(expectedUrl) ==  receivedEffect).isTrue()
         job.cancel()
     }
 
