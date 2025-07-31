@@ -97,7 +97,7 @@ class TvShowMapperTest {
         Assertions.assertEquals("", result.name)
         Assertions.assertEquals(0, result.episodeNumber)
         Assertions.assertEquals(0.0, result.rating)
-        Assertions.assertEquals("", result.duration)
+        Assertions.assertEquals(0, result.duration)
         Assertions.assertEquals(0, result.currentSeason)
     }
 
