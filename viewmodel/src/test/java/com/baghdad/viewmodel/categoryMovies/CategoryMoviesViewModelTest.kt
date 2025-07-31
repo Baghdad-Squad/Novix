@@ -23,19 +23,6 @@ class CategoryMoviesViewModelTest {
     private lateinit var viewModel: CategoryMoviesViewModel
     private val testDispatcher = StandardTestDispatcher()
 
-    private val testMovie = Movie(
-        id = 1L,
-        title = "Test Movie",
-        genres = listOf(Genre(1L, "Action")),
-        averageRating = 8.5,
-        userRating = null,
-        releaseDate = LocalDate.parse("2023-01-01"),
-        overview = "Some movie",
-        posterImageURL = "https://example.com/poster.jpg",
-        trailerURL = "https://example.com/trailer.mp4",
-        runtimeMinutes = 100
-    )
-
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
@@ -55,14 +42,13 @@ class CategoryMoviesViewModelTest {
         )
     }
 
-
     @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
     }
 
     @Test
-    fun `when getGenreName called then should update categoryName`() = runTest {
+    fun `should update categoryName when getGenreName called`() = runTest {
         val states = mutableListOf<CategoryMoviesState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
 
@@ -73,7 +59,7 @@ class CategoryMoviesViewModelTest {
     }
 
     @Test
-    fun `when getGenreMovies called then should update moviesFlow`() = runTest {
+    fun `should update moviesFlow when getGenreMovies called`() = runTest {
         val states = mutableListOf<CategoryMoviesState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
 
@@ -84,7 +70,7 @@ class CategoryMoviesViewModelTest {
     }
 
     @Test
-    fun `when onBackClicked then should emit NavigateBack`() = runTest {
+    fun `should emit NavigateBack when onBackClicked`() = runTest {
         val effects = mutableListOf<CategoryMoviesEffect>()
         val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
 
@@ -96,7 +82,7 @@ class CategoryMoviesViewModelTest {
     }
 
     @Test
-    fun `when onMovieClicked with valid ID then should emit NavigateToMovieDetails`() = runTest {
+    fun `should emit NavigateToMovieDetails when onMovieClicked with valid ID`() = runTest {
         val effects = mutableListOf<CategoryMoviesEffect>()
         val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
 
@@ -108,7 +94,7 @@ class CategoryMoviesViewModelTest {
     }
 
     @Test
-    fun `when toUiState called then should map Movie to MovieUiState correctly`() {
+    fun `should map Movie to MovieUiState correctly when toUiState called`() {
         val uiState = testMovie.toUiState()
 
         assertThat(uiState.id).isEqualTo(testMovie.id)
@@ -117,7 +103,7 @@ class CategoryMoviesViewModelTest {
     }
 
     @Test
-    fun `when getMovieGenreNameByIdUseCase fails then should not crash`() = runTest {
+    fun `should not crash when getMovieGenreNameByIdUseCase fails`() = runTest {
         coEvery { getMovieGenreNameByIdUseCase(1L) } throws RuntimeException("Failed")
         viewModel = CategoryMoviesViewModel(1L, getGenreMoviesUseCase, getMovieGenreNameByIdUseCase)
 
@@ -132,30 +118,43 @@ class CategoryMoviesViewModelTest {
     }
 
     @Test
-    fun `when moviesFlow default then should be empty`() = runTest {
+    fun `should be empty when moviesFlow default`() = runTest {
         val defaultState = CategoryMoviesState()
         assertThat(defaultState.moviesFlow).isNotNull()
     }
 
     @Test
-    fun `when Movie has empty poster then should return empty posterPictureURL`() {
+    fun `should return empty posterPictureURL when Movie has empty poster`() {
         val movie = testMovie.copy(posterImageURL = "")
         val uiState = movie.toUiState()
         assertThat(uiState.posterPictureURL).isEqualTo("")
     }
 
     @Test
-    fun `when Movie has different id then should reflect in uiState`() {
+    fun `should reflect in uiState when Movie has different id`() {
         val movie = testMovie.copy(id = 99L)
         val uiState = movie.toUiState()
         assertThat(uiState.id).isEqualTo(99L)
     }
 
     @Test
-    fun `when Movie has long poster URL then should keep it in uiState`() {
+    fun `should keep posterImageURL unchanged when mapping to uiState`() {
         val longUrl = "https://example.com/very/long/path/poster.jpg"
         val movie = testMovie.copy(posterImageURL = longUrl)
         val uiState = movie.toUiState()
         assertThat(uiState.posterPictureURL).isEqualTo(longUrl)
     }
+
+    private val testMovie = Movie(
+        id = 1L,
+        title = "Test Movie",
+        genres = listOf(Genre(1L, "Action")),
+        averageRating = 8.5,
+        userRating = null,
+        releaseDate = LocalDate.parse("2023-01-01"),
+        overview = "Some movie",
+        posterImageURL = "https://example.com/poster.jpg",
+        trailerURL = "https://example.com/trailer.mp4",
+        runtimeMinutes = 100
+    )
 }
