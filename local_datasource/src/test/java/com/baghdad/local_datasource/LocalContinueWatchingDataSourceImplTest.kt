@@ -6,52 +6,63 @@ import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ContinueWatchingDto
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class LocalContinueWatchingDataSourceImplTest {
 
-    lateinit var continueWatchingDao: ContinueWatchingDao
-    lateinit var logger: Logger
-
-    lateinit var localContinueWatchingDataSourceImpl: LocalContinueWatchingDataSourceImpl
+    private lateinit var continueWatchingDao: ContinueWatchingDao
+    private lateinit var logger: Logger
+    private lateinit var dataSource: LocalContinueWatchingDataSourceImpl
 
     @BeforeEach
     fun setUp() {
         continueWatchingDao = mockk()
-        logger = mockk()
-
-        localContinueWatchingDataSourceImpl =
-            LocalContinueWatchingDataSourceImpl(continueWatchingDao, logger)
+        logger = mockk(relaxed = true)
+        dataSource = LocalContinueWatchingDataSourceImpl(continueWatchingDao, logger)
     }
 
     @Test
-    fun `should add to continue watching when call addContinueWatching`() = runTest {
+    fun `should add to continue watching when addContinueWatching is called`() = runTest {
         // Given
         coEvery { continueWatchingDao.upsertContinueWatching(CONTINUE_WATCHING.toLocalDto()) } returns Unit
-        coEvery { logger.logException(any()) } returns Unit
-        coEvery { continueWatchingDao.upsertContinueWatching(any()) } returns Unit
 
         // When
-        val result = localContinueWatchingDataSourceImpl.addContinueWatching(CONTINUE_WATCHING)
+        val result = dataSource.addContinueWatching(CONTINUE_WATCHING)
 
         // Then
         assertThat(result).isEqualTo(Unit)
     }
 
     @Test
-    fun `should get continue watching when call getContinueWatching`() = runTest {
+    fun `should return continue watching list when getContinueWatching is called`() = runTest {
         // Given
         coEvery { continueWatchingDao.getContinueWatching(1, any(), any()) } returns listOf(
             CONTINUE_WATCHING.toLocalDto()
         )
 
-        coEvery { logger.logException(any()) } returns Unit
         // When
+        val result = dataSource.getContinueWatching(1, pageSize = 10, page = 1)
 
-        val result = localContinueWatchingDataSourceImpl.getContinueWatching(1, 10, 0)
+        // Then
+        assertThat(result).isEqualTo(listOf(CONTINUE_WATCHING))
+    }
+
+    @Test
+    fun `should observe continue watching when observeContinueWatching is called`() = runTest {
+        // Given
+        every { continueWatchingDao.observeContinueWatching(1) } returns flowOf(
+            listOf(CONTINUE_WATCHING.toLocalDto())
+        )
+
+        // When
+        val flow = dataSource.observeContinueWatching(1)
+        val result = flow.first()
 
         // Then
         assertThat(result).isEqualTo(listOf(CONTINUE_WATCHING))
@@ -66,5 +77,4 @@ class LocalContinueWatchingDataSourceImplTest {
             userId = 1
         )
     }
-
 }
