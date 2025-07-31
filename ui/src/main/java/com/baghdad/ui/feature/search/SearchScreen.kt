@@ -122,8 +122,11 @@ fun SearchContent(
             .systemBarsPadding()
             .statusBarsPadding(),
         snackbar = {
-            SearchSnackBar(snackBarState = snackBarState)
-        }
+            SearchSnackBar(
+                snackBarState = snackBarState,
+                onActionClick = listener::onSnackBarActionLabelClick,
+            )
+        },
     ) {
         Column(
             modifier = Modifier
@@ -167,11 +170,16 @@ fun SearchContent(
 }
 
 @Composable
-private fun SearchSnackBar(snackBarState: SnackBarState) {
+private fun SearchSnackBar(
+    snackBarState: SnackBarState,
+    onActionClick: () -> Unit,
+) {
     SnackBar(
         message = stringResource(getSnackBarMessage(snackBarState.message)),
         isSuccess = snackBarState.isSuccess,
-        isVisible = snackBarState.isVisible
+        isVisible = snackBarState.isVisible,
+        actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+        onActionClick = onActionClick,
     )
 }
 
@@ -389,5 +397,8 @@ private fun createPreviewListener() = object : SearchInteractionListener {
     override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {}
     override fun onRecentlyViewedClick(id: Long, imageUrl: String) {}
     override fun onMovieItemClick(contentId: Long, contentImageUrl: String) {}
-    override fun onTvShowItemClick(contentId: Long, contentImageUrl: String) {}
+    override fun onTvShowItemClick(contentId: Long, contentImageUrl: String,
+    ) {}
+
+    override fun onSnackBarActionLabelClick() {}
 }

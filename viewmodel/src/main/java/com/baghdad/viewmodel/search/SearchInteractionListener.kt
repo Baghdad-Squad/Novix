@@ -21,4 +21,6 @@ interface SearchInteractionListener {
     fun onMovieItemClick(contentId: Long, contentImageUrl: String)
     fun onTvShowItemClick(contentId: Long, contentImageUrl: String)
     fun onActorItemClick(id: Long)
+
+    fun onSnackBarActionLabelClick()
 }

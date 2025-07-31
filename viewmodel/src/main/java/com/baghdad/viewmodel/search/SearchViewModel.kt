@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.search
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
@@ -13,6 +14,7 @@ import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
@@ -104,6 +106,7 @@ class SearchViewModel(
                     page = page
                 )
             },
+            onInitialLoadError = ::onSearchError,
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toMovieUI() },
             onFlowCreated = { moviesFlow ->
@@ -125,6 +128,7 @@ class SearchViewModel(
                     page = page
                 )
             },
+            onInitialLoadError = ::onSearchError,
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toTvShowUI() },
             onFlowCreated = { tvShowsFlow -> updateState { it.copy(tvShowsFlow = tvShowsFlow) } },
@@ -142,11 +146,28 @@ class SearchViewModel(
                 )
             },
             onInitialLoadFinished = ::onFinally,
+            onInitialLoadError = ::onSearchError,
             mapEntityToUiState = { it.toActorUI() },
             onFlowCreated = { actorsFlow -> updateState { it.copy(actorsFlow = actorsFlow) } },
             onLoadingChanged = { isLoading ->
                 updateState { it.copy(isLoading = isLoading) }
             }
+        )
+    }
+
+    private fun onSearchError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
+    }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
         )
     }
 
@@ -540,11 +561,16 @@ class SearchViewModel(
         sendEffect(SearchScreenEffect.NavigateToActorDetails(id))
     }
 
+    override fun onSnackBarActionLabelClick() {
+        performSearchByTab(currentState.searchText)
+    }
+
     private fun onLoading() {
         updateState { it.copy(isLoading = true) }
     }
 
     private fun onFinally() {
+        hideSnackBar()
         updateState { it.copy(isLoading = false) }
     }
 
