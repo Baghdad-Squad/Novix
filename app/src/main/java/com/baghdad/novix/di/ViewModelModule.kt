@@ -21,6 +21,8 @@ import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
@@ -80,6 +82,7 @@ val viewModelModule = module {
             isLoggedInUseCase = get()
         )
     }
+    single<CoroutineDispatcher> { Dispatchers.IO }
 
     viewModelOf(::TopRatingViewModel)
     viewModelOf(::LoginViewModel)
