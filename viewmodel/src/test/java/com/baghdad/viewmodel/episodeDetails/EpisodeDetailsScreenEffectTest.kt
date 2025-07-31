@@ -1,116 +1,113 @@
 package com.baghdad.viewmodel.episodeDetails
 
 import com.baghdad.viewmodel.base.BaseUiEffect
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class EpisodeDetailsScreenEffectTest {
 
     @Test
-    fun `NavigateToCategoryTvShows with same ids should be equal`() {
+    fun `NavigateToCategoryTvShows should be equal when ids are same`() {
         val effect1 = EpisodeDetailsScreenEffect.NavigateToCategoryTvShows(CATEGORY_ID)
         val effect2 = EpisodeDetailsScreenEffect.NavigateToCategoryTvShows(CATEGORY_ID)
 
-        assertEquals(effect1, effect2)
+        assertThat(effect1).isEqualTo(effect2)
     }
 
     @Test
-    fun `NavigateToCategoryTvShows copy function should work correctly`() {
+    fun `NavigateToCategoryTvShows should create new instance with updated id when copy is called`() {
         val originalEffect = EpisodeDetailsScreenEffect.NavigateToCategoryTvShows(123L)
         val copiedEffect = originalEffect.copy(categoryId = 456L)
 
-        Assertions.assertEquals(456L, copiedEffect.categoryId)
-        Assertions.assertEquals(123L, originalEffect.categoryId)
+        assertThat(copiedEffect.categoryId).isEqualTo(456L)
+        assertThat(originalEffect.categoryId).isEqualTo(123L)
     }
 
     @Test
-    fun `NavigateToActorDetails should set id correctly`() {
+    fun `NavigateToActorDetails should store actorId correctly when created`() {
         val effect = EpisodeDetailsScreenEffect.NavigateToActorDetails(ACTOR_ID)
 
-        Assertions.assertEquals(ACTOR_ID, effect.actorId)
+        assertThat(effect.actorId).isEqualTo(ACTOR_ID)
     }
 
     @Test
-    fun `NavigateToActorDetails with different ids should not be equal`() {
+    fun `NavigateToActorDetails should not be equal when actorIds are different`() {
         val effect1 = EpisodeDetailsScreenEffect.NavigateToActorDetails(123L)
         val effect2 = EpisodeDetailsScreenEffect.NavigateToActorDetails(456L)
 
-        assertNotEquals(effect1, effect2)
+        assertThat(effect1).isNotEqualTo(effect2)
     }
 
     @Test
-    fun `NavigateToActorDetails copy function should work correctly`() {
+    fun `NavigateToActorDetails should create new instance with updated id when copy is called`() {
         val originalEffect = EpisodeDetailsScreenEffect.NavigateToActorDetails(123L)
         val copiedEffect = originalEffect.copy(actorId = 456L)
 
-        assertEquals(456L, copiedEffect.actorId)
-        assertEquals(123L, originalEffect.actorId)
+        assertThat(copiedEffect.actorId).isEqualTo(456L)
+        assertThat(originalEffect.actorId).isEqualTo(123L)
     }
 
     @Test
-    fun `NavigateBack should be instance of EpisodeDetailsScreenEffect`() {
+    fun `NavigateBack should be instance of EpisodeDetailsScreenEffect when created`() {
         val effect = EpisodeDetailsScreenEffect.NavigateBack
-        assertTrue(effect is EpisodeDetailsScreenEffect)
+        assertThat(effect).isInstanceOf(EpisodeDetailsScreenEffect::class.java)
     }
 
     @Test
-    fun `NavigateBack should be instance of BaseUiEffect`() {
+    fun `NavigateBack should be instance of BaseUiEffect when created`() {
         val effect = EpisodeDetailsScreenEffect.NavigateBack
-        Assertions.assertTrue(effect is BaseUiEffect)
+        assertThat(effect).isInstanceOf(BaseUiEffect::class.java)
     }
 
     @Test
-    fun `NavigateToLogin should be instance of EpisodeDetailsScreenEffect`() {
+    fun `NavigateToLogin should be instance of EpisodeDetailsScreenEffect when created`() {
         val effect = EpisodeDetailsScreenEffect.NavigateToLogin
-       assertTrue(effect is EpisodeDetailsScreenEffect)
+        assertThat(effect).isInstanceOf(EpisodeDetailsScreenEffect::class.java)
     }
 
     @Test
-    fun `NavigateToLogin should be instance of BaseUiEffect`() {
+    fun `NavigateToLogin should be instance of BaseUiEffect when created`() {
         val effect = EpisodeDetailsScreenEffect.NavigateToLogin
-        assertTrue(effect is BaseUiEffect)
+        assertThat(effect).isInstanceOf(BaseUiEffect::class.java)
     }
 
     @Test
-    fun `all effects should be usable in collections`() {
-        val effects = listOf<EpisodeDetailsScreenEffect>(
+    fun `all effects should be usable in collections when added`() {
+        val effects = listOf(
             EpisodeDetailsScreenEffect.NavigateBack,
             EpisodeDetailsScreenEffect.NavigateToLogin,
             EpisodeDetailsScreenEffect.NavigateToCategoryTvShows(CATEGORY_ID),
             EpisodeDetailsScreenEffect.NavigateToActorDetails(ACTOR_ID)
         )
 
-        assertEquals(4, effects.size)
-        assertTrue(effects.all { true })
+        assertThat(effects).hasSize(4)
+        assertThat(effects).isNotEmpty()
     }
 
     @Test
-    fun `component functions should work for data classes`() {
+    fun `component functions should return correct values when destructuring data classes`() {
         val navigateToCategory = EpisodeDetailsScreenEffect.NavigateToCategoryTvShows(123L)
         val (categoryIdComponent) = navigateToCategory
-        Assertions.assertEquals(123L, categoryIdComponent)
+        assertThat(categoryIdComponent).isEqualTo(123L)
 
         val navigateToActor = EpisodeDetailsScreenEffect.NavigateToActorDetails(456L)
         val (actorIdComponent) = navigateToActor
-        Assertions.assertEquals(456L, actorIdComponent)
+        assertThat(actorIdComponent).isEqualTo(456L)
     }
 
     @Test
-    fun `toString should work correctly for all effects`() {
+    fun `toString should include class name and id when called on effects`() {
         val navigateToCategory = EpisodeDetailsScreenEffect.NavigateToCategoryTvShows(123L)
         val navigateBack = EpisodeDetailsScreenEffect.NavigateBack
         val navigateToLogin = EpisodeDetailsScreenEffect.NavigateToLogin
         val navigateToActor = EpisodeDetailsScreenEffect.NavigateToActorDetails(456L)
 
-        assertTrue(navigateToCategory.toString().contains("NavigateToCategoryTvShows"))
-        assertTrue(navigateToCategory.toString().contains("123"))
-        assertEquals("NavigateBack", navigateBack.toString())
-        assertEquals("NavigateToLogin", navigateToLogin.toString())
-        assertTrue(navigateToActor.toString().contains("NavigateToActorDetails"))
-        assertTrue(navigateToActor.toString().contains("456"))
+        assertThat(navigateToCategory.toString()).contains("NavigateToCategoryTvShows")
+        assertThat(navigateToCategory.toString()).contains("123")
+        assertThat(navigateBack.toString()).isEqualTo("NavigateBack")
+        assertThat(navigateToLogin.toString()).isEqualTo("NavigateToLogin")
+        assertThat(navigateToActor.toString()).contains("NavigateToActorDetails")
+        assertThat(navigateToActor.toString()).contains("456")
     }
 
     private companion object {

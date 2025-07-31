@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 class EpisodeDetailsScreenStateTest {
 
     @Test
-    fun `default constructor should create state with default values`() {
+    fun `EpisodeDetailsScreenState should initialize with default values when default constructor is used`() {
         // When
         val state = EpisodeDetailsScreenState()
 
@@ -24,7 +24,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `constructor with all parameters should set values correctly`() {
+    fun `EpisodeDetailsScreenState should set all properties correctly when constructed with parameters`() {
         // Given
         val episodeUiState = createEpisodeUiState()
         val guests = listOf(createGuestOfHonor())
@@ -56,7 +56,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `isLoading should be true when either details or cast members are loading`() {
+    fun `isLoading should be true when either isEpisodeDetailsLoading or isEpisodeCastMembersLoading is true`() {
         // Given
         val loadingDetailsState = EpisodeDetailsScreenState(isEpisodeDetailsLoading = true)
         val loadingCastState = EpisodeDetailsScreenState(isEpisodeCastMembersLoading = true)
@@ -74,7 +74,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `EpisodeUiState default constructor should create with default values`() {
+    fun `EpisodeUiState should initialize with default values when default constructor is used`() {
         // When
         val episodeUiState = EpisodeDetailsScreenState.EpisodeUiState()
 
@@ -93,7 +93,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `EpisodeUiState constructor with parameters should set values correctly`() {
+    fun `EpisodeUiState should set all properties correctly when constructed with parameters`() {
         // Given
         val categories = listOf(createCategoryUiState())
         val headerPictures = listOf(HEADER_IMAGE)
@@ -128,7 +128,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `EpisodeUiState copy function should work correctly`() {
+    fun `EpisodeUiState should create new instance with updated properties when copy is called`() {
         // Given
         val original = createEpisodeUiState()
 
@@ -137,12 +137,12 @@ class EpisodeDetailsScreenStateTest {
 
         // Then
         assertThat(copied.title).isEqualTo("Copied Title")
-        assertThat(original.title).isEqualTo(EPISODE_TITLE) // Original unchanged
+        assertThat(original.title).isEqualTo(EPISODE_TITLE)
         assertThat(copied.id).isEqualTo(original.id)
     }
 
     @Test
-    fun `GuestsOfHonerUiState default constructor should create with default values`() {
+    fun `GuestsOfHonerUiState should initialize with default values when default constructor is used`() {
         // When
         val guest = EpisodeDetailsScreenState.GuestsOfHonerUiState()
 
@@ -154,7 +154,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `GuestsOfHonerUiState constructor with parameters should set values correctly`() {
+    fun `GuestsOfHonerUiState should set all properties correctly when constructed with parameters`() {
         // When
         val guest = EpisodeDetailsScreenState.GuestsOfHonerUiState(
             id = GUEST_ID,
@@ -171,7 +171,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `GuestsOfHonerUiState copy function should work correctly`() {
+    fun `GuestsOfHonerUiState should create new instance with updated properties when copy is called`() {
         // Given
         val original = createGuestOfHonor()
 
@@ -180,11 +180,11 @@ class EpisodeDetailsScreenStateTest {
 
         // Then
         assertThat(copied.name).isEqualTo("Copied Name")
-        assertThat(original.name).isEqualTo(GUEST_NAME) // Original unchanged
+        assertThat(original.name).isEqualTo(GUEST_NAME)
     }
 
     @Test
-    fun `CategoryUiState default constructor should create with default values`() {
+    fun `CategoryUiState should initialize with default values when default constructor is used`() {
         // When
         val category = EpisodeDetailsScreenState.CategoryUiState()
 
@@ -194,7 +194,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `CategoryUiState constructor with parameters should set values correctly`() {
+    fun `CategoryUiState should set all properties correctly when constructed with parameters`() {
         // When
         val category = EpisodeDetailsScreenState.CategoryUiState(
             id = CATEGORY_ID,
@@ -207,7 +207,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `CategoryUiState copy function should work correctly`() {
+    fun `CategoryUiState should create new instance with updated properties when copy is called`() {
         // Given
         val original = createCategoryUiState()
 
@@ -216,43 +216,37 @@ class EpisodeDetailsScreenStateTest {
 
         // Then
         assertThat(copied.name).isEqualTo("Copied Category")
-        assertThat(original.name).isEqualTo(CATEGORY_NAME) // Original unchanged
+        assertThat(original.name).isEqualTo(CATEGORY_NAME)
     }
 
     @Test
-    fun `AddToListBottomSheetState should work correctly`() {
-        // Default
-        val defaultState = EpisodeDetailsScreenState.AddToListBottomSheetState()
-        assertThat(defaultState.isVisible).isFalse()
-
-        // Custom
+    fun `AddToListBottomSheetState should update visibility correctly when copy is called`() {
+        // Given
         val customState = EpisodeDetailsScreenState.AddToListBottomSheetState(true)
-        assertThat(customState.isVisible).isTrue()
 
-        // Copy
+        // When
         val copied = customState.copy(isVisible = false)
+
+        // Then
         assertThat(copied.isVisible).isFalse()
-        assertThat(customState.isVisible).isTrue() // Original unchanged
+        assertThat(customState.isVisible).isTrue()
     }
 
     @Test
-    fun `RateEpisodeBottomSheetState should work correctly`() {
-        // Default
-        val defaultState = EpisodeDetailsScreenState.RateEpisodeBottomSheetState()
-        assertThat(defaultState.isVisible).isFalse()
-
-        // Custom
+    fun `RateEpisodeBottomSheetState should update visibility correctly when copy is called`() {
+        // Given
         val customState = EpisodeDetailsScreenState.RateEpisodeBottomSheetState(true)
-        assertThat(customState.isVisible).isTrue()
 
-        // Copy
+        // When
         val copied = customState.copy(isVisible = false)
+
+        // Then
         assertThat(copied.isVisible).isFalse()
-        assertThat(customState.isVisible).isTrue() // Original unchanged
+        assertThat(customState.isVisible).isTrue()
     }
 
     @Test
-    fun `equals should work correctly for identical states`() {
+    fun `equals should return true when comparing identical states`() {
         // Given
         val state1 = EpisodeDetailsScreenState(
             episode = createEpisodeUiState(),
@@ -269,7 +263,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `equals should work correctly for different states`() {
+    fun `equals should return false when comparing different states`() {
         // Given
         val state1 = EpisodeDetailsScreenState(episode = createEpisodeUiState())
         val state2 = EpisodeDetailsScreenState(episode = createEpisodeUiState(title = "Different"))
@@ -279,7 +273,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `state with multiple guests should preserve order`() {
+    fun `guestsOfHonor should maintain insertion order when multiple guests are added`() {
         // Given
         val guests = listOf(
             createGuestOfHonor(name = "Guest 1"),
@@ -298,7 +292,7 @@ class EpisodeDetailsScreenStateTest {
     }
 
     @Test
-    fun `state with multiple categories should preserve order`() {
+    fun `categories should maintain insertion order when multiple categories are added`() {
         // Given
         val categories = listOf(
             createCategoryUiState(name = "Category 1"),
@@ -316,7 +310,6 @@ class EpisodeDetailsScreenStateTest {
         assertThat(state.episode.categories[2].name).isEqualTo("Category 3")
     }
 
-    // Helper functions
     private fun createEpisodeUiState(
         id: Long = EPISODE_ID,
         title: String = EPISODE_TITLE,
@@ -352,6 +345,7 @@ class EpisodeDetailsScreenStateTest {
         id = id,
         name = name
     )
+
     private companion object {
         const val EPISODE_ID = 123L
         const val EPISODE_TITLE = "Test Episode"
@@ -370,5 +364,4 @@ class EpisodeDetailsScreenStateTest {
         const val CHARACTER_NAME = "Guest Star"
         const val PROFILE_PIC = "profile.jpg"
     }
-
 }

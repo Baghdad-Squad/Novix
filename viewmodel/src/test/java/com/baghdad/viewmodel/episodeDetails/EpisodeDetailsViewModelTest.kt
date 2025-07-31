@@ -6,6 +6,7 @@ import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -18,15 +19,11 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EpisodeDetailsViewModelTest {
-
 
     @BeforeEach
     fun setUp() {
@@ -52,29 +49,28 @@ class EpisodeDetailsViewModelTest {
         Dispatchers.resetMain()
     }
 
-
     @Test
-    fun ` should send NavigateBack effect when onBackClick is clicked`() = runTest {
+    fun `onBackClick should emit NavigateBack effect when called`() = runTest {
         // Given
         testDispatcher.scheduler.advanceUntilIdle()
-
         var receivedEffect: EpisodeDetailsScreenEffect? = null
         val job = launch {
             episodeDetailsViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
+
         // When
         episodeDetailsViewModel.onBackClick()
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertEquals(EpisodeDetailsScreenEffect.NavigateBack, receivedEffect)
+        assertThat(receivedEffect).isEqualTo(EpisodeDetailsScreenEffect.NavigateBack)
         job.cancel()
     }
 
     @Test
-    fun `onReadMoreOverviewClick should toggle isOverviewExpanded state when click on onReadMoreOverviewClick`() = runTest {
+    fun `onReadMoreOverviewClick should toggle isOverviewExpanded state when called`() = runTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Given
@@ -85,12 +81,11 @@ class EpisodeDetailsViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        val finalState = episodeDetailsViewModel.uiState.value.isOverviewExpanded
-        assertEquals(!initialState, finalState)
+        assertThat(episodeDetailsViewModel.uiState.value.isOverviewExpanded).isEqualTo(!initialState)
     }
 
     @Test
-    fun `should send NavigateToCategoryTvShows effect when onCategoryClick clicked`() = runTest {
+    fun `onCategoryClick should emit NavigateToCategoryTvShows effect with correct id when called`() = runTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Given
@@ -101,18 +96,20 @@ class EpisodeDetailsViewModelTest {
                 receivedEffect = effect
             }
         }
+
         // When
         episodeDetailsViewModel.onCategoryClick(categoryId)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertEquals(EpisodeDetailsScreenEffect.NavigateToCategoryTvShows(categoryId), receivedEffect)
+        assertThat(receivedEffect).isEqualTo(EpisodeDetailsScreenEffect.NavigateToCategoryTvShows(categoryId))
         job.cancel()
     }
 
     @Test
-    fun `should send NavigateToActorDetails effect when onGuestOfHonorClick clicked`() = runTest {
+    fun `onGuestOfHonorClick should emit NavigateToActorDetails effect with correct id when called`() = runTest {
         testDispatcher.scheduler.advanceUntilIdle()
+
         // Given
         val guestId = 456L
         var receivedEffect: EpisodeDetailsScreenEffect? = null
@@ -121,17 +118,18 @@ class EpisodeDetailsViewModelTest {
                 receivedEffect = effect
             }
         }
+
         // When
         episodeDetailsViewModel.onGuestOfHonorClick(guestId)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertEquals(EpisodeDetailsScreenEffect.NavigateToActorDetails(guestId), receivedEffect)
+        assertThat(receivedEffect).isEqualTo(EpisodeDetailsScreenEffect.NavigateToActorDetails(guestId))
         job.cancel()
     }
 
     @Test
-    fun `should show add to list bottom sheet when onSaveEpisodeClick clicked`() = runTest {
+    fun `onSaveEpisodeClick should show addToListBottomSheet when called`() = runTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // When
@@ -139,26 +137,27 @@ class EpisodeDetailsViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertTrue(episodeDetailsViewModel.uiState.value.addToListBottomSheetState.isVisible)
+        assertThat(episodeDetailsViewModel.uiState.value.addToListBottomSheetState.isVisible).isTrue()
     }
 
     @Test
-    fun `onDismissAddToListBottomSheetClick should hide add to list bottom sheet`() = runTest {
+    fun `onDismissAddToListBottomSheetClick should hide addToListBottomSheet when called`() = runTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // When
+        // Given
         episodeDetailsViewModel.onSaveEpisodeClick()
         testDispatcher.scheduler.advanceUntilIdle()
 
+        // When
         episodeDetailsViewModel.onDismissAddToListBottomSheetClick()
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertFalse(episodeDetailsViewModel.uiState.value.addToListBottomSheetState.isVisible)
+        assertThat(episodeDetailsViewModel.uiState.value.addToListBottomSheetState.isVisible).isFalse()
     }
 
     @Test
-    fun `should send NavigateToLogin effect when onLoginClick clicked`() = runTest {
+    fun `onLoginClick should emit NavigateToLogin effect when called`() = runTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Given
@@ -168,43 +167,35 @@ class EpisodeDetailsViewModelTest {
                 receivedEffect = effect
             }
         }
+
         // When
         episodeDetailsViewModel.onLoginClick()
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertEquals(EpisodeDetailsScreenEffect.NavigateToLogin, receivedEffect)
+        assertThat(receivedEffect).isEqualTo(EpisodeDetailsScreenEffect.NavigateToLogin)
         job.cancel()
     }
 
     @Test
-    fun `should show rate episode bottom sheet onRateEpisodeClick clicked`() = runTest {
+    fun `onDismissRatingBottomSheet should hide rateEpisodeBottomSheet when called`() = runTest {
         testDispatcher.scheduler.advanceUntilIdle()
-        // When
+
+        // Given
         episodeDetailsViewModel.onRateEpisodeClick()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Then
-        assertTrue(episodeDetailsViewModel.uiState.value.rateEpisodeBottomSheetState.isVisible)
-    }
-
-    @Test
-    fun `should hide rate episode bottom sheet when onDismissRatingBottomSheet `() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-
         // When
-        episodeDetailsViewModel.onRateEpisodeClick()
-        testDispatcher.scheduler.advanceUntilIdle()
-
         episodeDetailsViewModel.onDismissRatingBottomSheet()
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertFalse(episodeDetailsViewModel.uiState.value.rateEpisodeBottomSheetState.isVisible)
+        assertThat(episodeDetailsViewModel.uiState.value.rateEpisodeBottomSheetState.isVisible).isFalse()
     }
 
     @Test
-    fun `failure should handle error gracefully when getEpisodeDetails`() = runTest {
+    fun `getEpisodeDetails should handle errors gracefully when exception occurs`() = runTest {
+        // Given
         val exception = RuntimeException()
         coEvery { getEpisodeDetailsUseCase(any(), any(), any()) } throws exception
 
@@ -216,14 +207,17 @@ class EpisodeDetailsViewModelTest {
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase
         )
 
+        // When
         testDispatcher.scheduler.advanceUntilIdle()
 
+        // Then
         coVerify { getEpisodeDetailsUseCase(tvShowId, seasonNumber, episodeNumber) }
-        assertFalse(episodeDetailsViewModel.uiState.value.isEpisodeDetailsLoading)
+        assertThat(episodeDetailsViewModel.uiState.value.isEpisodeDetailsLoading).isFalse()
     }
 
     @Test
-    fun `failure should handle error gracefully when getEpisodeCastMembers`() = runTest {
+    fun `getEpisodeCastMembers should handle errors gracefully when exception occurs`() = runTest {
+        // Given
         val exception = RuntimeException()
         coEvery { getEpisodeCastMembersUseCase(any(), any(), any()) } throws exception
 
@@ -235,77 +229,95 @@ class EpisodeDetailsViewModelTest {
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase
         )
 
+        // When
         testDispatcher.scheduler.advanceUntilIdle()
 
+        // Then
         coVerify { getEpisodeCastMembersUseCase(tvShowId, seasonNumber, episodeNumber) }
-        assertFalse(episodeDetailsViewModel.uiState.value.isEpisodeCastMembersLoading)
+        assertThat(episodeDetailsViewModel.uiState.value.isEpisodeCastMembersLoading).isFalse()
     }
 
     @Test
-    fun `onPlayTrailerClick should do nothing for now`() = runTest {
+    fun `onPlayTrailerClick should do nothing when called`() = runTest {
+        // When
         episodeDetailsViewModel.onPlayTrailerClick()
+
     }
 
     @Test
-    fun `state should have correct initial values`() = runTest {
+    fun `uiState should have correct default values when initialized`() = runTest {
+        // Given
         val initialState = EpisodeDetailsScreenState()
 
-        assertFalse(initialState.isEpisodeDetailsLoading)
-        assertFalse(initialState.isEpisodeCastMembersLoading)
-        assertEquals(EpisodeDetailsScreenState.EpisodeUiState(), initialState.episode)
-        assertTrue(initialState.guestsOfHonor.isEmpty())
-        assertFalse(initialState.isOverviewExpanded)
-        assertFalse(initialState.isSavedToList)
-        assertFalse(initialState.isRated)
-        assertFalse(initialState.addToListBottomSheetState.isVisible)
-        assertFalse(initialState.rateEpisodeBottomSheetState.isVisible)
+        // Then
+        assertThat(initialState.isEpisodeDetailsLoading).isFalse()
+        assertThat(initialState.isEpisodeCastMembersLoading).isFalse()
+        assertThat(initialState.episode).isEqualTo(EpisodeDetailsScreenState.EpisodeUiState())
+        assertThat(initialState.guestsOfHonor).isEmpty()
+        assertThat(initialState.isOverviewExpanded).isFalse()
+        assertThat(initialState.isSavedToList).isFalse()
+        assertThat(initialState.isRated).isFalse()
+        assertThat(initialState.addToListBottomSheetState.isVisible).isFalse()
+        assertThat(initialState.rateEpisodeBottomSheetState.isVisible).isFalse()
     }
 
     @Test
-    fun `EpisodeUiState should have correct default values`() = runTest {
+    fun `EpisodeUiState should have correct default values when initialized`() = runTest {
+        // Given
         val defaultUiState = EpisodeDetailsScreenState.EpisodeUiState()
 
-        assertEquals(0L, defaultUiState.id)
-        assertEquals("", defaultUiState.title)
-        assertEquals(0, defaultUiState.episodeNumber)
-        assertEquals(0.0, defaultUiState.rating)
-        assertEquals("", defaultUiState.trailerUrl)
-        assertEquals("", defaultUiState.duration)
-        assertEquals("", defaultUiState.releasedDate)
-        assertEquals(0, defaultUiState.currentSeason)
-        assertEquals("", defaultUiState.overview)
-        assertTrue(defaultUiState.categories.isEmpty())
-        assertTrue(defaultUiState.headerPictures.isEmpty())
+        // Then
+        assertThat(defaultUiState.id).isEqualTo(0L)
+        assertThat(defaultUiState.title).isEmpty()
+        assertThat(defaultUiState.episodeNumber).isEqualTo(0)
+        assertThat(defaultUiState.rating).isEqualTo(0.0)
+        assertThat(defaultUiState.trailerUrl).isEmpty()
+        assertThat(defaultUiState.duration).isEmpty()
+        assertThat(defaultUiState.releasedDate).isEmpty()
+        assertThat(defaultUiState.currentSeason).isEqualTo(0)
+        assertThat(defaultUiState.overview).isEmpty()
+        assertThat(defaultUiState.categories).isEmpty()
+        assertThat(defaultUiState.headerPictures).isEmpty()
     }
 
     @Test
-    fun `GuestsOfHonerUiState should have correct default values`() = runTest {
+    fun `GuestsOfHonerUiState should have correct default values when initialized`() = runTest {
+        // Given
         val defaultGuestState = EpisodeDetailsScreenState.GuestsOfHonerUiState()
 
-        assertEquals(0L, defaultGuestState.id)
-        assertEquals("", defaultGuestState.name)
-        assertEquals("", defaultGuestState.characterName)
-        assertEquals("", defaultGuestState.profilePictureURL)
+        // Then
+        assertThat(defaultGuestState.id).isEqualTo(0L)
+        assertThat(defaultGuestState.name).isEmpty()
+        assertThat(defaultGuestState.characterName).isEmpty()
+        assertThat(defaultGuestState.profilePictureURL).isEmpty()
     }
 
     @Test
-    fun `CategoryUiState should have correct default values`() = runTest {
+    fun `CategoryUiState should have correct default values when initialized`() = runTest {
+        // Given
         val defaultCategoryState = EpisodeDetailsScreenState.CategoryUiState()
 
-        assertEquals(0L, defaultCategoryState.id)
-        assertEquals("", defaultCategoryState.name)
+        // Then
+        assertThat(defaultCategoryState.id).isEqualTo(0L)
+        assertThat(defaultCategoryState.name).isEmpty()
     }
 
     @Test
-    fun `AddToListBottomSheetState should have correct default values`() = runTest {
+    fun `AddToListBottomSheetState should have correct default values when initialized`() = runTest {
+        // Given
         val defaultBottomSheetState = EpisodeDetailsScreenState.AddToListBottomSheetState()
-        assertFalse(defaultBottomSheetState.isVisible)
+
+        // Then
+        assertThat(defaultBottomSheetState.isVisible).isFalse()
     }
 
     @Test
-    fun `RateEpisodeBottomSheetState should have correct default values`() = runTest {
+    fun `RateEpisodeBottomSheetState should have correct default values when initialized`() = runTest {
+        // Given
         val defaultRateState = EpisodeDetailsScreenState.RateEpisodeBottomSheetState()
-        assertFalse(defaultRateState.isVisible)
+
+        // Then
+        assertThat(defaultRateState.isVisible).isFalse()
     }
 
     companion object {
@@ -369,6 +381,4 @@ class EpisodeDetailsViewModelTest {
     private val tvShowId = 123L
     private val seasonNumber = 1
     private val episodeNumber = 1
-
-
 }
