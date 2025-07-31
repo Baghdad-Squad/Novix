@@ -1,3 +1,0 @@
-package com.baghdad.viewmodel.trendingActors
-
-class TrendingActorViewModelTest 
