@@ -8,6 +8,7 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
+import com.baghdad.viewmodel.dummyData.DummyDataFactory.createMockGallery
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -227,10 +228,6 @@ class ActorDetailsViewModelTest {
                 trailerURL = "/trailer_$index",
                 headerImagesURLs = listOf("/header1_$index.jpg", "/header2_$index.jpg")
             )
-        }
-
-        private fun createMockGallery() = (1..15).map { index ->
-            "/gallery_image_$index.jpg"
         }
     }
 }
