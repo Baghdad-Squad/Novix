@@ -8,12 +8,15 @@ import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 
 class ContinueWatchingViewModel(
     private val getGenresUseCase: GetGenresUseCase,
     private val getAllContinueWatchingUseCase: GetAllContinueWatchingUseCase,
     private val getAllContinueWatchingByGenreUseCase: GetAllContinueWatchingByGenreUseCase,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<ContinueWatchingState, ContinueWatchingScreenEffect>(ContinueWatchingState()),
     ContinueWatchingInteractionListener {
     init {
@@ -25,6 +28,7 @@ class ContinueWatchingViewModel(
         tryToExecute(
             { if (currentState.selectedMediaTabIsMovie) getGenresUseCase.getMovieGenres() else getGenresUseCase.getTvShowGenres() },
             ::onGenresFetched,
+            dispatcher = defaultDispatcher
         )
     }
 

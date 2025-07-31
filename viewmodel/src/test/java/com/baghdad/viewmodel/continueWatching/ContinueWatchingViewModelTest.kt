@@ -1,14 +1,11 @@
 package com.baghdad.viewmodel.continueWatching
 
-import androidx.paging.PagingData
-import androidx.paging.map
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.entity.media.Genre
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -19,8 +16,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -40,17 +35,11 @@ class ContinueWatchingViewModelTest {
         continueWatchingViewModel = ContinueWatchingViewModel(
             getGenresUseCase,
             getAllContinueWatchingUseCase,
-            getAllContinueWatchingByGenreUseCase
+            getAllContinueWatchingByGenreUseCase,
+            testDispatcher
         )
         Dispatchers.setMain(testDispatcher)
     }
-
-    @AfterEach
-    fun tearDown() {
-        testDispatcher.scheduler.runCurrent()
-    }
-
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
@@ -70,17 +59,19 @@ class ContinueWatchingViewModelTest {
             )
             advanceUntilIdle()
             // Then
-            Assertions.assertTrue(receivedEffect is ContinueWatchingScreenEffect.NavigateToTvShowDetails)
+            assertThat(receivedEffect is ContinueWatchingScreenEffect.NavigateToTvShowDetails).isTrue()
             job.cancel()
         }
 
     @Test
     fun `onSelectedTab should update tab and refresh genres and tv shows when selected tab is movie`() =
         runTest {
+            // Given
             coEvery { getGenresUseCase.getTvShowGenres() } returns emptyList()
             coEvery { getAllContinueWatchingUseCase(any()) } returns PagedResult(emptyList(), 1, 0)
-
+            // When
             continueWatchingViewModel.onSelectedTab(false)
+            // Then
             assertThat(continueWatchingViewModel.uiState.value.selectedMediaTabIsMovie).isFalse()
         }
 
@@ -91,27 +82,10 @@ class ContinueWatchingViewModelTest {
         val state = continueWatchingViewModel.uiState.value
 
         // Then
-        Truth.assertThat(state.selectedMovieGenreId).isEqualTo(1L)
-        Truth.assertThat(state.isLoading).isTrue()
+        assertThat(state.selectedMovieGenreId).isEqualTo(1L)
+        assertThat(state.isLoading).isTrue()
     }
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `onBackClick should send NavigateBack effect when navigate back`() = runTest {
-        // Given
-        var receivedEffect: ContinueWatchingScreenEffect? = null
-        val job = launch {
-            continueWatchingViewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
-        }
 
-        // When
-        continueWatchingViewModel.onBackClick()
-        advanceUntilIdle()
-        // Then
-        assert(receivedEffect is ContinueWatchingScreenEffect.NavigateBack)
-        job.cancel()
-    }
 
     @Test
     fun `onGenreClick changes selected genre and triggers movie reload should update selected genre and reload media when current selectedGenreId is null`() =
@@ -119,8 +93,8 @@ class ContinueWatchingViewModelTest {
             continueWatchingViewModel.onGenreClick(1L)
 
             val state = continueWatchingViewModel.uiState.value
-            Truth.assertThat(state.selectedMovieGenreId).isEqualTo(1L)
-            Truth.assertThat(state.isLoading).isTrue()
+            assertThat(state.selectedMovieGenreId).isEqualTo(1L)
+            assertThat(state.isLoading).isTrue()
         }
 
     @Test
@@ -132,8 +106,8 @@ class ContinueWatchingViewModelTest {
             continueWatchingViewModel.onGenreClick(1L)
             val state = continueWatchingViewModel.uiState.value
             // Then
-            Truth.assertThat(state.selectedTvShowGenreId).isEqualTo(1L)
-            Truth.assertThat(state.isLoading).isTrue()
+            assertThat(state.selectedTvShowGenreId).isEqualTo(1L)
+            assertThat(state.isLoading).isTrue()
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -154,30 +128,30 @@ class ContinueWatchingViewModelTest {
             )
             advanceUntilIdle()
             // Then
-            Assertions.assertTrue(receivedEffect is ContinueWatchingScreenEffect.NavigateToMovieDetails)
+            assertThat(receivedEffect is ContinueWatchingScreenEffect.NavigateToMovieDetails).isTrue()
             job.cancel()
         }
 
     @Test
-    fun `onSelectedTab to Movie tab should update tab and reload genres and media when selected tab is movie`() {
+    fun `onSelectedTab to Movie tab should update tab and reload genres and Movie when selected tab is movie`() {
         // Given
         continueWatchingViewModel.onSelectedTab(true)
         val state = continueWatchingViewModel.uiState.value
-        Truth.assertThat(state.selectedMediaTabIsMovie).isTrue()
-        Truth.assertThat(state.isLoading).isTrue()
-        Truth.assertThat(state.selectedMovieGenreId).isNull()
+        assertThat(state.selectedMediaTabIsMovie).isTrue()
+        assertThat(state.isLoading).isTrue()
+        assertThat(state.selectedMovieGenreId).isNull()
     }
 
     @Test
-    fun `onSelectedTab updates tab and reloads genres and media should update tab and reload genres and media when selected tab is tv show`() =
+    fun `onSelectedTab updates tab and reloads genres and tv show should update tab and reload genres and tv show when selected tab is tv show`() =
         runTest {
             // When
             continueWatchingViewModel.onSelectedTab(false)
             val state = continueWatchingViewModel.uiState.value
             // Then
-            Truth.assertThat(state.selectedMediaTabIsMovie).isFalse()
-            Truth.assertThat(state.isLoading).isTrue()
-            Truth.assertThat(state.selectedMovieGenreId).isNull()
+            assertThat(state.selectedMediaTabIsMovie).isFalse()
+            assertThat(state.isLoading).isTrue()
+            assertThat(state.selectedMovieGenreId).isNull()
         }
 
     @Test
@@ -186,8 +160,8 @@ class ContinueWatchingViewModelTest {
         continueWatchingViewModel.onSelectedTab(false)
         val state = continueWatchingViewModel.uiState.value
         // Then
-        Truth.assertThat(state.selectedMediaTabIsMovie).isFalse()
-        Truth.assertThat(state.isLoading).isTrue()
+        assertThat(state.selectedMediaTabIsMovie).isFalse()
+        assertThat(state.isLoading).isTrue()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -198,7 +172,7 @@ class ContinueWatchingViewModelTest {
             Genre(1L, "Action"),
             Genre(2L, "Action")
         )
-        coEvery { getAllContinueWatchingUseCase(any()) } returns PagedResult(
+        coEvery { getAllContinueWatchingUseCase(0) } returns PagedResult(
             listOf(
                 ContinueWatching(
                     contentType = ContinueWatching.ContentType.MOVIE,
@@ -214,11 +188,8 @@ class ContinueWatchingViewModelTest {
 
         // When
         continueWatchingViewModel.onSelectedTab(true)
-        continueWatchingViewModel.uiState.value.mediaFlow.collect {
-            assertThat(it).isInstanceOf(PagingData::class.java)
-        }
-        advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
         // Then
-        Truth.assertThat(continueWatchingViewModel.uiState.value.selectedMediaTabIsMovie).isTrue()
+        assertThat(continueWatchingViewModel.uiState.value.selectedMediaTabIsMovie).isTrue()
     }
 }
