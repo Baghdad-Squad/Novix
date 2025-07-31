@@ -150,3 +150,4 @@ class TopRatingViewModel(
         BaseSnackBarMessage.UnknownError
 
 }
+
