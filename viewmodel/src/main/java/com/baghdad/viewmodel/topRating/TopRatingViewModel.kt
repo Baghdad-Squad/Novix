@@ -122,10 +122,13 @@ class TopRatingViewModel(
     }
 
     override fun onSelectedTab(selectedTab: TopRatingTab) {
+
         if (currentState.selectedTab == selectedTab) return
+
         updateState {
             it.copy(selectedTab = selectedTab)
         }
+
         when (selectedTab) {
             TopRatingTab.MOVIES -> {
                 getMovieGenres()
