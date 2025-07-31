@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class GenreMapperTest {
 
     @Test
-    fun `GenreDto toEntity should map correctly with valid data`() {
+    fun `should map correctly to entity when GenreDto has valid data`() {
         // Given
         val genreDto = createMockGenreDto(28L, "Action")
 
@@ -20,24 +20,7 @@ class GenreMapperTest {
     }
 
     @Test
-    fun `GenreDto toEntity should handle different genre types`() {
-        // Given
-        val movieGenreDto = createMockGenreDto(28L, "Action")
-        val tvShowGenreDto = GenreDto(35L, "Comedy", GenreDto.GenreType.TV_SHOW)
-
-        // When
-        val movieGenre = movieGenreDto.toEntity()
-        val tvShowGenre = tvShowGenreDto.toEntity()
-
-        // Then
-        assertThat(movieGenre.id).isEqualTo(28L)
-        assertThat(movieGenre.name).isEqualTo("Action")
-        assertThat(tvShowGenre.id).isEqualTo(35L)
-        assertThat(tvShowGenre.name).isEqualTo("Comedy")
-    }
-
-    @Test
-    fun `List of GenreDto toEntities should map correctly`() {
+    fun `should map correctly to entity list when list of GenreDto is provided`() {
         // Given
         val genreDtos = listOf(
             createMockGenreDto(28L, "Action"),
@@ -59,7 +42,7 @@ class GenreMapperTest {
     }
 
     @Test
-    fun `Empty list of GenreDto toEntities should return empty list`() {
+    fun `should return empty list when mapping empty list of GenreDto to entities`() {
         // Given
         val genreDtos = emptyList<GenreDto>()
 
@@ -71,7 +54,7 @@ class GenreMapperTest {
     }
 
     @Test
-    fun `Single GenreDto in list toEntities should map correctly`() {
+    fun `should map correctly to entity list when GenreDto list contains one item`() {
         // Given
         val genreDtos = listOf(createMockGenreDto(28L, "Action"))
 

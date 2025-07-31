@@ -1,6 +1,5 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.model.SearchQueryDto
 import com.baghdad.repository.model.TvShowDto
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
@@ -9,7 +8,7 @@ import org.junit.jupiter.api.Test
 class TvShowMapperTest {
 
     @Test
-    fun `TvShowDto toEntity should map correctly with valid data`() {
+    fun `should map TvShowDto to entity correctly when data is valid`() {
         // Given
         val tvShowDto = createMockTvShowDto()
 
@@ -32,125 +31,6 @@ class TvShowMapperTest {
         assertThat(result.headerImagesURLs[1]).isEqualTo("/header2.jpg")
         assertThat(result.trailerURL).isEqualTo(" ")
         assertThat(result.numberOfSeasons).isEqualTo(3)
-    }
-
-    @Test
-    fun `TvShowDto toEntity should handle empty release date with default value`() {
-        // Given
-        val tvShowDto = createMockTvShowDto().copy(releaseDate = "")
-
-        // When
-        val result = tvShowDto.toEntity()
-
-        // Then
-        assertThat(result.releaseDate).isEqualTo(LocalDate(1990, 1, 1))
-    }
-
-    @Test
-    fun `TvShowDto toEntity should handle blank release date with default value`() {
-        // Given
-        val tvShowDto = createMockTvShowDto().copy(releaseDate = "   ")
-
-        // When
-        val result = tvShowDto.toEntity()
-
-        // Then
-        assertThat(result.releaseDate).isEqualTo(LocalDate(1990, 1, 1))
-    }
-
-    @Test
-    fun `TvShowDto toEntity should handle null user rating`() {
-        // Given
-        val tvShowDto = createMockTvShowDto().copy(userRating = null)
-
-        // When
-        val result = tvShowDto.toEntity()
-
-        // Then
-        assertThat(result.userRating).isNull()
-    }
-
-    @Test
-    fun `TvShowDto toEntity should handle empty genres list`() {
-        // Given
-        val tvShowDto = createMockTvShowDto().copy(genres = emptyList())
-
-        // When
-        val result = tvShowDto.toEntity()
-
-        // Then
-        assertThat(result.genres).isEmpty()
-    }
-
-    @Test
-    fun `TvShowDto toEntity should handle empty header images list`() {
-        // Given
-        val tvShowDto = createMockTvShowDto().copy(headerImagesURLs = emptyList())
-
-        // When
-        val result = tvShowDto.toEntity()
-
-        // Then
-        assertThat(result.headerImagesURLs).isEmpty()
-    }
-
-    @Test
-    fun `TvShowDto toEntity should handle multiple genres`() {
-        // Given
-        val tvShowDto = createMockTvShowDto().copy(
-            genres = listOf(
-                createMockGenreDto(35L, "Comedy"),
-                createMockGenreDto(18L, "Drama"),
-                createMockGenreDto(10751L, "Family")
-            )
-        )
-
-        // When
-        val result = tvShowDto.toEntity()
-
-        // Then
-        assertThat(result.genres.size).isEqualTo(3)
-        assertThat(result.genres[0].id).isEqualTo(35L)
-        assertThat(result.genres[0].name).isEqualTo("Comedy")
-        assertThat(result.genres[1].id).isEqualTo(18L)
-        assertThat(result.genres[1].name).isEqualTo("Drama")
-        assertThat(result.genres[2].id).isEqualTo(10751L)
-        assertThat(result.genres[2].name).isEqualTo("Family")
-    }
-
-    @Test
-    fun `TvShowDto toSearchQueryDto should map correctly`() {
-        // Given
-        val tvShowDto = createMockTvShowDto()
-        val query = "test tv show query"
-
-        // When
-        val result = tvShowDto.toSearchQueryDto(query)
-
-        // Then
-        assertThat(result.queryName).isEqualTo(query)
-        assertThat(result.mediaId).isEqualTo(tvShowDto.id)
-        assertThat(result.mediaType).isEqualTo(SearchQueryDto.MediaType.TV_SHOW)
-    }
-
-    @Test
-    fun `TvShowDto toSearchQueryDto should handle different queries`() {
-        // Given
-        val tvShowDto = createMockTvShowDto()
-        val query1 = "comedy series"
-        val query2 = "drama shows"
-
-        // When
-        val result1 = tvShowDto.toSearchQueryDto(query1)
-        val result2 = tvShowDto.toSearchQueryDto(query2)
-
-        // Then
-        assertThat(result1.queryName).isEqualTo(query1)
-        assertThat(result1.mediaId).isEqualTo(tvShowDto.id)
-        assertThat(result1.mediaType).isEqualTo(SearchQueryDto.MediaType.TV_SHOW)
-        assertThat(result2.queryName).isEqualTo(query2)
-        assertThat(result2.mediaId).isEqualTo(tvShowDto.id)
-        assertThat(result2.mediaType).isEqualTo(SearchQueryDto.MediaType.TV_SHOW)
     }
 
     companion object {

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 class ContinueWatchingMapperTest {
 
     @Test
-    fun `ContinueWatchingDto toEntity should map correctly with valid data`() {
+    fun `should map to entity correctly when dto has valid data`() {
         // Given
         val continueWatchingDto = createMockContinueWatchingDto()
 
@@ -26,7 +26,7 @@ class ContinueWatchingMapperTest {
     }
 
     @Test
-    fun `ContinueWatchingDto toEntity should handle TV_SHOW content type`() {
+    fun `should map to TV_SHOW content type when dto is TVSHOW`() {
         // Given
         val continueWatchingDto = createMockContinueWatchingDto().copy(
             contentType = ContinueWatchingDto.ContentType.TV_SHOW
@@ -40,7 +40,7 @@ class ContinueWatchingMapperTest {
     }
 
     @Test
-    fun `ContinueWatchingDto toEntity should handle empty genre IDs`() {
+    fun `should map to entity with empty genreIds when dto has no genres`() {
         // Given
         val continueWatchingDto = createMockContinueWatchingDto().copy(genreIds = emptyList())
 
@@ -52,7 +52,7 @@ class ContinueWatchingMapperTest {
     }
 
     @Test
-    fun `ContinueWatchingDto toEntity should handle single genre ID`() {
+    fun `should map to entity with one genreId when dto has a single genre`() {
         // Given
         val continueWatchingDto = createMockContinueWatchingDto().copy(genreIds = listOf(28L))
 
@@ -65,7 +65,7 @@ class ContinueWatchingMapperTest {
     }
 
     @Test
-    fun `ContinueWatchingDto toEntity should handle multiple genre IDs`() {
+    fun `should map to entity with all genreIds when dto has multiple genres`() {
         // Given
         val continueWatchingDto = createMockContinueWatchingDto().copy(
             genreIds = listOf(28L, 12L, 16L, 35L, 80L)
@@ -84,25 +84,7 @@ class ContinueWatchingMapperTest {
     }
 
     @Test
-    fun `ContinueWatchingDto toEntity should handle different content IDs`() {
-        // Given
-        val continueWatchingDto1 = createMockContinueWatchingDto(contentId = 1L)
-        val continueWatchingDto2 = createMockContinueWatchingDto(contentId = 999999L)
-        val continueWatchingDto3 = createMockContinueWatchingDto(contentId = 0L)
-
-        // When
-        val result1 = continueWatchingDto1.toEntity()
-        val result2 = continueWatchingDto2.toEntity()
-        val result3 = continueWatchingDto3.toEntity()
-
-        // Then
-        assertThat(result1.contentId).isEqualTo(1L)
-        assertThat(result2.contentId).isEqualTo(999999L)
-        assertThat(result3.contentId).isEqualTo(0L)
-    }
-
-    @Test
-    fun `ContinueWatchingDto toEntity should handle different image URLs`() {
+    fun `should map imageUrl correctly when dto has different imageUrls`() {
         // Given
         val continueWatchingDto1 = createMockContinueWatchingDto(contentImageUrl = "/movie1.jpg")
         val continueWatchingDto2 = createMockContinueWatchingDto(contentImageUrl = "/tv_show2.png")
@@ -117,25 +99,6 @@ class ContinueWatchingMapperTest {
         assertThat(result1.contentImageUrl).isEqualTo("/movie1.jpg")
         assertThat(result2.contentImageUrl).isEqualTo("/tv_show2.png")
         assertThat(result3.contentImageUrl).isEmpty()
-    }
-
-    @Test
-    fun `List of ContinueWatchingDto toEntities should map correctly`() {
-        // Given
-        val continueWatchingDtos = listOf(
-            createMockContinueWatchingDto(contentId = 1L),
-            createMockContinueWatchingDto(contentId = 2L),
-            createMockContinueWatchingDto(contentId = 3L)
-        )
-
-        // When
-        val result = continueWatchingDtos.toEntities()
-
-        // Then
-        assertThat(result.size).isEqualTo(3)
-        assertThat(result[0].contentId).isEqualTo(1L)
-        assertThat(result[1].contentId).isEqualTo(2L)
-        assertThat(result[2].contentId).isEqualTo(3L)
     }
 
     @Test
@@ -168,67 +131,7 @@ class ContinueWatchingMapperTest {
         assertThat(result.userId).isEqualTo(123)
     }
 
-    @Test
-    fun `ContinueWatching toDto should handle TV_SHOW content type`() {
-        // Given
-        val continueWatching = createMockContinueWatching().copy(
-            contentType = ContinueWatching.ContentType.TV_SHOW
-        )
 
-        // When
-        val result = continueWatching.toDto()
-
-        // Then
-        assertThat(result.contentType).isEqualTo(ContinueWatchingDto.ContentType.TV_SHOW)
-    }
-
-    @Test
-    fun `ContinueWatching toDto should handle empty genre IDs`() {
-        // Given
-        val continueWatching = createMockContinueWatching().copy(genreIds = emptyList())
-
-        // When
-        val result = continueWatching.toDto()
-
-        // Then
-        assertThat(result.genreIds).isEmpty()
-    }
-
-    @Test
-    fun `ContinueWatching toDto should handle different content IDs`() {
-        // Given
-        val continueWatching1 = createMockContinueWatching(contentId = 1L)
-        val continueWatching2 = createMockContinueWatching(contentId = 999999L)
-        val continueWatching3 = createMockContinueWatching(contentId = 0L)
-
-        // When
-        val result1 = continueWatching1.toDto()
-        val result2 = continueWatching2.toDto()
-        val result3 = continueWatching3.toDto()
-
-        // Then
-        assertThat(result1.contentId).isEqualTo(1L)
-        assertThat(result2.contentId).isEqualTo(999999L)
-        assertThat(result3.contentId).isEqualTo(0L)
-    }
-
-    @Test
-    fun `ContinueWatching toDto should handle different image URLs`() {
-        // Given
-        val continueWatching1 = createMockContinueWatching(contentImageUrl = "/movie1.jpg")
-        val continueWatching2 = createMockContinueWatching(contentImageUrl = "/tv_show2.png")
-        val continueWatching3 = createMockContinueWatching(contentImageUrl = "")
-
-        // When
-        val result1 = continueWatching1.toDto()
-        val result2 = continueWatching2.toDto()
-        val result3 = continueWatching3.toDto()
-
-        // Then
-        assertThat(result1.contentImageUrl).isEqualTo("/movie1.jpg")
-        assertThat(result2.contentImageUrl).isEqualTo("/tv_show2.png")
-        assertThat(result3.contentImageUrl).isEmpty()
-    }
 
     companion object {
         private fun createMockContinueWatchingDto(

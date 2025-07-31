@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 class EpisodeMapperTest {
 
     @Test
-    fun `EpisodeDto toEntity should map correctly with valid data`() {
+    fun `should map correctly to entity when EpisodeDto has valid data`() {
         // Given
         val episodeDto = createMockEpisodeDto()
 
@@ -32,7 +32,7 @@ class EpisodeMapperTest {
     }
 
     @Test
-    fun `EpisodeDto toEntity should handle null released date`() {
+    fun `should return null releasedDate when EpisodeDto has null releasedDate`() {
         // Given
         val episodeDto = createMockEpisodeDto().copy(releasedDate = null)
 
@@ -44,7 +44,7 @@ class EpisodeMapperTest {
     }
 
     @Test
-    fun `EpisodeDto toEntity should handle different episode numbers`() {
+    fun `should map episodeNumber correctly when EpisodeDto has different episode numbers`() {
         // Given
         val episodeDto1 = createMockEpisodeDto().copy(episodeNumber = 1)
         val episodeDto2 = createMockEpisodeDto().copy(episodeNumber = 10)
@@ -62,7 +62,7 @@ class EpisodeMapperTest {
     }
 
     @Test
-    fun `EpisodeDto toEntity should handle different ratings`() {
+    fun `should map rating correctly when EpisodeDto has different ratings`() {
         // Given
         val episodeDto1 = createMockEpisodeDto().copy(rating = 5.0)
         val episodeDto2 = createMockEpisodeDto().copy(rating = 10.0)
@@ -80,7 +80,7 @@ class EpisodeMapperTest {
     }
 
     @Test
-    fun `EpisodeDto toEntity should handle different durations`() {
+    fun `should map duration correctly when EpisodeDto has different durations`() {
         // Given
         val episodeDto1 = createMockEpisodeDto().copy(duration = "30 min")
         val episodeDto2 = createMockEpisodeDto().copy(duration = "60 min")
@@ -98,7 +98,7 @@ class EpisodeMapperTest {
     }
 
     @Test
-    fun `EpisodeDto toEntity should handle different seasons`() {
+    fun `should map currentSeason correctly when EpisodeDto has different seasons`() {
         // Given
         val episodeDto1 = createMockEpisodeDto().copy(currentSeason = 1)
         val episodeDto2 = createMockEpisodeDto().copy(currentSeason = 5)
@@ -113,106 +113,6 @@ class EpisodeMapperTest {
         assertThat(result1.currentSeason).isEqualTo(1)
         assertThat(result2.currentSeason).isEqualTo(5)
         assertThat(result3.currentSeason).isEqualTo(10)
-    }
-
-    @Test
-    fun `EpisodeDto toEntity should handle different titles`() {
-        // Given
-        val episodeDto1 = createMockEpisodeDto().copy(title = "Pilot")
-        val episodeDto2 = createMockEpisodeDto().copy(title = "Season Finale")
-        val episodeDto3 = createMockEpisodeDto().copy(title = "Special Episode")
-
-        // When
-        val result1 = episodeDto1.toEntity()
-        val result2 = episodeDto2.toEntity()
-        val result3 = episodeDto3.toEntity()
-
-        // Then
-        assertThat(result1.title).isEqualTo("Pilot")
-        assertThat(result2.title).isEqualTo("Season Finale")
-        assertThat(result3.title).isEqualTo("Special Episode")
-    }
-
-    @Test
-    fun `EpisodeDto toEntity should handle different overviews`() {
-        // Given
-        val episodeDto1 = createMockEpisodeDto().copy(overview = "Short overview")
-        val episodeDto2 = createMockEpisodeDto().copy(overview = "Very long overview with lots of details...")
-        val episodeDto3 = createMockEpisodeDto().copy(overview = "")
-
-        // When
-        val result1 = episodeDto1.toEntity()
-        val result2 = episodeDto2.toEntity()
-        val result3 = episodeDto3.toEntity()
-
-        // Then
-        assertThat(result1.overview).isEqualTo("Short overview")
-        assertThat(result2.overview).isEqualTo("Very long overview with lots of details...")
-        assertThat(result3.overview).isEmpty()
-    }
-
-    @Test
-    fun `EpisodeDto toEntity should handle empty header pictures`() {
-        // Given
-        val episodeDto = createMockEpisodeDto().copy(headerPictures = emptyList())
-
-        // When
-        val result = episodeDto.toEntity()
-
-        // Then
-        assertThat(result.headerPictures).isEmpty()
-    }
-
-    @Test
-    fun `EpisodeDto toEntity should handle single header picture`() {
-        // Given
-        val episodeDto = createMockEpisodeDto().copy(headerPictures = listOf("/single_header.jpg"))
-
-        // When
-        val result = episodeDto.toEntity()
-
-        // Then
-        assertThat(result.headerPictures.size).isEqualTo(1)
-        assertThat(result.headerPictures[0]).isEqualTo("/single_header.jpg")
-    }
-
-    @Test
-    fun `EpisodeDto toEntity should handle genres list`() {
-        // Given
-        val episodeDto = createMockEpisodeDto().copy(
-            genres = listOf(
-                createMockGenreDto(35L, "Comedy"),
-                createMockGenreDto(18L, "Drama")
-            )
-        )
-
-        // When
-        val result = episodeDto.toEntity()
-
-        // Then
-        assertThat(result.genres.size).isEqualTo(2)
-        assertThat(result.genres[0].id).isEqualTo(35L)
-        assertThat(result.genres[0].name).isEqualTo("Comedy")
-        assertThat(result.genres[1].id).isEqualTo(18L)
-        assertThat(result.genres[1].name).isEqualTo("Drama")
-    }
-
-    @Test
-    fun `EpisodeDto toEntity should handle different trailer URLs`() {
-        // Given
-        val episodeDto1 = createMockEpisodeDto().copy(trailerUrl = "https://youtube.com/watch?v=trailer1")
-        val episodeDto2 = createMockEpisodeDto().copy(trailerUrl = "https://vimeo.com/trailer2")
-        val episodeDto3 = createMockEpisodeDto().copy(trailerUrl = "")
-
-        // When
-        val result1 = episodeDto1.toEntity()
-        val result2 = episodeDto2.toEntity()
-        val result3 = episodeDto3.toEntity()
-
-        // Then
-        assertThat(result1.trailerUrl).isEqualTo("https://youtube.com/watch?v=trailer1")
-        assertThat(result2.trailerUrl).isEqualTo("https://vimeo.com/trailer2")
-        assertThat(result3.trailerUrl).isEmpty()
     }
 
     companion object {

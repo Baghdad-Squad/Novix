@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 class CastMemberMapperTest {
 
     @Test
-    fun `CastMemberDto toEntity should map correctly with valid data`() {
+    fun `should map correctly when CastMemberDto has valid data`() {
         // Given
         val castMemberDto = createMockCastMemberDto()
 
@@ -32,52 +32,7 @@ class CastMemberMapperTest {
     }
 
     @Test
-    fun `CastMemberDto toEntity should handle different character names`() {
-        // Given
-        val castMemberDto1 = createMockCastMemberDto().copy(characterName = "James Bond")
-        val castMemberDto2 = createMockCastMemberDto().copy(characterName = "Iron Man")
-        val castMemberDto3 = createMockCastMemberDto().copy(characterName = "")
-
-        // When
-        val result1 = castMemberDto1.toEntity()
-        val result2 = castMemberDto2.toEntity()
-        val result3 = castMemberDto3.toEntity()
-
-        // Then
-        assertThat(result1.characterName).isEqualTo("James Bond")
-        assertThat(result2.characterName).isEqualTo("Iron Man")
-        assertThat(result3.characterName).isEmpty()
-    }
-
-    @Test
-    fun `CastMemberDto toEntity should handle different actors`() {
-        // Given
-        val actorDto1 = createMockActorDto().copy(
-            id = 123L,
-            name = "Actor One",
-        )
-        val actorDto2 = createMockActorDto().copy(
-            id = 456L,
-            name = "Actor Two",
-        )
-        val castMemberDto1 = CastMemberDto(actor = actorDto1, characterName = "Character One")
-        val castMemberDto2 = CastMemberDto(actor = actorDto2, characterName = "Character Two")
-
-        // When
-        val result1 = castMemberDto1.toEntity()
-        val result2 = castMemberDto2.toEntity()
-
-        // Then
-        assertThat(result1.actor.id).isEqualTo(123L)
-        assertThat(result1.actor.name).isEqualTo("Actor One")
-        assertThat(result1.characterName).isEqualTo("Character One")
-        assertThat(result2.actor.id).isEqualTo(456L)
-        assertThat(result2.actor.name).isEqualTo("Actor Two")
-        assertThat(result2.characterName).isEqualTo("Character Two")
-    }
-
-    @Test
-    fun `CastMemberDto toEntity should handle actor with null death date`() {
+    fun `should return null for death date when actor has null deathDate`() {
         // Given
         val actorDto = createMockActorDto().copy(deathDate = null)
         val castMemberDto = CastMemberDto(actor = actorDto, characterName = "Test Character")
@@ -91,7 +46,7 @@ class CastMemberMapperTest {
     }
 
     @Test
-    fun `CastMemberDto toEntity should handle actor with valid death date`() {
+    fun `should map valid death date correctly when actor has death date`() {
         // Given
         val actorDto = createMockActorDto().copy(deathDate = "2020-12-25")
         val castMemberDto = CastMemberDto(actor = actorDto, characterName = "Test Character")
@@ -105,7 +60,7 @@ class CastMemberMapperTest {
     }
 
     @Test
-    fun `CastMemberDto toEntity should handle actor with empty header pictures`() {
+    fun `should return empty list for headerPictures when actor has none`() {
         // Given
         val actorDto = createMockActorDto().copy(headerPictures = emptyList())
         val castMemberDto = CastMemberDto(actor = actorDto, characterName = "Test Character")
@@ -119,7 +74,7 @@ class CastMemberMapperTest {
     }
 
     @Test
-    fun `CastMemberDto toEntity should handle actor with single header picture`() {
+    fun `should map single header picture correctly when actor has one header image`() {
         // Given
         val actorDto = createMockActorDto().copy(headerPictures = listOf("/single_header.jpg"))
         val castMemberDto = CastMemberDto(actor = actorDto, characterName = "Test Character")

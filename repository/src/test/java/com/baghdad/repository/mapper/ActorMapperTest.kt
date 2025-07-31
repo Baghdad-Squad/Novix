@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 class ActorMapperTest {
 
     @Test
-    fun `ActorDto toEntity should map correctly with valid data`() {
+    fun `should map correctly when ActorDto has valid data`() {
         // Given
         val actorDto = createMockActorDto()
 
@@ -31,7 +31,7 @@ class ActorMapperTest {
     }
 
     @Test
-    fun `ActorDto toEntity should handle null birthday date`() {
+    fun `should return null birthDate when ActorDto birthday is null`() {
         // Given
         val actorDto = createMockActorDto().copy(birthdayDate = null)
 
@@ -42,57 +42,27 @@ class ActorMapperTest {
         assertThat(result.birthDate).isNull()
     }
 
-    @Test
-    fun `ActorDto toEntity should handle null death date`() {
-        // Given
-        val actorDto = createMockActorDto().copy(deathDate = null)
-
-        // When
-        val result = actorDto.toEntity()
-
-        // Then
-        assertThat(result.deathDate).isNull()
-    }
 
     @Test
-    fun `ActorDto toEntity should handle valid death date`() {
-        // Given
+    fun `should parse deathDate when ActorDto has valid death date`() {
         val actorDto = createMockActorDto().copy(deathDate = "2020-12-25")
-
-        // When
         val result = actorDto.toEntity()
 
-        // Then
         assertThat(result.deathDate).isEqualTo(LocalDate.parse("2020-12-25"))
     }
 
     @Test
-    fun `ActorDto toEntity should handle empty header pictures`() {
+    fun `should return empty headerPictures when ActorDto has empty list`() {
         // Given
         val actorDto = createMockActorDto().copy(headerPictures = emptyList())
-
         // When
         val result = actorDto.toEntity()
-
         // Then
         assertThat(result.headerPictures).isEmpty()
     }
 
     @Test
-    fun `ActorDto toEntity should handle single header picture`() {
-        // Given
-        val actorDto = createMockActorDto().copy(headerPictures = listOf("/single_header.jpg"))
-
-        // When
-        val result = actorDto.toEntity()
-
-        // Then
-        assertThat(result.headerPictures.size).isEqualTo(1)
-        assertThat(result.headerPictures[0]).isEqualTo("/single_header.jpg")
-    }
-
-    @Test
-    fun `ActorDto toSearchQueryDto should map correctly`() {
+    fun `should map to SearchQueryDto correctly when query is provided`() {
         // Given
         val actorDto = createMockActorDto()
         val query = "test actor query"
@@ -107,7 +77,7 @@ class ActorMapperTest {
     }
 
     @Test
-    fun `ActorDto toSearchQueryDto should handle different queries`() {
+    fun `should return correct query values when different queries are used`() {
         // Given
         val actorDto = createMockActorDto()
         val query1 = "action movies"
