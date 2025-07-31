@@ -18,7 +18,7 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns list containing poster URL`() = runTest {
+    fun `getMovieGalleryUseCase() should return list containing poster URL`() = runTest {
         // Given
         val movieId = 1L
         coEvery { movieRepository.getMovieImages(movieId) } returns listOf("https://example.com/shawshank.jpg")
@@ -32,7 +32,7 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns empty list when no images available`() = runTest {
+    fun `getMovieGalleryUseCase() should return empty list when no images available`() = runTest {
         // Given
         val movieId = 2L
         coEvery { movieRepository.getMovieImages(movieId) } returns emptyList()
@@ -45,7 +45,7 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns URLs with special characters`() = runTest {
+    fun `getMovieGalleryUseCase() should return URLs with special characters`() = runTest {
         // Given
         val movieId = 3L
         val specialUrls = listOf("https://example.com/ポスター.jpg")
@@ -59,7 +59,7 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns long URL`() = runTest {
+    fun `getMovieGalleryUseCase() should return long URL`() = runTest {
         // Given
         val movieId = 4L
         val longUrl = "https://example.com/images/poster/with/a/very/long/path?param=value"
@@ -73,7 +73,7 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase makes exactly one repository call`() = runTest {
+    fun `getMovieGalleryUseCase should call repository exactly once when invoked`() = runTest {
         // Given
         val movieId = 5L
         coEvery { movieRepository.getMovieImages(movieId) } returns listOf("https://example.com/1.jpg")
@@ -86,7 +86,7 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns different images for different movies`() = runTest {
+    fun `getMovieGalleryUseCase() should return different images for different movies`() = runTest {
         // Given
         val movieId1 = 6L
         val movieId2 = 7L
@@ -102,7 +102,7 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns HTTPS URLs`() = runTest {
+    fun `getMovieGalleryUseCase() should return HTTPS URLs`() = runTest {
         // Given
         val movieId = 8L
         coEvery { movieRepository.getMovieImages(movieId) } returns listOf("https://secure.example.com/poster.jpg")
@@ -115,7 +115,7 @@ class GetMovieGalleryUseCaseTest {
     }
 
     @Test
-    fun `getMovieGalleryUseCase returns URLs with query parameters`() = runTest {
+    fun `getMovieGalleryUseCase() should return URLs with query parameters`() = runTest {
         // Given
         val movieId = 9L
         val urlWithParams = "https://example.com/poster.jpg?width=500&quality=80"
