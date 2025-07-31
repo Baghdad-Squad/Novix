@@ -231,7 +231,7 @@ class TvShowDetailsScreenStateTest {
         val name = "Pilot"
         val episodeNumber = 1
         val rating = 8.2
-        val duration = "58 min"
+        val duration = 58
         val releaseDate = "20 Jan 2008"
         val currentSeason = 1
 
@@ -291,9 +291,9 @@ class TvShowDetailsScreenStateTest {
         val cast2 = TvShowDetailsScreenState.CastMemberUiState(1L, "Actor 1", "/image1.jpg", "Character 1")
         val cast3 = TvShowDetailsScreenState.CastMemberUiState(2L, "Actor 2", "/image2.jpg", "Character 2")
 
-        val episode1 = TvShowDetailsScreenState.EpisodeUiState(1L, "Episode 1", 1, 8.5, "45 min", "01 Jan 2008", 1)
-        val episode2 = TvShowDetailsScreenState.EpisodeUiState(1L, "Episode 1", 1, 8.5, "45 min", "01 Jan 2008", 1)
-        val episode3 = TvShowDetailsScreenState.EpisodeUiState(2L, "Episode 2", 2, 8.7, "47 min", "08 Jan 2008", 1)
+        val episode1 = TvShowDetailsScreenState.EpisodeUiState(1L, "Episode 1", 1, 8.5, 45, "01 Jan 2008", 1)
+        val episode2 = TvShowDetailsScreenState.EpisodeUiState(1L, "Episode 1", 1, 8.5, 45, "01 Jan 2008", 1)
+        val episode3 = TvShowDetailsScreenState.EpisodeUiState(2L, "Episode 2", 2, 8.7, 47, "08 Jan 2008", 1)
 
         val tvShowInfo1 = TvShowDetailsScreenState.TvShowInfoUiState(title = "Show 1")
         val tvShowInfo2 = TvShowDetailsScreenState.TvShowInfoUiState(title = "Show 1")
@@ -394,7 +394,7 @@ class TvShowDetailsScreenStateTest {
                 name = "Pilot",
                 episodeNumber = 1,
                 rating = 8.2,
-                duration = "58 min",
+                duration = 58,
                 releaseDate = "20 Jan 2008",
                 currentSeason = 1
             ),
@@ -403,7 +403,7 @@ class TvShowDetailsScreenStateTest {
                 name = "Cat's in the Bag...",
                 episodeNumber = 2,
                 rating = 8.2,
-                duration = "48 min",
+                duration = 48,
                 releaseDate = "27 Jan 2008",
                 currentSeason = 1
             )
