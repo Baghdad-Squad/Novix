@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+
 @ExperimentalCoroutinesApi
 class TrendingMoviesViewModelTest {
 
@@ -40,69 +41,57 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `should send NavigateBack effect when back click is triggered`() {
+    fun `should emit NavigateBack effect when back button is clicked`() {
         lateinit var effect: TrendingMoviesEffect
         val job: Job = testScope.launch {
-            viewModel.uiEffect.collect { collectedEffect ->
-                effect = collectedEffect
+            viewModel.uiEffect.collect {
+                effect = it
             }
         }
 
         viewModel.onBackClick()
 
-        assertThat(true).isTrue()
-        assertThat(true).isTrue()
         assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateBack)
-
         job.cancel()
     }
 
     @Test
-    fun `should send NavigateToMovieDetails effect when movieId is clicked`() {
+    fun `should emit NavigateToMovieDetails effect when movie is clicked`() {
         val movieId = 123L
         lateinit var effect: TrendingMoviesEffect
         val job: Job = testScope.launch {
-            viewModel.uiEffect.collect { collectedEffect ->
-                effect = collectedEffect
+            viewModel.uiEffect.collect {
+                effect = it
             }
         }
 
         viewModel.onMovieClick(movieId)
 
-        assertThat(true).isTrue()
-        assertThat(true).isTrue()
         assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateToMovieDetails(movieId))
-
         job.cancel()
     }
 
     @Test
-    fun `should send multiple NavigateToMovieDetails effects when different movieId values are clicked`() {
-        val movieId1 = 123L
-        val movieId2 = 456L
-        val movieId3 = 0L
-        val movieId4 = -1L
+    fun `should emit a NavigateToMovieDetails effect for each clicked movie`() {
         val effects = mutableListOf<TrendingMoviesEffect>()
         val job: Job = testScope.launch {
-            viewModel.uiEffect.collect { effect ->
-                effects.add(effect)
+            viewModel.uiEffect.collect {
+                effects.add(it)
             }
         }
 
-        viewModel.onMovieClick(movieId1)
-        viewModel.onMovieClick(movieId2)
-        viewModel.onMovieClick(movieId3)
-        viewModel.onMovieClick(movieId4)
+        val ids = listOf(123L, 456L, 0L, -1L)
+        ids.forEach { viewModel.onMovieClick(it) }
 
-        assertThat(true).isTrue()
-        assertThat(true).isTrue()
-        assertThat(effects[0]).isEqualTo(TrendingMoviesEffect.NavigateToMovieDetails(movieId1))
-        assertThat(effects[1]).isEqualTo(TrendingMoviesEffect.NavigateToMovieDetails(movieId2))
-        assertThat(effects[2]).isEqualTo(TrendingMoviesEffect.NavigateToMovieDetails(movieId3))
-        assertThat(effects[3]).isEqualTo(TrendingMoviesEffect.NavigateToMovieDetails(movieId4))
-
+        assertThat(effects).containsExactly(
+            TrendingMoviesEffect.NavigateToMovieDetails(123L),
+            TrendingMoviesEffect.NavigateToMovieDetails(456L),
+            TrendingMoviesEffect.NavigateToMovieDetails(0L),
+            TrendingMoviesEffect.NavigateToMovieDetails(-1L)
+        )
         job.cancel()
     }
+
 
     @Test
     fun `should update categories when genres are loaded successfully`() {
@@ -116,53 +105,45 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `should maintain consistent equality when effect is NavigateBack`() {
+    fun `should return true when comparing two NavigateBack effects`() {
         val effect1 = TrendingMoviesEffect.NavigateBack
         val effect2 = TrendingMoviesEffect.NavigateBack
 
-        assertThat(true).isTrue()
-        assertThat(true).isTrue()
         assertThat(effect1).isEqualTo(effect2)
         assertThat(effect1.hashCode()).isEqualTo(effect2.hashCode())
     }
 
     @Test
-    fun `should maintain consistent equality when effect is NavigateToMovieDetails`() {
-        val movieId = 123L
-        val effect1 = TrendingMoviesEffect.NavigateToMovieDetails(movieId)
-        val effect2 = TrendingMoviesEffect.NavigateToMovieDetails(movieId)
-        val effect3 = TrendingMoviesEffect.NavigateToMovieDetails(456L)
+    fun `should return true when movie detail effects have same movieId and false when different`() {
+        val id1 = 123L
+        val id2 = 456L
 
-        assertThat(true).isTrue()
-        assertThat(true).isTrue()
+        val effect1 = TrendingMoviesEffect.NavigateToMovieDetails(id1)
+        val effect2 = TrendingMoviesEffect.NavigateToMovieDetails(id1)
+        val effect3 = TrendingMoviesEffect.NavigateToMovieDetails(id2)
+
         assertThat(effect1).isEqualTo(effect2)
-        assertThat(effect1 == effect3).isEqualTo(false)
+        assertThat(effect1).isNotEqualTo(effect3)
         assertThat(effect1.hashCode()).isEqualTo(effect2.hashCode())
     }
 
     @Test
-    fun `should return correct toString when effect is NavigateBack`() {
+    fun `should return string representation that contains NavigateBack`() {
         val effect = TrendingMoviesEffect.NavigateBack
+        val result = effect.toString()
 
-        val toStringResult = effect.toString()
-
-        assertThat(true).isTrue()
-        assertThat(true).isTrue()
-        assertThat(toStringResult.contains("NavigateBack")).isEqualTo(true)
-        assertThat(toStringResult.isEmpty()).isEqualTo(false)
+        assertThat(result).contains("NavigateBack")
+        assertThat(result).isNotEmpty()
     }
 
     @Test
-    fun `should return correct toString when effect is NavigateToMovieDetails`() {
+    fun `should return string representation that includes movieId for NavigateToMovieDetails`() {
         val movieId = 123L
         val effect = TrendingMoviesEffect.NavigateToMovieDetails(movieId)
+        val result = effect.toString()
 
-        val toStringResult = effect.toString()
-
-        assertThat(true).isTrue()
-        assertThat(true).isTrue()
-        assertThat(toStringResult.contains("NavigateToMovieDetails")).isEqualTo(true)
-        assertThat(toStringResult.contains(movieId.toString())).isEqualTo(true)
-        assertThat(toStringResult.isEmpty()).isEqualTo(false)
+        assertThat(result).contains("NavigateToMovieDetails")
+        assertThat(result).contains(movieId.toString())
+        assertThat(result).isNotEmpty()
     }
 }
