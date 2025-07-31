@@ -8,6 +8,7 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -17,8 +18,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -55,61 +54,52 @@ class ActorDetailsViewModelTest {
     }
 
     @Test
-    fun `given empty gallery list when init then state should reflect empty gallery`() = runTest {
+    fun `uiState should have empty gallery when getActorGalleryUseCase returns empty list`() =
+        runTest {
+            // Given
+            coEvery { getActorInfoUseCase(actorId) } returns createMockActor()
+            coEvery { getActorMoviesUseCase(actorId) } returns createMockMovies()
+            coEvery { getActorTvShowUseCase(actorId) } returns createMockTvShows()
+            coEvery { getActorGalleryUseCase(actorId) } returns emptyList()
+
+            // When
+            createViewModel()
+            advanceUntilIdle()
+
+            // Then
+            assertThat(viewModel.uiState.value.gallery).isEmpty()
+            assertThat(viewModel.uiState.value.isGalleryMoreThanTen).isFalse()
+        }
+
+    @Test
+    fun `onBackIconClick should send NavigateBack effect when back icon is clicked`() = runTest {
         // Given
-        val mockActor = createMockActor()
-        val mockMovies = createMockMovies()
-        val mockTvShows = createMockTvShows()
-        val emptyGallery = emptyList<String>()
-
-        coEvery { getActorInfoUseCase(actorId) } returns mockActor
-        coEvery { getActorMoviesUseCase(actorId) } returns mockMovies
-        coEvery { getActorTvShowUseCase(actorId) } returns mockTvShows
-        coEvery { getActorGalleryUseCase(actorId) } returns emptyGallery
-
-        // When
+        setupSuccessfulMocks()
         createViewModel()
         advanceUntilIdle()
 
-        // Then
-        val currentState = viewModel.uiState.value
-        assertEquals(0, currentState.gallery.size)
-        assertFalse(currentState.isGalleryMoreThanTen)
+        // When
+        viewModel.onBackIconClick()
+
     }
 
     @Test
-    fun `given initialized viewModel when onBackIconClick then should send NavigateBack effect`() =
-        runTest {
-            // Given
-            setupSuccessfulMocks()
-            createViewModel()
-            advanceUntilIdle()
+    fun `isTextExpanded should be toggled when onReadMoreBiographyClick is called`() = runTest {
+        // Given
+        setupSuccessfulMocks()
+        createViewModel()
+        advanceUntilIdle()
+        val initialState = viewModel.uiState.value.isTextExpanded
 
-            // When
-            viewModel.onBackIconClick()
+        // When
+        viewModel.onReadMoreBiographyClick()
 
-            // Then
-        }
-
-    @Test
-    fun `given initialized viewModel when onReadMoreBiographyClick then should toggle isTextExpanded state`() =
-        runTest {
-            // Given
-            setupSuccessfulMocks()
-            createViewModel()
-            advanceUntilIdle()
-            val initialState = viewModel.uiState.value.isTextExpanded
-
-            // When
-            viewModel.onReadMoreBiographyClick()
-
-            // Then
-            val newState = viewModel.uiState.value.isTextExpanded
-            assertEquals(!initialState, newState)
-        }
+        // Then
+        assertThat(viewModel.uiState.value.isTextExpanded).isNotEqualTo(initialState)
+    }
 
     @Test
-    fun `given initialized viewModel when onViewAllGalleryClick then should send NavigateToActorGallery effect`() =
+    fun `NavigateToActorGallery effect should be sent when onViewAllGalleryClick is called`() =
         runTest {
             // Given
             setupSuccessfulMocks()
@@ -119,11 +109,10 @@ class ActorDetailsViewModelTest {
             // When
             viewModel.onViewAllGalleryClick()
 
-            // Then
         }
 
     @Test
-    fun `given initialized viewModel when onViewAllTopMoviesPicksClick then should send NavigateToActorTopMoviePicks effect`() =
+    fun `NavigateToActorTopMoviePicks effect should be sent when onViewAllTopMoviesPicksClick is called`() =
         runTest {
             // Given
             setupSuccessfulMocks()
@@ -132,12 +121,10 @@ class ActorDetailsViewModelTest {
 
             // When
             viewModel.onViewAllTopMoviesPicksClick()
-
-            // Then
         }
 
     @Test
-    fun `given initialized viewModel when onViewAllTopTvShowsClick then should send NavigateToActorTopTvShowPicks effect`() =
+    fun `NavigateToActorTopTvShowPicks effect should be sent when onViewAllTopTvShowsClick is called`() =
         runTest {
             // Given
             setupSuccessfulMocks()
@@ -146,12 +133,10 @@ class ActorDetailsViewModelTest {
 
             // When
             viewModel.onViewAllTopTvShowsClick()
-
-            // Then
         }
 
     @Test
-    fun `given initialized viewModel when onMovieCardClick with movieId then should send NavigateToMovieDetails effect with correct id`() =
+    fun `NavigateToMovieDetails effect should be sent with correct movieId when onMovieCardClick is called`() =
         runTest {
             // Given
             setupSuccessfulMocks()
@@ -161,12 +146,10 @@ class ActorDetailsViewModelTest {
 
             // When
             viewModel.onMovieCardClick(movieId)
-
-            // Then
         }
 
     @Test
-    fun `given initialized viewModel when onTvShowCardClick with tvShowId then should send NavigateToTvShowDetails effect with correct id`() =
+    fun `NavigateToTvShowDetails effect should be sent with correct tvShowId when onTvShowCardClick is called`() =
         runTest {
             // Given
             setupSuccessfulMocks()
@@ -176,9 +159,6 @@ class ActorDetailsViewModelTest {
 
             // When
             viewModel.onTvShowCardClick(tvShowId)
-
-            // Then
-
         }
 
     private fun setupSuccessfulMocks() {
