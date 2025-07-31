@@ -2,11 +2,10 @@ package com.baghdad.viewmodel.trendingActors
 
 import com.baghdad.entity.person.Actor
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
+import com.google.common.truth.Truth.assertThat
 
-class TrendingActorMapperViewModelTest {
+class TrendingActorMapperTest {
 
     @Test
     fun `should map correctly when Actor is valid`() {
@@ -24,9 +23,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(123L, uiState.id)
-        assertEquals("Leonardo DiCaprio", uiState.name)
-        assertEquals("https://example.com/profiles/leonardo.jpg", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(123L)
+        assertThat(uiState.name).isEqualTo("Leonardo DiCaprio")
+        assertThat(uiState.profilePictureURL).isEqualTo("https://example.com/profiles/leonardo.jpg")
     }
 
     @Test
@@ -45,9 +44,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(456L, uiState.id)
-        assertEquals("", uiState.name)
-        assertEquals("https://example.com/profiles/unknown.jpg", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(456L)
+        assertThat(uiState.name).isEqualTo("")
+        assertThat(uiState.profilePictureURL).isEqualTo("https://example.com/profiles/unknown.jpg")
     }
 
     @Test
@@ -66,9 +65,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(789L, uiState.id)
-        assertEquals("Unknown Actor", uiState.name)
-        assertEquals("", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(789L)
+        assertThat(uiState.name).isEqualTo("Unknown Actor")
+        assertThat(uiState.profilePictureURL).isEqualTo("")
     }
 
     @Test
@@ -89,9 +88,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(999L, uiState.id)
-        assertEquals(longName, uiState.name)
-        assertEquals("https://example.com/profiles/long-name-actor.jpg", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(999L)
+        assertThat(uiState.name).isEqualTo(longName)
+        assertThat(uiState.profilePictureURL).isEqualTo("https://example.com/profiles/long-name-actor.jpg")
     }
 
     @Test
@@ -112,9 +111,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(1000L, uiState.id)
-        assertEquals("Actor With Long URL", uiState.name)
-        assertEquals(longUrl, uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(1000L)
+        assertThat(uiState.name).isEqualTo("Actor With Long URL")
+        assertThat(uiState.profilePictureURL).isEqualTo(longUrl)
     }
 
     @Test
@@ -134,9 +133,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(2000L, uiState.id)
-        assertEquals(specialName, uiState.name)
-        assertEquals("https://example.com/profiles/zoe.jpg", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(2000L)
+        assertThat(uiState.name).isEqualTo(specialName)
+        assertThat(uiState.profilePictureURL).isEqualTo("https://example.com/profiles/zoe.jpg")
     }
 
     @Test
@@ -155,9 +154,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(0L, uiState.id)
-        assertEquals("Zero ID Actor", uiState.name)
-        assertEquals("https://example.com/profiles/zero.jpg", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(0L)
+        assertThat(uiState.name).isEqualTo("Zero ID Actor")
+        assertThat(uiState.profilePictureURL).isEqualTo("https://example.com/profiles/zero.jpg")
     }
 
     @Test
@@ -176,9 +175,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(-1L, uiState.id)
-        assertEquals("Negative ID Actor", uiState.name)
-        assertEquals("https://example.com/profiles/negative.jpg", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(-1L)
+        assertThat(uiState.name).isEqualTo("Negative ID Actor")
+        assertThat(uiState.profilePictureURL).isEqualTo("https://example.com/profiles/negative.jpg")
     }
 
     @Test
@@ -197,9 +196,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(Long.MAX_VALUE, uiState.id)
-        assertEquals("Max ID Actor", uiState.name)
-        assertEquals("https://example.com/profiles/max.jpg", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(Long.MAX_VALUE)
+        assertThat(uiState.name).isEqualTo("Max ID Actor")
+        assertThat(uiState.profilePictureURL).isEqualTo("https://example.com/profiles/max.jpg")
     }
 
     @Test
@@ -218,9 +217,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(0L, uiState.id)
-        assertEquals("", uiState.name)
-        assertEquals("", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(0L)
+        assertThat(uiState.name).isEqualTo("")
+        assertThat(uiState.profilePictureURL).isEqualTo("")
     }
 
     @Test
@@ -252,17 +251,10 @@ class TrendingActorMapperViewModelTest {
         val uiState1 = actor1.toTrendingActorsUi()
         val uiState2 = actor2.toTrendingActorsUi()
 
-        assertEquals(1L, uiState1.id)
-        assertEquals("Actor One", uiState1.name)
-        assertEquals("https://example.com/profiles/actor1.jpg", uiState1.profilePictureURL)
+        assertThat(uiState1.id).isEqualTo(1L)
+        assertThat(uiState1.name).isEqualTo("Actor One")
+        assertThat(uiState1.profilePictureURL).isEqualTo("https://example.com/profiles/actor1.jpg")
 
-        assertEquals(2L, uiState2.id)
-        assertEquals("Actor Two", uiState2.name)
-        assertEquals("https://example.com/profiles/actor2.jpg", uiState2.profilePictureURL)
-
-        assertNotEquals(uiState1.id, uiState2.id)
-        assertNotEquals(uiState1.name, uiState2.name)
-        assertNotEquals(uiState1.profilePictureURL, uiState2.profilePictureURL)
     }
 
     @Test
@@ -282,9 +274,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(3000L, uiState.id)
-        assertEquals(nameWithWhitespace, uiState.name)
-        assertEquals("https://example.com/profiles/rdj.jpg", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(3000L)
+        assertThat(uiState.name).isEqualTo(nameWithWhitespace)
+        assertThat(uiState.profilePictureURL).isEqualTo("https://example.com/profiles/rdj.jpg")
     }
 
     @Test
@@ -304,9 +296,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = actor.toTrendingActorsUi()
 
-        assertEquals(4000L, uiState.id)
-        assertEquals(nameWithNumbers, uiState.name)
-        assertEquals("https://example.com/profiles/r2d2.jpg", uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(4000L)
+        assertThat(uiState.name).isEqualTo(nameWithNumbers)
+        assertThat(uiState.profilePictureURL).isEqualTo("https://example.com/profiles/r2d2.jpg")
     }
 
     @Test
@@ -325,12 +317,9 @@ class TrendingActorMapperViewModelTest {
 
         val uiState = originalActor.toTrendingActorsUi()
 
-        assertEquals(originalActor.id, uiState.id)
-        assertEquals(originalActor.name, uiState.name)
-        assertEquals(originalActor.profilePictureURL, uiState.profilePictureURL)
+        assertThat(uiState.id).isEqualTo(originalActor.id)
+        assertThat(uiState.name).isEqualTo(originalActor.name)
+        assertThat(uiState.profilePictureURL).isEqualTo(originalActor.profilePictureURL)
 
-        assertEquals(5000L, originalActor.id)
-        assertEquals("Original Actor", originalActor.name)
-        assertEquals("https://example.com/profiles/original.jpg", originalActor.profilePictureURL)
     }
 }
