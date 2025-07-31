@@ -236,20 +236,7 @@ class TrendingActorMapperTest {
             department = "Acting"
         )
 
-        val actor2 = Actor(
-            id = 2L,
-            name = "Actor Two",
-            profilePictureURL = "https://example.com/profiles/actor2.jpg",
-            birthDate = LocalDate(1974, 11, 11),
-            placeOfBirth = "Los Angeles, California",
-            deathDate = null,
-            biography = "Bio of Leonardo DiCaprio",
-            headerPictures = listOf("header1.jpg", "header2.jpg"),
-            department = "Acting"
-        )
-
         val uiState1 = actor1.toTrendingActorsUi()
-        val uiState2 = actor2.toTrendingActorsUi()
 
         assertThat(uiState1.id).isEqualTo(1L)
         assertThat(uiState1.name).isEqualTo("Actor One")
