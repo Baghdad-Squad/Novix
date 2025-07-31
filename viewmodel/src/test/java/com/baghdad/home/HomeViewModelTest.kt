@@ -46,23 +46,21 @@ class HomeViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         getGenresUseCase = mockk(relaxed = true)
-        observeContinueWatchingUseCase = mockk(relaxed = true)
         getPopularMoviesUseCase = mockk(relaxed = true)
         getPopularTvShowsUseCase = mockk(relaxed = true)
         getMovieTopRatingUseCase = mockk(relaxed = true)
         getUpcomingMoviesUseCase = mockk(relaxed = true)
+        observeContinueWatchingUseCase = mockk(relaxed = true)
 
-        // Given
         coEvery { getGenresUseCase.getMovieGenres() } returns FakeHomeScreenData.genres
-        coEvery { observeContinueWatchingUseCase.invoke() } returns flowOf(FakeHomeScreenData.continueWatchingItems)
         coEvery { getPopularMoviesUseCase.invoke() } returns FakeHomeScreenData.movies
         coEvery { getPopularTvShowsUseCase.invoke() } returns FakeHomeScreenData.tvShows
         coEvery {
-            getMovieTopRatingUseCase.invoke(
-                any(),
-                any()
-            ).data
+            getMovieTopRatingUseCase.invoke(any(), any()).data
         } returns FakeHomeScreenData.movies
+        coEvery {
+            observeContinueWatchingUseCase.invoke()
+        } returns flowOf(FakeHomeScreenData.continueWatchingItems)
 
         viewModel = createViewModel()
     }
