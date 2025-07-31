@@ -39,11 +39,7 @@ import com.baghdad.viewmodel.trendingMovie.TrendingMoviesEffect
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesInteractionListener
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesScreenState
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
-import org.koin.androidx.compose.koinViewModel
-import com.baghdad.viewmodel.movie.TrendingMoviesEffect
-import com.baghdad.viewmodel.movie.TrendingMoviesInteractionListener
-import com.baghdad.viewmodel.movie.TrendingMoviesScreenState
-import com.baghdad.viewmodel.movie.TrendingMoviesViewModel
+
 
 
 @Composable
