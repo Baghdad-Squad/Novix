@@ -1,8 +1,10 @@
 package com.baghdad.viewmodel.trendingTvShow
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
 import com.baghdad.entity.media.Genre
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
@@ -12,6 +14,10 @@ class TrendingTvShowViewModel(
 ) : BaseViewModel<TrendingTvShowScreenState, TrendingTvShowScreenEffect>(TrendingTvShowScreenState()),
     TrendingTvShowInteractionListener {
     init {
+        loadData()
+    }
+
+    private fun loadData() {
         getTvShowGenres()
         getTrendingTvShowsByGenre(null)
     }
@@ -20,7 +26,8 @@ class TrendingTvShowViewModel(
         tryToExecute(
             callee = { getGenresUseCase.getTvShowGenres() },
             onSuccess = ::handleGenreSuccess,
-            onError = { mapThrowableToErrorMessage(it) })
+            onError = ::onLoadDataError
+        )
     }
 
     private fun handleGenreSuccess(genres: List<Genre>) {
@@ -41,7 +48,27 @@ class TrendingTvShowViewModel(
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toUiState() },
-            onFlowCreated = { tvShowFlow -> updateState { it.copy(trendingTvShows = tvShowFlow) } },
+            onFlowCreated = { tvShowFlow ->
+                updateState { it.copy(trendingTvShows = tvShowFlow) }
+                hideSnackBar()
+            },
+            onError = ::onLoadDataError,
+        )
+    }
+
+    private fun onLoadDataError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
+    }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
         )
     }
 
@@ -60,6 +87,10 @@ class TrendingTvShowViewModel(
         if (genreId != currentState.selectedGenreId) {
             getTrendingTvShowsByGenre(genreId)
         }
+    }
+
+    override fun onSnackBarActionLabelClick() {
+        loadData()
     }
 
     override fun onSaveTvShowClick(tvShowId: Long) {
