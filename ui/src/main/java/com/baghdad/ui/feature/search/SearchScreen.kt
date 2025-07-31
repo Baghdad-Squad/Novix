@@ -158,6 +158,8 @@ fun SearchContent(
             FilterBottomSheet(
                 isBottomSheetVisible = uiState.bottomSheetUiState.isBottomSheetVisible,
                 searchFilter = uiState.searchFilter,
+                isGenresError = uiState.searchFilter.isGenresError,
+                onReloadGenres = listener::onReloadFilterGenres,
                 onBottomSheetCloseClick = listener::onFilterCloseIconClick,
                 onClearClick = listener::onFilterClearClick,
                 onApplyClick = listener::onApplyFilterClick,
@@ -401,4 +403,6 @@ private fun createPreviewListener() = object : SearchInteractionListener {
     ) {}
 
     override fun onSnackBarActionLabelClick() {}
+
+    override fun onReloadFilterGenres() {}
 }

@@ -23,4 +23,6 @@ interface SearchInteractionListener {
     fun onActorItemClick(id: Long)
 
     fun onSnackBarActionLabelClick()
+
+    fun onReloadFilterGenres()
 }
