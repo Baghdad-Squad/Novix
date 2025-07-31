@@ -93,6 +93,7 @@ val viewModelModule = module {
             isLoggedInUseCase = get()
         )
     }
+    single<CoroutineDispatcher> { Dispatchers.IO }
 
     viewModelOf(::TopRatingViewModel)
     viewModelOf(::LoginViewModel)

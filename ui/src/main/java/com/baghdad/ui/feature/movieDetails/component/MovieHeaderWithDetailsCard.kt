@@ -42,7 +42,7 @@ fun MovieHeaderWithDetailsCard(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .offset(y = 116.dp)
+                .offset(y = 128.dp)
         ) {
             if (state.movieImages.size > 1) {
                 Row(
@@ -77,13 +77,6 @@ fun MovieHeaderWithDetailsCard(
                     .padding(bottom = 16.dp)
                     .padding(horizontal = 16.dp)
                     .align(Alignment.CenterHorizontally)
-                    .then(
-                        if (state.categories.isEmpty()) {
-                            Modifier.padding(bottom = 24.dp)
-                        } else {
-                            Modifier.padding(bottom = 0.dp)
-                        }
-                    )
             )
         }
     }

@@ -12,6 +12,7 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class HomeViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -20,6 +21,8 @@ class HomeViewModel(
     private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
     private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase,
+    private val defaultDispatcher: CoroutineDispatcher
+
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
     HomeInteractionListener {
     init {
@@ -33,6 +36,7 @@ class HomeViewModel(
     private fun getPopularItems() {
         tryToExecute(
             callee = { getPopularMoviesUseCase() to getPopularTvShowsUseCase() },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetPopularItemsSuccess,
             onStart = ::onGetPopularItemsStart,
             onFinally = ::onGetPopularItemsFinished,
@@ -65,6 +69,7 @@ class HomeViewModel(
     private fun getTopRatingMovies() {
         tryToExecute(
             callee = { getMovieTopRatingUseCase(DEFAULT_PAGE, null).data },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetTopRatingMoviesSuccess,
             onStart = ::onGetTopRatingMoviesStart,
             onFinally = ::onGetTopRatingMoviesFinished,
@@ -97,6 +102,7 @@ class HomeViewModel(
     private fun observeContinueWatchingItems() {
         tryToCollect(
             flowProvider = observeContinueWatchingUseCase::invoke,
+            dispatcher = defaultDispatcher,
             onNewValue = ::onNewContinueWatchingItems,
         )
     }
@@ -116,6 +122,7 @@ class HomeViewModel(
     private fun getMovieGenres() {
         tryToExecute(
             callee = getGenresUseCase::getMovieGenres,
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetMovieGenresSuccess,
             onStart = ::onGetMovieGenresStart,
             onFinally = ::onGetMovieGenresFinished,
@@ -143,6 +150,7 @@ class HomeViewModel(
     private fun getUpcomingItems() {
         tryToExecute(
             callee = { getUpcomingMoviesUseCase(currentState.selectedUpcomingGenreId) },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetUpcomingSuccess,
             onStart = ::onGetUpcomingStarted,
             onFinally = ::onGetUpcomingFinished,
