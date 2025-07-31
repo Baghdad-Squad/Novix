@@ -25,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -81,7 +80,7 @@ fun EpisodeDetailsContent(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
         else
-            Color.Transparent,
+            Theme.color.surface.copy(alpha = 0f),
         animationSpec = tween(
             durationMillis = 500,
             easing = FastOutSlowInEasing
@@ -147,7 +146,7 @@ fun EpisodeDetailsContent(
                     }
 
                     item {
-                        Spacer(Modifier.height(84.dp))
+                        Spacer(Modifier.height(128.dp))
                     }
 
                     item {

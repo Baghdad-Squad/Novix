@@ -119,9 +119,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     override fun onRateEpisodeClick() {
-        updateState {
-            it.copy(rateEpisodeBottomSheetState = it.rateEpisodeBottomSheetState.copy(isVisible = true))
-        }
+        // TODO("Not yet implemented")
     }
 
     override fun onDismissRatingBottomSheet() {

@@ -1,46 +1,35 @@
 package com.baghdad.viewmodel.categoryTvShows
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.paging.PagingData
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
-import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
+import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState.TvShowUiState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 class CategoryTvShowsViewModel @Inject constructor(
-//    private val categoryId: Long,
     savedStateHandle: SavedStateHandle,
-
     private val getTvShowsCategoryUseCase: GetTvShowsByGenreUseCase,
     private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase
 ) : BaseViewModel<CategoryTvShowsState, CategoryTvShowsEffect>(CategoryTvShowsState()),
     CategoryTvShowsInteractionListener {
 
     private val categoryId: Long = checkNotNull(savedStateHandle["categoryId"])
+
     init {
         getTvShowsByCategoryId(categoryId = categoryId)
         getCategoryNameById(categoryId = categoryId)
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
-    }
 
     override fun onBackClicked() {
         sendEffect(CategoryTvShowsEffect.NavigateBack)
     }
 
     override fun onSavedClick(tvShowId: Long) {
-        updateState {
-            it.copy(
-                tvShows = it.tvShows.map { item ->
-                    if (item.id == tvShowId) item.copy(isSaved = item.isSaved.not()) else item
-                }
-            )
-        }
+
     }
 
     override fun onTvShowClicked(tvShowId: Long) {
@@ -48,27 +37,26 @@ class CategoryTvShowsViewModel @Inject constructor(
     }
 
     private fun getTvShowsByCategoryId(categoryId: Long) {
-        tryToExecute(
-            callee = {
-                getTvShowsCategoryUseCase.invoke(genreId = categoryId, page = 1)
+        collectPagingFlow(
+            loadData = { page ->
+                getTvShowsCategoryUseCase.invoke(categoryId, page)
             },
-            onSuccess = { onGetTvShowsSuccess(it) },
-            onError = { onGetTvShowsError() }
-
+            onInitialLoadFinished = {},
+            pageSize = 20,
+            mapEntityToUiState = { it.toUiState() },
+            onFlowCreated = ::onGetTvShowsSuccess,
         )
     }
 
-    private fun onGetTvShowsSuccess(tvShows: List<TvShow>) {
-        updateState { it.copy(tvShows = tvShows.map { it.toUiState() }) }
+    private fun onGetTvShowsSuccess(tvShows: Flow<PagingData<TvShowUiState>>) {
+        updateState { it.copy(tvShowsFlow = tvShows) }
     }
-
-    private fun onGetTvShowsError() {}
 
     private fun getCategoryNameById(categoryId: Long) {
         tryToExecute(
             callee = { getCategoryNameByIdUseCase.invoke(categoryId) },
             onSuccess = { onSuccessGetCategoryName(it.name) },
-            onError = { onErrorGetCategoryName() }
+            onError = { onErrorGetCategoryName(it) }
         )
     }
 
@@ -76,6 +64,11 @@ class CategoryTvShowsViewModel @Inject constructor(
         updateState { it.copy(categoryName = categoryName) }
     }
 
-    fun onErrorGetCategoryName() {}
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
+        return BaseSnackBarMessage.UnknownError
+    }
+
+    fun onErrorGetCategoryName(t: Throwable) {}
+
 
 }

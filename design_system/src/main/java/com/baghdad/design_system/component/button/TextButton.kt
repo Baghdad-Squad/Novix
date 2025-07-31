@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
+import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 
 @Composable
@@ -25,6 +26,7 @@ fun TextButton(
     isLoading: Boolean = false,
     isEnabled: Boolean = true,
     textAlign: TextAlign? = null,
+    noRipple: Boolean = false,
     textModifier: Modifier = Modifier,
 ) {
     val animatedContentColor by animateColorAsState(
@@ -33,9 +35,21 @@ fun TextButton(
         label = stringResource(R.string.text_button_content_color)
     )
     Row(
-        modifier = modifier.clickable(enabled = isEnabled) {
-            onClick()
-        },
+        modifier = modifier.then(
+            if (noRipple) {
+                Modifier.noRippleClickable(
+                    onClick = {
+                        if (!isLoading) onClick()
+                    },
+                )
+            } else {
+                Modifier.clickable(
+                    onClick = {
+                        if (!isLoading) onClick()
+                    },
+                )
+            }
+        ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

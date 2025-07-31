@@ -43,7 +43,7 @@ fun PopularCardPager(
     autoSlideDuration: Long = 4000L,
 ) {
     val configuration = LocalConfiguration.current
-    val pagerState = rememberPagerState { items.size }
+    val pagerState = rememberPagerState { items.size.takeIf { it == 0 } ?: Int.MAX_VALUE }
     val screenWidth = configuration.screenWidthDp.dp
     val cardWidth = 188.dp
 
@@ -54,28 +54,27 @@ fun PopularCardPager(
         )
     if (items.isNotEmpty()) {
         LaunchedEffect(items) {
-            pagerState.animateScrollToPage(items.size / 2)
+            pagerState.animateScrollToPage(items.size + 1)
             while (true) {
                 delay(autoSlideDuration)
-                val next = (pagerState.currentPage + 1) % items.size
+                val next = (pagerState.currentPage + 1)
                 pagerState.animateScrollToPage(next)
             }
         }
     }
-
-    Crossfade(isLoading) { isLoading ->
-        if (isLoading) {
-            LoadingPopularCardPager(
-                contentPadding = PaddingValues(horizontal = horizontalPadding),
-                modifier = modifier,
-            )
-        } else {
-            Column(
-                modifier = modifier,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Crossfade(isLoading) { isLoading ->
+            if (isLoading) {
+                LoadingPopularCardPager(
+                    contentPadding = PaddingValues(horizontal = horizontalPadding),
+                    modifier = modifier,
+                )
+            } else {
+                Column(
+                    modifier = modifier,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     HorizontalPager(
                         state = pagerState,
                         contentPadding = PaddingValues(horizontal = horizontalPadding),
@@ -107,10 +106,16 @@ fun PopularCardPager(
                         val yTranslation =
                             when {
                                 currentPageOffset == 0f -> 0f
-                                else -> kotlin.math.abs(currentPageOffset) * 40f
+                                kotlin.math.abs(currentPageOffset) in 0.5f..1.5f ->
+                                    kotlin.math.abs(
+                                        currentPageOffset,
+                                    ) * 40f
+
+                                else -> kotlin.math.abs(currentPageOffset) * 20f
                             }
 
-                        val item = items[page]
+                        val item =
+                            items[if (items.isEmpty()) return@HorizontalPager else page % items.size]
 
                         PopularCard(
                             contentName = item.name,
@@ -119,6 +124,7 @@ fun PopularCardPager(
                             onCardClick = { onClick(item) },
                             onSavedClick = { onSaveClick(item) },
                             isSaved = item.isSaved,
+                            isCentralCard = currentPageOffset == 0f,
                             modifier =
                                 Modifier.graphicsLayer {
                                     rotationZ = rotation
@@ -130,7 +136,7 @@ fun PopularCardPager(
                     }
                     CarousalDot(
                         totalDots = items.size,
-                        selectedIndex = pagerState.currentPage,
+                        selectedIndex = if (items.isEmpty()) return@Crossfade else (pagerState.currentPage % items.size),
                     )
                 }
             }
@@ -152,7 +158,7 @@ private fun LoadingPopularCardPager(
             modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            ) { page ->
+    ) { page ->
         val currentPageOffset =
             (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
@@ -190,8 +196,7 @@ private fun LoadingPopularCardPager(
                         scaleX = xScale
                         scaleY = yScale
                         translationY = yTranslation
-                    }
-                    .fillMaxWidth(),
+                    }.fillMaxWidth(),
         )
     }
 }

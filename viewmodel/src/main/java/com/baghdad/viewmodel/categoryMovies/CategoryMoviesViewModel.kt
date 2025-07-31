@@ -74,8 +74,6 @@ class CategoryMoviesViewModel @Inject constructor(
         updateState { it.copy(moviesFlow = moviesFlow) }
     }
 
-    private fun onGetGenreMoviesError(throwable: Throwable) {}
-
     private fun onFinally() {
         updateState { it.copy(isLoading = false) }
     }

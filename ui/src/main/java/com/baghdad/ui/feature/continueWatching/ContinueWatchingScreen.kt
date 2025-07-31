@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.continueWatching
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,11 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -99,6 +104,10 @@ fun ContinueWatchingContent(
     snackBarState: SnackBarState,
     modifier: Modifier = Modifier
 ) {
+
+    val movieGenresScrollState = rememberLazyListState()
+    val tvGenresScrollState = rememberLazyListState()
+
     Scaffold(
         modifier = modifier
             .background(Theme.color.surface)
@@ -133,31 +142,54 @@ fun ContinueWatchingContent(
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            Row(
+            val borderColor = Theme.color.stroke
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Theme.color.surface)
-                    .padding(top = 4.dp, bottom = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Tab(
-                    text = stringResource(com.baghdad.ui.R.string.movies),
-                    onClick = { listener.onSelectedTab(true) },
-                    isSelected = uiState.selectedMediaTabIsMovie,
-                    modifier = Modifier.weight(1f)
-                )
-                Tab(
-                    text = stringResource(com.baghdad.ui.R.string.tv_shows),
-                    onClick = { listener.onSelectedTab(false) },
-                    isSelected = !uiState.selectedMediaTabIsMovie,
-                    modifier = Modifier.weight(1f)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Theme.color.surface)
+                        .padding(top = 4.dp)
+                        .drawBehind {
+                            val strokeWidth = 1.dp.toPx()
+                            val y = size.height - strokeWidth / 2
+                            drawLine(
+                                color = borderColor,
+                                start = Offset(0f, y),
+                                end = Offset(size.width, y),
+                                strokeWidth = strokeWidth
+                            )
+                        },
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Tab(
+                        text = stringResource(com.baghdad.ui.R.string.movies),
+                        onClick = { listener.onSelectedTab(true) },
+                        isSelected = uiState.selectedMediaTabIsMovie,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Tab(
+                        text = stringResource(com.baghdad.ui.R.string.tv_shows),
+                        onClick = { listener.onSelectedTab(false) },
+                        isSelected = !uiState.selectedMediaTabIsMovie,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
             GenresTabs(
                 genres = uiState.genres,
-                selectedTab = uiState.selectedGenreId,
+                selectedTab = when (uiState.selectedMediaTabIsMovie) {
+                    true -> uiState.selectedMovieGenreId
+                    false -> uiState.selectedTvShowGenreId
+                },
+                genresScrollState = when (uiState.selectedMediaTabIsMovie) {
+                    true -> movieGenresScrollState
+                    false -> tvGenresScrollState
+                },
                 onTabClick = { listener.onGenreClick(it) },
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier.padding(vertical = 12.dp)
             )
             LazyPagingVerticalGrid<ContinueWatchingState.ContinueWatchingMovieUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
@@ -169,8 +201,8 @@ fun ContinueWatchingContent(
                     end = 16.dp,
                     bottom = 12.dp,
                 ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 items = mediaItems,
             ) { media ->
 
@@ -194,12 +226,14 @@ private fun GenresTabs(
     genres: List<ContinueWatchingState.GenreUiState>,
     selectedTab: Long?,
     onTabClick: (Long?) -> Unit,
+    genresScrollState: LazyListState,
     modifier: Modifier = Modifier
 ) {
 
     LazyRow(
         modifier = modifier
             .wrapContentSize(),
+        state = genresScrollState,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {

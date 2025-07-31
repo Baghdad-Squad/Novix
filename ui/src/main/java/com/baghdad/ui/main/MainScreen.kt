@@ -57,35 +57,34 @@ fun MainScreen(
         animationSpec = BOTTOM_BAR_ANIMATION_SPEC
     )
 
-    Scaffold(
-        modifier = modifier
-            .background(Theme.color.surface)
-            .fillMaxSize()
-            .navigationBarsPadding(),
-        bottomBar = {
-            AnimatedVisibility(
-                visible = isMainGraphRoute,
-                enter = bottomSheetEnterAnimation,
-                exit = bottomSheetExitAnimation
-            ) {
-                NovixBottomNavigationBar(
-                    items = BOTTOM_NAV_ITEMS.values.toList(),
-                    onClick = { index ->
-                        if (index != selectedIndex) {
-                            val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
-                            navController.navigateToBottomNavDestination(targetGraph)
-                        }
-                    },
-                    selectedIconIndex = selectedIndex
-                )
-            }
+    state.value.isLoggedIn?.let { isLoggedIn ->
+
+        Scaffold(
+            modifier = modifier
+                .background(Theme.color.surface)
+                .fillMaxSize()
+                .navigationBarsPadding(), bottomBar = {
+                AnimatedVisibility(
+                    visible = isMainGraphRoute,
+                    enter = bottomSheetEnterAnimation,
+                    exit = bottomSheetExitAnimation
+                ) {
+                    NovixBottomNavigationBar(
+                        items = BOTTOM_NAV_ITEMS.values.toList(), onClick = { index ->
+                            if (index != selectedIndex) {
+                                val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
+                                navController.navigateToBottomNavDestination(targetGraph)
+                            }
+                        }, selectedIconIndex = selectedIndex
+                    )
+                }
+            }) {
+            NovixNavHost(
+                modifier = Modifier.padding(bottom = animatedBottomPadding),
+                navController = navController,
+                startDestination = if (isLoggedIn == true) Graph.HomeGraph else Graph.AuthenticationGraph
+            )
         }
-    ) {
-        NovixNavHost(
-            modifier = Modifier.padding(bottom = animatedBottomPadding),
-            navController = navController,
-            startDestination = if (state.value.isLoggedIn) Graph.HomeGraph else Graph.AuthenticationGraph,
-        )
     }
 }
 
@@ -95,12 +94,12 @@ private const val BOTTOM_BAR_HEIGHT = 70
 private val BOTTOM_BAR_ANIMATION_SPEC = tween<Dp>(300, easing = FastOutSlowInEasing)
 
 private val bottomSheetEnterAnimation = slideInVertically(
-    animationSpec = tween(300, easing = FastOutSlowInEasing),
-    initialOffsetY = { it }
-) + fadeIn(animationSpec = tween(200, 100))
+    animationSpec = tween(300, easing = FastOutSlowInEasing), initialOffsetY = { it }) + fadeIn(
+    animationSpec = tween(200, 100)
+)
 
 private val bottomSheetExitAnimation = slideOutVertically(
-    animationSpec = tween(200, easing = FastOutLinearInEasing),
-    targetOffsetY = { it }
-) + fadeOut(animationSpec = tween(150))
+    animationSpec = tween(200, easing = FastOutLinearInEasing), targetOffsetY = { it }) + fadeOut(
+    animationSpec = tween(150)
+)
 

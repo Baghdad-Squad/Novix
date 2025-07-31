@@ -35,7 +35,6 @@ class TvShowDetailsViewModel @Inject constructor(
         getTvShowDetails(tvShowId)
         getTvShowCast(tvShowId)
         onClickSeasonTab(0)
-
     }
 
     private fun getTvShowDetails(tvShowId: Long) {

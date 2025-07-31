@@ -49,6 +49,7 @@ class SearchRepositoryImpl @Inject constructor(
             mapToEntity = ActorDto::toEntity,
             onStart = {
                 deleteInvalidCacheOfMoreThanOneHour()
+                if (page == 1) localRecentSearchDataSource.addRecentSearchQuery(name)
             },
             getCachedPage = { page, pageSize ->
                 localActorDataSource.searchActorsByName(
@@ -62,7 +63,6 @@ class SearchRepositoryImpl @Inject constructor(
             },
             cacheData = {
                 cacheActorSearchResult(
-                    isFirstSearch = page == 1,
                     query = name,
                     actors = it
                 )
@@ -71,11 +71,9 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
     private suspend fun cacheActorSearchResult(
-        isFirstSearch: Boolean,
         query: String,
         actors: List<ActorDto>
     ) {
-        if (isFirstSearch) localRecentSearchDataSource.addRecentSearchQuery(query)
         localActorDataSource.addActors(actors)
         localSearchQueryDataSource.addSearchQueries(actors.map { it.toSearchQueryDto(query) })
     }
@@ -91,13 +89,15 @@ class SearchRepositoryImpl @Inject constructor(
             mapToEntity = MovieDto::toEntity,
             onStart = {
                 deleteInvalidCacheOfMoreThanOneHour()
+                if (page == 1) localRecentSearchDataSource.addRecentSearchQuery(title)
             },
             getCachedPage = { page, pageSize ->
                 localMovieDataSource.searchMoviesByTitle(
                     title,
                     page,
-                    pageSize
+                    pageSize,
                 )
+
             },
             getRemoteData = { page, _ ->
                 updateGenreCache()
@@ -106,20 +106,17 @@ class SearchRepositoryImpl @Inject constructor(
             },
             cacheData = {
                 cacheMovieSearchResult(
-                    isFirstSearch = page == 1,
                     query = title,
-                    movies = it
+                    movies = it,
                 )
             }
         )
     }
 
     private suspend fun cacheMovieSearchResult(
-        isFirstSearch: Boolean,
         query: String,
         movies: List<MovieDto>
     ) {
-        if (isFirstSearch) localRecentSearchDataSource.addRecentSearchQuery(query)
         localMovieDataSource.addMovies(movies)
         localSearchQueryDataSource.addSearchQueries(movies.map { it.toSearchQueryDto(query) })
     }
@@ -135,6 +132,7 @@ class SearchRepositoryImpl @Inject constructor(
             mapToEntity = TvShowDto::toEntity,
             onStart = {
                 deleteInvalidCacheOfMoreThanOneHour()
+                if (page == 1) localRecentSearchDataSource.addRecentSearchQuery(title)
             },
             getCachedPage = { page, pageSize ->
                 localTvShowDataSource.searchTvShowsByTitle(
@@ -150,20 +148,17 @@ class SearchRepositoryImpl @Inject constructor(
             },
             cacheData = {
                 cacheTvShowSearchResult(
-                    isFirstSearch = page == 1,
                     query = title,
-                    tvShows = it
+                    tvShows = it,
                 )
             }
         )
     }
 
     private suspend fun cacheTvShowSearchResult(
-        isFirstSearch: Boolean,
         query: String,
         tvShows: List<TvShowDto>
     ) {
-        if (isFirstSearch) localRecentSearchDataSource.addRecentSearchQuery(query)
         localTvShowDataSource.addTvShows(tvShows)
         localSearchQueryDataSource.addSearchQueries(tvShows.map { it.toSearchQueryDto(query) })
     }

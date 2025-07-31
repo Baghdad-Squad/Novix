@@ -1,18 +1,20 @@
 package com.baghdad.ui.feature.search
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.HorizontalDivider
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.theme.NovixTheme
@@ -33,11 +36,12 @@ import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.search.component.EmptySearchState
+import com.baghdad.ui.feature.search.component.RecentSearchItem
 import com.baghdad.ui.feature.search.component.RecentlyViewedSection
 import com.baghdad.ui.feature.search.component.SearchResultContent
 import com.baghdad.ui.feature.search.component.SearchTextField
+import com.baghdad.ui.feature.search.component.SectionHeaderWithAction
 import com.baghdad.ui.feature.search.component.filter.FilterBottomSheet
-import com.baghdad.ui.feature.search.component.recentSearchSection
 import com.baghdad.ui.feature.util.remeberSaveableLazyListState
 import com.baghdad.ui.feature.util.rememberSaveableLazyGridState
 import com.baghdad.ui.navigation.graph.search.SearchNavEvent
@@ -57,12 +61,10 @@ fun SearchScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    val movieItems =
-        uiState.moviesFlow.collectAsLazyPagingItems()
-    val actorItems =
-        uiState.actorsFlow.collectAsLazyPagingItems()
-    val tvShowItems =
-        uiState.tvShowsFlow.collectAsLazyPagingItems()
+
+    val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
+    val actorItems = uiState.actorsFlow.collectAsLazyPagingItems()
+    val tvShowItems = uiState.tvShowsFlow.collectAsLazyPagingItems()
 
     SearchContent(
         uiState = uiState,
@@ -73,25 +75,30 @@ fun SearchScreen(
         tvShowItems = tvShowItems
     )
 
+    HandleNavigationEffects(
+        viewModel = viewModel,
+        handleNavigation = handleNavigation
+    )
+}
+
+@Composable
+private fun HandleNavigationEffects(
+    viewModel: SearchViewModel,
+    handleNavigation: (SearchNavEvent) -> Unit
+) {
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
-            is SearchScreenEffect.NavigateToActorDetails -> handleNavigation(
-                SearchNavEvent.NavigateToActorDetails(
-                    effect.actorId
-                )
-            )
+            is SearchScreenEffect.NavigateToActorDetails -> {
+                handleNavigation(SearchNavEvent.NavigateToActorDetails(effect.actorId))
+            }
 
-            is SearchScreenEffect.NavigateToMovieDetails -> handleNavigation(
-                SearchNavEvent.NavigateToMovieDetails(
-                    effect.movieId
-                )
-            )
+            is SearchScreenEffect.NavigateToMovieDetails -> {
+                handleNavigation(SearchNavEvent.NavigateToMovieDetails(effect.movieId))
+            }
 
-            is SearchScreenEffect.NavigateToTvShowDetails -> handleNavigation(
-                SearchNavEvent.NavigateToTvShowDetails(
-                    effect.tvShowId
-                )
-            )
+            is SearchScreenEffect.NavigateToTvShowDetails -> {
+                handleNavigation(SearchNavEvent.NavigateToTvShowDetails(effect.tvShowId))
+            }
         }
     }
 }
@@ -115,11 +122,7 @@ fun SearchContent(
             .systemBarsPadding()
             .statusBarsPadding(),
         snackbar = {
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
-            )
+            SearchSnackBar(snackBarState = snackBarState)
         }
     ) {
         Column(
@@ -132,109 +135,216 @@ fun SearchContent(
         ) {
             SearchTextField(
                 query = uiState.searchText,
-                onQueryChange = { listener.onSearchTextChanged(it) },
-                onFilterIconClick = { listener.onFilterIconClick() },
+                onQueryChange = listener::onSearchTextChanged,
+                onFilterIconClick = listener::onFilterIconClick,
                 searchTab = uiState.selectedSearchTab,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            AnimatedContent(uiState.isUserTyping.not() && uiState.searchText.isNotBlank()) { it ->
-                if (it) {
-                    SearchResultContent(
-                        selectedTab = uiState.selectedSearchTab,
-                        onTabSelected = { listener.onSelectedSearchTabChanged(it) },
-                        onSavedClick = { listener.onSaveRecentlyViewedClick(it) },
-                        movies = movieItems,
-                        tvShows = tvShowItems,
-                        actors = actorItems,
-                        onMovieClick = { id, imageUrl -> listener.onMovieItemClick(id, imageUrl) },
-                        onTvShowClick = { id, imageUrl ->
-                            listener.onTvShowItemClick(
-                                id,
-                                imageUrl
-                            )
-                        },
-                        onActorClick = { listener.onActorItemClick(it) },
-                        isLoading = uiState.isLoading,
-                        moviesState = moviesState,
-                        actorsState = actorsState,
-                        tvShowsState = tvShowsState,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                } else RecentlyViewsWithSearch(uiState, listener)
-            }
+
+            SearchContentSection(
+                uiState = uiState,
+                listener = listener,
+                movieItems = movieItems,
+                actorItems = actorItems,
+                tvShowItems = tvShowItems,
+                moviesState = moviesState,
+                actorsState = actorsState,
+                tvShowsState = tvShowsState
+            )
 
             FilterBottomSheet(
                 isBottomSheetVisible = uiState.bottomSheetUiState.isBottomSheetVisible,
                 searchFilter = uiState.searchFilter,
-                onBottomSheetCloseClick = { listener.onFilterCloseIconClick() },
-                onClearClick = { listener.onFilterClearClick() },
-                onApplyClick = { listener.onApplyFilterClick() },
-                onRatingChanged = { listener.onRatingChanged(it) },
-                onYearRangeSelected = { listener.onYearRangeSelected(it) },
-                onGenreSelected = { listener.onGenreSelected(it) })
+                onBottomSheetCloseClick = listener::onFilterCloseIconClick,
+                onClearClick = listener::onFilterClearClick,
+                onApplyClick = listener::onApplyFilterClick,
+                onRatingChanged = listener::onRatingChanged,
+                onYearRangeSelected = listener::onYearRangeSelected,
+                onGenreSelected = listener::onGenreSelected
+            )
         }
     }
 }
 
+@Composable
+private fun SearchSnackBar(snackBarState: SnackBarState) {
+    SnackBar(
+        message = stringResource(getSnackBarMessage(snackBarState.message)),
+        isSuccess = snackBarState.isSuccess,
+        isVisible = snackBarState.isVisible
+    )
+}
 
 @Composable
-private fun RecentlyViewsWithSearch(
-    uiState: SearchScreenState, listener: SearchInteractionListener
+private fun SearchContentSection(
+    uiState: SearchScreenState,
+    listener: SearchInteractionListener,
+    movieItems: LazyPagingItems<SearchScreenState.MovieUiState>,
+    actorItems: LazyPagingItems<SearchScreenState.ActorUiState>,
+    tvShowItems: LazyPagingItems<SearchScreenState.TvShowUiState>,
+    moviesState: androidx.compose.foundation.lazy.grid.LazyGridState,
+    actorsState: androidx.compose.foundation.lazy.LazyListState,
+    tvShowsState: androidx.compose.foundation.lazy.grid.LazyGridState
 ) {
+    val shouldShowSearchResults = uiState.searchText.trim().isNotBlank()
+    AnimatedContent(targetState = shouldShowSearchResults) { showResults ->
+        if (showResults) {
+            SearchResultContent(
+                selectedTab = uiState.selectedSearchTab,
+                onTabSelected = listener::onSelectedSearchTabChanged,
+                onSavedClick = listener::onSaveRecentlyViewedClick,
+                movies = movieItems,
+                tvShows = tvShowItems,
+                actors = actorItems,
+                onMovieClick = { id, imageUrl ->
+                    listener.onMovieItemClick(id, imageUrl)
+                },
+                onTvShowClick = { id, imageUrl ->
+                    listener.onTvShowItemClick(id, imageUrl)
+                },
+                onActorClick = listener::onActorItemClick,
+                isLoading = uiState.isLoading,
+                moviesState = moviesState,
+                actorsState = actorsState,
+                tvShowsState = tvShowsState,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        } else {
+            RecentViewsAndSearchSection(
+                uiState = uiState,
+                listener = listener
+            )
+        }
+    }
+}
 
+@Composable
+private fun RecentViewsAndSearchSection(
+    uiState: SearchScreenState,
+    listener: SearchInteractionListener
+) {
+    val hasNoContent = uiState.recentSearch.isEmpty() && uiState.recentViewed.isEmpty()
+
+    if (hasNoContent) {
+        EmptySearchStateSection()
+    } else {
+        RecentContentList(
+            uiState = uiState,
+            listener = listener
+        )
+    }
+}
+
+@Composable
+private fun EmptySearchStateSection() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        EmptySearchState(
+            imagePath = com.baghdad.design_system.R.drawable.start_explore,
+            contentDescription = stringResource(R.string.start_exploring),
+            message = stringResource(R.string.start_exploring),
+            modifier = Modifier.padding(bottom = 60.dp)
+        )
+    }
+}
+
+@Composable
+private fun RecentContentList(
+    uiState: SearchScreenState,
+    listener: SearchInteractionListener
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.color.surface),
         contentPadding = PaddingValues(bottom = 8.dp)
     ) {
-        if (uiState.recentSearch.isEmpty() && uiState.recentViewed.isEmpty()) {
-            item {
-                Box(
-                    modifier = Modifier.height(600.dp), contentAlignment = Alignment.Center
-                ) {
-                    EmptySearchState(
-                        imagePath = com.baghdad.design_system.R.drawable.start_explore,
-                        contentDescription = stringResource(R.string.start_exploring),
-                        message = stringResource(R.string.start_exploring),
-                    )
-                }
-            }
-        } else {
+        addRecentlyViewedSection(
+            uiState = uiState,
+            listener = listener
+        )
 
-            if (uiState.recentViewed.isNotEmpty()) {
-                item {
-                    RecentlyViewedSection(
-                        recentViewed = uiState.recentViewed,
-                        onClearRecentlyViewedClick = { listener.onClearRecentlyViewedClick() },
-                        onSavedClick = { listener.onSaveRecentlyViewedClick(it) },
-                        onRecentlyViewedClick = { id, imageUrl ->
-                            listener.onRecentlyViewedClick(
-                                id,
-                                imageUrl
-                            )
-                        },
-                        modifier = Modifier.padding(top = 12.dp)
-                    )
-                }
-            } else {
-                item {
-                    Spacer(modifier = Modifier.padding(top = 12.dp))
-                }
-            }
-            if (uiState.recentSearch.isNotEmpty()) recentSearchSection(
-                recentSearch = uiState.recentSearch,
-                onClearRecentSearchClick = { listener.onClearRecentSearchClick() },
-                onRemoveRecentSearchItemClick = { listener.onRemoveRecentSearchItemClick(it) },
-                onRecentSearchClicked = { listener.onRecentSearchItemClick(it) },
+        addRecentSearchSection(
+            uiState = uiState,
+            listener = listener
+        )
+    }
+}
+
+private fun LazyListScope.addRecentlyViewedSection(
+    uiState: SearchScreenState,
+    listener: SearchInteractionListener
+) {
+    if (uiState.recentViewed.isNotEmpty()) {
+        item {
+            RecentlyViewedSection(
+                recentViewed = uiState.recentViewed,
+                onClearRecentlyViewedClick = listener::onClearRecentlyViewedClick,
+                onSavedClick = listener::onSaveRecentlyViewedClick,
+                onRecentlyViewedClick = { id, imageUrl ->
+                    listener.onRecentlyViewedClick(id, imageUrl)
+                },
+                modifier = Modifier.padding(top = 12.dp)
+            )
+        }
+    } else {
+        item {
+            Spacer(modifier = Modifier.padding(top = 12.dp))
+        }
+    }
+}
+
+private fun LazyListScope.addRecentSearchSection(
+    uiState: SearchScreenState,
+    listener: SearchInteractionListener
+) {
+    if (uiState.recentSearch.isNotEmpty()) {
+        item {
+            SectionHeaderWithAction(
+                title = stringResource(R.string.recent_search),
+                onClearAllClick = listener::onClearRecentSearchClick,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+        }
+
+        itemsIndexed(
+            items = uiState.recentSearch,
+            key = { _, item -> item.id }
+        ) { index, keyWord ->
+            RecentSearchItem(
+                title = keyWord.query,
+                onCancelClick = { listener.onRemoveRecentSearchItemClick(keyWord.id) },
+                onRecentSearchClicked = { listener.onRecentSearchItemClick(keyWord.id) },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .animateItem(
+                        fadeInSpec = tween(durationMillis = 300),
+                        fadeOutSpec = tween(durationMillis = 300),
+                        placementSpec = tween(durationMillis = 300)
+                    )
+            )
+
+            if (index < uiState.recentSearch.lastIndex) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(horizontal = 18.dp)
+                        .animateItem(
+                            fadeInSpec = tween(durationMillis = 300),
+                            fadeOutSpec = tween(durationMillis = 300),
+                            placementSpec = tween(durationMillis = 300)
+                        ),
+                    thickness = 1.dp,
+                    color = Theme.color.stroke
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+private fun getSnackBarMessage(type: BaseSnackBarMessage): Int {
     return when (type) {
         SearchSnackBarMessage.RemovedItemSuccessfully -> R.string.snackbar_removed_success
         SearchSnackBarMessage.SavedItemSuccessfully -> R.string.snackbar_saved_success
@@ -242,44 +352,42 @@ private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     }
 }
 
-@Preview
+@Preview(device = "spec:width=411dp,height=891dp")
 @Composable
 private fun SearchScreenPreview() {
     NovixTheme {
         SearchContent(
             uiState = SearchScreenState(
-                searchText = "", recentSearch = emptyList(), recentViewed = emptyList()
-            ), listener = object : SearchInteractionListener {
-                override fun onSearchTextChanged(query: String) {}
-                override fun onFilterIconClick() {}
-                override fun onRatingChanged(rating: Int) {}
-                override fun onYearRangeSelected(range: ClosedFloatingPointRange<Float>) {}
-                override fun onGenreSelected(genre: SearchScreenState.GenreUiState) {}
-                override fun onClearRecentlyViewedClick() {}
-                override fun onClearRecentSearchClick() {}
-                override fun onRemoveRecentSearchItemClick(id: Long) {}
-                override fun onRecentSearchItemClick(id: Long) {}
-                override fun onFilterCloseIconClick() {}
-                override fun onFilterClearClick() {}
-                override fun onApplyFilterClick() {}
-
-                override fun onActorItemClick(id: Long) {}
-                override fun onSaveRecentlyViewedClick(item: Long) {}
-                override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {}
-                override fun onRecentlyViewedClick(id: Long, imageUrl: String) {
-                }
-
-                override fun onMovieItemClick(contentId: Long, contentImageUrl: String) {
-                }
-
-                override fun onTvShowItemClick(contentId: Long, contentImageUrl: String) {
-                }
-            },
+                searchText = "",
+                recentSearch = emptyList(),
+                recentViewed = emptyList()
+            ),
+            listener = createPreviewListener(),
             snackBarState = SnackBarState(),
             movieItems = flowOf(PagingData.empty<SearchScreenState.MovieUiState>()).collectAsLazyPagingItems(),
             actorItems = flowOf(PagingData.empty<SearchScreenState.ActorUiState>()).collectAsLazyPagingItems(),
             tvShowItems = flowOf(PagingData.empty<SearchScreenState.TvShowUiState>()).collectAsLazyPagingItems()
-
         )
     }
+}
+
+private fun createPreviewListener() = object : SearchInteractionListener {
+    override fun onSearchTextChanged(query: String) {}
+    override fun onFilterIconClick() {}
+    override fun onRatingChanged(rating: Int) {}
+    override fun onYearRangeSelected(range: ClosedFloatingPointRange<Float>) {}
+    override fun onGenreSelected(genre: SearchScreenState.GenreUiState) {}
+    override fun onClearRecentlyViewedClick() {}
+    override fun onClearRecentSearchClick() {}
+    override fun onRemoveRecentSearchItemClick(id: Long) {}
+    override fun onRecentSearchItemClick(id: Long) {}
+    override fun onFilterCloseIconClick() {}
+    override fun onFilterClearClick() {}
+    override fun onApplyFilterClick() {}
+    override fun onActorItemClick(id: Long) {}
+    override fun onSaveRecentlyViewedClick(item: Long) {}
+    override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {}
+    override fun onRecentlyViewedClick(id: Long, imageUrl: String) {}
+    override fun onMovieItemClick(contentId: Long, contentImageUrl: String) {}
+    override fun onTvShowItemClick(contentId: Long, contentImageUrl: String) {}
 }

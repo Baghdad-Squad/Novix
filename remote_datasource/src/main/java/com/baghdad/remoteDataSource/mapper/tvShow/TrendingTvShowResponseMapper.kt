@@ -10,8 +10,10 @@ import com.baghdad.repository.model.TvShowDto
 
 fun TrendingTvShowsResponse.toPagedTvShowDtos(): PagedResultDto<TvShowDto> {
     return PagedResultDto(
-        data = this.results?.mapNotNull { it?.toTvShowDto() } ?: emptyList(),
-        nextKey = getNextKey(page, totalPages),
+        data =
+            this.results?.mapNotNull { it?.takeIf { it.id != null }?.toTvShowDto() }
+                ?: emptyList(),
+            nextKey = getNextKey(page, totalPages),
         prevKey = getPreviousKey(page)
     )
 }

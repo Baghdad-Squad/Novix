@@ -6,8 +6,11 @@ import javax.inject.Inject
 class SearchFilterHelper @Inject constructor(){
 
     fun matchesGenreFilter(itemGenres: List<Genre>, selectedGenres: List<Genre>): Boolean {
-        return selectedGenres.isEmpty() || itemGenres.any { selectedGenres.contains(it) }
+        val itemGenreIds = itemGenres.map { it.id }
+        val selectedIds = selectedGenres.map { it.id }
+        return selectedGenres.isEmpty() || itemGenreIds.any { it in selectedIds }
     }
+
 
     fun matchesYearFilter(releaseYear: Int, minimumYear: Int?, maximumYear: Int?): Boolean {
         val minCheck = minimumYear?.let { releaseYear >= it } != false

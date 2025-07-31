@@ -7,15 +7,13 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.LocalGenreDataSource
-import com.baghdad.repository.datasource.local.LocalTrendingTvShowsDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.TvShowDto
 import com.baghdad.repository.util.executeSafely
-import com.baghdad.repository.util.getPagedSafely
+import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
 import javax.inject.Inject
 
@@ -54,11 +52,21 @@ class TvShowRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTvShowsByGenre(genreId: Long, page: Int): List<TvShow> {
-        return executeSafely {
-            tvShowRemoteDataSource.getTvShowsByGenre(genreId, page).map {
-                it.toEntity()
-            }
+    override suspend fun getTvShowsByGenre(
+        genreId: Long,
+        page: Int,
+        pageSize: Int
+    ): PagedResult<TvShow> {
+        return getRemotePagedSafely(
+            page = page, pageSize = pageSize,
+            getRemoteData = { page, _ ->
+                tvShowRemoteDataSource.getTvShowsByGenre(
+                    genreId = genreId,
+                    page = page,
+                )
+            },
+        ) {
+            it.toEntity()
         }
     }
 

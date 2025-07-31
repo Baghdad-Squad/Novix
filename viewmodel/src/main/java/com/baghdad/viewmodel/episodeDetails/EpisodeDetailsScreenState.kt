@@ -13,7 +13,7 @@ data class EpisodeDetailsScreenState(
     val addToListBottomSheetState: AddToListBottomSheetState = AddToListBottomSheetState(),
     val rateEpisodeBottomSheetState: RateEpisodeBottomSheetState = RateEpisodeBottomSheetState()
 ): BaseUiState {
-    override val isLoading: Boolean
+    val isLoading: Boolean
         get() = isEpisodeDetailsLoading || isEpisodeCastMembersLoading
 
     data class EpisodeUiState(

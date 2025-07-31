@@ -17,8 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.HomeAppBar
@@ -52,7 +50,6 @@ fun HomeScreen(
     handleNavigation: (HomeNavEvent) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val upcomingItems = state.upcomingItems.collectAsLazyPagingItems()
     val snackBarState = viewModel.snackBarState.collectAsStateWithLifecycle()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
@@ -61,7 +58,6 @@ fun HomeScreen(
 
     HomeContent(
         state = state,
-        upcomingItems = upcomingItems,
         interactionListener = viewModel,
         snackBarState = snackBarState.value,
     )
@@ -70,7 +66,6 @@ fun HomeScreen(
 @Composable
 private fun HomeContent(
     state: HomeScreenState,
-    upcomingItems: LazyPagingItems<HomeScreenState.UpcomingItemUiState>,
     interactionListener: HomeInteractionListener,
     snackBarState: SnackBarState,
 ) {
@@ -81,7 +76,7 @@ private fun HomeContent(
             .fillMaxSize()
             .background(Theme.color.surface)
             .statusBarsPadding(),
-        topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp)) },
+        topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) },
         snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -92,7 +87,7 @@ private fun HomeContent(
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
-            contentPadding = PaddingValues(vertical = 16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp, top = 8.dp),
             state = lazyGridState,
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -143,7 +138,7 @@ private fun HomeContent(
                 genres = state.upcomingGenres,
                 isGenresLoading = state.isUpcomingGenresLoading,
                 onGenreSelected = interactionListener::onUpcomingGenreSelected,
-                upcomingItems = upcomingItems,
+                upcomingItems = state.upcomingItems,
                 isUpcomingItemsLoading = state.isUpcomingMoviesLoading,
                 onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
                 onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,

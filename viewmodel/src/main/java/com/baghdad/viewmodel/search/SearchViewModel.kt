@@ -18,10 +18,15 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,15 +43,13 @@ class SearchViewModel @Inject constructor(
     private val searchActorsUseCase: SearchActorsUseCase
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
-    private var searchJob: Job? = null
-    private var lastSearch: String = ""
-    private var tabChanged = false
 
     init {
         getRecentSearches()
         getRecentViewed()
         getMovieGenres()
         getTvShowGenres()
+        observeSearchQueryChanges()
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
@@ -54,27 +57,41 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onSearchTextChanged(text: String) {
-        val trimmed = text.trim()
-        updateState { it.copy(searchText = text, isUserTyping = true) }
-        Log.e("SearchViewModel", "onSearchTextChanged: $trimmed")
-        if (trimmed == lastSearch && !tabChanged) {
-            updateState { it.copy(isUserTyping = false) }
+        updateState { it.copy(searchText = text, isLoading = true) }
+        if (text.trim() == currentState.lastProcessedQuery) {
+            updateState { it.copy(isLoading = false) }
             return
         }
-        Log.e("SearchViewModel", "Performing search for: $trimmed")
-        searchJob?.cancel()
-        lastSearch = trimmed
-
-        if (trimmed.isBlank()) {
-            clearAllPagingFlows()
-            return
-        }
-
-        searchJob = tryToExecute(
-            onStart = { handleSearchStart() },
-            callee = { performSearchByTab(trimmed) },
-        )
     }
+
+    @OptIn(FlowPreview::class)
+    private fun observeSearchQueryFlow(): Flow<String> {
+        return uiState.map { it.searchText.trim() }.distinctUntilChanged()
+            .debounce(SEARCH_DEBOUNCED_DELAY)
+    }
+
+    private fun observeSearchQueryChanges() {
+        tryToCollect(
+            flowProvider = { observeSearchQueryFlow() },
+            onNewValue = { query -> onSearchQueryChangedCollected(query) })
+    }
+
+    private fun onSearchQueryChangedCollected(query: String) {
+        val processedQuery = query.trim()
+
+        if (processedQuery == currentState.lastProcessedQuery) {
+            return
+        }
+
+        currentState.lastProcessedQuery = processedQuery
+
+        if (processedQuery.isBlank()) {
+            clearAllPagingFlows()
+        } else {
+            performSearchByTab(processedQuery)
+        }
+    }
+
 
     private fun performSearchByTab(text: String) {
         when (currentState.selectedSearchTab) {
@@ -96,9 +113,15 @@ class SearchViewModel @Inject constructor(
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toMovieUI() },
-            onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } }
+            onFlowCreated = { moviesFlow ->
+                updateState { it.copy(moviesFlow = moviesFlow) }
+            },
+            onLoadingChanged = { isLoading ->
+                updateState { it.copy(isLoading = isLoading) }
+            }
         )
     }
+
 
     private fun searchTvShows(text: String) {
         collectPagingFlow(
@@ -111,7 +134,10 @@ class SearchViewModel @Inject constructor(
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toTvShowUI() },
-            onFlowCreated = { tvShowsFlow -> updateState { it.copy(tvShowsFlow = tvShowsFlow) } }
+            onFlowCreated = { tvShowsFlow -> updateState { it.copy(tvShowsFlow = tvShowsFlow) } },
+            onLoadingChanged = { isLoading ->
+                updateState { it.copy(isLoading = isLoading) }
+            }
         )
     }
 
@@ -119,30 +145,24 @@ class SearchViewModel @Inject constructor(
         collectPagingFlow(
             loadData = { page ->
                 searchActorsUseCase(
-                    query = text,
-                    page = page
+                    query = text, page = page
                 )
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toActorUI() },
-            onFlowCreated = { actorsFlow -> updateState { it.copy(actorsFlow = actorsFlow) } }
+            onFlowCreated = { actorsFlow -> updateState { it.copy(actorsFlow = actorsFlow) } },
+            onLoadingChanged = { isLoading ->
+                updateState { it.copy(isLoading = isLoading) }
+            }
         )
     }
 
     private fun clearAllPagingFlows() {
         updateState {
             it.copy(
-                moviesFlow = flowOf(),
-                tvShowsFlow = flowOf(),
-                actorsFlow = flowOf()
+                moviesFlow = flowOf(), tvShowsFlow = flowOf(), actorsFlow = flowOf()
             )
         }
-    }
-
-    private suspend fun handleSearchStart() {
-        delay(SEARCH_DEBOUNCED_DELAY)
-        updateState { it.copy(isUserTyping = false) }
-        onLoading()
     }
 
     private fun getRecentViewed() {
@@ -277,7 +297,9 @@ class SearchViewModel @Inject constructor(
     override fun onRecentSearchItemClick(id: Long) {
         val searchText = currentState.recentSearch.find { it.id == id }?.query ?: ""
         updateState { it.copy(searchText = searchText) }
+        currentState.lastProcessedQuery = ""
         onSearchTextChanged(searchText)
+        onSearchQueryChangedCollected(searchText)
     }
 
     override fun onFilterCloseIconClick() {
@@ -291,22 +313,14 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onFilterClearClick() {
-        if (currentState.searchText.isNotBlank()) {
-            onSearchTextChanged(currentState.searchText)
-            updateState {
-                it.copy(
-                    bottomSheetUiState = it.bottomSheetUiState.copy(
-                        isBottomSheetVisible = false
-                    )
-                )
-            }
+        if (currentState.selectedSearchTab == SearchScreenState.SearchTab.MOVIES) {
+            resetMoviesFilter()
         } else {
-            if (currentState.selectedSearchTab == SearchScreenState.SearchTab.MOVIES) {
-                resetMoviesFilter()
-            } else {
-                resetTvShowsFilter()
-            }
+            resetTvShowsFilter()
         }
+
+        currentState.lastProcessedQuery = ""
+        onSearchQueryChangedCollected(currentState.searchText)
     }
 
     private fun resetMoviesFilter() {
@@ -314,11 +328,8 @@ class SearchViewModel @Inject constructor(
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
                     isBottomSheetVisible = false,
-                    moviesFilter = it.bottomSheetUiState.moviesFilter.copy(
-                        minimumRating = 0,
-                        minimumYear = 1874,
-                        maximumYear = 2035,
-                        selectedGenres = emptyList()
+                    moviesFilter = SearchScreenState.SearchFilterUiState(
+                        allGenres = currentState.bottomSheetUiState.moviesFilter.allGenres,
                     )
                 )
             )
@@ -330,11 +341,8 @@ class SearchViewModel @Inject constructor(
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
                     isBottomSheetVisible = false,
-                    moviesFilter = it.bottomSheetUiState.moviesFilter.copy(
-                        minimumRating = 0,
-                        minimumYear = 1874,
-                        maximumYear = 2035,
-                        selectedGenres = emptyList()
+                    tvShowsFilter = SearchScreenState.SearchFilterUiState(
+                        allGenres = currentState.bottomSheetUiState.tvShowsFilter.allGenres,
                     )
                 )
             )
@@ -342,15 +350,18 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onApplyFilterClick() {
-        if (currentState.searchText.isNotBlank()) {
-            onSearchTextChanged(currentState.searchText)
-        }
         updateState {
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
                     isBottomSheetVisible = false
                 )
             )
+        }
+
+        val currentQuery = currentState.searchText.trim()
+        if (currentQuery.isNotBlank()) {
+            currentState.lastProcessedQuery = ""
+            onSearchQueryChangedCollected(currentQuery)
         }
     }
 
@@ -363,7 +374,13 @@ class SearchViewModel @Inject constructor(
                 )
             )
         }
+
+        val isMoviesTab = currentState.selectedSearchTab == SearchScreenState.SearchTab.MOVIES
+        val isGenresEmpty = currentState.bottomSheetUiState.moviesFilter.allGenres.isEmpty()
+
+        if (isMoviesTab && isGenresEmpty) getMovieGenres() else getTvShowGenres()
     }
+
 
     override fun onRatingChanged(rating: Int) {
         if (currentState.selectedSearchTab == SearchScreenState.SearchTab.MOVIES) {
@@ -406,8 +423,7 @@ class SearchViewModel @Inject constructor(
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
                     moviesFilter = it.bottomSheetUiState.moviesFilter.copy(
-                        minimumYear = range.start.toInt(),
-                        maximumYear = range.endInclusive.toInt()
+                        minimumYear = range.start.toInt(), maximumYear = range.endInclusive.toInt()
                     )
                 )
             )
@@ -419,8 +435,7 @@ class SearchViewModel @Inject constructor(
             it.copy(
                 bottomSheetUiState = it.bottomSheetUiState.copy(
                     tvShowsFilter = it.bottomSheetUiState.tvShowsFilter.copy(
-                        minimumYear = range.start.toInt(),
-                        maximumYear = range.endInclusive.toInt()
+                        minimumYear = range.start.toInt(), maximumYear = range.endInclusive.toInt()
                     )
                 )
             )
@@ -472,25 +487,26 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {
-        updateState { it.copy(selectedSearchTab = selectedTab, isLoading = true) }
-        tabChanged = true
-        performSearchByTab(currentState.searchText)
+        if (selectedTab != currentState.selectedSearchTab) {
+            updateState { it.copy(selectedSearchTab = selectedTab, isLoading = true) }
+            currentState.lastProcessedQuery = ""
+            onSearchQueryChangedCollected(currentState.searchText)
+        }
     }
 
     override fun onRecentlyViewedClick(id: Long, imageUrl: String) {
         val recentlyViewed = currentState.recentViewed.find { it.id == id }
         recentlyViewed?.let {
             if (it.contentType == RecentlyViewed.ContentType.MOVIE) {
-                onMovieItemClick(id, imageUrl)
+                sendEffect(SearchScreenEffect.NavigateToMovieDetails(id))
             } else {
-                onTvShowItemClick(id, imageUrl)
+                sendEffect(SearchScreenEffect.NavigateToTvShowDetails(id))
             }
         }
     }
 
     override fun onMovieItemClick(
-        contentId: Long,
-        contentImageUrl: String
+        contentId: Long, contentImageUrl: String
     ) {
         tryToExecute(
             callee = {
@@ -509,8 +525,7 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onTvShowItemClick(
-        contentId: Long,
-        contentImageUrl: String
+        contentId: Long, contentImageUrl: String
     ) {
         tryToExecute(
             callee = {

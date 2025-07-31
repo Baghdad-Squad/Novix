@@ -40,7 +40,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         return handleRequest<SimilarMovieResponse>(
             apiCall = { movieApiService.getSimilarMovies(movieId) },
             logger = logger,
-        ).results?.map { it.toDto() } ?: emptyList()
+        ).results?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
     }
 
     override suspend fun getMovieDetails(movieId: Long): MovieDto {
@@ -54,7 +54,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         return handleRequest<CastMembersResponse>(
             apiCall = { movieApiService.getMovieCastMembers(movieId) },
             logger = logger,
-        ).cast?.map { it.toDto() } ?: emptyList()
+        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
     }
 
     override suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto> {
@@ -77,14 +77,14 @@ class RemoteMovieDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        ).results.orEmpty().map { it.toDto() }
+        ).results.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
     }
 
     override suspend fun getMovieImages(movieId: Long): List<String> {
         return handleRequest<MovieImageResponse>(
             apiCall = { movieApiService.getMovieImages(movieId) },
             logger = logger,
-        ).backdrops?.map { it.filePath.orEmpty() }.orEmpty()
+        ).backdrops?.map { "https://image.tmdb.org/t/p/w500" + it.filePath.orEmpty() }.orEmpty()
     }
 
     override suspend fun getMovieTrailer(movieId: Long): String {
@@ -113,7 +113,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         ).toMovieDtos()
     }
     @OptIn(ExperimentalTime::class)
-    override suspend fun getUpcomingMovies(page: Int, genreId: Long?): PagedResultDto<MovieDto> {
+    override suspend fun getUpcomingMovies(genreId: Long?): List<MovieDto> {
         val today: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
         val thirtyDaysLater: LocalDate = today.plus(
             value = 30,
@@ -125,7 +125,6 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         val response = handleRequest<DiscoverMovieResponse>(
             apiCall = {
                 movieApiService.getUpcomingMovies(
-                    page = page,
                     genres = genreId?.toString() ?: "",
                     releaseDateLte = maximumReleaseDate,
                     releaseDateGte = minimumReleaseDate
@@ -133,7 +132,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
             },
             logger = logger,
         )
-        return response.toPagedMovieDtos()
+        return response.toMovieDtos()
     }
 
     override suspend fun getPopularMovies(): List<MovieDto> {
