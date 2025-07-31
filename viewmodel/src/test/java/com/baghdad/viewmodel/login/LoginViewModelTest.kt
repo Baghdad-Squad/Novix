@@ -3,6 +3,7 @@ package com.baghdad.viewmodel.login
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.domain.usecase.login.LoginUseCase
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -13,9 +14,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -39,20 +37,20 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `initial state should have correct default values`() {
-        // Given & When
+    fun `uiState should have correct default values when initialized`() {
+        // When
         val state = viewModel.uiState.value
 
         // Then
-        assertFalse(state.isLoading)
-        assertEquals("", state.userName)
-        assertEquals("", state.password)
-        assertFalse(state.isPasswordVisible)
-        assertTrue(state.isAnyFieldEmpty)
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.userName).isEmpty()
+        assertThat(state.password).isEmpty()
+        assertThat(state.isPasswordVisible).isFalse()
+        assertThat(state.isAnyFieldEmpty).isTrue()
     }
 
     @Test
-    fun `onUserNameValueChange should update userName and validate fields`() {
+    fun `onUserNameValueChange() should update userName and validate fields when called with non-empty value`() {
         // Given
         val userName = "testuser"
 
@@ -61,12 +59,12 @@ class LoginViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertEquals(userName, state.userName)
-        assertTrue(state.isAnyFieldEmpty)
+        assertThat(state.userName).isEqualTo(userName)
+        assertThat(state.isAnyFieldEmpty).isTrue()
     }
 
     @Test
-    fun `onUserNameValueChange with empty string should set isAnyFieldEmpty to true`() {
+    fun `onUserNameValueChange() should set isAnyFieldEmpty to true when called with empty string`() {
         // Given
         viewModel.onUserNameValueChange("user")
         viewModel.onPasswordValueChange("pass")
@@ -76,12 +74,12 @@ class LoginViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertEquals("", state.userName)
-        assertTrue(state.isAnyFieldEmpty)
+        assertThat(state.userName).isEmpty()
+        assertThat(state.isAnyFieldEmpty).isTrue()
     }
 
     @Test
-    fun `onPasswordValueChange should update password and validate fields`() {
+    fun `onPasswordValueChange() should update password and validate fields when called with non-empty value`() {
         // Given
         val password = "testpass"
 
@@ -90,12 +88,12 @@ class LoginViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertEquals(password, state.password)
-        assertTrue(state.isAnyFieldEmpty)
+        assertThat(state.password).isEqualTo(password)
+        assertThat(state.isAnyFieldEmpty).isTrue()
     }
 
     @Test
-    fun `onPasswordValueChange with empty string should set isAnyFieldEmpty to true`() {
+    fun `onPasswordValueChange() should set isAnyFieldEmpty to true when called with empty string`() {
         // Given
         viewModel.onUserNameValueChange("user")
         viewModel.onPasswordValueChange("pass")
@@ -105,12 +103,12 @@ class LoginViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertEquals("", state.password)
-        assertTrue(state.isAnyFieldEmpty)
+        assertThat(state.password).isEmpty()
+        assertThat(state.isAnyFieldEmpty).isTrue()
     }
 
     @Test
-    fun `when both userName and password are filled isAnyFieldEmpty should be false`() {
+    fun `isAnyFieldEmpty should be false when both userName and password fields are filled`() {
         // Given
         val userName = "testuser"
         val password = "testpass"
@@ -121,38 +119,38 @@ class LoginViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertEquals(userName, state.userName)
-        assertEquals(password, state.password)
-        assertFalse(state.isAnyFieldEmpty)
+        assertThat(state.userName).isEqualTo(userName)
+        assertThat(state.password).isEqualTo(password)
+        assertThat(state.isAnyFieldEmpty).isFalse()
     }
 
     @Test
-    fun `togglePasswordVisibility should toggle isPasswordVisible from false to true`() {
+    fun `togglePasswordVisibility() should toggle isPasswordVisible from false to true when called`() {
         // Given
-        assertFalse(viewModel.uiState.value.isPasswordVisible)
+        assertThat(viewModel.uiState.value.isPasswordVisible).isFalse()
 
         // When
         viewModel.togglePasswordVisibility()
 
         // Then
-        assertTrue(viewModel.uiState.value.isPasswordVisible)
+        assertThat(viewModel.uiState.value.isPasswordVisible).isTrue()
     }
 
     @Test
-    fun `togglePasswordVisibility should toggle isPasswordVisible from true to false`() {
+    fun `togglePasswordVisibility() should toggle isPasswordVisible from true to false when called twice`() {
         // Given
         viewModel.togglePasswordVisibility()
-        assertTrue(viewModel.uiState.value.isPasswordVisible)
+        assertThat(viewModel.uiState.value.isPasswordVisible).isTrue()
 
         // When
         viewModel.togglePasswordVisibility()
 
         // Then
-        assertFalse(viewModel.uiState.value.isPasswordVisible)
+        assertThat(viewModel.uiState.value.isPasswordVisible).isFalse()
     }
 
     @Test
-    fun `onRegisterClicked should emit NavigateToRegister effect`() = runTest {
+    fun `onRegisterClicked() should emit NavigateToRegister effect when called`() = runTest {
         // Given
         var effect: LoginUiEffect? = null
         val job = launch {
@@ -164,12 +162,12 @@ class LoginViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertEquals(LoginUiEffect.NavigateToRegister, effect)
+        assertThat(effect).isEqualTo(LoginUiEffect.NavigateToRegister)
         job.cancel()
     }
 
     @Test
-    fun `onForgotPasswordClicked should emit NavigateToForgotPassword effect`() = runTest {
+    fun `onForgotPasswordClicked() should emit NavigateToForgotPassword effect when called`() = runTest {
         // Given
         var effect: LoginUiEffect? = null
         val job = launch {
@@ -181,12 +179,12 @@ class LoginViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertEquals(LoginUiEffect.NavigateToForgotPassword, effect)
+        assertThat(effect).isEqualTo(LoginUiEffect.NavigateToForgotPassword)
         job.cancel()
     }
 
     @Test
-    fun `onLoginClicked with UnAuthorizedException should handle error correctly`() = runTest {
+    fun `onLoginClicked() should handle UnAuthorizedException correctly when login fails`() = runTest {
         // Given
         val userName = "testuser"
         val password = "wrongpass"
@@ -200,12 +198,11 @@ class LoginViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertFalse(viewModel.uiState.value.isLoading)
+        assertThat(viewModel.uiState.value.isLoading).isFalse()
     }
 
-
     @Test
-    fun `onLoginSuccess should emit NavigateToHome effect`() = runTest {
+    fun `onLoginSuccess() should emit NavigateToHome effect when called`() = runTest {
         // Given
         var effect: LoginUiEffect? = null
         val job = launch {
@@ -217,44 +214,49 @@ class LoginViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        assertEquals(LoginUiEffect.NavigateToHome, effect)
+        assertThat(effect).isEqualTo(LoginUiEffect.NavigateToHome)
         job.cancel()
     }
 
     @Test
-    fun `onLoginError with UnAuthorizedException should handle correctly`() {
+    fun `onLoginError() should handle UnAuthorizedException correctly when called`() {
         // Given
         val exception = UnAuthorizedException()
 
         // When
         viewModel.onLoginError(exception)
 
+        // Then
+        assertThat(viewModel.uiState.value.isLoading).isFalse()
     }
 
     @Test
-    fun `onLoginError with NoInternetException should handle correctly`() {
+    fun `onLoginError() should handle NoInternetException correctly when called`() {
         // Given
         val exception = NoInternetException()
 
         // When
         viewModel.onLoginError(exception)
 
+        // Then
+        assertThat(viewModel.uiState.value.isLoading).isFalse()
     }
 
     @Test
-    fun `onLoginError with unknown exception should handle correctly`() {
+    fun `onLoginError() should handle unknown exceptions correctly when called`() {
         // Given
         val exception = RuntimeException("Unknown error")
 
         // When
         viewModel.onLoginError(exception)
 
+        // Then
+        assertThat(viewModel.uiState.value.isLoading).isFalse()
     }
 
-
     @Test
-    fun `multiple field changes should maintain correct state`() {
-        // Given & When
+    fun `uiState should maintain correct values when multiple field changes occur`() {
+        // When
         viewModel.onUserNameValueChange("user1")
         viewModel.onPasswordValueChange("pass1")
         viewModel.togglePasswordVisibility()
@@ -263,14 +265,14 @@ class LoginViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertEquals("user2", state.userName)
-        assertEquals("pass2", state.password)
-        assertTrue(state.isPasswordVisible)
-        assertFalse(state.isAnyFieldEmpty)
+        assertThat(state.userName).isEqualTo("user2")
+        assertThat(state.password).isEqualTo("pass2")
+        assertThat(state.isPasswordVisible).isTrue()
+        assertThat(state.isAnyFieldEmpty).isFalse()
     }
 
     @Test
-    fun `onUserNameValueChange with whitespace should be treated as valid input`() {
+    fun `onUserNameValueChange() should treat whitespace as valid input when called`() {
         // Given
         val userNameWithSpaces = " test user "
 
@@ -280,12 +282,12 @@ class LoginViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertEquals(userNameWithSpaces, state.userName)
-        assertFalse(state.isAnyFieldEmpty)
+        assertThat(state.userName).isEqualTo(userNameWithSpaces)
+        assertThat(state.isAnyFieldEmpty).isFalse()
     }
 
     @Test
-    fun `onPasswordValueChange with whitespace should be treated as valid input`() {
+    fun `onPasswordValueChange() should treat whitespace as valid input when called`() {
         // Given
         val passwordWithSpaces = " test password "
 
@@ -295,7 +297,7 @@ class LoginViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertEquals(passwordWithSpaces, state.password)
-        assertFalse(state.isAnyFieldEmpty)
+        assertThat(state.password).isEqualTo(passwordWithSpaces)
+        assertThat(state.isAnyFieldEmpty).isFalse()
     }
 }
