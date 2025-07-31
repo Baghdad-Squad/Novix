@@ -35,11 +35,11 @@ class TvShowDetailsViewModel(
             onSuccess = ::onGetTvShowDetailsSuccess,
             onStart = { updateState { it.copy(isTvShowDetailsLoading = true) } },
             onFinally = ::onFinallyAndAddToContinueWatching,
-            onError = ::onGetTvShowDetailsError
+            onError = ::onLoadDataError
         )
     }
 
-    private fun onGetTvShowDetailsError(throwable: Throwable) {
+    private fun onLoadDataError(throwable: Throwable) {
         when (throwable) {
             is NoInternetException -> showNoInternetSnackBar()
             else -> handleError(throwable)
@@ -60,15 +60,8 @@ class TvShowDetailsViewModel(
             onSuccess = ::onGetTvShowCastSuccess,
             onStart = { updateState { it.copy(isCastMembersLoading = true) } },
             onFinally = { updateState { it.copy(isCastMembersLoading = false) } },
-            onError = ::onGetTvShowCastError
+            onError = ::onLoadDataError
         )
-    }
-
-    private fun onGetTvShowCastError(throwable: Throwable) {
-        when (throwable) {
-            is NoInternetException -> showNoInternetSnackBar()
-            else -> handleError(throwable)
-        }
     }
 
     private fun onGetTvShowCastSuccess(cast: List<CastMember>) {
@@ -123,15 +116,8 @@ class TvShowDetailsViewModel(
             onSuccess = ::onGetTvShowEpisodesSuccess,
             onStart = {updateState { it.copy(isEpisodesLoading = true) }},
             onFinally = {updateState { it.copy(isEpisodesLoading = false) }},
-            onError = ::onGetTvShowEpisodesError
+            onError = ::onLoadDataError
         )
-    }
-
-    private fun onGetTvShowEpisodesError(throwable: Throwable) {
-        when (throwable) {
-            is NoInternetException -> showNoInternetSnackBar()
-            else -> handleError(throwable)
-        }
     }
 
     private fun onGetTvShowEpisodesSuccess(episodes: List<Episode>) {
