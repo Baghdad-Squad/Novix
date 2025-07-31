@@ -5,10 +5,8 @@ import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.usecase.actor.GetTrendingActorsUseCase
 import com.baghdad.entity.person.Actor
 import com.baghdad.viewmodel.base.BaseUiState
-import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.coVerifyAll
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,12 +19,11 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TrendingActorsCompleteTest {
+class TrendingActorsViewModelTest {
 
     private lateinit var getTrendingActorsUseCase: GetTrendingActorsUseCase
     private lateinit var trendingActorViewModel: TrendingActorViewModel
@@ -54,315 +51,188 @@ class TrendingActorsCompleteTest {
     }
 
     @Test
-    fun `onBackClick should send OnBackClick effect`() = runTest {
-        var receivedEffect: TrendingActorsUiEffect? = null
-        val job = launch {
-            trendingActorViewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
-        }
+    fun `should emit OnBackClick when onBackClick is called`() = runTest {
+        var result: TrendingActorsUiEffect? = null
+        val job = launch { trendingActorViewModel.uiEffect.collect { result = it } }
 
         trendingActorViewModel.onBackClick()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        Assertions.assertEquals(TrendingActorsUiEffect.OnBackClick, receivedEffect)
+        assertThat(result).isEqualTo(TrendingActorsUiEffect.OnBackClick)
         job.cancel()
     }
 
     @Test
-    fun `onTrendingActorClick should send NavigateToActorsDetails effect`() = runTest {
+    fun `should emit NavigateToActorsDetails when onTrendingActorClick is called`() = runTest {
         val actorId = 123L
-        var receivedEffect: TrendingActorsUiEffect? = null
-        val job = launch {
-            trendingActorViewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
-        }
+        var result: TrendingActorsUiEffect? = null
+        val job = launch { trendingActorViewModel.uiEffect.collect { result = it } }
 
         trendingActorViewModel.onTrendingActorClick(actorId)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        Assertions.assertEquals(TrendingActorsUiEffect.NavigateToActorsDetails(actorId), receivedEffect)
+        assertThat(result).isEqualTo(TrendingActorsUiEffect.NavigateToActorsDetails(actorId))
         job.cancel()
     }
 
     @Test
-    fun `multiple onTrendingActorClick calls should send multiple effects`() = runTest {
-        val receivedEffects = mutableListOf<TrendingActorsUiEffect>()
-        val actorIds = listOf(123L, 456L, 789L)
-        val job = launch {
-            trendingActorViewModel.uiEffect.collect { effect ->
-                receivedEffects.add(effect)
-            }
-        }
+    fun `should emit multiple NavigateToActorsDetails effects for multiple clicks`() = runTest {
+        val ids = listOf(123L, 456L, 789L)
+        val results = mutableListOf<TrendingActorsUiEffect>()
+        val job = launch { trendingActorViewModel.uiEffect.collect { results.add(it) } }
 
-        actorIds.forEach { actorId ->
-            trendingActorViewModel.onTrendingActorClick(actorId)
+        ids.forEach {
+            trendingActorViewModel.onTrendingActorClick(it)
             testDispatcher.scheduler.advanceUntilIdle()
         }
 
-        Assertions.assertEquals(3, receivedEffects.size)
-        Assertions.assertEquals(TrendingActorsUiEffect.NavigateToActorsDetails(123L), receivedEffects[0])
-        Assertions.assertEquals(TrendingActorsUiEffect.NavigateToActorsDetails(456L), receivedEffects[1])
-        Assertions.assertEquals(TrendingActorsUiEffect.NavigateToActorsDetails(789L), receivedEffects[2])
+        assertThat(results).hasSize(3)
+        assertThat(results[0]).isEqualTo(TrendingActorsUiEffect.NavigateToActorsDetails(123L))
+        assertThat(results[1]).isEqualTo(TrendingActorsUiEffect.NavigateToActorsDetails(456L))
+        assertThat(results[2]).isEqualTo(TrendingActorsUiEffect.NavigateToActorsDetails(789L))
         job.cancel()
     }
 
     @Test
-    fun `default constructor should create state with default values`() {
+    fun `should have default state values`() {
         val state = TrendingActorsUiState()
-        Assertions.assertEquals(emptyFlow<PagingData<TrendingActorsUiState.TrendingActor>>().toString(), state.trendingActor.toString())
-        Assertions.assertFalse(state.isLoading)
+        assertThat(state.isLoading).isFalse()
     }
 
     @Test
-    fun `constructor with parameters should set values correctly`() {
-        val mockPagingData = PagingData.from(listOf(createTrendingActor()))
-        val trendingActorFlow = flowOf(mockPagingData)
-        val state = TrendingActorsUiState(
-            trendingActor = trendingActorFlow,
-            isLoading = true
-        )
-
-        Assertions.assertEquals(trendingActorFlow, state.trendingActor)
-        Assertions.assertTrue(state.isLoading)
+    fun `should apply isLoading correctly through constructor`() {
+        val flow = flowOf(PagingData.from(listOf(createTrendingActor())))
+        val state = TrendingActorsUiState(trendingActor = flow, isLoading = true)
+        assertThat(state.trendingActor).isEqualTo(flow)
+        assertThat(state.isLoading).isTrue()
     }
 
     @Test
-    fun `isLoading property should be accessible from BaseUiState interface`() {
+    fun `should expose isLoading from BaseUiState`() {
         val state: BaseUiState = TrendingActorsUiState(isLoading = true)
-        Assertions.assertTrue(state.isLoading)
+        assertThat(state.isLoading).isTrue()
     }
 
     @Test
-    fun `copy function should work correctly with isLoading change`() {
-        val originalState = TrendingActorsUiState(isLoading = false)
-        val newState = originalState.copy(isLoading = true)
-        Assertions.assertTrue(newState.isLoading)
-        Assertions.assertFalse(originalState.isLoading)
+    fun `should create copy with updated isLoading`() {
+        val original = TrendingActorsUiState(isLoading = false)
+        val copy = original.copy(isLoading = true)
+        assertThat(copy.isLoading).isTrue()
+        assertThat(original.isLoading).isFalse()
     }
 
     @Test
-    fun `copy function should work correctly with trendingActor change`() {
-        val originalFlow = emptyFlow<PagingData<TrendingActorsUiState.TrendingActor>>()
+    fun `should create copy with updated trendingActor flow`() {
+        val original = TrendingActorsUiState(trendingActor = emptyFlow())
         val newFlow = flowOf(PagingData.from(listOf(createTrendingActor())))
-        val originalState = TrendingActorsUiState(trendingActor = originalFlow)
-        val newState = originalState.copy(trendingActor = newFlow)
-
-        Assertions.assertEquals(newFlow, newState.trendingActor)
-        Assertions.assertEquals(originalFlow, originalState.trendingActor)
+        val copy = original.copy(trendingActor = newFlow)
+        assertThat(copy.trendingActor).isEqualTo(newFlow)
     }
 
     @Test
-    fun `equals should work correctly for identical states`() {
+    fun `should equal when states are identical`() {
         val flow = emptyFlow<PagingData<TrendingActorsUiState.TrendingActor>>()
-        val state1 = TrendingActorsUiState(trendingActor = flow, isLoading = true)
-        val state2 = TrendingActorsUiState(trendingActor = flow, isLoading = true)
-        Assertions.assertEquals(state1, state2)
+        val a = TrendingActorsUiState(trendingActor = flow, isLoading = true)
+        val b = TrendingActorsUiState(trendingActor = flow, isLoading = true)
+        assertThat(a).isEqualTo(b)
     }
 
     @Test
-    fun `equals should work correctly for different states`() {
-        val state1 = TrendingActorsUiState(isLoading = true)
-        val state2 = TrendingActorsUiState(isLoading = false)
-        Assertions.assertNotEquals(state1, state2)
+    fun `should not equal when isLoading differs`() {
+        val a = TrendingActorsUiState(isLoading = true)
+        val b = TrendingActorsUiState(isLoading = false)
+        assertThat(a).isNotEqualTo(b)
     }
 
     @Test
-    fun `hashCode should be consistent for identical states`() {
+    fun `should have same hashCode when states are equal`() {
         val flow = emptyFlow<PagingData<TrendingActorsUiState.TrendingActor>>()
-        val state1 = TrendingActorsUiState(trendingActor = flow, isLoading = true)
-        val state2 = TrendingActorsUiState(trendingActor = flow, isLoading = true)
-        Assertions.assertEquals(state1.hashCode(), state2.hashCode())
+        val a = TrendingActorsUiState(trendingActor = flow, isLoading = true)
+        val b = TrendingActorsUiState(trendingActor = flow, isLoading = true)
+        assertThat(a.hashCode()).isEqualTo(b.hashCode())
     }
 
     @Test
-    fun `TrendingActor constructor should set values correctly`() {
-        val trendingActor = TrendingActorsUiState.TrendingActor(
-            id = ACTOR_ID,
-            profilePictureURL = PROFILE_PICTURE_URL,
-            name = ACTOR_NAME
-        )
-        Assertions.assertEquals(ACTOR_ID, trendingActor.id)
-        Assertions.assertEquals(PROFILE_PICTURE_URL, trendingActor.profilePictureURL)
-        Assertions.assertEquals(ACTOR_NAME, trendingActor.name)
+    fun `should correctly create TrendingActor`() {
+        val actor = TrendingActorsUiState.TrendingActor(ACTOR_ID, PROFILE_PICTURE_URL, ACTOR_NAME)
+        assertThat(actor.id).isEqualTo(ACTOR_ID)
+        assertThat(actor.name).isEqualTo(ACTOR_NAME)
+        assertThat(actor.profilePictureURL).isEqualTo(PROFILE_PICTURE_URL)
     }
 
     @Test
-    fun `TrendingActor copy function should work correctly`() {
-        val originalActor = TrendingActorsUiState.TrendingActor(
-            id = ACTOR_ID,
-            profilePictureURL = PROFILE_PICTURE_URL,
-            name = "Original Name"
-        )
-        val copiedActor = originalActor.copy(name = "New Name")
-        Assertions.assertEquals("New Name", copiedActor.name)
-        Assertions.assertEquals("Original Name", originalActor.name)
-        Assertions.assertEquals(ACTOR_ID, copiedActor.id)
-        Assertions.assertEquals(PROFILE_PICTURE_URL, copiedActor.profilePictureURL)
+    fun `should copy TrendingActor with new name`() {
+        val original = TrendingActorsUiState.TrendingActor(ACTOR_ID, PROFILE_PICTURE_URL, "Old")
+        val copy = original.copy(name = "New")
+        assertThat(copy.name).isEqualTo("New")
+        assertThat(original.name).isEqualTo("Old")
     }
 
     @Test
-    fun `TrendingActor equals should work correctly`() {
-        val actor1 = TrendingActorsUiState.TrendingActor(
-            id = ACTOR_ID,
-            profilePictureURL = PROFILE_PICTURE_URL,
-            name = ACTOR_NAME
-        )
-        val actor2 = TrendingActorsUiState.TrendingActor(
-            id = ACTOR_ID,
-            profilePictureURL = PROFILE_PICTURE_URL,
-            name = ACTOR_NAME
-        )
-        Assertions.assertEquals(actor1, actor2)
+    fun `should equal when TrendingActors have same values`() {
+        val a = TrendingActorsUiState.TrendingActor(ACTOR_ID, PROFILE_PICTURE_URL, ACTOR_NAME)
+        val b = TrendingActorsUiState.TrendingActor(ACTOR_ID, PROFILE_PICTURE_URL, ACTOR_NAME)
+        assertThat(a).isEqualTo(b)
     }
 
     @Test
-    fun `TrendingActor with different ids should not be equal`() {
-        val actor1 = TrendingActorsUiState.TrendingActor(id = 123L, profilePictureURL = "", name = "")
-        val actor2 = TrendingActorsUiState.TrendingActor(id = 456L, profilePictureURL = "", name = "")
-        Assertions.assertNotEquals(actor1, actor2)
+    fun `should not equal when TrendingActors have different ids`() {
+        val a = TrendingActorsUiState.TrendingActor(1, "", "")
+        val b = TrendingActorsUiState.TrendingActor(2, "", "")
+        assertThat(a).isNotEqualTo(b)
     }
 
     @Test
-    fun `TrendingActor hashCode should be consistent`() {
-        val actor1 = TrendingActorsUiState.TrendingActor(
-            id = ACTOR_ID,
-            profilePictureURL = PROFILE_PICTURE_URL,
-            name = ACTOR_NAME
-        )
-        val actor2 = TrendingActorsUiState.TrendingActor(
-            id = ACTOR_ID,
-            profilePictureURL = PROFILE_PICTURE_URL,
-            name = ACTOR_NAME
-        )
-        Assertions.assertEquals(actor1.hashCode(), actor2.hashCode())
+    fun `should return consistent hashCode for TrendingActor`() {
+        val a = TrendingActorsUiState.TrendingActor(ACTOR_ID, PROFILE_PICTURE_URL, ACTOR_NAME)
+        val b = TrendingActorsUiState.TrendingActor(ACTOR_ID, PROFILE_PICTURE_URL, ACTOR_NAME)
+        assertThat(a.hashCode()).isEqualTo(b.hashCode())
     }
 
     @Test
-    fun `TrendingActor component functions should work correctly`() {
-        val actor = TrendingActorsUiState.TrendingActor(
-            id = ACTOR_ID,
-            profilePictureURL = PROFILE_PICTURE_URL,
-            name = ACTOR_NAME
-        )
-        val (id, profileURL, name) = actor
-        Assertions.assertEquals(ACTOR_ID, id)
-        Assertions.assertEquals(PROFILE_PICTURE_URL, profileURL)
-        Assertions.assertEquals(ACTOR_NAME, name)
+    fun `should deconstruct TrendingActor correctly`() {
+        val actor = TrendingActorsUiState.TrendingActor(ACTOR_ID, PROFILE_PICTURE_URL, ACTOR_NAME)
+        val (id, url, name) = actor
+        assertThat(id).isEqualTo(ACTOR_ID)
+        assertThat(url).isEqualTo(PROFILE_PICTURE_URL)
+        assertThat(name).isEqualTo(ACTOR_NAME)
     }
 
     @Test
-    fun `OnBackClick should be singleton object`() {
-        val effect1 = TrendingActorsUiEffect.OnBackClick
-        val effect2 = TrendingActorsUiEffect.OnBackClick
-        Assertions.assertEquals(effect1, effect2)
-        Assertions.assertTrue(effect1 === effect2)
+    fun `should return OnBackClick singleton correctly`() {
+        val a = TrendingActorsUiEffect.OnBackClick
+        val b = TrendingActorsUiEffect.OnBackClick
+        assertThat(a).isSameInstanceAs(b)
     }
 
     @Test
-    fun `NavigateToActorsDetails with same actorId should be equal`() {
-        val effect1 = TrendingActorsUiEffect.NavigateToActorsDetails(ACTOR_ID)
-        val effect2 = TrendingActorsUiEffect.NavigateToActorsDetails(ACTOR_ID)
-        Assertions.assertEquals(effect1, effect2)
+    fun `should equal NavigateToActorsDetails with same id`() {
+        val a = TrendingActorsUiEffect.NavigateToActorsDetails(ACTOR_ID)
+        val b = TrendingActorsUiEffect.NavigateToActorsDetails(ACTOR_ID)
+        assertThat(a).isEqualTo(b)
     }
 
     @Test
-    fun `NavigateToActorsDetails with different actorIds should not be equal`() {
-        val effect1 = TrendingActorsUiEffect.NavigateToActorsDetails(123L)
-        val effect2 = TrendingActorsUiEffect.NavigateToActorsDetails(456L)
-        Assertions.assertNotEquals(effect1, effect2)
+    fun `should not equal NavigateToActorsDetails with different id`() {
+        val a = TrendingActorsUiEffect.NavigateToActorsDetails(1L)
+        val b = TrendingActorsUiEffect.NavigateToActorsDetails(2L)
+        assertThat(a).isNotEqualTo(b)
     }
 
     @Test
-    fun `NavigateToActorsDetails should set actorId correctly`() {
-        val effect = TrendingActorsUiEffect.NavigateToActorsDetails(ACTOR_ID)
-        Assertions.assertEquals(ACTOR_ID, effect.actorId)
-    }
-
-    @Test
-    fun `NavigateToActorsDetails copy function should work correctly`() {
-        val originalEffect = TrendingActorsUiEffect.NavigateToActorsDetails(123L)
-        val copiedEffect = originalEffect.copy(actorId = 456L)
-        Assertions.assertEquals(456L, copiedEffect.actorId)
-        Assertions.assertEquals(123L, originalEffect.actorId)
-    }
-
-    @Test
-    fun `all effects should be usable in collections`() {
-        val effects = listOf<TrendingActorsUiEffect>(
-            TrendingActorsUiEffect.OnBackClick,
-            TrendingActorsUiEffect.NavigateToActorsDetails(ACTOR_ID),
-            TrendingActorsUiEffect.NavigateToActorsDetails(456L)
-        )
-        Assertions.assertEquals(3, effects.size)
-        Assertions.assertTrue(effects.all { it is TrendingActorsUiEffect })
-    }
-
-    @Test
-    fun `component functions should work for data classes`() {
-        val navigateToActorsDetails = TrendingActorsUiEffect.NavigateToActorsDetails(123L)
-        val (actorIdComponent) = navigateToActorsDetails
-        Assertions.assertEquals(123L, actorIdComponent)
-    }
-
-    @Test
-    fun `toString should work correctly for all effects`() {
-        val onBackClick = TrendingActorsUiEffect.OnBackClick
-        val navigateToActorsDetails = TrendingActorsUiEffect.NavigateToActorsDetails(123L)
-        Assertions.assertEquals("OnBackClick", onBackClick.toString())
-        Assertions.assertTrue(navigateToActorsDetails.toString().contains("NavigateToActorsDetails"))
-        Assertions.assertTrue(navigateToActorsDetails.toString().contains("123"))
-    }
-
-    @Test
-    fun `effects should work correctly in when expressions`() {
-        val effects = listOf<TrendingActorsUiEffect>(
-            TrendingActorsUiEffect.OnBackClick,
-            TrendingActorsUiEffect.NavigateToActorsDetails(123L)
-        )
-        val results = effects.map { effect ->
-            when (effect) {
-                is TrendingActorsUiEffect.OnBackClick -> "back"
-                is TrendingActorsUiEffect.NavigateToActorsDetails -> "navigate_${effect.actorId}"
-            }
-        }
-        Assertions.assertEquals(listOf("back", "navigate_123"), results)
-    }
-
-    @Test
-    fun `toTrendingActorsUi should map Actor to TrendingActor correctly`() {
+    fun `should map Actor to TrendingActor using extension`() {
         val actor = createMockActor()
-        val trendingActor = actor.toTrendingActorsUi()
-        Assertions.assertEquals(actor.id, trendingActor.id)
-        Assertions.assertEquals(actor.profilePictureURL, trendingActor.profilePictureURL)
-        Assertions.assertEquals(actor.name, trendingActor.name)
+        val ui = actor.toTrendingActorsUi()
+        assertThat(ui.id).isEqualTo(actor.id)
+        assertThat(ui.name).isEqualTo(actor.name)
+        assertThat(ui.profilePictureURL).isEqualTo(actor.profilePictureURL)
     }
 
     @Test
-    fun `multiple TrendingActors should be comparable in collections`() {
-        val actors = listOf(
-            TrendingActorsUiState.TrendingActor(1L, "url1", "Actor 1"),
-            TrendingActorsUiState.TrendingActor(2L, "url2", "Actor 2"),
-            TrendingActorsUiState.TrendingActor(3L, "url3", "Actor 3")
-        )
-        val sortedById = actors.sortedBy { it.id }
-        val sortedByName = actors.sortedBy { it.name }
-        Assertions.assertEquals(3, sortedById.size)
-        Assertions.assertEquals(1L, sortedById[0].id)
-        Assertions.assertEquals(2L, sortedById[1].id)
-        Assertions.assertEquals(3L, sortedById[2].id)
-        Assertions.assertEquals("Actor 1", sortedByName[0].name)
-        Assertions.assertEquals("Actor 2", sortedByName[1].name)
-        Assertions.assertEquals("Actor 3", sortedByName[2].name)
-    }
-
-    @Test
-    fun `onFinally should update isLoading to false`() = runTest {
-
+    fun `should update isLoading to false after finally`() = runTest {
         testDispatcher.scheduler.advanceUntilIdle()
         val state = trendingActorViewModel.uiState.value
-        Assertions.assertFalse(state.isLoading)
+        assertThat(state.isLoading).isFalse()
     }
 
     private fun createTrendingActor() = TrendingActorsUiState.TrendingActor(
@@ -376,23 +246,26 @@ class TrendingActorsCompleteTest {
         name = ACTOR_NAME,
         profilePictureURL = PROFILE_PICTURE_URL,
         birthDate = LocalDate.parse("1980-01-01"),
-        placeOfBirth = "New York, USA",
+        placeOfBirth = "New York",
         deathDate = null,
-        biography = "Famous actor",
+        biography = "Bio",
         headerPictures = listOf("/header.jpg"),
         department = "Acting"
     )
 
     companion object {
+        private const val ACTOR_ID = 123L
+        private const val ACTOR_NAME = "Robert Downey Jr."
+        private const val PROFILE_PICTURE_URL = "https://example.com/robert_downey_jr.jpg"
         private fun createMockActors() = listOf(
             Actor(
                 id = 1L,
                 name = "Robert Downey Jr.",
                 profilePictureURL = "/robert_downey_jr.jpg",
                 birthDate = LocalDate.parse("1965-04-04"),
-                placeOfBirth = "New York City, New York, USA",
+                placeOfBirth = "NYC",
                 deathDate = null,
-                biography = "American actor and producer",
+                biography = "Actor",
                 headerPictures = listOf("/header1.jpg"),
                 department = "Acting"
             ),
@@ -401,27 +274,12 @@ class TrendingActorsCompleteTest {
                 name = "Scarlett Johansson",
                 profilePictureURL = "/scarlett_johansson.jpg",
                 birthDate = LocalDate.parse("1984-11-22"),
-                placeOfBirth = "New York City, New York, USA",
+                placeOfBirth = "NYC",
                 deathDate = null,
-                biography = "American actress and singer",
+                biography = "Actress",
                 headerPictures = listOf("/header2.jpg"),
-                department = "Acting"
-            ),
-            Actor(
-                id = 3L,
-                name = "Chris Evans",
-                profilePictureURL = "/chris_evans.jpg",
-                birthDate = LocalDate.parse("1981-06-13"),
-                placeOfBirth = "Boston, Massachusetts, USA",
-                deathDate = null,
-                biography = "American actor and filmmaker",
-                headerPictures = listOf("/header3.jpg"),
                 department = "Acting"
             )
         )
-
-        private const val ACTOR_ID = 123L
-        private const val ACTOR_NAME = "Robert Downey Jr."
-        private const val PROFILE_PICTURE_URL = "https://example.com/robert_downey_jr.jpg"
     }
 }
