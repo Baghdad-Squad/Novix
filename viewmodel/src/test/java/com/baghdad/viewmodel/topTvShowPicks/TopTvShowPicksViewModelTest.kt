@@ -18,16 +18,14 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TopTvShowPicksViewModelTest {
-
     private lateinit var getActorTvShowUseCase: GetActorTvShowUseCase
-    private lateinit var viewModel: TopTvShowPicksViewModel
+    private lateinit var topTvShowPicksViewModel: TopTvShowPicksViewModel
     private val actorId = 123L
     private val tvShowId = 1L
     private val testDispatcher = StandardTestDispatcher()
@@ -37,7 +35,8 @@ class TopTvShowPicksViewModelTest {
         Dispatchers.setMain(testDispatcher)
         getActorTvShowUseCase = mockk(relaxed = true)
         coEvery { getActorTvShowUseCase(actorId) } returns mockedTvShow()
-        viewModel = TopTvShowPicksViewModel(actorId, getActorTvShowUseCase, testDispatcher)
+        topTvShowPicksViewModel =
+            TopTvShowPicksViewModel(actorId, getActorTvShowUseCase, testDispatcher)
         advanceUntilIdle()
     }
 
@@ -50,54 +49,52 @@ class TopTvShowPicksViewModelTest {
 
 
     @Test
-    fun `onTvShowDetailsClick should send NavigateToMovieDetails effect`() = runTest {
+    fun `onTvShowDetailsClick should Navigate To MovieDetails when clicked`() = runTest {
         // Given
         var receivedEffect: TopTvShowPicksEffect? = null
         val job = launch {
-            viewModel.uiEffect.collect { effect ->
+            topTvShowPicksViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
         // When
-        viewModel.onTvShowDetailsClick(tvShowId)
+        topTvShowPicksViewModel.onTvShowDetailsClick(tvShowId)
         advanceUntilIdle()
         // Then
         assertTrue(receivedEffect is TopTvShowPicksEffect.NavigateToTvShowDetails)
-        assertEquals(
-            tvShowId,
-            (receivedEffect as TopTvShowPicksEffect.NavigateToTvShowDetails).tvShowId
-        )
+        assertTrue(tvShowId == (receivedEffect as TopTvShowPicksEffect.NavigateToTvShowDetails).tvShowId)
         job.cancel()
     }
 
 
     @Test
-    fun `onSaveTvShowClick should toggle isSaved state for specific movie`() = runTest {
-        advanceUntilIdle()
-        // Given
-        val initialState = viewModel.uiState.value
-        val initialMovie = initialState.tvShows.find { it.id == tvShowId }
-        assertEquals(false, initialMovie?.isSaved)
-        // When
-        viewModel.onSaveTvShowClick(tvShowId)
-        advanceUntilIdle()
-        // Then
-        val updatedState = viewModel.uiState.value
-        val updatedMovie = updatedState.tvShows.find { it.id == tvShowId }
-        assertTrue(updatedMovie?.isSaved == true)
-    }
+    fun `onSaveTvShowClick should toggle isSaved state for specific movie when clicked`() =
+        runTest {
+            advanceUntilIdle()
+            // Given
+            val initialState = topTvShowPicksViewModel.uiState.value
+            val initialMovie = initialState.tvShows.find { it.id == tvShowId }
+            assertTrue(false == initialMovie?.isSaved)
+            // When
+            topTvShowPicksViewModel.onSaveTvShowClick(tvShowId)
+            advanceUntilIdle()
+            // Then
+            val updatedState = topTvShowPicksViewModel.uiState.value
+            val updatedMovie = updatedState.tvShows.find { it.id == tvShowId }
+            assertTrue(updatedMovie?.isSaved == true)
+        }
 
     @Test
-    fun `onBackClick should send NavigateBack effect`() = runTest {
+    fun `onBackClick should Navigate Back when clicked`() = runTest {
         // Given
         var receivedEffect: TopTvShowPicksEffect? = null
         val job = launch {
-            viewModel.uiEffect.collect { effect ->
+            topTvShowPicksViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
         // When
-        viewModel.onBackClick()
+        topTvShowPicksViewModel.onBackClick()
         advanceUntilIdle()
         // Then
         assertTrue(receivedEffect is TopTvShowPicksEffect.NavigateBack)
@@ -109,9 +106,9 @@ class TopTvShowPicksViewModelTest {
         // Given
         val throwable = RuntimeException("Test error")
         // When
-        val result = viewModel.mapThrowableToErrorMessage(throwable)
+        val result = topTvShowPicksViewModel.mapThrowableToErrorMessage(throwable)
         // Then
-        assertEquals(BaseSnackBarMessage.UnknownError, result)
+        assertTrue(BaseSnackBarMessage.UnknownError == result)
     }
 
 

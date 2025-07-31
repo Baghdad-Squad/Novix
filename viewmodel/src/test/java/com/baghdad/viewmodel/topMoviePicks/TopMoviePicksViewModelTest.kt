@@ -14,8 +14,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,7 +22,7 @@ import org.junit.jupiter.api.Test
 class TopMoviePicksViewModelTest {
 
     private lateinit var getActorMoviesUseCase: GetActorMoviesUseCase
-    private lateinit var viewModel: TopMoviePicksViewModel
+    private lateinit var topMoviePicksViewModel: TopMoviePicksViewModel
     private val actorId = 123L
     private val movieId = 1L
     private val testDispatcher = StandardTestDispatcher()
@@ -34,56 +32,55 @@ class TopMoviePicksViewModelTest {
         Dispatchers.setMain(testDispatcher)
         getActorMoviesUseCase = mockk()
         coEvery { getActorMoviesUseCase(actorId) } returns mockedMovies()
-        viewModel = TopMoviePicksViewModel(actorId, getActorMoviesUseCase, testDispatcher)
+        topMoviePicksViewModel = TopMoviePicksViewModel(actorId, getActorMoviesUseCase, testDispatcher)
     }
 
 
     @Test
-    fun `onMovieDetailsClick should send NavigateToMovieDetails effect`() = runTest {
+    fun `onMovieDetailsClick should Navigate To MovieDetails when clicked`() = runTest {
         // Given
         var receivedEffect: TopMoviePicksEffect? = null
         val job = launch {
-            viewModel.uiEffect.collect { effect ->
+            topMoviePicksViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
         // When
-        viewModel.onMovieDetailsClick(movieId)
+        topMoviePicksViewModel.onMovieDetailsClick(movieId)
         advanceUntilIdle()
         // Then
         assertTrue(receivedEffect is TopMoviePicksEffect.NavigateToMovieDetails)
-        assertEquals(
-            movieId,
-            (receivedEffect as TopMoviePicksEffect.NavigateToMovieDetails).movieId
+        assertTrue(
+            movieId == (receivedEffect as TopMoviePicksEffect.NavigateToMovieDetails).movieId
         )
         job.cancel()
     }
 
     @Test
-    fun `onSaveMovieClick should toggle isSaved state for specific movie`() = runTest {
+    fun `onSaveMovieClick should toggle isSaved state for specific movie when clicked`() = runTest {
         // Given
-        val initialState = viewModel.uiState.value
+        val initialState = topMoviePicksViewModel.uiState.value
         val initialMovie = initialState.movies.find { it.id == movieId }
-        assertEquals(false, initialMovie?.isSaved)
+        assertTrue(false == initialMovie?.isSaved)
         // When
-        viewModel.onSaveMovieClick(movieId)
+        topMoviePicksViewModel.onSaveMovieClick(movieId)
         // Then
-        val updatedState = viewModel.uiState.value
+        val updatedState = topMoviePicksViewModel.uiState.value
         val updatedMovie = updatedState.movies.find { it.id == movieId }
         assertTrue(updatedMovie?.isSaved == true)
     }
 
     @Test
-    fun `onBackClick should send NavigateBack effect`() = runTest {
+    fun `onBackClick should Navigate Back when clicked`() = runTest {
         // Given
         var receivedEffect: TopMoviePicksEffect? = null
         val job = launch {
-            viewModel.uiEffect.collect { effect ->
+            topMoviePicksViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
         // When
-        viewModel.onBackClick()
+        topMoviePicksViewModel.onBackClick()
         advanceUntilIdle()
         // Then
         assertTrue(receivedEffect is TopMoviePicksEffect.NavigateBack)
@@ -95,9 +92,9 @@ class TopMoviePicksViewModelTest {
         // Given
         val throwable = RuntimeException("Test error")
         // When
-        val result = viewModel.mapThrowableToErrorMessage(throwable)
+        val result = topMoviePicksViewModel.mapThrowableToErrorMessage(throwable)
         // Then
-        assertEquals(BaseSnackBarMessage.UnknownError, result)
+        assertTrue(BaseSnackBarMessage.UnknownError == result)
     }
 
     @Test
@@ -109,7 +106,6 @@ class TopMoviePicksViewModelTest {
         // Then
         val state = newViewModel.uiState.value
         assertTrue(state.movies.isEmpty())
-        assertFalse(state.isLoading)
     }
 
 

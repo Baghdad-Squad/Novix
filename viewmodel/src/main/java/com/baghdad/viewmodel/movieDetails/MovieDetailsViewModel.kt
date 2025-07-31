@@ -38,6 +38,7 @@ class MovieDetailsViewModel(
     override fun onSaveCurrentMovieClick() {
         tryToExecute(
             callee = { currentState.movieId },
+            dispatcher = defaultDispatcher,
             onSuccess = {
                 updateState {
 
