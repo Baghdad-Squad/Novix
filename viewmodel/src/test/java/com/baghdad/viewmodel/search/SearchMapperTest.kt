@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.search
 
-import androidx.paging.PagingData
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -8,7 +7,6 @@ import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.search.RecentSearch
 import com.google.common.truth.Truth
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.Test
@@ -125,7 +123,7 @@ class SearchMapperTest {
             id = 1L,
             name = "Layla Nasr",
             profilePictureURL = "https://example.com/profiles/layla_nasr.jpg",
-            birthDate = kotlinx.datetime.LocalDate(year = 1984, monthNumber = 3, dayOfMonth = 27),
+            birthDate = LocalDate(year = 1984, month = 3, day = 27),
             placeOfBirth = "Cairo, Egypt",
             deathDate = null, // Still alive
             biography = "Layla Nasr is a versatile Egyptian actress known for her powerful performances in historical dramas and contemporary thrillers. Her breakout role in 'The Pharaoh’s Shadow' launched her international career.",
@@ -142,11 +140,12 @@ class SearchMapperTest {
             contentType = RecentlyViewed.ContentType.MOVIE,
             viewedAt = LocalDateTime(
                 year = 2025,
-                monthNumber = 7,
-                dayOfMonth = 31,
+                month = 7,
+                day = 31,
                 hour = 20,
                 minute = 15,
-                second = 0
+                second = 0,
+                nanosecond = 0
             )
         )
         private val GENRE = Genre(id = 1L, name = "Action")
