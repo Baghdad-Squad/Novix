@@ -1,14 +1,14 @@
 package com.baghdad.viewmodel.review
 
 import com.baghdad.entity.media.Review
+import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class ReviewUiMapperTest {
 
     @Test
-    fun `GIVEN Review domain model WHEN mapped to UI THEN fields are correctly transformed`() {
+    fun `toReviewUi() should correctly transform all fields when given valid Review domain model`() {
         // Given
         val review = Review(
             id = "r1",
@@ -24,12 +24,12 @@ class ReviewUiMapperTest {
         val uiReview = review.toReviewUi()
 
         // Then
-        assertEquals("r1", uiReview.id)
-        assertEquals("Max Verstappen", uiReview.authorName)
-        assertEquals("https://example.com/avatar.jpg", uiReview.authorAvatarUrl)
-        assertEquals("Inception", uiReview.contentTitle)
-        assertEquals("Amazing plot!", uiReview.reviewText)
-        assertEquals("15-07-2023", uiReview.postedDate)
-        assertEquals(8.8, uiReview.rating)
+        assertThat(uiReview.id).isEqualTo("r1")
+        assertThat(uiReview.authorName).isEqualTo("Max Verstappen")
+        assertThat(uiReview.authorAvatarUrl).isEqualTo("https://example.com/avatar.jpg")
+        assertThat(uiReview.contentTitle).isEqualTo("Inception")
+        assertThat(uiReview.reviewText).isEqualTo("Amazing plot!")
+        assertThat(uiReview.postedDate).isEqualTo("15-07-2023")
+        assertThat(uiReview.rating).isWithin(0.01).of(8.8)
     }
 }
