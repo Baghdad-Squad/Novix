@@ -7,7 +7,7 @@ import com.baghdad.entity.media.TvShow
 
 fun Genre.toTopRatingGenreUiState() =
     TopRatingState.GenreUiState(
-        id = this.id,
+        id   = this.id,
         name = this.name
     )
 
