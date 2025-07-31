@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test
 
 class GetTvShowImagesUseCaseTest {
 
+    private lateinit var tvShowRepository: TvShowRepository
+    private lateinit var getTvShowImagesUseCase: GetTvShowImagesUseCase
+
     @BeforeEach
     fun setUp() {
         tvShowRepository = mockk(relaxed = true)
@@ -18,7 +21,7 @@ class GetTvShowImagesUseCaseTest {
     }
 
     @Test
-    fun `getTvShowImagesUseCase returns list of image URLs`() = runTest {
+    fun `getTvShowImagesUseCase() should return image URLs when repository returns data`() = runTest {
         // Given
         val tvId = 1L
         val expectedUrls = listOf(
@@ -32,12 +35,12 @@ class GetTvShowImagesUseCaseTest {
         val result = getTvShowImagesUseCase(tvId)
 
         // Then
-        assertThat(result).hasSize(3)
         assertThat(result).isEqualTo(expectedUrls)
+        assertThat(result).hasSize(3)
     }
 
     @Test
-    fun `getTvShowImagesUseCase returns empty list when no images available`() = runTest {
+    fun `getTvShowImagesUseCase() should return empty list when repository returns no images`() = runTest {
         // Given
         val tvId = 2L
         coEvery { tvShowRepository.getTvShowImages(tvId) } returns emptyList()
@@ -50,38 +53,40 @@ class GetTvShowImagesUseCaseTest {
     }
 
     @Test
-    fun `getTvShowImagesUseCase returns list with special character URLs`() = runTest {
+    fun `getTvShowImagesUseCase() should handle URLs with special characters when repository returns them`() = runTest {
         // Given
         val tvId = 3L
-        val expectedUrls = listOf("https://example.com/tv/戦争と平和.jpg")
-        coEvery { tvShowRepository.getTvShowImages(tvId) } returns expectedUrls
+        val expectedUrl = "https://example.com/tv/戦争と平和.jpg"
+        coEvery { tvShowRepository.getTvShowImages(tvId) } returns listOf(expectedUrl)
 
         // When
         val result = getTvShowImagesUseCase(tvId)
 
         // Then
-        assertThat(result[0]).isEqualTo("https://example.com/tv/戦争と平和.jpg")
+        assertThat(result.first()).isEqualTo(expectedUrl)
     }
 
     @Test
-    fun `getTvShowImagesUseCase returns list with long URLs`() = runTest {
+    fun `getTvShowImagesUseCase() should handle long URLs when repository returns them`() = runTest {
         // Given
         val tvId = 4L
-        val longUrl = "https://example.com/very/long/path/to/the/tv/show/images" +
-                "/with/many/subdirectories/and/parameters?query=123&param=abc"
+        val longUrl = buildString {
+            append("https://example.com/very/long/path/to/the/tv/show/images")
+            append("/with/many/subdirectories/and/parameters?query=123&param=abc")
+        }
         coEvery { tvShowRepository.getTvShowImages(tvId) } returns listOf(longUrl)
 
         // When
         val result = getTvShowImagesUseCase(tvId)
 
         // Then
-        assertThat(result[0].length).isGreaterThan(50)
+        assertThat(result.first()).hasLength(longUrl.length)
     }
 
     @Test
-    fun `getTvShowImagesUseCase makes exactly one repository call`() = runTest {
+    fun `getTvShowImagesUseCase() should make exactly one repository call per invocation`() = runTest {
         // Given
-        val tvId = 1L
+        val tvId = 5L
         coEvery { tvShowRepository.getTvShowImages(tvId) } returns emptyList()
 
         // When
@@ -92,10 +97,10 @@ class GetTvShowImagesUseCaseTest {
     }
 
     @Test
-    fun `getTvShowImagesUseCase returns different URLs for different TV shows`() = runTest {
+    fun `getTvShowImagesUseCase() should return different URLs for different TV show IDs`() = runTest {
         // Given
-        val tvId1 = 1L
-        val tvId2 = 2L
+        val tvId1 = 6L
+        val tvId2 = 7L
         val urls1 = listOf("https://example.com/show1.jpg")
         val urls2 = listOf("https://example.com/show2.jpg")
         coEvery { tvShowRepository.getTvShowImages(tvId1) } returns urls1
@@ -107,60 +112,52 @@ class GetTvShowImagesUseCaseTest {
 
         // Then
         assertThat(result1).isNotEqualTo(result2)
-        assertThat(result1[0]).endsWith("show1.jpg")
-        assertThat(result2[0]).endsWith("show2.jpg")
+        assertThat(result1.first()).endsWith("show1.jpg")
+        assertThat(result2.first()).endsWith("show2.jpg")
     }
 
     @Test
-    fun `getTvShowImagesUseCase returns secure HTTPS URLs`() = runTest {
+    fun `getTvShowImagesUseCase() should return secure HTTPS URLs when available`() = runTest {
         // Given
-        val tvId = 5L
-        val expectedUrls = listOf("https://secure.example.com/image.jpg")
+        val tvId = 8L
+        val expectedUrl = "https://secure.example.com/image.jpg"
+        coEvery { tvShowRepository.getTvShowImages(tvId) } returns listOf(expectedUrl)
+
+        // When
+        val result = getTvShowImagesUseCase(tvId)
+
+        // Then
+        assertThat(result.first()).startsWith("https://")
+    }
+
+    @Test
+    fun `getTvShowImagesUseCase() should preserve URL query parameters when present`() = runTest {
+        // Given
+        val tvId = 9L
+        val expectedUrl = "https://example.com/image.jpg?width=500&quality=80"
+        coEvery { tvShowRepository.getTvShowImages(tvId) } returns listOf(expectedUrl)
+
+        // When
+        val result = getTvShowImagesUseCase(tvId)
+
+        // Then
+        assertThat(result.first()).contains("?")
+        assertThat(result.first()).contains("width=500")
+        assertThat(result.first()).contains("quality=80")
+    }
+
+    @Test
+    fun `getTvShowImagesUseCase() should handle multiple image URLs when returned`() = runTest {
+        // Given
+        val tvId = 10L
+        val expectedUrls = List(20) { "https://example.com/image${it + 1}.jpg" }
         coEvery { tvShowRepository.getTvShowImages(tvId) } returns expectedUrls
 
         // When
         val result = getTvShowImagesUseCase(tvId)
 
         // Then
-        assertThat(result[0]).startsWith("https://")
-    }
-
-    @Test
-    fun `getTvShowImagesUseCase returns URLs with query parameters when present`() = runTest {
-        // Given
-        val tvId = 6L
-        val expectedUrls = listOf("https://example.com/image.jpg?width=500&quality=80")
-        coEvery { tvShowRepository.getTvShowImages(tvId) } returns expectedUrls
-
-        // When
-        val result = getTvShowImagesUseCase(tvId)
-
-        // Then
-        assertThat(result[0]).contains("?width=500")
-    }
-
-    @Test
-    fun `getTvShowImagesUseCase returns multiple image URLs`() = runTest {
-        // Given
-        val tvId = 7L
-        val expectedUrls = listOf(
-            "https://example.com/image1.jpg",
-            "https://example.com/image2.jpg",
-            "https://example.com/image3.jpg",
-            "https://example.com/image4.jpg"
-        )
-        coEvery { tvShowRepository.getTvShowImages(tvId) } returns expectedUrls
-
-        // When
-        val result = getTvShowImagesUseCase(tvId)
-
-        // Then
-        assertThat(result).hasSize(4)
-        assertThat(result).isEqualTo(expectedUrls)
-    }
-
-    companion object {
-        private lateinit var tvShowRepository: TvShowRepository
-        private lateinit var getTvShowImagesUseCase: GetTvShowImagesUseCase
+        assertThat(result).hasSize(20)
+        assertThat(result.last()).endsWith("image20.jpg")
     }
 }
