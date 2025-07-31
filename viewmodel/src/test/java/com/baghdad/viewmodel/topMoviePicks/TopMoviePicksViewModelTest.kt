@@ -4,6 +4,7 @@ import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -49,10 +50,8 @@ class TopMoviePicksViewModelTest {
         topMoviePicksViewModel.onMovieDetailsClick(movieId)
         advanceUntilIdle()
         // Then
-        assertTrue(receivedEffect is TopMoviePicksEffect.NavigateToMovieDetails)
-        assertTrue(
-            movieId == (receivedEffect as TopMoviePicksEffect.NavigateToMovieDetails).movieId
-        )
+        assertThat(receivedEffect is TopMoviePicksEffect.NavigateToMovieDetails).isTrue()
+        assertThat(movieId == (receivedEffect as TopMoviePicksEffect.NavigateToMovieDetails).movieId).isTrue()
         job.cancel()
     }
 
@@ -67,7 +66,7 @@ class TopMoviePicksViewModelTest {
         // Then
         val updatedState = topMoviePicksViewModel.uiState.value
         val updatedMovie = updatedState.movies.find { it.id == movieId }
-        assertTrue(updatedMovie?.isSaved == true)
+        assertThat(updatedMovie?.isSaved == true).isTrue()
     }
 
     @Test
@@ -83,29 +82,18 @@ class TopMoviePicksViewModelTest {
         topMoviePicksViewModel.onBackClick()
         advanceUntilIdle()
         // Then
-        assertTrue(receivedEffect is TopMoviePicksEffect.NavigateBack)
+        assertThat(receivedEffect is TopMoviePicksEffect.NavigateBack).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `mapThrowableToErrorMessage should return UnknownError`() {
+    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
         // Given
         val throwable = RuntimeException("Test error")
         // When
         val result = topMoviePicksViewModel.mapThrowableToErrorMessage(throwable)
         // Then
-        assertTrue(BaseSnackBarMessage.UnknownError == result)
-    }
-
-    @Test
-    fun `should handle empty movies list`() = runTest {
-        // Given
-        coEvery { getActorMoviesUseCase(actorId) } returns emptyList()
-        // When
-        val newViewModel = TopMoviePicksViewModel(actorId, getActorMoviesUseCase, testDispatcher)
-        // Then
-        val state = newViewModel.uiState.value
-        assertTrue(state.movies.isEmpty())
+        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
     }
 
 

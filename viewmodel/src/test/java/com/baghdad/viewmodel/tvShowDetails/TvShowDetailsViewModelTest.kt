@@ -7,8 +7,8 @@ import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
-import com.baghdad.entity.person.Actor
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -20,8 +20,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -67,7 +65,7 @@ class TvShowDetailsViewModelTest {
         advanceUntilIdle()
         job.cancel()
         // Then
-        assertTrue(effects.contains(TvShowDetailsScreenEffect.NavigateBack))
+        assertThat(effects.contains(TvShowDetailsScreenEffect.NavigateBack)).isTrue()
     }
 
     @Test
@@ -83,7 +81,7 @@ class TvShowDetailsViewModelTest {
         tvShowDetailsViewModel.onClickReadMoreOverview()
         // Then
         val finalExpanded = tvShowDetailsViewModel.uiState.value.isTextExpanded
-        assertEquals(!initialExpanded, finalExpanded)
+        assertThat(!initialExpanded == finalExpanded).isTrue()
     }
 
     @Test
@@ -103,7 +101,7 @@ class TvShowDetailsViewModelTest {
         job.cancel()
         // Then
         val expectedEffect = TvShowDetailsScreenEffect.NavigateToGenreScreen(genreId)
-        assertTrue(effects.contains(expectedEffect))
+        assertThat(effects.contains(expectedEffect)).isTrue()
     }
 
     @Test
@@ -123,7 +121,7 @@ class TvShowDetailsViewModelTest {
         job.cancel()
         // Then
         val expectedEffect = TvShowDetailsScreenEffect.NavigateToActorDetails(actorId)
-        assertTrue(effects.contains(expectedEffect))
+        assertThat(effects.contains(expectedEffect)).isTrue()
     }
 
     @Test
@@ -144,7 +142,7 @@ class TvShowDetailsViewModelTest {
         // Then
         val expectedEffect =
             TvShowDetailsScreenEffect.NavigateToEpisodeDetails(seasonNumber, episodeNumber)
-        assertTrue(effects.contains(expectedEffect))
+        assertThat(effects.contains(expectedEffect)).isTrue()
     }
 
     @Test
@@ -164,7 +162,7 @@ class TvShowDetailsViewModelTest {
         job.cancel()
         // Then
         val expectedEffect = TvShowDetailsScreenEffect.NavigateToReviews(tvShowId)
-        assertTrue(effects.contains(expectedEffect))
+        assertThat(effects.contains(expectedEffect)).isTrue()
     }
 
     @Test
@@ -192,7 +190,7 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
 
-        assertTrue(true)
+        assertThat(true).isTrue()
     }
 
     @Test
@@ -202,7 +200,7 @@ class TvShowDetailsViewModelTest {
         // When
         val result = tvShowDetailsViewModel.mapThrowableToErrorMessage(throwable)
         // Then
-        assertEquals(BaseSnackBarMessage.UnknownError, result)
+        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
     }
 
     private companion object {
@@ -224,20 +222,6 @@ class TvShowDetailsViewModelTest {
             numberOfSeasons = 3,
             genres = emptyList<Genre>(),
             userRating = null
-        )
-        val mockActor = Actor(
-            id = 1L,
-            name = "Test Actor",
-            profilePictureURL = "https://example.com/profile.jpg",
-            birthDate = kotlinx.datetime.LocalDate.parse("1990-01-01"),
-            placeOfBirth = "Baghdad",
-            deathDate = null,
-            biography = "This is a test biography.",
-            headerPictures = listOf(
-                "https://example.com/header1.jpg",
-                "https://example.com/header2.jpg"
-            ),
-            department = "Acting"
         )
 
         val mockEpisodes = listOf(

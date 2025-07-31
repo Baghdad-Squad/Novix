@@ -4,6 +4,7 @@ import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -31,13 +32,12 @@ class TopTvShowPicksViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
 
     @BeforeEach
-    fun setUp() = runTest {
+    fun setUp() {
         Dispatchers.setMain(testDispatcher)
         getActorTvShowUseCase = mockk(relaxed = true)
         coEvery { getActorTvShowUseCase(actorId) } returns mockedTvShow()
         topTvShowPicksViewModel =
             TopTvShowPicksViewModel(actorId, getActorTvShowUseCase, testDispatcher)
-        advanceUntilIdle()
     }
 
     @AfterEach
@@ -61,8 +61,8 @@ class TopTvShowPicksViewModelTest {
         topTvShowPicksViewModel.onTvShowDetailsClick(tvShowId)
         advanceUntilIdle()
         // Then
-        assertTrue(receivedEffect is TopTvShowPicksEffect.NavigateToTvShowDetails)
-        assertTrue(tvShowId == (receivedEffect as TopTvShowPicksEffect.NavigateToTvShowDetails).tvShowId)
+        assertThat(receivedEffect is TopTvShowPicksEffect.NavigateToTvShowDetails).isTrue()
+        assertThat(tvShowId == (receivedEffect as TopTvShowPicksEffect.NavigateToTvShowDetails).tvShowId).isTrue()
         job.cancel()
     }
 
@@ -81,7 +81,7 @@ class TopTvShowPicksViewModelTest {
             // Then
             val updatedState = topTvShowPicksViewModel.uiState.value
             val updatedMovie = updatedState.tvShows.find { it.id == tvShowId }
-            assertTrue(updatedMovie?.isSaved == true)
+            assertThat(updatedMovie?.isSaved == true).isTrue()
         }
 
     @Test
@@ -97,18 +97,18 @@ class TopTvShowPicksViewModelTest {
         topTvShowPicksViewModel.onBackClick()
         advanceUntilIdle()
         // Then
-        assertTrue(receivedEffect is TopTvShowPicksEffect.NavigateBack)
+        assertThat(receivedEffect is TopTvShowPicksEffect.NavigateBack).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `mapThrowableToErrorMessage should return UnknownError`() {
+    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
         // Given
         val throwable = RuntimeException("Test error")
         // When
         val result = topTvShowPicksViewModel.mapThrowableToErrorMessage(throwable)
         // Then
-        assertTrue(BaseSnackBarMessage.UnknownError == result)
+        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
     }
 
 

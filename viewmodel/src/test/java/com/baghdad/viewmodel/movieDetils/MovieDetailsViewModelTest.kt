@@ -12,6 +12,7 @@ import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -22,8 +23,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -75,7 +74,7 @@ class MovieDetailsViewModelTest {
             movieDetailsViewModel.onExtendOverviewClick()
             val finalState = movieDetailsViewModel.uiState.value.isExtendText
             // Then
-            assertEquals(!initialState, finalState)
+            assertThat(!initialState == finalState).isTrue()
         }
 
     @Test
@@ -92,7 +91,7 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onCategoryClick(categoryId)
         advanceUntilIdle()
         // Then
-        assertEquals(MovieDetailsEffect.NavigateToCategory(categoryId), receivedEffect)
+        assertThat(MovieDetailsEffect.NavigateToCategory(categoryId) == receivedEffect).isTrue()
         job.cancel()
     }
 
@@ -106,7 +105,7 @@ class MovieDetailsViewModelTest {
             advanceUntilIdle()
             val finalState = movieDetailsViewModel.uiState.value.moreLikeThisMovie.first().isSaved
             // Then
-            assertEquals(!initialState, finalState)
+            assertThat(!initialState == finalState).isTrue()
         }
 
     @Test
@@ -122,7 +121,7 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onBackClicked()
         advanceUntilIdle()
         // Then
-        assertEquals(MovieDetailsEffect.NavigateBack, receivedEffect)
+        assertThat(MovieDetailsEffect.NavigateBack == receivedEffect).isTrue()
         job.cancel()
     }
 
@@ -140,7 +139,7 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onActorClick(actorId)
         advanceUntilIdle()
         // Then
-        assertEquals(MovieDetailsEffect.NavigateToActorDetails(actorId), receivedEffect)
+        assertThat(MovieDetailsEffect.NavigateToActorDetails(actorId) == receivedEffect).isTrue()
         job.cancel()
     }
 
@@ -158,7 +157,7 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onReviewClick(reviewId)
         advanceUntilIdle()
         // Then
-        assertEquals(MovieDetailsEffect.NavigateToReviewDetails(reviewId), receivedEffect)
+        assertThat(MovieDetailsEffect.NavigateToReviewDetails(reviewId) == receivedEffect).isTrue()
         job.cancel()
     }
 
@@ -176,7 +175,7 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onMovieClick(movieId)
         advanceUntilIdle()
         // Then
-        assertEquals(MovieDetailsEffect.NavigateToMovie(movieId), receivedEffect)
+        assertThat(MovieDetailsEffect.NavigateToMovie(movieId) == receivedEffect).isTrue()
         job.cancel()
     }
 
@@ -193,7 +192,7 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onBackClick()
         advanceUntilIdle()
         // Then
-        assertEquals(MovieDetailsEffect.NavigateBack, receivedEffect)
+        assertThat(MovieDetailsEffect.NavigateBack == receivedEffect).isTrue()
         job.cancel()
     }
 
@@ -211,7 +210,7 @@ class MovieDetailsViewModelTest {
         advanceUntilIdle()
         // Then
         val expectedUrl = movieDetailsViewModel.uiState.value.movieTrailerURL
-        assertEquals(MovieDetailsEffect.OpenYoutubeLink(expectedUrl), receivedEffect)
+        assertThat(MovieDetailsEffect.OpenYoutubeLink(expectedUrl) == receivedEffect).isTrue()
         job.cancel()
     }
 
@@ -224,17 +223,17 @@ class MovieDetailsViewModelTest {
             advanceUntilIdle()
             // Then
             val finalState = movieDetailsViewModel.uiState.value
-            assertFalse(finalState.isLoading)
+            assertThat(finalState.isLoading).isFalse()
         }
 
     @Test
-    fun `mapThrowableToErrorMessage should return UnknownError`() {
+    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
         // Given
         val throwable = RuntimeException("Test error")
         // When
         val result = movieDetailsViewModel.mapThrowableToErrorMessage(throwable)
         // Then
-        assertEquals(BaseSnackBarMessage.UnknownError, result)
+        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
     }
 
 

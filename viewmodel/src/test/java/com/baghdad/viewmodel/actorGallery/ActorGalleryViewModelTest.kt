@@ -3,6 +3,7 @@ package com.baghdad.viewmodel.actorGallery
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.dummyData.DummyDataFactory.createMockGallery
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -45,17 +45,17 @@ class ActorGalleryViewModelTest {
         advanceUntilIdle()
         job.cancel()
         //Then
-        assertTrue(effects.contains(ActorGalleryScreenEffect.OnBackClick))
+        assertThat(effects.contains(ActorGalleryScreenEffect.OnBackClick)).isTrue()
     }
 
     @Test
-    fun `mapThrowableToErrorMessage should return UnknownError`() {
+    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
         // Given
         val throwable = RuntimeException("Test error")
         // When
         val result = viewModel.mapThrowableToErrorMessage(throwable)
         // Then
-        assertTrue(BaseSnackBarMessage.UnknownError == result)
+        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
     }
 
 
