@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource.util
 
+import android.util.Log
 import com.baghdad.repository.exception.NetworkException
 import com.baghdad.repository.exception.NoInternetNetworkException
 import com.baghdad.repository.exception.RequestTimeoutNetworkException
@@ -9,6 +10,7 @@ import com.baghdad.repository.exception.TooManyRequestsNetworkException
 import com.baghdad.repository.exception.UnauthorizedNetworkException
 import com.baghdad.repository.exception.UnknownNetworkException
 import com.baghdad.repository.logger.Logger
+import com.google.gson.JsonParseException
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.SerializationException
 import retrofit2.Response
@@ -31,7 +33,7 @@ suspend inline fun <reified T> handleRequest(
             try {
                 response.body() ?: throw NullPointerException("Response body is null")
 
-            } catch (e: Exception) {
+            } catch (e: JsonParseException) {
                 logger.logException(e)
                 throw SerializationNetworkException()
             }
@@ -60,6 +62,7 @@ suspend inline fun <reified T> handleRequest(
 
 
 fun mapToNetworkException(e: Throwable): NetworkException {
+    Log.i("NetworkException", "exception: $e")
     return when (e) {
         is IOException -> NoInternetNetworkException()
         is SerializationException -> SerializationNetworkException()

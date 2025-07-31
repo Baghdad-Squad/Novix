@@ -1,5 +1,7 @@
 package com.baghdad.viewmodel.home
 
+import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -12,6 +14,9 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.util.ConnectivityObserver
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
 class HomeViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -20,9 +25,10 @@ class HomeViewModel(
     private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
     private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase,
-) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
-    HomeInteractionListener {
+    private val connectivityObserver: ConnectivityObserver
+) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()), HomeInteractionListener {
     init {
+        Log.d("HomeViewModel", "init called")
         getPopularItems()
         getTopRatingMovies()
         observeContinueWatchingItems()
@@ -30,9 +36,26 @@ class HomeViewModel(
         getUpcomingItems()
     }
 
+    val isConnected = connectivityObserver.isConnected().stateIn(
+        viewModelScope, initialValue = false, started = SharingStarted.WhileSubscribed(5000)
+    )
+
     private fun getPopularItems() {
+
+
         tryToExecute(
-            callee = { getPopularMoviesUseCase() to getPopularTvShowsUseCase() },
+            callee = {
+//                var connected = isConnected.first()
+//                Log.i("HomeViewModel", "isConnected: $connected")
+////                if (!connected && true) {
+////                    connected = isConnected.filter { it }.first()
+////                }
+//                if (!connected) {
+//                    throw NoInternetException()
+//                }
+                getPopularMoviesUseCase() to getPopularTvShowsUseCase()
+
+            },
             onSuccess = ::onGetPopularItemsSuccess,
             onStart = ::onGetPopularItemsStart,
             onFinally = ::onGetPopularItemsFinished,
@@ -74,10 +97,8 @@ class HomeViewModel(
     private fun onGetTopRatingMoviesSuccess(movies: List<Movie>) {
         updateState {
             it.copy(
-                topRatingItems =
-                    movies
-                        .take(TOP_RATING_MOVIES_LIMIT)
-                        .map(Movie::toTopRatingItemUiState),
+                topRatingItems = movies.take(TOP_RATING_MOVIES_LIMIT)
+                    .map(Movie::toTopRatingItemUiState),
             )
         }
     }
@@ -104,10 +125,8 @@ class HomeViewModel(
     private fun onNewContinueWatchingItems(items: List<ContinueWatching>) {
         updateState {
             it.copy(
-                continueWatchingItems =
-                    items
-                        .take(CONTINUE_WATCHING_LIMIT)
-                        .map(ContinueWatching::toUiState),
+                continueWatchingItems = items.take(CONTINUE_WATCHING_LIMIT)
+                    .map(ContinueWatching::toUiState),
                 isContinueWatchingLoading = false,
             )
         }
@@ -167,7 +186,8 @@ class HomeViewModel(
         }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     override fun onPopularItemClicked(item: HomeScreenState.PopularItemUiState) {
         if (item.type == HomeScreenState.PopularItemUiState.Type.MOVIE) {

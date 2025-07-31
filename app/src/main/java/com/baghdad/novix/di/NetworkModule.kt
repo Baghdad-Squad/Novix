@@ -1,7 +1,10 @@
 package com.baghdad.novix.di
 
+import android.content.Context
+import android.net.ConnectivityManager
 import com.baghdad.local_datasource.language.AppLanguageProvider
 import com.baghdad.novix.BuildConfig
+import com.baghdad.novix.util.ConnectivityObserverImpl
 import com.baghdad.remoteDataSource.RemoteActorDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteAuthenticationImpl
 import com.baghdad.remoteDataSource.RemoteEpisodeDataSourceImpl
@@ -28,6 +31,7 @@ import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.language.LanguageProvider
+import com.baghdad.viewmodel.util.ConnectivityObserver
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
@@ -68,6 +72,15 @@ val remoteDataSourceModule = module {
     }
     single<Connectivity> {
         Connectivity(androidContext())
+    }
+    single<ConnectivityManager> {
+        androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+    single<ConnectivityObserver> {
+        ConnectivityObserverImpl(
+            connectivityManager = get<ConnectivityManager>()
+        )
+
     }
     single<CacheInterceptor> {
         CacheInterceptor()
