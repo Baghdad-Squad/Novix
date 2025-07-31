@@ -87,7 +87,7 @@ class MovieDetailsViewModelTest {
         assertEquals("Test Movie", currentState.movieName)
         assertEquals("Test movie overview", currentState.overView)
         assertEquals(8.0, currentState.rating)
-        assertTrue(currentState.duration == "2 hr 0 min" || currentState.duration == "2h 0min")
+        assertTrue(currentState.duration ==120)
         assertEquals("/movie_poster.jpg", currentState.posterImageURL)
         assertEquals(3, currentState.movieImages.size)
         assertEquals(2, currentState.castMembers.size)
