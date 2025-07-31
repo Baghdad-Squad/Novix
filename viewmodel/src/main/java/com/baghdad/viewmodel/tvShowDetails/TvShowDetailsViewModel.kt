@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.tvShowDetails
 
-import android.util.Log
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
@@ -51,6 +50,7 @@ class TvShowDetailsViewModel(
     private fun getTvShowCast(tvShowId: Long) {
         tryToExecute(
             callee = { getTvShowCastMembersUseCase(tvShowId) },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetTvShowCastSuccess,
             onStart = ::onLoading,
             onFinally = ::onFinally
@@ -65,7 +65,7 @@ class TvShowDetailsViewModel(
         }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
+    public override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
     }
 
@@ -103,9 +103,9 @@ class TvShowDetailsViewModel(
 
     override fun onClickSeasonTab(seasonIndex: Int) {
         updateState { it.copy(selectedSeasonIndex = seasonIndex) }
-
         tryToExecute(
             callee = { getTvShowSeasonEpisodesUseCase(tvShowId, seasonIndex + 1) },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetTvShowEpisodesSuccess,
             onStart = ::onLoading,
             onFinally = ::onFinally
