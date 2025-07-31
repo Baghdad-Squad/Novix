@@ -8,6 +8,40 @@ import org.junit.jupiter.api.Test
 
 class TvShowMapperTest {
 
+    @Test
+    fun `should return correct TvShowUiState when toUiState called`() {
+        val uiState = tvShow.toUiState()
+
+        assertThat(uiState.id).isEqualTo(101L)
+        assertThat(uiState.posterPictureURL).isEqualTo("https://example.com/poster.jpg")
+        assertThat(uiState.isSaved).isFalse()
+    }
+
+    @Test
+    fun `should return uiState with empty posterPictureURL when TvShow has empty poster url`() {
+        val show = tvShow.copy(posterImageURL = "")
+        val uiState = show.toUiState()
+
+        assertThat(uiState.posterPictureURL).isEqualTo("")
+    }
+
+    @Test
+    fun `should reflect that in uiState when TvShow has different id`() {
+        val show = tvShow.copy(id = 999L)
+        val uiState = show.toUiState()
+
+        assertThat(uiState.id).isEqualTo(999L)
+    }
+
+    @Test
+    fun `should preserve it in uiState when TvShow has long url`() {
+        val longUrl = "https://example.com/super/long/path/poster.jpg"
+        val show = tvShow.copy(posterImageURL = longUrl)
+        val uiState = show.toUiState()
+
+        assertThat(uiState.posterPictureURL).isEqualTo(longUrl)
+    }
+
     private val genre = Genre(1L, "Drama")
 
     private val tvShow = TvShow(
@@ -23,39 +57,4 @@ class TvShowMapperTest {
         headerImagesURLs = listOf("https://example.com/header1.jpg"),
         numberOfSeasons = 3
     )
-
-    @Test
-    fun `when toUiState called then should return correct TvShowUiState`() {
-
-        val uiState = tvShow.toUiState()
-
-        assertThat(uiState.id).isEqualTo(101L)
-        assertThat(uiState.posterPictureURL).isEqualTo("https://example.com/poster.jpg")
-        assertThat(uiState.isSaved).isFalse()
-    }
-
-    @Test
-    fun `when TvShow has empty poster url then should return uiState with empty posterPictureURL`() {
-        val show = tvShow.copy(posterImageURL = "")
-        val uiState = show.toUiState()
-
-        assertThat(uiState.posterPictureURL).isEqualTo("")
-    }
-
-    @Test
-    fun `when TvShow has different id then should reflect that in uiState`() {
-        val show = tvShow.copy(id = 999L)
-        val uiState = show.toUiState()
-
-        assertThat(uiState.id).isEqualTo(999L)
-    }
-
-    @Test
-    fun `when TvShow has long url then should preserve it in uiState`() {
-        val longUrl = "https://example.com/super/long/path/poster.jpg"
-        val show = tvShow.copy(posterImageURL = longUrl)
-        val uiState = show.toUiState()
-
-        assertThat(uiState.posterPictureURL).isEqualTo(longUrl)
-    }
 }
