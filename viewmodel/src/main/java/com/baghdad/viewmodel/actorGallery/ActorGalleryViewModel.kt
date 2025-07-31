@@ -18,9 +18,6 @@ class ActorGalleryViewModel @Inject constructor(
 
     private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
 
-    private val actorId: Long,
-) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
-    ActorGalleryInteractionListener {
     init {
         loadData()
     }
@@ -29,7 +26,8 @@ class ActorGalleryViewModel @Inject constructor(
         getActorGalleryImages(actorId)
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     fun getActorGalleryImages(actorId: Long) {
         tryToExecute(

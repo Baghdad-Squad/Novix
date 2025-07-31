@@ -50,15 +50,6 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 @Composable
 fun EpisodeDetailsScreen(
     viewModel: EpisodeDetailsViewModel = hiltViewModel(),
-    handleNavigation: (TvShowDetailsNavEvent) -> Unit
-    tvShowId: Long,
-    seasonNumber: Int,
-    episodeNumber: Int,
-    viewModel: EpisodeDetailsViewModel =
-        koinViewModel(
-            key = tvShowId.toString() + seasonNumber.toString() + episodeNumber.toString(),
-            parameters = { parametersOf(tvShowId, seasonNumber, episodeNumber) },
-        ),
     handleNavigation: (TvShowDetailsNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
