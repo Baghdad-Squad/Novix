@@ -109,7 +109,7 @@ class SearchMapperTest {
             genres = listOf(Genre(1L, "Fantasy"), Genre(2L, "Mystery")),
             averageRating = 9.1,
             userRating = 8.8,
-            releaseDate = kotlinx.datetime.LocalDate(year = 2022, monthNumber = 9, dayOfMonth = 22),
+            releaseDate = LocalDate(year = 2022, month = 9, day = 22),
             overview = "In a land where ancient magic awakens once more, a young oracle must choose between destiny and freedom.",
             posterImageURL = "https://example.com/posters/avalon.jpg",
             trailerURL = "https://example.com/trailers/avalon.mp4",
@@ -152,13 +152,14 @@ class SearchMapperTest {
         private val RECENT_SEARCH = RecentSearch(
             id = 1L,
             query = "kotlin",
-            searchedAt = kotlinx.datetime.LocalDateTime(
+            searchedAt = LocalDateTime(
                 year = 2025,
-                monthNumber = 7,
-                dayOfMonth = 31,
+                month = 7,
+                day = 31,
                 hour = 20,
                 minute = 15,
-                second = 0
+                second = 0,
+                nanosecond = 0
             )
         )
     }
