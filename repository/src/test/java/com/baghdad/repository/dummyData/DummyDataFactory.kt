@@ -1,4 +1,4 @@
-package com.baghdad.repository
+package com.baghdad.repository.dummyData
 
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
@@ -28,7 +28,7 @@ object DummyDataFactory {
         id = 789L,
         name = "Test Actor",
         profilePictureURL = "/actor_profile.jpg",
-        birthDate = LocalDate.parse("1985-03-10"),
+        birthDate = LocalDate.Companion.parse("1985-03-10"),
         placeOfBirth = "Los Angeles, USA",
         deathDate = null,
         biography = "Test actor biography",
@@ -67,7 +67,7 @@ object DummyDataFactory {
         episodeNumber = 5,
         rating = 8.5,
         duration = "45 min",
-        releasedDate = LocalDate.parse("2023-05-15"),
+        releasedDate = LocalDate.Companion.parse("2023-05-15"),
         currentSeason = 2,
         overview = "Test episode overview",
         headerPictures = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg"),

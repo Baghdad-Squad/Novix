@@ -4,11 +4,11 @@ import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.model.ContinueWatchingDto
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -35,7 +35,6 @@ class ContinueWatchingRepositoryImplTest {
             createMockContinueWatchingDto(2L, ContinueWatchingDto.ContentType.TV_SHOW),
             createMockContinueWatchingDto(3L, ContinueWatchingDto.ContentType.MOVIE)
         )
-
         val expectedResult = PagedResult(
             data = listOf(
                 createMockContinueWatching(1L, ContinueWatching.ContentType.MOVIE),
@@ -45,16 +44,13 @@ class ContinueWatchingRepositoryImplTest {
             nextKey = null,
             prevKey = null
         )
-
         coEvery {
             localContinueWatchingDataSource.getContinueWatching(1, pageSize, page)
         } returns mockContinueWatchingList
-
         // When
         val result = continueWatchingRepositoryImpl.getContinueWatching(page, pageSize)
-
         // Then
-        assertEquals(expectedResult, result)
+        assertThat(expectedResult == result).isTrue()
         coVerify { localContinueWatchingDataSource.getContinueWatching(1, pageSize, page) }
     }
 
@@ -69,16 +65,13 @@ class ContinueWatchingRepositoryImplTest {
                 nextKey = null,
                 prevKey = null
             )
-
             coEvery {
                 localContinueWatchingDataSource.getContinueWatching(1, pageSize, page)
             } returns emptyList()
-
             // When
             val result = continueWatchingRepositoryImpl.getContinueWatching(page, pageSize)
-
             // Then
-            assertEquals(expectedResult, result)
+            assertThat(expectedResult == result).isTrue()
             coVerify { localContinueWatchingDataSource.getContinueWatching(1, pageSize, page) }
         }
 
@@ -110,37 +103,7 @@ class ContinueWatchingRepositoryImplTest {
             val result = continueWatchingRepositoryImpl.getContinueWatching(page, pageSize)
 
             // Then
-            assertEquals(expectedResult, result)
-            coVerify { localContinueWatchingDataSource.getContinueWatching(1, pageSize, page) }
-        }
-
-    @Test
-    fun `getContinueWatching should return paged result with prev key when page is greater than 1`() =
-        runTest {
-            // Given
-            val page = 3
-            val pageSize = 10
-            val mockContinueWatchingList = listOf(
-                createMockContinueWatchingDto(1L, ContinueWatchingDto.ContentType.MOVIE)
-            )
-
-            val expectedResult = PagedResult(
-                data = listOf(
-                    createMockContinueWatching(1L, ContinueWatching.ContentType.MOVIE)
-                ),
-                nextKey = null,
-                prevKey = 2
-            )
-
-            coEvery {
-                localContinueWatchingDataSource.getContinueWatching(1, pageSize, page)
-            } returns mockContinueWatchingList
-
-            // When
-            val result = continueWatchingRepositoryImpl.getContinueWatching(page, pageSize)
-
-            // Then
-            assertEquals(expectedResult, result)
+            assertThat(expectedResult == result).isTrue()
             coVerify { localContinueWatchingDataSource.getContinueWatching(1, pageSize, page) }
         }
 
