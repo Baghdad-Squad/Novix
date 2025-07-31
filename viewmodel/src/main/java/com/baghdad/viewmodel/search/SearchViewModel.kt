@@ -99,7 +99,6 @@ class SearchViewModel @Inject constructor(
             SearchScreenState.SearchTab.TV_SHOWS -> searchTvShows(text)
             SearchScreenState.SearchTab.ACTORS -> searchActors(text)
         }
-        tabChanged = false
     }
 
     private fun searchMovies(text: String) {
