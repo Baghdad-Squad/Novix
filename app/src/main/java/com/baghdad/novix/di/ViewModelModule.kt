@@ -65,6 +65,11 @@ val viewModelModule = module {
     viewModel { (actorId: Long) ->
         TopTvShowViewModel(actorId, get())
     }
+    viewModel {
+        SearchViewModel(
+            get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(),
+        )
+    }
     viewModel { (tvShowId: Long, seasonNumber: Int, episodeNumber: Int) ->
         EpisodeDetailsViewModel(tvShowId, seasonNumber, episodeNumber, get(), get())
     }
