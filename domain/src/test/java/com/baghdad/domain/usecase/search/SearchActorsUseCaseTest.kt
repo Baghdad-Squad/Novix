@@ -21,7 +21,7 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `invoke returns actors matching query with pagination keys`() = runTest {
+    fun `invoke() should return actors matching query with pagination keys`() = runTest {
         // Given
         val query = "Tom"
         val page = 1
@@ -38,7 +38,7 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `searchActorsUseCase returns empty result with null keys when no matches found`() = runTest {
+    fun `searchActorsUseCase() should return empty result with null keys when no matches found`() = runTest {
         // Given
         val query = "Unknown Actor"
         val page = 1
@@ -54,7 +54,7 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `searchActorsUseCase returns case insensitive matches with pagination`() = runTest {
+    fun `searchActorsUseCase() should return case insensitive matches with pagination`() = runTest {
         // Given
         val query = "meryl"
         val page = 1
@@ -76,7 +76,7 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `searchActorsUseCase returns different pages with correct pagination keys`() = runTest {
+    fun `searchActorsUseCase() should return different pages with correct pagination keys`() = runTest {
         // Given
         val query = "actor"
         val page1Result = sampleActors.copy(
@@ -118,7 +118,7 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `searchActorsUseCase handles special characters in query`() = runTest {
+    fun `searchActorsUseCase() should handle special characters in query`() = runTest {
         // Given
         val query = "Édgar"
         val page = 1
@@ -137,10 +137,10 @@ class SearchActorsUseCaseTest {
                         "https://example.com/denzel_header2.jpg"
                     ),
                     department = "Acting",
-            )
-        ),
-        nextKey = null,
-        prevKey = null
+                )
+            ),
+            nextKey = null,
+            prevKey = null
         )
         coEvery { searchRepository.searchActorsByName(query, page) } returns specialActorResult
 
@@ -152,7 +152,7 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `searchActorsUseCase makes exactly one repository call`() = runTest {
+    fun `invoke() should make exactly one repository call`() = runTest {
         // Given
         val query = "search"
         val page = 1
@@ -166,7 +166,7 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `searchActorsUseCase returns correct pagination keys for first page`() = runTest {
+    fun `invoke() should return correct pagination keys for first page`() = runTest {
         // Given
         val query = "first"
         val page = 1
@@ -185,7 +185,7 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `searchActorsUseCase returns correct pagination keys for middle page`() = runTest {
+    fun `searchActorsUseCase() should return correct pagination keys for middle page`() = runTest {
         // Given
         val query = "middle"
         val page = 3
@@ -204,7 +204,7 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `searchActorsUseCase returns correct pagination keys for last page`() = runTest {
+    fun `searchActorsUseCase() should return correct pagination keys for last page`() = runTest {
         // Given
         val query = "last"
         val page = 5
@@ -222,7 +222,7 @@ class SearchActorsUseCaseTest {
         assertThat(result.nextKey).isNull()
     }
 
-    companion object{
+    companion object {
         private lateinit var searchRepository: SearchRepository
         private lateinit var searchActorsUseCase: SearchActorsUseCase
 
