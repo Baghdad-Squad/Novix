@@ -2,77 +2,32 @@ package com.baghdad.local_datasource.entity
 
 import com.baghdad.local_datasource.roomDB.entity.ContinueWatching
 import com.baghdad.local_datasource.roomDB.entity.toDto
-import com.baghdad.local_datasource.roomDB.entity.toLocalDto
+import com.baghdad.local_datasource.roomDB.entity.toDtos
 import com.baghdad.repository.model.ContinueWatchingDto
-import org.junit.jupiter.api.Test
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 
 class ContinueWatchingTest {
 
     @Test
-    fun `toDto converts all fields correctly`() {
+    fun `should convert all fields correctly when toDto is called`() {
         // When
-        val result = fakeEntity1.toDto()
+        val result = CONTINUE_WATCHING.toDto()
 
         // Then
-        assertThat(result).isEqualTo(
-            ContinueWatchingDto(
-                contentId = 1L,
-                genreIds = listOf(1L, 2L, 3L),
-                contentImageUrl = "https://example.com/poster.jpg",
-                contentType = ContinueWatchingDto.ContentType.MOVIE,
-                userId = 1L
-            )
-        )
+        assertThat(result.contentId).isEqualTo(1L)
+        assertThat(result.genreIds).containsExactly(1L, 2L, 3L)
+        assertThat(result.contentImageUrl).isEqualTo("https://example.com/poster.jpg")
+        assertThat(result.contentType).isEqualTo(ContinueWatchingDto.ContentType.MOVIE)
+        assertThat(result.userId).isEqualTo(1L)
     }
 
     @Test
-    fun `toLocalDto converts all fields correctly`() {
-        // When
-        val result = fakeDto.toLocalDto()
-
-        // Then
-        assertThat(result).isEqualTo(
-            ContinueWatching(
-                contentId = 1L,
-                genreIds = listOf(4L, 5L),
-                contentImageUrl = "https://example.com/tv_poster.jpg",
-                contentType = "TV_SHOW",
-                userId = 1L
-            )
-        )
-    }
-
-    @Test
-    fun `conversion is bidirectional`() {
+    fun `should throw exception when toDto is called with invalid contentType`() {
         // Given
-        val original = ContinueWatching(
-            contentId = 1L,
-            genreIds = listOf(1L, 2L),
-            contentImageUrl = "image.jpg",
-            contentType = "TV_SHOW",
-            userId = 1L
-        )
-
-        // When
-        val converted = original.toDto().toLocalDto()
-
-        // Then
-        assertThat(converted).isEqualTo(original)
-    }
-
-    @Test
-    fun `toDto throws for invalid contentType`() {
-        // Given
-        val invalidEntity = ContinueWatching(
-            contentId = 1L,
-            genreIds = emptyList(),
-            contentImageUrl = "https://example.com/invalid.jpg",
-            contentType = "INVALID_TYPE",
-            userId = 1L
-        )
+        val invalidEntity = CONTINUE_WATCHING.copy(contentType = "INVALID")
         // Then
         assertThrows(IllegalArgumentException::class.java) {
             invalidEntity.toDto()
@@ -80,42 +35,25 @@ class ContinueWatchingTest {
     }
 
     @Test
-    fun `handles all enum values correctly`() {
+    fun `should handle all enum values correctly when toDto is called`() {
         // When & Then
-        assertThat(fakeEntity1.toDto().contentType)
+        assertThat(CONTINUE_WATCHING.toDto().contentType)
             .isEqualTo(ContinueWatchingDto.ContentType.MOVIE)
-        assertThat(fakeEntity2.toDto().contentType)
-            .isEqualTo(ContinueWatchingDto.ContentType.TV_SHOW)
     }
 
     @Test
-    fun `handles empty genreIds`() {
+    fun `should return empty genreIds when toLocalDto is called with empty genreIds`() {
         // Given
-        val emptyGenres = ContinueWatchingDto(
-            contentId = 3L,
-            genreIds = emptyList(),
-            contentImageUrl = "https://example.com/empty.jpg",
-            contentType = ContinueWatchingDto.ContentType.MOVIE,
-            userId = 3L
-        )
-
-        // When
-        val result = emptyGenres.toLocalDto()
+        val result = CONTINUE_WATCHING.copy(genreIds = emptyList())
 
         // Then
         assertThat(result.genreIds).isEmpty()
     }
 
     @Test
-    fun `handles null contentImageUrl`() {
+    fun `should return empty contentImageUrl when toDto is called with empty contentImageUrl`() {
         // Given
-        val emptyImage = ContinueWatching(
-            contentId = 4L,
-            genreIds = listOf(1L),
-            contentImageUrl = "",
-            contentType = "MOVIE",
-            userId = 4L
-        )
+        val emptyImage = CONTINUE_WATCHING.copy(contentImageUrl = "")
 
         // When
         val result = emptyImage.toDto()
@@ -124,26 +62,38 @@ class ContinueWatchingTest {
         assertThat(result.contentImageUrl).isEmpty()
     }
 
-    val fakeEntity1 = ContinueWatching(
-        contentId = 1L,
-        genreIds = listOf(1L, 2L, 3L),
-        contentImageUrl = "https://example.com/poster.jpg",
-        contentType = "MOVIE",
-        userId = 1L
-    )
-    val fakeEntity2 = ContinueWatching(
-        contentId = 2L,
-        genreIds = emptyList(),
-        contentImageUrl = "https://example.com/tv.jpg",
-        contentType = "TV_SHOW",
-        userId = 2L
-    )
-    val fakeDto = ContinueWatchingDto(
-        contentId = 1L,
-        genreIds = listOf(4L, 5L),
-        contentImageUrl = "https://example.com/tv_poster.jpg",
-        contentType = ContinueWatchingDto.ContentType.TV_SHOW,
-        userId = 1L
-    )
+    @Test
+    fun `should convert list of ContinueWatching to list of ContinueWatchingDto when toDtos is called`() {
+        // Given
+        val entities = listOf(
+            CONTINUE_WATCHING,
+            CONTINUE_WATCHING.copy(
+                contentId = 2L,
+                contentType = "TV_SHOW"
+            )
+        )
 
+        // When
+        val result = entities.toDtos()
+
+        // Then
+        assertThat(result).hasSize(2)
+
+        assertThat(result[0].contentId).isEqualTo(1L)
+        assertThat(result[0].contentType).isEqualTo(ContinueWatchingDto.ContentType.MOVIE)
+
+        assertThat(result[1].contentId).isEqualTo(2L)
+        assertThat(result[1].contentType).isEqualTo(ContinueWatchingDto.ContentType.TV_SHOW)
+    }
+
+
+    companion object {
+        val CONTINUE_WATCHING = ContinueWatching(
+            contentId = 1L,
+            genreIds = listOf(1L, 2L, 3L),
+            contentImageUrl = "https://example.com/poster.jpg",
+            contentType = "MOVIE",
+            userId = 1L
+        )
+    }
 }
