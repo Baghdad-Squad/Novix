@@ -16,7 +16,10 @@ import com.baghdad.remoteDataSource.apiService.GenreApiService
 import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.apiService.SearchApiService
 import com.baghdad.remoteDataSource.apiService.TvShowApiService
+import com.baghdad.remoteDataSource.interceptor.CacheInterceptor
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
+import com.baghdad.remoteDataSource.interceptor.OfflineCacheInterceptor
+import com.baghdad.remoteDataSource.util.Connectivity
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
@@ -31,13 +34,17 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.util.concurrent.TimeUnit
+
 
 private const val timeOut = 20L
 val remoteDataSourceModule = module {
@@ -54,6 +61,20 @@ val remoteDataSourceModule = module {
         }
     }
 
+    single<Cache> {
+        val cacheSize = 5L * 1024 * 1024
+        val cacheDir = androidContext().cacheDir
+        Cache(File(cacheDir, "http-cache"), cacheSize)
+    }
+    single<Connectivity> {
+        Connectivity(androidContext())
+    }
+    single<CacheInterceptor> {
+        CacheInterceptor()
+    }
+    single<OfflineCacheInterceptor> {
+        OfflineCacheInterceptor(get<Connectivity>())
+    }
     single {
         HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -75,7 +96,10 @@ val remoteDataSourceModule = module {
             .connectTimeout(timeOut, TimeUnit.SECONDS)
             .readTimeout(timeOut, TimeUnit.SECONDS)
             .writeTimeout(timeOut, TimeUnit.SECONDS)
+            .cache(get())
             .addInterceptor(get<HttpLoggingInterceptor>())
+            .addInterceptor(get<OfflineCacheInterceptor>())
+            .addNetworkInterceptor(get<CacheInterceptor>())
             .addInterceptor(get<HeadersSetupInterceptor>())
             .build()
     }
