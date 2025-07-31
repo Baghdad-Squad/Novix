@@ -17,7 +17,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
 @ExperimentalCoroutinesApi
 class TrendingMoviesViewModelTest {
 
@@ -41,7 +40,7 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `should send NavigateBack effect on back click`() {
+    fun `should send NavigateBack effect when back click is triggered`() {
         lateinit var effect: TrendingMoviesEffect
         val job: Job = testScope.launch {
             viewModel.uiEffect.collect { collectedEffect ->
@@ -59,7 +58,7 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `should send NavigateToMovieDetails effect with correct movieId`() {
+    fun `should send NavigateToMovieDetails effect when movieId is clicked`() {
         val movieId = 123L
         lateinit var effect: TrendingMoviesEffect
         val job: Job = testScope.launch {
@@ -78,7 +77,7 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `should accept different movieId values for NavigateToMovieDetails effect`() {
+    fun `should send multiple NavigateToMovieDetails effects when different movieId values are clicked`() {
         val movieId1 = 123L
         val movieId2 = 456L
         val movieId3 = 0L
@@ -117,7 +116,7 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `should maintain consistent equality for NavigateBack effect`() {
+    fun `should maintain consistent equality when effect is NavigateBack`() {
         val effect1 = TrendingMoviesEffect.NavigateBack
         val effect2 = TrendingMoviesEffect.NavigateBack
 
@@ -128,7 +127,7 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `should maintain consistent equality for NavigateToMovieDetails effect`() {
+    fun `should maintain consistent equality when effect is NavigateToMovieDetails`() {
         val movieId = 123L
         val effect1 = TrendingMoviesEffect.NavigateToMovieDetails(movieId)
         val effect2 = TrendingMoviesEffect.NavigateToMovieDetails(movieId)
@@ -142,7 +141,7 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `should have correct toString for NavigateBack effect`() {
+    fun `should return correct toString when effect is NavigateBack`() {
         val effect = TrendingMoviesEffect.NavigateBack
 
         val toStringResult = effect.toString()
@@ -154,7 +153,7 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `should have correct toString for NavigateToMovieDetails effect`() {
+    fun `should return correct toString when effect is NavigateToMovieDetails`() {
         val movieId = 123L
         val effect = TrendingMoviesEffect.NavigateToMovieDetails(movieId)
 
@@ -166,5 +165,4 @@ class TrendingMoviesViewModelTest {
         assertThat(toStringResult.contains(movieId.toString())).isEqualTo(true)
         assertThat(toStringResult.isEmpty()).isEqualTo(false)
     }
-
 }
