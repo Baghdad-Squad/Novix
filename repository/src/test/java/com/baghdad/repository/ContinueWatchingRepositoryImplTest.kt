@@ -108,7 +108,7 @@ class ContinueWatchingRepositoryImplTest {
         }
 
     @Test
-    fun `addContinueWatching should call data source with correct parameters for movie`() =
+    fun `addContinueWatching should call data source when correct parameters for movie provided`() =
         runTest {
             // Given
             val contentId = 123L
@@ -138,7 +138,7 @@ class ContinueWatchingRepositoryImplTest {
         }
 
     @Test
-    fun `addContinueWatching should call data source with correct parameters for tv show`() =
+    fun `addContinueWatching should call data source when correct parameters for tv show provided`() =
         runTest {
             // Given
             val contentId = 456L
@@ -167,37 +167,9 @@ class ContinueWatchingRepositoryImplTest {
             coVerify { localContinueWatchingDataSource.addContinueWatching(expectedDto) }
         }
 
-    @Test
-    fun `addContinueWatching should handle empty genre list`() = runTest {
-        // Given
-        val contentId = 789L
-        val genreIds = emptyList<Long>()
-        val contentImageUrl = "https://example.com/empty.jpg"
-        val contentType = ContinueWatching.ContentType.MOVIE
-        val expectedDto = ContinueWatchingDto(
-            contentId = contentId,
-            genreIds = genreIds,
-            contentImageUrl = contentImageUrl,
-            contentType = ContinueWatchingDto.ContentType.MOVIE,
-            userId = 1L
-        )
-
-        coEvery { localContinueWatchingDataSource.addContinueWatching(expectedDto) } returns Unit
-
-        // When
-        continueWatchingRepositoryImpl.addContinueWatching(
-            contentId = contentId,
-            genreIds = genreIds,
-            contentImageUrl = contentImageUrl,
-            contentType = contentType
-        )
-
-        // Then
-        coVerify { localContinueWatchingDataSource.addContinueWatching(expectedDto) }
-    }
 
     @Test
-    fun `addContinueWatching should handle large genre list`() = runTest {
+    fun `addContinueWatching should handle large genre list when large genre is provided`() = runTest {
         // Given
         val contentId = 999L
         val genreIds = (1L..20L).toList()

@@ -89,7 +89,7 @@ class RecentlyViewedRepositoryImplTest {
         }
 
     @Test
-    fun `deleteAllRecentlyViewed should call data source delete method`() = runTest {
+    fun `deleteAllRecentlyViewed should call data source delete method when it is requested`() = runTest {
         // Given
         coEvery { localRecentlyViewedDataSource.deleteAllRecentlyViewed() } returns Unit
         // When

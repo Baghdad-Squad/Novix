@@ -50,7 +50,7 @@ class FavoriteGenreRepositoryImplTest {
         }
 
     @Test
-    fun `getFavoriteGenres should handle large dataset correctly`() = runTest {
+    fun `getFavoriteGenres should handle large dataset correctly when it is provided with it`() = runTest {
 
         val largeGenreList = (1..100).map { index ->
             createMockFavoriteGenreDto(index.toLong(), "Genre$index", index * 2)

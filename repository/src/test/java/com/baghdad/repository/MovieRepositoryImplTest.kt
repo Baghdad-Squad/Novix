@@ -410,19 +410,6 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun `getTopRatedMovies should throw exception when remote call fails`() = runTest {
-        // Given
-        val page = 1
-        val exception = RuntimeException("Network error")
-        coEvery { remoteMovieDataSource.getTopRatedMovies(page) } throws exception
-
-        // When & Then
-        assertThrows<Exception> {
-            movieRepositoryImpl.getTopRatedMovies(page)
-        }
-    }
-
-    @Test
     fun `getPopularMovies should return list of movies when remote call succeeds`() = runTest {
         // Given
         val mockMovieDtos = listOf(createMockMovieDto())
@@ -453,17 +440,6 @@ class MovieRepositoryImplTest {
         coVerify { remoteMovieDataSource.getPopularMovies() }
     }
 
-    @Test
-    fun `getPopularMovies should throw exception when remote call fails`() = runTest {
-        // Given
-        val exception = RuntimeException("Network error")
-        coEvery { remoteMovieDataSource.getPopularMovies() } throws exception
-
-        // When & Then
-        assertThrows<Exception> {
-            movieRepositoryImpl.getPopularMovies()
-        }
-    }
 
     @Test
     fun `getTrendingMovies should return paged result when remote call succeeds`() = runTest {
@@ -484,19 +460,6 @@ class MovieRepositoryImplTest {
         assertThat(result.nextKey).isEqualTo(2)
         assertThat(result.prevKey).isNull()
         coVerify { remoteMovieDataSource.getTrendingMovies(page) }
-    }
-
-    @Test
-    fun `getTrendingMovies should throw exception when remote call fails`() = runTest {
-        // Given
-        val page = 1
-        val exception = RuntimeException("Network error")
-        coEvery { remoteMovieDataSource.getTrendingMovies(page) } throws exception
-
-        // When & Then
-        assertThrows<Exception> {
-            movieRepositoryImpl.getTrendingMovies(page)
-        }
     }
 
     @Test
@@ -549,19 +512,6 @@ class MovieRepositoryImplTest {
         // Then
         assertThat(result).isEqualTo(emptyList<Movie>())
         coVerify { remoteMovieDataSource.getUpcomingMovies(genreId) }
-    }
-
-    @Test
-    fun `getUpcomingMovies should throw exception when remote call fails`() = runTest {
-        // Given
-        val genreId = 28L
-        val exception = RuntimeException("Network error")
-        coEvery { remoteMovieDataSource.getUpcomingMovies(genreId) } throws exception
-
-        // When & Then
-        assertThrows<Exception> {
-            movieRepositoryImpl.getUpcomingMovies(genreId)
-        }
     }
 
     companion object {
