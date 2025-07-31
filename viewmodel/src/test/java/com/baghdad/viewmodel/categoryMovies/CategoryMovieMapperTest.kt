@@ -11,6 +11,7 @@ class CategoryMoviesStateTest {
 
     @Test
     fun `should have expected defaults when CategoryMoviesState created with default constructor`() {
+
         val state = CategoryMoviesState()
 
         assertThat(state.isLoading).isFalse()
@@ -20,7 +21,7 @@ class CategoryMoviesStateTest {
 
     @Test
     fun `should return correct values when CategoryMoviesState created with custom values`() {
-        val movieUiState = CategoryMoviesState.MovieUiState(1L, "poster", true)
+
         val state = CategoryMoviesState(
             isLoading = true,
             moviesFlow = flowOf(),
@@ -34,6 +35,7 @@ class CategoryMoviesStateTest {
 
     @Test
     fun `should have expected default values when MovieUiState created with default constructor`() {
+
         val movie = CategoryMoviesState.MovieUiState()
 
         assertThat(movie.id).isEqualTo(0L)
@@ -43,6 +45,7 @@ class CategoryMoviesStateTest {
 
     @Test
     fun `should return those values when MovieUiState created with custom values`() {
+
         val movie = CategoryMoviesState.MovieUiState(
             id = 10L,
             posterPictureURL = "poster-url",
@@ -56,6 +59,7 @@ class CategoryMoviesStateTest {
 
     @Test
     fun `should be equal when two MovieUiStates have same values`() {
+
         val m1 = CategoryMoviesState.MovieUiState(1L, "url", true)
         val m2 = CategoryMoviesState.MovieUiState(1L, "url", true)
 
@@ -84,6 +88,7 @@ class CategoryMoviesStateTest {
 
     @Test
     fun `should map correctly when toUiState called on movie with empty poster`() {
+
         val movie = testMovie.copy(posterImageURL = "")
         val result = movie.toUiState()
 
