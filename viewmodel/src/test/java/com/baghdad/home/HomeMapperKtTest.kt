@@ -2,8 +2,6 @@ package com.baghdad.home
 
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.ContinueWatching.ContentType
-import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.home.HomeScreenState
 import com.baghdad.viewmodel.home.toPopularItemUiState
@@ -18,12 +16,14 @@ import org.junit.jupiter.api.Test
 class HomeMapperKtTest {
     @Test
     fun `should map Genre to GenreUiState when toUiState is called`() {
+        //Given
+        val genre = FakeHomeScreenData.genre
         // When
-        val genreUiState = GENRE.toUiState()
+        val genreUiState = genre.toUiState()
 
         // Then
-        assertThat(GENRE.id).isEqualTo(genreUiState.id)
-        assertThat(GENRE.name).isEqualTo(genreUiState.name)
+        assertThat(genre.id).isEqualTo(genreUiState.id)
+        assertThat(genre.name).isEqualTo(genreUiState.name)
     }
 
     @Test
@@ -47,14 +47,17 @@ class HomeMapperKtTest {
 
     @Test
     fun `should map Movie to PopularItemUiState when toPopularItemUiState is called`() {
+        // Given
+        val movie = FakeHomeScreenData.movie
+
         // When
-        val popularItemUiState = MOVIE.toPopularItemUiState()
+        val popularItemUiState = movie.toPopularItemUiState()
 
         // Then
-        assertThat(MOVIE.id).isEqualTo(popularItemUiState.id)
-        assertThat(MOVIE.title).isEqualTo(popularItemUiState.name)
-        assertThat(MOVIE.averageRating).isEqualTo(popularItemUiState.rating.roundToFirstDecimal())
-        assertThat(MOVIE.posterImageURL).isEqualTo(popularItemUiState.imageUrl)
+        assertThat(movie.id).isEqualTo(popularItemUiState.id)
+        assertThat(movie.title).isEqualTo(popularItemUiState.name)
+        assertThat(movie.averageRating).isEqualTo(popularItemUiState.rating.roundToFirstDecimal())
+        assertThat(movie.posterImageURL).isEqualTo(popularItemUiState.imageUrl)
         assertThat(popularItemUiState.type).isEqualTo(HomeScreenState.PopularItemUiState.Type.MOVIE)
         assertThat(popularItemUiState.isSaved).isFalse()
     }
@@ -65,7 +68,7 @@ class HomeMapperKtTest {
         val tvShow = TvShow(
             id = 1,
             title = "test",
-            genres = GENRES,
+            genres = FakeHomeScreenData.genres,
             averageRating = 1.0,
             userRating = 1.0,
             releaseDate = LocalDate(2002, 2, 22),
@@ -90,52 +93,28 @@ class HomeMapperKtTest {
 
     @Test
     fun `should map Movie to TopRatingItemUiState when toTopRatingItemUiState is called`() {
+        // Given
+        val movie = FakeHomeScreenData.movie
+
         // When
-        val topRatingItemUiState = MOVIE.toTopRatingItemUiState()
+        val topRatingItemUiState = movie.toTopRatingItemUiState()
 
         // Then
-        assertThat(MOVIE.id).isEqualTo(topRatingItemUiState.id)
-        assertThat(MOVIE.posterImageURL).isEqualTo(topRatingItemUiState.imageUrl)
+        assertThat(movie.id).isEqualTo(topRatingItemUiState.id)
+        assertThat(movie.posterImageURL).isEqualTo(topRatingItemUiState.imageUrl)
         assertThat(topRatingItemUiState.isSaved).isFalse()
     }
 
     @Test
     fun `should map Movie to UpcomingItemUiState when toUpcomingItemUiState is called`() {
+        // Given
+        val movie = FakeHomeScreenData.movie
         // When
-        val upcomingItemUiState = MOVIE.toUpcomingItemUiState()
+        val upcomingItemUiState = movie.toUpcomingItemUiState()
 
         // Then
-        assertThat(MOVIE.id).isEqualTo(upcomingItemUiState.id)
-        assertThat(MOVIE.posterImageURL).isEqualTo(upcomingItemUiState.imageUrl)
+        assertThat(movie.id).isEqualTo(upcomingItemUiState.id)
+        assertThat(movie.posterImageURL).isEqualTo(upcomingItemUiState.imageUrl)
         assertThat(upcomingItemUiState.isSaved).isFalse()
-    }
-
-    companion object {
-
-        private val GENRE = Genre(
-            id = 1,
-            name = "Action"
-        )
-
-        private val GENRES = listOf(
-            GENRE,
-            GENRE.copy(id = 2, name = "Drama"),
-            GENRE.copy(id = 3, name = "Comedy"),
-            GENRE.copy(id = 4, name = "Romance"),
-            GENRE.copy(id = 5, name = "Horror")
-        )
-
-        private val MOVIE = Movie(
-            id = 1,
-            title = "test",
-            genres = GENRES,
-            averageRating = 1.0,
-            userRating = 1.0,
-            releaseDate = LocalDate(2002, 2, 22),
-            overview = "test",
-            posterImageURL = "test",
-            trailerURL = "test",
-            runtimeMinutes = 5,
-        )
     }
 }

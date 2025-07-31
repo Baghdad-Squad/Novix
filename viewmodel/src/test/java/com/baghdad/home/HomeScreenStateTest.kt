@@ -36,7 +36,7 @@ class HomeScreenStateTest {
         assertThat(homeScreenState.isTopRatingLoading).isFalse()
         assertThat(homeScreenState.topRatingItems).isEqualTo(FakeHomeScreenData.topRatingItems)
         assertThat(homeScreenState.isContinueWatchingLoading).isFalse()
-        assertThat(homeScreenState.continueWatchingItems).isEqualTo(FakeHomeScreenData.continueWatchingItems)
+        assertThat(homeScreenState.continueWatchingItems).isEqualTo(FakeHomeScreenData.continueWatchingItemsUiState)
         assertThat(homeScreenState.isUpcomingGenresLoading).isFalse()
         assertThat(homeScreenState.upcomingGenres).isEqualTo(FakeHomeScreenData.upcomingGenres)
         assertThat(homeScreenState.isUpcomingMoviesLoading).isFalse()
@@ -109,7 +109,7 @@ class HomeScreenStateTest {
     @Test
     fun `should set correct values when ContinueWatchingItemUiState is created with parameters`() {
         // Given
-        val continueWatchingItemUiState = FakeHomeScreenData.continueWatchingItems
+        val continueWatchingItemUiState = FakeHomeScreenData.continueWatchingItemsUiState
 
         // Then
         assertThat(continueWatchingItemUiState[0].id).isEqualTo(5)
@@ -171,7 +171,7 @@ class HomeScreenStateTest {
             isTopRatingLoading = false,
             topRatingItems = FakeHomeScreenData.topRatingItems,
             isContinueWatchingLoading = false,
-            continueWatchingItems = FakeHomeScreenData.continueWatchingItems,
+            continueWatchingItems = FakeHomeScreenData.continueWatchingItemsUiState,
             isUpcomingGenresLoading = false,
             upcomingGenres = FakeHomeScreenData.upcomingGenres,
             isUpcomingMoviesLoading = false,
@@ -186,7 +186,7 @@ class HomeScreenStateTest {
         assertThat(copiedScreenState.isTopRatingLoading).isFalse()
         assertThat(copiedScreenState.topRatingItems).isEqualTo(FakeHomeScreenData.topRatingItems)
         assertThat(copiedScreenState.isContinueWatchingLoading).isFalse()
-        assertThat(copiedScreenState.continueWatchingItems).isEqualTo(FakeHomeScreenData.continueWatchingItems)
+        assertThat(copiedScreenState.continueWatchingItems).isEqualTo(FakeHomeScreenData.continueWatchingItemsUiState)
         assertThat(copiedScreenState.isUpcomingGenresLoading).isFalse()
         assertThat(copiedScreenState.upcomingGenres).isEqualTo(FakeHomeScreenData.upcomingGenres)
         assertThat(copiedScreenState.isUpcomingMoviesLoading).isFalse()
