@@ -1,10 +1,14 @@
 package com.baghdad.local_datasource.roomDB.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.baghdad.repository.model.RecentSearchDto
 
-@Entity(tableName = "RecentSearch")
+@Entity(
+    tableName = "RecentSearch",
+    indices = [Index(value = ["query"], unique = true)],
+)
 data class RecentSearch(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val query: String,
