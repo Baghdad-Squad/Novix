@@ -192,16 +192,6 @@ class TvShowDetailsViewModelTest {
         assertThat(true).isTrue()
     }
 
-//    @Test
-//    fun `mapThrowableToErrorMessage should return UnknownError`() {
-//        // Given
-//        val throwable = RuntimeException("Test error")
-//        // When
-//        val result = tvShowDetailsViewModel.mapThrowableToErrorMessage(throwable)
-//        // Then
-//        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
-//    }
-
     private companion object {
         const val tvShowId = 123L
         const val genreId = 456L
