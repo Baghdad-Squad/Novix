@@ -85,8 +85,8 @@ class GetMovieReviewsUseCaseTest {
         // Given
         val movieId = 6L
         val variedRatings = listOf(
-            sampleReviews[0].copy(rating = 1f),
-            sampleReviews[1].copy(rating = 10f)
+            sampleReviews[0].copy(rating = 1.0),
+            sampleReviews[1].copy(rating = 10.0)
         )
         coEvery { movieRepository.getMovieReviews(movieId) } returns variedRatings
 
@@ -94,8 +94,8 @@ class GetMovieReviewsUseCaseTest {
         val result = getMovieReviewsUseCase(movieId)
 
         // Then
-        assertThat(result[0].rating).isEqualTo(1f)
-        assertThat(result[1].rating).isEqualTo(10f)
+        assertThat(result[0].rating).isEqualTo(1)
+        assertThat(result[1].rating).isEqualTo(10)
     }
 
     @Test
@@ -161,7 +161,7 @@ class GetMovieReviewsUseCaseTest {
                 contentTitle = "Great Movie!",
                 reviewText = "Amazing plot and character development.",
                 postedDate = kotlinx.datetime.LocalDate(2023, 10, 1),
-                rating = 9f
+                rating = 9.0
             ),
             Review(
                 id = "rev2",
@@ -170,7 +170,7 @@ class GetMovieReviewsUseCaseTest {
                 contentTitle = "Solid Performance",
                 reviewText = "Solid performance by the lead actor, but the story was a bit predictable.",
                 postedDate = kotlinx.datetime.LocalDate(2023, 10, 2),
-                rating = 8f
+                rating = 8.0
             )
         )
 
@@ -181,7 +181,7 @@ class GetMovieReviewsUseCaseTest {
             contentTitle = "",
             reviewText = "Okay",
             postedDate = kotlinx.datetime.LocalDate(2023, 10, 3),
-            rating = 5f
+            rating = 5.0
         )
 
     }
