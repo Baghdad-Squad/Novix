@@ -5,25 +5,31 @@ import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class ActorGalleryViewModel(
     private val getGalleryImagesUseCase: GetActorGalleryUseCase,
     private val actorId: Long,
-) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
+    private val ioDispatcher: CoroutineDispatcher,
+
+    ) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
     ActorGalleryInteractionListener {
+
     init {
         loadData()
     }
 
-    fun loadData() {
+    private fun loadData() {
         getActorGalleryImages(actorId)
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     fun getActorGalleryImages(actorId: Long) {
         tryToExecute(
             callee = { getGalleryImagesUseCase.invoke(actorId) },
+            dispatcher = ioDispatcher,
             onStart = ::onStart,
             onSuccess = ::onGalleryActorSuccess,
             onError = ::onGetActorGalleryError,
@@ -37,6 +43,7 @@ class ActorGalleryViewModel(
             else -> handleError(throwable)
         }
     }
+
 
     private fun showNoInternetSnackBar() {
         showSnackBar(

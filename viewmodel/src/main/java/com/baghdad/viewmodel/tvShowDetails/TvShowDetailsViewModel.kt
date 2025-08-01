@@ -12,6 +12,7 @@ import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class TvShowDetailsViewModel(
     private val tvShowId: Long,
@@ -19,7 +20,8 @@ class TvShowDetailsViewModel(
     private val getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase,
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
-) :
+    private val ioDispatcher: CoroutineDispatcher,
+    ) :
     BaseViewModel<TvShowDetailsScreenState, TvShowDetailsScreenEffect>(TvShowDetailsScreenState()),
     TvShowDetailsInteractionListener {
 
@@ -32,6 +34,7 @@ class TvShowDetailsViewModel(
     private fun getTvShowDetails(tvShowId: Long) {
         tryToExecute(
             callee = { getTvShowDetailsUseCase(tvShowId) },
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetTvShowDetailsSuccess,
             onStart = { updateState { it.copy(isTvShowDetailsLoading = true) } },
             onFinally = ::onFinallyAndAddToContinueWatching,
@@ -57,6 +60,7 @@ class TvShowDetailsViewModel(
     private fun getTvShowCast(tvShowId: Long) {
         tryToExecute(
             callee = { getTvShowCastMembersUseCase(tvShowId) },
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetTvShowCastSuccess,
             onStart = { updateState { it.copy(isCastMembersLoading = true) } },
             onFinally = { updateState { it.copy(isCastMembersLoading = false) } },
@@ -72,9 +76,8 @@ class TvShowDetailsViewModel(
         }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
-    }
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     override fun onClickBackIcon() {
         sendEffect(TvShowDetailsScreenEffect.NavigateBack)
@@ -110,9 +113,9 @@ class TvShowDetailsViewModel(
 
     override fun onClickSeasonTab(seasonIndex: Int) {
         updateState { it.copy(selectedSeasonIndex = seasonIndex) }
-
         tryToExecute(
             callee = { getTvShowSeasonEpisodesUseCase(tvShowId, seasonIndex + 1) },
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetTvShowEpisodesSuccess,
             onStart = {updateState { it.copy(isEpisodesLoading = true) }},
             onFinally = {updateState { it.copy(isEpisodesLoading = false) }},
