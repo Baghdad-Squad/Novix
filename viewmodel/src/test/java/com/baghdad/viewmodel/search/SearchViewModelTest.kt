@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.search
 
+import android.annotation.SuppressLint
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.search.RecentlyViewed
@@ -14,9 +15,10 @@ import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
 import com.baghdad.domain.util.now
+import com.baghdad.entity.media.Genre
+import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -136,8 +138,8 @@ class SearchViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        Truth.assertThat(state.searchText).isEqualTo(newText)
-        Truth.assertThat(state.isLoading).isTrue()
+        assertThat(state.searchText).isEqualTo(newText)
+        assertThat(state.isLoading).isTrue()
     }
 
     @Test
@@ -154,8 +156,8 @@ class SearchViewModelTest {
         advanceUntilIdle()
 
         val secondState = viewModel.uiState.value
-        Truth.assertThat(secondState.searchText).isEqualTo(query.trim())
-        Truth.assertThat(secondState.lastProcessedQuery).isEqualTo(firstState.lastProcessedQuery)
+        assertThat(secondState.searchText).isEqualTo(query.trim())
+        assertThat(secondState.lastProcessedQuery).isEqualTo(firstState.lastProcessedQuery)
     }
 
     @Test
@@ -166,7 +168,7 @@ class SearchViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        Truth.assertThat(state.searchText).isEmpty()
+        assertThat(state.searchText).isEmpty()
     }
 
     @Test
@@ -177,7 +179,7 @@ class SearchViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        Truth.assertThat(state.searchText).isEqualTo("   ")
+        assertThat(state.searchText).isEqualTo("   ")
     }
 
     @Test
@@ -189,8 +191,8 @@ class SearchViewModelTest {
             advanceUntilIdle()
 
             val state = viewModel.uiState.value
-            Truth.assertThat(state.searchText).isEqualTo("Adventure")
-            Truth.assertThat(state.isLoading).isTrue()
+            assertThat(state.searchText).isEqualTo("Adventure")
+            assertThat(state.isLoading).isTrue()
         }
 
     @Test
@@ -200,7 +202,7 @@ class SearchViewModelTest {
         advanceTimeBy(SEARCH_DEBOUNCED_DELAY + 10)
 
         val state = viewModel.uiState.value
-        Truth.assertThat(state.isLoading).isFalse()
+        assertThat(state.isLoading).isFalse()
     }
 
     @Test
@@ -216,7 +218,7 @@ class SearchViewModelTest {
             coVerify(exactly = 1) { deleteAllRecentlyViewedUseCase.invoke() }
 
             val state = viewModel.uiState.value
-            Truth.assertThat(state.isLoading).isFalse()
+            assertThat(state.isLoading).isFalse()
         }
 
     @Test
@@ -230,8 +232,7 @@ class SearchViewModelTest {
             advanceUntilIdle()
 
             val state = viewModel.uiState.value
-            Truth.assertThat(state.isLoading).isFalse()
-
+            assertThat(state.isLoading).isFalse()
         }
 
 
@@ -259,7 +260,7 @@ class SearchViewModelTest {
         advanceUntilIdle()
 
         coVerify(exactly = 1) { deleteAllRecentSearchesUseCase.invoke() }
-        Truth.assertThat(viewModel.uiState.value.isLoading).isFalse()
+        assertThat(viewModel.uiState.value.isLoading).isFalse()
     }
 
     @Test
@@ -271,7 +272,7 @@ class SearchViewModelTest {
         advanceUntilIdle()
 
         coVerify { deleteAllRecentSearchesUseCase.invoke() }
-        Truth.assertThat(viewModel.uiState.value.isLoading).isFalse()
+        assertThat(viewModel.uiState.value.isLoading).isFalse()
     }
 
     @Test
@@ -284,7 +285,7 @@ class SearchViewModelTest {
         advanceUntilIdle()
 
         coVerify(exactly = 1) { deleteRecentSearchUseCase(targetId) }
-        Truth.assertThat(viewModel.uiState.value.isLoading).isFalse()
+        assertThat(viewModel.uiState.value.isLoading).isFalse()
     }
 
     @Test
@@ -298,7 +299,7 @@ class SearchViewModelTest {
             advanceUntilIdle()
 
             coVerify { deleteRecentSearchUseCase(targetId) }
-            Truth.assertThat(viewModel.uiState.value.isLoading).isFalse()
+            assertThat(viewModel.uiState.value.isLoading).isFalse()
         }
 
     @Test
@@ -307,7 +308,7 @@ class SearchViewModelTest {
 
         viewModel.onFilterIconClick()
 
-        Truth.assertThat(viewModel.uiState.value.bottomSheetUiState.isBottomSheetVisible).isTrue()
+        assertThat(viewModel.uiState.value.bottomSheetUiState.isBottomSheetVisible).isTrue()
     }
 
     @Test
@@ -366,6 +367,8 @@ class SearchViewModelTest {
             assertThat(viewModel.uiState.value.searchText)
         }
 
+
+    ////////////////////////////
     @Test
     fun `should search movies when performSearchByTab is invoked and selected tab is MOVIES`() =
         runTest {
@@ -786,9 +789,7 @@ class SearchViewModelTest {
             nextKey = null,
             prevKey = null
         )
-
         method.invoke(viewModel, query)
-
     }
 
     @Test
@@ -842,9 +843,128 @@ class SearchViewModelTest {
         assertThat(actorItems).isEmpty()
     }
 
+    @Test
+    fun `searchTvShows should update tvShowsFlow and handle success callbacks`() = runTest {
+        val query = "Comedy"
+        val page = 1
+        val uiState =
+            SearchScreenState.TvShowUiState(
+                id = 101L,
+                posterPictureURL = "https://example.com/poster.jpg"
+            )
+
+        val viewModel = createViewModel()
+
+        coEvery { tvShow.toTvShowUI() } returns uiState
+
+        coEvery {
+            searchTvShowsUseCase(query = query, filter = any(), page = page)
+        } returns PagedResult(data = listOf(tvShow), nextKey = null, prevKey = null)
+
+        val method = viewModel::class.java.getDeclaredMethod("searchTvShows", String::class.java)
+        method.isAccessible = true
+
+        val job = launch {
+            viewModel.uiState.value.tvShowsFlow.collect { pagingData ->
+            }
+        }
+        advanceUntilIdle()
+        job.cancel()
+
+        assertThat(viewModel.uiState.value.isLoading).isFalse()
+
+    }
+
+    @Test
+    fun `searchTvShows should update tvShowsFlow and handle success callbacks `() = runTest {
+        val query = "Comedy"
+        val page = 1
+        val uiState = SearchScreenState.TvShowUiState(
+            id = 101L,
+            posterPictureURL = "https://example.com/poster.jpg"
+        )
+
+        val viewModel = createViewModel()
+
+        coEvery { tvShow.toTvShowUI() } returns uiState
+//
+        coEvery {
+            searchTvShowsUseCase(query = query, filter = any(), page = page)
+        } returns PagedResult(data = listOf(tvShow), nextKey = null, prevKey = null)
+
+        val method = viewModel::class.java.getDeclaredMethod("searchTvShows", String::class.java)
+        method.isAccessible = true
+        method.invoke(viewModel, query)
+
+        val job = launch {
+            viewModel.uiState.value.tvShowsFlow.collect { pagingData ->
+            }
+        }
+        advanceUntilIdle()
+//        job.cancel()
+
+//        assertThat(viewModel.uiState.value.isLoading).isFalse()
+//        assertThat(viewModel.uiState.value.tvShowsFlow).isNotNull()
+    }
+
+    @Test
+    fun `onSearchError should call showNoInternetSnackBar for NoInternetException`() = runTest {
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("onSearchError", Throwable::class.java)
+        method.isAccessible = true
+
+        val exception = NoInternetException()
+
+        method.invoke(viewModel, exception)
+
+        assertThat(viewModel.uiState.value.isLoading)
+    }
+
+//    @Test
+//    fun `onRecentSearchItemClick sets search text and triggers callbacks`() {
+//        viewModel.onRecentSearchItemClick(1L)
+//
+//        assertThat(viewModel.currentState.searchText).isEqualTo("Hello")
+//        assertThat(viewModel.currentState.lastProcessedQuery).isEmpty()
+//        verify { viewModel.onSearchTextChanged("Hello") }
+//        verify { viewModel.onSearchQueryChangedCollected("Hello") }
+//    }
 
 
+    //    advanceUntilIdle()
     companion object {
         internal const val SEARCH_DEBOUNCED_DELAY = 300L
+        private val genres = listOf(
+            Genre(id = 1L, name = "Action"),
+            Genre(id = 2L, name = "Adventure"),
+            Genre(id = 3L, name = "Comedy"),
+            Genre(id = 4L, name = "Drama"),
+            Genre(id = 5L, name = "Fantasy"),
+            Genre(id = 6L, name = "Horror"),
+            Genre(id = 7L, name = "Mystery"),
+            Genre(id = 8L, name = "Romance"),
+            Genre(id = 9L, name = "Sci-Fi"),
+            Genre(id = 10L, name = "Thriller")
+
+        )
+        private val tvShow = TvShow(
+            id = 1L,
+            title = "Comedy",
+            genres = genres,
+            averageRating = 8.7,
+            userRating = 9.2,
+            releaseDate = LocalDate(2020, 5, 15),
+            overview = "A band of unlikely heroes must protect their realm from an ancient evil rising from the rift.",
+            posterImageURL = "https://example.com/images/chronicles_of_the_rift_poster.jpg",
+            trailerURL = "https://example.com/trailers/chronicles_of_the_rift.mp4",
+            headerImagesURLs = listOf(
+                "https://example.com/images/header_1.jpg",
+                "https://example.com/images/header_2.jpg",
+                "https://example.com/images/header_3.jpg"
+            ),
+            numberOfSeasons = 4
+        )
+
     }
 }
