@@ -19,7 +19,7 @@ class ActorDetailsViewModel(
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
     private val getActorGalleryUseCase: GetActorGalleryUseCase,
-    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
     ) :
     BaseViewModel<ActorDetailsScreenState, ActorDetailsScreenEffect>(ActorDetailsScreenState()),
     ActorDetailsInteractionListener {
@@ -41,7 +41,7 @@ class ActorDetailsViewModel(
             callee = {
                 getActorInfoUseCase(actorId)
             },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetActorInfoSuccess,
             onStart = ::onGetActorInfoStart,
             onError = ::onError,

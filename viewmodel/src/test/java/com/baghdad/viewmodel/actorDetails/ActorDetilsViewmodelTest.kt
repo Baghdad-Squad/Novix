@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.actorDetails
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
@@ -9,6 +10,7 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.viewmodel.dummyData.DummyDataFactory.createMockGallery
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -51,7 +53,7 @@ class ActorDetailsViewModelTest {
             getActorMoviesUseCase = getActorMoviesUseCase,
             getActorTvShowUseCase = getActorTvShowUseCase,
             getActorGalleryUseCase = getActorGalleryUseCase,
-            defaultDispatcher = testDispatcher
+            ioDispatcher = testDispatcher
         )
     }
 
@@ -158,7 +160,7 @@ class ActorDetailsViewModelTest {
         }
 
     @Test
-    fun `onTvShowCardClick should Navigate To TvShowDetails screen when clicked and it has the correct tvShowId`() =
+    fun `onTvShowCardClick should Navigate To TvShow Details screen when clicked and it has the correct tvShowId`() =
         runTest {
             // Given
             var receivedEffect: ActorDetailsScreenEffect? = null
@@ -176,16 +178,45 @@ class ActorDetailsViewModelTest {
             job.cancel()
         }
 
-//    @Test
-//    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
-//        // Given
-//        val throwable = RuntimeException("Test error")
-//        // When
-//        val result = viewModel.mapThrowableToErrorMessage(throwable)
-//        // Then
-//        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
-//    }
+    @Test
+    fun `onSnackBarActionLabelClick should load data when it is clicked`() = runTest {
+        // Given
+        val expectedActor = createMockActor()
+        coEvery { getActorInfoUseCase(actorId) } returns expectedActor
+        val effects = mutableListOf<ActorDetailsScreenEffect>()
+        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
 
+        // When
+        viewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+        job.cancel()
+
+        // Then
+        val actualState = viewModel.uiState.value
+        assertThat(actualState.actorInfo).isEqualTo(expectedActor.toActorInfoUI())
+        assertThat(actualState.isLoading).isFalse()
+    }
+
+    @Test
+    fun `getActorInfo should show no internet snackBar when NoInternetException is thrown`() = runTest {
+        // Given
+        coEvery { getActorInfoUseCase(actorId) } throws NoInternetException()
+        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+
+        val job = launch {
+            viewModel.snackBarState.collect {
+                emittedSnackBarMessages.add(it.message)
+            }
+        }
+
+        // When
+        viewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+        job.cancel()
+
+        // Then
+        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+    }
 
     companion object {
         private fun createMockActor() = Actor(
