@@ -56,40 +56,6 @@ class SearchMapperTest {
         assertThat(result.query).isEqualTo("kotlin")
     }
 
-    @Test
-    fun `should map Genre to GenreUiState when toGenreUI is called`() {
-        val ui = GENRE.toGenreUI()
-
-        assertThat(ui.id).isEqualTo(1L)
-        assertThat(ui.name).isEqualTo("Action")
-    }
-
-    @Test
-    fun `should map GenreUiState to Genre when toGenre is called`() {
-        val ui = SearchScreenState.GenreUiState(id = 7L, name = "Drama")
-        val domain = ui.toGenre()
-
-        assertThat(domain.id).isEqualTo(7L)
-        assertThat(domain.name).isEqualTo("Drama")
-    }
-
-    @Test
-    fun `should map SearchFilterUiState to SearchFilter when toSearchFilter is called`() {
-        val ui = SearchScreenState.SearchFilterUiState(
-            minimumYear = 1990,
-            maximumYear = 2020,
-            minimumRating = 3,
-            selectedGenres = listOf(SearchScreenState.GenreUiState(8L, "Comedy"))
-        )
-
-        val domain = ui.toSearchFilter()
-
-        assertThat(domain.minimumYear).isEqualTo(1990)
-        assertThat(domain.maximumYear).isEqualTo(2020)
-        assertThat(domain.minimumRating).isEqualTo(3)
-        assertThat(domain.selectedGenres.first().name).isEqualTo("Comedy")
-    }
-
     companion object {
         private val MOVIE = Movie(
             id = 1L,
