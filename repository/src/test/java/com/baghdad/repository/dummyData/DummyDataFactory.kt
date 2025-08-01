@@ -8,6 +8,8 @@ import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
 import com.baghdad.repository.model.GenreDto
+import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.TvShowDto
 import kotlinx.datetime.LocalDate
 
 object DummyDataFactory {
@@ -74,6 +76,7 @@ object DummyDataFactory {
         genres = emptyList(),
         trailerUrl = " "
     )
+
     fun createMockCastMemberDto() = CastMemberDto(
         actor = createMockActorDto(),
         characterName = "Test Character"
@@ -84,4 +87,60 @@ object DummyDataFactory {
         characterName = "Test Character"
     )
 
+    fun createMockTvShowDto() =
+        listOf(
+            TvShowDto(
+                id = 123L,
+                title = "Test TV Show",
+                genres = listOf(createMockGenreDto(1, "Drama"), createMockGenreDto(2, "Comedy")),
+                userRating = 7.5,
+                releaseDate = "2023-01-01",
+                overview = "This is a test TV show overview.",
+                trailerURL = "https://youtube.com/watch?v=test_trailer",
+                headerImagesURLs = listOf("/header1.jpg", "/header2.jpg"),
+                posterPictureURL = "/tv_show_poster.jpg",
+                imdbRating = 8.0,
+                numberOfSeasons = 3
+            ),
+            TvShowDto(
+                id = 456L,
+                title = "Another Test TV Show",
+                genres = listOf(createMockGenreDto(3, "Action"), createMockGenreDto(4, "Sci-Fi")),
+                userRating = 8.0,
+                releaseDate = "2022-05-15",
+                overview = "This is another test TV show overview.",
+                trailerURL = "https://youtube.com/watch?v=another_test_trailer",
+                headerImagesURLs = listOf("/header3.jpg", "/header4.jpg"),
+                posterPictureURL = "/another_tv_show_poster.jpg",
+                imdbRating = 9.0,
+                numberOfSeasons = 2
+            )
+        )
+    fun createMockMovieDto() =
+        listOf(
+            MovieDto(
+                id = 1L,
+                title = "Test Movie",
+                genres = listOf(createMockGenreDto(1, "Action"), createMockGenreDto(2, "Adventure")),
+                userRating = 7.5,
+                releaseDate = "2023-01-01",
+                overview = "This is a test movie overview.",
+                trailerURL = "https://youtube.com/watch?v=test_movie_trailer",
+                posterPictureURL = "/movie_poster.jpg",
+                imdbRating = 8.0,
+                runtimeMinutes = 120
+            ),
+            MovieDto(
+                id = 2L,
+                title = "Another Test Movie",
+                genres = listOf(createMockGenreDto(3, "Comedy"), createMockGenreDto(4, "Drama")),
+                userRating = 8.0,
+                releaseDate = "2022-05-15",
+                overview = "This is another test movie overview.",
+                trailerURL = "https://youtube.com/watch?v=another_test_movie_trailer",
+                posterPictureURL = "/another_movie_poster.jpg",
+                imdbRating = 9.0,
+                runtimeMinutes = 150
+            )
+        )
 }
