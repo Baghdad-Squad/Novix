@@ -1,23 +1,32 @@
 package com.baghdad.viewmodel.categoryMovies
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
 import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.*
-import io.mockk.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CategoryMoviesViewModelTest {
 
-    private val getGenreMoviesUseCase: GetMoviesByGenreUseCase = mockk()
+    private val getGenreMoviesUseCase: GetMoviesByGenreUseCase = mockk(relaxed = true)
     private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase = mockk()
 
     private lateinit var viewModel: CategoryMoviesViewModel
@@ -147,6 +156,28 @@ class CategoryMoviesViewModelTest {
         assertThat(uiState.posterPictureURL).isEqualTo(longUrl)
     }
 
+    @Test
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() =
+        runTest {
+            // Given
+            coEvery { getMovieGenreNameByIdUseCase(any()) } throws NoInternetException()
+            val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+
+            val job = launch {
+                viewModel.snackBarState.collect {
+                    emittedSnackBarMessages.add(it.message)
+                }
+            }
+
+            // When
+            viewModel.onSnackBarActionLabelClick()
+            advanceUntilIdle()
+            job.cancel()
+
+            // Then
+            assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+        }
+
     private val testMovie = Movie(
         id = 1L,
         title = "Test Movie",
@@ -159,4 +190,5 @@ class CategoryMoviesViewModelTest {
         trailerURL = "https://example.com/trailer.mp4",
         runtimeMinutes = 100
     )
+
 }
