@@ -4,7 +4,7 @@ import com.baghdad.viewmodel.base.BaseUiState
 
 data class ReviewScreenState(
     val reviews: List<ReviewUiState> = emptyList<ReviewUiState>(),
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
 ) : BaseUiState {
 
     data class ReviewUiState(
@@ -14,7 +14,7 @@ data class ReviewScreenState(
         val contentTitle: String = "",
         val reviewText: String = "",
         val postedDate: String = "",
-        val rating: Float = 0.0f,
+        val rating: Double = 0.0,
         val isExpanded: Boolean = false
     )
 }

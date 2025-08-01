@@ -3,13 +3,17 @@ package com.baghdad.viewmodel.movieDetails
 import com.baghdad.viewmodel.base.BaseUiState
 
 data class MovieDetailsState(
+    val isMovieGalleryLoading: Boolean = false,
+    val isMovieDetailsLoading: Boolean = false,
+    val isCastMemberLoading: Boolean = false,
+    val isMoreLikeThisMovieLoading: Boolean = false,
     val movieId: Long = 0L,
     val movieImages: List<String> = emptyList(),
     val movieName: String = "",
     val movieTrailerURL: String = "",
     val categories: List<CategoryUiState> = emptyList(),
     val rating: Double = 0.0,
-    val duration: String = "",
+    val duration: Int = 0,
     val date: String = "",
     val overView: String = "",
     val castMembers: List<ActorCardInfo> = emptyList(),
@@ -19,8 +23,9 @@ data class MovieDetailsState(
     val isStared: Boolean = false,
     val isSaved: Boolean = false,
     val isHasTrailer: Boolean = true,
-    override val isLoading: Boolean = false,
 ) : BaseUiState {
+    val isLoading: Boolean
+        get() = isMovieDetailsLoading || isMovieGalleryLoading || isCastMemberLoading || isMoreLikeThisMovieLoading
 
     data class ActorCardInfo(
         val name: String = "",

@@ -2,6 +2,8 @@ package com.baghdad.ui.feature.categoryTvShows
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -10,29 +12,27 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
-import com.baghdad.ui.feature.util.hideNavigationBar
+import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
+import com.baghdad.ui.feature.util.rememberSaveableLazyGridState
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsEffect
@@ -76,15 +76,9 @@ private fun handleEffect(
 
 @Composable
 private fun CategoryTvShowsContent(
-    uiState: CategoryTvShowsState,
-    listener: CategoryTvShowsViewModel,
-    snackBarState: SnackBarState
+    uiState: CategoryTvShowsState, listener: CategoryTvShowsViewModel, snackBarState: SnackBarState
 ) {
-    val context = LocalContext.current
-    val view = LocalView.current
-    LaunchedEffect(Unit) {
-        hideNavigationBar(context, view)
-    }
+    val lazyPagingTvShows = uiState.tvShowsFlow.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = {
@@ -93,7 +87,10 @@ private fun CategoryTvShowsContent(
                     .fillMaxWidth()
                     .background(Theme.color.surface)
                     .statusBarsPadding()
-                    .padding(top = 12.dp, bottom = 12.dp),
+                    .padding(
+                        top = 12.dp,
+                        bottom = 12.dp
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
@@ -115,23 +112,28 @@ private fun CategoryTvShowsContent(
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
-        }
+        },
+        isLoading = uiState.isLoading
     ) {
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface),
-            contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(
-                uiState.tvShows, key = { it.id }) { tvShow ->
+        Column {
+            LazyPagingVerticalGrid(
+                items = lazyPagingTvShows,
+                columns = GridCells.Adaptive(minSize = 150.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.color.surface),
+                contentPadding = PaddingValues(
+                    horizontal = 16.dp,
+                    vertical = 8.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                state = rememberSaveableLazyGridState()
+            ) { tvShow ->
                 HomeCard(
                     url = tvShow.posterPictureURL,
                     contentDescription = null,
@@ -141,6 +143,7 @@ private fun CategoryTvShowsContent(
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }
+
         }
     }
 }

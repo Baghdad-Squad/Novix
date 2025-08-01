@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -22,21 +23,23 @@ import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 @Composable
 fun GallerySection(
     imageUrls: List<String>,
-    isMoreThanTen: Boolean,
+    isShowAllVisible: Boolean,
     modifier: Modifier = Modifier,
     onClickShowAll: () -> Unit = {}
 ) {
     Column(modifier = modifier) {
         SectionHeader(
             title = stringResource(R.string.gallery),
-            isShowAllVisible = isMoreThanTen,
+            isShowAllVisible = isShowAllVisible,
             onClick = onClickShowAll,
             modifier = Modifier.fillMaxWidth()
         )
 
         LazyRow(
+            modifier = Modifier
+                .padding(top = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(top = 12.dp, start = 16.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
 
             items(imageUrls) {

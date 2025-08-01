@@ -29,6 +29,8 @@ fun FilterBottomSheet(
     searchFilter: SearchScreenState.SearchFilterUiState,
     onApplyClick: () -> Unit,
     onClearClick: () -> Unit,
+    isGenresError: Boolean,
+    onReloadGenres: () -> Unit,
     onBottomSheetCloseClick: () -> Unit,
     onGenreSelected: (GenreUiState) -> Unit,
     onYearRangeSelected: (ClosedFloatingPointRange<Float>) -> Unit,
@@ -62,6 +64,8 @@ fun FilterBottomSheet(
             GenresSection(
                 allGenres = searchFilter.allGenres,
                 selectedGenres = searchFilter.selectedGenres,
+                isGenresError = isGenresError,
+                onReloadGenres = onReloadGenres,
                 onGenreSelected = onGenreSelected,
                 modifier = Modifier
                     .padding(bottom = 24.dp)
@@ -79,7 +83,6 @@ fun FilterBottomSheet(
                 onClearClick = onClearClick,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 24.dp)
             )
         }
     }
@@ -106,6 +109,8 @@ private fun FilterBottomSheetPrev() {
                 onYearRangeSelected = {},
                 onGenreSelected = {},
                 onRatingChanged = {},
+                isGenresError = false,
+                onReloadGenres = {},
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
         }

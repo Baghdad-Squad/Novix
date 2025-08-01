@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.flowOf
 data class SearchScreenState(
     val searchText: String = "",
     val isUserTyping: Boolean = false,
+    var lastProcessedQuery: String = "",
     val selectedSearchTab: SearchTab = SearchTab.MOVIES,
     val moviesFlow: Flow<PagingData<MovieUiState>> = flowOf(),
     val tvShowsFlow: Flow<PagingData<TvShowUiState>> = flowOf(),
@@ -16,7 +17,7 @@ data class SearchScreenState(
     val recentViewed: List<RecentlyViewedUiState> = emptyList(),
     val recentSearch: List<RecentSearchUiState> = emptyList(),
     val bottomSheetUiState: FilterBottomSheetUiState = FilterBottomSheetUiState(),
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
 ) : BaseUiState {
     val searchFilter: SearchFilterUiState
         get() = if (selectedSearchTab == SearchTab.MOVIES) {
@@ -24,6 +25,7 @@ data class SearchScreenState(
         } else {
             bottomSheetUiState.tvShowsFilter
         }
+
     data class FilterBottomSheetUiState(
         val moviesFilter: SearchFilterUiState = SearchFilterUiState(),
         val tvShowsFilter: SearchFilterUiState = SearchFilterUiState(),
@@ -66,11 +68,12 @@ data class SearchScreenState(
     )
 
     data class SearchFilterUiState(
-        val minimumYear: Int? = null,
-        val maximumYear: Int? = null,
+        val minimumYear: Int? = 1874,
+        val maximumYear: Int? = 2035,
         val minimumRating: Int = 0,
+        val isGenresError: Boolean = false,
         val selectedGenres: List<GenreUiState> = emptyList(),
-        val allGenres: List<GenreUiState> = emptyList(),
+        val allGenres: List<GenreUiState> = emptyList()
     )
 
     enum class SearchTab {

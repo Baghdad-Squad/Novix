@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.tvShowDetails
 
-import android.util.Log
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
@@ -9,9 +9,9 @@ import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import kotlinx.coroutines.delay
 
 class TvShowDetailsViewModel(
     private val tvShowId: Long,
@@ -27,16 +27,23 @@ class TvShowDetailsViewModel(
         getTvShowDetails(tvShowId)
         getTvShowCast(tvShowId)
         onClickSeasonTab(0)
-
     }
 
     private fun getTvShowDetails(tvShowId: Long) {
         tryToExecute(
             callee = { getTvShowDetailsUseCase(tvShowId) },
             onSuccess = ::onGetTvShowDetailsSuccess,
-            onStart = ::onLoading,
-            onFinally = ::onFinallyAndAddToContinueWatching
+            onStart = { updateState { it.copy(isTvShowDetailsLoading = true) } },
+            onFinally = ::onFinallyAndAddToContinueWatching,
+            onError = ::onLoadDataError
         )
+    }
+
+    private fun onLoadDataError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
     }
 
     private fun onGetTvShowDetailsSuccess(tvShow: TvShow) {
@@ -51,8 +58,9 @@ class TvShowDetailsViewModel(
         tryToExecute(
             callee = { getTvShowCastMembersUseCase(tvShowId) },
             onSuccess = ::onGetTvShowCastSuccess,
-            onStart = ::onLoading,
-            onFinally = ::onFinally
+            onStart = { updateState { it.copy(isCastMembersLoading = true) } },
+            onFinally = { updateState { it.copy(isCastMembersLoading = false) } },
+            onError = ::onLoadDataError
         )
     }
 
@@ -106,12 +114,14 @@ class TvShowDetailsViewModel(
         tryToExecute(
             callee = { getTvShowSeasonEpisodesUseCase(tvShowId, seasonIndex + 1) },
             onSuccess = ::onGetTvShowEpisodesSuccess,
-            onStart = ::onLoading,
-            onFinally = ::onFinally
+            onStart = {updateState { it.copy(isEpisodesLoading = true) }},
+            onFinally = {updateState { it.copy(isEpisodesLoading = false) }},
+            onError = ::onLoadDataError
         )
     }
 
     private fun onGetTvShowEpisodesSuccess(episodes: List<Episode>) {
+        hideSnackBar()
         updateState { tvShowDetailsScreenState ->
             tvShowDetailsScreenState.copy(
                 episodes = episodes.map { it.toUiState() }
@@ -123,28 +133,37 @@ class TvShowDetailsViewModel(
         sendEffect(TvShowDetailsScreenEffect.OpenYoutubeLink(currentState.tvShowInfo.trailerURL))
     }
 
-    private fun onLoading() {
-        updateState { it.copy(isLoading = true) }
+    override fun onSnackBarActionLabelClick() {
+        getTvShowDetails(tvShowId)
+        getTvShowCast(tvShowId)
+        onClickSeasonTab(0)
     }
 
-    private fun onFinally() {
-        updateState { it.copy(isLoading = false) }
-    }
+
     private fun onFinallyAndAddToContinueWatching() {
-        onFinally()
+        updateState { it.copy(isTvShowDetailsLoading = false) }
         addToContinueWatching()
     }
 
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
+        )
+    }
+
     private fun addToContinueWatching() {
-            tryToExecute(
-                callee = {
-                    addContinueWatchingUseCase(
-                        tvShowId, currentState.tvShowInfo.genres.map { it.id ?: 0 },
-                        contentImageUrl = currentState.tvShowInfo.posterPictureURL,
-                        contentType = ContinueWatching.ContentType.TV_SHOW,
-                    )
-                },
-            )
+        tryToExecute(
+            callee = {
+                addContinueWatchingUseCase(
+                    tvShowId, currentState.tvShowInfo.genres.map { it.id ?: 0 },
+                    contentImageUrl = currentState.tvShowInfo.posterPictureURL,
+                    contentType = ContinueWatching.ContentType.TV_SHOW,
+                )
+            },
+        )
     }
 
 }

@@ -1,5 +1,6 @@
 package com.baghdad.design_system.component
 
+import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -22,7 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -35,6 +38,7 @@ import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun NovixBottomNavigationBar(
     items: List<BottomNavItem>,
@@ -43,11 +47,22 @@ fun NovixBottomNavigationBar(
     selectedIconIndex: Int = 0
 ) {
     val horizontalPadding = 25.dp
+    val strokeColor = Theme.color.stroke
 
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
             .background(Theme.color.surface)
+            .drawBehind {
+                val strokeWidth = 1.dp.toPx()
+                val y = 0f
+                drawLine(
+                    color = strokeColor,
+                    start = Offset(0f, y),
+                    end = Offset(size.width, y),
+                    strokeWidth = strokeWidth
+                )
+            }
     ) {
         val iconCount = items.size
         val availableWidth = maxWidth - (horizontalPadding * 2)

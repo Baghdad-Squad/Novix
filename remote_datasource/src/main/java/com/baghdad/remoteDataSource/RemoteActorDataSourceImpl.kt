@@ -39,14 +39,14 @@ class RemoteActorDataSourceImpl(
         return handleRequest<ActorMoviesResponse>(
             apiCall = { actorApiService.getActorMovies(personId) },
             logger = logger,
-        ).cast?.map { it.toDto() } ?: emptyList()
+        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
     }
 
     override suspend fun getActorTvShows(personId: Long): List<TvShowDto> {
         return handleRequest<ActorTvShowsResponse>(
             apiCall = {actorApiService.getActorTvShows(personId)},
-            logger = logger
-        ).cast?.map { it.toDto() } ?: emptyList()
+            logger = logger,
+        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
     }
 
     override suspend fun getTrendingActors(page: Int): PagedResultDto<ActorDto> {

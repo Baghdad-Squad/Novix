@@ -36,5 +36,5 @@ data class MovieAuthorDetails(
     @SerializedName("avatar_path")
     val avatarPath: String? = null,
     @SerializedName("rating")
-    val rating: Float? = null
+    val rating: Double? = null
 )

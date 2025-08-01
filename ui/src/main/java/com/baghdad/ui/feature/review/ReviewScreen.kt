@@ -1,6 +1,7 @@
 package com.baghdad.ui.feature.review
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -83,9 +84,12 @@ fun ReviewContent(
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
-        }
+        },
+        isLoading = uiState.isLoading
     ) {
 
         Column(
@@ -142,8 +146,12 @@ private fun EmptyReviewScreen() {
         contentAlignment = Alignment.Center
     ) {
         EmptySearchState(
-            imagePath = com.baghdad.design_system.R.drawable.ic_empty_review_screen,
-            contentDescription = "No Reviews yet",
+            imagePath = if (isSystemInDarkTheme()) {
+                com.baghdad.design_system.R.drawable.ic_empty_review_screen_dark
+            } else {
+                com.baghdad.design_system.R.drawable.ic_empty_review_screen
+            },
+            contentDescription = stringResource(R.string.there_is_no_review),
             message = stringResource(R.string.there_is_no_review)
         )
     }

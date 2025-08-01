@@ -29,7 +29,7 @@
     <string name="cast">طاقم العمل</string>
     <string name="more_like_this">المزيد مثل هذا</string>
     <string name="overview">نظرة عامة</string>
-    <string name="play_trailer">تشغيل الاعلان</string>
+    <string name="play_trailer">عرض المقطع الدعائي</string>
     <string name="card_movie_image">صورة كارد الفلم</string>
     <string name="birth_place">مكان الميلاد</string>
     <string name="top_tv_shows_picks">أفضل المسلسلات المختارة</string>
@@ -40,7 +40,7 @@
     <string name="retry">أعد المحاولة</string>
     <string name="season">موسم</string>
     <string name="episode">حلقة %1$s</string>
-    <string name="view_reviews">عرض التقييمات</string>
+    <string name="view_reviews">عرض المراجعات</string>
     <string name="add_to_list">إضافة إلى القائمة</string>
     <string name="please_login_to_save_to_list">الرجاء تسجيل الدخول لحفظ القائمه</string>
     <string name="bottom_sheet_content_description">وصف محتوى الصفحة السفلية</string>
@@ -61,16 +61,16 @@
     <string name="user_name">اسم المستخدم</string>
     <string name="don_t_have_account">لا تملك حساب؟</string>
     <string name="forgot_password">نسيت كلمة المرور؟</string>
-    <string name="create_account">تسجيل حساب جديد</string>
+    <string name="create_account">انشاء حساب جديد</string>
     <string name="login_successfully">تم تسجيل الدخول بنجاح</string>
-    <string name="incorrect_username_or_password">خطأ في كلمة المرور او الاسم</string>
+    <string name="incorrect_username_or_password">البيانات غير صحيحة</string>
     <string name="trending_tv_shows">المسلسلات الرائجة</string>
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>
     <string name="what_do_you_want_to_watch">ماذا تريد أن تشاهد؟</string>
     <string name="top_rating">الاعلى تقييم</string>
     <string name="actors">ممثلين</string>
-    <string name="episode_header_template">الحلقة %1$d - %2$s</string>
+    <string name="episode_title_template">الحلقة %1$d %2$s</string>
     <string name="movie_card">بطاقة الفيلم</string>
     <string name="trending_movies">الأفلام الرائجة</string>
 
@@ -83,7 +83,7 @@
     <string name="trending_people">الممثلون الرائجون</string>
 
     <string name="episodes">عدد الحلقات %1$d </string>
-    <string name="s"> الموسم</string>
+    <string name="season_number_template">الموسم %1$d </string>
     <string name="automatically_redirecting_to_login">سيتم توجيهك تلقائيا لتسجيل الدخول في ٥ ثواني …</string>
     <string name="oops_we_can_t_find_the_page">Oops! We can\'t find the page you\'re looking for</string>
     <string name="there_was_a_problem">There was a problem</string>
@@ -92,4 +92,25 @@
     <string name="sign_up_for_an_account">سجّل للحصول على حساب</string>
     <string name="login_to_your_account_success_message">سجل الدخول لحسابك</string>
 
+    <!-- Corrected string resources for Arabic duration formatting -->
+    <string name="reviewer_avatar">صورة المراجع</string>
+    <string name="unknown">غير معروف</string>
+
+    <!-- Hours -->
+    <string name="hour">ساعة</string>
+    <string name="two_hour"> ساعتين</string>
+    <string name="hours">%1$s ساعات</string>
+
+    <!-- Minutes -->
+    <string name="min">%1$s دقيقة</string>
+    <string name="one_minute">دقيقة</string>
+    <string name="two_minute"> دقيقتين</string>
+    <string name="minutes">%1$s دقائق</string>
+
+    <!-- Combined duration -->
+    <string name="duration_combined">%1$s  و %2$s</string>
+    <string name="default_image">"الصورة الافتراضية "</string>
+    <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
+
 </resources>
+

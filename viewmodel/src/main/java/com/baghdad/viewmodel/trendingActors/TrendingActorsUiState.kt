@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.emptyFlow
 
 data class TrendingActorsUiState(
     val trendingActor: Flow<PagingData<TrendingActor>> = emptyFlow(),
-    override val isLoading: Boolean = false
+    val isLoading: Boolean = false
 ) : BaseUiState {
     data class TrendingActor(
         val id: Long,

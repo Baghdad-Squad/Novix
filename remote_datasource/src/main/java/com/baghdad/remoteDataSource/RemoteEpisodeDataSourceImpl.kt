@@ -43,8 +43,7 @@ class RemoteEpisodeDataSourceImpl(
                 )
             },
             logger = logger,
-        ).cast?.map { it.toDto() } ?: emptyList()
-
+        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
     }
 
     override suspend fun getEpisodeImages(tvId: Long, seasonNumber: Int, episodeNumber: Int): List<String> {

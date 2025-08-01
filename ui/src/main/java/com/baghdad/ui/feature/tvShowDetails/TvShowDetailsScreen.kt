@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -51,9 +50,12 @@ import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.Navig
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToCategoryTvShows
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToEpisodeDetails
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToReviews
+import com.baghdad.ui.util.arabicDuration
+import com.baghdad.ui.util.isArabicSystemLocale
 import com.baghdad.ui.util.openYouTubeLink
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.movieDetails.formatDuration
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsInteractionListener
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenEffect
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
@@ -134,7 +136,7 @@ fun TvShowDetailsContent(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
         else
-            Color.Transparent,
+            Theme.color.surface.copy(alpha = 0f),
         animationSpec = tween(
             durationMillis = 500,
             easing = FastOutSlowInEasing
@@ -169,11 +171,14 @@ fun TvShowDetailsContent(
                 isLoading = false /*TODO*/
             )
         },
+        isLoading = uiState.isLoading,
         snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
         }
     ) {
@@ -225,25 +230,26 @@ fun TvShowDetailsContent(
                     }
                 }
 
-                    item {
-                        SeasonSection(
-                            seasonCount = uiState.tvShowInfo.seasonCount,
-                            selectedSeasonIndex = uiState.selectedSeasonIndex,
-                            onSeasonSelected = { listener.onClickSeasonTab(it) },
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
+                item {
+                    SeasonSection(
+                        seasonCount = uiState.tvShowInfo.seasonCount,
+                        selectedSeasonIndex = uiState.selectedSeasonIndex,
+                        onSeasonSelected = { listener.onClickSeasonTab(it) },
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
 
-                    item {
-                        Text(
-                            text = stringResource(R.string.episodes, uiState.episodes.size),
-                            style = Theme.typography.label.small,
-                            color = Theme.color.hint,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .padding(bottom = 12.dp)
-                        )
-                    }
+                item {
+                    Text(
+                        text = stringResource(R.string.episodes, uiState.episodes.size),
+                        style = Theme.typography.label.small,
+                        color = Theme.color.hint,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 12.dp)
+                    )
+                }
+
 
                 if (uiState.episodes.isNotEmpty()) {
                     items(uiState.episodes) { episode ->
@@ -252,7 +258,7 @@ fun TvShowDetailsContent(
                             imageUrl = uiState.tvShowInfo.posterPictureURL,
                             episodeName = episode.name,
                             releaseDate = episode.releaseDate,
-                            duration = episode.duration,
+                            duration = if (isArabicSystemLocale()) arabicDuration(episode.duration) else episode.duration.formatDuration(),
                             rating = episode.rating,
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
@@ -267,6 +273,7 @@ fun TvShowDetailsContent(
                     }
                 }
             }
+
             TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -290,9 +297,7 @@ fun TvShowDetailsContent(
             )
         }
     }
-
 }
-
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {

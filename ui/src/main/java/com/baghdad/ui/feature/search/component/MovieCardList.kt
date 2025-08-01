@@ -22,15 +22,14 @@ fun MovieCardList(
     modifier: Modifier = Modifier
 ) {
 
-    LazyPagingVerticalGrid<SearchScreenState.MovieUiState>(
+    LazyPagingVerticalGrid(
         items = movies,
         modifier = modifier,
         columns = GridCells.Adaptive(minSize = 150.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        key = { it.id },
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         state = state,
-        contentPadding = PaddingValues(vertical = 8.dp)
+        contentPadding = PaddingValues(top = 4.dp, bottom = 8.dp)
     ) { movie ->
         HomeCard(
             url = movie.posterPictureURL,
