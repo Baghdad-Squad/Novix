@@ -95,7 +95,6 @@ val viewModelModule = module {
             get(),
             get(),
             get(),
-            get(),
         )
     }
     viewModel { (tvShowId: Long, seasonNumber: Int, episodeNumber: Int) ->
