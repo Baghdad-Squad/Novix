@@ -3,15 +3,14 @@ package com.baghdad.domain.usecase.tvShow
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
-import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
 
 class GetPopularTvShowsUseCaseTest {
 
@@ -41,17 +40,30 @@ class GetPopularTvShowsUseCaseTest {
     }
 
     @Test
-    fun `invoke should return popular tv shows from repository`() = runTest {
+    fun `getPopularTvShowsUseCase() should return popular tv shows when repository returns data`() = runTest {
         // Given
         val expected = listOf(createTvShow(1), createTvShow(2))
-
         coEvery { tvShowRepository.getPopularTvShows() } returns expected
 
         // When
         val result = useCase()
 
         // Then
-        assertEquals(expected, result)
+        assertThat(result).isEqualTo(expected)
+        coVerify(exactly = 1) { tvShowRepository.getPopularTvShows() }
+    }
+
+    @Test
+    fun `getPopularTvShowsUseCase() should return empty list when repository returns empty list`() = runTest {
+        // Given
+        val expected = emptyList<TvShow>()
+        coEvery { tvShowRepository.getPopularTvShows() } returns expected
+
+        // When
+        val result = useCase()
+
+        // Then
+        assertThat(result).isEmpty()
         coVerify(exactly = 1) { tvShowRepository.getPopularTvShows() }
     }
 }

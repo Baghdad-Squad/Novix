@@ -15,6 +15,9 @@ import org.junit.jupiter.api.Test
 
 class GetTvShowsByGenreUseCaseTest {
 
+    private lateinit var tvShowRepository: TvShowRepository
+    private lateinit var getTvShowsByGenreUseCase: GetTvShowsByGenreUseCase
+
     @BeforeEach
     fun setUp() {
         tvShowRepository = mockk(relaxed = true)
@@ -22,14 +25,14 @@ class GetTvShowsByGenreUseCaseTest {
     }
 
     @Test
-    fun `getTvShowsByGenre returns list of tv shows for given genre`() = runTest {
+    fun `getTvShowsByGenreUseCase() should return list of tv shows when repository returns data for given genre`() = runTest {
         // Given
-        val genreId = 18L // Drama
+        val genreId = 18L
         val page = 1
         val expectedShows = PagedResult(
             data = listOf(
-            sampleTvShow.copy(id = 1, title = "Breaking Bad"),
-            sampleTvShow.copy(id = 2, title = "The Sopranos")
+                sampleTvShow.copy(id = 1, title = "Breaking Bad"),
+                sampleTvShow.copy(id = 2, title = "The Sopranos")
             ),
             nextKey = 2,
             prevKey = null
@@ -43,7 +46,7 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        val result = getTvShowsByGenreUseCase.invoke(genreId, page)
+        val result = getTvShowsByGenreUseCase(genreId, page)
 
         // Then
         assertThat(result.data).hasSize(2)
@@ -51,9 +54,9 @@ class GetTvShowsByGenreUseCaseTest {
     }
 
     @Test
-    fun `getTvShowsByGenre returns empty list when no shows found`() = runTest {
+    fun `getTvShowsByGenreUseCase() should return empty list when repository returns no shows for given genre`() = runTest {
         // Given
-        val genreId = 99L // Non-existent genre
+        val genreId = 99L
         val page = 1
         val expectedShows = PagedResult(
             data = emptyList<TvShow>(),
@@ -69,16 +72,16 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        val result = getTvShowsByGenreUseCase.invoke(genreId, page)
+        val result = getTvShowsByGenreUseCase(genreId, page)
 
         // Then
         assertThat(result.data).isEmpty()
     }
 
     @Test
-    fun `getTvShowsByGenre makes exactly one repository call`() = runTest {
+    fun `getTvShowsByGenreUseCase() should make exactly one repository call per invocation`() = runTest {
         // Given
-        val genreId = 35L // Comedy
+        val genreId = 35L
         val page = 2
         val expectedShows = PagedResult(
             data = listOf(
@@ -104,35 +107,31 @@ class GetTvShowsByGenreUseCaseTest {
     }
 
     @Test
-    fun `getTvShowsByGenre returns different results for different pages`() = runTest {
+    fun `getTvShowsByGenreUseCase() should return different results when called with different pages`() = runTest {
         // Given
         val genreId = 10759L
-        val expectedShows = PagedResult(
+        val page1Shows = PagedResult(
             data = listOf(
                 sampleTvShow.copy(id = 1, title = "Breaking Bad"),
                 sampleTvShow.copy(id = 2, title = "The Sopranos")
             ),
             nextKey = 2,
             prevKey = null
-        )// Action & Adventure
-        val page1Shows = expectedShows.copy(
-            data = listOf(
-                sampleTvShow.copy(id = 1, title = "Breaking Bad"),
-                sampleTvShow.copy(id = 2, title = "The Sopranos")
-            )
         )
-        val page2Shows = expectedShows.copy(
+        val page2Shows = PagedResult(
             data = listOf(
                 sampleTvShow.copy(id = 3, title = "The Crown"),
                 sampleTvShow.copy(id = 4, title = "The Office")
-            )
+            ),
+            nextKey = 3,
+            prevKey = 1
         )
         coEvery { tvShowRepository.getTvShowsByGenre(genreId, 1, pageSize = 20) } returns page1Shows
         coEvery { tvShowRepository.getTvShowsByGenre(genreId, 2, pageSize = 20) } returns page2Shows
 
         // When
-        val resultPage1 = getTvShowsByGenreUseCase.invoke(genreId, 1)
-        val resultPage2 = getTvShowsByGenreUseCase.invoke(genreId, 2)
+        val resultPage1 = getTvShowsByGenreUseCase(genreId, 1)
+        val resultPage2 = getTvShowsByGenreUseCase(genreId, 2)
 
         // Then
         assertThat(resultPage1.data.map { it.id }).containsExactly(1L, 2L)
@@ -140,7 +139,7 @@ class GetTvShowsByGenreUseCaseTest {
     }
 
     @Test
-    fun `getTvShowsByGenre returns different results for different genres`() = runTest {
+    fun `getTvShowsByGenreUseCase() should return different results when called with different genres`() = runTest {
         // Given
         val dramaShows = PagedResult(
             data = listOf(
@@ -158,24 +157,12 @@ class GetTvShowsByGenreUseCaseTest {
             nextKey = 2,
             prevKey = null
         )
-        coEvery {
-            tvShowRepository.getTvShowsByGenre(
-                18L,
-                1,
-                pageSize = 20
-            )
-        } returns dramaShows // Drama
-        coEvery {
-            tvShowRepository.getTvShowsByGenre(
-                35L,
-                1,
-                pageSize = 20
-            )
-        } returns comedyShows // Comedy
+        coEvery { tvShowRepository.getTvShowsByGenre(18L, 1, pageSize = 20) } returns dramaShows // Drama
+        coEvery { tvShowRepository.getTvShowsByGenre(35L, 1, pageSize = 20) } returns comedyShows // Comedy
 
         // When
-        val dramaResult = getTvShowsByGenreUseCase.invoke(18L, 1)
-        val comedyResult = getTvShowsByGenreUseCase.invoke(35L, 1)
+        val dramaResult = getTvShowsByGenreUseCase(18L, 1)
+        val comedyResult = getTvShowsByGenreUseCase(35L, 1)
 
         // Then
         assertThat(dramaResult.data[0].title).isEqualTo("The Crown")
@@ -183,14 +170,14 @@ class GetTvShowsByGenreUseCaseTest {
     }
 
     @Test
-    fun `getTvShowsByGenre handles large result sets`() = runTest {
+    fun `getTvShowsByGenreUseCase() should handle large result sets when repository returns many shows`() = runTest {
         // Given
-        val genreId = 10765L // Sci-Fi & Fantasy
+        val genreId = 10765L
         val page = 1
         val largeList = List(50) { index ->
             sampleTvShow.copy(id = index.toLong(), title = "Show $index")
         }
-        val expectedShows = PagedResult<TvShow>(
+        val expectedShows = PagedResult(
             data = largeList,
             nextKey = 2,
             prevKey = null
@@ -204,7 +191,7 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        val result = getTvShowsByGenreUseCase.invoke(genreId, page)
+        val result = getTvShowsByGenreUseCase(genreId, page)
 
         // Then
         assertThat(result.data).hasSize(50)
@@ -212,17 +199,12 @@ class GetTvShowsByGenreUseCaseTest {
     }
 
     companion object {
-        private lateinit var tvShowRepository: TvShowRepository
-        private lateinit var getTvShowsByGenreUseCase: GetTvShowsByGenreUseCase
-
         private val sampleTvShow = TvShow(
             id = 1L,
             title = "Sample Show",
             posterImageURL = "/sample.jpg",
             overview = "Sample overview",
-            genres = listOf(
-                Genre(id = 18L, name = "Drama"),
-            ),
+            genres = listOf(Genre(id = 18L, name = "Drama")),
             averageRating = 9.5,
             userRating = 8.5,
             releaseDate = LocalDate(2020, 1, 1),

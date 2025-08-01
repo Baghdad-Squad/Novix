@@ -57,18 +57,15 @@ class GetMoviesByGenreUseCaseTest {
     }
 
     @Test
-    fun `when getting movies by genre should return paged result with correct data`() = runTest {
-        // Given
+    fun `getMoviesByGenre() should return paged result with correct data when called with valid genre and page`() = runTest {
         val genreId = 1L
         val page = 1
         coEvery {
             movieRepository.getMoviesByGenre(genreId, page, GetMoviesByGenreUseCase.PAGE_SIZE)
         } returns sampleMovies
 
-        // When
         val result = getMoviesByGenreUseCase(genreId, page)
 
-        // Then
         assertThat(result.data).hasSize(2)
         assertThat(result.data[0].title).isEqualTo("The Dark Knight")
         assertThat(result.data[1].title).isEqualTo("Mad Max: Fury Road")
@@ -77,30 +74,26 @@ class GetMoviesByGenreUseCaseTest {
     }
 
     @Test
-    fun `when getting movies by genre should call repository with correct parameters`() = runTest {
-        // Given
+    fun `getMoviesByGenre() should call repository with correct parameters when invoked`() = runTest {
         val genreId = 1L
         val page = 1
         coEvery {
             movieRepository.getMoviesByGenre(any(), any(), any())
         } returns sampleMovies
 
-        // When
         getMoviesByGenreUseCase(genreId, page)
 
-        // Then
         coVerify(exactly = 1) {
             movieRepository.getMoviesByGenre(
-                eq(genreId),
-                eq(page),
-                eq(GetMoviesByGenreUseCase.PAGE_SIZE)
+                genreId,
+                page,
+                GetMoviesByGenreUseCase.PAGE_SIZE
             )
         }
     }
 
     @Test
-    fun `when getting movies by different genre should return different results`() = runTest {
-        // Given
+    fun `getMoviesByGenre() should return different results for different genre IDs`() = runTest {
         val actionGenreId = 1L
         val comedyGenreId = 2L
         val page = 1
@@ -128,19 +121,16 @@ class GetMoviesByGenreUseCaseTest {
             movieRepository.getMoviesByGenre(comedyGenreId, page, any())
         } returns comedyMovies
 
-        // When
         val actionResult = getMoviesByGenreUseCase(actionGenreId, page)
         val comedyResult = getMoviesByGenreUseCase(comedyGenreId, page)
 
-        // Then
         assertThat(actionResult.data).isNotEqualTo(comedyResult.data)
         assertThat(actionResult.data[0].genres.map { it.id }).contains(actionGenreId)
         assertThat(comedyResult.data[0].genres.map { it.id }).contains(comedyGenreId)
     }
 
     @Test
-    fun `when getting different pages should return different results`() = runTest {
-        // Given
+    fun `getMoviesByGenre() should return different results for different page numbers`() = runTest {
         val genreId = 1L
         val page1Movies = sampleMovies
         val page2Movies = sampleMovies.copy(
@@ -169,11 +159,9 @@ class GetMoviesByGenreUseCaseTest {
             movieRepository.getMoviesByGenre(genreId, 2, any())
         } returns page2Movies
 
-        // When
         val page1Result = getMoviesByGenreUseCase(genreId, 1)
         val page2Result = getMoviesByGenreUseCase(genreId, 2)
 
-        // Then
         assertThat(page1Result.data).hasSize(2)
         assertThat(page2Result.data).hasSize(1)
         assertThat(page1Result.nextKey).isEqualTo(2)
@@ -181,8 +169,7 @@ class GetMoviesByGenreUseCaseTest {
     }
 
     @Test
-    fun `when repository throws exception should propagate it`() = runTest {
-        // Given
+    fun `getMoviesByGenre() should propagate exception when repository throws`() = runTest {
         val genreId = 1L
         val page = 1
         val expectedException = RuntimeException("Network error")
@@ -191,7 +178,6 @@ class GetMoviesByGenreUseCaseTest {
             movieRepository.getMoviesByGenre(genreId, page, any())
         } throws expectedException
 
-        // When & Then
         assertThrows<RuntimeException> {
             getMoviesByGenreUseCase(genreId, page)
         }.apply {

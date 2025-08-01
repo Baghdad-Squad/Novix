@@ -23,7 +23,7 @@ class GetPopularMoviesUseCaseTest {
     }
 
     @Test
-    fun `invoke should return popular movies from repository`() = runTest {
+    fun `invoke() should return popular movies from repository`() = runTest {
         // Given
         val expectedMovies = listOf(
             Movie(
