@@ -19,6 +19,8 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
@@ -37,6 +39,7 @@ class SearchViewModel(
     private val searchMoviesUseCase: SearchMoviesUseCase,
     private val searchTvShowsUseCase: SearchTvShowsUseCase,
     private val searchActorsUseCase: SearchActorsUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
     init {
@@ -63,6 +66,7 @@ class SearchViewModel(
 
     private fun observeSearchQueryChanges() {
         tryToCollect(
+            dispatcher = dispatcher,
             flowProvider = { observeSearchQueryFlow() },
             onNewValue = { query -> onSearchQueryChangedCollected(query) },
         )
@@ -185,6 +189,7 @@ class SearchViewModel(
 
     private fun getRecentViewed() {
         tryToCollect(
+            dispatcher = dispatcher,
             flowProvider = { getRecentlyViewedUseCase() },
             onNewValue = ::onGetRecentViewedSuccess,
         )
@@ -199,6 +204,7 @@ class SearchViewModel(
 
     private fun getRecentSearches() {
         tryToCollect(
+            dispatcher = dispatcher,
             flowProvider = { getRecentSearchesUseCase() },
             onNewValue = ::onGetRecentSearchesSuccess,
         )
@@ -213,6 +219,7 @@ class SearchViewModel(
 
     private fun getMovieGenres() {
         tryToExecute(
+            dispatcher = dispatcher,
             callee = { getGenresUseCase.getMovieGenres() },
             onSuccess = ::onGetMovieGenresSuccess,
             onError = ::onGetMovieGenresError,
@@ -252,6 +259,7 @@ class SearchViewModel(
 
     private fun getTvShowGenres() {
         tryToExecute(
+            dispatcher = dispatcher,
             callee = { getGenresUseCase.getTvShowGenres() },
             onSuccess = ::onGetTvShowGenresSuccess,
             onFinally = ::onFinally,
@@ -290,6 +298,7 @@ class SearchViewModel(
 
     override fun onClearRecentlyViewedClick() {
         tryToExecute(
+            dispatcher = dispatcher,
             callee = { deleteAllRecentlyViewedUseCase() },
             onSuccess = { onClearRecentViewedSuccess() },
             onStart = ::onLoading,
@@ -322,6 +331,7 @@ class SearchViewModel(
 
     override fun onClearRecentSearchClick() {
         tryToExecute(
+            dispatcher = dispatcher,
             callee = { deleteAllRecentSearchesUseCase() },
             onSuccess = { onClearRecentSearchSuccess() },
             onStart = ::onLoading,
@@ -338,6 +348,7 @@ class SearchViewModel(
 
     override fun onRemoveRecentSearchItemClick(id: Long) {
         tryToExecute(
+            dispatcher = dispatcher,
             callee = { deleteRecentSearchUseCase(id) },
             onSuccess = { onRemoveRecentSearchItemSuccess() },
             onStart = ::onLoading,

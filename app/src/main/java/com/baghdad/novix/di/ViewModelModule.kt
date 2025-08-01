@@ -47,7 +47,14 @@ val viewModelModule = module {
         ActorGalleryViewModel(get(), actorId, get())
     }
     viewModel { (actorId: Long) ->
-        ActorDetailsViewModel(actorId, get(), get(), get(), get(), get())
+        ActorDetailsViewModel(
+            actorId,
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
     }
 
     viewModel{(tvShowId: Long) ->
@@ -80,7 +87,17 @@ val viewModelModule = module {
     }
     viewModel {
         SearchViewModel(
-            get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
         )
     }
     viewModel { (tvShowId: Long, seasonNumber: Int, episodeNumber: Int) ->
