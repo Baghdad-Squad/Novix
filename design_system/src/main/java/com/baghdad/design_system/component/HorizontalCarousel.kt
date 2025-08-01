@@ -38,13 +38,17 @@ fun <T> HorizontalCarousel(
         itemSpacing = itemSpacing,
         contentPadding = contentPadding
     ) { i ->
+
         val item = items[i]
+        val isFocused = state.currentItem == i
+        val isLastTwo = i >= items.lastIndex - 1
+
         Box(
             modifier =Modifier
                 .fillMaxWidth()
                 .maskClip(shape)
         ) {
-            itemContent(item , state.currentItem == i)
+            itemContent(item, isFocused || isLastTwo)
         }
     }
 }
