@@ -8,8 +8,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class LogOutUseCaseTest {
-    lateinit var authenticationRepository: AuthenticationRepository
-    lateinit var logOutUseCase: LogOutUseCase
+    private lateinit var authenticationRepository: AuthenticationRepository
+    private lateinit var logOutUseCase: LogOutUseCase
 
     @BeforeEach
     fun setUp() {
@@ -18,7 +18,7 @@ class LogOutUseCaseTest {
     }
 
     @Test
-    fun `should return true when successful logout`() = runTest{
+    fun `logOutUseCase() should return true when logout is successful`() = runTest {
         // Given
         coEvery { authenticationRepository.logOut() } returns true
 
@@ -30,7 +30,7 @@ class LogOutUseCaseTest {
     }
 
     @Test
-    fun `should return false when invalid logout`() = runTest {
+    fun `logOutUseCase() should return false when logout fails`() = runTest {
         // Given
         coEvery { authenticationRepository.logOut() } returns false
 
@@ -40,5 +40,4 @@ class LogOutUseCaseTest {
         // Then
         assert(!result)
     }
-
 }

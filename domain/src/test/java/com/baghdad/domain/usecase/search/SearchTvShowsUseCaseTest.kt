@@ -4,7 +4,6 @@ import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.search.SearchFilter
 import com.baghdad.domain.repository.FavoriteGenreRepository
 import com.baghdad.domain.repository.SearchRepository
-import com.baghdad.domain.util.SearchFilterHelper
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.google.common.truth.Truth.assertThat
@@ -15,7 +14,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
 
 class SearchTvShowsUseCaseTest {
 
@@ -29,7 +27,7 @@ class SearchTvShowsUseCaseTest {
     }
 
     @Test
-    fun `SearchTvShowsUseCase returns filtered and sorted tv shows based on favorite genres`() = runTest {
+    fun `searchTvShowsUseCase() should return filtered and sorted tv shows when repository returns data and favorite genres exist`() = runTest {
         // Given
         val query = "Game"
         val page = 1
@@ -74,7 +72,7 @@ class SearchTvShowsUseCaseTest {
     }
 
     @Test
-    fun `SearchTvShowsUseCase returns empty result when no matches found after filtering`() = runTest {
+    fun `searchTvShowsUseCase() should return empty result when no matches found after filtering`() = runTest {
         val query = "No Match"
         val page = 1
         val filter = SearchFilter(
@@ -94,7 +92,7 @@ class SearchTvShowsUseCaseTest {
     }
 
     @Test
-    fun `SearchTvShowsUseCase applies all filters correctly`() = runTest {
+    fun `searchTvShowsUseCase() should apply all filters correctly when all filters are provided`() = runTest {
         val query = "Filter Test"
         val page = 1
         val filter = SearchFilter(
@@ -141,7 +139,7 @@ class SearchTvShowsUseCaseTest {
     }
 
     @Test
-    fun `SearchTvShowsUseCase sorts by favorite genre score correctly`() = runTest {
+    fun `searchTvShowsUseCase() should sort by favorite genre score correctly when favorite genres exist`() = runTest {
         val query = "Sort Test"
         val page = 1
         val filter = SearchFilter(
@@ -168,7 +166,7 @@ class SearchTvShowsUseCaseTest {
     }
 
     @Test
-    fun `SearchTvShowsUseCase makes exactly one repository call for each dependency`() = runTest {
+    fun `searchTvShowsUseCase() should make exactly one repository call when executed`() = runTest {
         val query = "Single Call"
         val page = 1
         val filter = SearchFilter(
@@ -191,7 +189,7 @@ class SearchTvShowsUseCaseTest {
     }
 
     @Test
-    fun `SearchTvShowsUseCase preserves pagination keys from original result`() = runTest {
+    fun `searchTvShowsUseCase() should preserve pagination keys when repository returns paginated result`() = runTest {
         val query = "Pagination"
         val page = 2
         val filter = SearchFilter(

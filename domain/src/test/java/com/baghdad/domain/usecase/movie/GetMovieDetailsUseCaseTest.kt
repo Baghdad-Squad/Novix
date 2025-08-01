@@ -24,15 +24,17 @@ class GetMovieDetailsUseCaseTest {
     }
 
     @Test
-    fun `should get movies detail from when function run successfully`() = runTest {
+    fun `getMovieDetailsUseCase() should return movie details when repository returns data successfully`() = runTest {
         val movieId = 1L
         coEvery { movieRepository.getMovieDetails(movieId) } returns movieDetail
+
         val result = getMovieDetailsUseCase.invoke(movieId)
+
         assertThat(result).isEqualTo(movieDetail)
     }
 
     @Test
-    fun `throws exception when repository fails`() = runTest {
+    fun `getMovieDetailsUseCase() should throw NetworkException when repository fails`() = runTest {
         val movieId = 2L
         coEvery { movieRepository.getMovieDetails(movieId) } throws NetworkException()
 
@@ -40,7 +42,6 @@ class GetMovieDetailsUseCaseTest {
             getMovieDetailsUseCase.invoke(movieId)
         }
     }
-
 
     private companion object {
         val movieDetail = Movie(
@@ -56,5 +57,4 @@ class GetMovieDetailsUseCaseTest {
             trailerURL = ""
         )
     }
-
 }

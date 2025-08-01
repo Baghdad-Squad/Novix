@@ -28,8 +28,6 @@ import com.baghdad.viewmodel.search.SearchScreenState
 fun SearchTextField(
     query: String,
     onQueryChange: (String) -> Unit,
-    onFilterIconClick: () -> Unit,
-    searchTab: SearchScreenState.SearchTab,
     modifier: Modifier = Modifier,
     maxLength: Int = 100,
     hint: String = stringResource(R.string.search_hint),
@@ -52,31 +50,11 @@ fun SearchTextField(
                 leadingIcon = painterResource(com.baghdad.design_system.R.drawable.search_icon),
                 hint = hint,
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),// Optional: auto-trim extra input
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
                 maxLength = maxLength
 
             )
-
-            AnimatedVisibility(searchTab == SearchScreenState.SearchTab.MOVIES || searchTab == SearchScreenState.SearchTab.TV_SHOWS || query.isBlank()) {
-                Box(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .background(Theme.color.primary, shape = RoundedCornerShape(12.dp))
-                        .noRippleClickable { onFilterIconClick() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(com.baghdad.design_system.R.drawable.filter_horizontal),
-                        contentDescription = stringResource(R.string.filter_icon),
-                        modifier = Modifier
-                            .fillMaxSize(0.5f)
-                            .size(20.dp)
-
-                    )
-                }
-            }
-
         }
     }
 }

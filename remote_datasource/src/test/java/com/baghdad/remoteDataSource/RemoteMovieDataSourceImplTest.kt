@@ -106,8 +106,7 @@ class RemoteMovieDataSourceImplTest {
         val result = dataSource.getMovieImages(movieId)
 
         // Then
-        assertThat(result).containsExactly("/backdrop1.jpg")
-    }
+        assertThat(result).containsExactly("https://image.tmdb.org/t/p/w500/backdrop1.jpg")    }
 
     @Test
     fun `getTopRatedMovies should return paged results`() = runTest {
@@ -223,7 +222,7 @@ class RemoteMovieDataSourceImplTest {
                         name = "Critic",
                         username = "critic123",
                         avatarPath = "/avatar.png",
-                        rating = 4.0f
+                        rating = 4.0
                     ),
                     content = "Great movie!",
                     createdAt = "2024-01-01T10:00:00Z"
@@ -244,7 +243,7 @@ class RemoteMovieDataSourceImplTest {
         assertThat(review.id).isEqualTo("review_1")
         assertThat(review.authorName).isEqualTo("Critic")
         assertThat(review.authorAvatarUrl).contains("/avatar.png")
-        assertThat(review.rating).isEqualTo(4.0f)
+        assertThat(review.rating).isEqualTo(4.0)
         assertThat(review.reviewText).isEqualTo("Great movie!")
         assertThat(review.postedDate).isEqualTo("2024-01-01T10:00:00Z")
     }
@@ -299,8 +298,7 @@ class RemoteMovieDataSourceImplTest {
     @Test
     fun `getUpcomingMovies should return paged result`() = runTest {
         // Given
-        val page = 1
-        val genreId: Long? = 28
+        val genreId: Long = 28
         val response = DiscoverMovieResponse(
             results = listOf(
                 DiscoverMovieResponse.Result(
@@ -321,15 +319,15 @@ class RemoteMovieDataSourceImplTest {
                 any(),
                 any(),
                 any(),
-                any()
             )
         } returns Response.success(response)
 
         // When
-        val result = dataSource.getUpcomingMovies(page, genreId)
+        val result = dataSource.getUpcomingMovies(genreId)
 
         // Then
-        assertThat(result.data).hasSize(1)
-        assertThat(result.data[0].title).isEqualTo("Upcoming Movie")
+        assertThat(result).hasSize(1)
+        assertThat(result[0].id).isEqualTo(1L)
+
     }
 }

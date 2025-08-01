@@ -22,7 +22,7 @@ class GetSimilarMoviesUseCaseTest {
     }
 
     @Test
-    fun `should get similar movies from repository when the function run successfully`() = runTest {
+    fun `invoke() should return similar movies when repository returns data`() = runTest {
         val movieId = 1L
         coEvery { movieRepository.getSimilarMovies(movieId) } returns similarMovies
         val result = getSimilarMoviesUseCase(movieId)
@@ -30,23 +30,21 @@ class GetSimilarMoviesUseCaseTest {
     }
 
     @Test
-    fun `should return empty similar movies from repository when there is no similar movies`() =
-        runTest {
-            val movieId = 1L
-            coEvery { movieRepository.getSimilarMovies(movieId) } returns emptyList()
-            val result = getSimilarMoviesUseCase(movieId)
-            assertThat(result).isEqualTo(emptyList<Movie>())
-        }
+    fun `invoke() should return empty list when repository returns no similar movies`() = runTest {
+        val movieId = 1L
+        coEvery { movieRepository.getSimilarMovies(movieId) } returns emptyList()
+        val result = getSimilarMoviesUseCase(movieId)
+        assertThat(result).isEmpty()
+    }
 
     @Test
-    fun `should not throw exception when complete successfully`() = runTest {
+    fun `invoke() should not throw exception when called successfully`() = runTest {
         val movieId = 1L
         coEvery { movieRepository.getSimilarMovies(movieId) } returns similarMovies
         assertDoesNotThrow {
             getSimilarMoviesUseCase.invoke(movieId)
         }
     }
-
 
     private companion object {
 
