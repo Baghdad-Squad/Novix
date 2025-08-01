@@ -7,33 +7,27 @@ import org.junit.jupiter.api.Test
 class ActorMovieMapperTest {
 
     @Test
-    fun `toDto should map fields correctly`() {
-        val dto = ActorMovieDto(
-            id = 123,
-            title = "Inception",
-            voteAverage = 8.8,
-            releaseDate = "2010-07-16",
-            overview = "A mind-bending thriller",
-            posterPath = "/poster.jpg"
-        )
+    fun `should map fields correctly when toDto is called`() {
+        // Given
+        val result = ACTOR_MOVIE_DTO.toDto()
 
-        val result = dto.toDto()
-
-        assertThat(result.id).isEqualTo(123L)
-        assertThat(result.title).isEqualTo("Inception")
-        assertThat(result.imdbRating).isEqualTo(8.8)
-        assertThat(result.releaseDate).isEqualTo("2010-07-16")
-        assertThat(result.overview).isEqualTo("A mind-bending thriller")
-        assertThat(result.posterPictureURL).isEqualTo("https://image.tmdb.org/t/p/w500/poster.jpg")
+        // Then
+        assertThat(result.id).isEqualTo(ACTOR_MOVIE_DTO.id)
+        assertThat(result.title).isEqualTo(ACTOR_MOVIE_DTO.title)
+        assertThat(result.imdbRating).isEqualTo(ACTOR_MOVIE_DTO.voteAverage)
+        assertThat(result.releaseDate).isEqualTo(ACTOR_MOVIE_DTO.releaseDate)
+        assertThat(result.overview).isEqualTo(ACTOR_MOVIE_DTO.overview)
+        assertThat(result.posterPictureURL).isEqualTo(POSTER_URL + ACTOR_MOVIE_DTO.posterPath)
         assertThat(result.genres).isEmpty()
         assertThat(result.userRating).isNull()
         assertThat(result.runtimeMinutes).isEqualTo(0)
-        assertThat(result.trailerURL).isEqualTo("")
+        assertThat(result.trailerURL).isEmpty()
     }
 
     @Test
-    fun `toDto should handle nulls and defaults correctly`() {
-        val dto = ActorMovieDto(
+    fun `should handle nulls and defaults correctly when mapping toDto`() {
+        // Given
+        val emptyActorMovieDto = ACTOR_MOVIE_DTO.copy(
             id = null,
             title = null,
             voteAverage = null,
@@ -42,13 +36,27 @@ class ActorMovieMapperTest {
             posterPath = null
         )
 
-        val result = dto.toDto()
+        // When
+        val result = emptyActorMovieDto.toDto()
 
+        // Then
         assertThat(result.id).isEqualTo(0L)
         assertThat(result.title).isEqualTo("")
         assertThat(result.imdbRating).isEqualTo(0.0)
         assertThat(result.releaseDate).isEqualTo("0001-01-01")
         assertThat(result.overview).isEqualTo("")
         assertThat(result.posterPictureURL).isEqualTo("https://image.tmdb.org/t/p/w500")
+    }
+
+    companion object {
+        const val POSTER_URL = "https://image.tmdb.org/t/p/w500"
+        val ACTOR_MOVIE_DTO = ActorMovieDto(
+            id = 123,
+            title = "Inception",
+            voteAverage = 8.8,
+            releaseDate = "2010-07-16",
+            overview = "A mind-bending thriller",
+            posterPath = "/poster.jpg"
+        )
     }
 }

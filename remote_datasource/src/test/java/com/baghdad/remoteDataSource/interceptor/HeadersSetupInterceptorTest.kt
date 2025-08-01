@@ -4,7 +4,6 @@ import com.baghdad.repository.language.LanguageProvider
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
-import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.test.runTest
 import okhttp3.Call
 import okhttp3.Connection
@@ -28,15 +27,12 @@ class HeadersSetupInterceptorTest {
     private lateinit var languageProvider: LanguageProvider
     private lateinit var interceptor: HeadersSetupInterceptor
 
-    private val fakeAuthorizationToken = "test_token"
-    private val fakeLanguage = "en"
-
     @BeforeEach
     fun setUp() {
         mockWebServer = MockWebServer()
         languageProvider = mockk(relaxed = true)
-        every { languageProvider.getCurrentLanguage() } returns fakeLanguage
-        interceptor = HeadersSetupInterceptor(languageProvider, fakeAuthorizationToken)
+        every { languageProvider.getCurrentLanguage() } returns LANGUAGE
+        interceptor = HeadersSetupInterceptor(languageProvider, AUTHORIZATION_TOKEN)
     }
 
     @AfterEach
@@ -45,28 +41,34 @@ class HeadersSetupInterceptorTest {
     }
 
     @Test
-    fun `intercept should add Authorization header when authenticated`() = runTest {
+    fun `should add Authorization header when request is authenticated`() = runTest {
+        // Given
         mockWebServer.enqueue(MockResponse().setResponseCode(200))
         val request = Request.Builder()
             .url(mockWebServer.url("/test"))
             .tag(Invocation::class.java, createMockInvocation(true))
             .build()
 
+        // When
         val response = interceptor.intercept(createMockChain(request))
 
-        assertEquals("Bearer $fakeAuthorizationToken", response.request.header("Authorization"))
+        // Then
+        assertThat(response.request.header("Authorization"))
+            .isEqualTo("Bearer $AUTHORIZATION_TOKEN")
     }
 
     @Test
-    fun `intercept should not add Authorization header when not authenticated`() = runTest {
+    fun `should not add Authorization header when request is not authenticated`() = runTest {
+        // Given
         mockWebServer.enqueue(MockResponse().setResponseCode(200))
         val request = Request.Builder()
             .url(mockWebServer.url("/test"))
             .tag(Invocation::class.java, createMockInvocation(false))
             .build()
-
+        // When
         val response = interceptor.intercept(createMockChain(request))
 
+        // Then
         assertThat(response.request.header("Authorization")).isNull()
     }
 
@@ -101,4 +103,10 @@ class HeadersSetupInterceptorTest {
             every { arguments() } returns emptyList()
         }
     }
+
+    companion object {
+        private const val AUTHORIZATION_TOKEN = "test_token"
+        private val LANGUAGE = "en"
+    }
+
 }
