@@ -6,7 +6,7 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.search.RecentSearch
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.Test
@@ -16,25 +16,25 @@ class SearchMapperTest {
     fun `should map Movie to MovieUiState when toMovieUI is called`() {
         val ui = MOVIE.toMovieUI()
 
-        Truth.assertThat(ui.id).isEqualTo(1L)
-        Truth.assertThat(ui.posterPictureURL).isEqualTo("https://example.com/posters/echoes.jpg")
+        assertThat(ui.id).isEqualTo(1L)
+        assertThat(ui.posterPictureURL).isEqualTo("https://example.com/posters/echoes.jpg")
     }
 
     @Test
     fun `should map TvShow to TvShowUiState when toTvShowUI is called`() {
         val ui = TV_SHOW.toTvShowUI()
 
-        Truth.assertThat(ui.id).isEqualTo(1L)
-        Truth.assertThat(ui.posterPictureURL).isEqualTo("https://example.com/posters/avalon.jpg")
+        assertThat(ui.id).isEqualTo(1L)
+        assertThat(ui.posterPictureURL).isEqualTo("https://example.com/posters/avalon.jpg")
     }
 
     @Test
     fun `should map Actor to ActorUiState when toActorUI is called`() {
         val ui = ACTOR.toActorUI()
 
-        Truth.assertThat(ui.id).isEqualTo(1L)
-        Truth.assertThat(ui.name).isEqualTo("Layla Nasr")
-        Truth.assertThat(ui.profilePictureURL)
+        assertThat(ui.id).isEqualTo(1L)
+        assertThat(ui.name).isEqualTo("Layla Nasr")
+        assertThat(ui.profilePictureURL)
             .isEqualTo("https://example.com/profiles/layla_nasr.jpg")
     }
 
@@ -42,26 +42,26 @@ class SearchMapperTest {
     fun `should map RecentlyViewed to RecentlyViewedUiState when toRecentlyViewedUI is called`() {
         val ui = RECENTLY_VIEWED.toRecentlyViewedUI()
 
-        Truth.assertThat(ui.id).isEqualTo(1L)
-        Truth.assertThat(ui.posterPictureURL)
+        assertThat(ui.id).isEqualTo(1L)
+        assertThat(ui.posterPictureURL)
             .isEqualTo("https://example.com/images/echoes_of_eternity.jpg")
-        Truth.assertThat(ui.contentType).isEqualTo(RecentlyViewed.ContentType.MOVIE)
+        assertThat(ui.contentType).isEqualTo(RecentlyViewed.ContentType.MOVIE)
     }
 
     @Test
     fun `should map RecentSearch to RecentSearchUiState correctly`() {
         val result = RECENT_SEARCH.toRecentSearchUI()
 
-        Truth.assertThat(result.id).isEqualTo(1L)
-        Truth.assertThat(result.query).isEqualTo("kotlin")
+        assertThat(result.id).isEqualTo(1L)
+        assertThat(result.query).isEqualTo("kotlin")
     }
 
     @Test
     fun `should map Genre to GenreUiState when toGenreUI is called`() {
         val ui = GENRE.toGenreUI()
 
-        Truth.assertThat(ui.id).isEqualTo(1L)
-        Truth.assertThat(ui.name).isEqualTo("Action")
+        assertThat(ui.id).isEqualTo(1L)
+        assertThat(ui.name).isEqualTo("Action")
     }
 
     @Test
@@ -69,8 +69,8 @@ class SearchMapperTest {
         val ui = SearchScreenState.GenreUiState(id = 7L, name = "Drama")
         val domain = ui.toGenre()
 
-        Truth.assertThat(domain.id).isEqualTo(7L)
-        Truth.assertThat(domain.name).isEqualTo("Drama")
+        assertThat(domain.id).isEqualTo(7L)
+        assertThat(domain.name).isEqualTo("Drama")
     }
 
     @Test
@@ -84,10 +84,10 @@ class SearchMapperTest {
 
         val domain = ui.toSearchFilter()
 
-        Truth.assertThat(domain.minimumYear).isEqualTo(1990)
-        Truth.assertThat(domain.maximumYear).isEqualTo(2020)
-        Truth.assertThat(domain.minimumRating).isEqualTo(3)
-        Truth.assertThat(domain.selectedGenres.first().name).isEqualTo("Comedy")
+        assertThat(domain.minimumYear).isEqualTo(1990)
+        assertThat(domain.maximumYear).isEqualTo(2020)
+        assertThat(domain.minimumRating).isEqualTo(3)
+        assertThat(domain.selectedGenres.first().name).isEqualTo("Comedy")
     }
 
     companion object {
