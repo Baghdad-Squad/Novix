@@ -1,23 +1,28 @@
 package com.baghdad.viewmodel.episodeDetails
 
-import android.util.Log
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 class EpisodeDetailsViewModel(
-    tvShowId: Long,
-    seasonNumber: Int,
-    episodeNumber: Int,
+    private val tvShowId: Long,
+    private val seasonNumber: Int,
+    private val episodeNumber: Int,
     private val getEpisodeCastMembersUseCase: GetEpisodeCastMembersUseCase,
     private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase
 ) : BaseViewModel<EpisodeDetailsScreenState, EpisodeDetailsScreenEffect>(EpisodeDetailsScreenState()),
     EpisodeDetailsInteractionListener {
 
     init {
+        loadInitData(tvShowId, seasonNumber, episodeNumber)
+    }
+
+    private fun loadInitData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
         getEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
         getEpisodeCastMembers(tvShowId, seasonNumber, episodeNumber)
     }
@@ -27,12 +32,12 @@ class EpisodeDetailsViewModel(
             callee = { getEpisodeDetailsUseCase(tvShowId, seasonNumber, episodeNumber) },
             onSuccess = ::onGetEpisodeDetailsSuccess,
             onStart = ::onGetEpisodeDetailsStart,
-            onFinally = ::onGetEpisodeDetailsFinally
+            onFinally = ::onGetEpisodeDetailsFinally,
+            onError = ::onError
         )
     }
 
     private fun onGetEpisodeDetailsSuccess(episode: Episode) {
-        Log.d("EpisodeDetailsViewModel", "Episode details: $episode")
         updateState {
             it.copy(episode = episode.toUiState())
         }
@@ -47,11 +52,13 @@ class EpisodeDetailsViewModel(
     }
 
     private fun getEpisodeCastMembers(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
+        hideSnackBar()
         tryToExecute(
             callee = { getEpisodeCastMembersUseCase(tvShowId, seasonNumber, episodeNumber) },
             onSuccess = ::onGetEpisodeCastMembersSuccess,
             onStart = ::onGetEpisodeCastMembersLoading,
-            onFinally = ::onGetEpisodeCastMembersFinally
+            onFinally = ::onGetEpisodeCastMembersFinally,
+            onError = ::onError
         )
     }
 
@@ -120,5 +127,27 @@ class EpisodeDetailsViewModel(
         updateState {
             it.copy(rateEpisodeBottomSheetState = it.rateEpisodeBottomSheetState.copy(isVisible = false))
         }
+    }
+
+    private fun onError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
+    }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
+        )
+    }
+
+    override fun onSnackBarActionLabelClick() {
+        loadInitData(
+            tvShowId, seasonNumber, episodeNumber
+        )
     }
 }

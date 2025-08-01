@@ -172,6 +172,7 @@ private fun MovieDetailsContent(
         modifier = Modifier
             .background(Theme.color.surface)
             .navigationBarsPadding(),
+        isLoading = state.isLoading,
         bottomBar = {
             DetailsScreenBottomBar(
                 hasTrailer = state.movieTrailerURL.isNotBlank(),
@@ -184,7 +185,9 @@ private fun MovieDetailsContent(
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
         }
     ) {
@@ -295,7 +298,6 @@ private fun MovieDetailsContent(
     }
 
 }
-
 
 
 @Composable

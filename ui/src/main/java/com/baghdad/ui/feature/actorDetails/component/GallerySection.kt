@@ -23,14 +23,14 @@ import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 @Composable
 fun GallerySection(
     imageUrls: List<String>,
-    isMoreThanTen: Boolean,
+    isShowAllVisible: Boolean,
     modifier: Modifier = Modifier,
     onClickShowAll: () -> Unit = {}
 ) {
     Column(modifier = modifier) {
         SectionHeader(
             title = stringResource(R.string.gallery),
-            isShowAllVisible = isMoreThanTen,
+            isShowAllVisible = isShowAllVisible,
             onClick = onClickShowAll,
             modifier = Modifier.fillMaxWidth()
         )
