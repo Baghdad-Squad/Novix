@@ -21,15 +21,12 @@ class GetMovieCategoryUseCaseTest {
     }
 
     @Test
-    fun `getMovieCategoryUseCase returns genres for movie with multiple categories`() = runTest {
-        // Given
+    fun `getMovieCategoryUseCase() should return multiple genres when movie has multiple categories`() = runTest {
         val movieId = 1L
         coEvery { movieRepository.getMovieDetails(movieId) } returns sampleMovie
 
-        // When
         val result = getMovieCategoryUseCase(movieId)
 
-        // Then
         assertThat(result).hasSize(3)
         assertThat(result).containsExactly(
             Genre(id = 1L, name = "Sci-Fi"),
@@ -39,21 +36,17 @@ class GetMovieCategoryUseCaseTest {
     }
 
     @Test
-    fun `getMovieCategoryUseCase returns empty list for movie with no genres`() = runTest {
-        // Given
+    fun `getMovieCategoryUseCase() should return empty list when movie has no genres`() = runTest {
         val movieId = 2L
         coEvery { movieRepository.getMovieDetails(movieId) } returns minimalMovie
 
-        // When
         val result = getMovieCategoryUseCase(movieId)
 
-        // Then
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getMovieCategoryUseCase returns single genre for movie with one category`() = runTest {
-        // Given
+    fun `getMovieCategoryUseCase() should return single genre when movie has one category`() = runTest {
         val movieId = 3L
         val singleGenreMovie = sampleMovie.copy(
             id = movieId,
@@ -61,17 +54,14 @@ class GetMovieCategoryUseCaseTest {
         )
         coEvery { movieRepository.getMovieDetails(movieId) } returns singleGenreMovie
 
-        // When
         val result = getMovieCategoryUseCase(movieId)
 
-        // Then
         assertThat(result).hasSize(1)
         assertThat(result[0].name).isEqualTo("Drama")
     }
 
     @Test
-    fun `getMovieCategoryUseCase returns genres with special characters`() = runTest {
-        // Given
+    fun `getMovieCategoryUseCase() should return genres with special characters when present`() = runTest {
         val movieId = 4L
         val specialGenreMovie = sampleMovie.copy(
             id = movieId,
@@ -82,17 +72,14 @@ class GetMovieCategoryUseCaseTest {
         )
         coEvery { movieRepository.getMovieDetails(movieId) } returns specialGenreMovie
 
-        // When
         val result = getMovieCategoryUseCase(movieId)
 
-        // Then
         assertThat(result[0].name).isEqualTo("Sci-Fi/Fantasy")
         assertThat(result[1].name).isEqualTo("Action-Adventure")
     }
 
     @Test
-    fun `getMovieCategoryUseCase returns genres with unicode characters`() = runTest {
-        // Given
+    fun `getMovieCategoryUseCase() should return genres with unicode characters when present`() = runTest {
         val movieId = 5L
         val unicodeGenreMovie = sampleMovie.copy(
             id = movieId,
@@ -100,29 +87,23 @@ class GetMovieCategoryUseCaseTest {
         )
         coEvery { movieRepository.getMovieDetails(movieId) } returns unicodeGenreMovie
 
-        // When
         val result = getMovieCategoryUseCase(movieId)
 
-        // Then
         assertThat(result[0].name).isEqualTo("Dramédie")
     }
 
     @Test
-    fun `getMovieCategoryUseCase makes exactly one repository call`() = runTest {
-        // Given
+    fun `getMovieCategoryUseCase() should call repository exactly once per invocation`() = runTest {
         val movieId = 1L
         coEvery { movieRepository.getMovieDetails(movieId) } returns sampleMovie
 
-        // When
         getMovieCategoryUseCase(movieId)
 
-        // Then
         coVerify(exactly = 1) { movieRepository.getMovieDetails(movieId) }
     }
 
     @Test
-    fun `getMovieCategoryUseCase returns different genres for different movies`() = runTest {
-        // Given
+    fun `getMovieCategoryUseCase() should return different genres when called with different movie IDs`() = runTest {
         val movieId1 = 1L
         val movieId2 = 6L
         val comedyMovie = sampleMovie.copy(
@@ -132,19 +113,16 @@ class GetMovieCategoryUseCaseTest {
         coEvery { movieRepository.getMovieDetails(movieId1) } returns sampleMovie
         coEvery { movieRepository.getMovieDetails(movieId2) } returns comedyMovie
 
-        // When
         val result1 = getMovieCategoryUseCase(movieId1)
         val result2 = getMovieCategoryUseCase(movieId2)
 
-        // Then
         assertThat(result1).isNotEqualTo(result2)
         assertThat(result1.any { it.name == "Sci-Fi" }).isTrue()
         assertThat(result2.any { it.name == "Comedy" }).isTrue()
     }
 
     @Test
-    fun `getMovieCategoryUseCase returns genres in original order`() = runTest {
-        // Given
+    fun `getMovieCategoryUseCase() should preserve order of genres as in original movie data`() = runTest {
         val movieId = 7L
         val orderedGenresMovie = sampleMovie.copy(
             id = movieId,
@@ -156,10 +134,8 @@ class GetMovieCategoryUseCaseTest {
         )
         coEvery { movieRepository.getMovieDetails(movieId) } returns orderedGenresMovie
 
-        // When
         val result = getMovieCategoryUseCase(movieId)
 
-        // Then
         assertThat(result[0].name).isEqualTo("Primary")
         assertThat(result[1].name).isEqualTo("Secondary")
         assertThat(result[2].name).isEqualTo("Tertiary")

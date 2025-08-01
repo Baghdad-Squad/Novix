@@ -6,8 +6,8 @@ import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
-import com.baghdad.home.FakeHomeScreenData
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.home.FakeHomeScreenData
 import com.baghdad.viewmodel.home.HomeScreenEffect
 import com.baghdad.viewmodel.home.HomeScreenState
 import com.baghdad.viewmodel.home.HomeViewModel
