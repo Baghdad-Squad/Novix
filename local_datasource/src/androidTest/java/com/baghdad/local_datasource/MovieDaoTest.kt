@@ -7,8 +7,7 @@ import androidx.test.filters.SmallTest
 import com.baghdad.local_datasource.roomDB.dao.MovieDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.local_datasource.roomDB.entity.Movie
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
+import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -19,6 +18,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class MovieDaoTest {
+
     private lateinit var dataBase: NovixDatabase
     private lateinit var movieDao: MovieDao
 
@@ -38,7 +38,7 @@ class MovieDaoTest {
     }
 
     @Test
-    fun upsertMovie_insertsCorrectly() = runBlocking {
+    fun shouldInsertMovieCorrectly_whenUpsertMovieIsCalled() = runBlocking {
         // Given
         movieDao.upsertMovie(movie1)
 
@@ -46,13 +46,13 @@ class MovieDaoTest {
         val result = movieDao.getMovieById(1L)
 
         // Then
-        assertEquals(movie1.title, result.title)
-        assertEquals(movie1.genres, result.genres)
-        assertEquals(movie1.id, result.id)
+        assertThat(result.id).isEqualTo(movie1.id)
+        assertThat(result.title).isEqualTo(movie1.title)
+        assertThat(result.genres).isEqualTo(movie1.genres)
     }
 
     @Test
-    fun getMovieById_returnsCorrectMovie() = runBlocking {
+    fun shouldReturnCorrectMovie_whenGetMovieByIdIsCalled() = runBlocking {
         // Given
         movieDao.upsertMovie(movie1)
 
@@ -60,38 +60,38 @@ class MovieDaoTest {
         val result = movieDao.getMovieById(1L)
 
         // Then
-        assertEquals("Shadow Circuit", result.title)
+        assertThat(result.title).isEqualTo("Shadow Circuit")
     }
 
     @Test
-    fun deleteMovieById_removesSpecificMovie() = runBlocking {
+    fun shouldRemoveSpecificMovie_whenDeleteMovieByIdIsCalled() = runBlocking {
         // Given
         movieDao.upsertMovie(movie1)
 
         // When
         movieDao.deleteMovieById(1L)
+        val result = movieDao.getAllMovies().first()
 
         // Then
-        val allMovies = movieDao.getAllMovies().first()
-        assertTrue(allMovies.none { it.id == 1L })
+        assertThat(result.none { it.id == 1L }).isTrue()
     }
 
     @Test
-    fun deleteAll_removesEverything() = runBlocking {
+    fun shouldRemoveAllMovies_whenDeleteAllIsCalled() = runBlocking {
         // Given
         movieDao.upsertMovie(movie1)
         movieDao.upsertMovie(movie2)
 
         // When
         movieDao.deleteAll()
+        val result = movieDao.getAllMovies().first()
 
         // Then
-        val result = movieDao.getAllMovies().first()
-        assertTrue(result.isEmpty())
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun getAllMovies_returnsAllInserted() = runBlocking {
+    fun shouldReturnAllMovies_whenGetAllMoviesIsCalled() = runBlocking {
         // Given
         movieDao.upsertMovie(movie1)
         movieDao.upsertMovie(movie2)
@@ -100,11 +100,10 @@ class MovieDaoTest {
         val result = movieDao.getAllMovies().first()
 
         // Then
-        assertEquals(2, result.size)
-        assertTrue(result.any { it.title.contains("Shadow Circuit") })
-        assertTrue(result.any { it.title.contains("Celestial Drift") })
+        assertThat(result.size).isEqualTo(2)
+        assertThat(result.any { it.title.contains("Shadow Circuit") }).isTrue()
+        assertThat(result.any { it.title.contains("Celestial Drift") }).isTrue()
     }
-
 
     val movie1 = Movie(
         id = 1L,

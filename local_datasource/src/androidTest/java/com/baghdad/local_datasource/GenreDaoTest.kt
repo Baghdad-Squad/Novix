@@ -1,6 +1,5 @@
 package com.baghdad.local_datasource
 
-
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -8,8 +7,7 @@ import androidx.test.filters.SmallTest
 import com.baghdad.local_datasource.roomDB.dao.GenreDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.local_datasource.roomDB.entity.Genre
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
+import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -28,105 +26,102 @@ class GenreDaoTest {
             ApplicationProvider.getApplicationContext(),
             NovixDatabase::class.java
         ).allowMainThreadQueries().build()
-
         genreDao = database.genreDao()
     }
 
     @After
-    fun closeDataBase() {
+    fun closeDatabase() {
+        database.clearAllTables()
         database.close()
     }
 
     @Test
-    fun addGenre_insertsCorrectly() {
+    fun shouldInsertGenreCorrectly_whenAddGenreIsCalled() {
         // Given
-        val genre = Genre(
-            id = 1L,
-            name = "name1",
-            type = "type1"
-        )
+        val genre = FAKE_GENRE_1
 
         // When
         genreDao.addGenre(genre)
 
         // Then
-        val result = genreDao.getGenreById(1L)
-        assertEquals(genre.name, result.name)
-        assertEquals(genre.id, result.id)
+        val result = genreDao.getGenreById(genre.id)
+        assertThat(result).isNotNull()
+        assertThat(result.id).isEqualTo(genre.id)
+        assertThat(result.name).isEqualTo(genre.name)
     }
 
     @Test
-    fun getGenresByIds_returnsCorrectGenres() {
+    fun shouldReturnCorrectGenre_whenGetGenreByIdIsCalled() {
         // Given
-        val genre = Genre(
-            id = 2L,
-            name = "name2",
-            type = "type2"
-        )
-        // When
+        val genre = FAKE_GENRE_2
         genreDao.addGenre(genre)
 
+        // When
+        val result = genreDao.getGenreById(genre.id)
+
         // Then
-        val result = genreDao.getGenreById(2L)
-        assertEquals(genre, result)
+        assertThat(result).isEqualTo(genre)
     }
 
     @Test
-    fun getAllGenres_returnsAllItems() {
+    fun shouldReturnAllGenres_whenGetAllGenresIsCalled() {
         // Given
-        val genres = listOf(
-            Genre(id = 1L, name = "name2", type = "type2"),
-            Genre(id = 2L, name = "name3", type = "type3")
-        )
+        genreDao.addGenre(FAKE_GENRE_1)
+        genreDao.addGenre(FAKE_GENRE_2)
 
         // When
-        genres.forEach { genreDao.addGenre(it) }
+        val result = genreDao.getAllGenres()
+
+        // Then
+        assertThat(result).hasSize(2)
+        assertThat(result).containsAtLeast(FAKE_GENRE_1, FAKE_GENRE_2)
+    }
+
+    @Test
+    fun shouldRemoveSpecificGenre_whenDeleteGenreByIdIsCalled() {
+        // Given
+        val genre = FAKE_GENRE_3
+        genreDao.addGenre(genre)
+
+        // When
+        genreDao.deleteGenreById(genre.id)
 
         // Then
         val result = genreDao.getAllGenres()
-        assertEquals(2, result.size)
-        assertTrue(result.any { it.name == "name2" })
-        assertTrue(result.any { it.name == "name3" })
+        assertThat(result).doesNotContain(genre)
     }
 
     @Test
-    fun deleteGenreById_removesSpecificItem() {
+    fun shouldRemoveAllGenres_whenDeleteAllGenresIsCalled() {
         // Given
-        val genre = Genre(id = 3L, name = "name4", type = "type4")
-
-        // When
-        genreDao.addGenre(genre)
-        genreDao.deleteGenreById(3L)
-
-        // Then
-        val result = genreDao.getAllGenres()
-        assertTrue(result.none { it.id == 3L })
-    }
-
-    @Test
-    fun deleteAllGenres_removesEverything() {
-        // Given
-        genreDao.addGenre(Genre(4L, "name5", "type5"))
-        genreDao.addGenre(Genre(5L, "name6", "type6"))
+        genreDao.addGenre(FAKE_GENRE_1)
+        genreDao.addGenre(FAKE_GENRE_2)
 
         // When
         genreDao.deleteAllGenres()
 
         // Then
         val result = genreDao.getAllGenres()
-        assertTrue(result.isEmpty())
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun getGenreById_returnsCorrectGenre() {
+    fun shouldReturnCorrectName_whenGetGenreByIdIsCalled() {
         // Given
-        val genre = Genre(id = 6L, name = "name7", "type7")
-
-        // When
+        val genre = FAKE_GENRE_4
         genreDao.addGenre(genre)
 
+        // When
+        val result = genreDao.getGenreById(genre.id)
+
         // Then
-        val result = genreDao.getGenreById(6L)
-        assertEquals("name7", result.name)
+        assertThat(result.name).isEqualTo("name7")
+    }
+
+    companion object {
+        val FAKE_GENRE_1 = Genre(id = 1L, name = "name1", type = "type1")
+        val FAKE_GENRE_2 = Genre(id = 2L, name = "name2", type = "type2")
+        val FAKE_GENRE_3 = Genre(id = 3L, name = "name3", type = "type3")
+        val FAKE_GENRE_4 = Genre(id = 6L, name = "name7", type = "type7")
     }
 }

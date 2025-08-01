@@ -7,7 +7,7 @@ import androidx.test.filters.SmallTest
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.local_datasource.roomDB.entity.RecentlyViewed
-import junit.framework.TestCase.assertEquals
+import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -38,35 +38,35 @@ class RecentlyViewedDaoTest {
     }
 
     @Test
-    fun upsertRecentlyViewed_insertsItem() = runBlocking {
+    fun shouldInsertItem_whenUpsertRecentlyViewedIsCalled() = runBlocking {
         // Given
-        recentlyViewedDao.upsertRecentlyViewed(fakeRecentViews1)
+        recentlyViewedDao.upsertRecentlyViewed(recentView1)
 
         // When
         val result = recentlyViewedDao.getAllRecentlyViewed().first()
 
         // Then
-        assertTrue(result.contains(fakeRecentViews1))
+        assertTrue(result.contains(recentView1))
     }
 
     @Test
-    fun upsertRecentlyViewed_replacesExistingItem() = runBlocking {
+    fun shouldReplaceExistingItem_whenUpsertRecentlyViewedIsCalledTwice() = runBlocking {
         // Given
-        recentlyViewedDao.upsertRecentlyViewed(fakeRecentViews1)
-        recentlyViewedDao.upsertRecentlyViewed(fakeRecentViews2)
+        recentlyViewedDao.upsertRecentlyViewed(recentView1)
+        recentlyViewedDao.upsertRecentlyViewed(recentView2)
 
         // When
         val result = recentlyViewedDao.getAllRecentlyViewed().first()
 
         // Then
-        assertEquals(2, result.size)
-        assertEquals(fakeRecentViews1, result.first())
+        assertThat(result.size).isEqualTo(2)
+        assertThat(result.first()).isEqualTo(recentView1)
     }
 
     @Test
-    fun clearAllRecentlyViewed_removesAllItems() = runBlocking {
+    fun shouldRemoveAllItems_whenClearAllRecentlyViewedIsCalled() = runBlocking {
         // Given
-        val items = listOf(fakeRecentViews1, fakeRecentViews2)
+        val items = listOf(recentView1, recentView2)
         items.forEach { recentlyViewedDao.upsertRecentlyViewed(it) }
         recentlyViewedDao.clearAllRecentlyViewed()
 
@@ -74,33 +74,35 @@ class RecentlyViewedDaoTest {
         val result = recentlyViewedDao.getAllRecentlyViewed().first()
 
         // Then
-        assertTrue(result.isEmpty())
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun getAllRecentlyViewed_returnsAllInsertedItems() = runBlocking {
+    fun shouldReturnAllInsertedItems_whenGetAllRecentlyViewedIsCalled() = runBlocking {
         // Given
-        val items = listOf(fakeRecentViews1, fakeRecentViews2)
+        val items = listOf(recentView1, recentView2)
         items.forEach { recentlyViewedDao.upsertRecentlyViewed(it) }
 
         // When
         val result = recentlyViewedDao.getAllRecentlyViewed().first()
 
         // Then
-        assertEquals(2, result.size)
-        assertTrue(result.containsAll(items))
+        assertThat(result.size).isEqualTo(2)
+        assertThat(result.containsAll(items)).isTrue()
     }
 
-    val fakeRecentViews1 = RecentlyViewed(
-        contentId = 101L,
-        contentType = "movie",
-        contentImageURL = "https://example.com/images/movie_101.jpg",
-        viewedAt = System.currentTimeMillis() - 60_000
-    )
-    val fakeRecentViews2 = RecentlyViewed(
-        contentId = 102L,
-        contentType = "tv_show",
-        contentImageURL = "https://example.com/images/tv_102.jpg",
-        viewedAt = System.currentTimeMillis() - 3_600_000
-    )
+    companion object {
+        val recentView1 = RecentlyViewed(
+            contentId = 101L,
+            contentType = "movie",
+            contentImageURL = "https://example.com/images/movie_101.jpg",
+            viewedAt = System.currentTimeMillis() - 60_000
+        )
+        val recentView2 = RecentlyViewed(
+            contentId = 102L,
+            contentType = "tv_show",
+            contentImageURL = "https://example.com/images/tv_102.jpg",
+            viewedAt = System.currentTimeMillis() - 3_600_000
+        )
+    }
 }
