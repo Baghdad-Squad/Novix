@@ -9,6 +9,7 @@ class MovieResultMapperKtTest {
 
     @Test
     fun `should map fields correctly when valid data provided`() {
+        // Given
         val movieResult = MovieResult(
             id = 10,
             title = "Interstellar",
@@ -19,8 +20,10 @@ class MovieResultMapperKtTest {
             posterPath = "/poster.jpg"
         )
 
+        // When
         val movieDto = movieResult.toDto(movieResult.genreIds)
 
+        // Then
         assertThat(movieDto.id).isEqualTo(10L)
         assertThat(movieDto.title).isEqualTo("Interstellar")
         assertThat(movieDto.genres).hasSize(2)
@@ -30,6 +33,7 @@ class MovieResultMapperKtTest {
 
     @Test
     fun `should use defaults when fields are null`() {
+        // Given
         val movieResult = MovieResult(
             id = null,
             title = null,
@@ -40,8 +44,10 @@ class MovieResultMapperKtTest {
             posterPath = null
         )
 
+        // When
         val movieDto = movieResult.toDto()
 
+        // Then
         assertThat(movieDto.id).isEqualTo(0L)
         assertThat(movieDto.title).isEqualTo("Untitled")
         assertThat(movieDto.genres).isEmpty()
@@ -52,6 +58,7 @@ class MovieResultMapperKtTest {
 
     @Test
     fun `should use empty genres when genreIds parameter not passed`() {
+        // Given
         val movieResult = MovieResult(
             id = 30,
             title = "Default GenreIds",
@@ -62,8 +69,10 @@ class MovieResultMapperKtTest {
             posterPath = "/poster3.jpg"
         )
 
+        // When
         val movieDto = movieResult.toDto()
 
+        // Then
         assertThat(movieDto.genres).isEmpty()
     }
 }
