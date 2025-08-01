@@ -71,6 +71,7 @@ data class SearchScreenState(
         val minimumYear: Int? = 1874,
         val maximumYear: Int? = 2035,
         val minimumRating: Int = 0,
+        val isGenresError: Boolean = false,
         val selectedGenres: List<GenreUiState> = emptyList(),
         val allGenres: List<GenreUiState> = emptyList()
     )
