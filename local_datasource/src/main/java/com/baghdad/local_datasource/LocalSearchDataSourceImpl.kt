@@ -13,14 +13,17 @@ import kotlinx.coroutines.flow.map
 
 class LocalSearchDataSourceImpl(
     private val recentSearchDao: RecentSearchDao,
-    private val logger: Logger
+    private val logger: Logger,
 ) : LocalRecentSearchDataSource {
     override suspend fun addRecentSearchQuery(query: String) =
         executeWithErrorHandling(logger = logger) {
-            val newRecentSearch = RecentSearch(
-                query = query,
-            )
-            recentSearchDao.addRecentSearch(newRecentSearch)
+            val existingSearch = recentSearchDao.getRecentSearchByQuery(query)
+
+            val recentSearch =
+                existingSearch?.copy(searchedAt = System.currentTimeMillis())
+                    ?: RecentSearch(query = query)
+
+            recentSearchDao.upsertRecentSearch(recentSearch)
         }
 
     override fun getAllRecentSearches(): Flow<List<RecentSearchDto>> =

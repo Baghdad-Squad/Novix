@@ -89,7 +89,9 @@ private fun TopTvShowPicksContent(
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
         topBar = {
@@ -99,15 +101,10 @@ private fun TopTvShowPicksContent(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .padding(top = 12.dp)
-            ) {}
-        }
-
+            )
+        },
+        isLoading = uiState.isLoading
     ) {
-        if (uiState.isLoading) {
-            Box(Modifier.fillMaxSize()) {
-                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             modifier = Modifier

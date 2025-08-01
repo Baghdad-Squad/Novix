@@ -21,4 +21,5 @@ interface HomeInteractionListener {
     fun onUpcomingGenreSelected(genre: GenreUiState?)
     fun onUpcomingItemClicked(item: UpcomingItemUiState)
     fun onUpcomingItemSaveClicked(item: UpcomingItemUiState)
+    fun onSnackBarActionLabelClick()
 }
