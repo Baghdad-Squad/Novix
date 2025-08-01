@@ -31,7 +31,7 @@ class ActorGalleryViewModelTest {
         viewModel = ActorGalleryViewModel(
             getGalleryImagesUseCase = getGalleryImagesUseCase,
             actorId = ACTOR_ID,
-            defaultDispatcher = testDispatcher
+            ioDispatcher = testDispatcher
         )
     }
 
@@ -67,7 +67,7 @@ class ActorGalleryViewModelTest {
     }
 
     @Test
-    fun `getActorGalleryImages should show no internet snackbar when NoInternetException is thrown`() = runTest {
+    fun `getActorGalleryImages should show no internet snackBar when NoInternetException is thrown`() = runTest {
         // Given
         coEvery { getGalleryImagesUseCase.invoke(ACTOR_ID) } throws NoInternetException()
         val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
@@ -79,7 +79,7 @@ class ActorGalleryViewModelTest {
         }
 
         // When
-        viewModel.loadData()
+        viewModel.onSnackBarActionLabelClick()
         advanceUntilIdle()
         job.cancel()
 

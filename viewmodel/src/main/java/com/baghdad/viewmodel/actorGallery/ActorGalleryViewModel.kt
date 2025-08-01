@@ -10,7 +10,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 class ActorGalleryViewModel(
     private val getGalleryImagesUseCase: GetActorGalleryUseCase,
     private val actorId: Long,
-    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 
     ) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
     ActorGalleryInteractionListener {
@@ -19,7 +19,7 @@ class ActorGalleryViewModel(
         loadData()
     }
 
-    fun loadData() {
+    private fun loadData() {
         getActorGalleryImages(actorId)
     }
 
@@ -29,7 +29,7 @@ class ActorGalleryViewModel(
     fun getActorGalleryImages(actorId: Long) {
         tryToExecute(
             callee = { getGalleryImagesUseCase.invoke(actorId) },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onStart = ::onStart,
             onSuccess = ::onGalleryActorSuccess,
             onError = ::onGetActorGalleryError,
