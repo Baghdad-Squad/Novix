@@ -27,6 +27,7 @@ class TrendingMoviesViewModelTest {
     private val testDispatcher = UnconfinedTestDispatcher()
     private val testScope = TestScope(testDispatcher)
 
+
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
