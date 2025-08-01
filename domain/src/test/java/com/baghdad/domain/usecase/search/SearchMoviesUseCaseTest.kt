@@ -4,7 +4,6 @@ import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.search.SearchFilter
 import com.baghdad.domain.repository.FavoriteGenreRepository
 import com.baghdad.domain.repository.SearchRepository
-import com.baghdad.domain.util.SearchFilterHelper
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.google.common.truth.Truth.assertThat
