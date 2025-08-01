@@ -139,7 +139,6 @@ private fun TrendingMoviesContent(
             }
             LazyPagingVerticalGrid(
                 items = movieItems,
-                key = { it.id },
                 columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
