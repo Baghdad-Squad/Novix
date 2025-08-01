@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 class TopMoviePicksMapperTest {
 
     @Test
-    fun `toUIState should map Movie to MovieUiState correctly`() {
+    fun `toUIState should map Movie to MovieUiState correctly when it called`() {
         val result = movie.toUIState()
 
         assertThat(result.id).isEqualTo(123L)
@@ -18,7 +18,7 @@ class TopMoviePicksMapperTest {
     }
 
     @Test
-    fun `toUIState should handle empty posterImageURL correctly`() {
+    fun `toUIState should handle empty posterImageURL correctly when it called`() {
         val movieWithEmptyPoster = movie.copy(posterImageURL = "")
         val result = movieWithEmptyPoster.toUIState()
 

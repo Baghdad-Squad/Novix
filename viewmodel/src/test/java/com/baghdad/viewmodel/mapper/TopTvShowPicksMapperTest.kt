@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 class TopTvShowPicksMapperTest {
 
     @Test
-    fun `toUIState should map TvShow to TvShowUiState correctly`() {
+    fun `toUIState should map TvShow to TvShowUiState correctly when it called`() {
         val result = tvShow.toUIState()
 
         assertThat(result.id).isEqualTo(456L)
@@ -18,7 +18,7 @@ class TopTvShowPicksMapperTest {
     }
 
     @Test
-    fun `toUIState should handle empty posterImageURL correctly`() {
+    fun `toUIState should handle empty posterImageURL correctly when it called`() {
         val tvShowWithEmptyPoster = tvShow.copy(posterImageURL = "")
         val result = tvShowWithEmptyPoster.toUIState()
 

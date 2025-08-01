@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 class TvShowDetailsMapperTest {
 
     @Test
-    fun `TvShow toUiState should map correctly`() {
+    fun `TvShow toUiState should map correctly when it called`() {
         val result = tvShow.toUiState()
 
         assertThat(result.title).isEqualTo("Test TV Show")
@@ -28,7 +28,7 @@ class TvShowDetailsMapperTest {
     }
 
     @Test
-    fun `Genre toUiState should map correctly`() {
+    fun `Genre toUiState should map correctly when it called`() {
         val result = genre.toUiState()
 
         assertThat(result.id).isEqualTo(1L)
@@ -36,7 +36,7 @@ class TvShowDetailsMapperTest {
     }
 
     @Test
-    fun `CastMember toUiState should map correctly`() {
+    fun `CastMember toUiState should map correctly when it called`() {
         val result = castMember.toUiState()
 
         assertThat(result.id).isEqualTo(789L)
@@ -46,7 +46,7 @@ class TvShowDetailsMapperTest {
     }
 
     @Test
-    fun `Episode toUiState should map correctly`() {
+    fun `Episode toUiState should map correctly when it called`() {
         val result = episode.toUiState()
 
         assertThat(result.id).isEqualTo(101L)
@@ -59,7 +59,7 @@ class TvShowDetailsMapperTest {
     }
 
     @Test
-    fun `Episode toUiState should handle null release date`() {
+    fun `Episode toUiState should handle null release date when it called`() {
         val episodeWithNullDate = episode.copy(releasedDate = null)
         val result = episodeWithNullDate.toUiState()
 
@@ -67,7 +67,7 @@ class TvShowDetailsMapperTest {
     }
 
     @Test
-    fun `Episode toUiState should handle invalid duration string`() {
+    fun `Episode toUiState should handle invalid duration string when it called`() {
         val episodeWithInvalidDuration = episode.copy(duration = "invalid")
         val result = episodeWithInvalidDuration.toUiState()
 
