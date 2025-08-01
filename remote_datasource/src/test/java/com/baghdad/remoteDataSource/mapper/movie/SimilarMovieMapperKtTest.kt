@@ -1,6 +1,5 @@
-package com.baghdad.remoteDataSource.mapper
+package com.baghdad.remoteDataSource.mapper.movie
 
-import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
 import com.baghdad.remoteDataSource.response.MovieResult
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
 import com.google.common.truth.Truth.assertThat

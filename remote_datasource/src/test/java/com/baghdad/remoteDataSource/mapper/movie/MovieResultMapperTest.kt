@@ -1,6 +1,5 @@
-package com.baghdad.remoteDataSource.mapper
+package com.baghdad.remoteDataSource.mapper.movie
 
-import com.baghdad.remoteDataSource.mapper.movie.toDto
 import com.baghdad.remoteDataSource.response.MovieResult
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
