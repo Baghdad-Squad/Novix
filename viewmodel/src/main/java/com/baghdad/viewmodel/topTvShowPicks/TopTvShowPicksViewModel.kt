@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 class TopTvShowPicksViewModel(
     val actorId: Long,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
-    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<TopTvShowPicksState, TopTvShowPicksEffect>
     (TopTvShowPicksState()), TopTvShowPicksInteractionListener {
 
@@ -23,7 +23,7 @@ class TopTvShowPicksViewModel(
     private fun getActorTvShow(actorId: Long) {
         tryToExecute(
             callee = { getActorTvShowUseCase(actorId) },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetActorTvShowSuccess,
             onStart = ::onLoading,
             onError = ::onGetActorTvShowError,

@@ -1,8 +1,10 @@
 package com.baghdad.viewmodel.topTvShowPicks
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -100,15 +102,26 @@ class TopTvShowPicksViewModelTest {
         job.cancel()
     }
 
-//    @Test
-//    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
-//        // Given
-//        val throwable = RuntimeException("Test error")
-//        // When
-//        val result = topTvShowPicksViewModel.mapThrowableToErrorMessage(throwable)
-//        // Then
-//        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
-//    }
+    @Test
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
+        // Given
+        coEvery { getActorTvShowUseCase(actorId) } throws NoInternetException()
+        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+
+        val job = launch {
+            topTvShowPicksViewModel.snackBarState.collect {
+                emittedSnackBarMessages.add(it.message)
+            }
+        }
+
+        // When
+        topTvShowPicksViewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+
+        // Then
+        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+        job.cancel()
+    }
 
 
     companion object {
