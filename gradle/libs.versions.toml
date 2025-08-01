@@ -44,6 +44,8 @@ perf-plugin = "1.4.2"
 pagingCommonAndroid = "3.3.6"
 tensorflowLiteSupportVersion = "0.1.0"
 tensorflowLiteMetadata = "0.1.0"
+junitKtx = "1.2.1"
+runner = "1.6.2"
 hilt = "2.57"
 hilt-navigation-compose = "1.2.0"
 hilt-compiler = "1.2.0"
@@ -147,6 +149,8 @@ coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version
 androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
 tensorflow-tensorflow-lite-support = { group = "org.tensorflow", name = "tensorflow-lite-support", version.ref = "tensorflowLiteSupportVersion" }
 tensorflow-lite-metadata = { group = "org.tensorflow", name = "tensorflow-lite-metadata", version.ref = "tensorflowLiteMetadata" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 
 # hilt
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
@@ -211,7 +215,6 @@ hilt = [
     "hilt-navigation-compose",
     "hilt-compiler"
 ]
-
 
 room = [
     "androidx-room-ktx",

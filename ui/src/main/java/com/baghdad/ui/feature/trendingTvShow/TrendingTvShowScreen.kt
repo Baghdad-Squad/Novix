@@ -97,21 +97,33 @@ fun TrendingTvShowContent(
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = {listener.onSnackBarActionLabelClick(uiState.selectedGenreId)},
             )
         },
+        isLoading = uiState.isLoading,
         topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(top = 22.dp, bottom = 8.dp)
-                    .background(Theme.color.surface),
-                onGoBackClick = {
-                    listener.onBackIconClick()
-                },
-                screenTitle = stringResource(R.string.trending_tv_shows),
-            )
+            Column {
+                TopAppBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(top = 22.dp, bottom = 8.dp)
+                        .background(Theme.color.surface),
+                    onGoBackClick = {
+                        listener.onBackIconClick()
+                    },
+                    screenTitle = stringResource(R.string.trending_tv_shows),
+
+                    )
+                GenresSection(
+                    allGenres = uiState.genres,
+                    selectedGenre = uiState.selectedGenreId,
+                    onGenreSelected = { listener.onGenreClick(it?.id) },
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+            }
         }
     ) {
         Column(
@@ -121,18 +133,6 @@ fun TrendingTvShowContent(
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            GenresSection(
-                allGenres = uiState.genres,
-                selectedGenre = uiState.selectedGenreId,
-                onGenreSelected = { listener.onGenreClick(it?.id) },
-                modifier = Modifier.padding(vertical = 12.dp)
-            )
-
-            if (uiState.isLoading) {
-                Box(Modifier.fillMaxSize()) {
-                    WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-            }
 
             LazyPagingVerticalGrid<TrendingTvShowScreenState.TvShowUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),

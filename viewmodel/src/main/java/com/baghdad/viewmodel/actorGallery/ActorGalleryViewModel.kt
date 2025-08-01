@@ -6,23 +6,26 @@ import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ActorGalleryViewModel @Inject constructor(
-    private val getGalleryImagesUseCase: GetActorGalleryUseCase,
     savedStateHandle: SavedStateHandle,
-) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
+    private val getGalleryImagesUseCase: GetActorGalleryUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
+    ) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
     ActorGalleryInteractionListener {
 
     private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
+
 
     init {
         loadData()
     }
 
-    fun loadData() {
+    private fun loadData() {
         getActorGalleryImages(actorId)
     }
 
@@ -32,6 +35,7 @@ class ActorGalleryViewModel @Inject constructor(
     fun getActorGalleryImages(actorId: Long) {
         tryToExecute(
             callee = { getGalleryImagesUseCase.invoke(actorId) },
+            dispatcher = ioDispatcher,
             onStart = ::onStart,
             onSuccess = ::onGalleryActorSuccess,
             onError = ::onGetActorGalleryError,
@@ -45,6 +49,7 @@ class ActorGalleryViewModel @Inject constructor(
             else -> handleError(throwable)
         }
     }
+
 
     private fun showNoInternetSnackBar() {
         showSnackBar(

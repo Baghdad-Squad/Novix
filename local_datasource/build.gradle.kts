@@ -45,12 +45,20 @@ android {
             it.useJUnitPlatform()
         }
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
+        }
+    }
 }
 
 dependencies {
     implementation(project(":repository"))
     implementation(libs.bundles.coroutines)
     implementation(libs.bundles.room)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.runner)
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.bundles.test.core)
     androidTestImplementation(libs.bundles.test.core)

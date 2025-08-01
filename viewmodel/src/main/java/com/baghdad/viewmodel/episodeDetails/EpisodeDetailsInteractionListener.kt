@@ -11,4 +11,5 @@ interface EpisodeDetailsInteractionListener {
     fun onPlayTrailerClick()
     fun onRateEpisodeClick()
     fun onDismissRatingBottomSheet()
+    fun onSnackBarActionLabelClick()
 }

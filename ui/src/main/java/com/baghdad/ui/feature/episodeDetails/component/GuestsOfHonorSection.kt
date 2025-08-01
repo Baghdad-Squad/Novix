@@ -31,7 +31,6 @@ fun LazyListScope.guestsOfHonorItems(
     }
     items(
         items = guestsOfHonor,
-        key = { it.id }
     ) { guestOfHonor ->
         ActorCard(
             actorName = guestOfHonor.name,

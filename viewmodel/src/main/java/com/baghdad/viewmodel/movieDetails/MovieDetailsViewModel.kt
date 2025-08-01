@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.movieDetails
 
 import androidx.lifecycle.SavedStateHandle
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
@@ -8,11 +9,13 @@ import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
 import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
 import com.baghdad.entity.media.Movie
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
@@ -21,51 +24,61 @@ class MovieDetailsViewModel @Inject constructor(
     private val getMovieImagesUseCase: GetMovieGalleryUseCase,
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
     savedStateHandle: SavedStateHandle,
-    ) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
+) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
     MovieDetailsInteractionListener {
 
-        private val movieId: Long = checkNotNull(savedStateHandle["movieId"])
+    private val movieId: Long = checkNotNull(savedStateHandle["movieId"])
 
     init {
+        loadInitData()
+    }
+
+    private fun loadInitData() {
         getMovieGallery()
         getMovieDetails()
         getCastMembers()
         getMoreLikeThisShow()
     }
 
-
-
-
     override fun onStarMovieClick() {
         // TODO("Not yet implemented")
     }
 
-
     override fun onSaveCurrentMovieClick() {
         tryToExecute(
             callee = { currentState.movieId },
+            dispatcher = ioDispatcher,
             onSuccess = {
                 updateState {
-
                     it.copy(
                         isSaved = !currentState.isSaved,
-                        isLoading = false
                     )
                 }
             },
-            onStart = ::onLoading,
-            onFinally = ::onFinally
+            onStart = ::onMoreLikeThisStarted,
+            onFinally = ::onMoreLikeThisFinished
         )
+        // TODO: save logic
     }
 
     override fun onSaveMoreLikeThisMedia(id: Long) {
         tryToExecute(
             callee = { currentState.moreLikeThisMovie.firstOrNull { it.id == id }?.id ?: 1L },
             onSuccess = ::onSaveMoreLikeThisMediaSuccess,
-            onStart = ::onLoading,
-            onFinally = ::onFinally
+            onStart = ::onMoreLikeThisStarted,
+            dispatcher = ioDispatcher,
+            onFinally = ::onMoreLikeThisFinished
         )
+    }
+
+    private fun onMoreLikeThisStarted() {
+        updateState { state -> state.copy(isMoreLikeThisMovieLoading = true) }
+    }
+
+    private fun onMoreLikeThisFinished() {
+        updateState { state -> state.copy(isMoreLikeThisMovieLoading = false) }
     }
 
     private fun onSaveMoreLikeThisMediaSuccess(id: Long) {
@@ -79,7 +92,6 @@ class MovieDetailsViewModel @Inject constructor(
             }
             state.copy(
                 moreLikeThisMovie = updatedMovies,
-                isLoading = false
             )
         }
     }
@@ -121,10 +133,28 @@ class MovieDetailsViewModel @Inject constructor(
         sendEffect(MovieDetailsEffect.OpenYoutubeLink(currentState.movieTrailerURL))
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
+    private fun onError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
     }
 
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
+        )
+    }
+
+    override fun onSnackBarActionLabelClick() {
+        loadInitData()
+    }
+
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     private fun getMovieGallery() {
         tryToExecute(
@@ -132,16 +162,25 @@ class MovieDetailsViewModel @Inject constructor(
                 getMovieImagesUseCase(movieId = movieId)
             },
             onSuccess = ::onGetMovieGallerySuccess,
-            onStart = ::onLoading,
-            onFinally = ::onFinally
+            onStart = ::onGetMovieGalleryStarted,
+            dispatcher = ioDispatcher,
+            onFinally = ::onGetMovieGalleryFinished,
+            onError = ::onError
         )
+    }
+
+    private fun onGetMovieGalleryStarted() {
+        updateState { state -> state.copy(isMovieGalleryLoading = true) }
+    }
+
+    private fun onGetMovieGalleryFinished() {
+        updateState { state -> state.copy(isMovieGalleryLoading = false) }
     }
 
     private fun onGetMovieGallerySuccess(images: List<String>) {
         updateState { state ->
             state.copy(
                 movieImages = images,
-                isLoading = false
             )
         }
     }
@@ -150,9 +189,15 @@ class MovieDetailsViewModel @Inject constructor(
         tryToExecute(
             callee = { getMovieDetailsUseCase(movieId) },
             onSuccess = ::onGetMovieDetailsSuccess,
-            onStart = ::onLoading,
-            onFinally = ::onFinallyAndAddToContinueWatching
+            dispatcher = ioDispatcher,
+            onStart = ::onGetMovieDetailsStarted,
+            onFinally = ::onFinallyAndAddToContinueWatching,
+            onError = ::onError
         )
+    }
+
+    private fun onGetMovieDetailsStarted() {
+        updateState { state -> state.copy(isMovieDetailsLoading = true) }
     }
 
     private fun onGetMovieDetailsSuccess(details: Movie) {
@@ -167,7 +212,6 @@ class MovieDetailsViewModel @Inject constructor(
                 posterImageURL = details.posterImageURL,
                 date = details.releaseDate.toDDMMYYYYFormat(),
                 isSaved = state.isSaved,
-                isLoading = false,
                 categories = details.genres.map {
                     MovieDetailsState.CategoryUiState(
                         id = it.id,
@@ -194,9 +238,18 @@ class MovieDetailsViewModel @Inject constructor(
                     }
                 )
             },
-            onStart = ::onLoading,
-            onFinally = ::onFinally
+            onStart = ::onGetCastMembersStarted,
+            onFinally = ::onGetCastMembersFinally,
+            onError = ::onError
         )
+    }
+
+    private fun onGetCastMembersStarted() {
+        updateState { state -> state.copy(isCastMemberLoading = true) }
+    }
+
+    private fun onGetCastMembersFinally() {
+        updateState { state -> state.copy(isCastMemberLoading = false) }
     }
 
 
@@ -204,12 +257,23 @@ class MovieDetailsViewModel @Inject constructor(
         tryToExecute(
             callee = { getMoreLikeThisPosterImageUseCase(movieId) },
             onSuccess = ::onGetMovieMoreLikeThisSuccess,
-            onStart = ::onLoading,
-            onFinally = ::onFinally
-        )
+            onStart = ::onGetMovieMoreLikeThisStarted,
+            onFinally = ::onGetMovieMoreLikeThisFinished,
+            onError = ::onError,
+            dispatcher = ioDispatcher,
+            )
+    }
+
+    private fun onGetMovieMoreLikeThisStarted() {
+        updateState { state -> state.copy(isMoreLikeThisMovieLoading = true) }
+    }
+
+    private fun onGetMovieMoreLikeThisFinished() {
+        updateState { state -> state.copy(isMoreLikeThisMovieLoading = false) }
     }
 
     private fun onGetMovieMoreLikeThisSuccess(movies: List<Movie>) {
+        hideSnackBar()
         updateState { state ->
             state.copy(
                 moreLikeThisMovie = movies.map { movie ->
@@ -219,7 +283,6 @@ class MovieDetailsViewModel @Inject constructor(
                         isSaved = false
                     )
                 },
-                isLoading = false
             )
         }
     }
@@ -228,26 +291,21 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { state ->
             state.copy(
                 castMembers = actors,
-                isLoading = false
             )
         }
     }
 
-    private fun onLoading() {
-        updateState { it.copy(isLoading = true) }
-    }
 
-    private fun onFinally() {
-        updateState { it.copy(isLoading = false) }
-    }
+
     private fun onFinallyAndAddToContinueWatching() {
-        onFinally()
+        updateState { state -> state.copy(isMovieDetailsLoading = false) }
         addToContinueWatching()
     }
 
 
     private fun addToContinueWatching() {
         tryToExecute(
+            dispatcher = ioDispatcher,
             callee = {
                 addContinueWatchingUseCase(
                     movieId, currentState.categories.map { it.id },

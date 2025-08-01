@@ -3,6 +3,7 @@ package com.baghdad.ui.feature.topRating
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -28,7 +29,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
-import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
@@ -107,89 +107,89 @@ private fun TopRatingContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
+        isLoading = uiState.isLoading,
         topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(top = 22.dp, bottom = 8.dp)
-                    .background(Theme.color.surface),
-                onGoBackClick = {
-                    listener.onBackClick()
-                },
-                screenTitle = stringResource(com.baghdad.ui.R.string.top_rating),
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                val borderColor = Theme.color.stroke
-                Row(
+            Column {
+                TopAppBar(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Theme.color.surface)
-                        .padding(top = 4.dp)
-                        .drawBehind {
-                            val strokeWidth = 1.dp.toPx()
-                            val y = size.height - strokeWidth / 2
-                            drawLine(
-                                color = borderColor,
-                                start = Offset(0f, y),
-                                end = Offset(size.width, y),
-                                strokeWidth = strokeWidth
-                            )
-                        },
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .statusBarsPadding()
+                        .padding(top = 22.dp, bottom = 8.dp)
+                        .background(Theme.color.surface),
+                    onGoBackClick = {
+                        listener.onBackClick()
+                    },
+                    screenTitle = stringResource(com.baghdad.ui.R.string.top_rating),
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
-                    Tab(
-                        text = stringResource(com.baghdad.ui.R.string.movies),
-                        onClick = { listener.onSelectedTab(TopRatingTab.MOVIES) },
-                        isSelected = uiState.selectedTab == TopRatingTab.MOVIES,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Tab(
-                        text = stringResource(com.baghdad.ui.R.string.tv_shows),
-                        onClick = { listener.onSelectedTab(TopRatingTab.TV_SHOWS) },
-                        isSelected = uiState.selectedTab == TopRatingTab.TV_SHOWS,
-                        modifier = Modifier.weight(1f)
-                    )
+                    val borderColor = Theme.color.stroke
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Theme.color.surface)
+                            .padding(top = 4.dp)
+                            .drawBehind {
+                                val strokeWidth = 1.dp.toPx()
+                                val y = size.height - strokeWidth / 2
+                                drawLine(
+                                    color = borderColor,
+                                    start = Offset(0f, y),
+                                    end = Offset(size.width, y),
+                                    strokeWidth = strokeWidth
+                                )
+                            },
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Tab(
+                            text = stringResource(com.baghdad.ui.R.string.movies),
+                            onClick = { listener.onSelectedTab(TopRatingTab.MOVIES) },
+                            isSelected = uiState.selectedTab == TopRatingTab.MOVIES,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Tab(
+                            text = stringResource(com.baghdad.ui.R.string.tv_shows),
+                            onClick = { listener.onSelectedTab(TopRatingTab.TV_SHOWS) },
+                            isSelected = uiState.selectedTab == TopRatingTab.TV_SHOWS,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
+                GenresSection(
+                    allGenres = uiState.genres,
+                    selectedGenres = when (uiState.selectedTab) {
+                        TopRatingTab.MOVIES -> uiState.selectedMovieGenreId
+                        TopRatingTab.TV_SHOWS -> uiState.selectedTvShowGenreId
+                    },
+                    listState = when (uiState.selectedTab) {
+                        TopRatingTab.MOVIES -> movieGenresScrollState
+                        TopRatingTab.TV_SHOWS -> tvGenresScrollState
+                    },
+                    onGenreSelected = { listener.onGenreClick(it?.id) },
+                    modifier = Modifier
+                        .background(Theme.color.surface)
+                        .padding(vertical = 12.dp)
+                )
             }
-            GenresSection(
-                allGenres = uiState.genres,
-                selectedGenres = when (uiState.selectedTab) {
-                    TopRatingTab.MOVIES -> uiState.selectedMovieGenreId
-                    TopRatingTab.TV_SHOWS -> uiState.selectedTvShowGenreId
-                },
-                listState = when (uiState.selectedTab) {
-                    TopRatingTab.MOVIES -> movieGenresScrollState
-                    TopRatingTab.TV_SHOWS -> tvGenresScrollState
-                },
-                onGenreSelected = { listener.onGenreClick(it?.id) },
-                modifier = Modifier
-                    .background(Theme.color.surface)
-                    .padding(vertical = 12.dp)
-            )
+
 
         },
         snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
         }
     ) {
 
-        if (uiState.isLoading) {
-            Box(Modifier.fillMaxSize()) {
-                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
-
         when (uiState.selectedTab) {
             TopRatingTab.MOVIES -> {
-                LazyPagingVerticalGrid<TopRatingState.MovieUiState>(
+                LazyPagingVerticalGrid(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
                         .fillMaxSize()

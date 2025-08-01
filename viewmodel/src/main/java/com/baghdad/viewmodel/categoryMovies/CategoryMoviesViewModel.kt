@@ -2,8 +2,10 @@ package com.baghdad.viewmodel.categoryMovies
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
 import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +23,10 @@ class CategoryMoviesViewModel @Inject constructor(
 
     private val genreId: Long = checkNotNull(savedStateHandle["genreId"])
     init {
+        loadInitData()
+    }
+
+    private fun loadInitData() {
         getGenreMovies()
         getGenreName()
     }
@@ -41,7 +47,12 @@ class CategoryMoviesViewModel @Inject constructor(
         sendEffect(CategoryMoviesEffect.NavigateToMovieDetails(movieId))
     }
 
+    override fun onSnackBarActionLabelClick() {
+        loadInitData()
+    }
+
     private fun getGenreName() {
+        hideSnackBar()
         tryToExecute(
             callee = { getMovieGenreNameByIdUseCase.invoke(genreId) },
             onSuccess = { onGetGenreNameSuccess(it.name) },
@@ -55,7 +66,21 @@ class CategoryMoviesViewModel @Inject constructor(
         }
     }
 
-    private fun onGetGenreNameError(throwable: Throwable) {}
+    private fun onGetGenreNameError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
+    }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
+        )
+    }
 
     private fun getGenreMovies() {
         collectPagingFlow(
@@ -64,7 +89,10 @@ class CategoryMoviesViewModel @Inject constructor(
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toUiState() },
-            onFlowCreated = ::onGetGenreMoviesSuccess
+            onFlowCreated = ::onGetGenreMoviesSuccess,
+            onLoadingChanged = { isLoading ->
+                updateState { it.copy(isLoading = isLoading) }
+            }
 
         )
 

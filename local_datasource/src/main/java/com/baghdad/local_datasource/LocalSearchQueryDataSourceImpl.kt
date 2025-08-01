@@ -73,8 +73,8 @@ class LocalSearchQueryDataSourceImpl @Inject constructor(
                         actorDao.deleteActorById(it.mediaId)
                     }
                 }
-                searchQueryDao.deleteInvalidSearchQueries(timestamp)
             }
+                searchQueryDao.deleteInvalidSearchQueries(timestamp)
         }
     }
 

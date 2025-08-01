@@ -101,5 +101,6 @@
     <string name="two_minute">Two minutes</string>
     <string name="minutes">Minutes</string>
     <string name="duration_combined">%1$s %2$s</string>
+    <string name="an_error_occurred_while_loading_genres">An error occurred while loading genres</string>
 
 </resources>

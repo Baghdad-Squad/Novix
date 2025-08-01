@@ -2,7 +2,6 @@ package com.baghdad.ui.feature.topMoviePicks
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +13,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,7 +20,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
-import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
@@ -50,22 +47,24 @@ fun TopMoviePicksScreen(
     TopMoviePicksContent(
         uiState = uiState,
         listener = viewModel,
-        snackBarState = snackBarState
+        snackBarState = snackBarState,
     )
 }
 
 private fun handleEffect(
     effect: TopMoviePicksEffect,
-    handleNavigation: (ActorDetailsNavEvent) -> Unit
+    handleNavigation: (ActorDetailsNavEvent) -> Unit,
 ) {
     when (effect) {
-        is TopMoviePicksEffect.NavigateBack -> handleNavigation(
-            ActorDetailsNavEvent.NavigateBack
-        )
+        is TopMoviePicksEffect.NavigateBack ->
+            handleNavigation(
+                ActorDetailsNavEvent.NavigateBack,
+            )
 
-        is TopMoviePicksEffect.NavigateToMovieDetails -> handleNavigation(
-            NavigateToMovieDetails(effect.movieId)
-        )
+        is TopMoviePicksEffect.NavigateToMovieDetails ->
+            handleNavigation(
+                NavigateToMovieDetails(effect.movieId),
+            )
     }
 }
 
@@ -73,46 +72,48 @@ private fun handleEffect(
 private fun TopMoviePicksContent(
     uiState: TopMoviePicksState,
     listener: TopMoviePicksInteractionListener,
-    snackBarState: SnackBarState
+    snackBarState: SnackBarState,
 ) {
     Scaffold(
-        modifier = Modifier
-            .background(Theme.color.surface)
-            .systemBarsPadding()
-            .statusBarsPadding(),
+        modifier =
+            Modifier
+                .background(Theme.color.surface)
+                .systemBarsPadding()
+                .statusBarsPadding(),
+        isLoading = uiState.isLoading,
         snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
+                isVisible = snackBarState.isVisible,
             )
         },
         topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClick,
                 screenTitle = stringResource(com.baghdad.ui.R.string.top_movies_picks),
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .padding(top = 12.dp)
-            ) {}
+                modifier =
+                    Modifier
+                        .padding(vertical = 8.dp)
+                        .padding(top = 12.dp),
+                    )
         },
     ) {
-        if (uiState.isLoading) {
-            Box(Modifier.fillMaxSize()) {
-                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = 16.dp,
-                bottom = 8.dp
-            ),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Theme.color.surface),
+            contentPadding =
+                PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 16.dp,
+                    bottom = 8.dp,
+                ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -123,7 +124,7 @@ private fun TopMoviePicksContent(
                     isSaved = movie.isSaved,
                     onSavedClick = { listener.onSaveMovieClick(movie.id) },
                     onClick = { listener.onMovieDetailsClick(movie.id) },
-                    modifier = Modifier.aspectRatio(0.8f)
+                    modifier = Modifier.aspectRatio(0.8f),
                 )
             }
         }
@@ -131,6 +132,4 @@ private fun TopMoviePicksContent(
 }
 
 @Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
