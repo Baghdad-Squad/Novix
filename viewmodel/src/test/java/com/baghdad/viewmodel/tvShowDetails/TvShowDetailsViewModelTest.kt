@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.tvShowDetails
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
@@ -7,6 +8,7 @@ import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -44,7 +46,7 @@ class TvShowDetailsViewModelTest {
             getTvShowCastMembersUseCase = getTvShowCastMembersUseCase,
             getTvShowSeasonEpisodesUseCase = getTvShowSeasonEpisodesUseCase,
             addContinueWatchingUseCase = addContinueWatchingUseCase,
-            defaultDispatcher = testDispatcher
+            ioDispatcher = testDispatcher
         )
     }
 
@@ -190,6 +192,30 @@ class TvShowDetailsViewModelTest {
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
 
         assertThat(true).isTrue()
+    }
+
+    @Test
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
+        // Given
+        coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } throws NoInternetException()
+        coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
+        coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
+        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+
+        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+        val job = launch {
+            tvShowDetailsViewModel.snackBarState.collect {
+                emittedSnackBarMessages.add(it.message)
+            }
+        }
+
+        // When
+        tvShowDetailsViewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+
+        // Then
+        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+        job.cancel()
     }
 
     private companion object {

@@ -39,7 +39,7 @@ val viewModelModule = module {
             getMovieImagesUseCase = get(),
             getMoreLikeThisPosterImageUseCase = get(),
             addContinueWatchingUseCase = get(),
-            defaultDispatcher = get(),
+            ioDispatcher = get(),
         )
     }
 
@@ -57,7 +57,7 @@ val viewModelModule = module {
             getTvShowCastMembersUseCase = get(),
             getTvShowSeasonEpisodesUseCase = get(),
             addContinueWatchingUseCase = get(),
-            defaultDispatcher = get()
+            ioDispatcher = get()
         )
     }
 

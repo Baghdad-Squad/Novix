@@ -20,7 +20,7 @@ class TvShowDetailsViewModel(
     private val getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase,
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
-    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
     ) :
     BaseViewModel<TvShowDetailsScreenState, TvShowDetailsScreenEffect>(TvShowDetailsScreenState()),
     TvShowDetailsInteractionListener {
@@ -34,7 +34,7 @@ class TvShowDetailsViewModel(
     private fun getTvShowDetails(tvShowId: Long) {
         tryToExecute(
             callee = { getTvShowDetailsUseCase(tvShowId) },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetTvShowDetailsSuccess,
             onStart = { updateState { it.copy(isTvShowDetailsLoading = true) } },
             onFinally = ::onFinallyAndAddToContinueWatching,
@@ -60,7 +60,7 @@ class TvShowDetailsViewModel(
     private fun getTvShowCast(tvShowId: Long) {
         tryToExecute(
             callee = { getTvShowCastMembersUseCase(tvShowId) },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetTvShowCastSuccess,
             onStart = { updateState { it.copy(isCastMembersLoading = true) } },
             onFinally = { updateState { it.copy(isCastMembersLoading = false) } },
@@ -115,7 +115,7 @@ class TvShowDetailsViewModel(
         updateState { it.copy(selectedSeasonIndex = seasonIndex) }
         tryToExecute(
             callee = { getTvShowSeasonEpisodesUseCase(tvShowId, seasonIndex + 1) },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetTvShowEpisodesSuccess,
             onStart = {updateState { it.copy(isEpisodesLoading = true) }},
             onFinally = {updateState { it.copy(isEpisodesLoading = false) }},
