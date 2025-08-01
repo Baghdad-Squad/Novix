@@ -1,7 +1,9 @@
 package com.baghdad.viewmodel.topTvShowPicks
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.entity.media.TvShow
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
@@ -21,16 +23,34 @@ class TopTvShowViewModel(
             callee = { getActorTvShowUseCase(actorId) },
             onSuccess = ::onGetActorTvShowSuccess,
             onStart = ::onLoading,
+            onError = ::onGetActorTvShowError,
             onFinally = ::onFinally
         )
     }
 
     private fun onGetActorTvShowSuccess(tvShows: List<TvShow>) {
+        hideSnackBar()
         updateState { topTvShowState ->
             topTvShowState.copy(
                 tvShows = tvShows.map { it.toUIState() }
             )
         }
+    }
+
+    private fun onGetActorTvShowError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
+    }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
+        )
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
@@ -56,6 +76,10 @@ class TopTvShowViewModel(
 
     override fun onBackClick() {
         sendEffect(TopTvShowPicksEffect.NavigateBack)
+    }
+
+    override fun onSnackBarActionLabelClick() {
+        getActorTvShow(actorId)
     }
 
     private fun onLoading() {

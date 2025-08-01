@@ -69,7 +69,7 @@ fun LazyGridScope.upcomingSection(
             )
         }
     } else {
-        itemsIndexed(items = upcomingItems, key = { _, item -> item.id }) { index, item ->
+        itemsIndexed(items = upcomingItems) { index, item ->
             val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 150))
             val isInFirstRow = index < itemsPerRow
             val isFirstInRow = index % itemsPerRow == 0
