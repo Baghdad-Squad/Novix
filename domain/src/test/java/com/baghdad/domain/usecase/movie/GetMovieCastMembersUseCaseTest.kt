@@ -20,16 +20,17 @@ class GetMovieCastMembersUseCaseTest {
     }
 
     @Test
-    fun `should get movies detail from when function run successfully`() = runTest {
+    fun `getMovieCastMembersUseCase() should return cast members when repository returns data`() = runTest {
         val movieId = 1L
         coEvery { movieRepository.getMovieCastMembers(movieId) } returns castMembers
+
         val result = getMovieCastMembersUseCase.invoke(movieId)
+
         assertThat(result).isEqualTo(castMembers)
     }
 
-
     @Test
-    fun `should return cast with valid but minimal actor data`() = runTest {
+    fun `getMovieCastMembersUseCase() should return cast with minimal actor data when repository returns minimal data`() = runTest {
         val movieId = 2L
         val minimalCast = listOf(
             CastMember(
@@ -109,6 +110,5 @@ class GetMovieCastMembersUseCaseTest {
                 characterName = "Ariadne"
             )
         )
-
     }
 }

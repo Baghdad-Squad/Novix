@@ -29,7 +29,7 @@ class GetGenresUseCaseTest {
     }
 
     @Test
-    fun `getMovieGenres should return genres from movie repository`() = runTest {
+    fun `getMovieGenres() should return genres from movie repository`() = runTest {
         val movieGenres = listOf(actionGenre, comedyGenre)
         coEvery { movieRepository.getGenres() } returns movieGenres
 
@@ -39,7 +39,7 @@ class GetGenresUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenres should return genres from tv show repository`() = runTest {
+    fun `getTvShowGenres() should return genres from tv show repository`() = runTest {
         val tvShowGenres = listOf(dramaGenre, thrillerGenre)
         coEvery { tvShowRepository.getGenres() } returns tvShowGenres
 
@@ -49,7 +49,7 @@ class GetGenresUseCaseTest {
     }
 
     @Test
-    fun `getMovieGenres should return empty list when movie repository returns empty list`() =
+    fun `getMovieGenres() should return empty list when movie repository returns empty list`() =
         runTest {
         coEvery { movieRepository.getGenres() } returns emptyList()
 
@@ -59,7 +59,7 @@ class GetGenresUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenres should return empty list when tv show repository returns empty list`() =
+    fun `getTvShowGenres() should return empty list when tv show repository returns empty list`() =
         runTest {
         coEvery { tvShowRepository.getGenres() } returns emptyList()
 
@@ -69,7 +69,7 @@ class GetGenresUseCaseTest {
     }
 
     @Test
-    fun `getMovieGenres should propagate exception when movie repository throws exception`() =
+    fun `getMovieGenres() should propagate exception when movie repository throws exception`() =
         runTest {
             val exception = RuntimeException()
             coEvery { movieRepository.getGenres() } throws exception
@@ -82,7 +82,7 @@ class GetGenresUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenres should propagate exception when tv show repository throws exception`() =
+    fun `getTvShowGenres() should propagate exception when tv show repository throws exception`() =
         runTest {
         val exception = RuntimeException()
             coEvery { tvShowRepository.getGenres() } throws exception

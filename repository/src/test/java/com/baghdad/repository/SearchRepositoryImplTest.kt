@@ -15,6 +15,7 @@ import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.RecentSearchDto
 import com.baghdad.repository.model.TvShowDto
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -24,14 +25,11 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.util.Locale
 
 class SearchRepositoryImplTest {
-
     private lateinit var searchRemoteDataSource: RemoteSearchDataSource
     private lateinit var remoteGenreDataSource: RemoteGenreDataSource
     private lateinit var localRecentSearchDataSource: LocalRecentSearchDataSource
@@ -68,15 +66,20 @@ class SearchRepositoryImplTest {
 
     @Test
     fun `searchActorsByName should fetch from remote when cache is empty`() = runTest {
-
+        // Given
         val query = "Jane Doe"
         val page = 1
         val pageSize = 20
         val remoteActors = listOf(createMockActorDto(2L, "Jane Doe"))
         val remoteResult = PagedResultDto(remoteActors, nextKey = 2, prevKey = null)
-
         coEvery { localSearchQueryDataSource.deleteInvalidSearchQueries(any()) } returns Unit
-        coEvery { localActorDataSource.searchActorsByName(query, page, pageSize) } returnsMany listOf(
+        coEvery {
+            localActorDataSource.searchActorsByName(
+                query,
+                page,
+                pageSize
+            )
+        } returnsMany listOf(
             emptyList(),
             remoteActors
         )
@@ -84,122 +87,128 @@ class SearchRepositoryImplTest {
         coEvery { localRecentSearchDataSource.addRecentSearchQuery(query) } returns Unit
         coEvery { localActorDataSource.addActors(remoteActors) } returns Unit
         coEvery { localSearchQueryDataSource.addSearchQueries(any()) } returns Unit
-
+        // When
         val result = searchRepositoryImpl.searchActorsByName(query, page, pageSize)
-
-        assertEquals(1, result.data.size)
-        assertEquals("Jane Doe", result.data[0].name)
-        assertEquals(2, result.nextKey)
-        assertNull(result.prevKey)
-
+        // Then
+        assertThat(1 == result.data.size).isTrue()
+        assertThat("Jane Doe" == result.data[0].name).isTrue()
+        assertThat(2 == result.nextKey).isTrue()
+        assertThat(result.prevKey).isNull()
         coVerify { searchRemoteDataSource.searchActors(query, page) }
         coVerify { localRecentSearchDataSource.addRecentSearchQuery(query) }
         coVerify { localActorDataSource.addActors(remoteActors) }
     }
 
-    @Test
-    fun `searchActorsByName should return empty result when no data found`() = runTest {
-
-        val query = "Unknown Actor"
-        val page = 1
-        val pageSize = 20
-        val emptyRemoteResult = PagedResultDto<ActorDto>(emptyList(), nextKey = null, prevKey = null)
-
-        coEvery { localSearchQueryDataSource.deleteInvalidSearchQueries(any()) } returns Unit
-        coEvery { localActorDataSource.searchActorsByName(query, page, pageSize) } returns emptyList()
-        coEvery { searchRemoteDataSource.searchActors(query, page) } returns emptyRemoteResult
-
-        val result = searchRepositoryImpl.searchActorsByName(query, page, pageSize)
-
-        assertEquals(0, result.data.size)
-        assertNull(result.nextKey)
-        assertNull(result.prevKey)
-
-        coVerify { searchRemoteDataSource.searchActors(query, page) }
-    }
-
 
     @Test
-    fun `searchMoviesByTitle should fetch from remote and update genre cache when local cache is empty`() = runTest {
+    fun `searchMoviesByTitle should fetch from remote and update genre cache when local cache is empty`() =
+        runTest {
+            // Given
+            val title = "Avatar"
+            val page = 1
+            val pageSize = 20
+            val movieGenres = listOf(createMockGenreDto(1L, "Action", GenreDto.GenreType.MOVIE))
+            val tvGenres = listOf(createMockGenreDto(2L, "Drama", GenreDto.GenreType.TV_SHOW))
+            val remoteMovies = listOf(createMockMovieDto(3L, "Avatar"))
+            val remoteResult = PagedResultDto(remoteMovies, nextKey = 2, prevKey = null)
 
-        val title = "Avatar"
-        val page = 1
-        val pageSize = 20
-        val movieGenres = listOf(createMockGenreDto(1L, "Action", GenreDto.GenreType.MOVIE))
-        val tvGenres = listOf(createMockGenreDto(2L, "Drama", GenreDto.GenreType.TV_SHOW))
-        val remoteMovies = listOf(createMockMovieDto(3L, "Avatar"))
-        val remoteResult = PagedResultDto(remoteMovies, nextKey = 2, prevKey = null)
+            mockkStatic(Locale::class)
+            every { Locale.getDefault().language } returns "en"
 
-        mockkStatic(Locale::class)
-        every { Locale.getDefault().language } returns "en"
+            coEvery { localSearchQueryDataSource.deleteInvalidSearchQueries(any()) } returns Unit
+            coEvery {
+                localMovieDataSource.searchMoviesByTitle(
+                    title,
+                    page,
+                    pageSize
+                )
+            } returnsMany listOf(
+                emptyList(),
+                remoteMovies
+            )
+            coEvery { remoteGenreDataSource.getMovieGenre("en") } returns movieGenres
+            coEvery { remoteGenreDataSource.getTvShowGenre("en") } returns tvGenres
+            coEvery { localGenreDataSource.addGenre(any()) } returns Unit
+            coEvery { localGenreDataSource.getMovieGenre("en") } returns movieGenres
+            coEvery {
+                searchRemoteDataSource.searchMovies(
+                    title,
+                    page,
+                    movieGenres
+                )
+            } returns remoteResult
+            coEvery { localRecentSearchDataSource.addRecentSearchQuery(title) } returns Unit
+            coEvery { localMovieDataSource.addMovies(remoteMovies) } returns Unit
+            coEvery { localSearchQueryDataSource.addSearchQueries(any()) } returns Unit
 
-        coEvery { localSearchQueryDataSource.deleteInvalidSearchQueries(any()) } returns Unit
-        coEvery { localMovieDataSource.searchMoviesByTitle(title, page, pageSize) } returnsMany listOf(
-            emptyList(),
-            remoteMovies
-        )
-        coEvery { remoteGenreDataSource.getMovieGenre("en") } returns movieGenres
-        coEvery { remoteGenreDataSource.getTvShowGenre("en") } returns tvGenres
-        coEvery { localGenreDataSource.addGenre(any()) } returns Unit
-        coEvery { localGenreDataSource.getMovieGenre("en") } returns movieGenres
-        coEvery { searchRemoteDataSource.searchMovies(title, page, movieGenres) } returns remoteResult
-        coEvery { localRecentSearchDataSource.addRecentSearchQuery(title) } returns Unit
-        coEvery { localMovieDataSource.addMovies(remoteMovies) } returns Unit
-        coEvery { localSearchQueryDataSource.addSearchQueries(any()) } returns Unit
+            // When
+            val result = searchRepositoryImpl.searchMoviesByTitle(title, page, pageSize)
 
-        val result = searchRepositoryImpl.searchMoviesByTitle(title, page, pageSize)
-
-        assertEquals(1, result.data.size)
-        assertEquals("Avatar", result.data[0].title)
-
-        coVerify { remoteGenreDataSource.getMovieGenre("en") }
-        coVerify { remoteGenreDataSource.getTvShowGenre("en") }
-        coVerify { localGenreDataSource.addGenre(movieGenres[0]) }
-        coVerify { localGenreDataSource.addGenre(tvGenres[0]) }
-        coVerify { searchRemoteDataSource.searchMovies(title, page, movieGenres) }
-    }
+            // Then
+            assertThat(1 == result.data.size).isTrue()
+            assertThat("Avatar" == result.data[0].title).isTrue()
+            coVerify { remoteGenreDataSource.getMovieGenre("en") }
+            coVerify { remoteGenreDataSource.getTvShowGenre("en") }
+            coVerify { localGenreDataSource.addGenre(movieGenres[0]) }
+            coVerify { localGenreDataSource.addGenre(tvGenres[0]) }
+            coVerify { searchRemoteDataSource.searchMovies(title, page, movieGenres) }
+        }
 
     @Test
-    fun `searchTvShowsByName should fetch from remote and update genre cache when local cache is empty`() = runTest {
-        // Given
-        val title = "The Office"
-        val page = 1
-        val pageSize = 20
-        val movieGenres = listOf(createMockGenreDto(1L, "Action", GenreDto.GenreType.MOVIE))
-        val tvGenres = listOf(createMockGenreDto(2L, "Comedy", GenreDto.GenreType.TV_SHOW))
-        val remoteTvShows = listOf(createMockTvShowDto(3L, "The Office"))
-        val remoteResult = PagedResultDto(remoteTvShows, nextKey = 2, prevKey = null)
+    fun `searchTvShowsByName should fetch from remote and update genre cache when local cache is empty`() =
+        runTest {
+            // Given
+            val title = "The Office"
+            val page = 1
+            val pageSize = 20
+            val movieGenres = listOf(createMockGenreDto(1L, "Action", GenreDto.GenreType.MOVIE))
+            val tvGenres = listOf(createMockGenreDto(2L, "Comedy", GenreDto.GenreType.TV_SHOW))
+            val remoteTvShows = listOf(createMockTvShowDto(3L, "The Office"))
+            val remoteResult = PagedResultDto(remoteTvShows, nextKey = 2, prevKey = null)
 
-        mockkStatic(Locale::class)
-        every { Locale.getDefault().language } returns "en"
+            mockkStatic(Locale::class)
+            every { Locale.getDefault().language } returns "en"
 
-        coEvery { localSearchQueryDataSource.deleteInvalidSearchQueries(any()) } returns Unit
-        coEvery { localTvShowDataSource.searchTvShowsByTitle(title, page, pageSize) } returnsMany listOf(
-            emptyList(),
-            remoteTvShows
-        )
-        coEvery { remoteGenreDataSource.getMovieGenre("en") } returns movieGenres
-        coEvery { remoteGenreDataSource.getTvShowGenre("en") } returns tvGenres
-        coEvery { localGenreDataSource.addGenre(any()) } returns Unit
-        coEvery { localGenreDataSource.getTvShowGenre("en") } returns tvGenres
-        coEvery { searchRemoteDataSource.searchTvShows(title, page, tvGenres) } returns remoteResult
-        coEvery { localRecentSearchDataSource.addRecentSearchQuery(title) } returns Unit
-        coEvery { localTvShowDataSource.addTvShows(remoteTvShows) } returns Unit
-        coEvery { localSearchQueryDataSource.addSearchQueries(any()) } returns Unit
+            coEvery { localSearchQueryDataSource.deleteInvalidSearchQueries(any()) } returns Unit
+            coEvery {
+                localTvShowDataSource.searchTvShowsByTitle(
+                    title,
+                    page,
+                    pageSize
+                )
+            } returnsMany listOf(
+                emptyList(),
+                remoteTvShows
+            )
+            coEvery { remoteGenreDataSource.getMovieGenre("en") } returns movieGenres
+            coEvery { remoteGenreDataSource.getTvShowGenre("en") } returns tvGenres
+            coEvery { localGenreDataSource.addGenre(any()) } returns Unit
+            coEvery { localGenreDataSource.getTvShowGenre("en") } returns tvGenres
+            coEvery {
+                searchRemoteDataSource.searchTvShows(
+                    title,
+                    page,
+                    tvGenres
+                )
+            } returns remoteResult
+            coEvery { localRecentSearchDataSource.addRecentSearchQuery(title) } returns Unit
+            coEvery { localTvShowDataSource.addTvShows(remoteTvShows) } returns Unit
+            coEvery { localSearchQueryDataSource.addSearchQueries(any()) } returns Unit
 
-        val result = searchRepositoryImpl.searchTvShowsByName(title, page, pageSize)
+            // When
+            val result = searchRepositoryImpl.searchTvShowsByName(title, page, pageSize)
 
-        assertEquals(1, result.data.size)
-        assertEquals("The Office", result.data[0].title)
-
-        coVerify { remoteGenreDataSource.getMovieGenre("en") }
-        coVerify { remoteGenreDataSource.getTvShowGenre("en") }
-        coVerify { searchRemoteDataSource.searchTvShows(title, page, tvGenres) }
-    }
+            // Then
+            assertThat(1 == result.data.size).isTrue()
+            assertThat("The Office" == result.data[0].title).isTrue()
+            coVerify { remoteGenreDataSource.getMovieGenre("en") }
+            coVerify { remoteGenreDataSource.getTvShowGenre("en") }
+            coVerify { searchRemoteDataSource.searchTvShows(title, page, tvGenres) }
+        }
 
     @Test
     fun `getRecentSearches should return mapped recent searches flow`() = runTest {
-
+        // Given
         val mockRecentSearchDtos: List<RecentSearchDto> = listOf(
             createMockRecentSearchDto(1L, "John Doe"),
             createMockRecentSearchDto(2L, "Inception")
@@ -209,16 +218,18 @@ class SearchRepositoryImplTest {
             createMockRecentSearch(2L, "Inception")
         )
 
-        coEvery { localRecentSearchDataSource.getAllRecentSearches() } returns flowOf(mockRecentSearchDtos)
+        coEvery { localRecentSearchDataSource.getAllRecentSearches() } returns flowOf(
+            mockRecentSearchDtos
+        )
 
         val resultFlow = searchRepositoryImpl.getRecentSearches()
 
         resultFlow.collect { result ->
-            assertEquals(expectedRecentSearches.size, result.size)
-            assertEquals(expectedRecentSearches[0].id, result[0].id)
-            assertEquals(expectedRecentSearches[0].query, result[0].query)
-            assertEquals(expectedRecentSearches[1].id, result[1].id)
-            assertEquals(expectedRecentSearches[1].query, result[1].query)
+            assertThat(expectedRecentSearches.size == result.size).isTrue()
+            assertThat(expectedRecentSearches[0].id == result[0].id).isTrue()
+            assertThat(expectedRecentSearches[0].query == result[0].query).isTrue()
+            assertThat(expectedRecentSearches[1].id == result[1].id).isTrue()
+            assertThat(expectedRecentSearches[1].query == result[1].query).isTrue()
         }
 
         coVerify { localRecentSearchDataSource.getAllRecentSearches() }
@@ -258,24 +269,94 @@ class SearchRepositoryImplTest {
 
         coVerify { localRecentSearchDataSource.deleteAllRecentSearches() }
     }
+
     @Test
-    fun `searchActorsByName should handle remote data source exception`() = runTest {
+    fun `searchActorsByName should save recent search even when data comes from cache`() = runTest {
         // Given
-        val query = "Actor"
+        val query = "Cached Actor"
         val page = 1
         val pageSize = 20
-        val exception = RuntimeException("Network error")
+        val cachedActors = listOf(createMockActorDto(1L, "Cached Actor"))
 
         coEvery { localSearchQueryDataSource.deleteInvalidSearchQueries(any()) } returns Unit
-        coEvery { localActorDataSource.searchActorsByName(query, page, pageSize) } returns emptyList()
-        coEvery { searchRemoteDataSource.searchActors(query, page) } throws exception
+        coEvery {
+            localActorDataSource.searchActorsByName(
+                query,
+                page,
+                pageSize
+            )
+        } returns cachedActors
+        coEvery { localRecentSearchDataSource.addRecentSearchQuery(query) } returns Unit
 
-        assertThrows<Exception> {
-            searchRepositoryImpl.searchActorsByName(query, page, pageSize)
+        // When
+        val result = searchRepositoryImpl.searchActorsByName(query, page, pageSize)
+
+        // Then
+        assertThat(1 == result.data.size).isTrue()
+        assertThat("Cached Actor" == result.data[0].name).isTrue()
+        coVerify { localRecentSearchDataSource.addRecentSearchQuery(query) }
+        coVerify(exactly = 0) { searchRemoteDataSource.searchActors(any(), any()) }
+    }
+
+    @Test
+    fun `searchMoviesByTitle should save recent search even when data comes from cache`() =
+        runTest {
+            // Given
+            val title = "Cached Movie"
+            val page = 1
+            val pageSize = 20
+            val cachedMovies = listOf(createMockMovieDto(1L, "Cached Movie"))
+            coEvery { localSearchQueryDataSource.deleteInvalidSearchQueries(any()) } returns Unit
+            coEvery {
+                localMovieDataSource.searchMoviesByTitle(
+                    title,
+                    page,
+                    pageSize
+                )
+            } returns cachedMovies
+            coEvery { localRecentSearchDataSource.addRecentSearchQuery(title) } returns Unit
+
+            // When
+            val result = searchRepositoryImpl.searchMoviesByTitle(title, page, pageSize)
+
+            // Then
+            assertThat(1 == result.data.size).isTrue()
+            assertThat("Cached Movie" == result.data[0].title).isTrue()
+
+            coVerify { localRecentSearchDataSource.addRecentSearchQuery(title) }
+            coVerify(exactly = 0) { searchRemoteDataSource.searchMovies(any(), any(), any()) }
         }
 
-        coVerify { searchRemoteDataSource.searchActors(query, page) }
-    }
+    @Test
+    fun `searchTvShowsByName should save recent search even when data comes from cache`() =
+        runTest {
+            // Given
+            val title = "Cached TvShow"
+            val page = 1
+            val pageSize = 20
+            val cachedTvShows = listOf(createMockTvShowDto(1L, "Cached TvShow"))
+
+            coEvery { localSearchQueryDataSource.deleteInvalidSearchQueries(any()) } returns Unit
+            coEvery {
+                localTvShowDataSource.searchTvShowsByTitle(
+                    title,
+                    page,
+                    pageSize
+                )
+            } returns cachedTvShows
+            coEvery { localRecentSearchDataSource.addRecentSearchQuery(title) } returns Unit
+
+            // When
+            val result = searchRepositoryImpl.searchTvShowsByName(title, page, pageSize)
+
+            // Then
+            assertThat(1 == result.data.size).isTrue()
+            assertThat("Cached TvShow" == result.data[0].title).isTrue()
+
+            coVerify { localRecentSearchDataSource.addRecentSearchQuery(title) }
+            coVerify(exactly = 0) { searchRemoteDataSource.searchTvShows(any(), any(), any()) }
+        }
+
     companion object {
 
         private fun createMockActorDto(

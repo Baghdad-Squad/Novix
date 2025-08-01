@@ -7,10 +7,10 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import org.junit.jupiter.api.Test
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class GetEpisodeDetailsUseCaseTest {
@@ -42,7 +42,7 @@ class GetEpisodeDetailsUseCaseTest {
     }
 
     @Test
-    fun `when getting episode details should return correct episode`() = runTest {
+    fun `invoke should return correct episode when called with valid tvId seasonNumber and episodeNumber`() = runTest {
         // Given
         val tvId = 12345L
         val seasonNumber = 1
@@ -63,7 +63,7 @@ class GetEpisodeDetailsUseCaseTest {
     }
 
     @Test
-    fun `when getting episode details should call repository with correct parameters`() = runTest {
+    fun `invoke() should call repository with correct parameters when called`() = runTest {
         // Given
         val tvId = 12345L
         val seasonNumber = 2
@@ -87,7 +87,7 @@ class GetEpisodeDetailsUseCaseTest {
     }
 
     @Test
-    fun `when repository throws exception should propagate it`() = runTest {
+    fun `invoke() should throw RuntimeException when repository throws exception`() = runTest {
         // Given
         val tvId = 12345L
         val seasonNumber = 1
@@ -107,7 +107,7 @@ class GetEpisodeDetailsUseCaseTest {
     }
 
     @Test
-    fun `when getting different episode should return correct data`() = runTest {
+    fun `invoke() should return correct episode data when called with different tvId seasonNumber and episodeNumber`() = runTest {
         // Given
         val tvId = 67890L
         val seasonNumber = 3

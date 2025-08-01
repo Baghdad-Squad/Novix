@@ -16,7 +16,7 @@ import com.baghdad.viewmodel.review.ReviewViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
 import com.baghdad.viewmodel.topRating.TopRatingViewModel
-import com.baghdad.viewmodel.topTvShowPicks.TopTvShowViewModel
+import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksViewModel
 import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
@@ -30,9 +30,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModelOf(::SearchViewModel)
     single { SearchFilterHelper() }
-    viewModel { (actorId: Long) ->
-        ActorGalleryViewModel(get(), actorId)
-    }
+
     viewModel { (id: Long) ->
         MovieDetailsViewModel(
             movieId = id,
@@ -40,32 +38,45 @@ val viewModelModule = module {
             getCastsInfoUseCase = get(),
             getMovieImagesUseCase = get(),
             getMoreLikeThisPosterImageUseCase = get(),
-            addContinueWatchingUseCase = get()
+            addContinueWatchingUseCase = get(),
+            ioDispatcher = get(),
         )
     }
 
     viewModel { (actorId: Long) ->
-        ActorGalleryViewModel(get(), actorId)
+        ActorGalleryViewModel(get(), actorId, get())
     }
     viewModel { (actorId: Long) ->
-        ActorDetailsViewModel(actorId, get(), get(), get(), get())
+        ActorDetailsViewModel(actorId, get(), get(), get(), get(), get())
     }
-    viewModelOf(::TvShowDetailsViewModel)
+
+    viewModel{(tvShowId: Long) ->
+        TvShowDetailsViewModel(
+            tvShowId = tvShowId,
+            getTvShowDetailsUseCase = get(),
+            getTvShowCastMembersUseCase = get(),
+            getTvShowSeasonEpisodesUseCase = get(),
+            addContinueWatchingUseCase = get(),
+            ioDispatcher = get()
+        )
+    }
+
     viewModel { (mediaId: Long, mediaType: ContentType) ->
         ReviewViewModel(
             contentId = mediaId,
             contentType = mediaType,
             getMovieReviewsUseCase = get(),
-            getSeriesReviewsUseCase = get()
+            getSeriesReviewsUseCase = get(),
         )
     }
 
     viewModelOf(::EpisodeDetailsViewModel)
+    single<CoroutineDispatcher> { Dispatchers.IO }
     viewModel { (actorId: Long) ->
-        TopMoviePicksViewModel(actorId, get())
+        TopMoviePicksViewModel(actorId, get(), get())
     }
     viewModel { (actorId: Long) ->
-        TopTvShowViewModel(actorId, get())
+        TopTvShowPicksViewModel(actorId, get(), get())
     }
     viewModel {
         SearchViewModel(
