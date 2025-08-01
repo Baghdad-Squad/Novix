@@ -1,8 +1,10 @@
 package com.baghdad.viewmodel.trendingMovie
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
 import com.baghdad.entity.media.Genre
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
@@ -16,11 +18,12 @@ class TrendingMoviesViewModel(
         loadMoviesByGenres(null)
     }
 
+
     private fun loadGenres() {
         tryToExecute(
             callee = { getGenresUseCase.getMovieGenres() },
             onSuccess = ::handleGenreSuccess,
-            onError = { mapThrowableToErrorMessage(it) }
+            onError = ::onLoadDataError
         )
     }
 
@@ -41,7 +44,25 @@ class TrendingMoviesViewModel(
                         movies = flow,
                     )
                 }
-            }
+                hideSnackBar()
+            },
+            onInitialLoadError = ::onLoadDataError
+        )
+    }
+
+    private fun onLoadDataError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
+    }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
         )
     }
 
@@ -68,6 +89,11 @@ class TrendingMoviesViewModel(
         if (categoryId != currentState.selectedGenreId) {
             loadMoviesByGenres(categoryId)
         }
+    }
+
+    override fun onSnackBarActionLabelClick(categoryId: Long?) {
+        loadGenres()
+        loadMoviesByGenres(categoryId)
     }
 
     private fun onFinally() {
