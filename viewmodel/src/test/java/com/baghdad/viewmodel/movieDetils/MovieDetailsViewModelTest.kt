@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.movieDetils
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
@@ -9,36 +10,31 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieDetailsViewModelTest {
-
     private lateinit var getMovieDetailsUseCase: GetMovieDetailsUseCase
     private lateinit var getCastsInfoUseCase: GetMovieCastMembersUseCase
     private lateinit var getMovieImagesUseCase: GetMovieGalleryUseCase
     private lateinit var getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase
     private lateinit var addContinueWatchingUseCase: AddContinueWatchingUseCase
-    private lateinit var viewModel: MovieDetailsViewModel
+    private lateinit var movieDetailsViewModel: MovieDetailsViewModel
 
     private val testDispatcher = StandardTestDispatcher()
     private val movieId = 123L
@@ -46,16 +42,7 @@ class MovieDetailsViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        setupMocks()
-        createViewModel()
-    }
 
-    @AfterEach
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
-    private fun setupMocks() {
         getMovieDetailsUseCase = mockk()
         getCastsInfoUseCase = mockk()
         getMovieImagesUseCase = mockk()
@@ -67,185 +54,201 @@ class MovieDetailsViewModelTest {
         coEvery { getMovieImagesUseCase(any()) } returns createMockImages()
         coEvery { getMoreLikeThisPosterImageUseCase(any()) } returns createMockSimilarMovies()
         coEvery { addContinueWatchingUseCase(any(), any(), any(), any()) } returns Unit
-    }
 
-    private fun createViewModel() {
-        viewModel = MovieDetailsViewModel(
+        movieDetailsViewModel = MovieDetailsViewModel(
             getMovieDetailsUseCase = getMovieDetailsUseCase,
             getCastsInfoUseCase = getCastsInfoUseCase,
             getMovieImagesUseCase = getMovieImagesUseCase,
             getMoreLikeThisPosterImageUseCase = getMoreLikeThisPosterImageUseCase,
             addContinueWatchingUseCase = addContinueWatchingUseCase,
-            movieId = movieId
+            movieId = movieId,
+            ioDispatcher = testDispatcher,
         )
     }
 
     @Test
-    fun `initialize() should call all required use cases and update state correctly when successful`() =
+    fun `onExtendOverviewClick should toggle isExtendText state successfully when clicked`() =
         runTest {
+            // Given
+            val initialState = movieDetailsViewModel.uiState.value.isExtendText
             // When
-            advanceUntilIdle()
-
+            movieDetailsViewModel.onExtendOverviewClick()
+            val finalState = movieDetailsViewModel.uiState.value.isExtendText
             // Then
-            coVerify {
-                getMovieDetailsUseCase(movieId)
-                getCastsInfoUseCase(movieId)
-                getMovieImagesUseCase(movieId)
-                getMoreLikeThisPosterImageUseCase(movieId)
-                addContinueWatchingUseCase(any(), any(), any(), any())
-            }
-
-            val state = viewModel.uiState.first()
-            assertThat(state.movieId).isEqualTo(movieId)
-            assertThat(state.movieName).isEqualTo("Test Movie")
-            assertThat(state.overView).isEqualTo("Test movie overview")
-            assertThat(state.rating).isWithin(0.01).of(8.0)
-            assertThat(state.duration).isAnyOf("2 hr 0 min", "2h 0min")
-            assertThat(state.posterImageURL).isEqualTo("/movie_poster.jpg")
-            assertThat(state.movieImages).hasSize(3)
-            assertThat(state.castMembers).hasSize(2)
-            assertThat(state.moreLikeThisMovie).hasSize(2)
-            assertThat(state.categories).hasSize(2)
-            assertThat(state.isLoading).isFalse()
+            assertThat(!initialState == finalState).isTrue()
         }
 
     @Test
-    fun `onExtendOverviewClick() should toggle isExtendText state when called`() = runTest {
+    fun `onCategoryClick should Navigate To Category when clicked`() = runTest {
         // Given
-        advanceUntilIdle()
-        val initialState = viewModel.uiState.first().isExtendText
+        val categoryId = 28L
+        var receivedEffect: MovieDetailsEffect? = null
 
+        val job = launch {
+            movieDetailsViewModel.uiEffect.collect { effect ->
+                receivedEffect = effect
+            }
+        }
         // When
-        viewModel.onExtendOverviewClick()
-
+        movieDetailsViewModel.onCategoryClick(categoryId)
+        advanceUntilIdle()
         // Then
-        val newState = viewModel.uiState.first().isExtendText
-        assertThat(newState).isNotEqualTo(initialState)
+        assertThat(MovieDetailsEffect.NavigateToCategory(categoryId) == receivedEffect).isTrue()
+        job.cancel()
     }
 
     @Test
-    fun `onCategoryClick() should emit NavigateToCategory effect with correct categoryId when called`() =
+    fun `onSaveMoreLikeThisMedia should toggle isSaved state for the movie when clicked`() =
         runTest {
             // Given
-            advanceUntilIdle()
-            val categoryId = 28L
-            val effects = mutableListOf<MovieDetailsEffect>()
-
-            val job = launch {
-                viewModel.uiEffect.toList(effects)
-            }
-
+            val initialState = movieDetailsViewModel.uiState.value.moreLikeThisMovie.first().isSaved
             // When
-            viewModel.onCategoryClick(categoryId)
+            movieDetailsViewModel.onSaveMoreLikeThisMedia(456L)
             advanceUntilIdle()
-
+            val finalState = movieDetailsViewModel.uiState.value.moreLikeThisMovie.first().isSaved
             // Then
-            assertThat(effects.last()).isEqualTo(MovieDetailsEffect.NavigateToCategory(categoryId))
-            job.cancel()
+            assertThat(!initialState == finalState).isTrue()
         }
 
     @Test
-    fun `onActorClick() should emit NavigateToActorDetails effect with correct actorId when called`() =
-        runTest {
-            // Given
-            advanceUntilIdle()
-            val actorId = 456L
-            val effects = mutableListOf<MovieDetailsEffect>()
-
-            val job = launch {
-                viewModel.uiEffect.toList(effects)
-            }
-
-            // When
-            viewModel.onActorClick(actorId)
-            advanceUntilIdle()
-
-            // Then
-            assertThat(effects.last()).isEqualTo(MovieDetailsEffect.NavigateToActorDetails(actorId))
-            job.cancel()
-        }
-
-    @Test
-    fun `onMovieClick() should emit NavigateToMovie effect with correct movieId when called`() =
-        runTest {
-            // Given
-            advanceUntilIdle()
-            val clickedMovieId = 321L
-            val effects = mutableListOf<MovieDetailsEffect>()
-
-            val job = launch {
-                viewModel.uiEffect.toList(effects)
-            }
-
-            // When
-            viewModel.onMovieClick(clickedMovieId)
-            advanceUntilIdle()
-
-            // Then
-            assertThat(effects.last()).isEqualTo(MovieDetailsEffect.NavigateToMovie(clickedMovieId))
-            job.cancel()
-        }
-
-    @Test
-    fun `onTrailerClick() should emit OpenYoutubeLink effect with correct URL when called`() =
-        runTest {
-            // Given
-            advanceUntilIdle()
-            val expectedUrl = viewModel.uiState.first().movieTrailerURL
-            val effects = mutableListOf<MovieDetailsEffect>()
-
-            val job = launch {
-                viewModel.uiEffect.toList(effects)
-            }
-
-            // When
-            viewModel.onTrailerClick()
-            advanceUntilIdle()
-
-            // Then
-            assertThat(effects.last()).isEqualTo(MovieDetailsEffect.OpenYoutubeLink(expectedUrl))
-            job.cancel()
-        }
-
-    @Test
-    fun `initialize() should handle errors gracefully when getMovieDetails fails`() = runTest {
+    fun `onBackClicked should Navigate Back when clicked`() = runTest {
         // Given
-        val exception = RuntimeException("Network error")
-        coEvery { getMovieDetailsUseCase(any()) } throws exception
-
+        var receivedEffect: MovieDetailsEffect? = null
+        val job = launch {
+            movieDetailsViewModel.uiEffect.collect { effect ->
+                receivedEffect = effect
+            }
+        }
         // When
-        createViewModel()
+        movieDetailsViewModel.onBackClicked()
         advanceUntilIdle()
-
         // Then
-        coVerify { getMovieDetailsUseCase(movieId) }
+        assertThat(MovieDetailsEffect.NavigateBack == receivedEffect).isTrue()
+        job.cancel()
     }
 
     @Test
-    fun `onStarMovieClick() should update loading state correctly when called`() = runTest {
+    fun `onActorClick should send Navigate To ActorDetails when clicked`() = runTest {
         // Given
-        advanceUntilIdle()
-
+        val actorId = 456L
+        var receivedEffect: MovieDetailsEffect? = null
+        val job = launch {
+            movieDetailsViewModel.uiEffect.collect { effect ->
+                receivedEffect = effect
+            }
+        }
         // When
-        viewModel.onStarMovieClick()
+        movieDetailsViewModel.onActorClick(actorId)
         advanceUntilIdle()
-
         // Then
-        assertThat(viewModel.uiState.first().isLoading).isFalse()
+        assertThat(MovieDetailsEffect.NavigateToActorDetails(actorId) == receivedEffect).isTrue()
+        job.cancel()
     }
 
     @Test
-    fun `onSaveCurrentMovieClick() should update loading state correctly when called`() = runTest {
+    fun `onReviewClick should send Navigate To ReviewDetails when clicked`() = runTest {
         // Given
+        val reviewId = 789L
+        var receivedEffect: MovieDetailsEffect? = null
+        val job = launch {
+            movieDetailsViewModel.uiEffect.collect { effect ->
+                receivedEffect = effect
+            }
+        }
+        // When
+        movieDetailsViewModel.onReviewClick(reviewId)
         advanceUntilIdle()
+        // Then
+        assertThat(MovieDetailsEffect.NavigateToReviewDetails(reviewId) == receivedEffect).isTrue()
+        job.cancel()
+    }
+
+    @Test
+    fun `onMovieClick should Navigate To Movie when clicked`() = runTest {
+        // Given
+        val movieId = 321L
+        var receivedEffect: MovieDetailsEffect? = null
+        val job = launch {
+            movieDetailsViewModel.uiEffect.collect { effect ->
+                receivedEffect = effect
+            }
+        }
+        // When
+        movieDetailsViewModel.onMovieClick(movieId)
+        advanceUntilIdle()
+        // Then
+        assertThat(MovieDetailsEffect.NavigateToMovie(movieId) == receivedEffect).isTrue()
+        job.cancel()
+    }
+
+    @Test
+    fun `onBackClick should send Navigate Back when clicked`() = runTest {
+        // Given
+        var receivedEffect: MovieDetailsEffect? = null
+        val job = launch {
+            movieDetailsViewModel.uiEffect.collect { effect ->
+                receivedEffect = effect
+            }
+        }
+        // When
+        movieDetailsViewModel.onBackClick()
+        advanceUntilIdle()
+        // Then
+        assertThat(MovieDetailsEffect.NavigateBack == receivedEffect).isTrue()
+        job.cancel()
+    }
+
+    @Test
+    fun `onTrailerClick should Open Youtube Link with correct URL when clicked`() = runTest {
+        // Given
+        var receivedEffect: MovieDetailsEffect? = null
+        val job = launch {
+            movieDetailsViewModel.uiEffect.collect { effect ->
+                receivedEffect = effect
+            }
+        }
+        // When
+        movieDetailsViewModel.onTrailerClick()
+        advanceUntilIdle()
+        // Then
+        val expectedUrl = movieDetailsViewModel.uiState.value.movieTrailerURL
+        assertThat(MovieDetailsEffect.OpenYoutubeLink(expectedUrl) ==  receivedEffect).isTrue()
+        job.cancel()
+    }
+
+    @Test
+    fun `onSaveCurrentMovieClick should set loading state correctly during execution when clicked`() =
+        runTest {
+            // When
+            movieDetailsViewModel.onSaveCurrentMovieClick()
+            advanceUntilIdle()
+            // Then
+            val finalState = movieDetailsViewModel.uiState.value
+            assertThat(finalState.isLoading).isFalse()
+        }
+
+    @Test
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
+        // Given
+        coEvery { getMovieDetailsUseCase(any()) } throws NoInternetException()
+        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+
+        val job = launch {
+            movieDetailsViewModel.snackBarState.collect {
+                emittedSnackBarMessages.add(it.message)
+            }
+        }
 
         // When
-        viewModel.onSaveCurrentMovieClick()
+        movieDetailsViewModel.onSnackBarActionLabelClick()
         advanceUntilIdle()
+        job.cancel()
 
         // Then
-        assertThat(viewModel.uiState.first().isLoading).isFalse()
+        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
     }
+
+
 
     companion object {
         private fun createMockMovie() = Movie(

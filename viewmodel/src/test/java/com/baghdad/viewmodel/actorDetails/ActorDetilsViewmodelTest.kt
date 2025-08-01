@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.actorDetails
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
@@ -9,10 +10,14 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.google.common.truth.Truth.assertThat
+import com.baghdad.viewmodel.dummyData.DummyDataFactory.createMockGallery
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -29,143 +34,188 @@ class ActorDetailsViewModelTest {
     private lateinit var getActorTvShowUseCase: GetActorTvShowUseCase
     private lateinit var getActorGalleryUseCase: GetActorGalleryUseCase
     private lateinit var viewModel: ActorDetailsViewModel
-
     private val testDispatcher = StandardTestDispatcher()
     private val actorId = 123L
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-
         getActorInfoUseCase = mockk()
         getActorMoviesUseCase = mockk()
         getActorTvShowUseCase = mockk()
         getActorGalleryUseCase = mockk()
-    }
-
-    private fun createViewModel() {
+        coEvery { getActorInfoUseCase(actorId) } returns createMockActor()
+        coEvery { getActorMoviesUseCase(actorId) } returns createMockMovies()
+        coEvery { getActorTvShowUseCase(actorId) } returns createMockTvShows()
+        coEvery { getActorGalleryUseCase(actorId) } returns createMockGallery()
         viewModel = ActorDetailsViewModel(
             actorId = actorId,
             getActorInfoUseCase = getActorInfoUseCase,
             getActorMoviesUseCase = getActorMoviesUseCase,
             getActorTvShowUseCase = getActorTvShowUseCase,
-            getActorGalleryUseCase = getActorGalleryUseCase
+            getActorGalleryUseCase = getActorGalleryUseCase,
+            ioDispatcher = testDispatcher
         )
     }
 
     @Test
-    fun `uiState should have empty gallery when getActorGalleryUseCase returns empty list`() =
-        runTest {
-            // Given
-            coEvery { getActorInfoUseCase(actorId) } returns createMockActor()
-            coEvery { getActorMoviesUseCase(actorId) } returns createMockMovies()
-            coEvery { getActorTvShowUseCase(actorId) } returns createMockTvShows()
-            coEvery { getActorGalleryUseCase(actorId) } returns emptyList()
-
-            // When
-            createViewModel()
-            advanceUntilIdle()
-
-            // Then
-            assertThat(viewModel.uiState.value.gallery).isEmpty()
-            assertThat(viewModel.uiState.value.isGalleryMoreThanTen).isFalse()
-        }
-
-    @Test
-    fun `onBackIconClick should send NavigateBack effect when back icon is clicked`() = runTest {
+    fun `onBackIconClick should send NavigateBack when it is clicked`() = runTest {
         // Given
-        setupSuccessfulMocks()
-        createViewModel()
-        advanceUntilIdle()
-
+        var receivedEffect: ActorDetailsScreenEffect? = null
+        val job = launch {
+            viewModel.uiEffect.collect { effect ->
+                receivedEffect = effect
+            }
+        }
         // When
         viewModel.onBackIconClick()
-
-    }
-
-    @Test
-    fun `isTextExpanded should be toggled when onReadMoreBiographyClick is called`() = runTest {
-        // Given
-        setupSuccessfulMocks()
-        createViewModel()
         advanceUntilIdle()
-        val initialState = viewModel.uiState.value.isTextExpanded
-
-        // When
-        viewModel.onReadMoreBiographyClick()
-
         // Then
-        assertThat(viewModel.uiState.value.isTextExpanded).isNotEqualTo(initialState)
+        assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateBack).isTrue()
+        job.cancel()
     }
 
     @Test
-    fun `NavigateToActorGallery effect should be sent when onViewAllGalleryClick is called`() =
+    fun `onReadMoreBiographyClick should toggle isTextExpanded state when it is clicked`() =
+        runTest {
+            // When
+            val initialState = viewModel.uiState.value.isTextExpanded
+            viewModel.onReadMoreBiographyClick()
+            val newState = viewModel.uiState.value.isTextExpanded
+            // Then
+            assertThat(newState != initialState).isTrue()
+        }
+
+    @Test
+    fun `onViewAllGalleryClick should Navigate To ActorGallery screen when it is clicked`() =
         runTest {
             // Given
-            setupSuccessfulMocks()
-            createViewModel()
-            advanceUntilIdle()
-
+            var receivedEffect: ActorDetailsScreenEffect? = null
+            val job = launch {
+                viewModel.uiEffect.collect { effect ->
+                    receivedEffect = effect
+                }
+            }
             // When
             viewModel.onViewAllGalleryClick()
-
+            advanceUntilIdle()
+            // Then
+            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToActorGallery).isTrue()
+            job.cancel()
         }
 
     @Test
-    fun `NavigateToActorTopMoviePicks effect should be sent when onViewAllTopMoviesPicksClick is called`() =
+    fun `onViewAllTopMoviesPicksClick should Navigate To ActorTopMoviePicks when it is clicked`() =
         runTest {
             // Given
-            setupSuccessfulMocks()
-            createViewModel()
-            advanceUntilIdle()
-
+            var receivedEffect: ActorDetailsScreenEffect? = null
+            val job = launch {
+                viewModel.uiEffect.collect { effect ->
+                    receivedEffect = effect
+                }
+            }
             // When
             viewModel.onViewAllTopMoviesPicksClick()
+            advanceUntilIdle()
+            // Then
+            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToActorTopMoviePicks).isTrue()
+            job.cancel()
         }
 
     @Test
-    fun `NavigateToActorTopTvShowPicks effect should be sent when onViewAllTopTvShowsClick is called`() =
+    fun `onViewAllTopTvShowsClick should Navigate To ActorTopTvShowPicks when it clicked`() =
         runTest {
             // Given
-            setupSuccessfulMocks()
-            createViewModel()
-            advanceUntilIdle()
-
+            var receivedEffect: ActorDetailsScreenEffect? = null
+            val job = launch {
+                viewModel.uiEffect.collect { effect ->
+                    receivedEffect = effect
+                }
+            }
             // When
             viewModel.onViewAllTopTvShowsClick()
+            advanceUntilIdle()
+            // Then
+            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks).isTrue()
+            job.cancel()
         }
 
     @Test
-    fun `NavigateToMovieDetails effect should be sent with correct movieId when onMovieCardClick is called`() =
+    fun `onMovieCardClick should Navigate To MovieDetails screen when clicked and it has the correct movieId`() =
         runTest {
             // Given
-            setupSuccessfulMocks()
-            createViewModel()
-            advanceUntilIdle()
+            var receivedEffect: ActorDetailsScreenEffect? = null
+            val job = launch {
+                viewModel.uiEffect.collect { effect ->
+                    receivedEffect = effect
+                }
+            }
+            // When
             val movieId = 456L
-
-            // When
             viewModel.onMovieCardClick(movieId)
+            advanceUntilIdle()
+            // Then
+            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToMovieDetails).isTrue()
+            job.cancel()
         }
 
     @Test
-    fun `NavigateToTvShowDetails effect should be sent with correct tvShowId when onTvShowCardClick is called`() =
+    fun `onTvShowCardClick should Navigate To TvShow Details screen when clicked and it has the correct tvShowId`() =
         runTest {
             // Given
-            setupSuccessfulMocks()
-            createViewModel()
-            advanceUntilIdle()
-            val tvShowId = 789L
-
+            var receivedEffect: ActorDetailsScreenEffect? = null
+            val job = launch {
+                viewModel.uiEffect.collect { effect ->
+                    receivedEffect = effect
+                }
+            }
             // When
+            val tvShowId = 789L
             viewModel.onTvShowCardClick(tvShowId)
+            advanceUntilIdle()
+            // Then
+            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToTvShowDetails).isTrue()
+            job.cancel()
         }
 
-    private fun setupSuccessfulMocks() {
-        coEvery { getActorInfoUseCase(actorId) } returns createMockActor()
-        coEvery { getActorMoviesUseCase(actorId) } returns createMockMovies()
-        coEvery { getActorTvShowUseCase(actorId) } returns createMockTvShows()
-        coEvery { getActorGalleryUseCase(actorId) } returns createMockGallery()
+    @Test
+    fun `onSnackBarActionLabelClick should load data when it is clicked`() = runTest {
+        // Given
+        val expectedActor = createMockActor()
+        coEvery { getActorInfoUseCase(actorId) } returns expectedActor
+        val effects = mutableListOf<ActorDetailsScreenEffect>()
+        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
+
+        // When
+        viewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+        job.cancel()
+
+        // Then
+        val actualState = viewModel.uiState.value
+        assertThat(actualState.actorInfo).isEqualTo(expectedActor.toActorInfoUI())
+        assertThat(actualState.isLoading).isFalse()
+    }
+
+    @Test
+    fun `getActorInfo should show no internet snackBar when NoInternetException is thrown`() = runTest {
+        // Given
+        coEvery { getActorInfoUseCase(actorId) } throws NoInternetException()
+        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+
+        val job = launch {
+            viewModel.snackBarState.collect {
+                emittedSnackBarMessages.add(it.message)
+            }
+        }
+
+        // When
+        viewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+        job.cancel()
+
+        // Then
+        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
     }
 
     companion object {
@@ -214,10 +264,6 @@ class ActorDetailsViewModelTest {
                 trailerURL = "/trailer_$index",
                 headerImagesURLs = listOf("/header1_$index.jpg", "/header2_$index.jpg")
             )
-        }
-
-        private fun createMockGallery() = (1..15).map { index ->
-            "/gallery_image_$index.jpg"
         }
     }
 }

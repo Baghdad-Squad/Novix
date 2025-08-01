@@ -1,6 +1,5 @@
-package com.baghdad.home
+package com.baghdad.viewmodel.home
 
-import com.baghdad.viewmodel.home.HomeScreenState
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

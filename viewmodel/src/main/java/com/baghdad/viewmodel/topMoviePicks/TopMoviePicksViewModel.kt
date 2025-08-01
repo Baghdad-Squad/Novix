@@ -7,10 +7,12 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class TopMoviePicksViewModel(
     val actorId: Long,
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<TopMoviePicksState, TopMoviePicksEffect>(TopMoviePicksState()),
     TopMoviePicksInteractionListener {
     init {
@@ -24,6 +26,7 @@ class TopMoviePicksViewModel(
     private fun getActorMovies(actorId: Long) {
         tryToExecute(
             callee = { getActorMoviesUseCase(actorId) },
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetActorMoviesSuccess,
             onError = ::onGetActorMoviesError,
             onStart = ::onLoading,
@@ -45,6 +48,8 @@ class TopMoviePicksViewModel(
         }
     }
 
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
     private fun showNoInternetSnackBar() {
         showSnackBar(
             message = BaseSnackBarMessage.NetworkError,
@@ -54,7 +59,6 @@ class TopMoviePicksViewModel(
         )
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
 
     override fun onMovieDetailsClick(movieId: Long) {
         sendEffect(TopMoviePicksEffect.NavigateToMovieDetails(movieId))

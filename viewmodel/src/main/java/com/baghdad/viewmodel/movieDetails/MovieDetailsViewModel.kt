@@ -12,6 +12,7 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
+import kotlinx.coroutines.CoroutineDispatcher
 
 class MovieDetailsViewModel(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
@@ -20,6 +21,7 @@ class MovieDetailsViewModel(
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
     private val movieId: Long,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
     MovieDetailsInteractionListener {
 
@@ -39,6 +41,19 @@ class MovieDetailsViewModel(
     }
 
     override fun onSaveCurrentMovieClick() {
+        tryToExecute(
+            callee = { currentState.movieId },
+            dispatcher = ioDispatcher,
+            onSuccess = {
+                updateState {
+                    it.copy(
+                        isSaved = !currentState.isSaved,
+                    )
+                }
+            },
+            onStart = ::onMoreLikeThisStarted,
+            onFinally = ::onMoreLikeThisFinished
+        )
         // TODO: save logic
     }
 
@@ -47,6 +62,7 @@ class MovieDetailsViewModel(
             callee = { currentState.moreLikeThisMovie.firstOrNull { it.id == id }?.id ?: 1L },
             onSuccess = ::onSaveMoreLikeThisMediaSuccess,
             onStart = ::onMoreLikeThisStarted,
+            dispatcher = ioDispatcher,
             onFinally = ::onMoreLikeThisFinished
         )
     }
@@ -131,10 +147,8 @@ class MovieDetailsViewModel(
         loadInitData()
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
-    }
-
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     private fun getMovieGallery() {
         tryToExecute(
@@ -143,6 +157,7 @@ class MovieDetailsViewModel(
             },
             onSuccess = ::onGetMovieGallerySuccess,
             onStart = ::onGetMovieGalleryStarted,
+            dispatcher = ioDispatcher,
             onFinally = ::onGetMovieGalleryFinished,
             onError = ::onError
         )
@@ -168,6 +183,7 @@ class MovieDetailsViewModel(
         tryToExecute(
             callee = { getMovieDetailsUseCase(movieId) },
             onSuccess = ::onGetMovieDetailsSuccess,
+            dispatcher = ioDispatcher,
             onStart = ::onGetMovieDetailsStarted,
             onFinally = ::onFinallyAndAddToContinueWatching,
             onError = ::onError
@@ -237,8 +253,9 @@ class MovieDetailsViewModel(
             onSuccess = ::onGetMovieMoreLikeThisSuccess,
             onStart = ::onGetMovieMoreLikeThisStarted,
             onFinally = ::onGetMovieMoreLikeThisFinished,
-            onError = ::onError
-        )
+            onError = ::onError,
+            dispatcher = ioDispatcher,
+            )
     }
 
     private fun onGetMovieMoreLikeThisStarted() {
@@ -281,6 +298,7 @@ class MovieDetailsViewModel(
 
     private fun addToContinueWatching() {
         tryToExecute(
+            dispatcher = ioDispatcher,
             callee = {
                 addContinueWatchingUseCase(
                     movieId, currentState.categories.map { it.id },

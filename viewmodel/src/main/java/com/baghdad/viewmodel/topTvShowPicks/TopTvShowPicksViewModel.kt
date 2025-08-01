@@ -7,10 +7,12 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
-class TopTvShowViewModel(
+class TopTvShowPicksViewModel(
     val actorId: Long,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<TopTvShowPicksState, TopTvShowPicksEffect>
     (TopTvShowPicksState()), TopTvShowPicksInteractionListener {
 
@@ -21,6 +23,7 @@ class TopTvShowViewModel(
     private fun getActorTvShow(actorId: Long) {
         tryToExecute(
             callee = { getActorTvShowUseCase(actorId) },
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetActorTvShowSuccess,
             onStart = ::onLoading,
             onError = ::onGetActorTvShowError,
@@ -37,6 +40,8 @@ class TopTvShowViewModel(
         }
     }
 
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
     private fun onGetActorTvShowError(throwable: Throwable) {
         when (throwable) {
             is NoInternetException -> showNoInternetSnackBar()
@@ -51,10 +56,6 @@ class TopTvShowViewModel(
             isSuccess = false,
             durationMillis = Int.MAX_VALUE.toLong(),
         )
-    }
-
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
     }
 
     override fun onTvShowDetailsClick(tvShowId: Long) {
