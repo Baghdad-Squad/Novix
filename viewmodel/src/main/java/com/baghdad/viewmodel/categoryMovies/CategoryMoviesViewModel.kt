@@ -15,13 +15,12 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryMoviesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-//    private val genreId: Long,
     private val getGenreMoviesUseCase: GetMoviesByGenreUseCase,
     private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase
 ) : BaseViewModel<CategoryMoviesState, CategoryMoviesEffect>(CategoryMoviesState()),
     CategoryMoviesInteractionListener {
 
-    private val genreId: Long = checkNotNull(savedStateHandle["genreId"])
+    private val categoryId: Long = checkNotNull(savedStateHandle["categoryId"])
     init {
         loadInitData()
     }
@@ -54,7 +53,7 @@ class CategoryMoviesViewModel @Inject constructor(
     private fun getGenreName() {
         hideSnackBar()
         tryToExecute(
-            callee = { getMovieGenreNameByIdUseCase.invoke(genreId) },
+            callee = { getMovieGenreNameByIdUseCase.invoke(categoryId) },
             onSuccess = { onGetGenreNameSuccess(it.name) },
             onError = { onGetGenreNameError(it) }
         )
@@ -85,7 +84,7 @@ class CategoryMoviesViewModel @Inject constructor(
     private fun getGenreMovies() {
         collectPagingFlow(
             loadData = { page ->
-                getGenreMoviesUseCase(genreId, page)
+                getGenreMoviesUseCase(categoryId, page)
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toUiState() },

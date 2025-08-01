@@ -50,6 +50,7 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 @Composable
 fun ActorDetailsScreen(
     viewModel: ActorDetailsViewModel = hiltViewModel(),
+    handleNavigation: (ActorDetailsNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()

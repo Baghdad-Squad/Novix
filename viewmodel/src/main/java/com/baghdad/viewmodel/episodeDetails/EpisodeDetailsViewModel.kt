@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.episodeDetails
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
@@ -26,7 +25,7 @@ class EpisodeDetailsViewModel @Inject constructor(
 //    private val tvShowId: Long = checkNotNull(savedStateHandle["tvShowId"])
 
     init {
-        loadInitData(tvShowId, seasonNumber, episodeNumber)
+        loadInitData(14L, seasonNumber, episodeNumber)
     }
 
     private fun loadInitData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
@@ -154,7 +153,7 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         loadInitData(
-            tvShowId, seasonNumber, episodeNumber
+            14L, seasonNumber, episodeNumber
         )
     }
 }

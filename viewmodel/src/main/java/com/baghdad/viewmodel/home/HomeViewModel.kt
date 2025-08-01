@@ -253,6 +253,7 @@ class HomeViewModel @Inject constructor(
             updateState {
                 it.copy(selectedUpcomingGenreId = genre?.id)
             }
+            getUpcomingItems()
         }
     }
 
