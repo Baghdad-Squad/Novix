@@ -22,7 +22,7 @@ class LoginUseCaseTest {
     }
 
     @Test
-    fun `should not throw any exception when Successful login`() = runTest {
+    fun `loginUseCase() should complete successfully when login is successful`() = runTest {
         // Given
         val username = "user"
         val password = "password"
@@ -33,6 +33,6 @@ class LoginUseCaseTest {
         // Then
         loginUseCase.invoke(username, password)
 
-        coVerify { authenticationRepository.login(username, password) }
+        coVerify(exactly = 1) { authenticationRepository.login(username, password) }
     }
 }

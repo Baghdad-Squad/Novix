@@ -23,7 +23,7 @@ class GetRecentSearchesUseCaseTest {
     }
 
     @Test
-    fun `should return sorted recent searches by searchedAt descending`() = runTest {
+    fun `invoke() should return sorted recent searches by searchedAt descending`() = runTest {
         val unsortedSearches = getTestRecentSearches(size = 5).shuffled()
         val expectedSorted = unsortedSearches.sortedByDescending { it.searchedAt }
 
@@ -36,7 +36,7 @@ class GetRecentSearchesUseCaseTest {
     }
 
     @Test
-    fun `should return flow with empty list when repository returns empty list`() = runTest {
+    fun `invoke() should return flow with empty list when repository returns empty list`() = runTest {
         coEvery { searchRepository.getRecentSearches() } returns flowOf(emptyList())
 
         val result = getRecentSearchesUseCase().toList()
@@ -46,7 +46,7 @@ class GetRecentSearchesUseCaseTest {
     }
 
     @Test
-    fun `should handle multiple flow emissions and sort each`() = runTest {
+    fun `invoke() should handle multiple flow emissions and sort each`() = runTest {
         val firstEmission = getTestRecentSearches(3).shuffled()
         val secondEmission = getTestRecentSearches(2).shuffled()
 
@@ -66,7 +66,7 @@ class GetRecentSearchesUseCaseTest {
     }
 
     @Test
-    fun `should propagate exception when repository throws`() = runTest {
+    fun `invoke() should propagate exception when repository throws`() = runTest {
         val exception = RuntimeException()
         coEvery { searchRepository.getRecentSearches() } throws exception
 

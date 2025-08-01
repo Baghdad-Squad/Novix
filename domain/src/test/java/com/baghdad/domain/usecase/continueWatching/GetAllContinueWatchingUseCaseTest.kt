@@ -3,11 +3,11 @@ package com.baghdad.domain.usecase.continueWatching
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.ContinueWatchingRepository
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -23,7 +23,7 @@ class GetAllContinueWatchingUseCaseTest {
     }
 
     @Test
-    fun `invoke should return paged result from repository`() = runTest {
+    fun `invoke() should return paged result from repository`() = runTest {
         // Given
         val page = 1
         val expectedData = listOf(
@@ -54,12 +54,12 @@ class GetAllContinueWatchingUseCaseTest {
         val result = useCase(page)
 
         // Then
-        assertEquals(expectedResult, result)
+        assertThat(result).isEqualTo(expectedResult)
         coVerify(exactly = 1) { repository.getContinueWatching(page, 20) }
     }
 
     @Test
-    fun `invoke should return empty list when no data exists`() = runTest {
+    fun `invoke() should return empty list when no data exists`() = runTest {
         // Given
         val page = 5
         val expectedResult = PagedResult<ContinueWatching>(
@@ -74,7 +74,7 @@ class GetAllContinueWatchingUseCaseTest {
         val result = useCase(page)
 
         // Then
-        assertEquals(expectedResult, result)
+        assertThat(result).isEqualTo(expectedResult)
         coVerify(exactly = 1) { repository.getContinueWatching(page, 20) }
     }
 }

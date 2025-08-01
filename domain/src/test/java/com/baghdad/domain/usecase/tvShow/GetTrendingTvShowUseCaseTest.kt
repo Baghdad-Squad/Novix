@@ -1,15 +1,15 @@
 package com.baghdad.domain.usecase.tvShow
 
-import com.baghdad.entity.media.Genre
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.TvShowRepository
+import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
-import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -25,7 +25,7 @@ class GetTrendingTvShowUseCaseTest {
     }
 
     @Test
-    fun `invoke returns all trending tv shows when genreId is null`() = runTest {
+    fun `getTrendingTvShows() should return all tv shows with pagination when genreId is null`() = runTest {
         // Given
         val page = 1
         val shows = listOf(
@@ -44,16 +44,17 @@ class GetTrendingTvShowUseCaseTest {
         val result = useCase(page, genreId = null)
 
         // Then
-        assertEquals(expectedResult, result)
-        coVerify { tvShowRepository.getTrendingTvShows(page) }
+        assertThat(result.data).containsExactlyElementsIn(shows)
+        assertThat(result.nextKey).isEqualTo(2)
+        assertThat(result.prevKey).isNull()
+        coVerify(exactly = 1) { tvShowRepository.getTrendingTvShows(page) }
     }
 
     @Test
-    fun `invoke returns filtered tv shows by genreId when genreId is provided`() = runTest {
+    fun `getTrendingTvShows() should return filtered tv shows when genreId is provided`() = runTest {
         // Given
         val page = 1
-        val genreId: Long = 1
-
+        val genreId = 1L
         val shows = listOf(
             createTvShow(1, listOf(Genre(1, "Drama"))),
             createTvShow(2, listOf(Genre(2, "Comedy"))),
@@ -72,11 +73,67 @@ class GetTrendingTvShowUseCaseTest {
         val result = useCase(page, genreId)
 
         // Then
-        val expected = listOf(shows[0], shows[2])
-        assertEquals(expected, result.data)
-        assertEquals(2, result.nextKey)
-        assertEquals(null, result.prevKey)
-        coVerify { tvShowRepository.getTrendingTvShows(page) }
+        val expectedShows = listOf(shows[0], shows[2])
+        assertThat(result.data).containsExactlyElementsIn(expectedShows)
+        assertThat(result.nextKey).isEqualTo(2)
+        assertThat(result.prevKey).isNull()
+        coVerify(exactly = 1) { tvShowRepository.getTrendingTvShows(page) }
+    }
+
+    @Test
+    fun `getTrendingTvShows() should return empty list when no tv shows match genreId`() = runTest {
+        // Given
+        val page = 1
+        val genreId = 99L
+        val shows = listOf(
+            createTvShow(1, listOf(Genre(1, "Drama"))),
+            createTvShow(2, listOf(Genre(2, "Comedy")))
+        )
+
+        val inputResult = PagedResult(
+            data = shows,
+            nextKey = 2,
+            prevKey = null
+        )
+
+        coEvery { tvShowRepository.getTrendingTvShows(page) } returns inputResult
+
+        // When
+        val result = useCase(page, genreId)
+
+        // Then
+        assertThat(result.data).isEmpty()
+        assertThat(result.nextKey).isEqualTo(2)
+        assertThat(result.prevKey).isNull()
+        coVerify(exactly = 1) { tvShowRepository.getTrendingTvShows(page) }
+    }
+
+    @Test
+    fun `getTrendingTvShows() should preserve pagination keys when filtering by genreId`() = runTest {
+        // Given
+        val page = 2
+        val genreId = 1L
+        val shows = listOf(
+            createTvShow(1, listOf(Genre(1, "Drama"))),
+            createTvShow(2, listOf(Genre(2, "Comedy")))
+        )
+
+        val inputResult = PagedResult(
+            data = shows,
+            nextKey = 3,
+            prevKey = 1
+        )
+
+        coEvery { tvShowRepository.getTrendingTvShows(page) } returns inputResult
+
+        // When
+        val result = useCase(page, genreId)
+
+        // Then
+        assertThat(result.data).hasSize(1)
+        assertThat(result.nextKey).isEqualTo(3)
+        assertThat(result.prevKey).isEqualTo(1)
+        coVerify(exactly = 1) { tvShowRepository.getTrendingTvShows(page) }
     }
 
     private fun createTvShow(id: Long, genres: List<Genre>): TvShow {

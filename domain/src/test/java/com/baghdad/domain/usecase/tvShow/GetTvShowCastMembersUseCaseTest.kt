@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test
 
 class GetTvShowCastMembersUseCaseTest {
 
+    private lateinit var getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase
+    private lateinit var tvShowRepository: TvShowRepository
+
     @BeforeEach
     fun setup() {
         tvShowRepository = mockk()
@@ -20,23 +23,34 @@ class GetTvShowCastMembersUseCaseTest {
     }
 
     @Test
-    fun `getTvShowCastMembersUseCase should get tv show cast members when function runs successfully`() = runTest {
+    fun `getTvShowCastMembersUseCase() should return cast members when repository returns data`() = runTest {
+        // Given
         val tvShowId = 1L
         coEvery { tvShowRepository.getTvShowCastMembers(tvShowId) } returns sampleCastMembers
-        val result = getTvShowCastMembersUseCase.invoke(tvShowId)
+
+        // When
+        val result = getTvShowCastMembersUseCase(tvShowId)
+
+        // Then
         assertThat(result).isEqualTo(sampleCastMembers)
     }
 
     @Test
-    fun `getTvShowCastMembersUseCase should return empty list when no cast members found`() = runTest {
+    fun `getTvShowCastMembersUseCase() should return empty list when repository returns no data`() = runTest {
+        // Given
         val tvShowId = 2L
         coEvery { tvShowRepository.getTvShowCastMembers(tvShowId) } returns emptyList()
-        val result = getTvShowCastMembersUseCase.invoke(tvShowId)
+
+        // When
+        val result = getTvShowCastMembersUseCase(tvShowId)
+
+        // Then
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun ` getTvShowCastMembersUseCase should return cast with valid but minimal actor data`() = runTest {
+    fun `getTvShowCastMembersUseCase() should return cast with minimal actor data when repository returns minimal data`() = runTest {
+        // Given
         val tvShowId = 3L
         val minimalCast = listOf(
             CastMember(
@@ -54,35 +68,41 @@ class GetTvShowCastMembersUseCaseTest {
                 characterName = "Background Character"
             )
         )
-
         coEvery { tvShowRepository.getTvShowCastMembers(tvShowId) } returns minimalCast
 
-        val result = getTvShowCastMembersUseCase.invoke(tvShowId)
+        // When
+        val result = getTvShowCastMembersUseCase(tvShowId)
 
+        // Then
         assertThat(result).isEqualTo(minimalCast)
-        assertThat(result[0].actor.name).isEqualTo("Unknown Actor")
-        assertThat(result[0].characterName).isEqualTo("Background Character")
+        assertThat(result.first().actor.name).isEqualTo("Unknown Actor")
+        assertThat(result.first().characterName).isEqualTo("Background Character")
     }
 
     @Test
-    fun `getTvShowCastMembersUseCase should return full cast with complete actor data`() = runTest {
+    fun `getTvShowCastMembersUseCase() should return complete cast when repository returns full data`() = runTest {
+        // Given
         val tvShowId = 4L
         coEvery { tvShowRepository.getTvShowCastMembers(tvShowId) } returns sampleCastMembers
-        val result = getTvShowCastMembersUseCase.invoke(tvShowId)
 
+        // When
+        val result = getTvShowCastMembersUseCase(tvShowId)
+
+        // Then
         assertThat(result).hasSize(3)
-        assertThat(result[0].actor.name).isEqualTo("Peter Dinklage")
-        assertThat(result[0].characterName).isEqualTo("Tyrion Lannister")
-        assertThat(result[1].actor.name).isEqualTo("Lena Headey")
-        assertThat(result[1].characterName).isEqualTo("Cersei Lannister")
-        assertThat(result[2].actor.name).isEqualTo("Emilia Clarke")
-        assertThat(result[2].characterName).isEqualTo("Daenerys Targaryen")
+        assertThat(result.map { it.actor.name }).containsExactly(
+            "Peter Dinklage",
+            "Lena Headey",
+            "Emilia Clarke"
+        )
+        assertThat(result.map { it.characterName }).containsExactly(
+            "Tyrion Lannister",
+            "Cersei Lannister",
+            "Daenerys Targaryen"
+        )
     }
 
     companion object {
-        private lateinit var getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase
-        private lateinit var tvShowRepository: TvShowRepository
-
         private val sampleCastMembers = listOf(
             CastMember(
                 actor = Actor(
@@ -110,9 +130,7 @@ class GetTvShowCastMembersUseCaseTest {
                     placeOfBirth = "Hamilton, Bermuda",
                     deathDate = null,
                     biography = "Known for her role as Cersei Lannister in Game of Thrones.",
-                    headerPictures = listOf(
-                        "https://example.com/images/lena-header1.jpg"
-                    ),
+                    headerPictures = listOf("https://example.com/images/lena-header1.jpg"),
                     department = "Acting"
                 ),
                 characterName = "Cersei Lannister"

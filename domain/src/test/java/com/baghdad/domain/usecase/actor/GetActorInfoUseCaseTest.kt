@@ -7,7 +7,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -50,7 +49,7 @@ class GetActorInfoUseCaseTest {
     )
 
     @Test
-    fun `getActorInfoUseCase should return actor info`() = runTest {
+    fun `getActorInfoUseCase() should return actor info when called with valid id`() = runTest {
         // Given
         val actorId = 1L
         val expectedActor = Actor(
@@ -73,12 +72,12 @@ class GetActorInfoUseCaseTest {
         val result = getActorInfoUseCase(actorId)
 
         // Then
-        assertEquals(expectedActor, result)
+        assertThat(result).isEqualTo(expectedActor)
     }
 
     // Edge cases
     @Test
-    fun `getActorInfoUseCase returns actor with minimal fields when data is sparse`() = runTest {
+    fun `getActorInfoUseCase() should return actor with minimal fields when data is sparse`() = runTest {
         // Given
         val actorId = 2L
         coEvery { actorRepository.getActorInfo(actorId) } returns minimalActor
@@ -93,7 +92,7 @@ class GetActorInfoUseCaseTest {
     }
 
     @Test
-    fun `getActorInfoUseCase returns actor with multiple header pictures`() = runTest {
+    fun `getActorInfoUseCase() should return actor with multiple header pictures when available`() = runTest {
         // Given
         val actorId = 3L
         val actorWithManyHeaders = sampleActor.copy(
@@ -109,7 +108,7 @@ class GetActorInfoUseCaseTest {
     }
 
     @Test
-    fun `getActorInfoUseCase returns actor with birth date but no place of birth`() = runTest {
+    fun `getActorInfoUseCase() should return actor with birth date when place of birth is missing`() = runTest {
         // Given
         val actorId = 3L
         val actorWithBirthDateOnly = minimalActor.copy(
@@ -126,7 +125,7 @@ class GetActorInfoUseCaseTest {
     }
 
     @Test
-    fun `getActorInfoUseCase returns actor with department but no biography`() = runTest {
+    fun `getActorInfoUseCase() should return actor with department when biography is missing`() = runTest {
         // Given
         val actorId = 4L
         val actorWithDepartmentOnly = minimalActor.copy(
@@ -143,7 +142,7 @@ class GetActorInfoUseCaseTest {
     }
 
     @Test
-    fun `getActorInfoUseCase returns actor with profile picture but no header pictures`() =
+    fun `getActorInfoUseCase() should return actor with profile picture when header pictures are missing`() =
         runTest {
             // Given
             val actorId = 5L
@@ -161,7 +160,7 @@ class GetActorInfoUseCaseTest {
         }
 
     @Test
-    fun `getActorInfoUseCase makes exactly one repository call`() = runTest {
+    fun `getActorInfoUseCase() should make exactly one repository call when invoked`() = runTest {
         // Given
         val actorId = 6L
         coEvery { actorRepository.getActorInfo(actorId) } returns sampleActor
@@ -172,5 +171,4 @@ class GetActorInfoUseCaseTest {
         // Then
         coVerify(exactly = 1) { actorRepository.getActorInfo(actorId) }
     }
-
 }

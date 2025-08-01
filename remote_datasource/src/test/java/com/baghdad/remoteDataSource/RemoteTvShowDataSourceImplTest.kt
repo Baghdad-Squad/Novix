@@ -104,8 +104,7 @@ class RemoteTvShowDataSourceImplTest {
         val result = dataSource.getTvShowsByGenre(genreId, page)
 
         // Then
-        assertThat(result).hasSize(1)
-        assertThat(result[0].id).isEqualTo(1L)
+        assertThat(result.data[0].id).isEqualTo(1L)
     }
 
     @Test
@@ -293,7 +292,7 @@ class RemoteTvShowDataSourceImplTest {
                         name = "Author Name",
                         username = "author123",
                         avatarPath = "/avatar.jpg",
-                        rating = 4.5f
+                        rating = 4.5
                     )
                 )
             )
@@ -306,7 +305,7 @@ class RemoteTvShowDataSourceImplTest {
         // Then
         assertThat(result).hasSize(1)
         assertThat(result[0].id).isEqualTo("rev1")
-        assertThat(result[0].rating).isEqualTo(4.5f)
+        assertThat(result[0].rating).isEqualTo(4.5)
     }
 
     @Test

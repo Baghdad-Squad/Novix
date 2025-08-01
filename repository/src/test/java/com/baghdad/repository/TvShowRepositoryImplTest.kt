@@ -15,6 +15,7 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -80,7 +81,7 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getGenres()
 
-        assertEquals(emptyList<Genre>(), result)
+        assertThat(emptyList<Genre>() == result).isTrue()
         coVerify { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) }
     }
 
@@ -110,9 +111,9 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getGenres()
 
-        assertEquals(1, result.size)
-        assertEquals(expectedGenre.id, result[0].id)
-        assertEquals(expectedGenre.name, result[0].name)
+        assertThat(1 == result.size).isTrue()
+        assertThat(expectedGenre.id== result[0].id).isTrue()
+        assertThat(expectedGenre.name== result[0].name).isTrue()
         coVerify { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) }
     }
 
@@ -135,10 +136,10 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getGenres()
 
-        assertEquals(expectedGenres.size, result.size)
+        assertThat(expectedGenres.size == result.size).isTrue()
         for (i in expectedGenres.indices) {
-            assertEquals(expectedGenres[i].id, result[i].id)
-            assertEquals(expectedGenres[i].name, result[i].name)
+            assertThat(expectedGenres[i].id== result[i].id).isTrue()
+            assertThat(expectedGenres[i].name== result[i].name).isTrue()
         }
         coVerify { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) }
     }
@@ -161,10 +162,10 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowDetails(tvId)
 
-        assertEquals(expectedTvShow.id, result.id)
-        assertEquals(expectedTvShow.title, result.title)
-        assertEquals(expectedTvShow.trailerURL, result.trailerURL)
-        assertEquals(mockImages.take(10), result.headerImagesURLs)
+        assertThat(expectedTvShow.id== result.id).isTrue()
+        assertThat(expectedTvShow.title== result.title).isTrue()
+        assertThat(expectedTvShow.trailerURL== result.trailerURL).isTrue()
+        assertThat(mockImages.take(10)== result.headerImagesURLs).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowDetails(tvId) }
         coVerify { tvShowRemoteDataSource.getTvShowImages(tvId) }
         coVerify { tvShowRemoteDataSource.getTvShowTrailer(tvId) }
@@ -184,8 +185,8 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowDetails(tvId)
 
-        assertEquals(10, result.headerImagesURLs.size)
-        assertEquals(mockImages.take(10), result.headerImagesURLs)
+        assertThat(10== result.headerImagesURLs.size).isTrue()
+        assertThat(mockImages.take(10)== result.headerImagesURLs).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowDetails(tvId) }
         coVerify { tvShowRemoteDataSource.getTvShowImages(tvId) }
         coVerify { tvShowRemoteDataSource.getTvShowTrailer(tvId) }
@@ -202,10 +203,10 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowCastMembers(tvId)
 
-        assertEquals(expectedCastMembers.size, result.size)
-        assertEquals(expectedCastMembers[0].actor.id, result[0].actor.id)
-        assertEquals(expectedCastMembers[0].actor.name, result[0].actor.name)
-        assertEquals(expectedCastMembers[0].characterName, result[0].characterName)
+        assertThat(expectedCastMembers.size== result.size).isTrue()
+        assertThat(expectedCastMembers[0].actor.id== result[0].actor.id).isTrue()
+        assertThat(expectedCastMembers[0].actor.name== result[0].actor.name).isTrue()
+        assertThat(expectedCastMembers[0].characterName== result[0].characterName).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowCastMembers(tvId) }
     }
 
@@ -217,7 +218,7 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowCastMembers(tvId)
 
-        assertEquals(emptyList<CastMember>(), result)
+        assertThat(emptyList<CastMember>()== result).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowCastMembers(tvId) }
     }
 
@@ -231,7 +232,7 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowImages(tvId)
 
-        assertEquals(mockImages, result)
+        assertThat(mockImages == result).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowImages(tvId) }
     }
 
@@ -243,7 +244,7 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowImages(tvId)
 
-        assertEquals(emptyList<String>(), result)
+        assertThat(emptyList<String>()== result).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowImages(tvId) }
     }
 
@@ -259,9 +260,9 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowsByGenre(genreId, page, 20)
 
-        assertEquals(expectedTvShows.data.size, result.data.size)
-        assertEquals(expectedTvShows.data[0].id, result.data[0].id)
-        assertEquals(expectedTvShows.data[0].title, result.data[0].title)
+        assertThat(expectedTvShows.data.size== result.data.size).isTrue()
+        assertThat(expectedTvShows.data[0].id== result.data[0].id).isTrue()
+        assertThat(expectedTvShows.data[0].title== result.data[0].title).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) }
     }
 
@@ -278,7 +279,7 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowsByGenre(genreId, page, pageSize = 20)
 
-        assertEquals(emptyList<TvShowDto>(), result.data)
+        assertThat(emptyList<TvShowDto>()== result.data).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) }
     }
 
@@ -295,10 +296,10 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowSeasonEpisodes(tvId, seasonNumber)
 
-        assertEquals(expectedEpisodes.size, result.size)
-        assertEquals(expectedEpisodes[0].id, result[0].id)
-        assertEquals(expectedEpisodes[0].title, result[0].title)
-        assertEquals(expectedEpisodes[0].episodeNumber, result[0].episodeNumber)
+        assertThat(expectedEpisodes.size== result.size).isTrue()
+        assertThat(expectedEpisodes[0].id== result[0].id).isTrue()
+        assertThat(expectedEpisodes[0].title== result[0].title).isTrue()
+        assertThat(expectedEpisodes[0].episodeNumber== result[0].episodeNumber).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber) }
     }
 
@@ -311,7 +312,7 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowSeasonEpisodes(tvId, seasonNumber)
 
-        assertEquals(emptyList<Episode>(), result)
+        assertThat(emptyList<Episode>()== result).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber) }
     }
 
@@ -326,10 +327,10 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowReviews(tvId)
 
-        assertEquals(expectedReviews.size, result.size)
-        assertEquals(expectedReviews[0].id, result[0].id)
-        assertEquals(expectedReviews[0].contentTitle, result[0].contentTitle)
-        assertEquals(expectedReviews[0].authorName, result[0].authorName)
+        assertThat(expectedReviews.size== result.size).isTrue()
+        assertThat(expectedReviews[0].id== result[0].id).isTrue()
+        assertThat(expectedReviews[0].contentTitle== result[0].contentTitle).isTrue()
+        assertThat(expectedReviews[0].authorName== result[0].authorName).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowReviews(tvId) }
     }
 
@@ -341,7 +342,7 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowReviews(tvId)
 
-        assertEquals(emptyList<Review>(), result)
+        assertThat(emptyList<Review>()== result).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowReviews(tvId) }
     }
 
@@ -357,11 +358,11 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTopRatedTvShows(page)
 
-        assertEquals(1, result.data.size)
-        assertEquals(789L, result.data[0].id)
-        assertEquals("Test TV Show", result.data[0].title)
-        assertEquals(2, result.nextKey)
-        assertEquals(null, result.prevKey)
+        assertThat(1 == result.data.size).isTrue()
+        assertThat(789L == result.data[0].id).isTrue()
+        assertThat("Test TV Show" == result.data[0].title).isTrue()
+        assertThat(2 == result.nextKey).isTrue()
+        assertThat(null == result.prevKey).isTrue()
         coVerify { tvShowRemoteDataSource.getTopRatedTvShows(page) }
     }
 
@@ -376,9 +377,9 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getPopularTvShows()
 
-        assertEquals(expectedTvShows.size, result.size)
-        assertEquals(expectedTvShows[0].id, result[0].id)
-        assertEquals(expectedTvShows[0].title, result[0].title)
+        assertThat(expectedTvShows.size == result.size).isTrue()
+        assertThat(expectedTvShows[0].id == result[0].id).isTrue()
+        assertThat(expectedTvShows[0].title == result[0].title).isTrue()
         coVerify { tvShowRemoteDataSource.getPopularTvShows() }
     }
 
@@ -389,7 +390,7 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getPopularTvShows()
 
-        assertEquals(emptyList<TvShow>(), result)
+        assertThat(emptyList<TvShow>()== result).isTrue()
         coVerify { tvShowRemoteDataSource.getPopularTvShows() }
     }
 
@@ -404,11 +405,11 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTrendingTvShows(page)
 
-        assertEquals(1, result.data.size)
-        assertEquals(789L, result.data[0].id)
-        assertEquals("Test TV Show", result.data[0].title)
-        assertEquals(2, result.nextKey)
-        assertEquals(null, result.prevKey)
+        assertThat(1 == result.data.size).isTrue()
+        assertThat(789L == result.data[0].id).isTrue()
+        assertThat("Test TV Show" == result.data[0].title).isTrue()
+        assertThat(2 == result.nextKey).isTrue()
+        assertThat(null == result.prevKey).isTrue()
         coVerify { tvShowRemoteDataSource.getTrendingTvShows(page) }
     }
 
@@ -533,7 +534,7 @@ class TvShowRepositoryImplTest {
             id = "review123",
             contentTitle = "Great movie! Highly recommended.",
             authorName = "John Reviewer",
-            rating = 9.0f,
+            rating = 9.0,
             authorAvatarUrl = "https://example.com/avatar.jpg",
             reviewText = "This movie was fantastic! The plot was engaging and the acting was top-notch.",
             postedDate = LocalDate.parse("2023-01-01").toString()
@@ -543,7 +544,7 @@ class TvShowRepositoryImplTest {
             id = "review123",
             contentTitle = "Great movie! Highly recommended.",
             authorName = "John Reviewer",
-            rating = 9.0f,
+            rating = 9.0,
             authorAvatarUrl = "https://example.com/avatar.jpg",
             reviewText = "This movie was fantastic! The plot was engaging and the acting was top-notch.",
             postedDate = LocalDate.parse("2023-01-01")

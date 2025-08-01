@@ -86,7 +86,7 @@ class CategoryTvShowsViewModelTest {
         assertThat(states.last().tvShowsFlow).isNotNull()
         job.cancel()
     }
-
+    
     @Test
     fun `should emit NavigateBack when onBackClicked`() = runTest {
         val effects = mutableListOf<CategoryTvShowsEffect>()

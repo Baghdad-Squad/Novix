@@ -4,15 +4,14 @@ import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
-import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
 
 class GetTrendingMoviesUseCaseTest {
 
@@ -41,7 +40,7 @@ class GetTrendingMoviesUseCaseTest {
     }
 
     @Test
-    fun `invoke should return all trending movies when genreId is null`() = runTest {
+    fun `invoke() should return all trending movies when genreId is null`() = runTest {
         // Given
         val movies = listOf(createMovie(1, listOf(1, 2)), createMovie(2, listOf(3)))
         val expectedResult = PagedResult(
@@ -56,12 +55,12 @@ class GetTrendingMoviesUseCaseTest {
         val result = useCase(1, genreId = null)
 
         // Then
-        assertEquals(expectedResult, result)
+        assertThat(result).isEqualTo(expectedResult)
         coVerify { repository.getTrendingMovies(1) }
     }
 
     @Test
-    fun `invoke should filter trending movies by genreId`() = runTest {
+    fun `invoke() should filter trending movies by genreId`() = runTest {
         // Given
         val movies = listOf(
             createMovie(1, listOf(1, 2)),
@@ -84,7 +83,7 @@ class GetTrendingMoviesUseCaseTest {
         val result = useCase(1, genreId = 1)
 
         // Then
-        assertEquals(expectedResult, result)
+        assertThat(result).isEqualTo(expectedResult)
         coVerify { repository.getTrendingMovies(1) }
     }
 }

@@ -3,11 +3,11 @@ package com.baghdad.domain.usecase.continueWatching
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.ContinueWatchingRepository
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -23,7 +23,7 @@ class GetAllContinueWatchingByGenreUseCaseTest {
     }
 
     @Test
-    fun `invoke should return filtered items matching genreId`() = runTest {
+    fun `invoke() should return filtered items matching genreId`() = runTest {
         // Given
         val genreId = 1L
         val page = 1
@@ -56,16 +56,16 @@ class GetAllContinueWatchingByGenreUseCaseTest {
         val result = useCase(genreId, page)
 
         // Then
-        assertEquals(1, result.data.size)
-        assertEquals(1L, result.data.first().contentId)
-        assertEquals(pagedResult.nextKey, result.nextKey)
-        assertEquals(pagedResult.prevKey, result.prevKey)
+        assertThat(result.data).hasSize(1)
+        assertThat(result.data.first().contentId).isEqualTo(1L)
+        assertThat(result.nextKey).isEqualTo(pagedResult.nextKey)
+        assertThat(result.prevKey).isEqualTo(pagedResult.prevKey)
 
         coVerify(exactly = 1) { repository.getContinueWatching(page, 20) }
     }
 
     @Test
-    fun `invoke should return empty list if no item matches genreId`() = runTest {
+    fun `invoke() should return empty list if no item matches genreId`() = runTest {
         // Given
         val genreId = 99L
         val page = 1
@@ -98,9 +98,9 @@ class GetAllContinueWatchingByGenreUseCaseTest {
         val result = useCase(genreId, page)
 
         // Then
-        assertEquals(0, result.data.size)
-        assertEquals(pagedResult.nextKey, result.nextKey)
-        assertEquals(pagedResult.prevKey, result.prevKey)
+        assertThat(result.data).isEmpty()
+        assertThat(result.nextKey).isEqualTo(pagedResult.nextKey)
+        assertThat(result.prevKey).isEqualTo(pagedResult.prevKey)
 
         coVerify(exactly = 1) { repository.getContinueWatching(page, 20) }
     }
