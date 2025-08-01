@@ -27,7 +27,6 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
-import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
@@ -48,15 +47,12 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-
 @Composable
 fun ActorDetailsScreen(
     actorId: Long,
-    viewModel: ActorDetailsViewModel = koinViewModel(
-        key = actorId.toString(),
-        parameters = { parametersOf(actorId) }
-    ),
-    handleNavigation: (ActorDetailsNavEvent) -> Unit
+    viewModel: ActorDetailsViewModel =
+        koinViewModel(key = actorId.toString(), parameters = { parametersOf(actorId) }),
+    handleNavigation: (ActorDetailsNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
@@ -72,80 +68,87 @@ fun ActorDetailsScreen(
 
 private fun handleEffect(
     effect: ActorDetailsScreenEffect,
-    handleNavigation: (ActorDetailsNavEvent) -> Unit
+    handleNavigation: (ActorDetailsNavEvent) -> Unit,
 ) {
     when (effect) {
-        is ActorDetailsScreenEffect.NavigateBack -> handleNavigation(
-            ActorDetailsNavEvent.NavigateBack
-        )
+        is ActorDetailsScreenEffect.NavigateBack ->
+            handleNavigation(
+                ActorDetailsNavEvent.NavigateBack,
+            )
 
-        is ActorDetailsScreenEffect.NavigateToMovieDetails -> handleNavigation(
-            NavigateToMovieDetails(effect.movieId)
-        )
+        is ActorDetailsScreenEffect.NavigateToMovieDetails ->
+            handleNavigation(
+                NavigateToMovieDetails(effect.movieId),
+            )
 
-        is ActorDetailsScreenEffect.NavigateToTvShowDetails -> handleNavigation(
-            NavigateToTvShowDetails(effect.tvShowId)
-        )
+        is ActorDetailsScreenEffect.NavigateToTvShowDetails ->
+            handleNavigation(
+                NavigateToTvShowDetails(effect.tvShowId),
+            )
 
-        ActorDetailsScreenEffect.NavigateToActorGallery -> handleNavigation(
-            ActorDetailsNavEvent.NavigateToActorGallery
-        )
+        ActorDetailsScreenEffect.NavigateToActorGallery ->
+            handleNavigation(
+                ActorDetailsNavEvent.NavigateToActorGallery,
+            )
 
-        ActorDetailsScreenEffect.NavigateToActorTopMoviePicks -> handleNavigation(
-            ActorDetailsNavEvent.NavigateToActorTopMoviePicks
-        )
+        ActorDetailsScreenEffect.NavigateToActorTopMoviePicks ->
+            handleNavigation(
+                ActorDetailsNavEvent.NavigateToActorTopMoviePicks,
+            )
 
-        ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks -> handleNavigation(
-            ActorDetailsNavEvent.NavigateToActorTopTvShowPicks
-        )
+        ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks ->
+            handleNavigation(
+                ActorDetailsNavEvent.NavigateToActorTopTvShowPicks,
+            )
 
-        ActorDetailsScreenEffect.NavigateToLogin -> handleNavigation(
-            ActorDetailsNavEvent.NavigateToLogin
-        )
+        ActorDetailsScreenEffect.NavigateToLogin ->
+            handleNavigation(
+                ActorDetailsNavEvent.NavigateToLogin,
+            )
     }
 }
-
 
 @Composable
 fun ActorDetailsContent(
     uiState: ActorDetailsScreenState,
     listener: ActorDetailsInteractionListener,
     modifier: Modifier = Modifier,
-    snackBarState: SnackBarState
+    snackBarState: SnackBarState,
 ) {
     val scrollState = rememberScrollState()
     var shouldShowBackground by remember { mutableStateOf(false) }
     val animatedColor by animateColorAsState(
-        targetValue = if (shouldShowBackground)
-            Theme.color.surface
-        else
-            Theme.color.surface.copy(alpha = 0f),
-        animationSpec = tween(
-            durationMillis = 500,
-            easing = FastOutSlowInEasing
-        ),
+        targetValue =
+            if (shouldShowBackground) {
+                Theme.color.surface
+            } else {
+                Theme.color.surface.copy(alpha = 0f)
+            },
+        animationSpec =
+            tween(
+                durationMillis = 500,
+                easing = FastOutSlowInEasing,
+            ),
     )
     Scaffold(
-        modifier = Modifier
-            .background(Theme.color.surface)
-            .navigationBarsPadding(),
+        modifier =
+            Modifier
+                .background(Theme.color.surface)
+                .navigationBarsPadding(),
+        isLoading = uiState.isLoading,
         snackbar = {
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
-        }) {
+        },
+    ) {
         LaunchedEffect(scrollState) {
-            snapshotFlow { scrollState.value }
-                .collect { scrollValue ->
-                    shouldShowBackground = scrollValue > 450
-                }
-        }
-
-        if (uiState.isLoading) {
-            Box(Modifier.fillMaxSize()) {
-                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            snapshotFlow { scrollState.value }.collect { scrollValue ->
+                shouldShowBackground = scrollValue > 450
             }
         }
 
@@ -153,15 +156,14 @@ fun ActorDetailsContent(
             modifier = modifier
                 .background(Theme.color.surface)
                 .fillMaxSize()
-                .navigationBarsPadding()
+                .navigationBarsPadding(),
         ) {
             Column(
                 modifier = modifier
                     .fillMaxSize()
                     .verticalScroll(scrollState)
-                    .padding(bottom = 24.dp)
+                    .padding(bottom = 24.dp),
             ) {
-
                 ActorHeaderWithDetailsCard(uiState = uiState)
 
                 if (uiState.actorInfo.biography.isNotBlank()) {
@@ -169,16 +171,16 @@ fun ActorDetailsContent(
                         biography = uiState.actorInfo.biography,
                         onExpandedChange = { listener.onReadMoreBiographyClick() },
                         isExpanded = uiState.isTextExpanded,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = 16.dp),
                     )
                 }
 
                 if (uiState.gallery.isNotEmpty()) {
                     GallerySection(
                         imageUrls = uiState.gallery,
-                        isMoreThanTen = uiState.isGalleryMoreThanTen,
+                        isShowAllVisible = uiState.gallery.size > 10,
                         onClickShowAll = { listener.onViewAllGalleryClick() },
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = 16.dp),
                     )
                 }
 
@@ -190,9 +192,9 @@ fun ActorDetailsContent(
                         onSavedClick = { listener.onSaveMovieClick(it.id) },
                         onCardClick = { listener.onMovieCardClick(it.id) },
                         isSaved = { it.isSaved },
-                        isMoreThanTen = uiState.isMoviesMoreThanTen,
+                        isShowAllVisible = uiState.topMoviesPicks.size > 10,
                         onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = 16.dp),
                     )
                 }
                 if (uiState.topTvShowsPicks.isNotEmpty()) {
@@ -203,18 +205,19 @@ fun ActorDetailsContent(
                         onSavedClick = { listener.onSaveTvShowClick(it.id) },
                         onCardClick = { listener.onTvShowCardClick(it.id) },
                         isSaved = { it.isSaved },
-                        isMoreThanTen = uiState.isTvShowsMoreThanTen,
+                        isShowAllVisible = uiState.topTvShowsPicks.size > 10,
                         onClickShowAll = { listener.onViewAllTopTvShowsClick() },
                     )
                 }
             }
             TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(animatedColor)
-                    .zIndex(1f)
-                    .align(Alignment.TopCenter)
-                    .padding(top = 56.dp, bottom = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(animatedColor)
+                        .zIndex(1f)
+                        .align(Alignment.TopCenter)
+                        .padding(top = 56.dp, bottom = 8.dp),
                 onGoBackClick = {
                     listener.onBackIconClick()
                 },
@@ -224,6 +227,4 @@ fun ActorDetailsContent(
 }
 
 @Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
