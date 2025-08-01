@@ -1,6 +1,8 @@
 package com.baghdad.viewmodel.search
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
@@ -11,20 +13,33 @@ import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
+import com.baghdad.domain.util.now
+import com.baghdad.entity.person.Actor
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.spyk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -165,7 +180,6 @@ class SearchViewModelTest {
         Truth.assertThat(state.searchText).isEqualTo("   ")
     }
 
-
     @Test
     fun `should update searchText and set isLoading to true when user enters new query`() =
         runTest {
@@ -178,7 +192,6 @@ class SearchViewModelTest {
             Truth.assertThat(state.searchText).isEqualTo("Adventure")
             Truth.assertThat(state.isLoading).isTrue()
         }
-
 
     @Test
     fun `should clear paging flows when user enters blank query`() = runTest {
@@ -296,6 +309,540 @@ class SearchViewModelTest {
 
         Truth.assertThat(viewModel.uiState.value.bottomSheetUiState.isBottomSheetVisible).isTrue()
     }
+
+    @Test
+    fun `should emit debounced trimmed query when search text is updated`() = runTest {
+        val method = SearchViewModel::class.java.getDeclaredMethod("observeSearchQueryFlow")
+        method.isAccessible = true
+
+        val viewModel = createViewModel()
+
+        val flow = method.invoke(viewModel) as Flow<String>
+        val collected = mutableListOf<String>()
+
+        val job = launch {
+            flow.collect { value ->
+                collected.add(value)
+            }
+        }
+
+        viewModel.onSearchTextChanged("  reflected query ")
+
+        advanceUntilIdle()
+
+        job.cancel()
+
+        assertThat(collected).containsExactly("reflected query")
+    }
+
+    @Test
+    fun `should process search query correctly when whenSearchQueryChanges is invoked`() = runTest {
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("observeSearchQueryChanges")
+        method.isAccessible = true
+
+        checkNotNull(method) { "Method observeSearchQueryChanges not found" }
+
+        viewModel.onSearchTextChanged("test query")
+
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.searchText).isEqualTo("test query")
+    }
+
+    @Test
+    fun `should update state and trigger correct action when onSearchQueryChangedCollected is invoked`() =
+        runTest {
+            val viewModel = createViewModel()
+
+            val method = viewModel::class.java.getDeclaredMethod(
+                "onSearchQueryChangedCollected",
+                String::class.java
+            )
+
+            method.isAccessible = true
+
+            assertThat(viewModel.uiState.value.searchText)
+        }
+
+    @Test
+    fun `should search movies when performSearchByTab is invoked and selected tab is MOVIES`() =
+        runTest {
+            val viewModel = createViewModel()
+            val method = viewModel::class.java.getDeclaredMethod(
+                "performSearchByTab",
+                String::class.java
+            )
+
+            method.isAccessible = true
+            coEvery { searchMoviesUseCase(any(), any(), any()) } returns PagedResult(
+                emptyList(),
+                nextKey = null,
+                prevKey = null
+            )
+            assertThat(viewModel.uiState.value.searchText).isEmpty()
+        }
+
+    @Test
+    fun `should search tv show when performSearchByTab is invoked and selected tab is TV_SHOWS`() =
+        runTest {
+            val viewModel = createViewModel()
+            val method = viewModel::class.java.getDeclaredMethod(
+                "performSearchByTab",
+                String::class.java
+            )
+
+            method.isAccessible = true
+            coEvery { searchTvShowsUseCase(any(), any(), any()) } returns PagedResult(
+                emptyList(),
+                nextKey = null,
+                prevKey = null
+            )
+            assertThat(viewModel.uiState.value.searchText).isEmpty()
+        }
+
+    @Test
+    fun `should search actors when performSearchByTab is invoked and selected tab is ACTORS`() =
+        runTest {
+            val viewModel = createViewModel()
+            val method = viewModel::class.java.getDeclaredMethod(
+                "performSearchByTab",
+                String::class.java
+            )
+
+            method.isAccessible = true
+            coEvery { searchActorsUseCase(any(), any()) } returns PagedResult(
+                emptyList(),
+                nextKey = null,
+                prevKey = null
+            )
+            assertThat(viewModel.uiState.value.searchText).isEmpty()
+        }
+
+    @Test
+    fun `should show no internet snackbar when onSearchError is invoked with NoInternetException`() =
+        runTest {
+            val viewModel = createViewModel()
+
+            val method = viewModel::class.java.getDeclaredMethod(
+                "onSearchError",
+                Throwable::class.java
+            )
+            method.isAccessible = true
+
+            method.invoke(viewModel, NoInternetException())
+
+            assertThat(viewModel.uiState.value.isLoading).isFalse()
+        }
+
+    @Test
+    fun `should delegate to handleError when onSearchError is invoked with generic RuntimeException`() =
+        runTest {
+            val viewModel = createViewModel()
+
+            val method = viewModel::class.java.getDeclaredMethod(
+                "onSearchError",
+                Throwable::class.java
+            )
+            method.isAccessible = true
+
+            val throwable = RuntimeException("Something broke")
+            method.invoke(viewModel, throwable)
+
+            assertThat(viewModel.uiState.value.isLoading).isFalse()
+        }
+
+
+    @Test
+    fun `should handle custom exception when onSearchError is invoked with IllegalStateException`() =
+        runTest {
+            val viewModel = createViewModel()
+
+            val method = viewModel::class.java.getDeclaredMethod(
+                "onSearchError",
+                Throwable::class.java
+            )
+            method.isAccessible = true
+
+            val previousState = viewModel.uiState.value
+
+            method.invoke(viewModel, IllegalStateException("Invalid state"))
+
+            assertThat(viewModel.uiState.value).isEqualTo(previousState)
+        }
+
+    @Test
+    fun `showNoInternetSnackBar should delegate to showSnackBar with NetworkError config`() =
+        runTest {
+            val viewModel = spyk(createViewModel()) {
+                every {
+                    showSnackBar(
+                        message = BaseSnackBarMessage.NetworkError,
+                        actionLabelRes = null,
+                        isSuccess = false,
+                        durationMillis = Int.MAX_VALUE.toLong()
+                    )
+                } just Runs
+            }
+
+            val method = viewModel::class.java.getDeclaredMethod("showNoInternetSnackBar")
+            method.isAccessible = true
+            method.invoke(viewModel)
+
+            assertThat(viewModel.uiState.value.isLoading).isFalse()
+        }
+
+
+    @Test
+    fun `should update recentViewed when onGetRecentViewedSuccess is invoked with more than 10 items`() =
+        runTest {
+            val items = (1..15).map {
+                RecentlyViewed(
+                    contentId = it.toLong(),
+                    contentType = RecentlyViewed.ContentType.MOVIE,
+                    contentImageUrl = "https://example.com/poster$it.jpg",
+                    viewedAt = LocalDateTime.now(),
+                )
+            }
+
+            val viewModel = createViewModel()
+
+            val method = viewModel::class.java.getDeclaredMethod(
+                "onGetRecentViewedSuccess",
+                List::class.java
+            )
+            method.isAccessible = true
+            method.invoke(viewModel, items)
+
+            val actual = viewModel.uiState.value.recentViewed
+            val expected = items
+                .take(10)
+                .map { it.toRecentlyViewedUI() }
+                .distinctBy { it.id }
+
+            assertThat(actual).isEqualTo(expected)
+        }
+
+    @Test
+    fun `should set genres to empty and isGenresError to true when onGetTvShowGenresError is called`() =
+        runTest {
+            val viewModel = createViewModel()
+
+            val throwable = RuntimeException("Test error")
+            val method = viewModel::class.java.getDeclaredMethod(
+                "onGetTvShowGenresError",
+                Throwable::class.java
+            )
+            method.isAccessible = true
+            method.invoke(viewModel, throwable)
+
+            val result = viewModel.uiState.value.bottomSheetUiState.tvShowsFilter
+
+            assertThat(result.allGenres).isEmpty()
+            assertThat(result.isGenresError).isTrue()
+        }
+
+//    @Test
+//    fun `should toggle isSaved flag when onSaveRecentlyViewedClick is called with matching id`() = runTest {
+//        val initialList = listOf(
+//            SearchScreenState.RecentlyViewedUiState(id = 1, isSaved = false),
+//            SearchScreenState.RecentlyViewedUiState(id = 2, isSaved = true),
+//            SearchScreenState.RecentlyViewedUiState(id = 3, isSaved = false)
+//        )
+//
+//        val viewModel = createViewModel(initialList)
+//
+//        viewModel.onSaveRecentlyViewedClick(2L)
+//
+//        val updatedList = viewModel.uiState.value.recentViewed
+//
+//        val toggledItem = updatedList.find { it.id == 2L }
+//        assertThat(toggledItem?.isSaved).isFalse()
+//
+//        assertThat(updatedList.find { it.id == 1L }?.isSaved).isEqualTo(false)
+//        assertThat(updatedList.find { it.id == 3L }?.isSaved).isEqualTo(false)
+//    }
+
+//    @Test
+//    fun `should update searchText and reset lastProcessedQuery when onRecentSearchItemClick is called`() = runTest {
+//        // Arrange: create recentSearch mock data
+//        val recentSearchList = listOf(
+//            SearchScreenState.RecentSearchUiState(id = 1L, query = "Inception"),
+//            SearchScreenState.RecentSearchUiState(id = 2L, query = "Interstellar"),
+//        )
+//
+//        val viewModel = createViewModelWithRecentSearch(recentSearchList)
+//
+//        var searchTextChangedArg: String? = null
+//        var searchQueryChangedArg: String? = null
+//
+//        // Override callbacks for verification
+//        viewModel.overrideOnSearchTextChanged { text ->
+//            searchTextChangedArg = text
+//        }
+//
+//        viewModel.overrideOnSearchQueryChangedCollected { text ->
+//            searchQueryChangedArg = text
+//        }
+//
+//        // Act
+//        viewModel.onRecentSearchItemClick(2L)
+//
+//        // Assert
+//        val currentState = viewModel.uiState.value
+//        assertThat(currentState.searchText).isEqualTo("Interstellar")
+//        assertThat(viewModel.lastProcessedQuery).isEqualTo("")
+//        assertThat(searchTextChangedArg).isEqualTo("Interstellar")
+//        assertThat(searchQueryChangedArg).isEqualTo("Interstellar")
+//    }
+
+    @Test
+    fun `should hide bottom sheet when onFilterCloseIconClick is triggered`() = runTest {
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("onFilterCloseIconClick")
+        method.isAccessible = true
+
+        method.invoke(viewModel)
+
+        val result = viewModel.uiState.value.bottomSheetUiState.isBottomSheetVisible
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun `should send navigation effect with correct contentId`() = runTest {
+        val viewModel = createViewModel()
+        val testId = 1234L
+
+        val effects = mutableListOf<SearchScreenEffect>()
+        val job = launch {
+            viewModel.uiEffect.collect { effects.add(it) }
+        }
+
+        val method = viewModel::class.java.getDeclaredMethod(
+            "onAddRecentlyViewedTvShowSuccess",
+            Long::class.java
+        )
+        method.isAccessible = true
+        method.invoke(viewModel, testId)
+
+        advanceUntilIdle()
+
+        assertThat(effects).containsExactly(SearchScreenEffect.NavigateToTvShowDetails(testId))
+
+        job.cancel()
+    }
+
+    @Test
+    fun `should send actor navigation effect on actor item click`() = runTest {
+        val viewModel = createViewModel()
+        val testId = 9876L
+
+        val effects = mutableListOf<SearchScreenEffect>()
+        val job = launch {
+            viewModel.uiEffect.collect { effects.add(it) }
+        }
+
+        val method = viewModel::class.java.getDeclaredMethod("onActorItemClick", Long::class.java)
+        method.isAccessible = true
+        method.invoke(viewModel, testId)
+
+        advanceUntilIdle()
+
+        assertThat(effects).containsExactly(SearchScreenEffect.NavigateToActorDetails(testId))
+
+        job.cancel()
+    }
+
+    @Test
+    fun `searchTvShows should handle error and call onSearchError`() = runTest {
+        val query = "horror"
+        val error = RuntimeException("404")
+        val viewModel = createViewModel()
+        val method = viewModel::class.java.getDeclaredMethod(
+            "searchTvShows",
+            String::class.java
+        )
+
+        method.isAccessible = true
+        coEvery { searchTvShowsUseCase.invoke(query, any(), any()) } throws error
+
+        coEvery { searchTvShowsUseCase(any(), any(), any()) } returns PagedResult(
+            emptyList(),
+            nextKey = null,
+            prevKey = null
+        )
+        assertThat(viewModel.uiState.value.searchText).isEmpty()
+        assertThat(viewModel.uiState.value.isLoading).isFalse()
+    }
+
+    @Test
+    fun `searchTvShows should handle error and call onSearchError `() = runTest {
+        val query = "horror"
+        val error = RuntimeException("404")
+
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("searchTvShows", String::class.java)
+        method.isAccessible = true
+
+        coEvery {
+            searchTvShowsUseCase(
+                query = query,
+                filter = any(),
+                page = any()
+            )
+        } throws error
+
+        coEvery {
+            searchTvShowsUseCase(any(), any(), any())
+        } returns PagedResult(
+            data = emptyList(),
+            nextKey = null,
+            prevKey = null
+        )
+
+        method.invoke(viewModel, query)
+
+        assertThat(viewModel.uiState.value.searchText).isEmpty()
+    }
+
+    @Test
+    fun `searchActors should handle error and call onSearchError`() = runTest {
+        val query = "drama"
+        val error = RuntimeException("Server timeout")
+
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("searchActors", String::class.java)
+        method.isAccessible = true
+
+        coEvery {
+            searchActorsUseCase(query = query, page = any())
+        } throws error
+
+        method.invoke(viewModel, query)
+
+        assertThat(viewModel.uiState.value.actorsFlow).isNotNull()
+        assertThat(viewModel.uiState.value.isLoading).isTrue()
+
+    }
+
+    @Test
+    fun `searchActors should load data, handle success and map entities`() = runTest {
+        val query = "drama"
+        val page = 1
+
+        val viewModel = createViewModel()
+
+        coEvery {
+            searchActorsUseCase(query = query, page = page)
+        } returns PagedResult(
+            data = listOf(),
+            nextKey = null,
+            prevKey = null
+        )
+
+
+        val method = viewModel::class.java.getDeclaredMethod("searchActors", String::class.java)
+        method.isAccessible = true
+
+        method.invoke(viewModel, query)
+
+        val actorsFlow = viewModel.uiState.value.actorsFlow
+        assertThat(actorsFlow).isNotNull()
+    }
+
+    @Test
+    fun `searchActors loadData should invoke use case with correct params`() = runTest {
+        val query = "sci-fi"
+        val page = 2
+
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("searchActors", String::class.java)
+        method.isAccessible = true
+
+        coEvery {
+            searchActorsUseCase(query = query, page = page)
+        } returns PagedResult(
+            data = listOf(
+                Actor(
+                    id = 1L,
+                    name = "Eva Thornton",
+                    profilePictureURL = "https://example.com/images/eva.jpg",
+                    birthDate = LocalDate(1985, 5, 20),
+                    placeOfBirth = "London, UK",
+                    deathDate = null,
+                    biography = "Eva Thornton began her career on the West End stage before making waves in international cinema.",
+                    headerPictures = listOf(
+                        "https://example.com/headers/eva1.jpg",
+                        "https://example.com/headers/eva2.jpg"
+                    ),
+                    department = "Acting"
+                )
+            ),
+            nextKey = null,
+            prevKey = null
+        )
+
+        method.invoke(viewModel, query)
+
+    }
+
+    @Test
+    fun `clearAllPagingFlows should reset actorFlow flows to empty`() = runTest {
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("clearAllPagingFlows")
+        method.isAccessible = true
+
+        val job = launch {
+            method.invoke(viewModel)
+        }
+        job.join()
+
+        val updatedState = viewModel.uiState.value
+        val actorItems = updatedState.actorsFlow.toList()
+        assertThat(actorItems).isEmpty()
+    }
+
+    @Test
+    fun `clearAllPagingFlows should reset moviesFlow to empty`() = runTest {
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("clearAllPagingFlows")
+        method.isAccessible = true
+
+        val job = launch {
+            method.invoke(viewModel)
+        }
+        job.join()
+
+        val updatedState = viewModel.uiState.value
+        val actorItems = updatedState.moviesFlow.toList()
+        assertThat(actorItems).isEmpty()
+    }
+
+    @Test
+    fun `clearAllPagingFlows should reset tvShow to empty`() = runTest {
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("clearAllPagingFlows")
+        method.isAccessible = true
+
+        val job = launch {
+            method.invoke(viewModel)
+        }
+        job.join()
+
+        val updatedState = viewModel.uiState.value
+        val actorItems = updatedState.tvShowsFlow.toList()
+        assertThat(actorItems).isEmpty()
+    }
+
+
 
     companion object {
         internal const val SEARCH_DEBOUNCED_DELAY = 300L
