@@ -6,6 +6,9 @@ import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.dummyData.DummyDataFactory.createMockActor
 import com.baghdad.repository.dummyData.DummyDataFactory.createMockActorDto
+import com.baghdad.repository.dummyData.DummyDataFactory.createMockMovieDto
+import com.baghdad.repository.dummyData.DummyDataFactory.createMockTvShowDto
+import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.model.PagedResultDto
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -66,6 +69,22 @@ class ActorRepositoryImplTest {
     }
 
     @Test
+    fun `getActorMovies should return list of movies when remote call succeeds`() = runTest {
+        // Given
+        val mockMovieDtos = createMockMovieDto()
+        val expectedMovies = mockMovieDtos.map { it.toEntity() }
+
+        coEvery { remoteActorDataSource.getActorMovies(actorId) } returns mockMovieDtos
+
+        // When
+        val result = actorRepositoryImpl.getActorMovies(actorId)
+
+        // Then
+        assertThat(result).isEqualTo(expectedMovies)
+        coVerify { remoteActorDataSource.getActorMovies(actorId) }
+    }
+
+    @Test
     fun `getActorTvShows should return empty list when no tv shows found`() = runTest {
         // Given
         coEvery { remoteActorDataSource.getActorTvShows(actorId) } returns emptyList()
@@ -75,6 +94,22 @@ class ActorRepositoryImplTest {
 
         // Then
         assertThat(emptyList<TvShow>() == result).isTrue()
+        coVerify { remoteActorDataSource.getActorTvShows(actorId) }
+    }
+
+    @Test
+    fun `getActorTvShows should return list of tv shows when remote call succeeds`() = runTest {
+        // Given
+        val mockTvShowDtos = createMockTvShowDto()
+        val expectedTvShows = mockTvShowDtos.map { it.toEntity() }
+
+        coEvery { remoteActorDataSource.getActorTvShows(actorId) } returns mockTvShowDtos
+
+        // When
+        val result = actorRepositoryImpl.getActorTvShows(actorId)
+
+        // Then
+        assertThat(result).isEqualTo(expectedTvShows)
         coVerify { remoteActorDataSource.getActorTvShows(actorId) }
     }
 
