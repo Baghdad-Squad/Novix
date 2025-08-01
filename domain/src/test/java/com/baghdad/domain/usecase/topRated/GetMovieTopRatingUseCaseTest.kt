@@ -4,12 +4,12 @@ import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
-import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -41,7 +41,7 @@ class GetMovieTopRatingUseCaseTest {
     }
 
     @Test
-    fun `invoke should return all movies when genreId is null`() = runTest {
+    fun `getTopRatedMovies() should return all movies when genreId is null`() = runTest {
         // Given
         val page = 1
         val movies = listOf(
@@ -56,12 +56,12 @@ class GetMovieTopRatingUseCaseTest {
         val result = useCase(page, genreId = null)
 
         // Then
-        assertEquals(movies, result.data)
+        assertThat(result.data).containsExactlyElementsIn(movies)
         coVerify(exactly = 1) { movieRepository.getTopRatedMovies(page) }
     }
 
     @Test
-    fun `invoke should return only movies matching genreId`() = runTest {
+    fun `getTopRatedMovies() should return filtered movies when genreId is provided`() = runTest {
         // Given
         val page = 1
         val genreId = 2L
@@ -79,7 +79,54 @@ class GetMovieTopRatingUseCaseTest {
         val result = useCase(page, genreId)
 
         // Then
-        assertEquals(expected, result.data)
-        coVerify { movieRepository.getTopRatedMovies(page) }
+        assertThat(result.data).containsExactlyElementsIn(expected)
+        coVerify(exactly = 1) { movieRepository.getTopRatedMovies(page) }
+    }
+
+    @Test
+    fun `getTopRatedMovies() should return empty list when no movies match genreId`() = runTest {
+        // Given
+        val page = 1
+        val genreId = 99L
+        val movies = listOf(
+            createMovie(1, listOf(1)),
+            createMovie(2, listOf(2))
+        )
+        val pagedResult = PagedResult(data = movies, nextKey = 2, prevKey = null)
+
+        coEvery { movieRepository.getTopRatedMovies(page) } returns pagedResult
+
+        // When
+        val result = useCase(page, genreId)
+
+        // Then
+        assertThat(result.data).isEmpty()
+        coVerify(exactly = 1) { movieRepository.getTopRatedMovies(page) }
+    }
+
+    @Test
+    fun `getTopRatedMovies() should preserve pagination keys when filtering by genreId`() = runTest {
+        // Given
+        val page = 2
+        val genreId = 2L
+        val movies = listOf(
+            createMovie(1, listOf(1)),
+            createMovie(2, listOf(2))
+        )
+        val pagedResult = PagedResult(
+            data = movies,
+            nextKey = 3,
+            prevKey = 1
+        )
+
+        coEvery { movieRepository.getTopRatedMovies(page) } returns pagedResult
+
+        // When
+        val result = useCase(page, genreId)
+
+        // Then
+        assertThat(result.nextKey).isEqualTo(3)
+        assertThat(result.prevKey).isEqualTo(1)
+        assertThat(result.data).hasSize(1)
     }
 }

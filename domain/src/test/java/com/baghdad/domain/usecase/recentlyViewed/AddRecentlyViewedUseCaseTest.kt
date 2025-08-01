@@ -23,7 +23,7 @@ class AddRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `should add movie to recently viewed`() = runTest {
+    fun `invoke() should add movie to recently viewed when contentType is MOVIE`() = runTest {
         val movie = getRecentlyViewedItem(contentType = ContentType.MOVIE)
 
         addRecentlyViewedUseCase(movie.contentId, movie.contentImageUrl, movie.contentType)
@@ -35,12 +35,13 @@ class AddRecentlyViewedUseCaseTest {
                     assertThat(it.contentImageUrl).isEqualTo(movie.contentImageUrl)
                     assertThat(it.contentType).isEqualTo(ContentType.MOVIE)
                     assertThat(it.viewedAt).isNotNull()
-                })
+                }
+            )
         }
     }
 
     @Test
-    fun `should add tv show to recently viewed`() = runTest {
+    fun `invoke() should add tv show to recently viewed when contentType is TV_SHOW`() = runTest {
         val tvShow = getRecentlyViewedItem(contentType = ContentType.TV_SHOW)
 
         addRecentlyViewedUseCase(
@@ -62,7 +63,7 @@ class AddRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `should propagate exception when repository throws`() = runTest {
+    fun `invoke() should propagate exception when repository throws`() = runTest {
         val recentlyViewed = getRecentlyViewedItem()
 
         coEvery {

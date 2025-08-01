@@ -67,7 +67,7 @@ class GetActorMoviesUseCaseTest {
     }
 
     @Test
-    fun `getActorMoviesUseCase should return actor movies`() = runTest {
+    fun `getActorMoviesUseCase() should return actor movies when called with valid actorId`() = runTest {
         // Given
         val actorId = 1L
         coEvery { actorRepository.getActorMovies(actorId) } returns sampleMovies
@@ -80,7 +80,7 @@ class GetActorMoviesUseCaseTest {
     }
 
     @Test
-    fun `getActorMoviesUseCase returns empty list when no movies found`() = runTest {
+    fun `getActorMoviesUseCase() should return empty list when no movies found for actor`() = runTest {
         // Given
         val actorId = 2L
         coEvery { actorRepository.getActorMovies(actorId) } returns emptyList()
@@ -93,7 +93,7 @@ class GetActorMoviesUseCaseTest {
     }
 
     @Test
-    fun `getActorMoviesUseCase returns movies with minimal fields`() = runTest {
+    fun `getActorMoviesUseCase() should return movies with minimal fields when data is sparse`() = runTest {
         // Given
         val actorId = 3L
         coEvery { actorRepository.getActorMovies(actorId) } returns listOf(minimalMovie)
@@ -109,7 +109,7 @@ class GetActorMoviesUseCaseTest {
     }
 
     @Test
-    fun `getActorMoviesUseCase returns movies with special characters in titles`() = runTest {
+    fun `getActorMoviesUseCase() should return movies with special characters in titles when titles contain unicode chars`() = runTest {
         // Given
         val actorId = 6L
         val specialTitleMovie = listOf(
@@ -125,7 +125,7 @@ class GetActorMoviesUseCaseTest {
     }
 
     @Test
-    fun `getActorMoviesUseCase makes exactly one repository call`() = runTest {
+    fun `getActorMoviesUseCase() should make exactly one repository call when invoked`() = runTest {
         // Given
         val actorId = 7L
         coEvery { actorRepository.getActorMovies(actorId) } returns sampleMovies
@@ -137,9 +137,8 @@ class GetActorMoviesUseCaseTest {
         coVerify(exactly = 1) { actorRepository.getActorMovies(actorId) }
     }
 
-
     @Test
-    fun `getActorMoviesUseCase returns movies with multiple genres`() = runTest {
+    fun `getActorMoviesUseCase() should return movies with multiple genres when movie has many genres`() = runTest {
         // Given
         val actorId = 9L
         val multiGenreMovie = listOf(

@@ -21,19 +21,24 @@ class DeleteAllRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `should delete all recently viewed successfully`() = runTest {
+    fun `invoke() should delete all recently viewed successfully`() = runTest {
+        // When
         deleteAllRecentlyViewedUseCase()
 
+        // Then
         coVerify(exactly = 1) { recentlyViewedRepository.deleteAllRecentlyViewed() }
     }
 
     @Test
-    fun `should propagate exception when repository throws exception`() = runTest {
+    fun `invoke() should propagate exception when repository throws exception`() = runTest {
+        // Given
         val exception = RuntimeException()
         coEvery { recentlyViewedRepository.deleteAllRecentlyViewed() } throws exception
 
+        // When
         val resultException = runCatching { deleteAllRecentlyViewedUseCase() }.exceptionOrNull()
 
+        // Then
         assertThat(resultException).isNotNull()
         assertThat(resultException).isInstanceOf(RuntimeException::class.java)
     }

@@ -21,7 +21,7 @@ class DeleteRecentSearchUseCaseTest {
     }
 
     @Test
-    fun `should delete recent search by id successfully`() = runTest {
+    fun `invoke() should delete recent search by id successfully`() = runTest {
         val id = 123L
 
         deleteRecentSearchUseCase(id)
@@ -30,7 +30,7 @@ class DeleteRecentSearchUseCaseTest {
     }
 
     @Test
-    fun `should propagate exception when repository throws exception`() = runTest {
+    fun `invoke() should propagate exception when repository throws exception`() = runTest {
         val id = 456L
         val exception = RuntimeException("Something went wrong")
         coEvery { searchRepository.deleteRecentSearchById(id) } throws exception

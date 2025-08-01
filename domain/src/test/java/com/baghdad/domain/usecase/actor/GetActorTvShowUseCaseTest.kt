@@ -35,7 +35,8 @@ class GetActorTvShowUseCaseTest {
                 "https://example.com/breakingbad_header2.jpg"
             ),
             numberOfSeasons = 5
-        ), TvShow(
+        ),
+        TvShow(
             id = 2L,
             title = "Better Call Saul",
             overview = "The trials and tribulations of criminal lawyer Jimmy McGill",
@@ -73,7 +74,7 @@ class GetActorTvShowUseCaseTest {
     }
 
     @Test
-    fun `invoke returns tv shows when actor has appearances`() = runTest {
+    fun `getActorTvShowUseCase() should return tv shows when actor has appearances`() = runTest {
         // Given
         val actorId = 1L
         coEvery { actorRepository.getActorTvShows(actorId) } returns sampleTvShows
@@ -87,7 +88,7 @@ class GetActorTvShowUseCaseTest {
     }
 
     @Test
-    fun `invoke returns empty list when actor has no tv show appearances`() = runTest {
+    fun `getActorTvShowUseCase() should return empty list when actor has no tv show appearances`() = runTest {
         // Given
         val actorId = 2L
         coEvery { actorRepository.getActorTvShows(actorId) } returns emptyList()
@@ -100,7 +101,7 @@ class GetActorTvShowUseCaseTest {
     }
 
     @Test
-    fun `invoke returns tv shows with minimal information`() = runTest {
+    fun `getActorTvShowUseCase() should return tv shows with minimal information when data is sparse`() = runTest {
         // Given
         val actorId = 3L
         coEvery { actorRepository.getActorTvShows(actorId) } returns listOf(minimalTvShow)
@@ -117,7 +118,7 @@ class GetActorTvShowUseCaseTest {
     }
 
     @Test
-    fun `invoke returns tv shows with multiple genres`() = runTest {
+    fun `getActorTvShowUseCase() should return tv shows with multiple genres`() = runTest {
         // Given
         val actorId = 5L
         coEvery { actorRepository.getActorTvShows(actorId) } returns sampleTvShows
@@ -131,7 +132,7 @@ class GetActorTvShowUseCaseTest {
     }
 
     @Test
-    fun `invoke returns tv shows with header images`() = runTest {
+    fun `getActorTvShowUseCase() should return tv shows with header images`() = runTest {
         // Given
         val actorId = 6L
         coEvery { actorRepository.getActorTvShows(actorId) } returns sampleTvShows
@@ -145,7 +146,7 @@ class GetActorTvShowUseCaseTest {
     }
 
     @Test
-    fun `invoke returns tv shows with different season counts`() = runTest {
+    fun `getActorTvShowUseCase() should return tv shows with different season counts`() = runTest {
         // Given
         val actorId = 7L
         coEvery { actorRepository.getActorTvShows(actorId) } returns sampleTvShows
@@ -159,7 +160,7 @@ class GetActorTvShowUseCaseTest {
     }
 
     @Test
-    fun `invoke makes exactly one repository call`() = runTest {
+    fun `getActorTvShowUseCase() should make exactly one repository call when invoked`() = runTest {
         // Given
         val actorId = 8L
         coEvery { actorRepository.getActorTvShows(actorId) } returns sampleTvShows
@@ -172,7 +173,7 @@ class GetActorTvShowUseCaseTest {
     }
 
     @Test
-    fun `invoke returns tv shows with special characters in titles`() = runTest {
+    fun `getActorTvShowUseCase() should return tv shows with special characters in titles`() = runTest {
         // Given
         val actorId = 9L
         val specialTitleShow = listOf(

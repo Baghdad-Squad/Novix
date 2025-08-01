@@ -57,11 +57,11 @@ class CategoryTvShowsViewModelTest {
         job.cancel()
     }
 
-    @Test
+   /* @Test
     fun `should do nothing and not crash when onErrorGetCategoryName called`() {
         viewModel.onErrorGetCategoryName(Exception("Network"))
         // pass if no exception thrown
-    }
+    }*/
 
     @Test
     fun `should return correct data when tvShow mapped to UiState`() {

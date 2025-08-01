@@ -21,7 +21,7 @@ class GetTvShowGenreNameByIdUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenreNameByIdUseCase returns correct genre for existing category ID`() = runTest {
+    fun `getTvShowGenreNameByIdUseCase() should return correct genre for existing category ID`() = runTest {
         // Given
         val categoryId = 3L
         coEvery { getGenresUseCase.getTvShowGenres() } returns sampleTvGenres
@@ -34,7 +34,7 @@ class GetTvShowGenreNameByIdUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenreNameByIdUseCase returns first match when duplicate IDs exist`() = runTest {
+    fun `getTvShowGenreNameByIdUseCase() should return first match when duplicate IDs exist`() = runTest {
         // Given
         val categoryId = 2L
         val genresWithDuplicates = sampleTvGenres + Genre(id = 2L, name = "Sitcom")
@@ -48,7 +48,7 @@ class GetTvShowGenreNameByIdUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenreNameByIdUseCase returns genre with special characters`() = runTest {
+    fun `getTvShowGenreNameByIdUseCase() should return genre with special characters`() = runTest {
         // Given
         val categoryId = 6L
         val specialGenre = Genre(id = 6L, name = "Reality-TV/Docusoap")
@@ -62,7 +62,7 @@ class GetTvShowGenreNameByIdUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenreNameByIdUseCase returns genre with long name`() = runTest {
+    fun `getTvShowGenreNameByIdUseCase() should return genre with long name`() = runTest {
         // Given
         val categoryId = 7L
         val longNameGenre = Genre(id = 7L, name = "Historical Fiction Drama Series")
@@ -76,7 +76,7 @@ class GetTvShowGenreNameByIdUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenreNameByIdUseCase returns correct genre from large genre list`() = runTest {
+    fun `getTvShowGenreNameByIdUseCase() should return correct genre from large genre list`() = runTest {
         // Given
         val largeGenreList = List(1000) { Genre(id = it.toLong(), name = "TV Genre $it") }
         val targetId = 999L
@@ -90,7 +90,7 @@ class GetTvShowGenreNameByIdUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenreNameByIdUseCase makes exactly one call to genres repository`() = runTest {
+    fun `getTvShowGenreNameByIdUseCase() should make exactly one call to genres repository`() = runTest {
         // Given
         val categoryId = 1L
         coEvery { getGenresUseCase.getTvShowGenres() } returns sampleTvGenres
@@ -103,7 +103,7 @@ class GetTvShowGenreNameByIdUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenreNameByIdUseCase returns consistent results for same category ID`() = runTest {
+    fun `getTvShowGenreNameByIdUseCase() should return consistent results for same category ID`() = runTest {
         // Given
         val categoryId = 4L
         coEvery { getGenresUseCase.getTvShowGenres() } returns sampleTvGenres
@@ -118,7 +118,7 @@ class GetTvShowGenreNameByIdUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenreNameByIdUseCase returns different genres for different category IDs`() = runTest {
+    fun `getTvShowGenreNameByIdUseCase() should return different genres for different category IDs`() = runTest {
         // Given
         coEvery { getGenresUseCase.getTvShowGenres() } returns sampleTvGenres
 
@@ -133,7 +133,7 @@ class GetTvShowGenreNameByIdUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenreNameByIdUseCase returns genre with unicode characters`() = runTest {
+    fun `getTvShowGenreNameByIdUseCase() should return genre with unicode characters`() = runTest {
         // Given
         val categoryId = 8L
         val unicodeGenre = Genre(id = 8L, name = "Télé-réalité")
@@ -147,7 +147,7 @@ class GetTvShowGenreNameByIdUseCaseTest {
     }
 
     @Test
-    fun `getTvShowGenreNameByIdUseCase returns genre with numeric characters in name`() = runTest {
+    fun `getTvShowGenreNameByIdUseCase() should return genre with numeric characters in name`() = runTest {
         // Given
         val categoryId = 9L
         val numericGenre = Genre(id = 9L, name = "24/7 Series")
@@ -168,6 +168,5 @@ class GetTvShowGenreNameByIdUseCaseTest {
             Genre(id = 4L, name = "Documentary"),
             Genre(id = 5L, name = "Crime")
         )
-
     }
 }

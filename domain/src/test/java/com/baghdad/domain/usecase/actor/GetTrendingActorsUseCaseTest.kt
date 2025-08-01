@@ -3,12 +3,12 @@ package com.baghdad.domain.usecase.actor
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.ActorRepository
 import com.baghdad.entity.person.Actor
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
-import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -24,7 +24,7 @@ class GetTrendingActorsUseCaseTest {
     }
 
     @Test
-    fun `invoke should return paged result from repository`() = runTest {
+    fun `invoke() should return paged result from repository`() = runTest {
         // Given
         val page = 1
         val expectedActors = listOf(
@@ -70,7 +70,7 @@ class GetTrendingActorsUseCaseTest {
         val result = useCase(page)
 
         // Then
-        assertEquals(expectedResult, result)
+        assertThat(result).isEqualTo(expectedResult)
         coVerify(exactly = 1) { actorRepository.getTrendingActors(page) }
     }
 }
