@@ -8,4 +8,5 @@ interface TopRatingInteractionListener {
     fun onSaveMovieClick(movieId: Long)
     fun onBackClick()
     fun onSelectedTab(selectedTab: TopRatingTab)
+    fun onSnackBarActionLabelClick()
 }

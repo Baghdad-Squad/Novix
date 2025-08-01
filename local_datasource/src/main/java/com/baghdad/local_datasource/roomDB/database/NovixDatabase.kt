@@ -16,7 +16,7 @@ import com.baghdad.local_datasource.roomDB.dao.TvShowDao
 import com.baghdad.local_datasource.roomDB.entity.Actor
 import com.baghdad.local_datasource.roomDB.entity.ContinueWatching
 import com.baghdad.local_datasource.roomDB.entity.Genre
-import com.baghdad.local_datasource.roomDB.entity.LocalFavoriteGenreDto
+import com.baghdad.local_datasource.roomDB.entity.FavoriteGenre
 import com.baghdad.local_datasource.roomDB.entity.Movie
 import com.baghdad.local_datasource.roomDB.entity.RecentSearch
 import com.baghdad.local_datasource.roomDB.entity.RecentlyViewed
@@ -31,7 +31,7 @@ import com.baghdad.local_datasource.roomDB.entity.TvShow
         RecentlyViewed::class,
         Actor::class,
         Genre::class,
-        LocalFavoriteGenreDto::class,
+        FavoriteGenre::class,
         SearchQuery::class,
         ContinueWatching::class,
     ],

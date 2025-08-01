@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.home
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -10,6 +11,7 @@ import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.CoroutineDispatcher
@@ -26,6 +28,10 @@ class HomeViewModel(
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
     HomeInteractionListener {
     init {
+        loadData()
+    }
+
+    private fun loadData() {
         getPopularItems()
         getTopRatingMovies()
         observeContinueWatchingItems()
@@ -40,6 +46,7 @@ class HomeViewModel(
             onSuccess = ::onGetPopularItemsSuccess,
             onStart = ::onGetPopularItemsStart,
             onFinally = ::onGetPopularItemsFinished,
+            onError = ::onLoadDataError,
         )
     }
 
@@ -51,6 +58,13 @@ class HomeViewModel(
             it.copy(
                 popularItems = (popularMovies + popularTvShows).shuffled(),
             )
+        }
+    }
+
+    private fun onLoadDataError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
         }
     }
 
@@ -73,6 +87,7 @@ class HomeViewModel(
             onSuccess = ::onGetTopRatingMoviesSuccess,
             onStart = ::onGetTopRatingMoviesStart,
             onFinally = ::onGetTopRatingMoviesFinished,
+            onError = ::onLoadDataError,
         )
     }
 
@@ -104,6 +119,7 @@ class HomeViewModel(
             flowProvider = observeContinueWatchingUseCase::invoke,
             dispatcher = defaultDispatcher,
             onNewValue = ::onNewContinueWatchingItems,
+            onError = ::onLoadDataError
         )
     }
 
@@ -126,6 +142,7 @@ class HomeViewModel(
             onSuccess = ::onGetMovieGenresSuccess,
             onStart = ::onGetMovieGenresStart,
             onFinally = ::onGetMovieGenresFinished,
+            onError = ::onLoadDataError,
         )
     }
 
@@ -154,10 +171,12 @@ class HomeViewModel(
             onSuccess = ::onGetUpcomingSuccess,
             onStart = ::onGetUpcomingStarted,
             onFinally = ::onGetUpcomingFinished,
+            onError = ::onLoadDataError,
         )
     }
 
     private fun onGetUpcomingSuccess(movies: List<Movie>) {
+        hideSnackBar()
         updateState {
             it.copy(upcomingItems = movies.map(Movie::toUpcomingItemUiState))
         }
@@ -175,7 +194,8 @@ class HomeViewModel(
         }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     override fun onPopularItemClicked(item: HomeScreenState.PopularItemUiState) {
         if (item.type == HomeScreenState.PopularItemUiState.Type.MOVIE) {
@@ -240,6 +260,19 @@ class HomeViewModel(
 
     override fun onUpcomingItemSaveClicked(item: HomeScreenState.UpcomingItemUiState) {
 //        TODO("Implement when saving lists is implemented")
+    }
+
+    override fun onSnackBarActionLabelClick() {
+        loadData()
+    }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
+        )
     }
 
     companion object {
