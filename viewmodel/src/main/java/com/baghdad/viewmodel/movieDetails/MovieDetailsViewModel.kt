@@ -21,7 +21,7 @@ class MovieDetailsViewModel(
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
     private val movieId: Long,
-    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
     MovieDetailsInteractionListener {
 
@@ -43,18 +43,16 @@ class MovieDetailsViewModel(
     override fun onSaveCurrentMovieClick() {
         tryToExecute(
             callee = { currentState.movieId },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = {
                 updateState {
-
                     it.copy(
                         isSaved = !currentState.isSaved,
-                        isLoading = false
                     )
                 }
             },
-            onStart = ::onLoading,
-            onFinally = ::onFinally
+            onStart = ::onMoreLikeThisStarted,
+            onFinally = ::onMoreLikeThisFinished
         )
         // TODO: save logic
     }
@@ -63,9 +61,9 @@ class MovieDetailsViewModel(
         tryToExecute(
             callee = { currentState.moreLikeThisMovie.firstOrNull { it.id == id }?.id ?: 1L },
             onSuccess = ::onSaveMoreLikeThisMediaSuccess,
-            onStart = ::onLoading,
-            dispatcher = defaultDispatcher,
-            onFinally = ::onFinally
+            onStart = ::onMoreLikeThisStarted,
+            dispatcher = ioDispatcher,
+            onFinally = ::onMoreLikeThisFinished
         )
     }
 
@@ -159,7 +157,7 @@ class MovieDetailsViewModel(
             },
             onSuccess = ::onGetMovieGallerySuccess,
             onStart = ::onGetMovieGalleryStarted,
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onFinally = ::onGetMovieGalleryFinished,
             onError = ::onError
         )
@@ -185,7 +183,7 @@ class MovieDetailsViewModel(
         tryToExecute(
             callee = { getMovieDetailsUseCase(movieId) },
             onSuccess = ::onGetMovieDetailsSuccess,
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onStart = ::onGetMovieDetailsStarted,
             onFinally = ::onFinallyAndAddToContinueWatching,
             onError = ::onError
@@ -256,7 +254,7 @@ class MovieDetailsViewModel(
             onStart = ::onGetMovieMoreLikeThisStarted,
             onFinally = ::onGetMovieMoreLikeThisFinished,
             onError = ::onError,
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             )
     }
 
@@ -300,7 +298,7 @@ class MovieDetailsViewModel(
 
     private fun addToContinueWatching() {
         tryToExecute(
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             callee = {
                 addContinueWatchingUseCase(
                     movieId, currentState.categories.map { it.id },

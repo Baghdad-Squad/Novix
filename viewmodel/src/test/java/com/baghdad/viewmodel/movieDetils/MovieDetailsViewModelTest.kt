@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.movieDetils
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
@@ -9,6 +10,7 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.google.common.truth.Truth.assertThat
@@ -61,7 +63,7 @@ class MovieDetailsViewModelTest {
             getMoreLikeThisPosterImageUseCase = getMoreLikeThisPosterImageUseCase,
             addContinueWatchingUseCase = addContinueWatchingUseCase,
             movieId = movieId,
-            defaultDispatcher = testDispatcher,
+            ioDispatcher = testDispatcher,
         )
     }
 
@@ -225,6 +227,29 @@ class MovieDetailsViewModelTest {
             val finalState = movieDetailsViewModel.uiState.value
             assertThat(finalState.isLoading).isFalse()
         }
+
+    @Test
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
+        // Given
+        coEvery { getMovieDetailsUseCase(any()) } throws NoInternetException()
+        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+
+        val job = launch {
+            movieDetailsViewModel.snackBarState.collect {
+                emittedSnackBarMessages.add(it.message)
+            }
+        }
+
+        // When
+        movieDetailsViewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+        job.cancel()
+
+        // Then
+        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+    }
+
+
 
     companion object {
         private fun createMockMovie() = Movie(
