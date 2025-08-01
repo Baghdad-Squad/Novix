@@ -16,21 +16,8 @@ data class SearchScreenState(
     val actorsFlow: Flow<PagingData<ActorUiState>> = flowOf(),
     val recentViewed: List<RecentlyViewedUiState> = emptyList(),
     val recentSearch: List<RecentSearchUiState> = emptyList(),
-    val bottomSheetUiState: FilterBottomSheetUiState = FilterBottomSheetUiState(),
     val isLoading: Boolean = false,
 ) : BaseUiState {
-    val searchFilter: SearchFilterUiState
-        get() = if (selectedSearchTab == SearchTab.MOVIES) {
-            bottomSheetUiState.moviesFilter
-        } else {
-            bottomSheetUiState.tvShowsFilter
-        }
-
-    data class FilterBottomSheetUiState(
-        val moviesFilter: SearchFilterUiState = SearchFilterUiState(),
-        val tvShowsFilter: SearchFilterUiState = SearchFilterUiState(),
-        val isBottomSheetVisible: Boolean = false
-    )
 
     data class MovieUiState(
         val id: Long = 0,
@@ -65,15 +52,6 @@ data class SearchScreenState(
     data class RecentSearchUiState(
         val id: Long = 0,
         val query: String = ""
-    )
-
-    data class SearchFilterUiState(
-        val minimumYear: Int? = 1874,
-        val maximumYear: Int? = 2035,
-        val minimumRating: Int = 0,
-        val isGenresError: Boolean = false,
-        val selectedGenres: List<GenreUiState> = emptyList(),
-        val allGenres: List<GenreUiState> = emptyList()
     )
 
     enum class SearchTab {
