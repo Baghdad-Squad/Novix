@@ -1,9 +1,6 @@
 package com.baghdad.viewmodel.home
 
-import androidx.paging.PagingData
 import com.baghdad.viewmodel.base.BaseUiState
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 
 data class HomeScreenState(
     val isPopularLoading: Boolean = true,

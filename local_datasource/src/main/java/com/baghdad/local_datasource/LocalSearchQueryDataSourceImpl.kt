@@ -72,8 +72,8 @@ class LocalSearchQueryDataSourceImpl(
                         actorDao.deleteActorById(it.mediaId)
                     }
                 }
-                searchQueryDao.deleteInvalidSearchQueries(timestamp)
             }
+                searchQueryDao.deleteInvalidSearchQueries(timestamp)
         }
     }
 

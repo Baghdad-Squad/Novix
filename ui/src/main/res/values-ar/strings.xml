@@ -110,6 +110,7 @@
     <!-- Combined duration -->
     <string name="duration_combined">%1$s  و %2$s</string>
     <string name="default_image">"الصورة الافتراضية "</string>
+    <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
 
 </resources>
 
