@@ -7,6 +7,7 @@ import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.utls.collectAndSnapshot
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -155,6 +156,32 @@ class CategoryMoviesViewModelTest {
 
         assertThat(uiState.posterPictureURL).isEqualTo(longUrl)
     }
+    @Test
+    fun `should  update moviesFlow and set isLoading to false when paging flow collected`() =
+        runTest {
+            // Given
+            coEvery { getGenreMoviesUseCase(1L, any()) } returns PagedResult(
+                data = listOf(testMovie),
+                nextKey = null,
+                prevKey = null
+            )
+
+            viewModel = CategoryMoviesViewModel(
+                genreId = 1L,
+                getGenreMoviesUseCase = getGenreMoviesUseCase,
+                getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase
+            )
+
+            advanceUntilIdle()
+            // When
+            val items = collectAndSnapshot(
+                flow = viewModel.uiState.value.moviesFlow,
+            )
+
+            // Then
+            assertThat(items).isNotEmpty()
+            assertThat(viewModel.uiState.value.isLoading).isFalse()
+        }
 
     @Test
     fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() =
