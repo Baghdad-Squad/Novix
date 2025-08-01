@@ -106,6 +106,7 @@ class SearchViewModel(
             mapEntityToUiState = { it.toMovieUI() },
             onFlowCreated = { moviesFlow ->
                 updateState { it.copy(moviesFlow = moviesFlow) }
+                hideSnackBar()
             },
             onLoadingChanged = { isLoading ->
                 updateState { it.copy(isLoading = isLoading) }
@@ -125,7 +126,10 @@ class SearchViewModel(
             onInitialLoadError = ::onSearchError,
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toTvShowUI() },
-            onFlowCreated = { tvShowsFlow -> updateState { it.copy(tvShowsFlow = tvShowsFlow) } },
+            onFlowCreated = { tvShowsFlow ->
+                updateState { it.copy(tvShowsFlow = tvShowsFlow) }
+                hideSnackBar()
+            },
             onLoadingChanged = { isLoading ->
                 updateState { it.copy(isLoading = isLoading) }
             },
@@ -143,7 +147,10 @@ class SearchViewModel(
             onInitialLoadFinished = ::onFinally,
             onInitialLoadError = ::onSearchError,
             mapEntityToUiState = { it.toActorUI() },
-            onFlowCreated = { actorsFlow -> updateState { it.copy(actorsFlow = actorsFlow) } },
+            onFlowCreated = { actorsFlow ->
+                updateState { it.copy(actorsFlow = actorsFlow) }
+                hideSnackBar()
+            },
             onLoadingChanged = { isLoading ->
                 updateState { it.copy(isLoading = isLoading) }
             },
@@ -645,7 +652,6 @@ class SearchViewModel(
     }
 
     private fun onFinally() {
-        hideSnackBar()
         updateState { it.copy(isLoading = false) }
     }
 
