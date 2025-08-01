@@ -1,6 +1,8 @@
 package com.baghdad.viewmodel.trendingActors
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetTrendingActorsUseCase
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
@@ -26,6 +28,11 @@ class TrendingActorViewModel(
             mapEntityToUiState = { it.toTrendingActorsUi() },
             onFlowCreated = { flow ->
                 updateState { it.copy(trendingActor = flow) }
+                hideSnackBar()
+            },
+            onInitialLoadError = ::onError,
+            onLoadingChanged = { isLoading ->
+                updateState { it.copy(isLoading = isLoading) }
             }
         )
     }
@@ -36,6 +43,26 @@ class TrendingActorViewModel(
 
     override fun onTrendingActorClick(actorId: Long) {
         sendEffect(TrendingActorsUiEffect.NavigateToActorsDetails(actorId))
+    }
+
+    private fun onError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
+    }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
+        )
+    }
+
+    override fun onSnackBarActionLabelClick() {
+        getTrendingActors()
     }
 
     private fun onFinally() {

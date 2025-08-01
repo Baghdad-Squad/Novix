@@ -33,14 +33,23 @@ fun PrimaryButton(
             if (!isLoading) onClick()
         },
         modifier = modifier.height(48.dp),
-        enabled = isEnabled,
+        enabled = isEnabled && !isLoading,
         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
-        colors = buttonColors(
-            containerColor = Theme.color.primary,
-            contentColor = Theme.color.onPrimary,
-            disabledContainerColor = Theme.color.disable,
-            disabledContentColor = Theme.color.onPrimaryHint
-        ),
+        colors = if (isLoading) {
+            buttonColors(
+                containerColor = Theme.color.primary,
+                contentColor = Theme.color.onPrimary,
+                disabledContainerColor = Theme.color.primary,
+                disabledContentColor = Theme.color.onPrimary
+            )
+        } else {
+            buttonColors(
+                containerColor = Theme.color.primary,
+                contentColor = Theme.color.onPrimary,
+                disabledContainerColor = Theme.color.disable,
+                disabledContentColor = Theme.color.onPrimaryHint
+            )
+        },
         shape = RoundedCornerShape(12.dp),
     ) {
         Text(

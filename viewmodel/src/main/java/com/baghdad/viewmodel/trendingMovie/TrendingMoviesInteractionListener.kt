@@ -5,4 +5,5 @@ interface TrendingMoviesInteractionListener {
     fun onMovieClick(movieId: Long)
     fun onToggleSaveMovie(movieId: Long)
     fun onCategoryClick(categoryId: Long?)
+    fun onSnackBarActionLabelClick(categoryId: Long?)
 }

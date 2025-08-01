@@ -10,4 +10,6 @@ interface ActorDetailsInteractionListener {
     fun onTvShowCardClick(tvShowId: Long)
     fun onSaveMovieClick(movieId: Long)
     fun onSaveTvShowClick(tvShowId: Long)
+
+    fun onSnackBarActionLabelClick()
 }
