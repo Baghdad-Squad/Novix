@@ -79,7 +79,8 @@ class TopRatingViewModel(
             onFlowCreated = { tvShowsFlow -> updateState { it.copy(tvShowsFlow = tvShowsFlow) } },
             onLoadingChanged = { isLoading ->
                 updateState { it.copy(isLoading = isLoading) }
-            }
+            },
+            onInitialLoadError = ::onError
         )
     }
 
@@ -98,7 +99,8 @@ class TopRatingViewModel(
             onFlowCreated = { moviesFlow -> updateState { it.copy(moviesFlow = moviesFlow) } },
             onLoadingChanged = { isLoading ->
                 updateState { it.copy(isLoading = isLoading) }
-            }
+            },
+            onInitialLoadError = ::onError
         )
     }
 

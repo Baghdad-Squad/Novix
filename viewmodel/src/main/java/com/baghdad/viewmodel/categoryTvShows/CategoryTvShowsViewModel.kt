@@ -54,7 +54,7 @@ class CategoryTvShowsViewModel(
             onLoadingChanged = { isLoading->
                 updateState { it.copy(isLoading = isLoading) }
             },
-            onError = ::onLoadDataError
+            onInitialLoadError = ::onLoadDataError
         )
     }
 

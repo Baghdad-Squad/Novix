@@ -71,10 +71,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
                     isVisible = true
                 )
             }
-            Log.d(
-                "BaseViewModel",
-                "showSnackBar: $message, isSuccess: $isSuccess, duration: $durationMillis, actionLabelRes: $actionLabelRes",
-            )
+
             delay(durationMillis)
             _snackBarState.update {
                 it.copy(
