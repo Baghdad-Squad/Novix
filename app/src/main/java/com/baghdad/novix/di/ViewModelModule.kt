@@ -1,6 +1,5 @@
 package com.baghdad.novix.di
 
-import com.baghdad.domain.util.SearchFilterHelper
 import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesViewModel
@@ -29,7 +28,6 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModelOf(::SearchViewModel)
-    single { SearchFilterHelper() }
 
     viewModel { (id: Long) ->
         MovieDetailsViewModel(

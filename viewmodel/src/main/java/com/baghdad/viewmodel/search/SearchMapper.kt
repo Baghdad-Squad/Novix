@@ -37,20 +37,3 @@ fun RecentSearch.toRecentSearchUI() = SearchScreenState.RecentSearchUiState(
     id = id,
     query = query
 )
-
-fun Genre.toGenreUI() = SearchScreenState.GenreUiState(
-    id = id,
-    name = name
-)
-
-fun SearchScreenState.SearchFilterUiState.toSearchFilter() = SearchFilter(
-    minimumYear = minimumYear,
-    maximumYear = maximumYear,
-    minimumRating = minimumRating,
-    selectedGenres = selectedGenres.map { it.toGenre() }
-)
-
-fun SearchScreenState.GenreUiState.toGenre() = Genre(
-    id = id,
-    name = name
-)
