@@ -14,10 +14,6 @@ class TrendingTvShowViewModel(
 ) : BaseViewModel<TrendingTvShowScreenState, TrendingTvShowScreenEffect>(TrendingTvShowScreenState()),
     TrendingTvShowInteractionListener {
     init {
-        loadData()
-    }
-
-    private fun loadData() {
         getTvShowGenres()
         getTrendingTvShowsByGenre(null)
     }
@@ -52,7 +48,7 @@ class TrendingTvShowViewModel(
                 updateState { it.copy(trendingTvShows = tvShowFlow) }
                 hideSnackBar()
             },
-            onError = ::onLoadDataError,
+            onInitialLoadError = ::onLoadDataError,
         )
     }
 
@@ -89,8 +85,9 @@ class TrendingTvShowViewModel(
         }
     }
 
-    override fun onSnackBarActionLabelClick() {
-        loadData()
+    override fun onSnackBarActionLabelClick(genreId: Long?) {
+        getTvShowGenres()
+        getTrendingTvShowsByGenre(genreId)
     }
 
     override fun onSaveTvShowClick(tvShowId: Long) {

@@ -99,7 +99,7 @@ fun TrendingTvShowContent(
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
+                onActionClick = {listener.onSnackBarActionLabelClick(uiState.selectedGenreId)},
             )
         },
         isLoading = uiState.isLoading,

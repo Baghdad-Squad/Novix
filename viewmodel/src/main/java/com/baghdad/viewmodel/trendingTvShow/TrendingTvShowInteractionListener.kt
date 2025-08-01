@@ -5,5 +5,5 @@ interface TrendingTvShowInteractionListener {
     fun onBackIconClick()
     fun onSaveTvShowClick(tvShowId: Long)
     fun onGenreClick(genreId: Long?)
-    fun onSnackBarActionLabelClick()
+    fun onSnackBarActionLabelClick(genreId: Long?)
 }
