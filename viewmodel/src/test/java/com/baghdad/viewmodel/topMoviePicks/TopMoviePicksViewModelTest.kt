@@ -1,8 +1,10 @@
 package com.baghdad.viewmodel.topMoviePicks
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -30,9 +32,10 @@ class TopMoviePicksViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        getActorMoviesUseCase = mockk( relaxed = true)
+        getActorMoviesUseCase = mockk(relaxed = true)
         coEvery { getActorMoviesUseCase(actorId) } returns mockedMovies()
-        topMoviePicksViewModel = TopMoviePicksViewModel(actorId, getActorMoviesUseCase, testDispatcher)
+        topMoviePicksViewModel =
+            TopMoviePicksViewModel(actorId, getActorMoviesUseCase, testDispatcher)
     }
 
 
@@ -85,15 +88,27 @@ class TopMoviePicksViewModelTest {
         job.cancel()
     }
 
-//    @Test
-//    fun `mapThrowableToErrorMessage should return UnknownError when mapping throwable to error message`() {
-//        // Given
-//        val throwable = RuntimeException("Test error")
-//        // When
-//        val result = topMoviePicksViewModel.mapThrowableToErrorMessage(throwable)
-//        // Then
-//        assertThat(BaseSnackBarMessage.UnknownError == result).isTrue()
-//    }
+    @Test
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() =
+        runTest {
+            // Given
+            coEvery { getActorMoviesUseCase(actorId) } throws NoInternetException()
+            val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+
+            val job = launch {
+                topMoviePicksViewModel.snackBarState.collect {
+                    emittedSnackBarMessages.add(it.message)
+                }
+            }
+
+            // When
+            topMoviePicksViewModel.onSnackBarActionLabelClick()
+            advanceUntilIdle()
+            job.cancel()
+
+            // Then
+            assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+        }
 
 
     companion object {

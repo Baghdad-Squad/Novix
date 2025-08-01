@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 class TopMoviePicksViewModel(
     val actorId: Long,
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
-    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<TopMoviePicksState, TopMoviePicksEffect>(TopMoviePicksState()),
     TopMoviePicksInteractionListener {
     init {
@@ -26,7 +26,7 @@ class TopMoviePicksViewModel(
     private fun getActorMovies(actorId: Long) {
         tryToExecute(
             callee = { getActorMoviesUseCase(actorId) },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetActorMoviesSuccess,
             onError = ::onGetActorMoviesError,
             onStart = ::onLoading,
