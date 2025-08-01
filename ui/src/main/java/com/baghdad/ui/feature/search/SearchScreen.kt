@@ -321,7 +321,6 @@ private fun LazyListScope.addRecentSearchSection(
 
         itemsIndexed(
             items = uiState.recentSearch,
-            key = { _, item -> item.id }
         ) { index, keyWord ->
             RecentSearchItem(
                 title = keyWord.query,
