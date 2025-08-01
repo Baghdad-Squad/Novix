@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.Flow
 interface RecentSearchDao {
 
     @Upsert
-    fun addRecentSearch(recentSearch: RecentSearch)
+    fun upsertRecentSearch(recentSearch: RecentSearch)
+
+    @Query("SELECT * FROM RecentSearch WHERE `query` = :query LIMIT 1")
+    suspend fun getRecentSearchByQuery(query: String): RecentSearch?
 
     @Query("SELECT * FROM RecentSearch")
     fun getAllRecentSearch(): Flow<List<RecentSearch>>

@@ -39,12 +39,12 @@ class RecentSearchDaoTest {
     }
 
     @Test
-    fun addRecentSearch_insertsCorrectly() = runBlocking {
+    fun upsertRecentSearch_insertsCorrectly() = runBlocking {
         // Given
         val item = RecentSearch(query = "Inception")
 
         // When
-        recentSearchDao.addRecentSearch(item)
+        recentSearchDao.upsertRecentSearch(item)
         val result = recentSearchDao.getAllRecentSearch().first()
 
         // Then
@@ -56,7 +56,7 @@ class RecentSearchDaoTest {
     fun deleteRecentSearchById_removesTargetItem() = runBlocking {
         // Given
         val item = RecentSearch(query = "To Delete")
-        recentSearchDao.addRecentSearch(item)
+        recentSearchDao.upsertRecentSearch(item)
         val id = recentSearchDao.getAllRecentSearch().first().find { it.query == "To Delete" }?.id
         requireNotNull(id) { "Inserted item not found in database" }
 
@@ -71,8 +71,8 @@ class RecentSearchDaoTest {
     @Test
     fun clearAllRecentSearch_removesEverything() = runBlocking {
         // Given
-        recentSearchDao.addRecentSearch(RecentSearch(query = "Clear 1"))
-        recentSearchDao.addRecentSearch(RecentSearch(query = "Clear 2"))
+        recentSearchDao.upsertRecentSearch(RecentSearch(query = "Clear 1"))
+        recentSearchDao.upsertRecentSearch(RecentSearch(query = "Clear 2"))
 
         // When
         recentSearchDao.clearAllRecentSearch()

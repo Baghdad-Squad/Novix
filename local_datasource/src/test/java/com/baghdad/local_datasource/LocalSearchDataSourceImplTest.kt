@@ -36,14 +36,14 @@ class LocalSearchDataSourceImplTest {
         runTest {
             // Given
             val query = "test"
-            coEvery { recentSearchDao.addRecentSearch(any()) } just Runs
+            coEvery { recentSearchDao.upsertRecentSearch(any()) } just Runs
             coEvery { logger.logException(any()) } just Runs
 
             // When
             localSearchDataSourceImpl.addRecentSearchQuery(query)
 
             // Then
-            coVerify { recentSearchDao.addRecentSearch(match { it.query == query }) }
+            coVerify { recentSearchDao.upsertRecentSearch(match { it.query == query }) }
         }
 
     @Test
