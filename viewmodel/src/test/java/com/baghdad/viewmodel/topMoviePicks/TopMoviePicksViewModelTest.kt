@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TopMoviePicksViewModelTest {
-
     private lateinit var getActorMoviesUseCase: GetActorMoviesUseCase
     private lateinit var topMoviePicksViewModel: TopMoviePicksViewModel
     private val actorId = 123L

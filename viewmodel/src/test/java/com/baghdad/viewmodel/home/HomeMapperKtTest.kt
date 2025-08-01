@@ -1,13 +1,8 @@
-package com.baghdad.home
+package com.baghdad.viewmodel.home
 
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.ContinueWatching.ContentType
 import com.baghdad.entity.media.TvShow
-import com.baghdad.viewmodel.home.HomeScreenState
-import com.baghdad.viewmodel.home.toPopularItemUiState
-import com.baghdad.viewmodel.home.toTopRatingItemUiState
-import com.baghdad.viewmodel.home.toUiState
-import com.baghdad.viewmodel.home.toUpcomingItemUiState
 import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate

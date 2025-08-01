@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieDetailsViewModelTest {
-
     private lateinit var getMovieDetailsUseCase: GetMovieDetailsUseCase
     private lateinit var getCastsInfoUseCase: GetMovieCastMembersUseCase
     private lateinit var getMovieImagesUseCase: GetMovieGalleryUseCase

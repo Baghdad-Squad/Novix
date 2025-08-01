@@ -1,10 +1,9 @@
-package com.baghdad.home
+package com.baghdad.viewmodel.home
 
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
-import com.baghdad.viewmodel.home.HomeScreenState
 import com.baghdad.viewmodel.home.HomeScreenState.ContinueWatchingItemUiState
 import com.baghdad.viewmodel.home.HomeScreenState.GenreUiState
 import com.baghdad.viewmodel.home.HomeScreenState.PopularItemUiState
