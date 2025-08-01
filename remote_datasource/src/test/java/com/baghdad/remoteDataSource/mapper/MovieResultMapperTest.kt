@@ -5,7 +5,7 @@ import com.baghdad.remoteDataSource.response.MovieResult
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class MovieResultMapperKtTest {
+class MovieResultMapperTest {
 
     @Test
     fun `should map fields correctly when valid data provided`() {
@@ -24,11 +24,12 @@ class MovieResultMapperKtTest {
         val movieDto = movieResult.toDto(movieResult.genreIds)
 
         // Then
-        assertThat(movieDto.id).isEqualTo(10L)
-        assertThat(movieDto.title).isEqualTo("Interstellar")
+        assertThat(movieDto.id).isEqualTo(movieResult.id)
+        assertThat(movieDto.title).isEqualTo(movieResult.title)
         assertThat(movieDto.genres).hasSize(2)
-        assertThat(movieDto.imdbRating).isEqualTo(8.6)
-        assertThat(movieDto.posterPictureURL).isEqualTo("https://image.tmdb.org/t/p/w500/poster.jpg")
+        assertThat(movieDto.imdbRating).isEqualTo(movieResult.voteAverage)
+        assertThat(movieDto.posterPictureURL)
+            .isEqualTo("https://image.tmdb.org/t/p/w500${movieResult.posterPath}")
     }
 
     @Test

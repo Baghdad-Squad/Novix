@@ -1,12 +1,13 @@
 package com.baghdad.remoteDataSource.mapper
 
 import com.baghdad.remoteDataSource.mapper.movie.toDto
+import com.baghdad.remoteDataSource.mapper.movie.toGenreDto
 import com.baghdad.remoteDataSource.response.movie.Genre
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class MoviesDetailsResponseMapperKtTest {
+class MoviesDetailsResponseMapperTest {
 
     private val url = "https://image.tmdb.org/t/p/w500"
 
@@ -20,7 +21,7 @@ class MoviesDetailsResponseMapperKtTest {
             voteAverage = 9.0,
             releaseDate = "2008-07-18",
             overview = "Batman vs Joker",
-            posterPath = "/darkknight.jpg",
+            posterPath = "/darkKnight.jpg",
             runtime = 152
         )
 
@@ -65,5 +66,55 @@ class MoviesDetailsResponseMapperKtTest {
         assertThat(dto.posterPictureURL).isEmpty()
         assertThat(dto.runtimeMinutes).isEqualTo(0)
         assertThat(dto.userRating).isEqualTo(response.voteAverage)
+    }
+
+    @Test
+    fun `should return null when id is null`() {
+        // Given
+        val genre = Genre(id = null, name = "Action")
+
+        // When
+        val result = genre.toGenreDto()
+
+        // Then
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `should return null when name is null`() {
+        // Given
+        val genre = Genre(id = 1L, name = null)
+
+        // When
+        val result = genre.toGenreDto()
+
+        // Then
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `should return null when name is blank`() {
+        // Given
+        val genre = Genre(id = 2L, name = "   ")
+
+        // When
+        val result = genre.toGenreDto()
+
+        // Then
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `should return GenreDto when id and name are valid`() {
+        // Given
+        val genre = Genre(id = 3L, name = "Comedy")
+
+        // When
+        val result = genre.toGenreDto()
+
+        // Then
+        assertThat(result).isNotNull()
+        assertThat(result?.id).isEqualTo(3L)
+        assertThat(result?.name).isEqualTo("Comedy")
     }
 }

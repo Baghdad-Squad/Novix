@@ -6,7 +6,7 @@ import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class DiscoverMovieResponseMapperTest {
+class DiscoverMovieMapperTest {
 
     @Test
     fun `should map movies correctly when results contain valid data`() {
