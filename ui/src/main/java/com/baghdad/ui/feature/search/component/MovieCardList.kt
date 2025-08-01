@@ -28,7 +28,6 @@ fun MovieCardList(
         columns = GridCells.Adaptive(minSize = 150.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        key = { it.id },
         state = state,
         contentPadding = PaddingValues(top = 4.dp, bottom = 8.dp)
     ) { movie ->

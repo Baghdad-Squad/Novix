@@ -15,7 +15,7 @@ fun <T> TopMediaPicksSection(
     onSavedClick: (T) -> Unit,
     onCardClick: (T) -> Unit,
     isSaved: (T) -> Boolean,
-    isMoreThanTen: Boolean,
+    isShowAllVisible: Boolean,
     onClickShowAll: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -23,7 +23,7 @@ fun <T> TopMediaPicksSection(
     Column(modifier = modifier) {
         SectionHeader(
             title = title,
-            isShowAllVisible = isMoreThanTen,
+            isShowAllVisible = isShowAllVisible,
             onClick = onClickShowAll,
             modifier = Modifier.fillMaxWidth()
         )

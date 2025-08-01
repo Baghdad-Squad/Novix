@@ -36,7 +36,7 @@ fun OutlinedButton(
     val animatedBorderColor by animateColorAsState(
         targetValue = if (isEnabled) Theme.color.stroke else Theme.color.disable,
         animationSpec = tween(300),
-        label = stringResource(R.string.outlined_button_border_color)
+        label = stringResource(R.string.outlined_button_border_color),
     )
     OutlinedButton(
         modifier = modifier.height(48.dp),
@@ -44,39 +44,43 @@ fun OutlinedButton(
             if (!isLoading) onClick()
         },
         shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            contentColor = Theme.color.primary,
-            disabledContentColor = Theme.color.disable,
-        ),
-        border = BorderStroke(
-            width = 1.dp,
-            color = animatedBorderColor
-        ),
+        colors =
+            ButtonDefaults.outlinedButtonColors(
+                containerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                contentColor = Theme.color.primary,
+                disabledContentColor = Theme.color.disable,
+            ),
+        border =
+            BorderStroke(
+                width = 1.dp,
+                color = animatedBorderColor,
+            ),
         enabled = isEnabled,
         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
     ) {
         Text(
             text = label,
-            style = Theme.typography.label.large
+            style = Theme.typography.label.large,
         )
         AnimatedContent(
-            modifier = Modifier.padding(start = 8.dp),
-            targetState = isLoading
+            targetState = isLoading,
         ) { loading ->
             if (loading) {
                 StripedCircularProgressIndicator(
-                    color = LocalContentColor.current
+                    modifier = Modifier.padding(start = 8.dp),
+                    color = LocalContentColor.current,
                 )
             } else {
                 painter?.let { painter ->
                     Icon(
                         painter = painter,
                         contentDescription = stringResource(R.string.primary_button_icon),
-                        modifier = Modifier
-                            .size(20.dp)
-                    )
+                        modifier =
+                            Modifier
+                                .padding(start = 8.dp)
+                                .size(20.dp),
+                            )
                 }
             }
         }
