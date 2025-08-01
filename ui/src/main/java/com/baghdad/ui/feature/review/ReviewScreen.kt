@@ -84,9 +84,12 @@ fun ReviewContent(
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
-        }
+        },
+        isLoading = uiState.isLoading
     ) {
 
         Column(

@@ -4,4 +4,6 @@ interface TopMoviePicksInteractionListener {
     fun onMovieDetailsClick(movieId: Long)
     fun onSaveMovieClick(movieId: Long)
     fun onBackClick()
+
+    fun onSnackBarActionLabelClick()
 }

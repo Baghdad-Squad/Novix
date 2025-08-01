@@ -113,7 +113,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
     protected fun <Entity : Any, UiState : Any> collectPagingFlow(
         loadData: suspend (page: Int) -> PagedResult<Entity>,
         onInitialLoadFinished: suspend () -> Unit,
-        onError: (Throwable) -> Unit = ::handleError,
+        onInitialLoadError: (Throwable) -> Unit = ::handleError,
         pageSize: Int = 20,
         mapEntityToUiState: (Entity) -> UiState,
         onFlowCreated: (Flow<PagingData<UiState>>) -> Unit,
@@ -128,8 +128,8 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
                 onInitialLoadFinished()
                 onLoadingChanged?.invoke(false)
             },
-            onError = {
-                onError(it)
+            onInitialLoadError = {
+                onInitialLoadError(it)
                 onLoadingChanged?.invoke(false)
             }
         ).map { pagingData ->

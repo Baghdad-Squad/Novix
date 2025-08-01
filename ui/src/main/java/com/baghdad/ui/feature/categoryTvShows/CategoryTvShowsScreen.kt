@@ -112,17 +112,14 @@ private fun CategoryTvShowsContent(
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
-        }) {
+        },
+        isLoading = uiState.isLoading
+    ) {
         Column {
-            if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                ) {
-                    WavyLoadingIndicator()
-                }
-            }
             LazyPagingVerticalGrid(
                 items = lazyPagingTvShows,
                 columns = GridCells.Adaptive(minSize = 150.dp),
