@@ -7,10 +7,11 @@ import androidx.test.filters.SmallTest
 import com.baghdad.local_datasource.roomDB.dao.ContinueWatchingDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.local_datasource.roomDB.entity.ContinueWatching
+import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -27,7 +28,6 @@ class ContinueWatchingDaoTest {
             ApplicationProvider.getApplicationContext(),
             NovixDatabase::class.java
         ).allowMainThreadQueries().build()
-
         continueWatchingDao = database.continueWatchingDao()
     }
 
@@ -37,73 +37,92 @@ class ContinueWatchingDaoTest {
     }
 
     @Test
-    fun upsertContinueWatching_insertsItemCorrectly() = runBlocking {
-        val item = ContinueWatching(
-            contentId = 1L,
-            userId = 100L,
-            genreIds = listOf(1L, 2L),
-            contentImageUrl = "image_url",
-            contentType = "movie",
-        )
+    fun shouldInsertItemCorrectly_whenUpsertContinueWatchingIsCalled() = runBlocking {
+        // When
+        continueWatchingDao.upsertContinueWatching(FAKE_CONTINUE_WATCHING_1)
+        val result = continueWatchingDao.getContinueWatching(TEST_USER_ID, 1, 0)
 
-        continueWatchingDao.upsertContinueWatching(item)
-
-        val result =
-            continueWatchingDao.getContinueWatching(userId = 100L, pageSize = 1, offset = 0)
-
-        assertEquals(item, result.first())
+        // Then
+        assertThat(result.first()).isEqualTo(FAKE_CONTINUE_WATCHING_1)
     }
 
     @Test
-    fun getContinueWatching_returnsPaginatedResults() = runBlocking {
-        val userId = 100L
-        val items = List(15) { index ->
+    fun shouldUpdateItem_whenUpsertContinueWatchingCalledWithSameContentId() = runBlocking {
+        // Given
+        continueWatchingDao.upsertContinueWatching(FAKE_CONTINUE_WATCHING_1)
+
+        // When
+        val updated = FAKE_CONTINUE_WATCHING_1.copy(contentImageUrl = "new_url")
+        continueWatchingDao.upsertContinueWatching(updated)
+        val result = continueWatchingDao.getContinueWatching(TEST_USER_ID, 1, 0)
+
+        // Then
+        assertThat(result.first().contentImageUrl).isEqualTo("new_url")
+    }
+
+    @Test
+    fun shouldReturnPaginatedResultsInDescendingOrder_whenGetContinueWatchingIsCalled() =
+        runBlocking {
+            // Given
+            FAKE_ITEMS.forEach { continueWatchingDao.upsertContinueWatching(it) }
+
+            // When
+            val page =
+                continueWatchingDao.getContinueWatching(TEST_USER_ID, pageSize = 5, offset = 5)
+
+            // Then
+            assertThat(page.size).isEqualTo(5)
+            assertThat(page.map { it.contentId }).isEqualTo(listOf(9L, 8L, 7L, 6L, 5L))
+    }
+
+    @Test
+    fun shouldObserveContinueWatching_whenNewItemIsInserted() = runBlocking {
+        // When
+        continueWatchingDao.upsertContinueWatching(FAKE_CONTINUE_WATCHING_2)
+        val result = continueWatchingDao.observeContinueWatching(TEST_USER_ID).first()
+
+        // Then
+        assertThat(result).contains(FAKE_CONTINUE_WATCHING_2)
+    }
+
+    @Test
+    fun shouldReturnEmptyList_whenUserHasNoContinueWatchingRecords() = runBlocking {
+        // When
+        val result =
+            continueWatchingDao.getContinueWatching(userId = 999L, pageSize = 10, offset = 0)
+
+        // Then
+        assertThat(result).isEmpty()
+    }
+
+    companion object {
+        const val TEST_USER_ID = 100L
+
+        val FAKE_CONTINUE_WATCHING_1 = ContinueWatching(
+            contentId = 1L,
+            userId = TEST_USER_ID,
+            genreIds = listOf(1L),
+            contentImageUrl = "url_1",
+            contentType = "movie"
+        )
+
+        val FAKE_CONTINUE_WATCHING_2 = ContinueWatching(
+            contentId = 2L,
+            userId = TEST_USER_ID,
+            genreIds = listOf(2L),
+            contentImageUrl = "url_2",
+            contentType = "series"
+        )
+
+        val FAKE_ITEMS = List(15) { index ->
             ContinueWatching(
                 contentId = index.toLong(),
-                userId = userId,
+                userId = TEST_USER_ID,
                 genreIds = listOf(1L, 2L),
                 contentImageUrl = "image_url_$index",
-                contentType = "movie",
+                contentType = if (index % 2 == 0) "movie" else "series",
+                viewedAt = index.toLong()
             )
         }
-
-        items.forEach { continueWatchingDao.upsertContinueWatching(it) }
-
-        val page = continueWatchingDao.getContinueWatching(
-            userId = userId,
-            pageSize = 5,
-            offset = 5
-        )
-
-        assertEquals(5, page.size)
-//        assertTrue(page.all { it.userId == userId })
     }
-
-    @Test
-    fun kgetContinueWatching_returnsPaginatedResults() = runBlocking {
-        val userId = 100L
-        val items = List(15) { index ->
-            ContinueWatching(
-                contentId = index.toLong(),  // Unique IDs
-                userId = userId,
-                genreIds = listOf(1L, 2L),
-                contentImageUrl = "image_url_$index",
-                contentType = "movie"
-            )
-        }
-
-        items.forEach { continueWatchingDao.upsertContinueWatching(it) }
-
-        // Fetch page 2 (items 5-9)
-        val page = continueWatchingDao.getContinueWatching(
-            userId = userId,
-            pageSize = 5,
-            offset = 5
-        )
-
-        // Verify the returned items have IDs 5..9
-        assertEquals(5, page.size)
-        assertEquals(listOf(5L, 6L, 7L, 8L, 9L), page.map { it.contentId })
-    }
-
 }

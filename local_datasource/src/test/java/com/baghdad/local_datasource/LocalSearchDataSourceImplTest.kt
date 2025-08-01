@@ -36,15 +36,16 @@ class LocalSearchDataSourceImplTest {
         runTest {
             // Given
             val query = "test"
+            coEvery { recentSearchDao.getRecentSearchByQuery(query) } returns null
             coEvery { recentSearchDao.upsertRecentSearch(any()) } just Runs
-            coEvery { logger.logException(any()) } just Runs
 
             // When
             localSearchDataSourceImpl.addRecentSearchQuery(query)
 
             // Then
-            coVerify { recentSearchDao.upsertRecentSearch(match { it.query == query }) }
+            coVerify(exactly = 1) { recentSearchDao.upsertRecentSearch(match { it.query == query }) }
         }
+
 
     @Test
     fun `should return all recent search queries when getAllRecentSearches is called`() = runTest {
