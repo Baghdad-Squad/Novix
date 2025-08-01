@@ -9,12 +9,11 @@ import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.local_datasource.roomDB.entity.SearchQuery
 import com.baghdad.local_datasource.roomDB.entity.TvShow
 import com.baghdad.repository.model.SearchQueryDto
-import junit.framework.TestCase.assertEquals
+import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,51 +40,43 @@ class TvShowDaoTest {
     }
 
     @Test
-    fun upsertTvShow_savesDataCorrectly() = runBlocking {
-        // Given
-        dao.upsertTvShow(fakeTvShow1)
-
+    fun shouldSaveTvShowCorrectly_whenUpsertTvShowIsCalled() = runBlocking {
         // When
+        dao.upsertTvShow(FAKE_TV_SHOW_1)
         val result = dao.getAllTvShow().first()
 
         // Then
-        assertEquals(1, result.size)
-        assertEquals("Quantum Echo", result.first().title)
+        assertThat(result.size).isEqualTo(1)
+        assertThat(result.first().title).isEqualTo(FAKE_TV_SHOW_1.title)
     }
 
     @Test
-    fun getAllTvShow_returnsAllInsertedItems() = runBlocking {
-        // Given
-        dao.upsertTvShow(fakeTvShow1)
-        dao.upsertTvShow(fakeTvShow2)
-
+    fun shouldReturnAllTvShows_whenGetAllTvShowIsCalled() = runBlocking {
         // When
+        dao.upsertTvShow(FAKE_TV_SHOW_1)
+        dao.upsertTvShow(FAKE_TV_SHOW_2)
         val result = dao.getAllTvShow().first()
 
         // Then
-        assertEquals(2, result.size)
+        assertThat(result.size).isEqualTo(2)
     }
 
     @Test
-    fun deleteTvShowById_removesTargetShow() = runBlocking {
-        // Given
-        dao.upsertTvShow(fakeTvShow1)
-        dao.deleteTvShowByID(fakeTvShow1.id)
-
+    fun shouldRemoveSpecificTvShow_whenDeleteTvShowByIdIsCalled() = runBlocking {
         // When
+        dao.upsertTvShow(FAKE_TV_SHOW_1)
+        dao.deleteTvShowByID(FAKE_TV_SHOW_1.id)
         val result = dao.getAllTvShow().first()
 
         // Then
-        assertTrue(result.none { it.id == fakeTvShow1.id })
+        assertTrue(result.none { it.id == FAKE_TV_SHOW_1.id })
     }
 
     @Test
-    fun deleteAll_removesAllShows() = runBlocking {
-        // Given
-        dao.upsertTvShow(fakeTvShow1)
-        dao.upsertTvShow(fakeTvShow2)
-
+    fun shouldRemoveAllTvShows_whenDeleteAllIsCalled() = runBlocking {
         // When
+        dao.upsertTvShow(FAKE_TV_SHOW_1)
+        dao.upsertTvShow(FAKE_TV_SHOW_2)
         dao.deleteAll()
         val result = dao.getAllTvShow().first()
 
@@ -94,33 +85,31 @@ class TvShowDaoTest {
     }
 
     @Test
-    fun getTvShowById_returnsCorrectData() = runBlocking {
-        // Given
-        dao.upsertTvShow(fakeTvShow2)
-
+    fun shouldReturnCorrectTvShow_whenGetTvShowByIdIsCalled() = runBlocking {
         // When
-        val result = dao.getTvShowById(fakeTvShow2.id)
+        dao.upsertTvShow(FAKE_TV_SHOW_2)
+        val result = dao.getTvShowById(FAKE_TV_SHOW_2.id)
 
         // Then
-        assertEquals(fakeTvShow2.title, result.title)
-        assertEquals(fakeTvShow2.numberOfSeasons, result.numberOfSeasons)
+        assertThat(result.title).isEqualTo(FAKE_TV_SHOW_2.title)
+        assertThat(result.numberOfSeasons).isEqualTo(FAKE_TV_SHOW_2.numberOfSeasons)
     }
 
     @Test
-    fun getTvShowsFromSearchQuery_returnsPaginatedMatchingTvShows() = runBlocking {
+    fun shouldReturnPaginatedTvShows_whenGetTvShowsFromSearchQueryIsCalled() = runBlocking {
         // Given
-        dao.upsertTvShows(listOf(fakeTvShow1, fakeTvShow2))
+        dao.upsertTvShows(listOf(FAKE_TV_SHOW_1, FAKE_TV_SHOW_2))
         database.searchQueryDao().addSearchQuery(
             SearchQuery(
                 queryName = "trending_tv",
-                mediaId = fakeTvShow1.id,
+                mediaId = FAKE_TV_SHOW_1.id,
                 mediaType = SearchQueryDto.MediaType.TV_SHOW.name
             )
         )
         database.searchQueryDao().addSearchQuery(
             SearchQuery(
                 queryName = "trending_tv",
-                mediaId = fakeTvShow2.id,
+                mediaId = FAKE_TV_SHOW_2.id,
                 mediaType = SearchQueryDto.MediaType.TV_SHOW.name
             )
         )
@@ -136,34 +125,46 @@ class TvShowDaoTest {
         )
 
         // Then
-        assertEquals(1, firstPage.size)
-        assertEquals(1, secondPage.size)
-        assertNotEquals(firstPage.first().id, secondPage.first().id)
-        assertTrue(listOf(fakeTvShow1.id, fakeTvShow2.id).contains(firstPage.first().id))
-        assertTrue(listOf(fakeTvShow1.id, fakeTvShow2.id).contains(secondPage.first().id))
+        assertThat(firstPage.size).isEqualTo(1)
+        assertThat(secondPage.size).isEqualTo(1)
+        assertThat(firstPage.first().id).isNotEqualTo(secondPage.first().id)
+        assertThat(
+            listOf(
+                FAKE_TV_SHOW_1.id,
+                FAKE_TV_SHOW_2.id
+            ).contains(firstPage.first().id)
+        ).isTrue()
+        assertThat(
+            listOf(
+                FAKE_TV_SHOW_1.id,
+                FAKE_TV_SHOW_2.id
+            ).contains(secondPage.first().id)
+        ).isTrue()
     }
 
-    private val fakeTvShow1 = TvShow(
-        id = 100L,
-        title = "Quantum Echo",
-        genres = listOf(1L, 2L, 3L),
-        imdbRating = 8.6,
-        userRating = 9.2,
-        releaseDate = "2025-01-15",
-        overview = "Echoes of quantum futures disrupt timelines.",
-        posterPictureURL = "https://example.com/quantum.jpg",
-        numberOfSeasons = 2
-    )
+    companion object {
+        val FAKE_TV_SHOW_1 = TvShow(
+            id = 100L,
+            title = "Quantum Echo",
+            genres = listOf(1L, 2L, 3L),
+            imdbRating = 8.6,
+            userRating = 9.2,
+            releaseDate = "2025-01-15",
+            overview = "Echoes of quantum futures disrupt timelines.",
+            posterPictureURL = "https://example.com/quantum.jpg",
+            numberOfSeasons = 2
+        )
 
-    private val fakeTvShow2 = TvShow(
-        id = 101L,
-        title = "Shadow Empire",
-        genres = listOf(4L, 5L, 6L),
-        imdbRating = 7.9,
-        userRating = 8.5,
-        releaseDate = "2023-11-22",
-        overview = "A mythical war for the lost throne of Arak.",
-        posterPictureURL = "https://example.com/shadow.jpg",
-        numberOfSeasons = 4
-    )
+        val FAKE_TV_SHOW_2 = TvShow(
+            id = 101L,
+            title = "Shadow Empire",
+            genres = listOf(4L, 5L, 6L),
+            imdbRating = 7.9,
+            userRating = 8.5,
+            releaseDate = "2023-11-22",
+            overview = "A mythical war for the lost throne of Arak.",
+            posterPictureURL = "https://example.com/shadow.jpg",
+            numberOfSeasons = 4
+        )
+    }
 }

@@ -1,6 +1,5 @@
 package com.baghdad.local_datasource
 
-
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -8,8 +7,7 @@ import androidx.test.filters.SmallTest
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.local_datasource.roomDB.entity.RecentSearch
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
+import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -20,6 +18,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class RecentSearchDaoTest {
+
     private lateinit var database: NovixDatabase
     private lateinit var recentSearchDao: RecentSearchDao
 
@@ -39,7 +38,7 @@ class RecentSearchDaoTest {
     }
 
     @Test
-    fun upsertRecentSearch_insertsCorrectly() = runBlocking {
+    fun shouldInsertRecentSearchCorrectly_whenUpsertRecentSearchIsCalled() = runBlocking {
         // Given
         val item = RecentSearch(query = "Inception")
 
@@ -48,12 +47,12 @@ class RecentSearchDaoTest {
         val result = recentSearchDao.getAllRecentSearch().first()
 
         // Then
-        assertEquals(1, result.size)
-        assertEquals("Inception", result.first().query)
+        assertThat(result.size).isEqualTo(1)
+        assertThat(result.first().query).isEqualTo("Inception")
     }
 
     @Test
-    fun deleteRecentSearchById_removesTargetItem() = runBlocking {
+    fun shouldRemoveTargetItem_whenDeleteRecentSearchByIdIsCalled() = runBlocking {
         // Given
         val item = RecentSearch(query = "To Delete")
         recentSearchDao.upsertRecentSearch(item)
@@ -65,11 +64,11 @@ class RecentSearchDaoTest {
         val result = recentSearchDao.getAllRecentSearch().first()
 
         // Then
-        assertTrue(result.none { it.id == id })
+        assertThat(result.none { it.id == id }).isTrue()
     }
 
     @Test
-    fun clearAllRecentSearch_removesEverything() = runBlocking {
+    fun shouldRemoveAllItems_whenClearAllRecentSearchIsCalled() = runBlocking {
         // Given
         recentSearchDao.upsertRecentSearch(RecentSearch(query = "Clear 1"))
         recentSearchDao.upsertRecentSearch(RecentSearch(query = "Clear 2"))
@@ -79,6 +78,6 @@ class RecentSearchDaoTest {
         val result = recentSearchDao.getAllRecentSearch().first()
 
         // Then
-        assertTrue(result.isEmpty())
+        assertThat(result).isEmpty()
     }
 }

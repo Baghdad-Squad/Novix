@@ -7,18 +7,15 @@ import androidx.test.filters.SmallTest
 import com.baghdad.local_datasource.roomDB.dao.SearchQueryDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import com.baghdad.local_datasource.roomDB.entity.SearchQuery
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertTrue
+import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
-import org.junit.runner.RunWith
 import org.junit.Test
+import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
-
 class SearchQueryDaoTest {
     private lateinit var database: NovixDatabase
     private lateinit var searchQueryDao: SearchQueryDao
@@ -39,90 +36,82 @@ class SearchQueryDaoTest {
     }
 
     @Test
-    fun addSearchQuery_insertsQuery() = runBlocking {
-        // Given
-        searchQueryDao.addSearchQuery(fakeSearchQueries1)
-
+    fun shouldInsertSingleQuery_whenAddSearchQueryIsCalled() = runBlocking {
         // When
+        searchQueryDao.addSearchQuery(SEARCH_QUERY)
         val result = searchQueryDao.getAllSearchQueries()
 
         // Then
-        assertEquals(1, result.size)
-        assertTrue(result.map { it.queryName }.containsAll(result.map { it.queryName }))
+        assertThat(result.size).isEqualTo(1)
+        assertThat(result.map { it.queryName }.containsAll(result.map { it.queryName })).isTrue()
     }
 
     @Test
-    fun addSearchQueries_insertsMultipleQueries() = runBlocking {
-        // Given
-        val queries = listOf(fakeSearchQueries1, fakeSearchQueries2)
-
+    fun shouldInsertMultipleQueries_whenAddSearchQueriesIsCalled() = runBlocking {
         // When
-        searchQueryDao.addSearchQueries(queries)
+        searchQueryDao.addSearchQueries(QUERY)
         val result = searchQueryDao.getAllSearchQueries()
 
         // Then
-        assertEquals(2, result.size)
-        assertTrue(result.map { it.queryName }.containsAll(queries.map { it.queryName }))
+        assertThat(result.size).isEqualTo(2)
+        assertThat(result.map { it.queryName }.containsAll(QUERY.map { it.queryName })).isTrue()
     }
 
     @Test
-    fun getInvalidSearchQueries_returnsOnlyOldQueries() = runBlocking {
+    fun shouldReturnOldQueriesOnly_whenGetInvalidSearchQueriesIsCalled() = runBlocking {
         // Given
         val threshold = 120_000L
 
         // When
-        searchQueryDao.addSearchQueries(listOf(fakeSearchQueries1, fakeSearchQueries2))
+        searchQueryDao.addSearchQueries(QUERY)
 
         // Then
         val result = searchQueryDao.getInvalidSearchQueries(threshold)
-        assertEquals(listOf(fakeSearchQueries1.queryName), result.map { it.queryName })
+        assertThat(result.map { it.queryName }).isEqualTo(listOf(SEARCH_QUERY.queryName))
     }
 
     @Test
-    fun getSearchByQuery_returnsCorrectMatch() = runBlocking {
+    fun shouldReturnCorrectQuery_whenGetSearchByQueryIsCalled() = runBlocking {
         // When
-        searchQueryDao.addSearchQuery(fakeSearchQueries1)
+        searchQueryDao.addSearchQuery(SEARCH_QUERY)
 
         // Then
         val result = searchQueryDao.getSearchByQuery("space_adventures", "MOVIE")
-        assertEquals("space_adventures", result.first().queryName)
+        assertThat(result.first().queryName).isEqualTo("space_adventures")
     }
 
     @Test
-    fun deleteSearchQueryByName_removesSingleEntry() = runBlocking {
+    fun shouldRemoveSingleEntry_whenDeleteSearchQueryByNameIsCalled() = runBlocking {
         // When
-        searchQueryDao.addSearchQuery(fakeSearchQueries1)
+        searchQueryDao.addSearchQuery(SEARCH_QUERY)
         searchQueryDao.deleteSearchQueryByName("space_adventures")
 
         // Then
         val result = searchQueryDao.getAllSearchQueries()
-        assertFalse(result.any { it.queryName == "space_adventures" })
+        assertThat(result.any { it.queryName == "space_adventures" }).isFalse()
     }
 
     @Test
-    fun deleteAllSearchQueries_clearsDatabase() = runBlocking {
-        // Given
-        val queries = listOf(fakeSearchQueries1, fakeSearchQueries2)
-
+    fun shouldClearDatabase_whenDeleteAllSearchQueriesIsCalled() = runBlocking {
         // When
-        searchQueryDao.addSearchQueries(queries)
+        searchQueryDao.addSearchQueries(QUERY)
         searchQueryDao.deleteAllSearchQueries()
 
         // Then
         val result = searchQueryDao.getAllSearchQueries()
-        assertTrue(result.isEmpty())
+        assertThat(result).isEmpty()
     }
 
-    val fakeSearchQueries1 = SearchQuery(
-        queryName = "space_adventures",
-        mediaId = 101L,
-        mediaType = "MOVIE",
-        timeStamp = 60_000
-    )
-    val fakeSearchQueries2 = SearchQuery(
-        queryName = "epic_fantasy",
-        mediaId = 102L,
-        mediaType = "MOVIE",
-        timeStamp = 120_000
-    )
+    companion object {
+        val SEARCH_QUERY = SearchQuery(
+            queryName = "space_adventures",
+            mediaId = 101L,
+            mediaType = "MOVIE",
+            timeStamp = 60_000
+        )
+        val QUERY = listOf(
+            SEARCH_QUERY,
+            SEARCH_QUERY.copy(queryName = "epic_fantasy", timeStamp = 120_000)
+        )
+    }
 }
