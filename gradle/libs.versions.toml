@@ -49,7 +49,6 @@ junitKtx = "1.2.1"
 runner = "1.6.2"
 
 
-
 [libraries]
 # AndroidX
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -226,7 +225,7 @@ test-core = [
     "mockk",
     "mockk-android",
     "truth",
-    "kotlinx-coroutines-test"
+    "kotlinx-coroutines-test",
 ]
 
 test-ui = [

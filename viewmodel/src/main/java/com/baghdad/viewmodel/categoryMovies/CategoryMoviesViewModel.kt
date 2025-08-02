@@ -7,12 +7,14 @@ import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
 class CategoryMoviesViewModel(
     private val genreId: Long,
     private val getGenreMoviesUseCase: GetMoviesByGenreUseCase,
-    private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase
+    private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<CategoryMoviesState, CategoryMoviesEffect>(CategoryMoviesState()),
     CategoryMoviesInteractionListener {
 
@@ -50,7 +52,8 @@ class CategoryMoviesViewModel(
         tryToExecute(
             callee = { getMovieGenreNameByIdUseCase.invoke(genreId) },
             onSuccess = { onGetGenreNameSuccess(it.name) },
-            onError = { onGetGenreNameError(it) }
+            onError = { onGetGenreNameError(it) },
+            dispatcher = ioDispatcher
         )
     }
 

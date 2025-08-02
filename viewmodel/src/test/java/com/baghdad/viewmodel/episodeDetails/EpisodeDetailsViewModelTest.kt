@@ -40,7 +40,8 @@ class EpisodeDetailsViewModelTest {
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             getEpisodeCastMembersUseCase = getEpisodeCastMembersUseCase,
-            getEpisodeDetailsUseCase = getEpisodeDetailsUseCase
+            getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
+            ioDispatcher = testDispatcher
         )
     }
 
@@ -204,7 +205,8 @@ class EpisodeDetailsViewModelTest {
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             getEpisodeCastMembersUseCase = getEpisodeCastMembersUseCase,
-            getEpisodeDetailsUseCase = getEpisodeDetailsUseCase
+            getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
+            ioDispatcher = testDispatcher
         )
 
         // When
@@ -226,7 +228,8 @@ class EpisodeDetailsViewModelTest {
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             getEpisodeCastMembersUseCase = getEpisodeCastMembersUseCase,
-            getEpisodeDetailsUseCase = getEpisodeDetailsUseCase
+            getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
+            ioDispatcher = testDispatcher
         )
 
         // When

@@ -21,27 +21,18 @@ class SearchMoviesUseCaseTest {
     fun setUp() {
         searchRepository = mockk()
         favoriteGenreRepository = mockk()
-        filterHelper = mockk()
         searchMoviesUseCase =
-            SearchMoviesUseCase(searchRepository, favoriteGenreRepository, filterHelper)
+            SearchMoviesUseCase(searchRepository, favoriteGenreRepository)
 
         coEvery { favoriteGenreRepository.getFavoriteGenres() } returns favoriteGenres
-        coEvery { filterHelper.matchesRatingFilter(any(), any()) } returns true
-        coEvery { filterHelper.matchesYearFilter(any(), any(), any()) } returns true
-        coEvery { filterHelper.matchesGenreFilter(any(), any()) } returns true
     }
 
     @Test
     fun `searchMoviesUseCase() should return filtered and sorted movies`() = runTest {
         val query = "action"
-        val filter = SearchFilter(
-            minimumYear = 9, maximumYear = 2020, minimumRating = 9, selectedGenres = listOf(
-                Genre(id = 1L, name = "Action"), Genre(id = 2L, name = "Crime")
-            )
-        )
         coEvery { searchRepository.searchMoviesByTitle(query, 1) } returns sampleMovies
 
-        val result = searchMoviesUseCase(query, filter, 1)
+        val result = searchMoviesUseCase(query,1)
 
         assertThat(result.data).hasSize(2)
         assertThat(result.data[0].title).isEqualTo("Inception")
@@ -49,104 +40,16 @@ class SearchMoviesUseCaseTest {
     }
 
     @Test
-    fun `searchMoviesUseCase() should apply rating filter correctly`() = runTest {
-        val query = "action"
-        val filter = SearchFilter(
-            minimumRating = 9,
-            minimumYear = 2010,
-            maximumYear = 2020,
-            selectedGenres = listOf(Genre(id = 1L, "Crime"), Genre(id = 1L, "Action"))
-        )
-        coEvery { searchRepository.searchMoviesByTitle(query, 1) } returns sampleMovies
-        coEvery { filterHelper.matchesRatingFilter(9.0, 9) } returns true
-        coEvery { filterHelper.matchesRatingFilter(8.8, 9) } returns false
-
-        val result = searchMoviesUseCase(query, filter, 1)
-
-        assertThat(result.data).hasSize(1)
-        assertThat(result.data[0].title).isEqualTo("The Dark Knight")
-    }
-
-    @Test
-    fun `searchMoviesUseCase() should applies year filter correctly`() = runTest {
-        val query = "action"
-        val filter = SearchFilter(
-            minimumYear = 2010, maximumYear = 2020, minimumRating = 9, selectedGenres = emptyList()
-        )
-
-        coEvery { searchRepository.searchMoviesByTitle(query, 1) } returns sampleMovies
-        coEvery { filterHelper.matchesYearFilter(2008, 2010, 2020) } returns false
-        coEvery { filterHelper.matchesYearFilter(2010, 2010, 2020) } returns true
-        coEvery { filterHelper.matchesRatingFilter(any(), any()) } returns true
-        coEvery { filterHelper.matchesGenreFilter(any(), any()) } returns true
-
-        val result = searchMoviesUseCase(query, filter, 1)
-
-        assertThat(result.data).hasSize(1)
-        assertThat(result.data[0].title).isEqualTo("Inception")
-    }
-
-    @Test
-    fun `searchMoviesUseCase() should apply genre filter correctly`() = runTest {
-        val query = "action"
-        val filter = SearchFilter(
-            selectedGenres = listOf(Genre(id = 1L, name = "Crime")),
-            minimumYear = 2010,
-            minimumRating = 9,
-            maximumYear = 2020,
-        )
-        coEvery { searchRepository.searchMoviesByTitle(query, 1) } returns sampleMovies
-        coEvery {
-            filterHelper.matchesGenreFilter(
-                listOf(Genre(1L, "Action"), Genre(2L, "Crime")), listOf(
-                    Genre(id = 1L, name = "Crime")
-                )
-            )
-        } returns true
-        coEvery {
-            filterHelper.matchesGenreFilter(
-                listOf(Genre(3L, "Sci-Fi"), Genre(4L, "Action")), listOf(
-                    Genre(id = 1L, name = "Crime")
-                )
-            )
-        } returns false
-
-        val result = searchMoviesUseCase(query, filter, 1)
-
-        assertThat(result.data).hasSize(1)
-        assertThat(result.data[0].title).isEqualTo("The Dark Knight")
-    }
-
-    @Test
-    fun `searchMoviesUseCase() should return empty list when no matches after filtering`() = runTest {
-        val query = "action"
-        val filter = SearchFilter(
-            minimumRating = 9,
-            minimumYear = 2010,
-            maximumYear = 2020,
-            selectedGenres = listOf(
-                Genre(id = 1L, name = "Comedy")
-            ),
-        )
-        coEvery { searchRepository.searchMoviesByTitle(query, 1) } returns sampleMovies
-        coEvery { filterHelper.matchesRatingFilter(any(), 9) } returns false
-
-        val result = searchMoviesUseCase(query, filter, 1)
-
-        assertThat(result.data).isEmpty()
-    }
-
-    @Test
     fun `searchMoviesUseCase() should maintain pagination keys after filtering`() = runTest {
         val query = "action"
-        val filter = SearchFilter(
+        SearchFilter(
             minimumYear = 2010, minimumRating = 9, maximumYear = 2020, selectedGenres = listOf(
                 Genre(id = 1L, name = "Action")
             )
         )
         coEvery { searchRepository.searchMoviesByTitle(query, 1) } returns sampleMovies
 
-        val result = searchMoviesUseCase(query, filter, 1)
+        val result = searchMoviesUseCase(query, 1)
 
         assertThat(result.prevKey).isNull()
         assertThat(result.nextKey).isEqualTo(2)
@@ -155,7 +58,7 @@ class SearchMoviesUseCaseTest {
     @Test
     fun `searchMoviesUseCase() should sort by favorite genre score descending`() = runTest {
         val query = "action"
-        val filter = SearchFilter(
+        SearchFilter(
             minimumYear = 9,
             minimumRating = 9,
             maximumYear = 2020,
@@ -171,7 +74,7 @@ class SearchMoviesUseCaseTest {
         )
         coEvery { searchRepository.searchMoviesByTitle(query, 1) } returns moviesWithDifferentScores
 
-        val result = searchMoviesUseCase(query, filter, 1)
+        val result = searchMoviesUseCase(query,1)
 
         assertThat(result.data[0].genres[0].name).isEqualTo("Sci-Fi")
         assertThat(result.data[1].genres[0].name).isEqualTo("Drama")
@@ -180,14 +83,9 @@ class SearchMoviesUseCaseTest {
     @Test
     fun `searchMoviesUseCase() should make correct repository calls`() = runTest {
         val query = "action"
-        val filter = SearchFilter(
-            minimumYear = 2010, minimumRating = 9, maximumYear = 2020, selectedGenres = listOf(
-                Genre(id = 1L, name = "Action")
-            )
-        )
         coEvery { searchRepository.searchMoviesByTitle(query, 1) } returns sampleMovies
 
-        searchMoviesUseCase(query, filter, 1)
+        searchMoviesUseCase(query, 1)
 
         coVerify(exactly = 1) { searchRepository.searchMoviesByTitle(query, 1) }
         coVerify(exactly = 1) { favoriteGenreRepository.getFavoriteGenres() }
@@ -196,7 +94,7 @@ class SearchMoviesUseCaseTest {
     @Test
     fun `searchMoviesUseCase() should handle empty favorite genres correctly`() = runTest {
         val query = "action"
-        val filter = SearchFilter(
+        SearchFilter(
             minimumYear = 2010, minimumRating = 9, maximumYear = 2020, selectedGenres = listOf(
                 Genre(id = 1L, name = "Action")
             )
@@ -204,7 +102,7 @@ class SearchMoviesUseCaseTest {
         coEvery { searchRepository.searchMoviesByTitle(query, 1) } returns sampleMovies
         coEvery { favoriteGenreRepository.getFavoriteGenres() } returns emptyMap()
 
-        val result = searchMoviesUseCase(query, filter, 1)
+        val result = searchMoviesUseCase(query, 1)
 
         assertThat(result.data).hasSize(2)
     }
@@ -212,7 +110,6 @@ class SearchMoviesUseCaseTest {
     companion object {
         private lateinit var searchRepository: SearchRepository
         private lateinit var favoriteGenreRepository: FavoriteGenreRepository
-        private lateinit var filterHelper: SearchFilterHelper
         private lateinit var searchMoviesUseCase: SearchMoviesUseCase
 
         private val sampleMovies = PagedResult(

@@ -8,13 +8,15 @@ import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class EpisodeDetailsViewModel(
     private val tvShowId: Long,
     private val seasonNumber: Int,
     private val episodeNumber: Int,
     private val getEpisodeCastMembersUseCase: GetEpisodeCastMembersUseCase,
-    private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase
+    private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<EpisodeDetailsScreenState, EpisodeDetailsScreenEffect>(EpisodeDetailsScreenState()),
     EpisodeDetailsInteractionListener {
 
@@ -30,10 +32,11 @@ class EpisodeDetailsViewModel(
     private fun getEpisodeDetails(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
         tryToExecute(
             callee = { getEpisodeDetailsUseCase(tvShowId, seasonNumber, episodeNumber) },
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetEpisodeDetailsSuccess,
             onStart = ::onGetEpisodeDetailsStart,
             onFinally = ::onGetEpisodeDetailsFinally,
-            onError = ::onError
+            onError = ::onError,
         )
     }
 
@@ -55,6 +58,7 @@ class EpisodeDetailsViewModel(
         hideSnackBar()
         tryToExecute(
             callee = { getEpisodeCastMembersUseCase(tvShowId, seasonNumber, episodeNumber) },
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetEpisodeCastMembersSuccess,
             onStart = ::onGetEpisodeCastMembersLoading,
             onFinally = ::onGetEpisodeCastMembersFinally,

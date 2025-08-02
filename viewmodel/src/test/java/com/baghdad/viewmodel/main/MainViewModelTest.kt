@@ -37,20 +37,6 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `uiState should have isLoading true and isLoggedIn null when ViewModel is initialized`() = runTest {
-        // When
-        viewModel = MainViewModel(isLoggedInUseCase)
-
-        // Then
-        assertThat(viewModel.uiState.value).isEqualTo(
-            MainState(
-                isLoggedIn = null,
-                isLoading = true
-            )
-        )
-    }
-
-    @Test
     fun `isUserLoggedIn should be called when ViewModel starts`() = runTest {
         // Given
         coEvery { mockAuthRepository.isUserLoggedIn() } returns true

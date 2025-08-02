@@ -28,7 +28,7 @@ class RemoteAuthenticationImplTest {
     }
 
     @Test
-    fun `getRequestToken should return token from API`() = runTest {
+    fun `should return request token when fetching from API`() = runTest {
         // Given
         val expectedToken = "reqToken123"
         coEvery { apiService.getRequestToken() } returns Response.success(
@@ -37,7 +37,6 @@ class RemoteAuthenticationImplTest {
                 expireAt = "2025-07-27",
                 success = true
             )
-
         )
 
         // When
@@ -48,7 +47,7 @@ class RemoteAuthenticationImplTest {
     }
 
     @Test
-    fun `validateCredentialWithToken should return validated request token`() = runTest {
+    fun `should return validated request token when validating credentials with token`() = runTest {
         // Given
         val expectedToken = "validatedToken"
         val username = "user"
@@ -72,7 +71,7 @@ class RemoteAuthenticationImplTest {
     }
 
     @Test
-    fun `createSession should return session id`() = runTest {
+    fun `should return session id when creating session`() = runTest {
         // Given
         val expectedSessionId = "session123"
         coEvery {
@@ -92,7 +91,7 @@ class RemoteAuthenticationImplTest {
     }
 
     @Test
-    fun `getUserDetails should return user DTO`() = runTest {
+    fun `should return user DTO when fetching user details`() = runTest {
         // Given
         val sessionId = "session123"
         val userId = 99L
@@ -111,7 +110,7 @@ class RemoteAuthenticationImplTest {
     }
 
     @Test
-    fun `deleteSession should return true if success is true`() = runTest {
+    fun `should return true when deleting session successfully`() = runTest {
         // Given
         val sessionId = "session123"
         coEvery {

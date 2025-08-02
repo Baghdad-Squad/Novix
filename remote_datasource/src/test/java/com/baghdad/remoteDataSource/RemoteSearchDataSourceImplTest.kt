@@ -6,13 +6,12 @@ import com.baghdad.remoteDataSource.response.search.MovieSearchResponse
 import com.baghdad.remoteDataSource.response.search.TvShowSearchResponse
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import retrofit2.Response
 
 class RemoteSearchDataSourceImplTest {
@@ -29,7 +28,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `searchMovies should return paged movie results`() = runTest {
+    fun `should return paged movie results when searching movies`() = runTest {
         // Given
         val query = "test"
         val page = 1
@@ -56,7 +55,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `getMoviesResultCount should return total results count`() = runTest {
+    fun `should return total results count when getting movies result count`() = runTest {
         // Given
         val title = "test"
         val response = MovieSearchResponse(totalResults = 100)
@@ -70,7 +69,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `searchTvShows should return paged tv show results`() = runTest {
+    fun `should return paged tv show results when searching tv shows`() = runTest {
         // Given
         val query = "test"
         val page = 1
@@ -97,7 +96,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `getTvShowsResultCount should return total results count`() = runTest {
+    fun `should return total results count when getting tv shows result count`() = runTest {
         // Given
         val title = "test"
         val response = TvShowSearchResponse(totalResults = 50)
@@ -111,7 +110,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `searchActors should return paged actor results`() = runTest {
+    fun `should return paged actor results when searching actors`() = runTest {
         // Given
         val query = "john"
         val page = 1
@@ -137,7 +136,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `getActorsResultCount should return total results count`() = runTest {
+    fun `should return total results count when getting actors result count`() = runTest {
         // Given
         val name = "john"
         val response = ActorSearchResponse(totalResults = 25)
@@ -151,7 +150,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `searchMovies should handle empty results`() = runTest {
+    fun `should return empty list when searching movies with no results`() = runTest {
         // Given
         val query = "none"
         val page = 1
@@ -167,7 +166,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `searchTvShows should handle null results`() = runTest {
+    fun `should return empty list when searching tv shows with null results`() = runTest {
         // Given
         val query = "none"
         val page = 1
@@ -183,7 +182,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `getMoviesResultCount should return 0 when null`() = runTest {
+    fun `should return 0 when getting movies result count with null`() = runTest {
         // Given
         val title = "unknown"
         val response = MovieSearchResponse(totalResults = null)
@@ -197,7 +196,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `getTvShowsResultCount should return 0 when null`() = runTest {
+    fun `should return 0 when getting tv shows result count with null`() = runTest {
         // Given
         val title = "unknown"
         val response = TvShowSearchResponse(totalResults = null)
@@ -211,7 +210,7 @@ class RemoteSearchDataSourceImplTest {
     }
 
     @Test
-    fun `getActorsResultCount should return 0 when null`() = runTest {
+    fun `should return 0 when getting actors result count with null`() = runTest {
         // Given
         val name = "unknown"
         val response = ActorSearchResponse(totalResults = null)
