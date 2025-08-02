@@ -1,4 +1,3 @@
-
 package com.baghdad.viewmodel.categoryTvShows
 
 import com.baghdad.domain.model.PagedResult
@@ -7,6 +6,7 @@ import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
+import com.baghdad.viewmodel.utls.collectAndSnapshot
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -94,7 +94,7 @@ class CategoryTvShowsViewModelTest {
         assertThat(states.last().tvShowsFlow).isNotNull()
         job.cancel()
     }
-    
+
     @Test
     fun `should emit NavigateBack when onBackClicked`() = runTest {
         val effects = mutableListOf<CategoryTvShowsEffect>()
@@ -131,7 +131,10 @@ class CategoryTvShowsViewModelTest {
     fun `should not crash when getCategoryNameByIdUseCase throws`() = runTest {
         coEvery { getGenresUseCase.getTvShowGenres() } throws RuntimeException("fail")
         viewModel = CategoryTvShowsViewModel(
-            1L, getTvShowsByGenreUseCase, GetTvShowGenreNameByIdUseCase(getGenresUseCase), testDispatcher
+            1L,
+            getTvShowsByGenreUseCase,
+            GetTvShowGenreNameByIdUseCase(getGenresUseCase),
+            testDispatcher
         )
 
         val states = mutableListOf<CategoryTvShowsState>()
@@ -166,4 +169,34 @@ class CategoryTvShowsViewModelTest {
 
         assertThat(uiState.posterPictureURL).isEqualTo(url)
     }
+
+    @Test
+    fun `should update moviesFlow and set isLoading to false when paging flow collected`() =
+        runTest {
+            // Given
+            coEvery { getTvShowsByGenreUseCase(1L, any()) } returns PagedResult(
+                data = listOf(testTvShow),
+                nextKey = null,
+                prevKey = null
+            )
+
+            viewModel = CategoryTvShowsViewModel(
+                categoryId = 1L,
+                getTvShowsCategoryUseCase = getTvShowsByGenreUseCase,
+                getCategoryNameByIdUseCase = getCategoryNameByIdUseCase,
+                ioDispatcher = testDispatcher
+            )
+
+            advanceUntilIdle()
+            // When
+            val items = collectAndSnapshot(
+                flow = viewModel.uiState.value.tvShowsFlow,
+            )
+
+            // Then
+            assertThat(items).isNotEmpty()
+            assertThat(viewModel.uiState.value.isLoading).isFalse()
+        }
+
+
 }
