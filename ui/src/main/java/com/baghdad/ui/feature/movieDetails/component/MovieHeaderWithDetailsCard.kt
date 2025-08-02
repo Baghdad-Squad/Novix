@@ -67,7 +67,7 @@ fun MovieHeaderWithDetailsCard(
                 title = state.movieName,
                 releaseDate = state.date,
                 rating = state.rating,
-                duration = if(isArabicSystemLocale()) arabicDuration(state.duration) else state.duration.formatDuration(),
+                duration = if (isArabicSystemLocale()) arabicDuration(state.duration) else state.duration.formatDuration(),
                 categories = state.categories,
                 onViewReviewClicked = {
                     listener.onReviewClick(state.movieId)
@@ -77,13 +77,7 @@ fun MovieHeaderWithDetailsCard(
                     .padding(bottom = 16.dp)
                     .padding(horizontal = 16.dp)
                     .align(Alignment.CenterHorizontally)
-                    .then(
-                        if (state.categories.isEmpty()) {
-                            Modifier.padding(bottom = 24.dp)
-                        } else {
-                            Modifier.padding(bottom = 0.dp)
-                        }
-                    )
+                    .then(Modifier.padding(bottom = if (state.categories.isEmpty()) 24.dp else 0.dp))
             )
         }
     }
