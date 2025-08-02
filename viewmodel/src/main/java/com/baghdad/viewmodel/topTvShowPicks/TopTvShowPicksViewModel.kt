@@ -42,6 +42,7 @@ class TopTvShowPicksViewModel(
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
         BaseSnackBarMessage.UnknownError
+
     private fun onGetActorTvShowError(throwable: Throwable) {
         when (throwable) {
             is NoInternetException -> showNoInternetSnackBar()

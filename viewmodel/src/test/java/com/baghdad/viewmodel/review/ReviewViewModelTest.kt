@@ -48,7 +48,8 @@ class ReviewViewModelTest {
                 getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
                 getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
                 contentId = contentId,
-                contentType = ContentType.MOVIE
+                contentType = ContentType.MOVIE,
+                ioDispatcher = testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
 
@@ -67,7 +68,8 @@ class ReviewViewModelTest {
             getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
             getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
             contentId = contentId,
-            contentType = ContentType.MOVIE
+            contentType = ContentType.MOVIE,
+            ioDispatcher = testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -88,7 +90,8 @@ class ReviewViewModelTest {
                 getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
                 getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
                 contentId = contentId,
-                contentType = ContentType.SERIES
+                contentType = ContentType.SERIES,
+                ioDispatcher = testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
 
@@ -108,7 +111,8 @@ class ReviewViewModelTest {
                 getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
                 getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
                 contentId = contentId,
-                contentType = ContentType.SERIES
+                contentType = ContentType.SERIES,
+                ioDispatcher = testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
 
@@ -129,7 +133,8 @@ class ReviewViewModelTest {
             getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
             getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
             contentId = contentId,
-            contentType = ContentType.SERIES
+            contentType = ContentType.SERIES,
+            ioDispatcher = testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -148,7 +153,8 @@ class ReviewViewModelTest {
                 getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
                 getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
                 contentId = contentId,
-                contentType = ContentType.SERIES
+                contentType = ContentType.SERIES,
+                ioDispatcher = testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
 
@@ -169,7 +175,8 @@ class ReviewViewModelTest {
                 getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
                 getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
                 contentId = contentId,
-                contentType = ContentType.MOVIE
+                contentType = ContentType.MOVIE,
+                ioDispatcher = testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
 
