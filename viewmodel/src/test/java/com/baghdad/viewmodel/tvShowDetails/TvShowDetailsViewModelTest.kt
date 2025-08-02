@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.tvShowDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
@@ -41,7 +42,7 @@ class TvShowDetailsViewModelTest {
         getTvShowSeasonEpisodesUseCase = mockk()
         addContinueWatchingUseCase = mockk()
         tvShowDetailsViewModel = TvShowDetailsViewModel(
-            tvShowId = tvShowId,
+            savedStateHandle = savedStateHandle,
             getTvShowDetailsUseCase = getTvShowDetailsUseCase,
             getTvShowCastMembersUseCase = getTvShowCastMembersUseCase,
             getTvShowSeasonEpisodesUseCase = getTvShowSeasonEpisodesUseCase,
@@ -219,6 +220,12 @@ class TvShowDetailsViewModelTest {
     }
 
     private companion object {
+
+        private val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "tvShowId" to 1L,
+            )
+        )
         const val tvShowId = 123L
         const val genreId = 456L
         const val actorId = 789L

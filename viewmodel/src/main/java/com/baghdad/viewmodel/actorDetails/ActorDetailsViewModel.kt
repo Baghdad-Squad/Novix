@@ -183,7 +183,7 @@ class ActorDetailsViewModel @Inject constructor(
     }
 
     override fun onViewAllTopTvShowsClick() {
-        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks)
+//        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks)
     }
 
     override fun onMovieCardClick(movieId: Long) {

@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.movieDetils
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
@@ -55,13 +56,15 @@ class MovieDetailsViewModelTest {
         coEvery { getMoreLikeThisPosterImageUseCase(any()) } returns createMockSimilarMovies()
         coEvery { addContinueWatchingUseCase(any(), any(), any(), any()) } returns Unit
 
+        val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
+
         movieDetailsViewModel = MovieDetailsViewModel(
             getMovieDetailsUseCase = getMovieDetailsUseCase,
             getCastsInfoUseCase = getCastsInfoUseCase,
             getMovieImagesUseCase = getMovieImagesUseCase,
             getMoreLikeThisPosterImageUseCase = getMoreLikeThisPosterImageUseCase,
             addContinueWatchingUseCase = addContinueWatchingUseCase,
-            movieId = movieId,
+            savedStateHandle = savedStateHandle,
             ioDispatcher = testDispatcher,
         )
     }
@@ -212,7 +215,7 @@ class MovieDetailsViewModelTest {
         advanceUntilIdle()
         // Then
         val expectedUrl = movieDetailsViewModel.uiState.value.movieTrailerURL
-        assertThat(MovieDetailsEffect.OpenYoutubeLink(expectedUrl) ==  receivedEffect).isTrue()
+        assertThat(MovieDetailsEffect.OpenYoutubeLink(expectedUrl) == receivedEffect).isTrue()
         job.cancel()
     }
 
@@ -228,26 +231,26 @@ class MovieDetailsViewModelTest {
         }
 
     @Test
-    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
-        // Given
-        coEvery { getMovieDetailsUseCase(any()) } throws NoInternetException()
-        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() =
+        runTest {
+            // Given
+            coEvery { getMovieDetailsUseCase(any()) } throws NoInternetException()
+            val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
 
-        val job = launch {
-            movieDetailsViewModel.snackBarState.collect {
-                emittedSnackBarMessages.add(it.message)
+            val job = launch {
+                movieDetailsViewModel.snackBarState.collect {
+                    emittedSnackBarMessages.add(it.message)
+                }
             }
+
+            // When
+            movieDetailsViewModel.onSnackBarActionLabelClick()
+            advanceUntilIdle()
+            job.cancel()
+
+            // Then
+            assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
         }
-
-        // When
-        movieDetailsViewModel.onSnackBarActionLabelClick()
-        advanceUntilIdle()
-        job.cancel()
-
-        // Then
-        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
-    }
-
 
 
     companion object {

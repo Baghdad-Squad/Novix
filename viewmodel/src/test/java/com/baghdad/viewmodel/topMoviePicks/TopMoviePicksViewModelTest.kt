@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.topMoviePicks
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.entity.media.Genre
@@ -33,8 +34,9 @@ class TopMoviePicksViewModelTest {
         Dispatchers.setMain(testDispatcher)
         getActorMoviesUseCase = mockk(relaxed = true)
         coEvery { getActorMoviesUseCase(actorId) } returns mockedMovies()
+
         topMoviePicksViewModel =
-            TopMoviePicksViewModel(actorId, getActorMoviesUseCase, testDispatcher)
+            TopMoviePicksViewModel(savedStateHandle, getActorMoviesUseCase, testDispatcher)
     }
 
 
@@ -111,6 +113,11 @@ class TopMoviePicksViewModelTest {
 
 
     companion object {
+        private val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "actorId" to 1L,
+            )
+        )
         private fun mockedMovies(): List<Movie> = listOf(
             Movie(
                 id = 1L,
