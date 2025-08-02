@@ -8,6 +8,7 @@ import com.baghdad.entity.media.Review
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class ReviewViewModel @Inject constructor(
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase,
     private val getSeriesReviewsUseCase: GetTvShowReviewsUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
     savedStateHandle: SavedStateHandle,
     ) : BaseViewModel<ReviewScreenState, ReviewScreenEffect>(ReviewScreenState()),
     ReviewInteractionListener {
@@ -39,7 +41,8 @@ class ReviewViewModel @Inject constructor(
             callee = { getMovieReviewsUseCase(contentId) },
             onSuccess = ::onReviewsSuccess,
             onFinally = ::onFinally,
-            onError = ::onLoadDataError
+            onError = ::onLoadDataError,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -49,7 +52,8 @@ class ReviewViewModel @Inject constructor(
             callee = { getSeriesReviewsUseCase(contentId) },
             onSuccess = ::onReviewsSuccess,
             onFinally = ::onFinally,
-            onError = ::onLoadDataError
+            onError = ::onLoadDataError,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -104,7 +108,7 @@ class ReviewViewModel @Inject constructor(
         loadData()
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
-    }
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
+
 }

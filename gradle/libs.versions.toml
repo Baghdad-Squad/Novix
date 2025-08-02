@@ -52,7 +52,6 @@ hilt-compiler = "1.2.0"
 dagger = "2.57"
 
 
-
 [libraries]
 # AndroidX
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -234,7 +233,7 @@ test-core = [
     "mockk",
     "mockk-android",
     "truth",
-    "kotlinx-coroutines-test"
+    "kotlinx-coroutines-test",
 ]
 
 test-ui = [

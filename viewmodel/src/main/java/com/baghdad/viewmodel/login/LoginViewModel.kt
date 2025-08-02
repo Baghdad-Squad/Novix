@@ -8,10 +8,12 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<LoginUiState, LoginUiEffect>(
     LoginUiState()
 ), LoginInteractionListener {
@@ -29,6 +31,7 @@ class LoginViewModel @Inject constructor(
                         password = uiState.value.password
                     )
                 },
+                dispatcher = ioDispatcher,
                 onSuccess = { onLoginSuccess() },
                 onError = { onLoginError(it) },
                 onFinally = { endLoading() })

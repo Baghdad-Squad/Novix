@@ -176,6 +176,7 @@ class TvShowDetailsViewModel @Inject constructor(
                     contentType = ContinueWatching.ContentType.TV_SHOW,
                 )
             },
+            dispatcher = ioDispatcher,
         )
     }
 

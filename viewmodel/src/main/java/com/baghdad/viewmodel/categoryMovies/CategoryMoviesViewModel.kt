@@ -8,6 +8,7 @@ import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -16,7 +17,8 @@ import javax.inject.Inject
 class CategoryMoviesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getGenreMoviesUseCase: GetMoviesByGenreUseCase,
-    private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase
+    private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<CategoryMoviesState, CategoryMoviesEffect>(CategoryMoviesState()),
     CategoryMoviesInteractionListener {
 
@@ -55,7 +57,8 @@ class CategoryMoviesViewModel @Inject constructor(
         tryToExecute(
             callee = { getMovieGenreNameByIdUseCase.invoke(categoryId) },
             onSuccess = { onGetGenreNameSuccess(it.name) },
-            onError = { onGetGenreNameError(it) }
+            onError = { onGetGenreNameError(it) },
+            dispatcher = ioDispatcher
         )
     }
 

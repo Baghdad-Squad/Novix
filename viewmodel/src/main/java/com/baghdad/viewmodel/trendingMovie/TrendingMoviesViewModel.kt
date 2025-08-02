@@ -9,11 +9,13 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 
 @HiltViewModel
 class TrendingMoviesViewModel @Inject constructor(
     private val getTrendingMoviesUseCase: GetTrendingMoviesUseCase,
     private val getGenresUseCase: GetGenresUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<TrendingMoviesScreenState, TrendingMoviesEffect>(TrendingMoviesScreenState()),
     TrendingMoviesInteractionListener {
     init {
@@ -26,7 +28,8 @@ class TrendingMoviesViewModel @Inject constructor(
         tryToExecute(
             callee = { getGenresUseCase.getMovieGenres() },
             onSuccess = ::handleGenreSuccess,
-            onError = ::onLoadDataError
+            onError = ::onLoadDataError,
+            dispatcher = ioDispatcher
         )
     }
 

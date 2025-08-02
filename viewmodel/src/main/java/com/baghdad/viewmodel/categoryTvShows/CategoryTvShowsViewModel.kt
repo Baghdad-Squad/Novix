@@ -11,13 +11,15 @@ import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState.TvShowUiState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 class CategoryTvShowsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getTvShowsCategoryUseCase: GetTvShowsByGenreUseCase,
-    private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase
+    private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<CategoryTvShowsState, CategoryTvShowsEffect>(CategoryTvShowsState()),
     CategoryTvShowsInteractionListener {
 
@@ -88,6 +90,7 @@ class CategoryTvShowsViewModel @Inject constructor(
     private fun getCategoryNameById(categoryId: Long) {
         tryToExecute(
             callee = { getCategoryNameByIdUseCase.invoke(categoryId) },
+            dispatcher = ioDispatcher,
             onSuccess = { onSuccessGetCategoryName(it.name) },
             onError = ::onLoadDataError
         )

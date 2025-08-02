@@ -14,7 +14,7 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertEquals
+import okio.IOException
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -35,155 +35,146 @@ class RemoteActorDataSourceImplTest {
     }
 
     @Test
-    fun `getActorImages should return formatted image URLs`() = runTest {
+    fun `should return formatted image URLs when fetching actor images`() = runTest {
         // Given
-        val personId = 456L
         val apiResponse = ActorImagesResponse(
             profiles = listOf(
                 ImageResponse(filePath = "/image1.jpg"),
                 ImageResponse(filePath = "/image2.jpg")
             )
         )
-        coEvery { apiService.getActorImages(personId) } returns Response.success(apiResponse)
+        coEvery { apiService.getActorImages(456L) } returns Response.success(apiResponse)
 
         // When
-        val result = dataSource.getActorImages(personId)
+        val result = dataSource.getActorImages(456L)
 
         // Then
-        assertEquals(2, result.size)
-        assertEquals("https://image.tmdb.org/t/p/w500/image1.jpg", result[0])
-        assertEquals("https://image.tmdb.org/t/p/w500/image2.jpg", result[1])
+        assertThat(result.size).isEqualTo(2)
+        assertThat(result[0])
+            .isEqualTo("https://image.tmdb.org/t/p/w500${apiResponse.profiles?.get(0)?.filePath}")
+        assertThat(result[1])
+            .isEqualTo("https://image.tmdb.org/t/p/w500${apiResponse.profiles?.get(1)?.filePath}")
     }
 
     @Test
-    fun `getActorMovies should return empty list when API returns null cast`() = runTest {
+    fun `should return empty list when actor movies API returns null cast`() = runTest {
         // Given
-        val personId = 789L
-        coEvery { apiService.getActorMovies(personId) } returns Response.success(
-            ActorMoviesResponse(
-                cast = null
-            )
+        coEvery { apiService.getActorMovies(789L) } returns Response.success(
+            ActorMoviesResponse(cast = null)
         )
 
         // When
-        val result = dataSource.getActorMovies(personId)
+        val result = dataSource.getActorMovies(789L)
 
         // Then
-        assertTrue(result.isEmpty())
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getActorImages should return empty list when profiles is empty`() = runTest {
+    fun `should return empty list when actor images profiles is empty`() = runTest {
         // Given
-        val personId = 456L
         val apiResponse = ActorImagesResponse(profiles = emptyList())
-        coEvery { apiService.getActorImages(personId) } returns Response.success(apiResponse)
+        coEvery { apiService.getActorImages(456L) } returns Response.success(apiResponse)
 
         // When
-        val result = dataSource.getActorImages(personId)
+        val result = dataSource.getActorImages(456L)
 
         // Then
-        assertTrue(result.isEmpty())
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getActorMovies should handle empty cast list`() = runTest {
+    fun `should return empty list when actor movies cast is empty`() = runTest {
         // Given
-        val personId = 789L
-        coEvery { apiService.getActorMovies(personId) } returns Response.success(
+        coEvery { apiService.getActorMovies(789L) } returns Response.success(
             ActorMoviesResponse(cast = emptyList())
         )
 
         // When
-        val result = dataSource.getActorMovies(personId)
+        val result = dataSource.getActorMovies(789L)
 
         // Then
-        assertTrue(result.isEmpty())
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getTrendingActors should handle empty results list`() = runTest {
+    fun `should return empty list when trending actors results is empty`() = runTest {
         // Given
-        val page = 1
         val apiResponse = TrendingActorResponse(
-            page = page,
+            page = 1,
             results = emptyList(),
             totalPages = 0,
             totalResults = 0
         )
-        coEvery { apiService.getTrendingActors(page) } returns Response.success(apiResponse)
+        coEvery { apiService.getTrendingActors(1) } returns Response.success(apiResponse)
 
         // When
-        val result = dataSource.getTrendingActors(page)
+        val result = dataSource.getTrendingActors(1)
 
         // Then
-        assertTrue(result.data.isEmpty())
+        assertThat(result.data).isEmpty()
     }
 
     @Test
-    fun `getActorImages should throw exception on API failure`() = runTest {
+    fun `should throw NoInternetNetworkException when fetching actor images fails`() = runTest {
         // Given
-        val personId = 456L
-        coEvery { apiService.getActorImages(personId) } throws _root_ide_package_.io.ktor.utils.io.errors.IOException()
+        coEvery { apiService.getActorImages(456L) } throws IOException()
 
         // When/Then
         assertThrows<NoInternetNetworkException> {
-            dataSource.getActorImages(personId)
+            dataSource.getActorImages(456L)
         }
     }
 
     @Test
-    fun `getActorDetails should handle partial data`() = runTest {
+    fun `should handle partial data when fetching actor details`() = runTest {
         // Given
-        val personId = 123L
         val response = ActorDetailsResponse(
-            id = personId.toInt(),
+            id = 123L.toInt(),
             name = null,
             biography = null,
             profilePath = null
         )
-        coEvery { apiService.getActorDetails(personId) } returns Response.success(response)
+        coEvery { apiService.getActorDetails(123L) } returns Response.success(response)
 
         // When
-        val result = dataSource.getActorDetails(personId)
+        val result = dataSource.getActorDetails(123L)
 
         // Then
-        assertEquals(personId, result.id)
-        assertEquals("", result.name)
-        assertEquals("", result.biography)
+        assertThat(result.id).isEqualTo(123L)
+        assertThat(result.name).isEmpty()
+        assertThat(result.biography).isEmpty()
         assertThat(result.headerPictures.isEmpty())
     }
 
     @Test
-    fun `getActorTvShows should return mapped TV shows`() = runTest {
+    fun `should return mapped TV shows when fetching actor TV shows`() = runTest {
         // Given
-        val personId = 101L
         val response = ActorTvShowsResponse(
             cast = listOf(
                 ActorTvShowDto(id = 1, name = "Show 1"),
                 ActorTvShowDto(id = 2, name = "Show 2")
             )
         )
-        coEvery { apiService.getActorTvShows(personId) } returns Response.success(response)
+        coEvery { apiService.getActorTvShows(101L) } returns Response.success(response)
 
         // When
-        val result = dataSource.getActorTvShows(personId)
+        val result = dataSource.getActorTvShows(101L)
 
         // Then
-        assertEquals(2, result.size)
-        assertEquals("Show 1", result[0].title)
-        assertEquals("Show 2", result[1].title)
+        assertThat(result.size).isEqualTo(2)
+        assertThat(result[0].title).isEqualTo("Show 1")
+        assertThat(result[1].title).isEqualTo("Show 2")
     }
 
     @Test
-    fun `getActorTvShows should return empty list when cast is null`() = runTest {
+    fun `should return empty list when actor TV shows cast is null`() = runTest {
         // Given
-        val personId = 101L
         val response = ActorTvShowsResponse(cast = null)
-        coEvery { apiService.getActorTvShows(personId) } returns Response.success(response)
+        coEvery { apiService.getActorTvShows(101L) } returns Response.success(response)
 
         // When
-        val result = dataSource.getActorTvShows(personId)
+        val result = dataSource.getActorTvShows(101L)
 
         // Then
         assertTrue(result.isEmpty())

@@ -11,12 +11,14 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 
 @HiltViewModel
 class EpisodeDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getEpisodeCastMembersUseCase: GetEpisodeCastMembersUseCase,
-    private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase
+    private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<EpisodeDetailsScreenState, EpisodeDetailsScreenEffect>(EpisodeDetailsScreenState()),
     EpisodeDetailsInteractionListener {
 
@@ -36,10 +38,11 @@ class EpisodeDetailsViewModel @Inject constructor(
     private fun getEpisodeDetails(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
         tryToExecute(
             callee = { getEpisodeDetailsUseCase(tvShowId, seasonNumber, episodeNumber) },
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetEpisodeDetailsSuccess,
             onStart = ::onGetEpisodeDetailsStart,
             onFinally = ::onGetEpisodeDetailsFinally,
-            onError = ::onError
+            onError = ::onError,
         )
     }
 
@@ -61,6 +64,7 @@ class EpisodeDetailsViewModel @Inject constructor(
         hideSnackBar()
         tryToExecute(
             callee = { getEpisodeCastMembersUseCase(tvShowId, seasonNumber, episodeNumber) },
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetEpisodeCastMembersSuccess,
             onStart = ::onGetEpisodeCastMembersLoading,
             onFinally = ::onGetEpisodeCastMembersFinally,

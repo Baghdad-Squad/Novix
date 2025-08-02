@@ -25,7 +25,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import retrofit2.Response
 
-
 class RemoteMovieDataSourceImplTest {
 
     private lateinit var dataSource: RemoteMovieDataSourceImpl
@@ -40,7 +39,7 @@ class RemoteMovieDataSourceImplTest {
     }
 
     @Test
-    fun `getMovieDetails should map response to MovieDto`() = runTest {
+    fun `should map response to MovieDto when getting movie details`() = runTest {
         // Given
         val movieId = 1L
         val response = MovieDetailsResponse(
@@ -68,7 +67,7 @@ class RemoteMovieDataSourceImplTest {
     }
 
     @Test
-    fun `getSimilarMovies should map response to MovieDto list`() = runTest {
+    fun `should map response to MovieDto list when getting similar movies`() = runTest {
         // Given
         val movieId = 1L
         val response = SimilarMovieResponse(
@@ -92,7 +91,7 @@ class RemoteMovieDataSourceImplTest {
     }
 
     @Test
-    fun `getMovieImages should return backdrop paths`() = runTest {
+    fun `should return backdrop paths when getting movie images`() = runTest {
         // Given
         val movieId = 1L
         val response = MovieImageResponse(
@@ -106,10 +105,11 @@ class RemoteMovieDataSourceImplTest {
         val result = dataSource.getMovieImages(movieId)
 
         // Then
-        assertThat(result).containsExactly("https://image.tmdb.org/t/p/w500/backdrop1.jpg")    }
+        assertThat(result).containsExactly("https://image.tmdb.org/t/p/w500/backdrop1.jpg")
+    }
 
     @Test
-    fun `getTopRatedMovies should return paged results`() = runTest {
+    fun `should return paged results when getting top rated movies`() = runTest {
         // Given
         val page = 1
         val response = SimilarMovieResponse(
@@ -129,7 +129,7 @@ class RemoteMovieDataSourceImplTest {
     }
 
     @Test
-    fun `getMoviesByGenre should return paged results`() = runTest {
+    fun `should return paged results when getting movies by genre`() = runTest {
         // Given
         val genreId = 1L
         val page = 1
@@ -152,7 +152,7 @@ class RemoteMovieDataSourceImplTest {
     }
 
     @Test
-    fun `getMovieCastMembers should return cast list`() = runTest {
+    fun `should return cast list when getting movie cast members`() = runTest {
         // Given
         val movieId = 1L
         val response = CastMembersResponse(
@@ -176,7 +176,7 @@ class RemoteMovieDataSourceImplTest {
     }
 
     @Test
-    fun `getPopularMovies should return mapped list of MovieDto`() = runTest {
+    fun `should return mapped list of MovieDto when getting popular movies`() = runTest {
         // Given
         val response = PopularMoviesResponse(
             results = listOf(
@@ -209,7 +209,7 @@ class RemoteMovieDataSourceImplTest {
     }
 
     @Test
-    fun `getMovieReviews should return mapped list of ReviewDto`() = runTest {
+    fun `should return mapped list of ReviewDto when getting movie reviews`() = runTest {
         // Given
         val response = ReviewsResponse(
             id = 1,
@@ -248,9 +248,8 @@ class RemoteMovieDataSourceImplTest {
         assertThat(review.postedDate).isEqualTo("2024-01-01T10:00:00Z")
     }
 
-
     @Test
-    fun `getMovieTrailer should return youtube url`() = runTest {
+    fun `should return YouTube url when getting movie trailer`() = runTest {
         // Given
         val movieId = 1L
         val videoKey = "abc123"
@@ -273,7 +272,7 @@ class RemoteMovieDataSourceImplTest {
     }
 
     @Test
-    fun `getTrendingMovies should return paged result`() = runTest {
+    fun `should return paged result when getting trending movies`() = runTest {
         // Given
         val page = 1
         val response = TrendingMovieResponse(
@@ -296,7 +295,7 @@ class RemoteMovieDataSourceImplTest {
     }
 
     @Test
-    fun `getUpcomingMovies should return paged result`() = runTest {
+    fun `should return paged result when getting upcoming movies`() = runTest {
         // Given
         val genreId: Long = 28
         val response = DiscoverMovieResponse(
@@ -328,6 +327,5 @@ class RemoteMovieDataSourceImplTest {
         // Then
         assertThat(result).hasSize(1)
         assertThat(result[0].id).isEqualTo(1L)
-
     }
 }

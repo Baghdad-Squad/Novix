@@ -1,6 +1,5 @@
 package com.baghdad.remoteDataSource
 
-
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
@@ -14,7 +13,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import retrofit2.Response
-
 
 class RemoteEpisodeDataSourceImplTest {
 
@@ -30,7 +28,7 @@ class RemoteEpisodeDataSourceImplTest {
     }
 
     @Test
-    fun `getEpisodeDetails should return episode details when API call succeeds`() = runTest {
+    fun `should return episode details when API call succeeds`() = runTest {
         // Given
         val tvId = 1L
         val seasonNumber = 1
@@ -39,8 +37,7 @@ class RemoteEpisodeDataSourceImplTest {
             id = 123,
             name = "Test Episode",
             overview = "Test overview",
-
-            )
+        )
         coEvery {
             apiService.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
         } returns Response.success(response)
@@ -55,7 +52,7 @@ class RemoteEpisodeDataSourceImplTest {
     }
 
     @Test
-    fun `getEpisodeCastMembers should return empty list when API returns null cast`() = runTest {
+    fun `should return empty list when episode cast is null`() = runTest {
         // Given
         val tvId = 1L
         val seasonNumber = 1
@@ -72,7 +69,7 @@ class RemoteEpisodeDataSourceImplTest {
     }
 
     @Test
-    fun `getEpisodeImages should return formatted image URLs`() = runTest {
+    fun `should return formatted image URLs when fetching episode images`() = runTest {
         // Given
         val tvId = 1L
         val seasonNumber = 1
@@ -97,7 +94,7 @@ class RemoteEpisodeDataSourceImplTest {
     }
 
     @Test
-    fun `getEpisodeImages should return empty list when no stills available`() = runTest {
+    fun `should return empty list when no episode images are available`() = runTest {
         // Given
         val tvId = 1L
         val seasonNumber = 1
@@ -114,9 +111,8 @@ class RemoteEpisodeDataSourceImplTest {
         assertThat(result).isEmpty()
     }
 
-
     @Test
-    fun `getEpisodeDetails should handle minimal data response`() = runTest {
+    fun `should handle minimal data when fetching episode details`() = runTest {
         // Given
         val tvId = 1L
         val seasonNumber = 1
@@ -140,7 +136,7 @@ class RemoteEpisodeDataSourceImplTest {
     }
 
     @Test
-    fun `getEpisodeTrailer should return empty string when no valid trailer found`() = runTest {
+    fun `should return empty string when no valid episode trailer is found`() = runTest {
         // Given
         val tvId = 1L
         val seasonNumber = 1

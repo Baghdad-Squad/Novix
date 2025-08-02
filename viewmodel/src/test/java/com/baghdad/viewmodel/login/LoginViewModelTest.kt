@@ -28,7 +28,7 @@ class LoginViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         loginUseCase = mockk()
-        viewModel = LoginViewModel(loginUseCase)
+        viewModel = LoginViewModel(loginUseCase, testDispatcher)
     }
 
     @AfterEach
