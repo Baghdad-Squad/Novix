@@ -95,4 +95,37 @@ class SearchScreenStateTest {
 
         assertThat(movieView.contentType).isEqualTo(RecentlyViewed.ContentType.MOVIE)
     }
+
+    @Test
+    fun `default ActorUiState should have empty profilePictureURL`() {
+        val actor = SearchScreenState.ActorUiState()
+        assertThat(actor.profilePictureURL).isEmpty()
+    }
+
+    @Test
+    fun `GenreUiState should correctly store provided id`() {
+        val genre = SearchScreenState.GenreUiState(id = 101, name = "Action")
+        assertThat(genre.id).isEqualTo(101L)
+    }
+
+    @Test
+    fun `GenreUiState should correctly store when provided name`() {
+        val genre = SearchScreenState.GenreUiState(id = 101, name = "Action")
+        assertThat(genre.name).isEqualTo("Action")
+    }
+
+    @Test
+    fun `default RecentSearchUiState should have id 0 and empty query`() {
+        val search = SearchScreenState.RecentSearchUiState()
+        assertThat(search.id).isEqualTo(0L)
+        assertThat(search.query).isEmpty()
+    }
+
+    @Test
+    fun `default GenreUiState should have empty name`() {
+        val genre = SearchScreenState.GenreUiState()
+        assertThat(genre.name).isEmpty()
+    }
+
+
 }
