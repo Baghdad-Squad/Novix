@@ -1,7 +1,6 @@
-package com.baghdad.remoteDataSource.respons.tvShow
+package com.baghdad.remoteDataSource.mapper.tvShow
 
 import com.baghdad.remoteDataSource.mapper.search.toPagedTvShowDtos
-import com.baghdad.remoteDataSource.mapper.tvShow.toDto
 import com.baghdad.remoteDataSource.response.movie.Genre
 import com.baghdad.remoteDataSource.response.search.TvShowSearchResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
