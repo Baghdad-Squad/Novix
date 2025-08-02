@@ -8,15 +8,18 @@ import com.baghdad.entity.media.TvShow
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class TrendingTvShowViewModelTest {
-
+    private val testDispatcher = StandardTestDispatcher()
     private val getGenresUseCase: GetGenresUseCase = mockk()
     private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase = mockk()
     private lateinit var viewModel: TrendingTvShowViewModel
@@ -49,6 +52,7 @@ class TrendingTvShowViewModelTest {
             nextKey = null,
             prevKey = null
         )
+        Dispatchers.setMain(testDispatcher)
         viewModel = TrendingTvShowViewModel(getTrendingTvShowUseCase, getGenresUseCase)
     }
 

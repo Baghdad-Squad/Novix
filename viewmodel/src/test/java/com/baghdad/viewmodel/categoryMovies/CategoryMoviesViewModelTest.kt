@@ -29,7 +29,6 @@ class CategoryMoviesViewModelTest {
 
     private val getGenreMoviesUseCase: GetMoviesByGenreUseCase = mockk(relaxed = true)
     private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase = mockk()
-
     private lateinit var viewModel: CategoryMoviesViewModel
     private val testDispatcher = StandardTestDispatcher()
 

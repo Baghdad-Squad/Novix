@@ -12,9 +12,15 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CategoryTvShowsViewModelTest {
@@ -58,7 +64,8 @@ class CategoryTvShowsViewModelTest {
         viewModel = CategoryTvShowsViewModel(
             categoryId = 1L,
             getTvShowsCategoryUseCase = getTvShowsByGenreUseCase,
-            getCategoryNameByIdUseCase = getCategoryNameByIdUseCase
+            getCategoryNameByIdUseCase = getCategoryNameByIdUseCase,
+            ioDispatcher = testDispatcher
         )
     }
 
@@ -122,7 +129,9 @@ class CategoryTvShowsViewModelTest {
     @Test
     fun `should not crash when getCategoryNameByIdUseCase throws`() = runTest {
         coEvery { getGenresUseCase.getTvShowGenres() } throws RuntimeException("fail")
-        viewModel = CategoryTvShowsViewModel(1L, getTvShowsByGenreUseCase, GetTvShowGenreNameByIdUseCase(getGenresUseCase))
+        viewModel = CategoryTvShowsViewModel(
+            1L, getTvShowsByGenreUseCase, GetTvShowGenreNameByIdUseCase(getGenresUseCase), testDispatcher
+        )
 
         val states = mutableListOf<CategoryTvShowsState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
