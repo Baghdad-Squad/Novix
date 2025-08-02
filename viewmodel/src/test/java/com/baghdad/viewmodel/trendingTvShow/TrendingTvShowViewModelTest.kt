@@ -8,47 +8,31 @@ import com.baghdad.entity.media.TvShow
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class TrendingTvShowViewModelTest {
 
+    private val testDispatcher = StandardTestDispatcher()
     private val getGenresUseCase: GetGenresUseCase = mockk()
     private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase = mockk()
     private lateinit var viewModel: TrendingTvShowViewModel
 
-    private val genres = listOf(
-        Genre(id = 1L, name = "Action"), Genre(id = 2L, name = "Drama")
-    )
-
-    private val tvShows = listOf(
-        TvShow(
-            id = 10L,
-            title = "Breaking Show",
-            genres = listOf(genres.first()),
-            averageRating = 8.5,
-            userRating = 7.0,
-            releaseDate = LocalDate.parse("2022-05-01"),
-            overview = "Good show",
-            posterImageURL = "poster.jpg",
-            trailerURL = "trailer.mp4",
-            headerImagesURLs = listOf("header1.jpg", "header2.jpg"),
-            numberOfSeasons = 3
-        )
-    )
 
     @BeforeEach
     fun setUp() {
         coEvery { getGenresUseCase.getTvShowGenres() } returns genres
         coEvery { getTrendingTvShowUseCase(any(), any()) } returns PagedResult(
-            tvShows,
-            nextKey = null,
-            prevKey = null
+            tvShows, nextKey = null, prevKey = null
         )
+        Dispatchers.setMain(testDispatcher)
         viewModel = TrendingTvShowViewModel(getTrendingTvShowUseCase, getGenresUseCase)
     }
 
@@ -121,5 +105,27 @@ class TrendingTvShowViewModelTest {
     @Test
     fun `should do nothing when onSaveTvShowClick called`() {
         viewModel.onSaveTvShowClick(1L)
+    }
+
+    companion object {
+        private val genres = listOf(
+            Genre(id = 1L, name = "Action"), Genre(id = 2L, name = "Drama")
+        )
+
+        private val tvShows = listOf(
+            TvShow(
+                id = 10L,
+                title = "Breaking Show",
+                genres = listOf(genres.first()),
+                averageRating = 8.5,
+                userRating = 7.0,
+                releaseDate = LocalDate.parse("2022-05-01"),
+                overview = "Good show",
+                posterImageURL = "poster.jpg",
+                trailerURL = "trailer.mp4",
+                headerImagesURLs = listOf("header1.jpg", "header2.jpg"),
+                numberOfSeasons = 3
+            )
+        )
     }
 }
