@@ -1,6 +1,5 @@
-package com.baghdad.remoteDataSource.mapper
+package com.baghdad.remoteDataSource.mapper.search
 
-import com.baghdad.remoteDataSource.mapper.search.toPagedActorDtos
 import com.baghdad.remoteDataSource.response.search.ActorSearchResponse
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test

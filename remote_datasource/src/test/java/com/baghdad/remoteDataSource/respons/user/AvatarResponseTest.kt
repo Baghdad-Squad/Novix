@@ -1,9 +1,9 @@
-package com.baghdad.remoteDataSource
+package com.baghdad.remoteDataSource.respons.user
 
 import com.baghdad.remoteDataSource.response.user.AvatarResponse
 import com.baghdad.remoteDataSource.response.user.GravatarResponse
 import com.baghdad.remoteDataSource.response.user.TmdbResponse
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 
 class AvatarResponseTest {
@@ -18,7 +18,7 @@ class AvatarResponseTest {
         val result = response.gravatar?.hash
 
         // Then
-        assertThat(result).isEqualTo("abc123")
+        Truth.assertThat(result).isEqualTo("abc123")
     }
 
     @Test
@@ -30,7 +30,7 @@ class AvatarResponseTest {
         val result = response.gravatar
 
         // Then
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     @Test
@@ -43,7 +43,7 @@ class AvatarResponseTest {
         val result = response.tmdb?.avatarPath
 
         // Then
-        assertThat(result).isEqualTo("/path/to/avatar.png")
+        Truth.assertThat(result).isEqualTo("/path/to/avatar.png")
     }
 
     @Test
@@ -55,6 +55,6 @@ class AvatarResponseTest {
         val result = response.tmdb
 
         // Then
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 }

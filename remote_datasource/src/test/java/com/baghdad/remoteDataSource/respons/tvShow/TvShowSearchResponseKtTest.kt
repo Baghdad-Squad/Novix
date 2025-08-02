@@ -1,7 +1,10 @@
-package com.baghdad.remoteDataSource.mapper
+package com.baghdad.remoteDataSource.respons.tvShow
 
 import com.baghdad.remoteDataSource.mapper.search.toPagedTvShowDtos
+import com.baghdad.remoteDataSource.mapper.tvShow.toDto
+import com.baghdad.remoteDataSource.response.movie.Genre
 import com.baghdad.remoteDataSource.response.search.TvShowSearchResponse
+import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
 import com.baghdad.repository.model.GenreDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -201,5 +204,71 @@ class TvShowSearchResponseMapperTest {
         assertThat(tvShow.userRating).isNull()
         assertThat(tvShow.genres).isEmpty()
         assertThat(tvShow.releaseDate).isEmpty()
+    }
+
+    @Test
+    fun `should map TvShowDetailsResponse with genres correctly`() {
+        // Given
+        val response = TVShowDetailsResponse(
+            id = 101,
+            name = "Breaking Bad",
+            genres = listOf(
+                Genre(id = 18, name = "Drama"),
+                Genre(id = 80, name = "Crime")
+            ),
+            voteAverage = 9.5,
+            firstAirDate = "2008-01-20",
+            overview = "Chemistry teacher turned meth producer",
+            posterPath = "/poster.jpg",
+            numberOfSeasons = 5
+        )
+
+        // When
+        val tvShowDto = response.toDto()
+
+        // Then
+        assertThat(tvShowDto.id).isEqualTo(101)
+        assertThat(tvShowDto.title).isEqualTo("Breaking Bad")
+        assertThat(tvShowDto.genres.map { it.name }).containsExactly("Drama", "Crime")
+        assertThat(tvShowDto.imdbRating).isEqualTo(9.5)
+        assertThat(tvShowDto.releaseDate).isEqualTo("2008-01-20")
+        assertThat(tvShowDto.posterPictureURL).isEqualTo("https://image.tmdb.org/t/p/w500/poster.jpg")
+        assertThat(tvShowDto.numberOfSeasons).isEqualTo(5)
+    }
+
+    @Test
+    fun `should handle null genres list`() {
+        // Given
+        val response = TVShowDetailsResponse(
+            id = 102,
+            name = "No Genre Show",
+            genres = null
+        )
+
+        // When
+        val tvShowDto = response.toDto()
+
+        // Then
+        assertThat(tvShowDto.genres).isEmpty()
+        assertThat(tvShowDto.title).isEqualTo("No Genre Show")
+    }
+
+    @Test
+    fun `should use defaults when genre fields are null`() {
+        // Given
+        val response = TVShowDetailsResponse(
+            id = 103,
+            name = "Incomplete Genre Show",
+            genres = listOf(Genre(id = null, name = null))
+        )
+
+        // When
+        val tvShowDto = response.toDto()
+
+        // Then
+        val genre = tvShowDto.genres.first()
+        assertThat(genre.id).isEqualTo(0L)
+        assertThat(genre.name).isEmpty()
+        assertThat(genre.type).isEqualTo(GenreDto.GenreType.TV_SHOW)
     }
 }
