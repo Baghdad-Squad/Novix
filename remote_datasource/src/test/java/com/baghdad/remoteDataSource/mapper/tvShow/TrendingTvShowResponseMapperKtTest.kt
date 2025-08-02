@@ -1,6 +1,5 @@
-package com.baghdad.remoteDataSource.respons.tvShow
+package com.baghdad.remoteDataSource.mapper.tvShow
 
-import com.baghdad.remoteDataSource.mapper.tvShow.toPagedTvShowDtos
 import com.baghdad.remoteDataSource.response.tvShow.TrendingTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TrendingTvShowsResponse.TrendingTvShow
 import com.google.common.truth.Truth.assertThat
