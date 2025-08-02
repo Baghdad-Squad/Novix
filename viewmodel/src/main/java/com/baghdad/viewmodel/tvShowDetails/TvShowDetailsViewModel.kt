@@ -166,6 +166,7 @@ class TvShowDetailsViewModel(
                     contentType = ContinueWatching.ContentType.TV_SHOW,
                 )
             },
+            dispatcher = ioDispatcher,
         )
     }
 

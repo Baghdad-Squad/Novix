@@ -7,10 +7,12 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class TrendingTvShowViewModel(
     private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase,
     private val getGenresUseCase: GetGenresUseCase,
+    private val ioDispatcher: CoroutineDispatcher ,
 ) : BaseViewModel<TrendingTvShowScreenState, TrendingTvShowScreenEffect>(TrendingTvShowScreenState()),
     TrendingTvShowInteractionListener {
     init {
@@ -22,7 +24,8 @@ class TrendingTvShowViewModel(
         tryToExecute(
             callee = { getGenresUseCase.getTvShowGenres() },
             onSuccess = ::handleGenreSuccess,
-            onError = ::onLoadDataError
+            onError = ::onLoadDataError,
+            dispatcher = ioDispatcher,
         )
     }
 
