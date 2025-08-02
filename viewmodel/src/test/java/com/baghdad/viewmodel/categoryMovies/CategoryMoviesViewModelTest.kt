@@ -47,7 +47,8 @@ class CategoryMoviesViewModelTest {
         viewModel = CategoryMoviesViewModel(
             genreId = 1L,
             getGenreMoviesUseCase = getGenreMoviesUseCase,
-            getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase
+            getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
+            ioDispatcher = testDispatcher
         )
     }
 
@@ -114,7 +115,12 @@ class CategoryMoviesViewModelTest {
     @Test
     fun `should not crash when getMovieGenreNameByIdUseCase fails`() = runTest {
         coEvery { getMovieGenreNameByIdUseCase(1L) } throws RuntimeException("Failed")
-        viewModel = CategoryMoviesViewModel(1L, getGenreMoviesUseCase, getMovieGenreNameByIdUseCase)
+        viewModel = CategoryMoviesViewModel(
+            1L,
+            getGenreMoviesUseCase,
+            getMovieGenreNameByIdUseCase,
+            testDispatcher
+        )
 
         val states = mutableListOf<CategoryMoviesState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
@@ -155,6 +161,7 @@ class CategoryMoviesViewModelTest {
 
         assertThat(uiState.posterPictureURL).isEqualTo(longUrl)
     }
+
     @Test
     fun `should  update moviesFlow and set isLoading to false when paging flow collected`() =
         runTest {
@@ -168,7 +175,8 @@ class CategoryMoviesViewModelTest {
             viewModel = CategoryMoviesViewModel(
                 genreId = 1L,
                 getGenreMoviesUseCase = getGenreMoviesUseCase,
-                getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase
+                getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
+                ioDispatcher = testDispatcher
             )
 
             advanceUntilIdle()

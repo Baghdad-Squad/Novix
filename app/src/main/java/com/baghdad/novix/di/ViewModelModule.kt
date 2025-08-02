@@ -76,7 +76,7 @@ val viewModelModule = module {
     }
 
     viewModel { (categoryId: Long) ->
-        CategoryMoviesViewModel(categoryId, get(), get())
+        CategoryMoviesViewModel(categoryId, get(), get(), get())
     }
     viewModel {
         MainViewModel(
