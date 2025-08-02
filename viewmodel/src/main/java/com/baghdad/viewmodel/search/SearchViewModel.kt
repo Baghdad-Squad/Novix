@@ -2,7 +2,6 @@ package com.baghdad.viewmodel.search
 
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.search.RecentlyViewed
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
@@ -12,13 +11,11 @@ import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
-import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
-import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -315,6 +312,7 @@ class SearchViewModel(
         contentImageUrl: String,
     ) {
         tryToExecute(
+            dispatcher = dispatcher,
             callee = {
                 addRecentlyViewedUseCase(
                     contentId,
@@ -337,6 +335,7 @@ class SearchViewModel(
         contentImageUrl: String,
     ) {
         tryToExecute(
+            dispatcher = dispatcher,
             callee = {
                 addRecentlyViewedUseCase(
                     contentId,
