@@ -208,7 +208,7 @@ class MovieDetailsViewModelTest {
             }
         }
         // When
-        movieDetailsViewModel.onTrailerClick()
+        movieDetailsViewModel.onClickPlayTrailer()
         advanceUntilIdle()
         // Then
         val expectedUrl = movieDetailsViewModel.uiState.value.movieTrailerURL
