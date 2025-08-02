@@ -18,8 +18,8 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class TrendingTvShowViewModelTest {
-
     private val testDispatcher = StandardTestDispatcher()
     private val getGenresUseCase: GetGenresUseCase = mockk()
     private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase = mockk()
