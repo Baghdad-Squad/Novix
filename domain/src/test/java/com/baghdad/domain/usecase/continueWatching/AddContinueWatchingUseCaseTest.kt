@@ -9,7 +9,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-
 class AddContinueWatchingUseCaseTest {
 
     private lateinit var repository: ContinueWatchingRepository
@@ -22,7 +21,7 @@ class AddContinueWatchingUseCaseTest {
     }
 
     @Test
-    fun `invoke should call repository with correct parameters`() = runTest {
+    fun `invoke() should call repository with correct parameters`() = runTest {
         // Given
         val contentId = 101L
         val genreIds = listOf(1L, 2L, 3L)
@@ -49,7 +48,7 @@ class AddContinueWatchingUseCaseTest {
     }
 
     @Test
-    fun `invoke should not throw when repository completes successfully`() = runTest {
+    fun `invoke() should complete successfully when repository does not throw`() = runTest {
         // Given
         val contentId = 200L
         val genreIds = listOf(5L, 8L)
@@ -60,6 +59,7 @@ class AddContinueWatchingUseCaseTest {
             repository.addContinueWatching(any(), any(), any(), any())
         } returns Unit
 
+        // When & Then (no exception)
         useCase(contentId, genreIds, imageUrl, contentType)
     }
 }

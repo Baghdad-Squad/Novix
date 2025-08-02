@@ -8,12 +8,14 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState.TvShowUiState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
 class CategoryTvShowsViewModel(
     private val categoryId: Long,
     private val getTvShowsCategoryUseCase: GetTvShowsByGenreUseCase,
-    private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase
+    private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<CategoryTvShowsState, CategoryTvShowsEffect>(CategoryTvShowsState()),
     CategoryTvShowsInteractionListener {
 
@@ -82,6 +84,7 @@ class CategoryTvShowsViewModel(
     private fun getCategoryNameById(categoryId: Long) {
         tryToExecute(
             callee = { getCategoryNameByIdUseCase.invoke(categoryId) },
+            dispatcher = ioDispatcher,
             onSuccess = { onSuccessGetCategoryName(it.name) },
             onError = ::onLoadDataError
         )

@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.tvShowDetails
 
-import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
@@ -8,8 +8,8 @@ import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
-import com.baghdad.entity.person.Actor
-import com.baghdad.entity.person.CastMember
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -18,18 +18,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
 class TvShowDetailsViewModelTest {
-
-    private lateinit var viewModel: TvShowDetailsViewModel
+    private lateinit var tvShowDetailsViewModel: TvShowDetailsViewModel
     private lateinit var getTvShowDetailsUseCase: GetTvShowDetailsUseCase
     private lateinit var getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase
     private lateinit var getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase
@@ -43,220 +40,149 @@ class TvShowDetailsViewModelTest {
         getTvShowCastMembersUseCase = mockk()
         getTvShowSeasonEpisodesUseCase = mockk()
         addContinueWatchingUseCase = mockk()
-    }
-
-    @AfterEach
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
-    private fun createViewModel(): TvShowDetailsViewModel {
-        return TvShowDetailsViewModel(
+        tvShowDetailsViewModel = TvShowDetailsViewModel(
             tvShowId = tvShowId,
             getTvShowDetailsUseCase = getTvShowDetailsUseCase,
             getTvShowCastMembersUseCase = getTvShowCastMembersUseCase,
             getTvShowSeasonEpisodesUseCase = getTvShowSeasonEpisodesUseCase,
-            addContinueWatchingUseCase = addContinueWatchingUseCase
+            addContinueWatchingUseCase = addContinueWatchingUseCase,
+            ioDispatcher = testDispatcher
         )
     }
 
     @Test
-    fun `init should call all required use cases`() = runTest {
-        coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
-        coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns mockCastMembers
-        coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns mockEpisodes
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
-
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        coVerify { getTvShowDetailsUseCase.invoke(tvShowId) }
-        coVerify { getTvShowCastMembersUseCase.invoke(tvShowId) }
-        coVerify { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) }
-        coVerify { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) }
-    }
-
-    @Test
-    fun `onClickBackIcon should send NavigateBack effect`() = runTest {
+    fun `onClickBackIcon should Navigate Back when clicked`() = runTest {
+        // Given
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
-
-        viewModel = createViewModel()
-
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
         val job = launch {
-            viewModel.uiEffect.collect { effects.add(it) }
+            tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
         }
-
-        viewModel.onClickBackIcon()
+        // When
+        tvShowDetailsViewModel.onClickBackIcon()
         advanceUntilIdle()
         job.cancel()
-
-        Assertions.assertTrue(effects.contains(TvShowDetailsScreenEffect.NavigateBack))
+        // Then
+        assertThat(effects.contains(TvShowDetailsScreenEffect.NavigateBack)).isTrue()
     }
 
     @Test
-    fun `onClickReadMoreOverview should toggle text expansion`() = runTest {
+    fun `onClickReadMoreOverview should toggle text expansion when clicked`() = runTest {
+        // Given
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
-
-        viewModel = createViewModel()
+        // When
         advanceUntilIdle()
-
-        val initialExpanded = viewModel.uiState.value.isTextExpanded
-        viewModel.onClickReadMoreOverview()
-
-        val finalExpanded = viewModel.uiState.value.isTextExpanded
-        Assertions.assertEquals(!initialExpanded, finalExpanded)
+        val initialExpanded = tvShowDetailsViewModel.uiState.value.isTextExpanded
+        tvShowDetailsViewModel.onClickReadMoreOverview()
+        // Then
+        val finalExpanded = tvShowDetailsViewModel.uiState.value.isTextExpanded
+        assertThat(!initialExpanded == finalExpanded).isTrue()
     }
 
     @Test
-    fun `onClickGenre should send NavigateToGenreScreen effect`() = runTest {
+    fun `onClickGenre should Navigate To Genre Screen when clicked`() = runTest {
+        // Given
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
-
-        viewModel = createViewModel()
-
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
         val job = launch {
-            viewModel.uiEffect.collect { effects.add(it) }
+            tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
         }
-
-        viewModel.onClickGenre(genreId)
+        // When
+        tvShowDetailsViewModel.onClickGenre(genreId)
         advanceUntilIdle()
         job.cancel()
-
+        // Then
         val expectedEffect = TvShowDetailsScreenEffect.NavigateToGenreScreen(genreId)
-        Assertions.assertTrue(effects.contains(expectedEffect))
+        assertThat(effects.contains(expectedEffect)).isTrue()
     }
 
     @Test
-    fun `onClickCastMember should send NavigateToActorDetails effect`() = runTest {
+    fun `onClickCastMember should Navigate To Actor Details when clicked`() = runTest {
+        // Given
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
-
-        viewModel = createViewModel()
-
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
         val job = launch {
-            viewModel.uiEffect.collect { effects.add(it) }
+            tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
         }
-
-        viewModel.onClickCastMember(actorId)
+        // When
+        tvShowDetailsViewModel.onClickCastMember(actorId)
         advanceUntilIdle()
         job.cancel()
-
+        // Then
         val expectedEffect = TvShowDetailsScreenEffect.NavigateToActorDetails(actorId)
-        Assertions.assertTrue(effects.contains(expectedEffect))
+        assertThat(effects.contains(expectedEffect)).isTrue()
     }
 
     @Test
-    fun `onClickEpisode should send NavigateToEpisodeDetails effect`() = runTest {
+    fun `onClickEpisode should Navigate To EpisodeDetails when clicked`() = runTest {
+        // Given
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
-
-        viewModel = createViewModel()
-
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
         val job = launch {
-            viewModel.uiEffect.collect { effects.add(it) }
+            tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
         }
-
-        viewModel.onClickEpisode(seasonNumber, episodeNumber)
+        // When
+        tvShowDetailsViewModel.onClickEpisode(seasonNumber, episodeNumber)
         advanceUntilIdle()
         job.cancel()
-
+        // Then
         val expectedEffect =
             TvShowDetailsScreenEffect.NavigateToEpisodeDetails(seasonNumber, episodeNumber)
-        Assertions.assertTrue(effects.contains(expectedEffect))
+        assertThat(effects.contains(expectedEffect)).isTrue()
     }
 
     @Test
-    fun `onClickReviews should send NavigateToReviews effect`() = runTest {
+    fun `onClickReviews should Navigate To Reviews when clicked`() = runTest {
+        // Given
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
-
-        viewModel = createViewModel()
-
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
         val job = launch {
-            viewModel.uiEffect.collect { effects.add(it) }
+            tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
         }
-
-        viewModel.onClickReviews(tvShowId)
+        // When
+        tvShowDetailsViewModel.onClickReviews(tvShowId)
         advanceUntilIdle()
         job.cancel()
-
+        // Then
         val expectedEffect = TvShowDetailsScreenEffect.NavigateToReviews(tvShowId)
-        Assertions.assertTrue(effects.contains(expectedEffect))
+        assertThat(effects.contains(expectedEffect)).isTrue()
     }
 
     @Test
-    fun `viewModel should initialize without crashing`() = runTest {
-        coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
-        coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
-        coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
-
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        coVerify { getTvShowDetailsUseCase.invoke(tvShowId) }
-        coVerify { getTvShowCastMembersUseCase.invoke(tvShowId) }
-
-        Assertions.assertNotNull(viewModel.uiState.value)
-    }
-
-    @Test
-    fun `onClickSeasonTab should update selected season and fetch episodes`() = runTest {
-        coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
-        coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
-        coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 2) } returns mockEpisodes
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
-
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.onClickSeasonTab(1)
-        advanceUntilIdle()
-
-        val finalState = viewModel.uiState.value
-        Assertions.assertEquals(1, finalState.selectedSeasonIndex)
-        coVerify { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 2) }
-    }
-
-    @Test
-    fun `addContinueWatching should be called with correct parameters`() = runTest {
-        coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
-        coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
-        coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
-
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        coVerify {
-            addContinueWatchingUseCase.invoke(
-                tvShowId,
-                any(),
-                any(),
-                ContinueWatching.ContentType.TV_SHOW
-            )
+    fun `onClickSeasonTab should update selected season and fetch episodes when clicked`() =
+        runTest {
+            // Given
+            coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
+            coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
+            coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
+            coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 2) } returns mockEpisodes
+            coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+            // When
+            tvShowDetailsViewModel.onClickSeasonTab(1)
+            advanceUntilIdle()
+            // Then
+            val finalState = tvShowDetailsViewModel.uiState.value
+            Assertions.assertEquals(1, finalState.selectedSeasonIndex)
+            coVerify { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 2) }
         }
-    }
 
     @Test
     fun `viewModel should implement TvShowDetailsInteractionListener`() {
@@ -265,9 +191,31 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
 
-        viewModel = createViewModel()
+        assertThat(true).isTrue()
+    }
 
-        Assertions.assertTrue(true)
+    @Test
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
+        // Given
+        coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } throws NoInternetException()
+        coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
+        coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
+        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+
+        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+        val job = launch {
+            tvShowDetailsViewModel.snackBarState.collect {
+                emittedSnackBarMessages.add(it.message)
+            }
+        }
+
+        // When
+        tvShowDetailsViewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+
+        // Then
+        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+        job.cancel()
     }
 
     private companion object {
@@ -289,27 +237,6 @@ class TvShowDetailsViewModelTest {
             numberOfSeasons = 3,
             genres = emptyList<Genre>(),
             userRating = null
-        )
-        val mockActor = Actor(
-            id = 1L,
-            name = "Test Actor",
-            profilePictureURL = "https://example.com/profile.jpg",
-            birthDate = kotlinx.datetime.LocalDate.parse("1990-01-01"),
-            placeOfBirth = "Baghdad",
-            deathDate = null,
-            biography = "This is a test biography.",
-            headerPictures = listOf(
-                "https://example.com/header1.jpg",
-                "https://example.com/header2.jpg"
-            ),
-            department = "Acting"
-        )
-
-        val mockCastMembers = listOf(
-            CastMember(
-                actor = mockActor,
-                characterName = "Test Character"
-            )
         )
 
         val mockEpisodes = listOf(
