@@ -34,14 +34,14 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksEffect
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksInteractionListener
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksState
-import com.baghdad.viewmodel.topTvShowPicks.TopTvShowViewModel
+import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun TopTvShowPicksScreen(
     actorId: Long,
-    viewModel: TopTvShowViewModel = koinViewModel(
+    viewModel: TopTvShowPicksViewModel = koinViewModel(
         key = actorId.toString(),
         parameters = { parametersOf(actorId) }
     ),
@@ -89,7 +89,9 @@ private fun TopTvShowPicksContent(
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
         topBar = {
@@ -99,15 +101,10 @@ private fun TopTvShowPicksContent(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .padding(top = 12.dp)
-            ) {}
-        }
-
+            )
+        },
+        isLoading = uiState.isLoading
     ) {
-        if (uiState.isLoading) {
-            Box(Modifier.fillMaxSize()) {
-                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             modifier = Modifier

@@ -1,7 +1,6 @@
 package com.baghdad.viewmodel.home
 
-import android.util.Log
-import androidx.lifecycle.viewModelScope
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -12,11 +11,10 @@ import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.util.ConnectivityObserver
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.CoroutineDispatcher
 
 class HomeViewModel(
     private val getGenresUseCase: GetGenresUseCase,
@@ -25,10 +23,15 @@ class HomeViewModel(
     private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
     private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase,
-    private val connectivityObserver: ConnectivityObserver
-) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()), HomeInteractionListener {
+    private val defaultDispatcher: CoroutineDispatcher
+
+) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
+    HomeInteractionListener {
     init {
-        Log.d("HomeViewModel", "init called")
+        loadData()
+    }
+
+    private fun loadData() {
         getPopularItems()
         getTopRatingMovies()
         observeContinueWatchingItems()
@@ -36,29 +39,14 @@ class HomeViewModel(
         getUpcomingItems()
     }
 
-    val isConnected = connectivityObserver.isConnected().stateIn(
-        viewModelScope, initialValue = false, started = SharingStarted.WhileSubscribed(5000)
-    )
-
     private fun getPopularItems() {
-
-
         tryToExecute(
-            callee = {
-//                var connected = isConnected.first()
-//                Log.i("HomeViewModel", "isConnected: $connected")
-////                if (!connected && true) {
-////                    connected = isConnected.filter { it }.first()
-////                }
-//                if (!connected) {
-//                    throw NoInternetException()
-//                }
-                getPopularMoviesUseCase() to getPopularTvShowsUseCase()
-
-            },
+            callee = { getPopularMoviesUseCase() to getPopularTvShowsUseCase() },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetPopularItemsSuccess,
             onStart = ::onGetPopularItemsStart,
             onFinally = ::onGetPopularItemsFinished,
+            onError = ::onLoadDataError,
         )
     }
 
@@ -70,6 +58,13 @@ class HomeViewModel(
             it.copy(
                 popularItems = (popularMovies + popularTvShows).shuffled(),
             )
+        }
+    }
+
+    private fun onLoadDataError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
         }
     }
 
@@ -88,17 +83,21 @@ class HomeViewModel(
     private fun getTopRatingMovies() {
         tryToExecute(
             callee = { getMovieTopRatingUseCase(DEFAULT_PAGE, null).data },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetTopRatingMoviesSuccess,
             onStart = ::onGetTopRatingMoviesStart,
             onFinally = ::onGetTopRatingMoviesFinished,
+            onError = ::onLoadDataError,
         )
     }
 
     private fun onGetTopRatingMoviesSuccess(movies: List<Movie>) {
         updateState {
             it.copy(
-                topRatingItems = movies.take(TOP_RATING_MOVIES_LIMIT)
-                    .map(Movie::toTopRatingItemUiState),
+                topRatingItems =
+                    movies
+                        .take(TOP_RATING_MOVIES_LIMIT)
+                        .map(Movie::toTopRatingItemUiState),
             )
         }
     }
@@ -118,15 +117,19 @@ class HomeViewModel(
     private fun observeContinueWatchingItems() {
         tryToCollect(
             flowProvider = observeContinueWatchingUseCase::invoke,
+            dispatcher = defaultDispatcher,
             onNewValue = ::onNewContinueWatchingItems,
+            onError = ::onLoadDataError
         )
     }
 
     private fun onNewContinueWatchingItems(items: List<ContinueWatching>) {
         updateState {
             it.copy(
-                continueWatchingItems = items.take(CONTINUE_WATCHING_LIMIT)
-                    .map(ContinueWatching::toUiState),
+                continueWatchingItems =
+                    items
+                        .take(CONTINUE_WATCHING_LIMIT)
+                        .map(ContinueWatching::toUiState),
                 isContinueWatchingLoading = false,
             )
         }
@@ -135,9 +138,11 @@ class HomeViewModel(
     private fun getMovieGenres() {
         tryToExecute(
             callee = getGenresUseCase::getMovieGenres,
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetMovieGenresSuccess,
             onStart = ::onGetMovieGenresStart,
             onFinally = ::onGetMovieGenresFinished,
+            onError = ::onLoadDataError,
         )
     }
 
@@ -162,13 +167,16 @@ class HomeViewModel(
     private fun getUpcomingItems() {
         tryToExecute(
             callee = { getUpcomingMoviesUseCase(currentState.selectedUpcomingGenreId) },
+            dispatcher = defaultDispatcher,
             onSuccess = ::onGetUpcomingSuccess,
             onStart = ::onGetUpcomingStarted,
             onFinally = ::onGetUpcomingFinished,
+            onError = ::onLoadDataError,
         )
     }
 
     private fun onGetUpcomingSuccess(movies: List<Movie>) {
+        hideSnackBar()
         updateState {
             it.copy(upcomingItems = movies.map(Movie::toUpcomingItemUiState))
         }
@@ -252,6 +260,19 @@ class HomeViewModel(
 
     override fun onUpcomingItemSaveClicked(item: HomeScreenState.UpcomingItemUiState) {
 //        TODO("Implement when saving lists is implemented")
+    }
+
+    override fun onSnackBarActionLabelClick() {
+        loadData()
+    }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
+        )
     }
 
     companion object {

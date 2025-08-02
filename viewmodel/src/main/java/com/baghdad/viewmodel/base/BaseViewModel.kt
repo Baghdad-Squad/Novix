@@ -58,6 +58,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
     fun showSnackBar(
         message: BaseSnackBarMessage,
         isSuccess: Boolean,
+        actionLabelRes: Int? = null,
         durationMillis: Long = 3000L,
     ) {
         viewModelScope.launch(Dispatchers.Main) {
@@ -65,13 +66,25 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
                 SnackBarState(
                     message = message,
                     isSuccess = isSuccess,
+                    actionLabelRes = actionLabelRes,
                     isVisible = true
                 )
             }
+
             delay(durationMillis)
             _snackBarState.update {
                 it.copy(
                     isVisible = false
+                )
+            }
+        }
+    }
+
+    protected fun hideSnackBar() {
+        viewModelScope.launch(Dispatchers.Main) {
+            _snackBarState.update {
+                it.copy(
+                    isVisible = false,
                 )
             }
         }
@@ -100,6 +113,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
     protected fun <Entity : Any, UiState : Any> collectPagingFlow(
         loadData: suspend (page: Int) -> PagedResult<Entity>,
         onInitialLoadFinished: suspend () -> Unit,
+        onInitialLoadError: (Throwable) -> Unit = ::handleError,
         pageSize: Int = 20,
         mapEntityToUiState: (Entity) -> UiState,
         onFlowCreated: (Flow<PagingData<UiState>>) -> Unit,
@@ -114,8 +128,8 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
                 onInitialLoadFinished()
                 onLoadingChanged?.invoke(false)
             },
-            onError = {
-                handleError(it)
+            onInitialLoadError = {
+                onInitialLoadError(it)
                 onLoadingChanged?.invoke(false)
             }
         ).map { pagingData ->
@@ -142,7 +156,6 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
             val result = callee()
             onSuccess?.invoke(result)
         } catch (throwable: Throwable) {
-            handleError(throwable)
             onError(throwable)
         } finally {
             onFinally()
@@ -166,7 +179,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
         }
     }
 
-    private fun handleError(throwable: Throwable) {
+    protected fun handleError(throwable: Throwable) {
         val errorMessage = when (throwable) {
             is LocalDataBaseException -> BaseSnackBarMessage.DataBaseError
             is UnknownException -> BaseSnackBarMessage.UnknownError

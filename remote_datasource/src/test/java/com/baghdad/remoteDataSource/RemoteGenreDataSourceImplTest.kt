@@ -27,7 +27,7 @@ class RemoteGenreDataSourceImplTest {
     }
 
     @Test
-    fun `getMovieGenre should return movie genres when API call succeeds`() = runTest {
+    fun `should return movie genres when API call succeeds`() = runTest {
         // Given
         val response = GenreListResponse(
             genres = listOf(
@@ -51,7 +51,7 @@ class RemoteGenreDataSourceImplTest {
     }
 
     @Test
-    fun `getTvShowGenre should return TV show genres when API call succeeds`() = runTest {
+    fun `should return TV show genres when API call succeeds`() = runTest {
         // Given
         val response = GenreListResponse(
             genres = listOf(
@@ -75,7 +75,7 @@ class RemoteGenreDataSourceImplTest {
     }
 
     @Test
-    fun `getMovieGenre should return empty list when API returns empty genres`() = runTest {
+    fun `should return empty list when movie genres API returns empty list`() = runTest {
         // Given
         val response = GenreListResponse(genres = emptyList())
         coEvery { genreApiService.getMovieGenre() } returns Response.success(response)
@@ -88,7 +88,7 @@ class RemoteGenreDataSourceImplTest {
     }
 
     @Test
-    fun `getTvShowGenre should return empty list when API returns null genres`() = runTest {
+    fun `should return empty list when TV show genres API returns empty list`() = runTest {
         // Given
         val response = GenreListResponse(genres = emptyList())
         coEvery { genreApiService.getTvShowGenre() } returns Response.success(response)
@@ -101,7 +101,7 @@ class RemoteGenreDataSourceImplTest {
     }
 
     @Test
-    fun `getMovieGenre should include genres with empty names`() = runTest {
+    fun `should include genres with empty names when fetching movie genres`() = runTest {
         // Given
         val response = GenreListResponse(
             genres = listOf(

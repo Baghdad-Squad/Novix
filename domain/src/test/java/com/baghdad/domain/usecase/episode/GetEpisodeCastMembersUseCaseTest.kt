@@ -157,7 +157,7 @@ class GetEpisodeCastMembersUseCaseTest {
 
         // Then
         assertThat(result).isEmpty()
-        coEvery {
+        coVerify(exactly = 1) {
             episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, nonExistentEpisode)
         }
     }

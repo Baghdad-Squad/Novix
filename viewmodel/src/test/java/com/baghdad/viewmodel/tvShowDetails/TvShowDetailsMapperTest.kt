@@ -5,8 +5,8 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
+import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class TvShowMapperTest {
@@ -20,8 +20,8 @@ class TvShowMapperTest {
 
         val result = genre.toUiState()
 
-        Assertions.assertEquals(genreId1, result.id)
-        Assertions.assertEquals(genreName1, result.name)
+        assertThat(genreId1).isEqualTo(result.id)
+        assertThat(genreName1).isEqualTo(result.name)
     }
 
     @Test
@@ -44,10 +44,10 @@ class TvShowMapperTest {
 
         val result = castMember.toUiState()
 
-        Assertions.assertEquals(actorId, result.id)
-        Assertions.assertEquals(actorName, result.name)
-        Assertions.assertEquals(actorImageUrl, result.imageUrl)
-        Assertions.assertEquals(characterName, result.characterName)
+        assertThat(actorId).isEqualTo(result.id)
+        assertThat(actorName).isEqualTo(result.name)
+        assertThat(actorImageUrl).isEqualTo(result.imageUrl)
+        assertThat(characterName).isEqualTo(result.characterName)
     }
 
     @Test
@@ -68,11 +68,11 @@ class TvShowMapperTest {
 
         val result = tvShow.toUiState()
 
-        Assertions.assertEquals(0.0, result.rating)
-        Assertions.assertEquals(0, result.seasonCount)
-        Assertions.assertEquals("", result.overView)
-        Assertions.assertEquals("", result.trailerURL)
-        Assertions.assertEquals("", result.posterPictureURL)
+        assertThat(result.rating).isEqualTo(0.0)
+        assertThat(result.seasonCount).isEqualTo(0)
+        assertThat(result.overView).isEqualTo("")
+        assertThat(result.trailerURL).isEqualTo("")
+        assertThat(result.posterPictureURL).isEqualTo("")
     }
 
     @Test
@@ -93,12 +93,12 @@ class TvShowMapperTest {
 
         val result = episode.toUiState()
 
-        Assertions.assertEquals(episodeId, result.id)
-        Assertions.assertEquals("", result.name)
-        Assertions.assertEquals(0, result.episodeNumber)
-        Assertions.assertEquals(0.0, result.rating)
-        Assertions.assertEquals("", result.duration)
-        Assertions.assertEquals(0, result.currentSeason)
+        assertThat(episodeId).isEqualTo(result.id)
+        assertThat("").isEqualTo(result.name)
+        assertThat(0).isEqualTo(result.episodeNumber)
+        assertThat(0.0).isEqualTo(result.rating)
+        assertThat(0).isEqualTo(result.duration)
+        assertThat(0).isEqualTo(result.currentSeason)
     }
 
     @Test
@@ -124,13 +124,13 @@ class TvShowMapperTest {
 
         val result = tvShow.toUiState()
 
-        Assertions.assertEquals(3, result.genres.size)
-        Assertions.assertEquals(genreId1, result.genres[0].id)
-        Assertions.assertEquals(genreName1, result.genres[0].name)
-        Assertions.assertEquals(genreId2, result.genres[1].id)
-        Assertions.assertEquals(genreName2, result.genres[1].name)
-        Assertions.assertEquals(genreId3, result.genres[2].id)
-        Assertions.assertEquals(genreName3, result.genres[2].name)
+        assertThat(3).isEqualTo(result.genres.size)
+        assertThat(genreId1).isEqualTo(result.genres[0].id)
+        assertThat(genreName1).isEqualTo(result.genres[0].name)
+        assertThat(genreId2).isEqualTo(result.genres[1].id)
+        assertThat(genreName2).isEqualTo(result.genres[1].name)
+        assertThat(genreId3).isEqualTo(result.genres[2].id)
+        assertThat(genreName3).isEqualTo(result.genres[2].name)
     }
 
     @Test
@@ -153,10 +153,10 @@ class TvShowMapperTest {
 
         val result = castMember.toUiState()
 
-        Assertions.assertEquals(actorId, result.id)
-        Assertions.assertEquals("", result.name)
-        Assertions.assertEquals("", result.imageUrl)
-        Assertions.assertEquals("", result.characterName)
+        assertThat(actorId).isEqualTo(result.id)
+        assertThat("").isEqualTo(result.name)
+        assertThat("").isEqualTo(result.imageUrl)
+        assertThat("").isEqualTo(result.characterName)
     }
 
     private companion object {

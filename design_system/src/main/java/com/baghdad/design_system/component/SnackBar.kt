@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,12 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
+import com.baghdad.design_system.component.button.TextButton
 import com.baghdad.design_system.theme.Theme
-
-
 
 @Composable
 fun SnackBar(
@@ -36,51 +35,69 @@ fun SnackBar(
     modifier: Modifier = Modifier,
     isSuccess: Boolean,
     isVisible: Boolean,
-    animationDuration: Int = 1000
+    animationDuration: Int = 1000,
+    actionLabel: String? = null,
+    onActionClick: (() -> Unit)? = null,
 ) {
     AnimatedVisibility(
         visible = isVisible,
-        enter = fadeIn(tween(animationDuration)) + slideInVertically(
-            animationSpec = tween(animationDuration),
-            initialOffsetY = { -it }
-        ),
-        exit = fadeOut(tween(animationDuration)) + slideOutVertically(
-            animationSpec = tween(animationDuration),
-            targetOffsetY = { -it }
-        )
+        enter =
+            fadeIn(tween(animationDuration)) +
+                slideInVertically(
+                    animationSpec = tween(animationDuration),
+                    initialOffsetY = { it },
+                ),
+        exit =
+            fadeOut(tween(animationDuration)) +
+                slideOutVertically(
+                    animationSpec = tween(animationDuration),
+                    targetOffsetY = { it },
+                ),
     ) {
         Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(color = Theme.color.surface)
-                .border(
-                    width = 1.dp,
-                    color = Theme.color.stroke,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .padding(horizontal = 12.dp, vertical = 16.dp),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(color = Theme.color.surface)
+                    .border(
+                        width = 1.dp,
+                        color = Theme.color.stroke,
+                        shape = RoundedCornerShape(12.dp),
+                    ).padding(horizontal = 12.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             SnackBarIcon(
                 isSuccess = isSuccess,
-                modifier = Modifier.size(24.dp)
-            )
+                modifier =
+                    Modifier
+                        .size(24.dp)
+                        .align(Alignment.Top),
+                    )
             Text(
                 text = message,
                 style = Theme.typography.body.medium,
                 color = Theme.color.title,
-                modifier = Modifier.weight(1f)
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
             )
+            actionLabel?.let {
+                TextButton(
+                    label = it,
+                    onClick = { onActionClick?.invoke() },
+                    noRipple = true,
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                )
+            }
         }
     }
 }
+
 @Composable
 private fun SnackBarIcon(
     isSuccess: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val icon = if (isSuccess) R.drawable.ic_tick_double else R.drawable.ic_alert
     val description = if (isSuccess) "Success icon" else "Error icon"
@@ -90,61 +107,63 @@ private fun SnackBarIcon(
         painter = painterResource(id = icon),
         contentDescription = description,
         tint = tintColor,
-        modifier = modifier
-    )
-}
-
-
-@Preview(showBackground = true,backgroundColor = 0xFF0D0608)
-@Composable
-fun PreviewSuccessSnackBarDark() {
-    SnackBar(
-        message = "Rate submitted successfully.",
-        isVisible = true,
-        isSuccess = true,
-        modifier = Modifier.padding(16.dp)
-    )
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-@Composable
-fun PreviewSuccessSnackBarLight() {
-    SnackBar(
-        message = "Rate submitted successfully.",
-        isVisible = true,
-        isSuccess = true,
-        modifier = Modifier.padding(16.dp)
+        modifier = modifier,
     )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0D0608)
 @Composable
-fun PreviewErrorSnackBarDark() {
+private fun PreviewSuccessSnackBarDark() {
     SnackBar(
-        message = "Some error happened",
+        message = "Rate submitted successfully.",
         isVisible = true,
-        isSuccess = false,
-        modifier = Modifier.padding(16.dp)
+        isSuccess = true,
+        modifier = Modifier.padding(16.dp),
     )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
-fun PreviewErrorSnackBarLight() {
+private fun PreviewSuccessSnackBarLight() {
     SnackBar(
-        message = "Some error happened",
+        message = "Rate submitted successfully. Rate submitted successfully Rate submitted successfully",
         isVisible = true,
-        isSuccess = false,
-        modifier = Modifier.padding(16.dp)
+        isSuccess = true,
+        actionLabel = "Undo",
+        modifier = Modifier.padding(16.dp),
     )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0D0608)
 @Composable
-fun PreviewBothSnackBarsDark() {
+private fun PreviewErrorSnackBarDark() {
+    SnackBar(
+        message = "Some error happened",
+        isVisible = true,
+        isSuccess = false,
+        actionLabel = "Retry",
+        onActionClick = {},
+        modifier = Modifier.padding(16.dp),
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Composable
+private fun PreviewErrorSnackBarLight() {
+    SnackBar(
+        message = "Some error happened",
+        isVisible = true,
+        isSuccess = false,
+        modifier = Modifier.padding(16.dp),
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF0D0608)
+@Composable
+private fun PreviewBothSnackBarsDark() {
     Column(
         modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         SnackBar(
             message = "Rate submitted successfully.",
@@ -161,10 +180,10 @@ fun PreviewBothSnackBarsDark() {
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
-fun PreviewBothSnackBarsLight() {
+private fun PreviewBothSnackBarsLight() {
     Column(
         modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         SnackBar(
             message = "Rate submitted successfully.",

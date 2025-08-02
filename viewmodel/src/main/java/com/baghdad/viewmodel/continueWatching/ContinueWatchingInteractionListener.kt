@@ -6,4 +6,6 @@ interface ContinueWatchingInteractionListener {
     fun onGenreClick(genreId: Long?)
     fun onSelectedTab(isMovieTab: Boolean)
     fun onMovieSaveClick(movieId: Long)
+
+    fun onSnackBarActionClick()
 }

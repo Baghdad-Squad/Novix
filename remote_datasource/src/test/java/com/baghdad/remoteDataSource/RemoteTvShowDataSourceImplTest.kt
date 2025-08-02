@@ -39,8 +39,7 @@ class RemoteTvShowDataSourceImplTest {
     }
 
     @Test
-    fun `getTvShowCastMembers should return cast members`() = runTest {
-        // Given
+    fun `should return cast members when getting TV show cast`() = runTest {
         val tvId = 1L
         val response = CastMembersResponse(
             cast = listOf(
@@ -54,18 +53,15 @@ class RemoteTvShowDataSourceImplTest {
         )
         coEvery { tvShowApiService.getTvShowCastMembers(tvId) } returns Response.success(response)
 
-        // When
         val result = dataSource.getTvShowCastMembers(tvId)
 
-        // Then
         assertThat(result).hasSize(1)
         assertThat(result[0].actor.id).isEqualTo(1L)
         assertThat(result[0].characterName).isEqualTo("Character 1")
     }
 
     @Test
-    fun `getTvShowImages should return formatted image URLs`() = runTest {
-        // Given
+    fun `should return formatted image URLs when getting TV show images`() = runTest {
         val tvId = 1L
         val response = TVShowImagesResponse(
             backdrops = listOf(
@@ -75,17 +71,14 @@ class RemoteTvShowDataSourceImplTest {
         )
         coEvery { tvShowApiService.getTvShowImages(tvId) } returns Response.success(response)
 
-        // When
         val result = dataSource.getTvShowImages(tvId)
 
-        // Then
         assertThat(result).hasSize(2)
         assertThat(result[0]).isEqualTo("https://image.tmdb.org/t/p/w500/backdrop1.jpg")
     }
 
     @Test
-    fun `getTvShowsByGenre should return TV shows list`() = runTest {
-        // Given
+    fun `should return TV shows list when getting by genre`() = runTest {
         val genreId = 1L
         val page = 1
         val response = TvShowResponse(
@@ -100,17 +93,13 @@ class RemoteTvShowDataSourceImplTest {
             response
         )
 
-        // When
         val result = dataSource.getTvShowsByGenre(genreId, page)
 
-        // Then
-        assertThat(result).hasSize(1)
-        assertThat(result[0].id).isEqualTo(1L)
+        assertThat(result.data[0].id).isEqualTo(1L)
     }
 
     @Test
-    fun `getTvShowEpisodes should return episodes list`() = runTest {
-        // Given
+    fun `should return episodes list when getting TV show episodes`() = runTest {
         val tvId = 1L
         val seasonNumber = 1
         val response = SeasonDetailResponse(
@@ -126,18 +115,15 @@ class RemoteTvShowDataSourceImplTest {
             response
         )
 
-        // When
         val result = dataSource.getTvShowEpisodes(tvId, seasonNumber)
 
-        // Then
         assertThat(result).hasSize(1)
         assertThat(result[0].id).isEqualTo(1L)
         assertThat(result[0].episodeNumber).isEqualTo(1)
     }
 
     @Test
-    fun `getTrendingTvShows should return paged results`() = runTest {
-        // Given
+    fun `should return paged results when getting trending TV shows`() = runTest {
         val page = 1
         val response = TrendingTvShowsResponse(
             page = page,
@@ -151,45 +137,36 @@ class RemoteTvShowDataSourceImplTest {
         )
         coEvery { tvShowApiService.getTrendingTvShows(page) } returns Response.success(response)
 
-        // When
         val result = dataSource.getTrendingTvShows(page)
 
-        // Then
         assertThat(result.data).hasSize(1)
         assertThat(result.data[0].id).isEqualTo(1L)
     }
 
     @Test
-    fun `getTvShowCastMembers should return empty list when null cast`() = runTest {
-        // Given
+    fun `should return empty list when getting TV show cast with null cast`() = runTest {
         val tvId = 1L
         val response = CastMembersResponse(cast = null)
         coEvery { tvShowApiService.getTvShowCastMembers(tvId) } returns Response.success(response)
 
-        // When
         val result = dataSource.getTvShowCastMembers(tvId)
 
-        // Then
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getTvShowImages should return empty list when null backdrops`() = runTest {
-        // Given
+    fun `should return empty list when getting TV show images with null backdrops`() = runTest {
         val tvId = 1L
         val response = TVShowImagesResponse(backdrops = null)
         coEvery { tvShowApiService.getTvShowImages(tvId) } returns Response.success(response)
 
-        // When
         val result = dataSource.getTvShowImages(tvId)
 
-        // Then
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getTvShowEpisodes should return empty list when null episodes`() = runTest {
-        // Given
+    fun `should return empty list when getting TV show episodes with null episodes`() = runTest {
         val tvId = 1L
         val seasonNumber = 1
         val response = SeasonDetailResponse(episodes = null)
@@ -197,16 +174,13 @@ class RemoteTvShowDataSourceImplTest {
             response
         )
 
-        // When
         val result = dataSource.getTvShowEpisodes(tvId, seasonNumber)
 
-        // Then
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getPopularTvShows should return list of TvShowDto`() = runTest {
-        // Given
+    fun `should return list of TvShowDto when getting popular TV shows`() = runTest {
         val response = PopularTvShowsResponse(
             results = listOf(
                 PopularTvShowsResponse.Result(
@@ -217,17 +191,14 @@ class RemoteTvShowDataSourceImplTest {
         )
         coEvery { tvShowApiService.getPopularTvShows() } returns Response.success(response)
 
-        // When
         val result = dataSource.getPopularTvShows()
 
-        // Then
         assertThat(result).hasSize(1)
         assertThat(result[0].id).isEqualTo(1L)
     }
 
     @Test
-    fun `getTopRatedTvShows should return paged result of TvShowDto`() = runTest {
-        // Given
+    fun `should return paged result of TvShowDto when getting top rated TV shows`() = runTest {
         val page = 1
         val response = TopRatedTvShowSearchResponse(
             page = page,
@@ -247,17 +218,14 @@ class RemoteTvShowDataSourceImplTest {
         )
         coEvery { tvShowApiService.getTopRatedTvShows(page) } returns Response.success(response)
 
-        // When
         val result = dataSource.getTopRatedTvShows(page)
 
-        // Then
         assertThat(result.data).hasSize(1)
         assertThat(result.data[0].id).isEqualTo(1L)
     }
 
     @Test
-    fun `getTvShowTrailer should return trailer URL`() = runTest {
-        // Given
+    fun `should return trailer URL when getting TV show trailer`() = runTest {
         val tvId = 1L
         val response = TVShowVideosResponse(
             results = listOf(
@@ -270,17 +238,14 @@ class RemoteTvShowDataSourceImplTest {
         )
         coEvery { tvShowApiService.getTvShowTrailer(tvId) } returns Response.success(response)
 
-        // When
         val result = dataSource.getTvShowTrailer(tvId)
 
-        // Then
         assertThat(result).contains("youtube.com")
         assertThat(result).contains("abcd1234")
     }
 
     @Test
-    fun `getTvShowReviews should return list of ReviewDto`() = runTest {
-        // Given
+    fun `should return list of ReviewDto when getting TV show reviews`() = runTest {
         val tvId = 1L
         val response = ReviewsResponse(
             results = listOf(
@@ -293,25 +258,22 @@ class RemoteTvShowDataSourceImplTest {
                         name = "Author Name",
                         username = "author123",
                         avatarPath = "/avatar.jpg",
-                        rating = 4.5f
+                        rating = 4.5
                     )
                 )
             )
         )
         coEvery { tvShowApiService.getTvShowReviews(tvId) } returns Response.success(response)
 
-        // When
         val result = dataSource.getTvShowReviews(tvId)
 
-        // Then
         assertThat(result).hasSize(1)
         assertThat(result[0].id).isEqualTo("rev1")
-        assertThat(result[0].rating).isEqualTo(4.5f)
+        assertThat(result[0].rating).isEqualTo(4.5)
     }
 
     @Test
-    fun `getTvShowDetails should return TvShowDto`() = runTest {
-        // Given
+    fun `should return TvShowDto when getting TV show details`() = runTest {
         val tvId = 1L
         val response = TVShowDetailsResponse(
             id = 1,
@@ -325,10 +287,8 @@ class RemoteTvShowDataSourceImplTest {
         )
         coEvery { tvShowApiService.getTvShowDetails(tvId) } returns Response.success(response)
 
-        // When
         val result = dataSource.getTvShowDetails(tvId)
 
-        // Then
         assertThat(result.id).isEqualTo(1L)
         assertThat(result.title).isEqualTo("TV Show")
         assertThat(result.numberOfSeasons).isEqualTo(3)

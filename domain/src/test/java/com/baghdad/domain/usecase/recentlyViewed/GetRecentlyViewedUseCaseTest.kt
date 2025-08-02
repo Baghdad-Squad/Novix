@@ -11,7 +11,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-
 class GetRecentlyViewedUseCaseTest {
 
     private lateinit var recentlyViewedRepository: RecentlyViewedRepository
@@ -24,7 +23,7 @@ class GetRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `returns all items sorted by viewedAt when repository emits items`() = runTest {
+    fun `invoke() should return all items sorted by viewedAt when repository emits items`() = runTest {
         val items = getRecentlyViewedList(15).shuffled()
         val expected = items.sortedByDescending { it.viewedAt }
 
@@ -38,7 +37,7 @@ class GetRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `returns empty list when repository emits empty list`() = runTest {
+    fun `invoke() should return empty list when repository emits empty list`() = runTest {
         coEvery { recentlyViewedRepository.getAllRecentlyViewed() } returns flowOf(emptyList())
 
         val result = getRecentlyViewedUseCase().toList()
@@ -48,7 +47,7 @@ class GetRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `applies sorting to each emission when repository emits multiple lists`() = runTest {
+    fun `invoke() should apply sorting to each emission when repository emits multiple lists`() = runTest {
         val firstEmission = getRecentlyViewedList(5).shuffled()
         val secondEmission = getRecentlyViewedList(8).shuffled()
 
@@ -68,7 +67,7 @@ class GetRecentlyViewedUseCaseTest {
     }
 
     @Test
-    fun `throws exception when repository throws`() = runTest {
+    fun `invoke() should throw exception when repository throws`() = runTest {
         val exception = RuntimeException()
         coEvery { recentlyViewedRepository.getAllRecentlyViewed() } throws exception
 

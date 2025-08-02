@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.movieDetils
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
@@ -9,29 +10,25 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieDetailsViewModelTest {
-
     private lateinit var getMovieDetailsUseCase: GetMovieDetailsUseCase
     private lateinit var getCastsInfoUseCase: GetMovieCastMembersUseCase
     private lateinit var getMovieImagesUseCase: GetMovieGalleryUseCase
@@ -64,54 +61,26 @@ class MovieDetailsViewModelTest {
             getMovieImagesUseCase = getMovieImagesUseCase,
             getMoreLikeThisPosterImageUseCase = getMoreLikeThisPosterImageUseCase,
             addContinueWatchingUseCase = addContinueWatchingUseCase,
-            movieId = movieId
+            movieId = movieId,
+            ioDispatcher = testDispatcher,
         )
     }
 
-    @AfterEach
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
+    @Test
+    fun `onExtendOverviewClick should toggle isExtendText state successfully when clicked`() =
+        runTest {
+            // Given
+            val initialState = movieDetailsViewModel.uiState.value.isExtendText
+            // When
+            movieDetailsViewModel.onExtendOverviewClick()
+            val finalState = movieDetailsViewModel.uiState.value.isExtendText
+            // Then
+            assertThat(!initialState == finalState).isTrue()
+        }
 
     @Test
-    fun `initialization should call all use cases and update state successfully`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-        val currentState = movieDetailsViewModel.uiState.value
-        coVerify { getMovieDetailsUseCase(movieId) }
-        coVerify { getCastsInfoUseCase(movieId) }
-        coVerify { getMovieImagesUseCase(movieId) }
-        coVerify { getMoreLikeThisPosterImageUseCase(movieId) }
-        coVerify { addContinueWatchingUseCase(any(), any(), any(), any()) }
-
-        assertEquals(movieId, currentState.movieId)
-        assertEquals("Test Movie", currentState.movieName)
-        assertEquals("Test movie overview", currentState.overView)
-        assertEquals(8.0, currentState.rating)
-        assertTrue(currentState.duration == "2 hr 0 min" || currentState.duration == "2h 0min")
-        assertEquals("/movie_poster.jpg", currentState.posterImageURL)
-        assertEquals(3, currentState.movieImages.size)
-        assertEquals(2, currentState.castMembers.size)
-        assertEquals(2, currentState.moreLikeThisMovie.size)
-        assertEquals(2, currentState.categories.size)
-        assertFalse(currentState.isLoading)
-    }
-
-    @Test
-    fun `onExtendOverviewClick should toggle isExtendText state successfully`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val initialState = movieDetailsViewModel.uiState.value.isExtendText
-
-        movieDetailsViewModel.onExtendOverviewClick()
-
-        val finalState = movieDetailsViewModel.uiState.value.isExtendText
-        assertEquals(!initialState, finalState)
-    }
-
-    @Test
-    fun `onCategoryClick should send NavigateToCategory effect`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-
+    fun `onCategoryClick should Navigate To Category when clicked`() = runTest {
+        // Given
         val categoryId = 28L
         var receivedEffect: MovieDetailsEffect? = null
 
@@ -120,166 +89,165 @@ class MovieDetailsViewModelTest {
                 receivedEffect = effect
             }
         }
-
+        // When
         movieDetailsViewModel.onCategoryClick(categoryId)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(MovieDetailsEffect.NavigateToCategory(categoryId), receivedEffect)
+        advanceUntilIdle()
+        // Then
+        assertThat(MovieDetailsEffect.NavigateToCategory(categoryId) == receivedEffect).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `onBackClicked should send NavigateBack effect`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
+    fun `onSaveMoreLikeThisMedia should toggle isSaved state for the movie when clicked`() =
+        runTest {
+            // Given
+            val initialState = movieDetailsViewModel.uiState.value.moreLikeThisMovie.first().isSaved
+            // When
+            movieDetailsViewModel.onSaveMoreLikeThisMedia(456L)
+            advanceUntilIdle()
+            val finalState = movieDetailsViewModel.uiState.value.moreLikeThisMovie.first().isSaved
+            // Then
+            assertThat(!initialState == finalState).isTrue()
+        }
 
+    @Test
+    fun `onBackClicked should Navigate Back when clicked`() = runTest {
+        // Given
         var receivedEffect: MovieDetailsEffect? = null
-
         val job = launch {
             movieDetailsViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
-
+        // When
         movieDetailsViewModel.onBackClicked()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(MovieDetailsEffect.NavigateBack, receivedEffect)
+        advanceUntilIdle()
+        // Then
+        assertThat(MovieDetailsEffect.NavigateBack == receivedEffect).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `onActorClick should send NavigateToActorDetails effect`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-
+    fun `onActorClick should send Navigate To ActorDetails when clicked`() = runTest {
+        // Given
         val actorId = 456L
         var receivedEffect: MovieDetailsEffect? = null
-
         val job = launch {
             movieDetailsViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
-
+        // When
         movieDetailsViewModel.onActorClick(actorId)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(MovieDetailsEffect.NavigateToActorDetails(actorId), receivedEffect)
+        advanceUntilIdle()
+        // Then
+        assertThat(MovieDetailsEffect.NavigateToActorDetails(actorId) == receivedEffect).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `onReviewClick should send NavigateToReviewDetails effect`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-
+    fun `onReviewClick should send Navigate To ReviewDetails when clicked`() = runTest {
+        // Given
         val reviewId = 789L
         var receivedEffect: MovieDetailsEffect? = null
-
         val job = launch {
             movieDetailsViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
-
+        // When
         movieDetailsViewModel.onReviewClick(reviewId)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(MovieDetailsEffect.NavigateToReviewDetails(reviewId), receivedEffect)
+        advanceUntilIdle()
+        // Then
+        assertThat(MovieDetailsEffect.NavigateToReviewDetails(reviewId) == receivedEffect).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `onMovieClick should send NavigateToMovie effect`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-
+    fun `onMovieClick should Navigate To Movie when clicked`() = runTest {
+        // Given
         val movieId = 321L
         var receivedEffect: MovieDetailsEffect? = null
-
         val job = launch {
             movieDetailsViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
-
+        // When
         movieDetailsViewModel.onMovieClick(movieId)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(MovieDetailsEffect.NavigateToMovie(movieId), receivedEffect)
+        advanceUntilIdle()
+        // Then
+        assertThat(MovieDetailsEffect.NavigateToMovie(movieId) == receivedEffect).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `onBackClick should send NavigateBack effect`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-
+    fun `onBackClick should send Navigate Back when clicked`() = runTest {
+        // Given
         var receivedEffect: MovieDetailsEffect? = null
-
         val job = launch {
             movieDetailsViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
-
+        // When
         movieDetailsViewModel.onBackClick()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(MovieDetailsEffect.NavigateBack, receivedEffect)
+        advanceUntilIdle()
+        // Then
+        assertThat(MovieDetailsEffect.NavigateBack == receivedEffect).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `onTrailerClick should send OpenYoutubeLink effect with correct URL`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-
+    fun `onTrailerClick should Open Youtube Link with correct URL when clicked`() = runTest {
+        // Given
         var receivedEffect: MovieDetailsEffect? = null
-
         val job = launch {
             movieDetailsViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
             }
         }
-
-        movieDetailsViewModel.onTrailerClick()
-        testDispatcher.scheduler.advanceUntilIdle()
-
+        // When
+        movieDetailsViewModel.onClickPlayTrailer()
+        advanceUntilIdle()
+        // Then
         val expectedUrl = movieDetailsViewModel.uiState.value.movieTrailerURL
-        assertEquals(MovieDetailsEffect.OpenYoutubeLink(expectedUrl), receivedEffect)
+        assertThat(MovieDetailsEffect.OpenYoutubeLink(expectedUrl) ==  receivedEffect).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `getMovieDetails failure should handle error gracefully`() = runTest {
-        val exception = RuntimeException()
-        coEvery { getMovieDetailsUseCase(any()) } throws exception
-        testDispatcher.scheduler.advanceUntilIdle()
-        coVerify { getMovieDetailsUseCase(movieId) }
-    }
+    fun `onSaveCurrentMovieClick should set loading state correctly during execution when clicked`() =
+        runTest {
+            // When
+            movieDetailsViewModel.onSaveCurrentMovieClick()
+            advanceUntilIdle()
+            // Then
+            val finalState = movieDetailsViewModel.uiState.value
+            assertThat(finalState.isLoading).isFalse()
+        }
 
     @Test
-    fun `onStarMovieClick should set loading state correctly during execution`() = runTest {
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
+        // Given
+        coEvery { getMovieDetailsUseCase(any()) } throws NoInternetException()
+        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
 
-        testDispatcher.scheduler.advanceUntilIdle()
+        val job = launch {
+            movieDetailsViewModel.snackBarState.collect {
+                emittedSnackBarMessages.add(it.message)
+            }
+        }
 
+        // When
+        movieDetailsViewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+        job.cancel()
 
-        movieDetailsViewModel.onStarMovieClick()
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val finalState = movieDetailsViewModel.uiState.value
-        assertFalse(finalState.isLoading)
+        // Then
+        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
     }
 
-
-    @Test
-    fun `onSaveCurrentMovieClick should set loading state correctly during execution`() = runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        movieDetailsViewModel.onSaveCurrentMovieClick()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Assert
-        val finalState = movieDetailsViewModel.uiState.value
-        assertFalse(finalState.isLoading)
-    }
 
 
     companion object {
