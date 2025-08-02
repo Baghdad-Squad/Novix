@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 class SearchParameterTest {
 
     @Test
-    fun `toParams should return correct map when all values are provided`() {
+    fun `should return correct map when all values are provided`() {
         // Given
         val param = SearchParameter(
             query = "Breaking Bad",
@@ -28,7 +28,7 @@ class SearchParameterTest {
     }
 
     @Test
-    fun `toParams should default page to 1 when pageNumber is null`() {
+    fun `should default page to 1 when pageNumber is null`() {
         // Given
         val param = SearchParameter(
             query = "Game of Thrones",
@@ -50,7 +50,7 @@ class SearchParameterTest {
     }
 
     @Test
-    fun `toParams should keep query empty when query is empty`() {
+    fun `should keep empty query when query is empty string`() {
         // Given
         val param = SearchParameter(
             query = "",
@@ -72,15 +72,18 @@ class SearchParameterTest {
     }
 
     @Test
-    fun `toParams should handle blank query as empty string`() {
+    fun `should keep blank query when query contains only spaces`() {
+        // Given
         val param = SearchParameter(
             query = "   ",
             pageNumber = 2,
             includeAdult = false
         )
 
+        // When
         val result = param.toParams()
 
+        // Then
         assertThat(result).isEqualTo(
             mapOf(
                 "query" to "   ",
@@ -91,41 +94,60 @@ class SearchParameterTest {
     }
 
     @Test
-    fun `toParams should handle negative and zero page numbers`() {
-        val negativePage = SearchParameter("Test", -1, false).toParams()
-        assertThat(negativePage["page"]).isEqualTo("-1")
+    fun `should handle negative and zero page numbers correctly when they are provided`() {
+        // Given
+        val negativeParam = SearchParameter("Test", -1, false)
+        val zeroParam = SearchParameter("Test", 0, true)
 
-        val zeroPage = SearchParameter("Test", 0, true).toParams()
-        assertThat(zeroPage["page"]).isEqualTo("0")
-        assertThat(zeroPage["include_adult"]).isEqualTo("true")
+        // When
+        val negativeResult = negativeParam.toParams()
+        val zeroResult = zeroParam.toParams()
+
+        // Then
+        assertThat(negativeResult["page"]).isEqualTo("-1")
+        assertThat(zeroResult["page"]).isEqualTo("0")
+        assertThat(zeroResult["include_adult"]).isEqualTo("true")
     }
 
     @Test
-    fun `toParams should always return exactly 3 keys`() {
+    fun `should always return exactly 3 keys when toParams is called`() {
+        // Given
         val param = SearchParameter("Test", null, false)
+
+        // When
         val result = param.toParams()
 
+        // Then
         assertThat(result.keys).containsExactly("query", "page", "include_adult")
         assertThat(result.size).isEqualTo(3)
     }
 
     @Test
-    fun `toParams should keep blank query`() {
+    fun `should keep blank query and include correct values when query is blank`() {
+        // Given
         val param = SearchParameter("   ", 2, true)
+
+        // When
         val result = param.toParams()
 
+        // Then
         assertThat(result["query"]).isEqualTo("   ")
         assertThat(result["page"]).isEqualTo("2")
         assertThat(result["include_adult"]).isEqualTo("true")
     }
 
     @Test
-    fun `toParams should handle zero and negative page numbers`() {
-        val zeroPage = SearchParameter("ZeroTest", 0, false).toParams()
-        assertThat(zeroPage["page"]).isEqualTo("0")
+    fun `should handle zero and negative page numbers independently when provided`() {
+        // Given
+        val zeroParam = SearchParameter("ZeroTest", 0, false)
+        val negativeParam = SearchParameter("NegativeTest", -5, true)
 
-        val negativePage = SearchParameter("NegativeTest", -5, true).toParams()
-        assertThat(negativePage["page"]).isEqualTo("-5")
+        // When
+        val zeroResult = zeroParam.toParams()
+        val negativeResult = negativeParam.toParams()
+
+        // Then
+        assertThat(zeroResult["page"]).isEqualTo("0")
+        assertThat(negativeResult["page"]).isEqualTo("-5")
     }
-
 }
