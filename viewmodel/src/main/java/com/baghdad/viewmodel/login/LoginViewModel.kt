@@ -6,9 +6,11 @@ import com.baghdad.domain.exception.UnKnownNetworkException
 import com.baghdad.domain.usecase.login.LoginUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class LoginViewModel(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<LoginUiState, LoginUiEffect>(
     LoginUiState()
 ), LoginInteractionListener {
@@ -26,6 +28,7 @@ class LoginViewModel(
                         password = uiState.value.password
                     )
                 },
+                dispatcher = ioDispatcher,
                 onSuccess = { onLoginSuccess() },
                 onError = { onLoginError(it) },
                 onFinally = { endLoading() })
