@@ -21,7 +21,7 @@ class GetActorGalleryUseCaseTest {
     }
 
     @Test
-    fun `getActorGalleryUseCase should return actor gallery`() = runTest {
+    fun `getActorGalleryUseCase() should return actor gallery when called with valid actorId`() = runTest {
         // Given
         val actorId = 1L
         val expectedGallery = listOf("image1.jpg", "image2.jpg")
@@ -35,7 +35,7 @@ class GetActorGalleryUseCaseTest {
     }
 
     @Test
-    fun `getActorGalleryUseCase should return empty list when no gallery found`() = runTest {
+    fun `getActorGalleryUseCase() should return empty list when no gallery found for actor`() = runTest {
         // Given
         val actorId = 2L
         val expectedGallery = emptyList<String>()
@@ -50,19 +50,21 @@ class GetActorGalleryUseCaseTest {
 
 
     @Test
-    fun `getActorGalleryUseCase should return empty when actorId is non-existing`() = runTest {
+    fun `getActorGalleryUseCase() should return empty list when actorId is non-existing`() = runTest {
         // Given
         val notExistingActorId = 1223312L
 
         coEvery { actorRepository.getActorGallery(notExistingActorId) } returns emptyList()
 
+        // When
         val result = getActorGalleryUseCase(notExistingActorId)
-        // When & Then
-        assertThat(result).isEqualTo(emptyList<String>())
+
+        // Then
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getActorGalleryUseCase returns single image gallery correctly`() = runTest {
+    fun `getActorGalleryUseCase() should return single image gallery correctly`() = runTest {
         // Given
         val actorId = 3L
         val singleImageGallery = listOf("single_image.jpg")
@@ -72,13 +74,12 @@ class GetActorGalleryUseCaseTest {
         val result = getActorGalleryUseCase(actorId)
 
         // Then
-        assertThat(result)
-            .hasSize(1)
-            .equals("single_image.jpg")
+        assertThat(result).hasSize(1)
+        assertThat(result[0]).isEqualTo("single_image.jpg")
     }
 
     @Test
-    fun `getActorGalleryUseCase returns gallery with different image formats`() = runTest {
+    fun `getActorGalleryUseCase() should return gallery with different image formats`() = runTest {
         // Given
         val actorId = 6L
         val mixedFormatGallery = listOf(
@@ -98,7 +99,7 @@ class GetActorGalleryUseCaseTest {
     }
 
     @Test
-    fun `getActorGalleryUseCase calls repository exactly once`() = runTest {
+    fun `getActorGalleryUseCase() should call repository exactly once when invoked`() = runTest {
         // Given
         val actorId = 7L
         val sampleGallery = listOf("simple.jpg")
@@ -113,7 +114,7 @@ class GetActorGalleryUseCaseTest {
     }
 
     @Test
-    fun `getActorGalleryUseCase with different actor IDs returns different galleries`() = runTest {
+    fun `getActorGalleryUseCase() should return different galleries when called with different actor IDs`() = runTest {
         // Given
         val actorId1 = 8L
         val gallery1 = listOf("actor8_1.jpg", "actor8_2.jpg")
@@ -132,5 +133,4 @@ class GetActorGalleryUseCaseTest {
         assertThat(result1).hasSize(2)
         assertThat(result2).hasSize(1)
     }
-
 }

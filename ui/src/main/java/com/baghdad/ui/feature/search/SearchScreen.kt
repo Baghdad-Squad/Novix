@@ -40,7 +40,6 @@ import com.baghdad.ui.feature.search.component.RecentlyViewedSection
 import com.baghdad.ui.feature.search.component.SearchResultContent
 import com.baghdad.ui.feature.search.component.SearchTextField
 import com.baghdad.ui.feature.search.component.SectionHeaderWithAction
-import com.baghdad.ui.feature.search.component.filter.FilterBottomSheet
 import com.baghdad.ui.feature.util.remeberSaveableLazyListState
 import com.baghdad.ui.feature.util.rememberSaveableLazyGridState
 import com.baghdad.ui.navigation.graph.search.SearchNavEvent
@@ -122,8 +121,11 @@ fun SearchContent(
             .systemBarsPadding()
             .statusBarsPadding(),
         snackbar = {
-            SearchSnackBar(snackBarState = snackBarState)
-        }
+            SearchSnackBar(
+                snackBarState = snackBarState,
+                onActionClick = listener::onSnackBarActionLabelClick,
+            )
+        },
     ) {
         Column(
             modifier = Modifier
@@ -136,8 +138,6 @@ fun SearchContent(
             SearchTextField(
                 query = uiState.searchText,
                 onQueryChange = listener::onSearchTextChanged,
-                onFilterIconClick = listener::onFilterIconClick,
-                searchTab = uiState.selectedSearchTab,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
@@ -152,26 +152,21 @@ fun SearchContent(
                 tvShowsState = tvShowsState
             )
 
-            FilterBottomSheet(
-                isBottomSheetVisible = uiState.bottomSheetUiState.isBottomSheetVisible,
-                searchFilter = uiState.searchFilter,
-                onBottomSheetCloseClick = listener::onFilterCloseIconClick,
-                onClearClick = listener::onFilterClearClick,
-                onApplyClick = listener::onApplyFilterClick,
-                onRatingChanged = listener::onRatingChanged,
-                onYearRangeSelected = listener::onYearRangeSelected,
-                onGenreSelected = listener::onGenreSelected
-            )
         }
     }
 }
 
 @Composable
-private fun SearchSnackBar(snackBarState: SnackBarState) {
+private fun SearchSnackBar(
+    snackBarState: SnackBarState,
+    onActionClick: () -> Unit,
+) {
     SnackBar(
         message = stringResource(getSnackBarMessage(snackBarState.message)),
         isSuccess = snackBarState.isSuccess,
-        isVisible = snackBarState.isVisible
+        isVisible = snackBarState.isVisible,
+        actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+        onActionClick = onActionClick,
     )
 }
 
@@ -311,7 +306,6 @@ private fun LazyListScope.addRecentSearchSection(
 
         itemsIndexed(
             items = uiState.recentSearch,
-            key = { _, item -> item.id }
         ) { index, keyWord ->
             RecentSearchItem(
                 title = keyWord.query,
@@ -373,21 +367,15 @@ private fun SearchScreenPreview() {
 
 private fun createPreviewListener() = object : SearchInteractionListener {
     override fun onSearchTextChanged(query: String) {}
-    override fun onFilterIconClick() {}
-    override fun onRatingChanged(rating: Int) {}
-    override fun onYearRangeSelected(range: ClosedFloatingPointRange<Float>) {}
-    override fun onGenreSelected(genre: SearchScreenState.GenreUiState) {}
     override fun onClearRecentlyViewedClick() {}
     override fun onClearRecentSearchClick() {}
     override fun onRemoveRecentSearchItemClick(id: Long) {}
     override fun onRecentSearchItemClick(id: Long) {}
-    override fun onFilterCloseIconClick() {}
-    override fun onFilterClearClick() {}
-    override fun onApplyFilterClick() {}
     override fun onActorItemClick(id: Long) {}
     override fun onSaveRecentlyViewedClick(item: Long) {}
     override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {}
     override fun onRecentlyViewedClick(id: Long, imageUrl: String) {}
     override fun onMovieItemClick(contentId: Long, contentImageUrl: String) {}
     override fun onTvShowItemClick(contentId: Long, contentImageUrl: String) {}
+    override fun onSnackBarActionLabelClick() {}
 }

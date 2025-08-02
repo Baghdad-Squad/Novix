@@ -21,14 +21,14 @@ class DeleteAllRecentSearchesUseCaseTest {
     }
 
     @Test
-    fun `should delete all recent searches successfully`() = runTest {
+    fun `invoke() should delete all recent searches successfully`() = runTest {
         deleteAllRecentSearchesUseCase()
 
         coVerify(exactly = 1) { searchRepository.deleteAllRecentSearches() }
     }
 
     @Test
-    fun `should propagate exception when repository throws exception`() = runTest {
+    fun `invoke() should propagate exception when repository throws exception`() = runTest {
         val exception = RuntimeException()
         coEvery { searchRepository.deleteAllRecentSearches() } throws exception
 

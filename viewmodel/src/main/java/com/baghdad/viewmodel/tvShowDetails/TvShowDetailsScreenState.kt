@@ -13,8 +13,11 @@ data class TvShowDetailsScreenState(
     val hasTrailer: Boolean = true,
     val isTvShowRated: Boolean = false,
     val isTvShowSaved: Boolean = false,
-    val isLoading: Boolean = false,
+    val isCastMembersLoading: Boolean = false,
+    val isEpisodesLoading: Boolean = false,
+    val isTvShowDetailsLoading: Boolean = false,
 ) : BaseUiState {
+    val isLoading = isTvShowDetailsLoading || isCastMembersLoading || isEpisodesLoading
     data class TvShowInfoUiState(
         val title: String = "",
         val genres: List<GenreUiState> = emptyList(),

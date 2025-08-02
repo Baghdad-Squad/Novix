@@ -14,6 +14,9 @@ import org.junit.jupiter.api.Test
 
 class GetTvShowSeasonEpisodesUseCaseTest {
 
+    private lateinit var tvShowRepository: TvShowRepository
+    private lateinit var getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase
+
     @BeforeEach
     fun setUp() {
         tvShowRepository = mockk(relaxed = true)
@@ -21,7 +24,7 @@ class GetTvShowSeasonEpisodesUseCaseTest {
     }
 
     @Test
-    fun `getTvShowSeasonEpisodes returns list of episodes for valid season`() = runTest {
+    fun `getTvShowSeasonEpisodesUseCase() should return episodes when repository returns data for valid season`() = runTest {
         // Given
         val tvId = 1L
         val seasonNumber = 1
@@ -36,11 +39,11 @@ class GetTvShowSeasonEpisodesUseCaseTest {
 
         // Then
         assertThat(result).hasSize(2)
-        assertThat(result.map { it.title }).containsExactly("Pilot", "Second Episode")
+        assertThat(result).containsExactlyElementsIn(expectedEpisodes)
     }
 
     @Test
-    fun `getTvShowSeasonEpisodes returns empty list for season with no episodes`() = runTest {
+    fun `getTvShowSeasonEpisodesUseCase() should return empty list when repository returns no episodes for season`() = runTest {
         // Given
         val tvId = 2L
         val seasonNumber = 5
@@ -54,7 +57,7 @@ class GetTvShowSeasonEpisodesUseCaseTest {
     }
 
     @Test
-    fun `getTvShowSeasonEpisodes makes exactly one repository call`() = runTest {
+    fun `getTvShowSeasonEpisodesUseCase() should make exactly one repository call per invocation`() = runTest {
         // Given
         val tvId = 3L
         val seasonNumber = 2
@@ -68,7 +71,7 @@ class GetTvShowSeasonEpisodesUseCaseTest {
     }
 
     @Test
-    fun `getTvShowSeasonEpisodes returns different results for different seasons`() = runTest {
+    fun `getTvShowSeasonEpisodesUseCase() should return different episodes for different seasons`() = runTest {
         // Given
         val tvId = 4L
         val season1Episodes = listOf(sampleEpisode.copy(id = 1, currentSeason = 1))
@@ -81,12 +84,13 @@ class GetTvShowSeasonEpisodesUseCaseTest {
         val resultSeason2 = getTvShowSeasonEpisodesUseCase(tvId, 2)
 
         // Then
-        assertThat(resultSeason1[0].id).isEqualTo(1L)
-        assertThat(resultSeason2[0].id).isEqualTo(2L)
+        assertThat(resultSeason1).isNotEqualTo(resultSeason2)
+        assertThat(resultSeason1.first().id).isEqualTo(1L)
+        assertThat(resultSeason2.first().id).isEqualTo(2L)
     }
 
     @Test
-    fun `getTvShowSeasonEpisodes returns correct episode details`() = runTest {
+    fun `getTvShowSeasonEpisodesUseCase() should return complete episode details when available`() = runTest {
         // Given
         val tvId = 5L
         val seasonNumber = 1
@@ -95,6 +99,9 @@ class GetTvShowSeasonEpisodesUseCaseTest {
             title = "Detailed Episode",
             overview = "This is a detailed episode description",
             episodeNumber = 3,
+            rating = 9.5,
+            duration = "60",
+            releasedDate = LocalDate(2023, 2, 15)
         )
         coEvery { tvShowRepository.getTvShowSeasonEpisodes(tvId, seasonNumber) } returns listOf(detailedEpisode)
 
@@ -102,13 +109,18 @@ class GetTvShowSeasonEpisodesUseCaseTest {
         val result = getTvShowSeasonEpisodesUseCase(tvId, seasonNumber)
 
         // Then
-        assertThat(result[0].title).isEqualTo("Detailed Episode")
-        assertThat(result[0].overview).isEqualTo("This is a detailed episode description")
-        assertThat(result[0].episodeNumber).isEqualTo(3)
+        with(result.first()) {
+            assertThat(title).isEqualTo("Detailed Episode")
+            assertThat(overview).isEqualTo("This is a detailed episode description")
+            assertThat(episodeNumber).isEqualTo(3)
+            assertThat(rating).isEqualTo(9.5)
+            assertThat(duration).isEqualTo("60")
+            assertThat(releasedDate).isEqualTo(LocalDate(2023, 2, 15))
+        }
     }
 
     @Test
-    fun `getTvShowSeasonEpisodes handles large season with many episodes`() = runTest {
+    fun `getTvShowSeasonEpisodesUseCase() should handle large number of episodes in season`() = runTest {
         // Given
         val tvId = 6L
         val seasonNumber = 1
@@ -126,14 +138,36 @@ class GetTvShowSeasonEpisodesUseCaseTest {
 
         // Then
         assertThat(result).hasSize(50)
+        assertThat(result.first().title).isEqualTo("Episode 1")
         assertThat(result.last().title).isEqualTo("Episode 50")
+        assertThat(result.map { it.episodeNumber }).containsExactlyElementsIn(1..50)
     }
 
-    companion object {
-        private lateinit var tvShowRepository: TvShowRepository
-        private lateinit var getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase
+    @Test
+    fun `getTvShowSeasonEpisodesUseCase() should preserve episode genres when present`() = runTest {
+        // Given
+        val tvId = 7L
+        val seasonNumber = 1
+        val episodeWithGenres = sampleEpisode.copy(
+            genres = listOf(
+                Genre(id = 1, "Drama"),
+                Genre(id = 2, "Action"),
+                Genre(id = 3, "Thriller")
+            )
+        )
+        coEvery { tvShowRepository.getTvShowSeasonEpisodes(tvId, seasonNumber) } returns listOf(episodeWithGenres)
 
-        private val sampleEpisode = Episode(
+        // When
+        val result = getTvShowSeasonEpisodesUseCase(tvId, seasonNumber)
+
+        // Then
+        assertThat(result.first().genres).hasSize(3)
+        assertThat(result.first().genres.map { it.name })
+            .containsExactly("Drama", "Action", "Thriller")
+    }
+
+    private companion object {
+        val sampleEpisode = Episode(
             id = 1L,
             title = "Sample Episode",
             overview = "Sample episode description",
@@ -143,10 +177,10 @@ class GetTvShowSeasonEpisodesUseCaseTest {
             releasedDate = LocalDate(2023, 1, 1),
             trailerUrl = "https://example.com/trailer.mp4",
             currentSeason = 1,
-            genres = listOf(Genre(id = 1, "Drama"),Genre( id = 2, name = "Action")),
+            genres = listOf(Genre(id = 1, "Drama"), Genre(id = 2, "Action")),
             headerPictures = listOf(
-            "https://example.com/episode.jpg",
-            "https://example.com/episode2.jpg"
+                "https://example.com/episode.jpg",
+                "https://example.com/episode2.jpg"
             )
         )
     }
