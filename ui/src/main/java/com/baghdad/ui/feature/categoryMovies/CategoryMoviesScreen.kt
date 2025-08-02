@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
@@ -126,14 +127,14 @@ private fun CategoryMoviesContent(
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
-        }
+        },
+        backgroundBlur = { BackgroundBlur() }
     ) {
         Column {
             LazyPagingVerticalGrid<CategoryMoviesState.MovieUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface),
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(
                     horizontal = 16.dp,
                     vertical = 8.dp
