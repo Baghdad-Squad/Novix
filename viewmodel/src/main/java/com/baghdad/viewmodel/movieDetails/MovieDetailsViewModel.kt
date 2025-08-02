@@ -123,7 +123,8 @@ class MovieDetailsViewModel(
         sendEffect(MovieDetailsEffect.NavigateBack)
     }
 
-    override fun onTrailerClick() {
+    override fun onClickPlayTrailer() {
+        addToContinueWatching()
         sendEffect(MovieDetailsEffect.OpenYoutubeLink(currentState.movieTrailerURL))
     }
 
@@ -185,7 +186,7 @@ class MovieDetailsViewModel(
             onSuccess = ::onGetMovieDetailsSuccess,
             dispatcher = ioDispatcher,
             onStart = ::onGetMovieDetailsStarted,
-            onFinally = ::onFinallyAndAddToContinueWatching,
+            onFinally = ::onFinally,
             onError = ::onError
         )
     }
@@ -290,9 +291,8 @@ class MovieDetailsViewModel(
     }
 
 
-    private fun onFinallyAndAddToContinueWatching() {
+    private fun onFinally() {
         updateState { state -> state.copy(isMovieDetailsLoading = false) }
-        addToContinueWatching()
     }
 
 

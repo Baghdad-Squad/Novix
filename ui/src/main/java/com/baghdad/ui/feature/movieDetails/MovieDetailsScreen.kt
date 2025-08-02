@@ -177,7 +177,7 @@ private fun MovieDetailsContent(
             DetailsScreenBottomBar(
                 hasTrailer = state.movieTrailerURL.isNotBlank(),
                 onRateClicked = { listener.onStarMovieClick() },
-                onPlayTrailerClicked = { listener.onTrailerClick() },
+                onPlayTrailerClicked = { listener.onClickPlayTrailer() },
                 isRated = state.isStared,
                 isLoading = false /*TODO*/
             )
