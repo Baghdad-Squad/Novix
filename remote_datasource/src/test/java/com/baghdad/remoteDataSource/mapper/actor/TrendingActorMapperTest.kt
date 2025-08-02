@@ -9,19 +9,14 @@ import org.junit.jupiter.api.Test
 class TrendingActorMapperTest {
 
     @Test
-    fun `toDto should map actor details correctly`() {
-        val details = TrendingActorDetails(
-            id = 123,
-            name = "carlos sanchez",
-            profilePath = "/profile.jpg",
-            knownForDepartment = "Acting"
-        )
+    fun `should map actor details correctly when toDto is called`() {
+        // When
+        val dto: ActorDto = TRENDING_ACTOR_DETAILS.toDto()
 
-        val dto: ActorDto = details.toDto()
-
-        assertThat(dto.id).isEqualTo(123L)
-        assertThat(dto.name).isEqualTo("carlos sanchez")
-        assertThat(dto.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/profile.jpg")
+        // Then
+        assertThat(dto.id).isEqualTo(TRENDING_ACTOR_DETAILS.id)
+        assertThat(dto.name).isEqualTo(TRENDING_ACTOR_DETAILS.name)
+        assertThat(dto.imageUrl).isEqualTo(URL + TRENDING_ACTOR_DETAILS.profilePath)
         assertThat(dto.biography).isEmpty()
         assertThat(dto.birthdayDate).isNull()
         assertThat(dto.deathDate).isNull()
@@ -31,22 +26,26 @@ class TrendingActorMapperTest {
     }
 
     @Test
-    fun `toDto should handle nulls safely`() {
-        val details = TrendingActorDetails(
+    fun `should handle nulls safely when toDto is called`() {
+        // Given
+        val details = TRENDING_ACTOR_DETAILS.copy(
             id = null,
             name = null,
             profilePath = null
         )
 
+        // When
         val dto = details.toDto()
 
+        // Then
         assertThat(dto.id).isEqualTo(0L)
         assertThat(dto.name).isEqualTo("")
         assertThat(dto.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500null")
     }
 
     @Test
-    fun `toPagedActorDtos should map multiple results correctly`() {
+    fun `should map multiple results correctly when toPagedActorDtos is called`() {
+        // Given
         val response = TrendingActorResponse(
             page = 1,
             totalPages = 3,
@@ -56,8 +55,10 @@ class TrendingActorMapperTest {
             )
         )
 
+        // When
         val result = response.toPagedActorDtos()
 
+        // Then
         assertThat(result.data).hasSize(2)
         assertThat(result.data[0].name).isEqualTo("Actor 1")
         assertThat(result.data[1].imageUrl).contains("/a2.jpg")
@@ -66,17 +67,32 @@ class TrendingActorMapperTest {
     }
 
     @Test
-    fun `toPagedActorDtos should return empty list if results is null`() {
+    fun `should return empty list when results is null in toPagedActorDtos`() {
+        // Given
         val response = TrendingActorResponse(
             page = 1,
             totalPages = 1,
             results = null
         )
 
+        // When
         val result = response.toPagedActorDtos()
 
+        // Then
         assertThat(result.data).isEmpty()
         assertThat(result.nextKey).isNull()
         assertThat(result.prevKey).isNull()
+    }
+
+    companion object {
+
+        const val URL = "https://image.tmdb.org/t/p/w500"
+
+        val TRENDING_ACTOR_DETAILS = TrendingActorDetails(
+            id = 1,
+            name = "test",
+            profilePath = "/profile.jpg",
+            knownForDepartment = "acting"
+        )
     }
 }

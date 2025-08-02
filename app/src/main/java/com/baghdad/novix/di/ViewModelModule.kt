@@ -10,7 +10,6 @@ import com.baghdad.viewmodel.home.HomeViewModel
 import com.baghdad.viewmodel.login.LoginViewModel
 import com.baghdad.viewmodel.main.MainViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
-import com.baghdad.viewmodel.review.ContentType
 import com.baghdad.viewmodel.review.ReviewViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
@@ -66,14 +65,7 @@ val viewModelModule = module {
         )
     }
 
-    viewModel { (mediaId: Long, mediaType: ContentType) ->
-        ReviewViewModel(
-            contentId = mediaId,
-            contentType = mediaType,
-            getMovieReviewsUseCase = get(),
-            getSeriesReviewsUseCase = get(),
-        )
-    }
+    viewModelOf(::ReviewViewModel)
 
     viewModelOf(::EpisodeDetailsViewModel)
     single<CoroutineDispatcher> { Dispatchers.IO }
@@ -98,14 +90,14 @@ val viewModelModule = module {
         )
     }
     viewModel { (tvShowId: Long, seasonNumber: Int, episodeNumber: Int) ->
-        EpisodeDetailsViewModel(tvShowId, seasonNumber, episodeNumber, get(), get())
+        EpisodeDetailsViewModel(tvShowId, seasonNumber, episodeNumber, get(), get(),get())
     }
     viewModel { (categoryId: Long) ->
-        CategoryTvShowsViewModel(categoryId, get(), get())
+        CategoryTvShowsViewModel(categoryId, get(), get(), get())
     }
 
     viewModel { (categoryId: Long) ->
-        CategoryMoviesViewModel(categoryId, get(), get())
+        CategoryMoviesViewModel(categoryId, get(), get(), get())
     }
     viewModel {
         MainViewModel(

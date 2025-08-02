@@ -11,6 +11,6 @@ interface MovieDetailsInteractionListener {
     fun onReviewClick(id: Long)
     fun onMovieClick(id: Long)
     fun onBackClick()
-    fun onTrailerClick()
+    fun onClickPlayTrailer()
     fun onSnackBarActionLabelClick()
 }

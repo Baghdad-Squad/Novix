@@ -7,13 +7,15 @@ import com.baghdad.entity.media.Review
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import kotlinx.coroutines.CoroutineDispatcher
 
 class ReviewViewModel(
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase,
     private val getSeriesReviewsUseCase: GetTvShowReviewsUseCase,
     val contentId: Long,
     private val contentType: ContentType,
-) : BaseViewModel<ReviewScreenState, ReviewScreenEffect>(ReviewScreenState()),
+    private val ioDispatcher: CoroutineDispatcher,
+    ) : BaseViewModel<ReviewScreenState, ReviewScreenEffect>(ReviewScreenState()),
     ReviewInteractionListener {
 
 
@@ -34,7 +36,8 @@ class ReviewViewModel(
             callee = { getMovieReviewsUseCase(contentId) },
             onSuccess = ::onReviewsSuccess,
             onFinally = ::onFinally,
-            onError = ::onLoadDataError
+            onError = ::onLoadDataError,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -44,7 +47,8 @@ class ReviewViewModel(
             callee = { getSeriesReviewsUseCase(contentId) },
             onSuccess = ::onReviewsSuccess,
             onFinally = ::onFinally,
-            onError = ::onLoadDataError
+            onError = ::onLoadDataError,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -99,7 +103,7 @@ class ReviewViewModel(
         loadData()
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.UnknownError
-    }
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
+
 }
