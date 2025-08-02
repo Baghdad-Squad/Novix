@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.WavyLoadingIndicator
@@ -95,7 +96,8 @@ fun ActorGalleryScreenContent(
                     .padding(vertical = 8.dp)
                     .padding(top = 12.dp)
             ) {}
-        }
+        },
+        backgroundBlur = { BackgroundBlur() }
     ) {
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize()) {
@@ -106,11 +108,9 @@ fun ActorGalleryScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.color.surface)
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(104.dp),
                 contentPadding = PaddingValues(16.dp),
