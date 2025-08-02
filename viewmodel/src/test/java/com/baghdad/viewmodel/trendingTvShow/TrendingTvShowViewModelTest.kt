@@ -33,7 +33,7 @@ class TrendingTvShowViewModelTest {
             tvShows, nextKey = null, prevKey = null
         )
         Dispatchers.setMain(testDispatcher)
-        viewModel = TrendingTvShowViewModel(getTrendingTvShowUseCase, getGenresUseCase)
+        viewModel = TrendingTvShowViewModel(getTrendingTvShowUseCase, getGenresUseCase, testDispatcher)
     }
 
     @Test
