@@ -1,4 +1,4 @@
-package com.baghdad.remoteDataSource.respons.user
+package com.baghdad.remoteDataSource.mapper.user
 
 import com.baghdad.remoteDataSource.response.user.AvatarResponse
 import com.baghdad.remoteDataSource.response.user.GravatarResponse

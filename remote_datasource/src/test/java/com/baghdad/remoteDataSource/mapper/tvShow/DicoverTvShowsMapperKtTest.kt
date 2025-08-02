@@ -1,6 +1,5 @@
-package com.baghdad.remoteDataSource.respons.tvShow
+package com.baghdad.remoteDataSource.mapper.tvShow
 
-import com.baghdad.remoteDataSource.mapper.tvShow.toPagedTvShowDtos
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
 import com.baghdad.remoteDataSource.response.tvShow.TvShowResponse
 import com.baghdad.repository.model.PagedResultDto
