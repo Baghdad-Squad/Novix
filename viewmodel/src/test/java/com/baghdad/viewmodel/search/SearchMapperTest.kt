@@ -114,7 +114,6 @@ class SearchMapperTest {
                 nanosecond = 0
             )
         )
-        private val GENRE = Genre(id = 1L, name = "Action")
         private val RECENT_SEARCH = RecentSearch(
             id = 1L,
             query = "kotlin",
