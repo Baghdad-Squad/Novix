@@ -2,7 +2,7 @@ package com.baghdad.remoteDataSource.mapper.actor
 
 import com.baghdad.remoteDataSource.response.actor.ActorTvShowDto
 import com.baghdad.remoteDataSource.response.actor.ActorTvShowsResponse
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class ActorTvShowsResponseTest {
@@ -37,18 +37,18 @@ class ActorTvShowsResponseTest {
         val response = ActorTvShowsResponse(cast = expectedShows)
 
         // Then
-        Truth.assertThat(response.cast).isNotNull()
-        Truth.assertThat(response.cast).hasSize(2)
+        assertThat(response.cast).isNotNull()
+        assertThat(response.cast).hasSize(2)
 
         val firstShow = response.cast!![0]
-        Truth.assertThat(firstShow.id).isEqualTo(101)
-        Truth.assertThat(firstShow.name).isEqualTo("Breaking Bad")
-        Truth.assertThat(firstShow.genreIds).containsExactly(18, 80).inOrder()
-        Truth.assertThat(firstShow.overview).isEqualTo("A chemistry teacher turned meth producer.")
-        Truth.assertThat(firstShow.posterPath).isEqualTo("/breakingbad.jpg")
-        Truth.assertThat(firstShow.voteAverage).isEqualTo(9.5)
-        Truth.assertThat(firstShow.firstAirDate).isEqualTo("2008-01-20")
-        Truth.assertThat(firstShow.originalName).isEqualTo("Breaking Bad")
+        assertThat(firstShow.id).isEqualTo(101)
+        assertThat(firstShow.name).isEqualTo("Breaking Bad")
+        assertThat(firstShow.genreIds).containsExactly(18, 80).inOrder()
+        assertThat(firstShow.overview).isEqualTo("A chemistry teacher turned meth producer.")
+        assertThat(firstShow.posterPath).isEqualTo("/breakingbad.jpg")
+        assertThat(firstShow.voteAverage).isEqualTo(9.5)
+        assertThat(firstShow.firstAirDate).isEqualTo("2008-01-20")
+        assertThat(firstShow.originalName).isEqualTo("Breaking Bad")
     }
 
     @Test
@@ -57,7 +57,7 @@ class ActorTvShowsResponseTest {
         val response = ActorTvShowsResponse()
 
         // Then
-        Truth.assertThat(response.cast).isNull()
+        assertThat(response.cast).isNull()
     }
 
     @Test
@@ -66,14 +66,14 @@ class ActorTvShowsResponseTest {
         val tvShow = ActorTvShowDto()
 
         // Then
-        Truth.assertThat(tvShow.id).isNull()
-        Truth.assertThat(tvShow.name).isNull()
-        Truth.assertThat(tvShow.genreIds).isNull()
-        Truth.assertThat(tvShow.overview).isNull()
-        Truth.assertThat(tvShow.posterPath).isNull()
-        Truth.assertThat(tvShow.voteAverage).isNull()
-        Truth.assertThat(tvShow.firstAirDate).isNull()
-        Truth.assertThat(tvShow.originalName).isNull()
+        assertThat(tvShow.id).isNull()
+        assertThat(tvShow.name).isNull()
+        assertThat(tvShow.genreIds).isNull()
+        assertThat(tvShow.overview).isNull()
+        assertThat(tvShow.posterPath).isNull()
+        assertThat(tvShow.voteAverage).isNull()
+        assertThat(tvShow.firstAirDate).isNull()
+        assertThat(tvShow.originalName).isNull()
     }
 
     @Test
@@ -82,7 +82,7 @@ class ActorTvShowsResponseTest {
         val response = ActorTvShowsResponse(cast = emptyList())
 
         // Then
-        Truth.assertThat(response.cast).isEmpty()
+        assertThat(response.cast).isEmpty()
     }
 
     @Test
@@ -98,14 +98,14 @@ class ActorTvShowsResponseTest {
         )
 
         // Then
-        Truth.assertThat(tvShow.id).isNull()
-        Truth.assertThat(tvShow.name).isEqualTo(expectedName)
-        Truth.assertThat(tvShow.genreIds).isNull()
-        Truth.assertThat(tvShow.overview).isNull()
-        Truth.assertThat(tvShow.posterPath).isNull()
-        Truth.assertThat(tvShow.voteAverage).isEqualTo(expectedVote)
-        Truth.assertThat(tvShow.firstAirDate).isNull()
-        Truth.assertThat(tvShow.originalName).isNull()
+        assertThat(tvShow.id).isNull()
+        assertThat(tvShow.name).isEqualTo(expectedName)
+        assertThat(tvShow.genreIds).isNull()
+        assertThat(tvShow.overview).isNull()
+        assertThat(tvShow.posterPath).isNull()
+        assertThat(tvShow.voteAverage).isEqualTo(expectedVote)
+        assertThat(tvShow.firstAirDate).isNull()
+        assertThat(tvShow.originalName).isNull()
     }
 
     @Test
@@ -123,13 +123,13 @@ class ActorTvShowsResponseTest {
         )
 
         // Then
-        Truth.assertThat(tvShow.id).isNull()
-        Truth.assertThat(tvShow.name).isNull()
-        Truth.assertThat(tvShow.genreIds).isNull()
-        Truth.assertThat(tvShow.overview).isNull()
-        Truth.assertThat(tvShow.posterPath).isNull()
-        Truth.assertThat(tvShow.voteAverage).isNull()
-        Truth.assertThat(tvShow.firstAirDate).isNull()
-        Truth.assertThat(tvShow.originalName).isNull()
+        assertThat(tvShow.id).isNull()
+        assertThat(tvShow.name).isNull()
+        assertThat(tvShow.genreIds).isNull()
+        assertThat(tvShow.overview).isNull()
+        assertThat(tvShow.posterPath).isNull()
+        assertThat(tvShow.voteAverage).isNull()
+        assertThat(tvShow.firstAirDate).isNull()
+        assertThat(tvShow.originalName).isNull()
     }
 }

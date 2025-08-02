@@ -2,7 +2,7 @@ package com.baghdad.remoteDataSource.mapper.actor
 
 import com.baghdad.remoteDataSource.response.actor.ActorImagesResponse
 import com.baghdad.remoteDataSource.response.actor.ImageResponse
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class ActorImagesResponseTest {
@@ -22,11 +22,11 @@ class ActorImagesResponseTest {
         )
 
         // Then
-        Truth.assertThat(response.id).isEqualTo(101)
-        Truth.assertThat(response.profiles).isNotNull()
-        Truth.assertThat(response.profiles).hasSize(2)
-        Truth.assertThat(response.profiles!![0].filePath).isEqualTo("/image1.jpg")
-        Truth.assertThat(response.profiles!![1].filePath).isEqualTo("/image2.jpg")
+        assertThat(response.id).isEqualTo(101)
+        assertThat(response.profiles).isNotNull()
+        assertThat(response.profiles).hasSize(2)
+        assertThat(response.profiles!![0].filePath).isEqualTo("/image1.jpg")
+        assertThat(response.profiles[1].filePath).isEqualTo("/image2.jpg")
     }
 
     @Test
@@ -35,8 +35,8 @@ class ActorImagesResponseTest {
         val response = ActorImagesResponse()
 
         // Then
-        Truth.assertThat(response.id).isNull()
-        Truth.assertThat(response.profiles).isNull()
+        assertThat(response.id).isNull()
+        assertThat(response.profiles).isNull()
     }
 
     @Test
@@ -48,8 +48,8 @@ class ActorImagesResponseTest {
         )
 
         // Then
-        Truth.assertThat(response.id).isEqualTo(202)
-        Truth.assertThat(response.profiles).isEmpty()
+        assertThat(response.id).isEqualTo(202)
+        assertThat(response.profiles).isEmpty()
     }
 
     @Test
@@ -58,7 +58,7 @@ class ActorImagesResponseTest {
         val image = ImageResponse()
 
         // Then
-        Truth.assertThat(image.filePath).isNull()
+        assertThat(image.filePath).isNull()
     }
 
     @Test
@@ -69,8 +69,8 @@ class ActorImagesResponseTest {
         )
 
         // Then
-        Truth.assertThat(response.id).isEqualTo(303)
-        Truth.assertThat(response.profiles).isNull()
+        assertThat(response.id).isEqualTo(303)
+        assertThat(response.profiles).isNull()
     }
 
     @Test
@@ -82,7 +82,7 @@ class ActorImagesResponseTest {
         )
 
         // Then
-        Truth.assertThat(response.id).isNull()
-        Truth.assertThat(response.profiles).isNull()
+        assertThat(response.id).isNull()
+        assertThat(response.profiles).isNull()
     }
 }

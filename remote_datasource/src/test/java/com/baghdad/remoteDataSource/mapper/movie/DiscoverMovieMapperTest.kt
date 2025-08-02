@@ -1,7 +1,7 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
 import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class DiscoverMovieMapperTest {
@@ -15,12 +15,12 @@ class DiscoverMovieMapperTest {
         val result = response.toMovieDtos()
 
         // Then
-        Truth.assertThat(result).hasSize(1)
-        Truth.assertThat(result.first().id).isEqualTo(DISCOVER_MOVIE_RESULT_VALID.id)
-        Truth.assertThat(result.first().title).isEqualTo(DISCOVER_MOVIE_RESULT_VALID.title)
-        Truth.assertThat(result.first().genres.size)
+        assertThat(result).hasSize(1)
+        assertThat(result.first().id).isEqualTo(DISCOVER_MOVIE_RESULT_VALID.id)
+        assertThat(result.first().title).isEqualTo(DISCOVER_MOVIE_RESULT_VALID.title)
+        assertThat(result.first().genres.size)
             .isEqualTo(DISCOVER_MOVIE_RESULT_VALID.genreIds?.size)
-        Truth.assertThat(result.first().posterPictureURL)
+        assertThat(result.first().posterPictureURL)
             .isEqualTo("https://image.tmdb.org/t/p/w500${DISCOVER_MOVIE_RESULT_VALID.posterPath}")
     }
 
@@ -33,7 +33,7 @@ class DiscoverMovieMapperTest {
         val result = response.toMovieDtos()
 
         // Then
-        Truth.assertThat(result).isEmpty()
+        assertThat(result).isEmpty()
     }
 
     @Test
@@ -45,13 +45,13 @@ class DiscoverMovieMapperTest {
         val result = response.toMovieDtos()
 
         // Then
-        Truth.assertThat(result).hasSize(1)
+        assertThat(result).hasSize(1)
         val movie = result.first()
-        Truth.assertThat(movie.id).isEqualTo(0L)
-        Truth.assertThat(movie.title).isEqualTo("Untitled")
-        Truth.assertThat(movie.releaseDate).isEqualTo("0001-01-01")
-        Truth.assertThat(movie.posterPictureURL).isEmpty()
-        Truth.assertThat(movie.genres).isEmpty()
+        assertThat(movie.id).isEqualTo(0L)
+        assertThat(movie.title).isEqualTo("Untitled")
+        assertThat(movie.releaseDate).isEqualTo("0001-01-01")
+        assertThat(movie.posterPictureURL).isEmpty()
+        assertThat(movie.genres).isEmpty()
     }
 
     @Test
@@ -75,7 +75,7 @@ class DiscoverMovieMapperTest {
         val result = response.toMovieDtos()
 
         // Then
-        Truth.assertThat(result).isEmpty()
+        assertThat(result).isEmpty()
     }
 
     @Test
@@ -95,7 +95,7 @@ class DiscoverMovieMapperTest {
         val movieDto = result.toDto(emptyList())
 
         // Then
-        Truth.assertThat(movieDto.genres).isEmpty()
+        assertThat(movieDto.genres).isEmpty()
     }
 
     @Test
@@ -115,9 +115,9 @@ class DiscoverMovieMapperTest {
         val movieDto = result.toDto(genreIds = result.genreIds)
 
         // Then
-        Truth.assertThat(movieDto.genres.size).isEqualTo(2)
-        Truth.assertThat(movieDto.genres.first().id).isEqualTo(0L)
-        Truth.assertThat(movieDto.genres.last().id).isEqualTo(15L)
+        assertThat(movieDto.genres.size).isEqualTo(2)
+        assertThat(movieDto.genres.first().id).isEqualTo(0L)
+        assertThat(movieDto.genres.last().id).isEqualTo(15L)
     }
 
     @Test
@@ -137,7 +137,7 @@ class DiscoverMovieMapperTest {
         val movieDto = result.toDto()
 
         // Then
-        Truth.assertThat(movieDto.genres).isEmpty()
+        assertThat(movieDto.genres).isEmpty()
     }
 
     companion object {
