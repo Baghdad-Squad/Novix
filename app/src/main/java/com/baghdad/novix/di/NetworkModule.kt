@@ -7,6 +7,7 @@ import com.baghdad.remoteDataSource.RemoteAuthenticationImpl
 import com.baghdad.remoteDataSource.RemoteEpisodeDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteMovieDataSourceImpl
+import com.baghdad.remoteDataSource.RemoteSavedListDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteTvShowDataSourceImpl
 import com.baghdad.remoteDataSource.apiService.ActorApiService
@@ -14,6 +15,7 @@ import com.baghdad.remoteDataSource.apiService.AuthenticationApiService
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
 import com.baghdad.remoteDataSource.apiService.GenreApiService
 import com.baghdad.remoteDataSource.apiService.MovieApiService
+import com.baghdad.remoteDataSource.apiService.SavedListApiService
 import com.baghdad.remoteDataSource.apiService.SearchApiService
 import com.baghdad.remoteDataSource.apiService.TvShowApiService
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
@@ -22,6 +24,7 @@ import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
+import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.language.LanguageProvider
@@ -169,6 +172,15 @@ val remoteDataSourceModule = module {
         RemoteAuthenticationImpl(
             authenticationApiService = get(),
             logger = get()
+        )
+    }
+    single<SavedListApiService> {
+        get<Retrofit>().create(SavedListApiService::class.java)
+    }
+    single<RemoteSavedListDataSource> {
+        RemoteSavedListDataSourceImpl(
+            savedListApiService = get(),
+            logger = get(),
         )
     }
 }

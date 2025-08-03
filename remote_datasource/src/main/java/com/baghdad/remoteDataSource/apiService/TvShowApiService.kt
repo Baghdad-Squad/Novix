@@ -1,6 +1,7 @@
 package com.baghdad.remoteDataSource.apiService
 
 import com.baghdad.remoteDataSource.interceptor.Authenticated
+import com.baghdad.remoteDataSource.interceptor.ForceLocaleEnglish
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.tvShow.PopularTvShowsResponse
@@ -31,6 +32,7 @@ interface TvShowApiService {
         @Path("tv_id") tvId: Long
     ): Response<CastMembersResponse>
 
+    @ForceLocaleEnglish
     @Authenticated
     @GET(TV_SHOW_IMAGES_ENDPOINT)
     suspend fun getTvShowImages(
@@ -51,6 +53,7 @@ interface TvShowApiService {
         @Path("season_number") seasonNumber: Int
     ): Response<SeasonDetailResponse>
 
+    @ForceLocaleEnglish
     @Authenticated
     @GET(TV_SHOW_REVIEWS_ENDPOINT)
     suspend fun getTvShowReviews(
