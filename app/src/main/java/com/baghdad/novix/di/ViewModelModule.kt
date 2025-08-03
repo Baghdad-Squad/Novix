@@ -10,6 +10,7 @@ import com.baghdad.viewmodel.home.HomeViewModel
 import com.baghdad.viewmodel.login.LoginViewModel
 import com.baghdad.viewmodel.main.MainViewModel
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
+import com.baghdad.viewmodel.onBoarding.OnBoardingViewModel
 import com.baghdad.viewmodel.review.ReviewViewModel
 import com.baghdad.viewmodel.search.SearchViewModel
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksViewModel
@@ -92,4 +93,5 @@ val viewModelModule = module {
     viewModelOf(::TrendingTvShowViewModel)
     viewModelOf(::TrendingMoviesViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::OnBoardingViewModel)
 }
