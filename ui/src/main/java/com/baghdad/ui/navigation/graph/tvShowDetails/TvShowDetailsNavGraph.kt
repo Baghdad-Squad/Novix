@@ -41,8 +41,8 @@ private fun handleTvShowDetailsNavEvent(
         is TvShowDetailsNavEvent.NavigateToEpisodeDetails -> navController.navigate(
             TvShowDetailsRoute.EpisodeDetailsScreen(
                 tvShowId = event.tvShowId,
-                event.seasonNumber,
-                event.episodeNumber
+                seasonNumber = event.seasonNumber,
+                episodeNumber = event.episodeNumber
             )
         )
 
