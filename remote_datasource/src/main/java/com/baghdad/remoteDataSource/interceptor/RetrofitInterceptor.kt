@@ -21,11 +21,20 @@ class HeadersSetupInterceptor @Inject constructor(
         val originalRequest = chain.request()
         val invocation = originalRequest.tag(Invocation::class.java)
         val shouldAttachAuthHeader = invocation
+                ?.method()
+                ?.annotations
+                ?.any { it.annotationClass == Authenticated::class } == true
+
+        val shouldForceEnglishLocale = invocation
             ?.method()
             ?.annotations
-            ?.any { it.annotationClass == Authenticated::class } == true
+            ?.any { it.annotationClass == ForceLocaleEnglish::class } == true
 
-        val language = languageProvider.getCurrentLanguage()
+        val language = if (shouldForceEnglishLocale) {
+            "en"
+        } else {
+            languageProvider.getCurrentLanguage()
+        }
 
         val modifiedRequest = originalRequest.newBuilder().apply {
             if (shouldAttachAuthHeader) {
@@ -35,8 +44,7 @@ class HeadersSetupInterceptor @Inject constructor(
             addHeader(acceptHeaderKey, acceptHeaderValue)
 
             url(
-                originalRequest.url.newBuilder()
-                    .addQueryParameter(languageQueryKey, language)
+                originalRequest.url.newBuilder().addQueryParameter(languageQueryKey, language)
                     .build()
             )
         }.build()
@@ -47,3 +55,6 @@ class HeadersSetupInterceptor @Inject constructor(
 
 @Target(AnnotationTarget.FUNCTION)
 annotation class Authenticated
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class ForceLocaleEnglish

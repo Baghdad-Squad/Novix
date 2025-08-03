@@ -175,7 +175,7 @@ private fun MovieDetailsContent(
             DetailsScreenBottomBar(
                 hasTrailer = state.movieTrailerURL.isNotBlank(),
                 onRateClicked = { listener.onStarMovieClick() },
-                onPlayTrailerClicked = { listener.onTrailerClick() },
+                onPlayTrailerClicked = { listener.onClickPlayTrailer() },
                 isRated = state.isStared,
                 isLoading = false /*TODO*/
             )
@@ -212,7 +212,7 @@ private fun MovieDetailsContent(
                 }
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Spacer(Modifier.height(116.dp))
+                    Spacer(Modifier.height(104.dp))
                 }
 
                 if (state.overView.isNotBlank()) {

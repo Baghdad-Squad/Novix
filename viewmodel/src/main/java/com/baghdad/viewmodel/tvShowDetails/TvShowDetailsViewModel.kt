@@ -47,7 +47,7 @@ class TvShowDetailsViewModel @Inject constructor(
             dispatcher = ioDispatcher,
             onSuccess = ::onGetTvShowDetailsSuccess,
             onStart = { updateState { it.copy(isTvShowDetailsLoading = true) } },
-            onFinally = ::onFinallyAndAddToContinueWatching,
+            onFinally = ::onFinally,
             onError = ::onLoadDataError
         )
     }
@@ -143,6 +143,7 @@ class TvShowDetailsViewModel @Inject constructor(
     }
 
     override fun onClickPlayTrailer() {
+        addToContinueWatching()
         sendEffect(TvShowDetailsScreenEffect.OpenYoutubeLink(currentState.tvShowInfo.trailerURL))
     }
 
@@ -153,9 +154,8 @@ class TvShowDetailsViewModel @Inject constructor(
     }
 
 
-    private fun onFinallyAndAddToContinueWatching() {
+    private fun onFinally() {
         updateState { it.copy(isTvShowDetailsLoading = false) }
-        addToContinueWatching()
     }
 
     private fun showNoInternetSnackBar() {
