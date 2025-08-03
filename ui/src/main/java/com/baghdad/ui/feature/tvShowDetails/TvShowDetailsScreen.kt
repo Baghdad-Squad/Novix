@@ -102,8 +102,9 @@ private fun handleEffect(
 
         is TvShowDetailsScreenEffect.NavigateToEpisodeDetails -> handleNavigation(
             NavigateToEpisodeDetails(
-                effect.seasonNumber,
-                effect.episodeNumber
+                tvShowId = effect.tvShowId,
+                seasonNumber = effect.seasonNumber,
+                episodeNumber = effect.episodeNumber
             )
         )
 
