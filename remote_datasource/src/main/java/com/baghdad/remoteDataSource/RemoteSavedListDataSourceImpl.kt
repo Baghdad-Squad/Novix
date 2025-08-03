@@ -10,7 +10,7 @@ class RemoteSavedListDataSourceImpl(
     private val savedListApiService: SavedListApiService,
     private val logger: Logger,
 ) : RemoteSavedListDataSource {
-    override suspend fun createSavedList(title: String) {
+    override suspend fun createSavedList(title: String, sessionId: String) {
         val result = handleRequest<CreateSavedListResponse>(
             apiCall = { savedListApiService.createSavedList(title) },
             logger = logger,

@@ -123,3 +123,5 @@ suspend fun <TEntity, TDto> getLocalPagedSafely(
         prevKey = if (page > 1) page - 1 else null
     )
 }
+
+class SavedListCreationException(message: String) : Exception(message)
