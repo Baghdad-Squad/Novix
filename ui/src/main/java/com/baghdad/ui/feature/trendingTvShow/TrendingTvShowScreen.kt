@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.WavyLoadingIndicator
@@ -109,8 +110,7 @@ fun TrendingTvShowContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(top = 22.dp, bottom = 8.dp)
-                        .background(Theme.color.surface),
+                        .padding(top = 22.dp, bottom = 8.dp),
                     onGoBackClick = {
                         listener.onBackIconClick()
                     },
@@ -124,21 +124,19 @@ fun TrendingTvShowContent(
                     modifier = Modifier.padding(vertical = 12.dp)
                 )
             }
-        }
+        },
+        backgroundBlur = { BackgroundBlur() }
     ) {
         Column(
             modifier = Modifier
-                .background(Theme.color.surface)
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-
             LazyPagingVerticalGrid<TrendingTvShowScreenState.TvShowUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface),
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
@@ -148,7 +146,6 @@ fun TrendingTvShowContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 items = trendingTvShows,
             ) { tvShow ->
-
                 HomeCard(
                     url = tvShow.posterPictureURL,
                     contentDescription = null,
