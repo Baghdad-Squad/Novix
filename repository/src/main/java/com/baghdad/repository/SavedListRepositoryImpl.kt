@@ -7,19 +7,19 @@ import com.baghdad.repository.util.executeAuthorizedSafely
 
 class SavedListRepositoryImpl(
     private val remoteSavedListSource: RemoteSavedListDataSource,
-    private val localSessionDataSource: LocalSessionDataStore
+    private val localSessionDataStore: LocalSessionDataStore
 ) : SavedListRepository {
 
 
     override suspend fun addMovieToSavedList(listId: Long, movieId: Long) {
-        val sessionId = localSessionDataSource.getSessionId().toString()
+        val sessionId = localSessionDataStore.getSessionId().toString()
         executeAuthorizedSafely(sessionId) {
             remoteSavedListSource.addMovieToSavedList(listId, movieId, sessionId)
         }
     }
 
     override suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long) {
-        val sessionId = localSessionDataSource.getSessionId().toString()
+        val sessionId = localSessionDataStore.getSessionId().toString()
         executeAuthorizedSafely(sessionId) {
             remoteSavedListSource.addTvShowToSavedList(listId, tvShowId, sessionId)
         }
