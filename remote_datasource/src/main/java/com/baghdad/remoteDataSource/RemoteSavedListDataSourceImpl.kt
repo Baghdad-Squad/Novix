@@ -15,11 +15,8 @@ class RemoteSavedListDataSourceImpl(
             apiCall = { savedListApiService.createSavedList(title) },
             logger = logger,
         )
-        if (result.success == true) {
-            logger.logException(
-                Exception("List created successfully with ID: ${result.listId}")
-            )
-        } else {
+
+        result.takeIf { it.success == true } ?: run {
             val message = result.statusMessage ?: "List creation failed"
             logger.logException(Exception("Failed to create list: $message"))
         }
