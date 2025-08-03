@@ -1,3 +1,5 @@
 package com.baghdad.domain.repository
 
-interface SavedListRepository
+interface SavedListRepository {
+    suspend fun createSavedList(title: String)
+}
