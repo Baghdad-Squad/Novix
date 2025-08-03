@@ -14,7 +14,6 @@ class SavedListRepositoryImpl(
     override suspend fun addMovieToSavedList(listId: Long, movieId: Long) {
         val sessionId = localSessionDataSource.getSessionId().toString()
         executeAuthorizedSafely(sessionId) {
-
             remoteSavedListSource.addMovieToSavedList(listId, movieId, sessionId)
         }
     }
