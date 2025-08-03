@@ -86,19 +86,19 @@ private fun handleEffect(
                 NavigateToTvShowDetails(effect.tvShowId),
             )
 
-        ActorDetailsScreenEffect.NavigateToActorGallery ->
+        is ActorDetailsScreenEffect.NavigateToActorGallery ->
             handleNavigation(
-                ActorDetailsNavEvent.NavigateToActorGallery,
+                ActorDetailsNavEvent.NavigateToActorGallery(actorId = effect.actorId),
             )
 
-        ActorDetailsScreenEffect.NavigateToActorTopMoviePicks ->
+        is ActorDetailsScreenEffect.NavigateToActorTopMoviePicks ->
             handleNavigation(
-                ActorDetailsNavEvent.NavigateToActorTopMoviePicks,
+                ActorDetailsNavEvent.NavigateToActorTopMoviePicks(actorId = effect.actorId),
             )
 
-        ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks ->
+        is ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks ->
             handleNavigation(
-                ActorDetailsNavEvent.NavigateToActorTopTvShowPicks,
+                ActorDetailsNavEvent.NavigateToActorTopTvShowPicks(actorId = effect.actorId),
             )
 
         ActorDetailsScreenEffect.NavigateToLogin ->
