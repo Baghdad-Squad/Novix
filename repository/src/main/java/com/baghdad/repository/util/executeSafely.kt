@@ -1,5 +1,6 @@
 package com.baghdad.repository.util
 
+import com.baghdad.domain.exception.ItemCreationFailedException
 import com.baghdad.domain.exception.LocalDataBaseException
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.exception.UnknownException
@@ -36,6 +37,8 @@ suspend fun <T> executeSafely(block: suspend () -> T): T {
         throw NetworkException()
     } catch (_: DatabaseException) {
         throw LocalDataBaseException()
+    } catch (_: ItemCreationFailedException) {
+        throw NetworkException()
     } catch (_: Exception) {
         throw UnknownException()
     }
@@ -123,5 +126,3 @@ suspend fun <TEntity, TDto> getLocalPagedSafely(
         prevKey = if (page > 1) page - 1 else null
     )
 }
-
-class SavedListCreationException(message: String) : Exception(message)
