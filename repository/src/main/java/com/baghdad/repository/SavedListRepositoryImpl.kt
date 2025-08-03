@@ -8,18 +8,23 @@ import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.SavedListDto
+import com.baghdad.repository.util.executeAuthorizedSafely
 
 class SavedListRepositoryImpl(
     private val remoteSavedListSource: RemoteSavedListDataSource,
-    private val localSessionDataStore : LocalSessionDataStore
+    private val localSessionDataStore: LocalSessionDataStore
 ) : SavedListRepository {
     override suspend fun getSavedLists(
         page: Int,
-        sessionId: String
+        pageSizes: Int,
     ): PagedResult<SavedList> {
-        return remoteSavedListSource.getSavedLists(
-            page = page,
-            sessionId = localSessionDataStore.getSessionId() ?: sessionId
-        ).toPagedResult(SavedListDto::toEntity)
+        val sessionId = localSessionDataStore.getSessionId().toString()
+        return executeAuthorizedSafely(sessionId) {
+            remoteSavedListSource.getSavedLists(
+                page = page,
+                sessionId = localSessionDataStore.getSessionId().toString()
+            ).toPagedResult(SavedListDto::toEntity)
+        }
     }
 }
+

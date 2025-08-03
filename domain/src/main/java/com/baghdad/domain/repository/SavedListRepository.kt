@@ -6,6 +6,6 @@ import com.baghdad.entity.savedList.SavedList
 interface SavedListRepository{
     suspend fun getSavedLists(
         page: Int,
-        sessionId: String
+        pageSizes: Int,
     ): PagedResult<SavedList>
 }

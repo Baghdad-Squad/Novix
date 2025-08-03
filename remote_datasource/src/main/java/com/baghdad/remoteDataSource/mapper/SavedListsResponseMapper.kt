@@ -5,14 +5,13 @@ import com.baghdad.remoteDataSource.response.UserListsResponse
 import com.baghdad.remoteDataSource.util.getNextKey
 import com.baghdad.remoteDataSource.util.getPreviousKey
 import com.baghdad.repository.model.PagedResultDto
-
 import com.baghdad.repository.model.SavedListDto
 
 
 fun UserListsResponse.toPagedSavedListsDtos(): PagedResultDto<SavedListDto> {
     return PagedResultDto(
-        data = this.results?.map { it.toSavedListDto() } ?: emptyList(),
-        nextKey = getNextKey(page, totalPages),
+        data = this.results?.takeIf { it.isEmpty() }?.map{ it.toSavedListDto() } ?: emptyList(),
+        nextKey = getNextKey(page, this.totalPages),
         prevKey = getPreviousKey(page)
     )
 }
