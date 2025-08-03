@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -135,14 +136,14 @@ fun EpisodeDetailsContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
+        backgroundBlur = { BackgroundBlur() }
     ) {
         LazyColumn(
             state = listState,
             contentPadding = PaddingValues(bottom = 72.dp),
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface),
+                    .fillMaxSize(),
         ) {
             item {
                 EpisodeHeaderWithDetailsCard(
