@@ -1,3 +1,8 @@
 package com.baghdad.remoteDataSource.apiService
 
-interface SavedListApiService
+import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
+import retrofit2.Response
+
+interface SavedListApiService {
+    suspend fun createSavedList(title: String): Response<CreateSavedListResponse>
+}
