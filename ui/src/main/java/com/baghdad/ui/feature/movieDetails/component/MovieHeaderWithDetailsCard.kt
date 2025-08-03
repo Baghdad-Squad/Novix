@@ -26,17 +26,23 @@ import com.baghdad.viewmodel.movieDetails.formatDuration
 
 @Composable
 fun MovieHeaderWithDetailsCard(
-    state: MovieDetailsState,
+    uiState: MovieDetailsState,
     listener: MovieDetailsInteractionListener,
     modifier: Modifier = Modifier
 ) {
-    val pagerState = rememberPagerState(pageCount = { state.movieImages.size })
+    val pagerState = rememberPagerState(pageCount = { uiState.movieImages.size })
+
+    val singlePagerState = rememberPagerState(pageCount = { 1 } )
+
+    val images = if (uiState.movieImages.isEmpty()) listOf(uiState.posterImageURL) else { uiState.movieImages }
+    val aspectRatio = if (uiState.movieImages.isNotEmpty()) { 1.778f } else { 1.2f }
+    val currentPagerState = if (uiState.movieImages.isEmpty()){ singlePagerState } else { pagerState }
 
     Box(modifier = modifier) {
         AutoSlidingImageCarousel(
-            imageUrls = state.movieImages,
-            imageAspectRatio = 1.778f,
-            pagerState = pagerState
+            imageUrls = images,
+            imageAspectRatio = aspectRatio,
+            pagerState = currentPagerState
         )
 
         Column(
@@ -44,7 +50,7 @@ fun MovieHeaderWithDetailsCard(
                 .align(Alignment.BottomCenter)
                 .offset(y = 116.dp)
         ) {
-            if (state.movieImages.size > 1) {
+            if (uiState.movieImages.size > 1) {
                 Row(
                     modifier = Modifier
                         .padding(bottom = 12.dp)
@@ -56,7 +62,7 @@ fun MovieHeaderWithDetailsCard(
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     CarousalDot(
-                        totalDots = state.movieImages.size,
+                        totalDots = uiState.movieImages.size,
                         selectedIndex = pagerState.currentPage,
                         modifier = Modifier
                     )
@@ -64,20 +70,20 @@ fun MovieHeaderWithDetailsCard(
             }
 
             MovieDetailsHeader(
-                title = state.movieName,
-                releaseDate = state.date,
-                rating = state.rating,
-                duration = if (isArabicSystemLocale()) arabicDuration(state.duration) else state.duration.formatDuration(),
-                categories = state.categories,
+                title = uiState.movieName,
+                releaseDate = uiState.date,
+                rating = uiState.rating,
+                duration = if (isArabicSystemLocale()) arabicDuration(uiState.duration) else uiState.duration.formatDuration(),
+                categories = uiState.categories,
                 onViewReviewClicked = {
-                    listener.onReviewClick(state.movieId)
+                    listener.onReviewClick(uiState.movieId)
                 },
                 onCategoryClick = { listener.onCategoryClick(it) },
                 modifier = Modifier
                     .padding(bottom = 16.dp)
                     .padding(horizontal = 16.dp)
                     .align(Alignment.CenterHorizontally)
-                    .then(Modifier.padding(bottom = if (state.categories.isEmpty()) 24.dp else 0.dp))
+                    .then(Modifier.padding(bottom = if (uiState.categories.isEmpty()) 24.dp else 0.dp))
             )
         }
     }

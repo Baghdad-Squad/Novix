@@ -208,7 +208,7 @@ private fun MovieDetailsContent(
             ) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     MovieHeaderWithDetailsCard(
-                        state = state,
+                        uiState = state,
                         listener = listener
                     )
                 }
