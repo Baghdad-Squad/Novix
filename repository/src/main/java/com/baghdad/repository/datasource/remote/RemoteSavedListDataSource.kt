@@ -6,6 +6,8 @@ import com.baghdad.repository.model.SavedListDto
 interface RemoteSavedListDataSource {
     suspend fun getSavedLists(
         page: Int,
+        pageSize: Int,
+        accountId :Long,
         sessionId: String,
         ): PagedResultDto<SavedListDto>
 }

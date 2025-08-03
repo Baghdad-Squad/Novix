@@ -11,7 +11,8 @@ interface SavedListApiService {
     @Authenticated
     @GET(LISTS_ENDPOINT)
     suspend fun getSavedLists(
-        @Path("session_id") sessionId: String,
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
         @Query("page") page: Int,
     ): Response<UserListsResponse>
 
