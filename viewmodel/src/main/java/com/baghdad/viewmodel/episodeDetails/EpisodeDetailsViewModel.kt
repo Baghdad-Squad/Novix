@@ -24,10 +24,10 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"])
     private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"])
-//    private val tvShowId: Long = checkNotNull(savedStateHandle["tvShowId"])
+    private val tvShowId: Long = checkNotNull(savedStateHandle["tvShowId"])
 
     init {
-        loadInitData(14L, seasonNumber, episodeNumber)
+        loadInitData(tvShowId, seasonNumber, episodeNumber)
     }
 
     private fun loadInitData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
@@ -157,7 +157,7 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         loadInitData(
-            14L, seasonNumber, episodeNumber
+            tvShowId, seasonNumber, episodeNumber
         )
     }
 }

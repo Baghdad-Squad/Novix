@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.tvShowDetails
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
@@ -14,10 +13,8 @@ import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import kotlinx.coroutines.CoroutineDispatcher
-import com.baghdad.viewmodel.review.ContentType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 @HiltViewModel
@@ -106,7 +103,7 @@ class TvShowDetailsViewModel @Inject constructor(
     }
 
     override fun onClickEpisode(seasonNumber: Int, episodeNumber: Int) {
-        sendEffect(TvShowDetailsScreenEffect.NavigateToEpisodeDetails(seasonNumber, episodeNumber))
+        sendEffect(TvShowDetailsScreenEffect.NavigateToEpisodeDetails(tvShowId = tvShowId , seasonNumber, episodeNumber))
     }
 
     override fun onClickReviews(tvShowId: Long) {

@@ -175,15 +175,15 @@ class ActorDetailsViewModel @Inject constructor(
     }
 
     override fun onViewAllGalleryClick() {
-        sendEffect(ActorDetailsScreenEffect.NavigateToActorGallery)
+        sendEffect(ActorDetailsScreenEffect.NavigateToActorGallery(actorId = actorId))
     }
 
     override fun onViewAllTopMoviesPicksClick() {
-        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopMoviePicks)
+        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopMoviePicks(actorId = actorId))
     }
 
     override fun onViewAllTopTvShowsClick() {
-//        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks)
+        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks(actorId = actorId))
     }
 
     override fun onMovieCardClick(movieId: Long) {
