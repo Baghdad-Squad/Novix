@@ -5,5 +5,5 @@ import com.baghdad.domain.repository.ContinueWatchingRepository
 class ObserveContinueWatchingUseCase(
     private val continueWatchingRepository: ContinueWatchingRepository,
 ) {
-    operator fun invoke() = continueWatchingRepository.observeContinueWatching()
+    suspend operator fun invoke() = continueWatchingRepository.observeContinueWatching()
 }
