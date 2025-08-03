@@ -36,6 +36,7 @@ class TvShowDetailsViewModelTest {
 
     @BeforeEach
     fun setUp() {
+
         Dispatchers.setMain(testDispatcher)
         getTvShowDetailsUseCase = mockk()
         getTvShowCastMembersUseCase = mockk()
@@ -133,22 +134,25 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
-        val job = launch {
-            tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
-        }
+        val job = launch { tvShowDetailsViewModel.uiEffect.collect { effects.add(it) } }
+
+
         // When
         tvShowDetailsViewModel.onClickEpisode(seasonNumber, episodeNumber)
         advanceUntilIdle()
         job.cancel()
+
         // Then
-        val expectedEffect =
-            TvShowDetailsScreenEffect.NavigateToEpisodeDetails(
-                tvShowId = tvShowId,
-                seasonNumber,
-                episodeNumber
-            )
-        assertThat(effects.contains(expectedEffect)).isTrue()
+        val expectedEffect = TvShowDetailsScreenEffect.NavigateToEpisodeDetails(
+            tvShowId = tvShowId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber
+        )
+
+        println("Actual effects: $effects")
+        assertThat(effects).containsExactly(expectedEffect)
     }
 
     @Test
@@ -228,7 +232,7 @@ class TvShowDetailsViewModelTest {
 
         private val savedStateHandle = SavedStateHandle(
             mapOf(
-                "tvShowId" to 1L,
+                "tvShowId" to 123L,
             )
         )
         const val tvShowId = 123L
