@@ -9,8 +9,7 @@ class GetSavedListsUseCase(
 ) {
     suspend operator fun invoke(
         page: Int,
-        pageSizes: Int
     ): PagedResult<SavedList> {
-        return savedListRepository.getSavedLists(page,pageSizes)
+        return savedListRepository.getSavedLists(page)
     }
 }

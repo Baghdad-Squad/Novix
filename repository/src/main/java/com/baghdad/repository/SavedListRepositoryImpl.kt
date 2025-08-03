@@ -16,13 +16,12 @@ class SavedListRepositoryImpl(
 ) : SavedListRepository {
     override suspend fun getSavedLists(
         page: Int,
-        pageSizes: Int,
     ): PagedResult<SavedList> {
         val sessionId = localSessionDataStore.getSessionId().toString()
         return executeAuthorizedSafely(sessionId) {
             remoteSavedListSource.getSavedLists(
                 page = page,
-                sessionId = localSessionDataStore.getSessionId().toString()
+                sessionId = sessionId
             ).toPagedResult(SavedListDto::toEntity)
         }
     }

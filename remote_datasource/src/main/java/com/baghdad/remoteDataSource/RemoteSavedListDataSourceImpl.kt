@@ -15,13 +15,13 @@ class RemoteSavedListDataSourceImpl(
 ) : RemoteSavedListDataSource {
     override suspend fun getSavedLists(
         page: Int,
-        sessionId: String
+        sessionId: String,
     ): PagedResultDto<SavedListDto> {
         val listsResponse = handleRequest<UserListsResponse>(
             apiCall = {
                 savedListApiService.getSavedLists(
-                    page,
-                    sessionId
+                    page = page,
+                    sessionId = sessionId,
                 )
                       },
             logger = logger,
