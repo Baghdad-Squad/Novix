@@ -24,7 +24,7 @@ fun NavGraphBuilder.tvShowDetailsNavGraph(navController: NavHostController) {
             }
         }
         composable<TvShowDetailsRoute.EpisodeDetailsScreen> { backStackEntry ->
-            EpisodeDetailsScreen{ navEvent ->
+            EpisodeDetailsScreen { navEvent ->
                 handleTvShowDetailsNavEvent(navEvent, navController)
             }
         }
@@ -33,13 +33,17 @@ fun NavGraphBuilder.tvShowDetailsNavGraph(navController: NavHostController) {
 
 private fun handleTvShowDetailsNavEvent(
     event: TvShowDetailsNavEvent,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     when (event) {
         TvShowDetailsNavEvent.NavigateBack -> navController.popBackStack()
 
         is TvShowDetailsNavEvent.NavigateToEpisodeDetails -> navController.navigate(
-            TvShowDetailsRoute.EpisodeDetailsScreen(event.seasonNumber, event.episodeNumber)
+            TvShowDetailsRoute.EpisodeDetailsScreen(
+                tvShowId = event.tvShowId,
+                event.seasonNumber,
+                event.episodeNumber
+            )
         )
 
         is TvShowDetailsNavEvent.NavigateToActorDetails -> navController.navigate(

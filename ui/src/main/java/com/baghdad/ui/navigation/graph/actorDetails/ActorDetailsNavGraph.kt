@@ -19,7 +19,7 @@ fun NavGraphBuilder.actorDetailsNavGraph(navController: NavHostController) {
         startDestination = ActorDetailsRoute.ActorDetailsScreen
     ) {
         composable<ActorDetailsRoute.ActorDetailsScreen> { backStackEntry ->
-            ActorDetailsScreen{ event ->
+            ActorDetailsScreen { event ->
                 handleActorDetailsNavigation(event, navController)
             }
         }
@@ -43,28 +43,28 @@ fun NavGraphBuilder.actorDetailsNavGraph(navController: NavHostController) {
 
 private fun handleActorDetailsNavigation(
     event: ActorDetailsNavEvent,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     when (event) {
         ActorDetailsNavEvent.NavigateBack -> navController.popBackStack()
-        ActorDetailsNavEvent.NavigateToActorGallery -> navController.navigate(
-            ActorDetailsRoute.ActorGalleryScreen
+        is ActorDetailsNavEvent.NavigateToActorGallery -> navController.navigate(
+            route = ActorDetailsRoute.ActorGalleryScreen(event.actorId)
         )
 
-        ActorDetailsNavEvent.NavigateToActorTopMoviePicks -> navController.navigate(
-            ActorDetailsRoute.ActorTopMoviePicksScreen
+        is ActorDetailsNavEvent.NavigateToActorTopMoviePicks -> navController.navigate(
+            route = ActorDetailsRoute.ActorTopMoviePicksScreen(event.actorId)
         )
 
-        ActorDetailsNavEvent.NavigateToActorTopTvShowPicks -> navController.navigate(
-            ActorDetailsRoute.ActorTopTvShowPicksScreen
+        is ActorDetailsNavEvent.NavigateToActorTopTvShowPicks -> navController.navigate(
+            route = ActorDetailsRoute.ActorTopTvShowPicksScreen(actorId = event.actorId)
         )
 
         is ActorDetailsNavEvent.NavigateToMovieDetails -> navController.navigate(
-            MovieDetailsGraph(event.movieId)
+            route =  MovieDetailsGraph(event.movieId)
         )
 
         is ActorDetailsNavEvent.NavigateToTvShowDetails -> navController.navigate(
-            TvShowDetailsGraph(event.tvShowId)
+            route = TvShowDetailsGraph(event.tvShowId)
         )
 
         ActorDetailsNavEvent.NavigateToLogin -> navController.navigate(AuthenticationGraph)
