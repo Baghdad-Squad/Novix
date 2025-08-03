@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 abstract class NetworkModule {
 
     @Binds
-    abstract fun provideLanguageProvider(imp : AppLanguageProvider): LanguageProvider
+    abstract fun provideLanguageProvider(appLanguageProvider : AppLanguageProvider): LanguageProvider
 
     companion object {
         private const val timeOut = 20L

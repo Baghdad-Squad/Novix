@@ -20,15 +20,6 @@ import javax.inject.Named
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
 
-    val Context.datastore: DataStore<Preferences> by preferencesDataStore(
-        name = "app-preferences"
-    )
-    val Context.userDataStore: DataStore<User> by dataStore(
-        fileName = "user.pb",
-        serializer = UserSerializer
-    )
-
-
 
     @Provides
     @Named("preferences")
@@ -42,5 +33,11 @@ object DataStoreModule {
         return context.userDataStore
     }
 
-
+    val Context.datastore: DataStore<Preferences> by preferencesDataStore(
+        name = "app-preferences"
+    )
+    val Context.userDataStore: DataStore<User> by dataStore(
+        fileName = "user.pb",
+        serializer = UserSerializer
+    )
 }

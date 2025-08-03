@@ -34,29 +34,29 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideMovieDao(db: NovixDatabase): MovieDao = db.movieDao()
+    fun provideMovieDao(database: NovixDatabase): MovieDao = database.movieDao()
 
     @Provides
-    fun provideTvShowDao(db: NovixDatabase): TvShowDao = db.tvShowDao()
+    fun provideTvShowDao(database: NovixDatabase): TvShowDao = database.tvShowDao()
 
     @Provides
-    fun provideRecentlyViewedDao(db: NovixDatabase): RecentlyViewedDao = db.recentViewedDao()
+    fun provideRecentlyViewedDao(database: NovixDatabase): RecentlyViewedDao = database.recentViewedDao()
 
     @Provides
-    fun provideRecentSearchDao(db: NovixDatabase): RecentSearchDao = db.recentSearchDao()
+    fun provideRecentSearchDao(database: NovixDatabase): RecentSearchDao = database.recentSearchDao()
 
     @Provides
-    fun provideActorDao(db: NovixDatabase): ActorDao = db.actorDao()
+    fun provideActorDao(database: NovixDatabase): ActorDao = database.actorDao()
 
     @Provides
-    fun provideGenreDao(db: NovixDatabase): GenreDao = db.genreDao()
+    fun provideGenreDao(database: NovixDatabase): GenreDao = database.genreDao()
 
     @Provides
-    fun provideFavoriteGenreDao(db: NovixDatabase): FavoriteGenreDao = db.favoriteGenreDao()
+    fun provideFavoriteGenreDao(database: NovixDatabase): FavoriteGenreDao = database.favoriteGenreDao()
 
     @Provides
-    fun provideSearchQueryDao(db: NovixDatabase): SearchQueryDao = db.searchQueryDao()
+    fun provideSearchQueryDao(database: NovixDatabase): SearchQueryDao = database.searchQueryDao()
 
     @Provides
-    fun provideContinueWatchingDao(db: NovixDatabase): ContinueWatchingDao = db.continueWatchingDao()
+    fun provideContinueWatchingDao(database: NovixDatabase): ContinueWatchingDao = database.continueWatchingDao()
 }

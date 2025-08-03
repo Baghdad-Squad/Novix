@@ -24,25 +24,25 @@ import dagger.hilt.components.SingletonComponent
 abstract class RemoteDataSourceModule {
 
     @Binds
-    abstract fun provideRemoteAuthenticationImpl(imp: RemoteAuthenticationImpl): RemoteAuthenticationDataSource
+    abstract fun provideRemoteAuthenticationImpl(remoteAuthenticationImpl: RemoteAuthenticationImpl): RemoteAuthenticationDataSource
 
     @Binds
-    abstract fun provideSearchRemoteDataSource(impl: RemoteSearchDataSourceImpl): RemoteSearchDataSource
+    abstract fun provideSearchRemoteDataSource(remoteSearchDataSourceImpl: RemoteSearchDataSourceImpl): RemoteSearchDataSource
 
     @Binds
-    abstract fun provideRemoteGenreDataSource(impl: RemoteGenreDataSourceImpl): RemoteGenreDataSource
+    abstract fun provideRemoteGenreDataSource(remoteGenreDataSourceImpl: RemoteGenreDataSourceImpl): RemoteGenreDataSource
 
     @Binds
-    abstract fun provideRemoteActorDataSource(impl: RemoteActorDataSourceImpl): RemoteActorDataSource
-
-
-    @Binds
-    abstract fun provideRemoteMovieDataSource(impl: RemoteMovieDataSourceImpl): RemoteMovieDataSource
+    abstract fun provideRemoteActorDataSource(remoteActorDataSourceImpl: RemoteActorDataSourceImpl): RemoteActorDataSource
 
 
     @Binds
-    abstract fun provideRemoteEpisodeDataSource(impl: RemoteEpisodeDataSourceImpl): RemoteEpisodeDataSource
+    abstract fun provideRemoteMovieDataSource(remoteMovieDataSourceImpl: RemoteMovieDataSourceImpl): RemoteMovieDataSource
+
 
     @Binds
-    abstract fun provideTvShowRemoteDataSource(impl: RemoteTvShowDataSourceImpl): RemoteTvShowDataSource
+    abstract fun provideRemoteEpisodeDataSource(remoteEpisodeDataSourceImpl: RemoteEpisodeDataSourceImpl): RemoteEpisodeDataSource
+
+    @Binds
+    abstract fun provideTvShowRemoteDataSource(remoteTvShowDataSourceImpl: RemoteTvShowDataSourceImpl): RemoteTvShowDataSource
 }

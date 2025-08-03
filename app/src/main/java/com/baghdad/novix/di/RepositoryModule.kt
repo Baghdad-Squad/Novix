@@ -7,7 +7,6 @@ import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.FavoriteGenreRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.domain.repository.RecentlyViewedRepository
-import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.repository.ActorRepositoryImpl
@@ -17,7 +16,6 @@ import com.baghdad.repository.EpisodeRepositoryImpl
 import com.baghdad.repository.FavoriteGenreRepositoryImpl
 import com.baghdad.repository.MovieRepositoryImpl
 import com.baghdad.repository.RecentlyViewedRepositoryImpl
-import com.baghdad.repository.SavedListRepositoryImpl
 import com.baghdad.repository.SearchRepositoryImpl
 import com.baghdad.repository.TvShowRepositoryImpl
 import dagger.Binds
@@ -31,31 +29,31 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun provideSearchRepository(impl: SearchRepositoryImpl): SearchRepository
+    abstract fun provideSearchRepository(searchRepositoryImpl: SearchRepositoryImpl): SearchRepository
 
     @Binds
-    abstract fun provideMovieRepository(impl: MovieRepositoryImpl): MovieRepository
+    abstract fun provideMovieRepository(movieRepositoryImpl: MovieRepositoryImpl): MovieRepository
 
     @Binds
-    abstract fun provideTvShowRepository(impl: TvShowRepositoryImpl): TvShowRepository
+    abstract fun provideTvShowRepository(tvShowRepositoryImpl: TvShowRepositoryImpl): TvShowRepository
 
     @Binds
-    abstract fun provideRecentlyViewedRepository(impl: RecentlyViewedRepositoryImpl): RecentlyViewedRepository
+    abstract fun provideRecentlyViewedRepository(recentlyViewedRepositoryImpl: RecentlyViewedRepositoryImpl): RecentlyViewedRepository
 
     @Binds
-    abstract fun provideActorRepository(impl: ActorRepositoryImpl): ActorRepository
+    abstract fun provideActorRepository(actorRepositoryImpl: ActorRepositoryImpl): ActorRepository
 
     @Binds
-    abstract fun provideEpisodeRepository(impl: EpisodeRepositoryImpl): EpisodeRepository
+    abstract fun provideEpisodeRepository(episodeRepositoryImpl: EpisodeRepositoryImpl): EpisodeRepository
 
     @Binds
-    abstract fun provideFavoriteGenreRepository(impl: FavoriteGenreRepositoryImpl): FavoriteGenreRepository
+    abstract fun provideFavoriteGenreRepository(favoriteGenreRepositoryImpl: FavoriteGenreRepositoryImpl): FavoriteGenreRepository
 
     @Binds
-    abstract fun provideContinueWatchingRepository(impl: ContinueWatchingRepositoryImpl): ContinueWatchingRepository
+    abstract fun provideContinueWatchingRepository(continueWatchingRepositoryImpl: ContinueWatchingRepositoryImpl): ContinueWatchingRepository
 
     @Binds
-    abstract fun provideAuthRepository(impl: AuthenticationRepositoryImpl): AuthenticationRepository
+    abstract fun provideAuthRepository(authenticationRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
 
 
 }

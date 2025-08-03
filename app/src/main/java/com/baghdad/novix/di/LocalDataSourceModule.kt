@@ -32,37 +32,37 @@ import dagger.hilt.components.SingletonComponent
 abstract class LocalDataSourceModule {
 
     @Binds
-    abstract fun provideLocalSessionDataStore(impl: LocalSessionDataStoreImpl): LocalSessionDataStore
+    abstract fun provideLocalSessionDataStore(localSessionDataStoreImpl: LocalSessionDataStoreImpl): LocalSessionDataStore
 
     @Binds
-    abstract fun provideLocalUserDataStore(impl: LocalUserDataStoreImpl): LocalUserDataStore
+    abstract fun provideLocalUserDataStore(localUserDataStoreImpl: LocalUserDataStoreImpl): LocalUserDataStore
 
     @Binds
-    abstract fun provideLocalActorDataSource(impl: LocalActorDataSourceImpl): LocalActorDataSource
+    abstract fun provideLocalActorDataSource(localActorDataSourceImpl: LocalActorDataSourceImpl): LocalActorDataSource
 
     @Binds
-    abstract fun provideLocalContinueWatchingDataSource(impl: LocalContinueWatchingDataSourceImpl): LocalContinueWatchingDataSource
+    abstract fun provideLocalContinueWatchingDataSource(localContinueWatchingDataSourceImpl: LocalContinueWatchingDataSourceImpl): LocalContinueWatchingDataSource
 
     @Binds
-    abstract fun provideLocalFavoriteGenreDataSource(impl: LocalFavoriteGenreDataSourceImpl): LocalFavoriteGenreDataSource
+    abstract fun provideLocalFavoriteGenreDataSource(localFavoriteGenreDataSourceImpl: LocalFavoriteGenreDataSourceImpl): LocalFavoriteGenreDataSource
 
     @Binds
-    abstract fun provideLocalGenreDataSource(impl: LocalGenreDataSourceImpl): LocalGenreDataSource
+    abstract fun provideLocalGenreDataSource(localGenreDataSourceImpl: LocalGenreDataSourceImpl): LocalGenreDataSource
 
     @Binds
-    abstract fun provideLocalMovieDataSource(impl: LocalMovieDataSourceImpl): LocalMovieDataSource
+    abstract fun provideLocalMovieDataSource(localMovieDataSourceImpl: LocalMovieDataSourceImpl): LocalMovieDataSource
 
     @Binds
-    abstract fun provideLocalRecentlyViewedDataSource(impl: LocalRecentlyViewedDataSourceImpl): LocalRecentlyViewedDataSource
+    abstract fun provideLocalRecentlyViewedDataSource(localRecentlyViewedDataSourceImpl: LocalRecentlyViewedDataSourceImpl): LocalRecentlyViewedDataSource
 
     @Binds
-    abstract fun provideLocalSearchDataSource(impl: LocalSearchDataSourceImpl): LocalRecentSearchDataSource
+    abstract fun provideLocalSearchDataSource(localSearchDataSourceImpl: LocalSearchDataSourceImpl): LocalRecentSearchDataSource
 
     @Binds
-    abstract fun provideLocalSearchQueryDataSource(impl: LocalSearchQueryDataSourceImpl): LocalSearchQueryDataSource
+    abstract fun provideLocalSearchQueryDataSource(localSearchQueryDataSourceImpl: LocalSearchQueryDataSourceImpl): LocalSearchQueryDataSource
 
     @Binds
-    abstract fun provideLocalTvShowDataSource(impl: LocalTvShowDataSourceImpl): LocalTvShowDataSource
+    abstract fun provideLocalTvShowDataSource(localTvShowDataSourceImpl: LocalTvShowDataSourceImpl): LocalTvShowDataSource
 
 
 }

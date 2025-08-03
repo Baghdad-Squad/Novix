@@ -13,6 +13,6 @@ import dagger.hilt.components.SingletonComponent
 abstract class LoggerModule{
 
     @Binds
-    abstract fun provideLogger(imp: CrashlyticsLogger): Logger
+    abstract fun provideLogger(crashlyticsLogger: CrashlyticsLogger): Logger
 
 }
