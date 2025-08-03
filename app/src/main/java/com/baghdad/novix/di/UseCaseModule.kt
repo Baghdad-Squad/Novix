@@ -30,6 +30,7 @@ import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
 import com.baghdad.domain.usecase.review.GetMovieReviewsUseCase
 import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
+import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
@@ -94,5 +95,6 @@ val useCaseModule = module {
     singleOf(::GetPopularMoviesUseCase)
     singleOf(::GetPopularTvShowsUseCase)
     singleOf(::IsLoggedInUseCase)
+    singleOf(::CreateSavedListUseCase)
 }
 
