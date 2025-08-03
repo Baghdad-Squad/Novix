@@ -1,6 +1,7 @@
 package com.baghdad.remoteDataSource.apiService
 
 import com.baghdad.remoteDataSource.interceptor.Authenticated
+import com.baghdad.remoteDataSource.interceptor.ForceLocaleEnglish
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
@@ -41,12 +42,14 @@ interface MovieApiService {
         @Query("page") page: Int
     ): Response<SimilarMovieResponse>
 
+    @ForceLocaleEnglish
     @Authenticated
     @GET(MOVIE_REVIEWS_ENDPOINT)
     suspend fun getMovieReviews(
         @Path("movie_id") movieId: Long
     ): Response<ReviewsResponse>
 
+    @ForceLocaleEnglish
     @Authenticated
     @GET(MOVIE_IMAGES_ENDPOINT)
     suspend fun getMovieImages(
