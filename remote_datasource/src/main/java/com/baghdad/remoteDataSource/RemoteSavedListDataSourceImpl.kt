@@ -1,8 +1,7 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.SavedListApiService
-import com.baghdad.remoteDataSource.request.AddItemsRequest
-import com.baghdad.remoteDataSource.request.MediaItem
+import com.baghdad.remoteDataSource.request.AddItemRequest
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.logger.Logger
@@ -13,29 +12,18 @@ class RemoteSavedListDataSourceImpl(
 ) : RemoteSavedListDataSource {
 
     override suspend fun addMovieToSavedList(listId: Long, movieId: Long, sessionId: String) {
-        val body = AddItemsRequest(
-            items = listOf(
-                MediaItem(mediaType = "movie", mediaId = movieId)
-            )
-        )
+        val body = AddItemRequest(mediaId = movieId)
 
-        return handleRequest(
+        handleRequest(
             apiCall = { savedListApiService.addItemToSavedList(listId, body, sessionId) },
             logger = logger
         )
     }
 
     override suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long, sessionId: String) {
-        val body = AddItemsRequest(
-            items = listOf(
-                MediaItem(
-                    mediaType = "tv",
-                    mediaId = tvShowId
-                )
-            )
-        )
+        val body = AddItemRequest(mediaId = tvShowId)
 
-        return handleRequest(
+        handleRequest(
             apiCall = { savedListApiService.addItemToSavedList(listId, body, sessionId) },
             logger = logger
         )
