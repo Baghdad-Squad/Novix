@@ -82,7 +82,7 @@ fun MainScreen(
             NovixNavHost(
                 modifier = Modifier.padding(bottom = animatedBottomPadding),
                 navController = navController,
-                startDestination = if (isLoggedIn == true) Graph.HomeGraph else Graph.AuthenticationGraph
+                startDestination = if (isLoggedIn == true) Graph.HomeGraph else Graph.OnBoardingGraph
             )
         }
     }

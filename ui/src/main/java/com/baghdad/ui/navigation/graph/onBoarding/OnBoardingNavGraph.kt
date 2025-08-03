@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.baghdad.ui.feature.onBoarding.OnBoardingScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.OnBoardingRoute
@@ -13,7 +14,14 @@ import com.baghdad.ui.navigation.route.OnBoardingRoute
 fun NavGraphBuilder.onBoardingNavGraph(navController: NavHostController) {
     navigation<Graph.OnBoardingGraph>(startDestination = OnBoardingRoute.OnBoardingScreen) {
         composable<OnBoardingRoute.OnBoardingScreen> {
-            DummyScreen(title = "OnBoarding Screen")
+            OnBoardingScreen(
+                handleNavigation = {event ->
+                    handleOnBoardingNavigation(
+                        event = event,
+                        navController = navController
+                    )
+                }
+            )
         }
         composable<OnBoardingRoute.WelcomeScreen> {
             DummyScreen(title = "Welcome Screen")
