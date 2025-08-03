@@ -5,8 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     id("com.google.protobuf") version "0.9.4"
+    alias(libs.plugins.kotlin.kapt)
     jacoco
-    kotlin("kapt")
 }
 
 android {

@@ -12,7 +12,8 @@ plugins {
     alias(libs.plugins.firebase.perf)
     jacoco
     alias(libs.plugins.hilt.android)
-    kotlin("kapt")
+    alias(libs.plugins.kotlin.kapt)
+
 }
 
 val formattedDate: String = ZonedDateTime.now(ZoneId.of("Africa/Cairo"))
@@ -174,5 +175,4 @@ gradle.projectsEvaluated {
 
 kapt {
     correctErrorTypes = true
-
 }

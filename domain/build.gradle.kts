@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     jacoco
-    kotlin("kapt")
+    alias(libs.plugins.kotlin.kapt)
 
 }
 
