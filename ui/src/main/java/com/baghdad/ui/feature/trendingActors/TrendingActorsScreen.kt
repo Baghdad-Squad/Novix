@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -79,8 +80,7 @@ fun TrendingActorsContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(top = 22.dp, bottom = 8.dp)
-                    .background(Theme.color.surface),
+                    .padding(top = 22.dp, bottom = 8.dp),
                 onGoBackClick = {
                     listener.onBackClick()
                 },
@@ -95,12 +95,12 @@ fun TrendingActorsContent(
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
-        }
+        },
+        backgroundBlur = { BackgroundBlur() }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.color.surface)
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
