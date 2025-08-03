@@ -43,6 +43,10 @@ android {
     }
 }
 
+tasks.withType<Test> {
+    jvmArgs("-XX:+EnableDynamicAgentLoading")
+}
+
 dependencies {
     implementation(project(":domain"))
     implementation(libs.bundles.coroutines)
@@ -61,3 +65,4 @@ dependencies {
 kapt{
     correctErrorTypes = true
 }
+
