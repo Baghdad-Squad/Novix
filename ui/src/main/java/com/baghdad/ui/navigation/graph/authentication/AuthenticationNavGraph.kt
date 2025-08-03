@@ -11,6 +11,7 @@ import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.AuthenticationRoute.ForgotPasswordScreen
 import com.baghdad.ui.navigation.route.AuthenticationRoute.SignUpScreen
 import com.baghdad.ui.navigation.route.Graph
+import com.baghdad.ui.navigation.route.OnBoardingRoute
 
 fun NavGraphBuilder.authenticationNavGraph(navController: NavHostController) {
     navigation<Graph.AuthenticationGraph>(
@@ -67,7 +68,9 @@ private fun handleAuthenticationNavigation(
         }
 
         AuthenticationNavEvent.NavigateBack -> {
-            navController.popBackStack()
+            navController.navigate(OnBoardingRoute.WelcomeScreen){
+                popUpTo(OnBoardingRoute.WelcomeScreen) { inclusive = true }
+            }
         }
     }
 }

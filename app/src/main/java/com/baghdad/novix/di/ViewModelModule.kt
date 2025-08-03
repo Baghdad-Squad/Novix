@@ -19,6 +19,7 @@ import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
+import com.baghdad.viewmodel.welcome.WelcomeViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -92,4 +93,5 @@ val viewModelModule = module {
     viewModelOf(::TrendingTvShowViewModel)
     viewModelOf(::TrendingMoviesViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::WelcomeViewModel)
 }
