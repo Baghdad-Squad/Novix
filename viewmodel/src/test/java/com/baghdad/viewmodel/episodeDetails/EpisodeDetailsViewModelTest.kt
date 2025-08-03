@@ -207,7 +207,7 @@ class EpisodeDetailsViewModelTest {
         coEvery { getEpisodeDetailsUseCase(any(), any(), any()) } throws exception
 
         val savedStateHandle = SavedStateHandle(mapOf(
-            "tvShowId" to 1L,
+            "tvShowId" to tvShowId,
             "seasonNumber" to seasonNumber,
             "episodeNumber" to episodeNumber,
 
@@ -233,7 +233,7 @@ class EpisodeDetailsViewModelTest {
         val exception = RuntimeException()
         coEvery { getEpisodeCastMembersUseCase(any(), any(), any()) } throws exception
         val savedStateHandle = SavedStateHandle(mapOf(
-            "tvShowId" to 1L,
+            "tvShowId" to tvShowId,
             "seasonNumber" to seasonNumber,
             "episodeNumber" to episodeNumber,
 

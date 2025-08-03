@@ -137,7 +137,7 @@ class ActorDetailsViewModelTest {
             viewModel.onViewAllTopTvShowsClick()
             advanceUntilIdle()
             // Then
-//            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks).isTrue()
+            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks).isTrue()
             job.cancel()
         }
 
