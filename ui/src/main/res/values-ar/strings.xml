@@ -112,5 +112,9 @@
     <string name="default_image">"الصورة الافتراضية "</string>
     <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
 
+
+    <string name="skip">تخطي</string>
+
+
 </resources>
 
