@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DeleteSavedListUseCase @Inject constructor(
     private val savedListRepository: SavedListRepository
 ) {
-    suspend operator fun invoke(title: String) {
-        savedListRepository.deleteSavedListByTitle(title)
+    suspend operator fun invoke(listId: Long) {
+        savedListRepository.deleteSavedListById(listId)
     }
 }
