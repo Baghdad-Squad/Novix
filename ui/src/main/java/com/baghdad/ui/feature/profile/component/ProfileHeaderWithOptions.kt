@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.DropDownMenu
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
@@ -101,9 +102,9 @@ fun ProfileHeaderWithOption(
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(start = 12.dp, top = 13.dp, bottom = 13.dp)
+                        .padding(start = 12.dp, top = 12.dp, bottom = 12.dp)
                         .background(color = Theme.color.surface, shape = RoundedCornerShape(8.dp))
-                        .clickable { onLogoutClick },
+                        .noRippleClickable { onLogoutClick },
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Icon(
