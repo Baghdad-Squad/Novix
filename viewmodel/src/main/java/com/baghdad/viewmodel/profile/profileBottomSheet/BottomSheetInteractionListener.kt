@@ -10,4 +10,5 @@ interface BottomSheetInteractionListener {
     fun onModerateContentRestrictionClick()
     fun onvContentRestrictionClick()
     fun onSaveClick()
+    fun onLogOutClick()
 }
