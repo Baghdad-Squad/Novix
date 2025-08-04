@@ -56,15 +56,6 @@ class SavedListRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSavedListDetails(
-        listId: Long,
-        page: Int,
-        pageSize: Int,
-    ): SavedListDetails =
-        executeSafely {
-            remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toEntity()
-        }
-
     override suspend fun removeMovieFromSavedList(listId: Long, movieId: Long) {
         executeSafely {
             remoteSavedListSource.removeMovieFromSavedList(listId, movieId)
@@ -76,4 +67,13 @@ class SavedListRepositoryImpl @Inject constructor(
             remoteSavedListSource.removeTvShowFromSavedList(listId, tvShowId)
         }
     }
+
+    override suspend fun getSavedListDetails(
+        listId: Long,
+        page: Int,
+        pageSize: Int,
+    ): SavedListDetails =
+        executeSafely {
+            remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toEntity()
+        }
 }

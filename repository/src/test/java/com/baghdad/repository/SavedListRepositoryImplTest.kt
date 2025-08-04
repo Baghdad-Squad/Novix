@@ -225,6 +225,26 @@ class SavedListRepositoryImplTest {
         }
 
     @Test
+    fun `should remove movie from saved list when the movie removed successfully`() = runTest {
+        // Given
+        coEvery { remoteSource.removeMovieFromSavedList(listId, movieId) } returns Unit
+        // When
+        repository.removeMovieFromSavedList(listId, movieId)
+        // Then
+        coVerify { remoteSource.removeMovieFromSavedList(listId, movieId) }
+    }
+
+    @Test
+    fun `should remove tvShow from saved list when the tvShow removed successfully`() = runTest {
+        // Given
+        coEvery { remoteSource.removeTvShowFromSavedList(listId, movieId) } returns Unit
+        // When
+        repository.removeTvShowFromSavedList(listId, movieId)
+        // Then
+        coVerify { remoteSource.removeTvShowFromSavedList(listId, movieId) }
+    }
+
+    @Test
     fun `should createSavedList not crash when session ID is null`() =
         runBlocking {
             // Given
