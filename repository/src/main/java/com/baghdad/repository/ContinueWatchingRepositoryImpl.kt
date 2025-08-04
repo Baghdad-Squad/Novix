@@ -12,11 +12,11 @@ import com.baghdad.repository.model.ContinueWatchingDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getLocalPagedSafely
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class ContinueWatchingRepositoryImpl(
+class ContinueWatchingRepositoryImpl @Inject constructor(
     private val localContinueWatchingDataSource: LocalContinueWatchingDataSource,
     private val authenticationRepository: AuthenticationRepository
 ) : ContinueWatchingRepository {
@@ -33,7 +33,8 @@ class ContinueWatchingRepositoryImpl(
                     localContinueWatchingDataSource.getContinueWatching(
                         it.id,
                         pageSize,
-                        page,)
+                        page,
+                    )
                 },
                 mapToEntity = ContinueWatchingDto::toEntity,
             )

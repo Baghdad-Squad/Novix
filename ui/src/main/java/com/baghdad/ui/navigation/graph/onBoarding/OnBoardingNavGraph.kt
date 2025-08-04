@@ -12,7 +12,7 @@ import com.baghdad.ui.navigation.route.OnBoardingRoute
 
 
 fun NavGraphBuilder.onBoardingNavGraph(navController: NavHostController) {
-    navigation<Graph.OnBoardingGraph>(startDestination = OnBoardingRoute.WelcomeScreen) {
+    navigation<Graph.OnBoardingGraph>(startDestination = OnBoardingRoute.OnBoardingScreen) {
         composable<OnBoardingRoute.OnBoardingScreen> {
             DummyScreen(title = "OnBoarding Screen")
         }

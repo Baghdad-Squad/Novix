@@ -7,9 +7,12 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 
-class TrendingMoviesViewModel(
+@HiltViewModel
+class TrendingMoviesViewModel @Inject constructor(
     private val getTrendingMoviesUseCase: GetTrendingMoviesUseCase,
     private val getGenresUseCase: GetGenresUseCase,
     private val ioDispatcher: CoroutineDispatcher,

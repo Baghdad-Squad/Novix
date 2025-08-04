@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.button.OutlinedButton
@@ -28,11 +29,10 @@ import com.baghdad.ui.navigation.graph.onBoarding.OnBoardingNavEvent
 import com.baghdad.viewmodel.welcome.WelcomeEffect
 import com.baghdad.viewmodel.welcome.WelcomeInteractionListener
 import com.baghdad.viewmodel.welcome.WelcomeViewModel
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun WelcomeScreen(
-    viewModel: WelcomeViewModel = koinViewModel(),
+    viewModel: WelcomeViewModel =  hiltViewModel(),
     handleNavigation: (OnBoardingNavEvent) -> Unit
 ) {
     ObserveAsEffect(viewModel.uiEffect) { effect ->

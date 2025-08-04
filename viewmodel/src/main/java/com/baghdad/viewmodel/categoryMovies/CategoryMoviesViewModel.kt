@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.categoryMovies
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
@@ -8,16 +9,20 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class CategoryMoviesViewModel(
-    private val genreId: Long,
+@HiltViewModel
+class CategoryMoviesViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getGenreMoviesUseCase: GetMoviesByGenreUseCase,
     private val getMovieGenreNameByIdUseCase: GetMovieGenreNameByIdUseCase,
     private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<CategoryMoviesState, CategoryMoviesEffect>(CategoryMoviesState()),
     CategoryMoviesInteractionListener {
 
+    private val categoryId: Long = checkNotNull(savedStateHandle["categoryId"])
     init {
         loadInitData()
     }
@@ -50,7 +55,7 @@ class CategoryMoviesViewModel(
     private fun getGenreName() {
         hideSnackBar()
         tryToExecute(
-            callee = { getMovieGenreNameByIdUseCase.invoke(genreId) },
+            callee = { getMovieGenreNameByIdUseCase.invoke(categoryId) },
             onSuccess = { onGetGenreNameSuccess(it.name) },
             onError = { onGetGenreNameError(it) },
             dispatcher = ioDispatcher
@@ -82,7 +87,7 @@ class CategoryMoviesViewModel(
     private fun getGenreMovies() {
         collectPagingFlow(
             loadData = { page ->
-                getGenreMoviesUseCase(genreId, page)
+                getGenreMoviesUseCase(categoryId, page)
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toUiState() },
