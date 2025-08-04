@@ -20,6 +20,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.R
+import com.baghdad.design_system.component.CarousalDot
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 
@@ -36,8 +38,11 @@ fun BottomSlidingSection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        IndicatorPointSide(
-            pagerState = pagerState)
+        CarousalDot(
+            pagerState.pageCount,
+            selectedIndex = pagerState.currentPage,
+        )
+
         IconsTransitionButtons(
             pagerState = pagerState,
             onClickNext = onClickNext,
@@ -47,15 +52,7 @@ fun BottomSlidingSection(
     }
 }
 
-@Composable
-private fun IndicatorPointSide(pagerState: PagerState) {
-    Row {
-        HorizontalPagerIndicator(
-            pagerState = pagerState,
-            modifier = Modifier.padding(horizontal = 8.dp),
-        )
-    }
-}
+
 
 @Composable
 private fun IconsTransitionButtons(
@@ -65,7 +62,7 @@ private fun IconsTransitionButtons(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         AnimatedVisibility(
             visible = pagerState.currentPage > 0,
@@ -73,7 +70,7 @@ private fun IconsTransitionButtons(
             exit = fadeOut(tween(300)) + slideOutVertically(tween(300)) { it / 2 }
         ) {
             IconButton(
-                icon = painterResource(com.baghdad.design_system.R.drawable.ic_arrow_right),
+                icon = painterResource(R.drawable.ic_arrow_right),
                 modifier = Modifier.rotate(180f),
                 background = Color.Transparent,
                 tintIcon = Theme.color.primary,
@@ -86,7 +83,7 @@ private fun IconsTransitionButtons(
             )
         }
         IconButton(
-            icon = painterResource(com.baghdad.design_system.R.drawable.ic_arrow_right),
+            icon = painterResource(R.drawable.ic_arrow_right),
             background = Theme.color.primary,
             tintIcon = Theme.color.onPrimary,
             shape = RoundedCornerShape(12.dp),
