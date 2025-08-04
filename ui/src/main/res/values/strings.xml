@@ -113,5 +113,6 @@
     <string name="language">Language</string>
     <string name="logout">Logout</string>
     <string name="logout_icon">logout icon</string>
+    <string name="profile_setting_item">profile setting item</string>
 
 </resources>

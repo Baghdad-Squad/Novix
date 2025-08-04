@@ -121,6 +121,7 @@
     <string name="language">اللغة</string>
     <string name="logout">تسجيل الخروج</string>
     <string name="logout_icon">ايقونة تسجيل الخروج</string>
+    <string name="profile_setting_item">عنصر اعدادات الملف الشخصي</string>
 
 
 </resources>
