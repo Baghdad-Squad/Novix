@@ -4,8 +4,9 @@ import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.repository.RecentlyViewedRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class GetRecentlyViewedUseCase(
+class GetRecentlyViewedUseCase @Inject constructor(
     private val recentlyViewedRepository: RecentlyViewedRepository
 ) {
     suspend operator fun invoke(): Flow<List<RecentlyViewed>> {

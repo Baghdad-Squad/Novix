@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.tvShowDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
@@ -35,13 +36,14 @@ class TvShowDetailsViewModelTest {
 
     @BeforeEach
     fun setUp() {
+
         Dispatchers.setMain(testDispatcher)
         getTvShowDetailsUseCase = mockk()
         getTvShowCastMembersUseCase = mockk()
         getTvShowSeasonEpisodesUseCase = mockk()
         addContinueWatchingUseCase = mockk()
         tvShowDetailsViewModel = TvShowDetailsViewModel(
-            tvShowId = tvShowId,
+            savedStateHandle = savedStateHandle,
             getTvShowDetailsUseCase = getTvShowDetailsUseCase,
             getTvShowCastMembersUseCase = getTvShowCastMembersUseCase,
             getTvShowSeasonEpisodesUseCase = getTvShowSeasonEpisodesUseCase,
@@ -132,18 +134,25 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
         coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
-        val job = launch {
-            tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
-        }
+        val job = launch { tvShowDetailsViewModel.uiEffect.collect { effects.add(it) } }
+
+
         // When
         tvShowDetailsViewModel.onClickEpisode(seasonNumber, episodeNumber)
         advanceUntilIdle()
         job.cancel()
+
         // Then
-        val expectedEffect =
-            TvShowDetailsScreenEffect.NavigateToEpisodeDetails(seasonNumber, episodeNumber)
-        assertThat(effects.contains(expectedEffect)).isTrue()
+        val expectedEffect = TvShowDetailsScreenEffect.NavigateToEpisodeDetails(
+            tvShowId = tvShowId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber
+        )
+
+        println("Actual effects: $effects")
+        assertThat(effects).containsExactly(expectedEffect)
     }
 
     @Test
@@ -195,30 +204,37 @@ class TvShowDetailsViewModelTest {
     }
 
     @Test
-    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
-        // Given
-        coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } throws NoInternetException()
-        coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
-        coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() =
+        runTest {
+            // Given
+            coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } throws NoInternetException()
+            coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
+            coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
+            coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
 
-        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
-        val job = launch {
-            tvShowDetailsViewModel.snackBarState.collect {
-                emittedSnackBarMessages.add(it.message)
+            val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+            val job = launch {
+                tvShowDetailsViewModel.snackBarState.collect {
+                    emittedSnackBarMessages.add(it.message)
+                }
             }
+
+            // When
+            tvShowDetailsViewModel.onSnackBarActionLabelClick()
+            advanceUntilIdle()
+
+            // Then
+            assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+            job.cancel()
         }
 
-        // When
-        tvShowDetailsViewModel.onSnackBarActionLabelClick()
-        advanceUntilIdle()
-
-        // Then
-        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
-        job.cancel()
-    }
-
     private companion object {
+
+        private val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "tvShowId" to 123L,
+            )
+        )
         const val tvShowId = 123L
         const val genreId = 456L
         const val actorId = 789L

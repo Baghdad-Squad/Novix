@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.topTvShowPicks
 
 import com.baghdad.domain.exception.NoInternetException
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.R
@@ -8,13 +9,18 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TopTvShowPicksViewModel(
-    val actorId: Long,
+@HiltViewModel
+class TopTvShowViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
     private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<TopTvShowPicksState, TopTvShowPicksEffect>
     (TopTvShowPicksState()), TopTvShowPicksInteractionListener {
+
+    private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
 
     init {
         getActorTvShow(actorId)

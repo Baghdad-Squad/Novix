@@ -2,8 +2,9 @@ package com.baghdad.domain.usecase.continueWatching
 
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.repository.ContinueWatchingRepository
+import javax.inject.Inject
 
-class AddContinueWatchingUseCase(
+class AddContinueWatchingUseCase @Inject constructor(
     private val continueWatchingRepository: ContinueWatchingRepository
 ) {
     suspend operator fun invoke(

@@ -15,8 +15,9 @@ import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
+import javax.inject.Inject
 
-class MovieRepositoryImpl(
+class MovieRepositoryImpl @Inject constructor(
     private val remoteGenreDataSource: RemoteGenreDataSource,
     private val localGenreDataSource: LocalGenreDataSource,
     private val remoteMovieDataSource: RemoteMovieDataSource,

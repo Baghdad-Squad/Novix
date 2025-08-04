@@ -18,18 +18,42 @@ import com.baghdad.repository.MovieRepositoryImpl
 import com.baghdad.repository.RecentlyViewedRepositoryImpl
 import com.baghdad.repository.SearchRepositoryImpl
 import com.baghdad.repository.TvShowRepositoryImpl
-import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.module
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-val repositoryModule = module {
-    singleOf(::SearchRepositoryImpl) { bind<SearchRepository>() }
-    singleOf(::MovieRepositoryImpl) { bind<MovieRepository>() }
-    singleOf(::TvShowRepositoryImpl) { bind<TvShowRepository>() }
-    singleOf(::RecentlyViewedRepositoryImpl) { bind<RecentlyViewedRepository>() }
-    singleOf(::ActorRepositoryImpl) { bind<ActorRepository>() }
-    singleOf(::EpisodeRepositoryImpl) { bind<EpisodeRepository>() }
-    singleOf(::FavoriteGenreRepositoryImpl) { bind<FavoriteGenreRepository>() }
-    singleOf(::ContinueWatchingRepositoryImpl) { bind<ContinueWatchingRepository>() }
-    singleOf(::AuthenticationRepositoryImpl) { bind<AuthenticationRepository>() }
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    @Binds
+    abstract fun provideSearchRepository(searchRepositoryImpl: SearchRepositoryImpl): SearchRepository
+
+    @Binds
+    abstract fun provideMovieRepository(movieRepositoryImpl: MovieRepositoryImpl): MovieRepository
+
+    @Binds
+    abstract fun provideTvShowRepository(tvShowRepositoryImpl: TvShowRepositoryImpl): TvShowRepository
+
+    @Binds
+    abstract fun provideRecentlyViewedRepository(recentlyViewedRepositoryImpl: RecentlyViewedRepositoryImpl): RecentlyViewedRepository
+
+    @Binds
+    abstract fun provideActorRepository(actorRepositoryImpl: ActorRepositoryImpl): ActorRepository
+
+    @Binds
+    abstract fun provideEpisodeRepository(episodeRepositoryImpl: EpisodeRepositoryImpl): EpisodeRepository
+
+    @Binds
+    abstract fun provideFavoriteGenreRepository(favoriteGenreRepositoryImpl: FavoriteGenreRepositoryImpl): FavoriteGenreRepository
+
+    @Binds
+    abstract fun provideContinueWatchingRepository(continueWatchingRepositoryImpl: ContinueWatchingRepositoryImpl): ContinueWatchingRepository
+
+    @Binds
+    abstract fun provideAuthRepository(authenticationRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
+
+
 }
