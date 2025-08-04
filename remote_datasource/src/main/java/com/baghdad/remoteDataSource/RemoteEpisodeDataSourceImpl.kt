@@ -13,8 +13,9 @@ import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import javax.inject.Inject
 
-class RemoteEpisodeDataSourceImpl(
+class RemoteEpisodeDataSourceImpl @Inject constructor(
     private val episodeApiService: EpisodeApiService,
     private val logger: Logger,
 ): RemoteEpisodeDataSource {

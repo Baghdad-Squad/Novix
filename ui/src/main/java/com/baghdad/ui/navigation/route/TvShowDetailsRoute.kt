@@ -7,5 +7,5 @@ sealed interface TvShowDetailsRoute : Route {
     data object TvShowDetailsScreen : Route
 
     @Serializable
-    data class EpisodeDetailsScreen(val seasonNumber: Int, val episodeNumber: Int) : Route
+    data class EpisodeDetailsScreen(val tvShowId: Long ,val seasonNumber: Int, val episodeNumber: Int) : Route
 }

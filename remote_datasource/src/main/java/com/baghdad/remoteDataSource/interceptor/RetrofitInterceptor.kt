@@ -4,9 +4,11 @@ import com.baghdad.repository.language.LanguageProvider
 import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.Invocation
+import javax.inject.Inject
 
-class HeadersSetupInterceptor(
-    private val languageProvider: LanguageProvider, private val authorizationToken: String
+class HeadersSetupInterceptor @Inject constructor(
+    private val languageProvider: LanguageProvider,
+    private val authorizationToken: String
 ) : Interceptor {
 
     private val acceptHeaderKey = "Accept"

@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -32,12 +33,11 @@ import com.baghdad.ui.navigation.bottom.rememberBottomNavSelectedIndex
 import com.baghdad.ui.navigation.bottom.rememberIsTopLevelMainRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.viewmodel.main.MainViewModel
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = koinViewModel(),
+    viewModel: MainViewModel = hiltViewModel(),
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val navController = rememberNavController()

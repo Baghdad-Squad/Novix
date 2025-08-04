@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.categoryTvShows
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
@@ -61,9 +62,10 @@ class CategoryTvShowsViewModelTest {
         coEvery { getGenresUseCase.getTvShowGenres() } returns listOf(genre)
 
         getCategoryNameByIdUseCase = GetTvShowGenreNameByIdUseCase(getGenresUseCase)
+        val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
 
         viewModel = CategoryTvShowsViewModel(
-            categoryId = 1L,
+            savedStateHandle = savedStateHandle,
             getTvShowsCategoryUseCase = getTvShowsByGenreUseCase,
             getCategoryNameByIdUseCase = getCategoryNameByIdUseCase,
             ioDispatcher = testDispatcher
@@ -130,8 +132,10 @@ class CategoryTvShowsViewModelTest {
     @Test
     fun `should not crash when getCategoryNameByIdUseCase throws`() = runTest {
         coEvery { getGenresUseCase.getTvShowGenres() } throws RuntimeException("fail")
+        val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
+
         viewModel = CategoryTvShowsViewModel(
-            1L,
+            savedStateHandle,
             getTvShowsByGenreUseCase,
             GetTvShowGenreNameByIdUseCase(getGenresUseCase),
             testDispatcher
@@ -180,8 +184,10 @@ class CategoryTvShowsViewModelTest {
                 prevKey = null
             )
 
+            val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
+
             viewModel = CategoryTvShowsViewModel(
-                categoryId = 1L,
+                savedStateHandle,
                 getTvShowsCategoryUseCase = getTvShowsByGenreUseCase,
                 getCategoryNameByIdUseCase = getCategoryNameByIdUseCase,
                 ioDispatcher = testDispatcher

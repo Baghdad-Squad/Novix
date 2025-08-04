@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.categoryMovies
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
@@ -43,9 +44,9 @@ class CategoryMoviesViewModelTest {
         )
 
         coEvery { getMovieGenreNameByIdUseCase(any()) } returns Genre(1L, "Action")
-
+        val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
         viewModel = CategoryMoviesViewModel(
-            genreId = 1L,
+            savedStateHandle,
             getGenreMoviesUseCase = getGenreMoviesUseCase,
             getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
             ioDispatcher = testDispatcher
@@ -115,11 +116,13 @@ class CategoryMoviesViewModelTest {
     @Test
     fun `should not crash when getMovieGenreNameByIdUseCase fails`() = runTest {
         coEvery { getMovieGenreNameByIdUseCase(1L) } throws RuntimeException("Failed")
+        val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
+
         viewModel = CategoryMoviesViewModel(
-            1L,
-            getGenreMoviesUseCase,
-            getMovieGenreNameByIdUseCase,
-            testDispatcher
+            savedStateHandle = savedStateHandle,
+            getGenreMoviesUseCase = getGenreMoviesUseCase,
+            getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
+            ioDispatcher = testDispatcher
         )
 
         val states = mutableListOf<CategoryMoviesState>()
@@ -171,9 +174,11 @@ class CategoryMoviesViewModelTest {
                 nextKey = null,
                 prevKey = null
             )
+            val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
+
 
             viewModel = CategoryMoviesViewModel(
-                genreId = 1L,
+                savedStateHandle = savedStateHandle,
                 getGenreMoviesUseCase = getGenreMoviesUseCase,
                 getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
                 ioDispatcher = testDispatcher

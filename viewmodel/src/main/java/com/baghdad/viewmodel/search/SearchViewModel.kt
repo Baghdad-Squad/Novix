@@ -12,21 +12,23 @@ import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
-import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
-import com.baghdad.viewmodel.search.SearchScreenState.GenreUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class SearchViewModel(
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    private val getGenresUseCase: GetGenresUseCase,
     private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
     private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase,
