@@ -6,6 +6,6 @@ interface SavedListDetailsInteractionListener {
     fun onCategoryClick(categoryId: Long)
     fun onTvShowClick(tvShowId: Long)
     fun onMovieClick(movieId: Long)
-    fun onSaveMovieClick(movieId: Long)
-    fun onSaveTvShowClick(tvShowId: Long)
+    fun onRemoveSavedMovieClick(movieId: Long)
+    fun onRemoveSavedTvShowClick(tvShowId: Long)
 }
