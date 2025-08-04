@@ -9,9 +9,11 @@ import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.logger.Logger
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Named
 
-class LocalSessionDataStoreImpl(
-    private val dataStore: DataStore<Preferences>,
+class LocalSessionDataStoreImpl @Inject constructor(
+    @Named("preferences") private val dataStore: DataStore<Preferences>,
     private val logger: Logger
 ) : LocalSessionDataStore {
     override suspend fun saveSessionId(sessionId: String) {

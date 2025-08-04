@@ -9,8 +9,9 @@ import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.util.executeSafely
+import javax.inject.Inject
 
-class ActorRepositoryImpl(
+class ActorRepositoryImpl @Inject constructor(
     private val remoteActorDataSource: RemoteActorDataSource,
 ) : ActorRepository {
     override suspend fun getActorInfo(actorId: Long): Actor {

@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.episodeDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
@@ -8,17 +9,22 @@ import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 
-class EpisodeDetailsViewModel(
-    private val tvShowId: Long,
-    private val seasonNumber: Int,
-    private val episodeNumber: Int,
+@HiltViewModel
+class EpisodeDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getEpisodeCastMembersUseCase: GetEpisodeCastMembersUseCase,
     private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase,
     private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<EpisodeDetailsScreenState, EpisodeDetailsScreenEffect>(EpisodeDetailsScreenState()),
     EpisodeDetailsInteractionListener {
+
+    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"])
+    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"])
+    private val tvShowId: Long = checkNotNull(savedStateHandle["tvShowId"])
 
     init {
         loadInitData(tvShowId, seasonNumber, episodeNumber)

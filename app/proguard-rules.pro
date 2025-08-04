@@ -108,3 +108,10 @@
 
 # Keep Protocol Buffers core
 -keep class com.google.protobuf.** { *; }
+
+
+# Silence warnings for compile-time-only Java model classes
+-dontwarn javax.lang.model.**
+-dontwarn com.squareup.javapoet.**
+-dontwarn com.google.auto.common.**
+

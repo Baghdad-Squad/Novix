@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.review
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.review.GetMovieReviewsUseCase
 import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
@@ -8,16 +9,20 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ReviewViewModel(
+@HiltViewModel
+class ReviewViewModel @Inject constructor(
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase,
     private val getSeriesReviewsUseCase: GetTvShowReviewsUseCase,
-    val contentId: Long,
-    private val contentType: ContentType,
     private val ioDispatcher: CoroutineDispatcher,
+    savedStateHandle: SavedStateHandle,
     ) : BaseViewModel<ReviewScreenState, ReviewScreenEffect>(ReviewScreenState()),
     ReviewInteractionListener {
 
+        private val contentId: Long = checkNotNull(savedStateHandle["mediaId"])
+        private val contentType : ContentType = checkNotNull(savedStateHandle["mediaType"])
 
     init {
         loadData()
