@@ -54,8 +54,8 @@ interface SavedListApiService {
 
     companion object {
         private const val LISTS_ENDPOINT = "account/{account_id}/lists"
-        private const val ADD_ITEM_TO_SAVED_LIST_ENDPOINT = "/list/{list_id}/add_item"
-        private const val REMOVE_ITEM_TO_SAVED_LIST_ENDPOINT = "/list/{list_id}/remove_item"
+        private const val ADD_ITEM_TO_SAVED_LIST_ENDPOINT = "list/{list_id}/add_item"
+        private const val REMOVE_ITEM_TO_SAVED_LIST_ENDPOINT = "list/{list_id}/remove_item"
         private const val CREATE_SAVED_LIST = "list"
         private const val GET_LIST_DETAILS_ENDPOINT = "list/{list_id}"
     }
