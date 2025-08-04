@@ -1,3 +1,5 @@
 package com.baghdad.repository.datasource.remote
 
-interface RemoteSavedListDataSource
+interface RemoteSavedListDataSource {
+    suspend fun deleteSavedListByTitle(title: String)
+}
