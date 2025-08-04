@@ -28,12 +28,12 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import com.baghdad.design_system.component.CarousalDot
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.viewmodel.home.HomeScreenState.PopularItemUiState
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlin.math.abs
 
 private const val ROTATION_OFFSET_ADJUSTMENT = 1f
@@ -43,12 +43,11 @@ private const val SCALE_SIDE_CARDS = 0.8f
 
 private const val TRANSFORM_ORIGIN_X = 0.5f
 private const val TRANSFORM_ORIGIN_Y = 0.9f
-private const val CARD_HORIZONTAL_PADDING_DP = 8
 private const val PAGE_SPACING_DP = 8
 private const val CARD_WIDTH = 188
 
-private const val SCALE_MIN_FRACTION = 0f
-private const val SCALE_MAX_FRACTION = 1f
+private const val MIN_FRACTION = 0f
+private const val MAX_FRACTION = 1f
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -71,16 +70,11 @@ fun PopularCardPager(
     }
     val horizontalPadding = (screenWidth - CARD_WIDTH.dp) / 2
 
-
-//    val horizontalPadding =
-//        maxOf(
-//            16.dp,
-//            (screenWidth - cardWidth) / 2 - 2.dp,
-//        )
     if (items.isNotEmpty()) {
         LaunchedEffect(items) {
+            pagerState.animateScrollToPage(items.size + 1)
             delay(autoSlideDuration)
-            while (isActive) {
+            while (true) {
                 delay(autoSlideDuration)
                 val next = (pagerState.currentPage + 1)
                 pagerState.animateScrollToPage(next)
@@ -110,46 +104,20 @@ fun PopularCardPager(
                         val currentPageOffset =
                             (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
-                        val rotation = androidx.compose.ui.util.lerp(
+                        val rotation = lerp(
                             start = 3f,
                             stop = -3f,
                             fraction = (currentPageOffset + ROTATION_OFFSET_ADJUSTMENT) * ROTATION_FRACTION_MULTIPLIER
                         )
-//                            when {
-//                                currentPageOffset < -0.5f -> 3f
-//                                currentPageOffset > 0.5f -> -3f
-//                                else -> 0f
-//                            }
 
-//                        val xScale =
-//                            when {
-//                                currentPageOffset == 0f -> 1f
-//                                else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.1f)
-//                            }
-
-                        val yScale = androidx.compose.ui.util.lerp(
+                        val yScale = lerp(
                             start = SCALE_CURRENT,
                             stop = SCALE_SIDE_CARDS,
                             fraction = abs(currentPageOffset).coerceIn(
-                                SCALE_MIN_FRACTION,
-                                SCALE_MAX_FRACTION
+                                MIN_FRACTION,
+                                MAX_FRACTION
                             )
                         )
-//                            when {
-//                                currentPageOffset == 0f -> 1f
-//                                else -> 1f - (kotlin.math.abs(currentPageOffset) * 0.15f)
-//                            }
-
-//                        val yTranslation =
-//                            when {
-//                                currentPageOffset == 0f -> 0f
-//                                kotlin.math.abs(currentPageOffset) in 0.5f..1.5f ->
-//                                    kotlin.math.abs(
-//                                        currentPageOffset,
-//                                    ) * 40f
-//
-//                                else -> kotlin.math.abs(currentPageOffset) * 20f
-//                            }
 
                         val item =
                             items[if (items.isEmpty()) return@HorizontalPager else page % items.size]
@@ -165,13 +133,12 @@ fun PopularCardPager(
                             modifier =
                                 Modifier.graphicsLayer {
                                     rotationZ = rotation
-                                    //scaleX = xScale
                                     scaleY = yScale
-                                    //translationY = yTranslation
                                     transformOrigin = TransformOrigin(
                                         TRANSFORM_ORIGIN_X,
                                         TRANSFORM_ORIGIN_Y
                                     )
+
                                 },
                         )
                     }
