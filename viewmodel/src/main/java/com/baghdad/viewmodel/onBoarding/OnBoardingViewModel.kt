@@ -15,20 +15,16 @@ class OnBoardingViewModel @Inject constructor(
 ): BaseViewModel<OnBoardingState, OnBoardingEffect>(OnBoardingState()),
     OnBoardingInteractionListener {
 
-        init {
-            onFirstTimeLaunch()
-        }
+
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
     }
 
-    override fun onNextButtonClick() {
+    override fun onNextButtonClick(sizeOfBoardingInfo: Int) {
         tryToExecute(
             callee = {
-                if (currentState.currentPage < currentState.onBoardingInfo.size) {
+                if (currentState.currentPage < sizeOfBoardingInfo) {
                     updateState { it.copy(currentPage = currentState.currentPage + 1) }
-                } else if (currentState.currentPage == currentState.onBoardingInfo.size) {
-                    sendEffect(OnBoardingEffect.NavigateToWelcomeToNovix)
                 }
             },
             onError = {
@@ -45,6 +41,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     override fun onSkipButtonClick() {
+        onFirstTimeLaunch()
         sendEffect(OnBoardingEffect.NavigateToWelcomeToNovix)
     }
 

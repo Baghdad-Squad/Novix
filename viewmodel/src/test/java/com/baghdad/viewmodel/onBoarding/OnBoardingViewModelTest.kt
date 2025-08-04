@@ -3,7 +3,6 @@ package com.baghdad.viewmodel.onBoarding
 import com.baghdad.domain.usecase.onBoarding.SetFirstTimeLaunchAppUseCase
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -54,11 +53,11 @@ class OnBoardingViewModelTest {
     fun `onNextButtonClick should increment current page when not on last page`() = runTest {
         // Given
         val initialState = viewModel.uiState.value
-        assertThat(initialState.currentPage).isEqualTo(0) // Should start at page 0
+        assertThat(initialState.currentPage).isEqualTo(0)
 
         // When
-        viewModel.onNextButtonClick()
-        advanceUntilIdle()  // Ensure coroutines complete
+        viewModel.onNextButtonClick(3)
+        advanceUntilIdle()
 
         // Then
         val updatedState = viewModel.uiState.value
@@ -95,16 +94,6 @@ class OnBoardingViewModelTest {
         // Then
         assertThat(receivedEffect is OnBoardingEffect.NavigateToWelcomeToNovix).isTrue()
         job.cancel()
-    }
-
-
-    @Test
-    fun `should set first time launch flag on initialization`() = runTest {
-        // When
-        advanceUntilIdle()
-
-        // Then
-        coVerify { setFirstTimeLaunchAppUseCase(true) }
     }
 
 }
