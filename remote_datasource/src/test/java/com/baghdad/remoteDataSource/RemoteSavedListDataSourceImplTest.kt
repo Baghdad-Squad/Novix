@@ -242,6 +242,32 @@ class RemoteSavedListDataSourceImplTest {
     }
 
     @Test
+    fun `should remove movie form saved list when the movie removed successfully`() = runTest {
+        // Given
+        coEvery { savedListApiService.removeItemFromSavedList(listId, any()) } returns
+                Response.success(ModifyListItemResponse(1, "Success"))
+
+        // When
+        remoteSource.removeMovieFromSavedList(listId, movieId)
+
+        // Then
+        coVerify { savedListApiService.removeItemFromSavedList(listId, any()) }
+    }
+
+    @Test
+    fun `should remove tv show form saved list when the tv show removed successfully`() = runTest {
+        // Given
+        coEvery { savedListApiService.removeItemFromSavedList(listId, any()) } returns
+                Response.success(ModifyListItemResponse(1, "Success"))
+
+        // When
+        remoteSource.removeTvShowFromSavedList(listId, tvShowId)
+
+        // Then
+        coVerify { savedListApiService.removeItemFromSavedList(listId, any()) }
+    }
+
+    @Test
     fun `getSavedListDetails should return valid DTO when API returns valid response`() =
         runTest {
             // Given
