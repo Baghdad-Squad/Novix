@@ -1,5 +1,6 @@
 package com.baghdad.repository
 
+import android.util.Log
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.entity.User
 import com.baghdad.repository.datasource.local.LocalSessionDataStore
@@ -23,6 +24,7 @@ class AuthenticationRepositoryImpl(
             )
             val sessionId = remoteAuthenticationDataSource.createSession(validatedRequestToken)
             val user = remoteAuthenticationDataSource.getUserDetails(sessionId)
+            Log.d("AuthRepository", "accountId: ${user.id}, sessionId: $sessionId")
             localSessionDataStore.saveSessionId(sessionId)
             localUserDataStore.saveUser(
                 id = user.id,
@@ -34,7 +36,9 @@ class AuthenticationRepositoryImpl(
 
 
     override suspend fun isUserLoggedIn(): Boolean {
-        return localSessionDataStore.getSessionId() != null
+        val sessionId = localSessionDataStore.getSessionId()
+        Log.d("AuthRepository", "sessionId: $sessionId")
+        return sessionId != null
     }
 
     override suspend fun getLoggedInUser(): User? {

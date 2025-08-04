@@ -1,3 +1,7 @@
 package com.baghdad.domain.repository
 
-interface SavedListRepository
+import com.baghdad.domain.model.savedList.SavedListDetails
+
+interface SavedListRepository {
+    suspend fun getSavedListDetails(listId: Long): SavedListDetails
+}
