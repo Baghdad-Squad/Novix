@@ -5,6 +5,7 @@ import com.baghdad.remoteDataSource.RemoteAuthenticationImpl
 import com.baghdad.remoteDataSource.RemoteEpisodeDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteGenreDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteMovieDataSourceImpl
+import com.baghdad.remoteDataSource.RemoteSavedListDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteSearchDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteTvShowDataSourceImpl
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
@@ -12,6 +13,7 @@ import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
+import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import dagger.Binds
@@ -45,4 +47,8 @@ abstract class RemoteDataSourceModule {
 
     @Binds
     abstract fun provideTvShowRemoteDataSource(remoteTvShowDataSourceImpl: RemoteTvShowDataSourceImpl): RemoteTvShowDataSource
+
+    @Binds
+    abstract fun provideRemoteSavedListDataSource(remoteSavedListDataSourceImpl: RemoteSavedListDataSourceImpl): RemoteSavedListDataSource
+
 }
