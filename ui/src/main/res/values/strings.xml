@@ -103,4 +103,15 @@
     <string name="duration_combined">%1$s %2$s</string>
     <string name="an_error_occurred_while_loading_genres">An error occurred while loading genres</string>
 
+    <string name="my_account">My account</string>
+    <string name="profile_image" translatable="false">Profile Image</string>
+    <string name="watching_history">Watching History</string>
+    <string name="my_rating">My rating</string>
+    <string name="content_restriction">Content Restriction</string>
+    <string name="change_password">Change password</string>
+    <string name="appearance">Appearance</string>
+    <string name="language">Language</string>
+    <string name="logout">Logout</string>
+    <string name="logout_icon">logout icon</string>
+
 </resources>

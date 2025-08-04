@@ -112,5 +112,16 @@
     <string name="default_image">"الصورة الافتراضية "</string>
     <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
 
+    <string name="my_account">حسابي</string>
+    <string name="watching_history">سجل المشاهدة</string>
+    <string name="my_rating">تقييمي</string>
+    <string name="content_restriction">تقييد المحتوى</string>
+    <string name="change_password">تغيير كلمة السر</string>
+    <string name="appearance">المظهر</string>
+    <string name="language">اللغة</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="logout_icon">ايقونة تسجيل الخروج</string>
+
+
 </resources>
 
