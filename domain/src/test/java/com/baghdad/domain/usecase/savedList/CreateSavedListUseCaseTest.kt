@@ -22,7 +22,7 @@ class CreateSavedListUseCaseTest {
 
 
     @Test
-    fun `invoke() should call createSavedList when the title is correct`() = runTest {
+    fun `invoke() should call createSavedList when the title is passed`() = runTest {
         // Given
         val title = "favorite"
         coEvery { savedListRepository.createSavedList(title) } returns Unit
