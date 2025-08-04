@@ -6,6 +6,7 @@ import com.baghdad.remoteDataSource.response.AddItemToSavedResponse
 import com.baghdad.remoteDataSource.response.UserListDto
 import com.baghdad.remoteDataSource.response.UserListsResponse
 import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
+import com.baghdad.remoteDataSource.response.savedList.DeleteSavedListResponse
 import com.baghdad.remoteDataSource.response.savedList.ListDetailsResponse
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.exception.ItemCreationFailedException
@@ -87,7 +88,7 @@ class RemoteSavedListDataSourceImplTest {
 
 
     @Test
-    fun `createSavedList should throw default message when statusMessage is null`() = runTest {
+    fun `should createSavedList throw default message when statusMessage is null`() = runTest {
         // Given
         val response = CreateSavedListResponse(success = false, statusMessage = null)
 
@@ -108,7 +109,7 @@ class RemoteSavedListDataSourceImplTest {
     }
 
     @Test
-    fun `createSavedList should propagate ItemCreationFailedException when API returns failure`() =
+    fun `should createSavedList  propagate ItemCreationFailedException when API returns failure`() =
         runTest {
             // Given
             val expectedMessage = "Access denied"
@@ -131,7 +132,7 @@ class RemoteSavedListDataSourceImplTest {
         }
 
     @Test
-    fun `getSavedLists should return paged results when API returns successful response`() =
+    fun `should getSavedLists return paged results when API returns successful response`() =
         runTest {
             // Given
             coEvery {
@@ -149,7 +150,7 @@ class RemoteSavedListDataSourceImplTest {
         }
 
     @Test
-    fun `getSavedLists should return empty list when API returns empty results`() = runTest {
+    fun `should getSavedLists return empty list when API returns empty results`() = runTest {
         // Given
         val response = UserListsResponse(
             page = page,
@@ -277,7 +278,7 @@ class RemoteSavedListDataSourceImplTest {
         }
 
     @Test
-    fun `getSavedListDetails should return default values and filter out invalid items`() =
+    fun `should getSavedListDetails return default values and filter out invalid items`() =
         runTest {
             // Given
             coEvery {
@@ -298,7 +299,7 @@ class RemoteSavedListDataSourceImplTest {
         }
 
     @Test
-    fun `getSavedListDetails should throw when API returns error`() =
+    fun `should getSavedListDetails throw when API returns error`() =
         runTest {
             // Given
             val errorBody = "Unknown Server Error".toResponseBody(null)
@@ -320,6 +321,49 @@ class RemoteSavedListDataSourceImplTest {
             assertThat(thrown).isInstanceOf(UnknownNetworkException::class.java)
             coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID, page) }
         }
+
+    @Test
+    fun `should call deleteSavedListById API with its parameters`() =
+        runTest {
+            // Given
+            val mockResponse: Response<DeleteSavedListResponse> =
+                Response.success(DeleteSavedListResponse(1))
+
+            coEvery {
+                savedListApiService.deleteSavedListById(
+                    listId,
+                    sessionId
+                )
+            } returns mockResponse
+
+            // When
+            val result = savedListApiService.deleteSavedListById(listId, sessionId)
+
+            // Then
+            coVerify(exactly = 1) { savedListApiService.deleteSavedListById(listId, sessionId) }
+            assertThat(result.isSuccessful).isTrue()
+        }
+
+    @Test
+    fun `should delegate deleteSavedListById to Retrofit service`() =
+        runTest {
+            // Given
+            val mockResponse: Response<DeleteSavedListResponse> =
+                Response.success(DeleteSavedListResponse(1))
+            coEvery {
+                savedListApiService.deleteSavedListById(
+                    listId,
+                    sessionId
+                )
+            } returns mockResponse
+
+            // When
+            remoteSource.deleteSavedListById(listId, sessionId)
+
+            // Then
+            coVerify { savedListApiService.deleteSavedListById(listId, sessionId) }
+        }
+
     companion object {
         private const val page = 1
         private const val pageSize = 20
