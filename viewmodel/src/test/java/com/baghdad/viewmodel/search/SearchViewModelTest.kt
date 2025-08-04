@@ -90,7 +90,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `init should call all required use cases`() = runTest {
+    fun `should init call all required use cases`() = runTest {
         coEvery { getRecentSearchesUseCase() } returns flowOf(emptyList())
         coEvery { getRecentlyViewedUseCase() } returns flowOf(emptyList())
         coEvery { addRecentlyViewedUseCase(any(), any(), any()) } returns Unit
@@ -118,7 +118,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `onSearchTextChanged should update searchText and isLoading when text changes`() = runTest {
+    fun `should onSearchTextChanged update searchText and isLoading when text changes`() = runTest {
         viewModel = createViewModel()
         val newText = "new query"
 
@@ -131,7 +131,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `onSearchTextChanged should not process same query when call it twice`() = runTest {
+    fun `should onSearchTextChanged  not process same query when call it twice`() = runTest {
         viewModel = createViewModel()
         val query = "same query"
 
@@ -149,7 +149,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `onSearchTextChanged should handle when it has empty string`() = runTest {
+    fun `should onSearchTextChanged handle when it has empty string`() = runTest {
         viewModel = createViewModel()
 
         viewModel.onSearchTextChanged("")
@@ -160,7 +160,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `onSearchTextChanged should handle when it has whitespace-only string`() = runTest {
+    fun `should onSearchTextChanged handle when it has whitespace-only string`() = runTest {
         viewModel = createViewModel()
 
         viewModel.onSearchTextChanged("   ")
@@ -364,7 +364,7 @@ class SearchViewModelTest {
         }
 
     @Test
-    fun `should search tv show when performSearchByTab is invoked and selected tab is TV_SHOWS`() =
+    fun `should search TV shows when performSearchByTab is called and selected tab is TV_SHOWS`() =
         runTest {
             val viewModel = createViewModel()
             val method = viewModel::class.java.getDeclaredMethod(
@@ -452,7 +452,7 @@ class SearchViewModelTest {
         }
 
     @Test
-    fun `showNoInternetSnackBar should delegate to showSnackBar with NetworkError config`() =
+    fun `should delegate to showSnackBar with NetworkError config when showNoInternetSnackBar is invoked`() =
         runTest {
             val viewModel = spyk(createViewModel()) {
                 every {
