@@ -6,7 +6,6 @@ import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
-import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.SavedListDto
@@ -19,8 +18,8 @@ class SavedListRepositoryImpl @Inject constructor(
     private val localUserDataStore: LocalUserDataStore,
 ) : SavedListRepository {
     override suspend fun createSavedList(title: String) {
-        val sessionId = localSessionDataStore.getSessionId().toString()
-        return executeSafely {
+        val sessionId = localSessionDataStore.getSessionId()
+        return executeAuthorizedSafely(sessionId) { sessionId ->
             remoteSavedListSource.createSavedList(title, sessionId)
         }
     }

@@ -1,8 +1,8 @@
 package com.baghdad.repository
 
+import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.entity.savedList.SavedList
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.google.common.truth.Truth.assertThat
@@ -11,17 +11,12 @@ import io.mockk.coVerify
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.UserDto
-import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
-import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -219,19 +214,6 @@ class SavedListRepositoryImplTest {
             coVerify { remoteSource.addTvShowToSavedList(listId, movieId, sessionId) }
         }
 
-    companion object {
-        private const val PAGE = 1
-        private const val PAGE_SIZE = 20
-        private const val SESSION_ID = "test_session_id"
-        private const val TEST_ACCOUNT_ID = 12345L
-        private val TEST_USER = UserDto(id = TEST_ACCOUNT_ID, userName = "testuser")
-
-        private val SAMPLE_SAVED_LIST_DTOS = listOf(
-            SavedListDto(id = 1L, name = "My Favorites", itemCount = 10),
-            SavedListDto(id = 2L, name = "Watch Later", itemCount = 5)
-        )
-    }
-
     @Test
     fun `should createSavedList not crash when session ID is null`() = runBlocking {
         // Given
@@ -240,9 +222,10 @@ class SavedListRepositoryImplTest {
         coEvery { remoteSource.createSavedList(title, any()) } returns Unit
 
         // When
-        repository.createSavedList(title)
+        val exception = runCatching { repository.createSavedList(title) }.exceptionOrNull()
 
         // Then
+        assertThat(exception).isInstanceOf(UnAuthorizedException::class.java)
         coVerify { localSessionDataStore.getSessionId() }
     }
 
@@ -260,5 +243,18 @@ class SavedListRepositoryImplTest {
         // Then
         coVerify(exactly = 1) { localSessionDataStore.getSessionId() }
         assertThat(resultException).isNotNull()
+    }
+
+    companion object {
+        private const val PAGE = 1
+        private const val PAGE_SIZE = 20
+        private const val SESSION_ID = "test_session_id"
+        private const val TEST_ACCOUNT_ID = 12345L
+        private val TEST_USER = UserDto(id = TEST_ACCOUNT_ID, userName = "testuser")
+
+        private val SAMPLE_SAVED_LIST_DTOS = listOf(
+            SavedListDto(id = 1L, name = "My Favorites", itemCount = 10),
+            SavedListDto(id = 2L, name = "Watch Later", itemCount = 5)
+        )
     }
 }
