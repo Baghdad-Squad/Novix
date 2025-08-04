@@ -43,15 +43,13 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
-import com.baghdad.ui.R
 import com.baghdad.viewmodel.onBoarding.OnBoardingInfo
-import com.baghdad.viewmodel.onBoarding.OnBoardingState
 import kotlin.math.abs
 
 @Composable
 fun OnBoardingHorizontalPagerContent(
     pagerState: PagerState,
-    state: OnBoardingState,
+    onBoardingInfo: List<OnBoardingInfo>,
     onNext: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -105,13 +103,13 @@ fun OnBoardingHorizontalPagerContent(
             ) {
                 ImageAnimated(
                     page = page,
-                    state = state,
+                    onBoardingInfo = onBoardingInfo,
                     pageOffset = pageOffset,
                     imageWidthFraction = imageWidthFraction
                 )
 
                 TextSlidingAnimationVisibility(
-                    onBoardingInfo = state.onBoardingInfo,
+                    onBoardingInfo = onBoardingInfo,
                     currentPage = page,
                     pageOffset = pageOffset
                 )
@@ -124,7 +122,7 @@ fun OnBoardingHorizontalPagerContent(
 @Composable
 private fun ImageAnimated(
     page: Int,
-    state: OnBoardingState,
+    onBoardingInfo: List<OnBoardingInfo>,
     pageOffset: Float,
     imageWidthFraction: Float = if (isTablet()) 0.50f else 0.80f,
 ) {
@@ -133,14 +131,8 @@ private fun ImageAnimated(
         animationSpec = tween(durationMillis = 500)
     ) { currentPage ->
         Image(
-            painter = painterResource(
-                when (currentPage) {
-                    0 -> R.drawable.img_on_boarding_1
-                    1 -> R.drawable.img_on_boarding_2
-                    else -> R.drawable.img_on_boarding_3
-                }
-            ),
-            contentDescription = stringResource(state.onBoardingInfo[currentPage].title),
+            painter = painterResource(onBoardingInfo[currentPage].imageIndex),
+            contentDescription = stringResource(onBoardingInfo[currentPage].title),
             modifier = Modifier
                 .fillMaxWidth(imageWidthFraction)
                 .graphicsLayer {
