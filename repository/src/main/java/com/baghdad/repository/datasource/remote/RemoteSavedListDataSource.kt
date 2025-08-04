@@ -10,4 +10,6 @@ interface RemoteSavedListDataSource {
         accountId :Long,
         sessionId: String,
         ): PagedResultDto<SavedListDto>
+    suspend fun addMovieToSavedList(listId: Long, movieId: Long, sessionId: String)
+    suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long, sessionId: String)
 }

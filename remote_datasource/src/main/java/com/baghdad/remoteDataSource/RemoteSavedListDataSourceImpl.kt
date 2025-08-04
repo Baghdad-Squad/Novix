@@ -1,9 +1,10 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.SavedListApiService
+import com.baghdad.remoteDataSource.request.AddItemRequest
+import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.remoteDataSource.mapper.toPagedSavedListsDtos
 import com.baghdad.remoteDataSource.response.UserListsResponse
-import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.PagedResultDto
@@ -31,5 +32,22 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
             logger = logger,
         )
         return listsResponse.toPagedSavedListsDtos()
+    }
+    override suspend fun addMovieToSavedList(listId: Long, movieId: Long, sessionId: String) {
+        val body = AddItemRequest(mediaId = movieId)
+
+        handleRequest(
+            apiCall = { savedListApiService.addItemToSavedList(listId, body, sessionId) },
+            logger = logger
+        )
+    }
+
+    override suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long, sessionId: String) {
+        val body = AddItemRequest(mediaId = tvShowId)
+
+        handleRequest(
+            apiCall = { savedListApiService.addItemToSavedList(listId, body, sessionId) },
+            logger = logger
+        )
     }
 }

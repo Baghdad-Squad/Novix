@@ -32,5 +32,19 @@ class SavedListRepositoryImpl @Inject constructor(
             ).toPagedResult(SavedListDto::toEntity)
         }
     }
-}
 
+
+    override suspend fun addMovieToSavedList(listId: Long, movieId: Long) {
+        val sessionId = localSessionDataStore.getSessionId().toString()
+        executeAuthorizedSafely(sessionId) {
+            remoteSavedListSource.addMovieToSavedList(listId, movieId, sessionId)
+        }
+    }
+
+    override suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long) {
+        val sessionId = localSessionDataStore.getSessionId().toString()
+        executeAuthorizedSafely(sessionId) {
+            remoteSavedListSource.addTvShowToSavedList(listId, tvShowId, sessionId)
+        }
+    }
+}

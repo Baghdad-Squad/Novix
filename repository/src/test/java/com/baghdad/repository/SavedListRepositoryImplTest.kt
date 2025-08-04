@@ -7,12 +7,15 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.UserDto
 import com.google.common.truth.Truth.assertThat
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class SavedListRepositoryImplTest {
     private lateinit var remoteSource: RemoteSavedListDataSource
@@ -20,13 +23,16 @@ class SavedListRepositoryImplTest {
     private lateinit var localUserDataStore: LocalUserDataStore
     private lateinit var repository: SavedListRepositoryImpl
 
+    val listId = 22L
+    val movieId = 22002L
+    val sessionId = "session_id"
+
     @BeforeEach
     fun setUp() {
         remoteSource = mockk(relaxed = true)
         localSessionDataStore = mockk(relaxed = true)
         localUserDataStore = mockk(relaxed = true)
-        repository =
-            SavedListRepositoryImpl(remoteSource, localSessionDataStore, localUserDataStore)
+        repository = SavedListRepositoryImpl(remoteSource, localSessionDataStore, localUserDataStore)
     }
 
     @Test
@@ -125,12 +131,66 @@ class SavedListRepositoryImplTest {
             }
         }
 
+    @Test
+    fun `should return success response when adding a movie to saved list`() = runTest {
+        // Given
+        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+        coEvery { remoteSource.addMovieToSavedList(listId, movieId, sessionId) } just Runs
+
+        // When
+        repository.addMovieToSavedList(listId, movieId)
+
+        // Then
+        coVerify { remoteSource.addMovieToSavedList(listId, movieId, sessionId) }
+    }
+
+    @Test
+    fun `should return success response when adding a tv show to saved list`() = runTest {
+        // Given
+        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+        coEvery { remoteSource.addTvShowToSavedList(listId, movieId, sessionId) } just Runs
+
+        // When
+        repository.addTvShowToSavedList(listId, movieId)
+
+        // Then
+        coVerify { remoteSource.addTvShowToSavedList(listId, movieId, sessionId) }
+    }
+
+    @Test
+    fun `should throw exception when api returns error while adding a movie to saved list`() =
+        runTest {
+            // Given
+            coEvery { localSessionDataStore.getSessionId() } returns sessionId
+            coEvery {
+                remoteSource.addMovieToSavedList(listId, movieId, sessionId)
+            } throws Exception()
+
+            // When & Then
+            assertThrows<Exception> { repository.addMovieToSavedList(listId, movieId) }
+
+            coVerify { remoteSource.addMovieToSavedList(listId, movieId, sessionId) }
+        }
+
+    @Test
+    fun `should throw exception when api returns error while adding a tv show to saved list`() =
+        runTest {
+            // Given
+            coEvery { localSessionDataStore.getSessionId() } returns sessionId
+            coEvery {
+                remoteSource.addTvShowToSavedList(listId, movieId, sessionId)
+            } throws Exception()
+
+            // When & Then
+            assertThrows<Exception> { repository.addTvShowToSavedList(listId, movieId) }
+
+            coVerify { remoteSource.addTvShowToSavedList(listId, movieId, sessionId) }
+        }
 
     companion object {
         private const val PAGE = 1
         private const val PAGE_SIZE = 20
         private const val SESSION_ID = "test_session_id"
-        private const val DEFAULT_ACCOUNT_ID = 0L
         private const val TEST_ACCOUNT_ID = 12345L
         private val TEST_USER = UserDto(id = TEST_ACCOUNT_ID, userName = "testuser")
 
@@ -139,5 +199,4 @@ class SavedListRepositoryImplTest {
             SavedListDto(id = 2L, name = "Watch Later", itemCount = 5)
         )
     }
-
 }
