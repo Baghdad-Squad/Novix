@@ -18,7 +18,7 @@ interface SavedListApiService {
     @Authenticated
     @POST(CREATE_SAVED_LIST)
     suspend fun createSavedList(
-        @Body body: CreateListRequest
+        @Body body: CreateListRequest,
     ): Response<CreateSavedListResponse>
 
     @Authenticated
@@ -26,7 +26,7 @@ interface SavedListApiService {
     suspend fun addItemToSavedList(
         @Path("list_id") listId: Long,
         @Body body: AddItemRequest,
-        @Query("session_id") sessionId: String
+        @Query("session_id") sessionId: String,
     ): Response<AddItemToSavedResponse>
 
     @Authenticated
@@ -41,6 +41,7 @@ interface SavedListApiService {
     @GET(GET_LIST_DETAILS_ENDPOINT)
     suspend fun getListDetails(
         @Path("list_id") listId: Long,
+        @Query("page") page: Int,
     ): Response<ListDetailsResponse>
 
     companion object {

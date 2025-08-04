@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.savedList
 
 import com.baghdad.domain.exception.UnKnownNetworkException
+import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.savedList.SavedListDetails
 import com.baghdad.domain.model.savedList.SavedListItem
 import com.baghdad.domain.repository.SavedListRepository
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.Test
 class GetSavedListDetailsUseCaseTest {
     private lateinit var savedListRepository: SavedListRepository
     private lateinit var getSavedListDetailsUseCase: GetSavedListDetailsUseCase
+    private val page = 1
+    private val pageSize = 20
 
     @BeforeEach
     fun setUp() {
@@ -31,20 +34,37 @@ class GetSavedListDetailsUseCaseTest {
             val expected =
                 SavedListDetails(
                     savedList = SavedList(1L, "My List", 2),
-                    listItems =
-                        listOf(
+                    pagedItems =
+                        PagedResult(
+                            data =
+                                listOf(
                             SavedListItem(100L, SavedListItem.Type.MOVIE, "Movie 1", "poster1"),
                             SavedListItem(101L, SavedListItem.Type.TV_SHOW, "TV Show", "poster2"),
+                                ),
+                            nextKey = null,
+                            prevKey = 1,
                         ),
                 )
-            coEvery { savedListRepository.getSavedListDetails(listId) } returns expected
+            coEvery {
+                savedListRepository.getSavedListDetails(
+                    listId,
+                    page,
+                    pageSize,
+                )
+            } returns expected
 
             // When
-            val result = getSavedListDetailsUseCase(listId)
+            val result = getSavedListDetailsUseCase(listId, page, pageSize)
 
             // Then
             assertThat(result).isEqualTo(expected)
-            coVerify(exactly = 1) { savedListRepository.getSavedListDetails(listId) }
+            coVerify(exactly = 1) {
+                savedListRepository.getSavedListDetails(
+                    listId,
+                    page,
+                    pageSize
+                )
+            }
         }
 
     @Test
@@ -53,13 +73,26 @@ class GetSavedListDetailsUseCaseTest {
             // Given
             val listId = 42L
             val exception = UnKnownNetworkException()
-            coEvery { savedListRepository.getSavedListDetails(listId) } throws exception
+            coEvery {
+                savedListRepository.getSavedListDetails(
+                    listId,
+                    page,
+                    pageSize,
+                )
+            } throws exception
 
             // When
-            val thrown = runCatching { getSavedListDetailsUseCase(listId) }.exceptionOrNull()
+            val thrown =
+                runCatching { getSavedListDetailsUseCase(listId, page, pageSize) }.exceptionOrNull()
 
             // Then
             assertThat(thrown).isInstanceOf(UnKnownNetworkException::class.java)
-            coVerify(exactly = 1) { savedListRepository.getSavedListDetails(listId) }
+            coVerify(exactly = 1) {
+                savedListRepository.getSavedListDetails(
+                    listId,
+                    page,
+                    pageSize
+                )
+            }
         }
 }

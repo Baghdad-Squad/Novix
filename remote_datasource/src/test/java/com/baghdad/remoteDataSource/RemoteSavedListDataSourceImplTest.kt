@@ -24,7 +24,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import retrofit2.Response
-import kotlin.jvm.java
 
 class RemoteSavedListDataSourceImplTest {
     private lateinit var savedListApiService: SavedListApiService
@@ -247,34 +246,34 @@ class RemoteSavedListDataSourceImplTest {
         runTest {
             // Given
             coEvery {
-                savedListApiService.getListDetails(LIST_ID)
+                savedListApiService.getListDetails(LIST_ID, page)
             } returns Response.success(VALID_LIST_DETAILS_RESPONSE)
 
             // When
-            val result = remoteSource.getSavedListDetails(LIST_ID)
+            val result = remoteSource.getSavedListDetails(LIST_ID, page, pageSize)
 
             // Then
             assertThat(result.savedList.id).isEqualTo(123L)
             assertThat(result.savedList.name).isEqualTo("My List")
             assertThat(result.savedList.itemCount).isEqualTo(2)
 
-            assertThat(result.listItems).hasSize(2)
+            assertThat(result.pagedItems.data).hasSize(2)
 
-            with(result.listItems[0]) {
+            with(result.pagedItems.data[0]) {
                 assertThat(id).isEqualTo(1L)
                 assertThat(type).isEqualTo(SavedListItemDto.Type.MOVIE)
                 assertThat(title).isEqualTo("Oppenheimer")
                 assertThat(posterUrl).isEqualTo("/path1.jpg")
             }
 
-            with(result.listItems[1]) {
+            with(result.pagedItems.data[1]) {
                 assertThat(id).isEqualTo(2L)
                 assertThat(type).isEqualTo(SavedListItemDto.Type.TV_SHOW)
                 assertThat(title).isEqualTo("Breaking Bad")
                 assertThat(posterUrl).isEqualTo("/path2.jpg")
             }
 
-            coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID) }
+            coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID, page) }
         }
 
     @Test
@@ -282,20 +281,20 @@ class RemoteSavedListDataSourceImplTest {
         runTest {
             // Given
             coEvery {
-                savedListApiService.getListDetails(LIST_ID)
+                savedListApiService.getListDetails(LIST_ID, page)
             } returns Response.success(INVALID_LIST_DETAILS_RESPONSE)
 
             // When
-            val result = remoteSource.getSavedListDetails(LIST_ID)
+            val result = remoteSource.getSavedListDetails(LIST_ID, page, pageSize)
 
             // Then
             assertThat(result.savedList.id).isEqualTo(-1L)
             assertThat(result.savedList.name).isEqualTo("")
             assertThat(result.savedList.itemCount).isEqualTo(0)
 
-            assertThat(result.listItems).isEmpty()
+            assertThat(result.pagedItems.data).isEmpty()
 
-            coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID) }
+            coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID, page) }
         }
 
     @Test
@@ -304,15 +303,22 @@ class RemoteSavedListDataSourceImplTest {
             // Given
             val errorBody = "Unknown Server Error".toResponseBody(null)
             coEvery {
-                savedListApiService.getListDetails(LIST_ID)
+                savedListApiService.getListDetails(LIST_ID, page)
             } returns Response.error(999, errorBody)
 
             // When
-            val thrown = runCatching { remoteSource.getSavedListDetails(LIST_ID) }.exceptionOrNull()
+            val thrown =
+                runCatching {
+                    remoteSource.getSavedListDetails(
+                        LIST_ID,
+                        page,
+                        pageSize,
+                    )
+                }.exceptionOrNull()
 
             // Then
             assertThat(thrown).isInstanceOf(UnknownNetworkException::class.java)
-            coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID) }
+            coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID, page) }
         }
     companion object {
         private const val page = 1

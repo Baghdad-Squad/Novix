@@ -6,5 +6,9 @@ import com.baghdad.domain.repository.SavedListRepository
 class GetSavedListDetailsUseCase(
     private val savedListRepository: SavedListRepository,
 ) {
-    suspend operator fun invoke(listId: Long): SavedListDetails = savedListRepository.getSavedListDetails(listId)
+    suspend operator fun invoke(
+        listId: Long,
+        page: Int,
+        pageSize: Int,
+    ): SavedListDetails = savedListRepository.getSavedListDetails(listId, page, pageSize)
 }

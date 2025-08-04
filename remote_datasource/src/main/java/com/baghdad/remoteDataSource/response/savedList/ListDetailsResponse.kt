@@ -12,6 +12,9 @@ data class ListDetailsResponse(
     @SerializedName("iso_639_1") val iso6391: String? = null,
     @SerializedName("name") val name: String? = null,
     @SerializedName("poster_path") val posterPath: String? = null,
+    @SerializedName("page") val page: Int? = null,
+    @SerializedName("total_pages") val totalPages: Int? = null,
+    @SerializedName("total_results") val totalResults: Int? = null,
 ) {
     data class Item(
         @SerializedName("adult") val adult: Boolean? = null,

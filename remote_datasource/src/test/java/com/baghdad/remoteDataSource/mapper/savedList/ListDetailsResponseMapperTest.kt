@@ -18,15 +18,15 @@ class ListDetailsResponseMapperTest {
         assertThat(dto.savedList.id).isEqualTo(123L)
         assertThat(dto.savedList.name).isEqualTo("My List")
         assertThat(dto.savedList.itemCount).isEqualTo(2)
-        assertThat(dto.listItems).hasSize(2)
+        assertThat(dto.pagedItems.data).hasSize(2)
 
-        val item1 = dto.listItems[0]
+        val item1 = dto.pagedItems.data[0]
         assertThat(item1.id).isEqualTo(1L)
         assertThat(item1.type).isEqualTo(SavedListItemDto.Type.MOVIE)
         assertThat(item1.title).isEqualTo("Oppenheimer")
         assertThat(item1.posterUrl).isEqualTo("/path1.jpg")
 
-        val item2 = dto.listItems[1]
+        val item2 = dto.pagedItems.data[1]
         assertThat(item2.id).isEqualTo(2L)
         assertThat(item2.type).isEqualTo(SavedListItemDto.Type.TV_SHOW)
         assertThat(item2.title).isEqualTo("Breaking Bad")
@@ -45,7 +45,7 @@ class ListDetailsResponseMapperTest {
         assertThat(dto.savedList.id).isEqualTo(321L)
         assertThat(dto.savedList.name).isEqualTo("Empty Items List")
         assertThat(dto.savedList.itemCount).isEqualTo(0)
-        assertThat(dto.listItems).isEmpty()
+        assertThat(dto.pagedItems.data).isEmpty()
     }
 
     @Test
@@ -60,7 +60,7 @@ class ListDetailsResponseMapperTest {
         assertThat(dto.savedList.id).isEqualTo(-1L)
         assertThat(dto.savedList.name).isEmpty()
         assertThat(dto.savedList.itemCount).isEqualTo(0)
-        assertThat(dto.listItems).isEmpty()
+        assertThat(dto.pagedItems.data).isEmpty()
     }
 
     companion object {

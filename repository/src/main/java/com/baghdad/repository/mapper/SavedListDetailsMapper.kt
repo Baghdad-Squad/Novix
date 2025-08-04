@@ -7,5 +7,5 @@ import com.baghdad.repository.model.savedList.SavedListItemDto
 fun SavedListDetailsDto.toEntity() =
     SavedListDetails(
         savedList = savedList.toEntity(),
-        listItems = listItems.map(SavedListItemDto::toEntity),
+        pagedItems = pagedItems.toPagedResult(SavedListItemDto::toEntity),
     )
