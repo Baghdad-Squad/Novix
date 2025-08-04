@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.onBoarding.component.BottomSlidingSection
@@ -24,14 +25,13 @@ import com.baghdad.viewmodel.onBoarding.OnBoardingState
 import com.baghdad.viewmodel.onBoarding.OnBoardingViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun OnBoardingScreen(
+    viewModel: OnBoardingViewModel = hiltViewModel(),
     handleNavigation: (OnBoardingNavEvent) -> Unit,
 ) {
 
-    val viewModel: OnBoardingViewModel = koinViewModel()
     val state by viewModel.uiState.collectAsState()
     val listener: OnBoardingInteractionListener = viewModel
 
@@ -39,7 +39,7 @@ fun OnBoardingScreen(
         handleEffect(effect, handleNavigation)
     }
 
-    OnBoardingComponent(
+    OnBoardingContent(
         state = state,
         listener = listener,
     )
@@ -48,13 +48,14 @@ fun OnBoardingScreen(
 
 
 @Composable
-private fun OnBoardingComponent(
+private fun OnBoardingContent(
     state: OnBoardingState,
     listener: OnBoardingInteractionListener,
 ) {
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val pagerState =
-        rememberPagerState(initialPage = state.initPage, pageCount = { state.onBoardingInfo.size })
+        rememberPagerState(initialPage = state.currentPage, pageCount = { state.onBoardingInfo.size })
+
 
     LazyColumn(
         modifier = Modifier
@@ -64,14 +65,15 @@ private fun OnBoardingComponent(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         item {
-            SkipText(onClick = { listener.onClickedOnSkip() })
+            SkipText(onClick = { listener.onSkipButtonClick() })
         }
         item {
             OnBoardingHorizontalPagerContent(
                 pagerState = pagerState,
                 state = state,
                 modifier = Modifier.fillParentMaxWidth(),
-                listener = listener,
+                onNext = { listener.onNextButtonClick() },
+                onBack = {listener.onBackButtonClick()},
             )
         }
         item {
@@ -81,7 +83,7 @@ private fun OnBoardingComponent(
                     if (pagerState.currentPage < pagerState.pageCount - 1) {
                         coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                     } else {
-                        listener.onClickedOnSkip()
+                        listener.onSkipButtonClick()
                     }
                 },
                 onClickBack = {
