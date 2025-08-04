@@ -17,6 +17,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -30,6 +31,7 @@ import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.viewmodel.home.HomeScreenState.PopularItemUiState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalFoundationApi::class)
@@ -43,7 +45,9 @@ fun PopularCardPager(
     autoSlideDuration: Long = 4000L,
 ) {
     val configuration = LocalConfiguration.current
-    val pagerState = rememberPagerState { items.size.takeIf { it == 0 } ?: Int.MAX_VALUE }
+    val virtualPagedCount = if (items.isEmpty()) 0 else items.size * 1000
+    val pagerState =
+        rememberPagerState(initialPage = 1) { virtualPagedCount }
     val screenWidth = configuration.screenWidthDp.dp
     val cardWidth = 188.dp
 
@@ -54,8 +58,8 @@ fun PopularCardPager(
         )
     if (items.isNotEmpty()) {
         LaunchedEffect(items) {
-            pagerState.animateScrollToPage(items.size + 1)
-            while (true) {
+            delay(autoSlideDuration)
+            while (isActive) {
                 delay(autoSlideDuration)
                 val next = (pagerState.currentPage + 1)
                 pagerState.animateScrollToPage(next)
@@ -160,7 +164,9 @@ private fun LoadingPopularCardPager(
                 .padding(bottom = 16.dp),
     ) { page ->
         val currentPageOffset =
-            (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+            remember(pagerState.currentPage, pagerState.currentPageOffsetFraction, page) {
+                (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+            }
 
         val rotation =
             when {
@@ -196,7 +202,8 @@ private fun LoadingPopularCardPager(
                         scaleX = xScale
                         scaleY = yScale
                         translationY = yTranslation
-                    }.fillMaxWidth(),
+                    }
+                    .fillMaxWidth(),
         )
     }
 }
