@@ -6,7 +6,7 @@ import com.baghdad.domain.repository.ContinueWatchingRepository
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.FavoriteGenreRepository
 import com.baghdad.domain.repository.LanguageProviderRepository
-import com.baghdad.domain.repository.AppearanceRepository  // Fixed: Changed from ThemeModeRepository
+import com.baghdad.domain.repository.AppearanceRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.domain.repository.RecentlyViewedRepository
 import com.baghdad.domain.repository.SavedListRepository
@@ -67,7 +67,5 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideAppearanceRepository(appearanceRepositoryImpl: AppearanceRepositoryImpl): AppearanceRepository
-
-
 
 }
