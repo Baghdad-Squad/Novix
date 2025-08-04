@@ -46,7 +46,7 @@ fun SafeImage(
             )
         )
         .memoryCachePolicy(CachePolicy.DISABLED)
-        //.diskCachePolicy(policy = CachePolicy.ENABLED)
+        .diskCachePolicy(policy = CachePolicy.ENABLED)
         .crossfade(true)
         .build()
     SubcomposeAsyncImage(
