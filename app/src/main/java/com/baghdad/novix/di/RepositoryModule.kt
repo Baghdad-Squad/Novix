@@ -63,7 +63,10 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideSavedListRepository(savedListRepository: SavedListRepositoryImpl): SavedListRepository
+
+    @Binds
     abstract fun provideSavedListRepository(savedListRepository: SavedListRepository): SavedListRepository
+
     @Binds
     abstract fun provideLanguageProviderRepository(languageProviderImpl: LanguageProviderImpl): LanguageProviderRepository
 
