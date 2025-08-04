@@ -10,7 +10,7 @@ import com.baghdad.repository.model.SavedListDto
 
 fun UserListsResponse.toPagedSavedListsDtos(): PagedResultDto<SavedListDto> {
     return PagedResultDto(
-        data = this.results?.takeIf { it.isEmpty() }?.map{ it.toSavedListDto() } ?: emptyList(),
+        data = this.results?.takeIf { it.isNotEmpty()}?.map{ it.toSavedListDto() } ?: emptyList(),
         nextKey = getNextKey(page, this.totalPages),
         prevKey = getPreviousKey(page)
     )
