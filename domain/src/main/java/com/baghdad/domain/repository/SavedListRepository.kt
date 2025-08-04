@@ -19,6 +19,6 @@ interface SavedListRepository {
         page: Int,
         pageSize: Int): SavedListDetails
 
-    suspend fun deleteSavedListByTitle(title: String)
+    suspend fun deleteSavedListById(listId: Long)
 
 }
