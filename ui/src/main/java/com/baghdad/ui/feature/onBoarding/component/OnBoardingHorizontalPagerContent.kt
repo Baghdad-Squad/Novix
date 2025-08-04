@@ -37,7 +37,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
@@ -46,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
-import com.baghdad.viewmodel.onBoarding.OnBoardingInteractionListener
 import com.baghdad.viewmodel.onBoarding.OnBoardingState
 import kotlin.math.abs
 
@@ -54,7 +52,8 @@ import kotlin.math.abs
 fun OnBoardingHorizontalPagerContent(
     pagerState: PagerState,
     state: OnBoardingState,
-    listener: OnBoardingInteractionListener,
+    onNext: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
     imageWidthFraction: Float = if (isTablet()) 0.50f else 0.80f,
 ) {
@@ -62,9 +61,9 @@ fun OnBoardingHorizontalPagerContent(
 
     LaunchedEffect(pagerState.currentPage) {
         if (pagerState.currentPage > previousPage) {
-            listener.onNextButtonClick()
+            onNext()
         } else if (pagerState.currentPage < previousPage) {
-            listener.onBackButtonClick()
+            onBack()
         }
         previousPage = pagerState.currentPage
     }
@@ -117,7 +116,7 @@ fun OnBoardingHorizontalPagerContent(
                                 else -> R.drawable.img_on_boarding_3
                             }
                         ),
-                        contentDescription = stringResource(state.onBoardingInfo[page].title),
+                        contentDescription = stringResource(state.onBoardingInfo[currentPage].title),
                         modifier = Modifier
                             .fillMaxWidth(imageWidthFraction)
                             .graphicsLayer {
@@ -137,7 +136,6 @@ fun OnBoardingHorizontalPagerContent(
                         Text(
                             text = stringResource(state.onBoardingInfo[page].title),
                             style = Theme.typography.title.large,
-                            fontWeight = FontWeight.Medium,
                             color = Theme.color.title,
                             modifier = Modifier.padding(top = 32.dp),
                             textAlign = TextAlign.Center,
@@ -148,7 +146,6 @@ fun OnBoardingHorizontalPagerContent(
                         Text(
                             text = stringResource(state.onBoardingInfo[page].description),
                             style = Theme.typography.body.medium,
-                            fontWeight = FontWeight.Normal,
                             color = Theme.color.body,
                             modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp),
                             lineHeight = TextUnit(24f, TextUnitType.Sp),

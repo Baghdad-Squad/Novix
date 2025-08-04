@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.modifier.noRippleClickable
@@ -24,7 +23,6 @@ fun SkipText(onClick: () -> Unit) {
         text = stringResource(R.string.skip),
         color = Theme.color.primary,
         style = Theme.typography.label.medium,
-        fontWeight = FontWeight.Medium,
         modifier = Modifier.padding(top = 56.dp)
     )
     Box(
