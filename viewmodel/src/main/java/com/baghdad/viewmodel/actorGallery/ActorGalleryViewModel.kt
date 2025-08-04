@@ -1,19 +1,25 @@
 package com.baghdad.viewmodel.actorGallery
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ActorGalleryViewModel(
+@HiltViewModel
+class ActorGalleryViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getGalleryImagesUseCase: GetActorGalleryUseCase,
-    private val actorId: Long,
     private val ioDispatcher: CoroutineDispatcher,
-
     ) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
     ActorGalleryInteractionListener {
+
+    private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
+
 
     init {
         loadData()

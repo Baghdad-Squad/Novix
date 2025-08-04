@@ -14,8 +14,9 @@ import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getFlowSafely
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class RecentlyViewedRepositoryImpl(
+class RecentlyViewedRepositoryImpl @Inject constructor(
     val localRecentlyViewedDataSource: LocalRecentlyViewedDataSource,
     val localFavoriteGenreDataSource: LocalFavoriteGenreDataSource,
     val localMovieDataSource: LocalMovieDataSource,

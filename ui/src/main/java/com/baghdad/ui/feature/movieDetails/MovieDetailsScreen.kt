@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
@@ -64,14 +65,11 @@ import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 
 @Composable
 fun MovieDetailsScreen(
-    movieId: Long,
-    viewModel: MovieDetailsViewModel = koinViewModel(parameters = { parametersOf(movieId) }),
+    viewModel: MovieDetailsViewModel = hiltViewModel(),
     handleNavigation: (MovieDetailsNavEvent) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -214,7 +212,7 @@ private fun MovieDetailsContent(
                 }
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    Spacer(Modifier.height(116.dp))
+                    Spacer(Modifier.height(104.dp))
                 }
 
                 if (state.overView.isNotBlank()) {

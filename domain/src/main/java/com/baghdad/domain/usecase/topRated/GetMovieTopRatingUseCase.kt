@@ -3,8 +3,9 @@ package com.baghdad.domain.usecase.topRated
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Movie
+import javax.inject.Inject
 
-class GetMovieTopRatingUseCase(
+class GetMovieTopRatingUseCase @Inject constructor(
     private val movieRepository: MovieRepository,
 
 ) {
