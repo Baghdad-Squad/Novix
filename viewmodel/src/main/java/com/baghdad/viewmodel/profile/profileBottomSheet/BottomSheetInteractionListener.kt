@@ -1,4 +1,4 @@
-package com.baghdad.viewmodel.profile.accountBottomSheet
+package com.baghdad.viewmodel.profile.profileBottomSheet
 
 interface BottomSheetInteractionListener {
     fun onCancelClick()
@@ -10,7 +10,4 @@ interface BottomSheetInteractionListener {
     fun onModerateContentRestrictionClick()
     fun onvContentRestrictionClick()
     fun onSaveClick()
-    /**
-     * we wanna add key or id to each list item
-     */
 }
