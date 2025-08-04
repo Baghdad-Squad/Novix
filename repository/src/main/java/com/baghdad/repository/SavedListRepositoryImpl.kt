@@ -10,8 +10,9 @@ import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.util.executeAuthorizedSafely
+import javax.inject.Inject
 
-class SavedListRepositoryImpl(
+class SavedListRepositoryImpl @Inject constructor(
     private val remoteSavedListSource: RemoteSavedListDataSource,
     private val localSessionDataStore: LocalSessionDataStore,
     private val localUserDataStore: LocalUserDataStore,

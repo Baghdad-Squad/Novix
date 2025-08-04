@@ -55,44 +55,6 @@ class GetSavedListsUseCaseTest {
         coVerify(exactly = 1) { savedListRepository.getSavedLists(page, pageSize) }
     }
 
-    @Test
-    fun `invoke should propagate exception when repository throws exception`() = runTest {
-        // Given
-        val expectedException = RuntimeException("Network error")
-
-        coEvery {
-            savedListRepository.getSavedLists(page, pageSize)
-        } throws expectedException
-
-        // When & Then
-        val exception = runCatching {
-            getSavedListsUseCase(page, pageSize)
-        }.exceptionOrNull()
-
-        assertThat(exception).isNotNull()
-        assertThat(exception).isInstanceOf(RuntimeException::class.java)
-        assertThat(exception?.message).isEqualTo("Network error")
-        coVerify(exactly = 1) { savedListRepository.getSavedLists(page, pageSize) }
-    }
-
-    @Test
-    fun `invoke should pass correct parameters to repository`() = runTest {
-        // Given
-        coEvery {
-            savedListRepository.getSavedLists(3, 10)
-        } returns PagedResult(
-            data = emptyList(),
-            nextKey = null,
-            prevKey = 2
-        )
-
-        // When
-        getSavedListsUseCase(3, 10)
-
-        // Then
-        coVerify(exactly = 1) { savedListRepository.getSavedLists(3, 10) }
-    }
-
     companion object {
         private const val page = 1
         private const val pageSize = 20

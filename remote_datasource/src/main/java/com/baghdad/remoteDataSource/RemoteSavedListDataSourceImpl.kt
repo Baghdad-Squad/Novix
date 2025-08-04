@@ -8,8 +8,9 @@ import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
+import javax.inject.Inject
 
-class RemoteSavedListDataSourceImpl(
+class RemoteSavedListDataSourceImpl @Inject constructor(
     private val savedListApiService: SavedListApiService,
     private val logger: Logger,
 ) : RemoteSavedListDataSource {
