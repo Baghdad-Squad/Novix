@@ -50,7 +50,7 @@ class RemoteSavedListDataSourceImplTest {
         // Given
         val response = CreateSavedListResponse(success = true)
 
-        coEvery { savedListApiService.createSavedList(any()) } returns mockk {
+        coEvery { savedListApiService.createSavedList(any(), any()) } returns mockk {
             every { body() } returns response
             every { isSuccessful } returns true
         }
@@ -59,7 +59,12 @@ class RemoteSavedListDataSourceImplTest {
         remoteSource.createSavedList(title, sessionId)
 
         // Then
-        coVerify { savedListApiService.createSavedList(CreateListRequest(name = title)) }
+        coVerify {
+            savedListApiService.createSavedList(
+                CreateListRequest(name = title),
+                sessionId = sessionId
+            )
+        }
     }
 
     @Test
@@ -69,7 +74,7 @@ class RemoteSavedListDataSourceImplTest {
             val errorMessage = "Unauthorized access"
             val response = CreateSavedListResponse(success = false, statusMessage = errorMessage)
 
-            coEvery { savedListApiService.createSavedList(any()) } returns mockk {
+            coEvery { savedListApiService.createSavedList(any(), any()) } returns mockk {
                 every { body() } returns response
                 every { isSuccessful } returns true
             }
@@ -84,7 +89,12 @@ class RemoteSavedListDataSourceImplTest {
             assertThat(resultException).isInstanceOf(ItemCreationFailedException::class.java)
             assertThat(resultException?.message).isEqualTo(errorMessage)
 
-            coVerify { savedListApiService.createSavedList(CreateListRequest(name = title)) }
+            coVerify {
+                savedListApiService.createSavedList(
+                    CreateListRequest(name = title),
+                    sessionId
+                )
+            }
         }
 
 
@@ -93,7 +103,7 @@ class RemoteSavedListDataSourceImplTest {
         // Given
         val response = CreateSavedListResponse(success = false, statusMessage = null)
 
-        coEvery { savedListApiService.createSavedList(any()) } returns mockk {
+        coEvery { savedListApiService.createSavedList(any(), any()) } returns mockk {
             every { body() } returns response
             every { isSuccessful } returns true
         }
@@ -116,7 +126,7 @@ class RemoteSavedListDataSourceImplTest {
             val expectedMessage = "Access denied"
             val response = CreateSavedListResponse(success = false, statusMessage = expectedMessage)
 
-            coEvery { savedListApiService.createSavedList(any()) } returns mockk {
+            coEvery { savedListApiService.createSavedList(any(), any()) } returns mockk {
                 every { body() } returns response
                 every { isSuccessful } returns true
             }
