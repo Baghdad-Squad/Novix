@@ -337,7 +337,7 @@ class SavedListRepositoryImplTest {
         }
 
     @Test
-    fun `deleteSavedListById should not call remote if session ID is missing`() =
+    fun `should not call remote when session ID is missing`() =
         runTest {
             // Given
             coEvery { localSessionDataStore.getSessionId() } returns ""
@@ -350,7 +350,7 @@ class SavedListRepositoryImplTest {
         }
 
     @Test
-    fun `should deleteSavedListById handle remote failure`() =
+    fun `should throw exception when remote delete fails`() =
         runTest {
             // Given
             coEvery { localSessionDataStore.getSessionId() } returns SESSION_ID
