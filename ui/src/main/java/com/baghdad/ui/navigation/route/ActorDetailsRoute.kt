@@ -7,11 +7,11 @@ sealed interface ActorDetailsRoute : Route {
     data object ActorDetailsScreen : Route
 
     @Serializable
-    data object ActorGalleryScreen : Route
+    data class ActorGalleryScreen(val actorId: Long) : Route
 
     @Serializable
-    data object ActorTopMoviePicksScreen : Route
+    data class ActorTopMoviePicksScreen(val actorId: Long) : Route
 
     @Serializable
-    data object ActorTopTvShowPicksScreen : Route
+    data class ActorTopTvShowPicksScreen(val actorId: Long): Route
 }

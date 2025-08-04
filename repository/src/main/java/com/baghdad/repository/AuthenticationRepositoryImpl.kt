@@ -8,8 +8,9 @@ import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.model.toEntity
 import com.baghdad.repository.util.executeLoginSafely
+import javax.inject.Inject
 
-class AuthenticationRepositoryImpl(
+class AuthenticationRepositoryImpl @Inject constructor(
     private val remoteAuthenticationDataSource: RemoteAuthenticationDataSource,
     private val localSessionDataStore: LocalSessionDataStore,
     private val localUserDataStore: LocalUserDataStore

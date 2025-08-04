@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.review
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.review.GetMovieReviewsUseCase
 import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
 import com.google.common.truth.Truth.assertThat
@@ -25,6 +26,7 @@ class ReviewViewModelTest {
     private val mockGetTvShowReviewsUseCase = mockk<GetTvShowReviewsUseCase>()
     private val testDispatcher = StandardTestDispatcher()
     private val contentId = 123L
+    private val mediaId: Long = 1L
 
     @BeforeEach
     fun setup() {
@@ -43,32 +45,41 @@ class ReviewViewModelTest {
             // Given
             coEvery { mockGetMovieReviewsUseCase(contentId) } returns emptyList()
 
-            // When
-            ReviewViewModel(
-                getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
-                getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-                contentId = contentId,
-                contentType = ContentType.MOVIE,
-                ioDispatcher = testDispatcher
-            )
-            testDispatcher.scheduler.advanceUntilIdle()
+            val savedStateHandle = SavedStateHandle(
+                mapOf(
+                    "mediaId" to 123L,
+                    "mediaType" to ContentType.MOVIE,
+                ))
 
-            // Then
-            coVerify(exactly = 1) { mockGetMovieReviewsUseCase(contentId) }
-            coVerify(exactly = 0) { mockGetTvShowReviewsUseCase(any()) }
+                    // When
+                    ReviewViewModel(
+                        getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
+                        getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
+                        savedStateHandle = savedStateHandle,
+                        ioDispatcher = testDispatcher
+                    )
+                            testDispatcher . scheduler . advanceUntilIdle ()
+
+                            // Then
+                            coVerify (exactly = 1) { mockGetMovieReviewsUseCase(contentId) }
+                            coVerify (exactly = 0) { mockGetTvShowReviewsUseCase(any()) }
         }
 
     @Test
     fun `reviewViewModel() should return empty state when movie reviews list is empty`() = runTest {
         // Given
         coEvery { mockGetMovieReviewsUseCase(contentId) } returns emptyList()
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "mediaId" to mediaId,
+                "mediaType" to ContentType.MOVIE,
+            ))
 
         // When
         val viewModel = ReviewViewModel(
             getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
             getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-            contentId = contentId,
-            contentType = ContentType.MOVIE,
+            savedStateHandle = savedStateHandle,
             ioDispatcher = testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -80,38 +91,49 @@ class ReviewViewModelTest {
     }
 
     @Test
-    fun `reviewViewModel() should call series reviews use case when content type is series`() =
-        runTest {
-            // Given
-            coEvery { mockGetTvShowReviewsUseCase(contentId) } returns emptyList()
+    fun `reviewViewModel() should call series reviews use case when content type is series`() = runTest {
+        // Given
+        val mediaId = 1L
+        coEvery { mockGetTvShowReviewsUseCase(mediaId) } returns emptyList()
+        coEvery { mockGetMovieReviewsUseCase(any()) } returns emptyList()
 
-            // When
-            ReviewViewModel(
-                getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
-                getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-                contentId = contentId,
-                contentType = ContentType.SERIES,
-                ioDispatcher = testDispatcher
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "mediaId" to mediaId,
+                "mediaType" to ContentType.SERIES,
             )
-            testDispatcher.scheduler.advanceUntilIdle()
+        )
 
-            // Then
-            coVerify(exactly = 1) { mockGetTvShowReviewsUseCase(contentId) }
-            coVerify(exactly = 0) { mockGetMovieReviewsUseCase(any()) }
-        }
+        // When
+        ReviewViewModel(
+            getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
+            getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
+            savedStateHandle = savedStateHandle,
+            ioDispatcher = testDispatcher
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Then
+        coVerify(exactly = 1) { mockGetTvShowReviewsUseCase(mediaId) }
+        coVerify(exactly = 0) { mockGetMovieReviewsUseCase(any()) }
+    }
 
     @Test
     fun `reviewViewModel() should return empty state when series reviews list is empty`() =
         runTest {
             // Given
             coEvery { mockGetTvShowReviewsUseCase(contentId) } returns emptyList()
+            val savedStateHandle = SavedStateHandle(
+                mapOf(
+                    "mediaId" to mediaId,
+                    "mediaType" to ContentType.MOVIE,
+                ))
 
             // When
             val viewModel = ReviewViewModel(
                 getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
                 getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-                contentId = contentId,
-                contentType = ContentType.SERIES,
+                savedStateHandle = savedStateHandle,
                 ioDispatcher = testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
@@ -127,13 +149,17 @@ class ReviewViewModelTest {
         // Given
         val exception = RuntimeException()
         coEvery { mockGetTvShowReviewsUseCase(contentId) } throws exception
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "mediaId" to mediaId,
+                "mediaType" to ContentType.MOVIE,
+            ))
 
         // When
         val viewModel = ReviewViewModel(
             getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
             getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-            contentId = contentId,
-            contentType = ContentType.SERIES,
+            savedStateHandle = savedStateHandle ,
             ioDispatcher = testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -149,11 +175,16 @@ class ReviewViewModelTest {
         runTest {
             // Given
             coEvery { mockGetTvShowReviewsUseCase(contentId) } returns emptyList()
+            val savedStateHandle = SavedStateHandle(
+                mapOf(
+                    "mediaId" to 123L,
+                    "mediaType" to ContentType.SERIES,
+                ))
+
             val viewModel = ReviewViewModel(
                 getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
                 getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-                contentId = contentId,
-                contentType = ContentType.SERIES,
+                savedStateHandle = savedStateHandle,
                 ioDispatcher = testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
@@ -171,11 +202,17 @@ class ReviewViewModelTest {
         runTest {
             // Given
             coEvery { mockGetMovieReviewsUseCase(contentId) } returns emptyList()
+            val savedStateHandle = SavedStateHandle(
+                mapOf(
+                    "mediaId" to mediaId,
+                    "mediaType" to ContentType.MOVIE,
+                ))
+
+
             val viewModel = ReviewViewModel(
                 getMovieReviewsUseCase = mockGetMovieReviewsUseCase,
                 getSeriesReviewsUseCase = mockGetTvShowReviewsUseCase,
-                contentId = contentId,
-                contentType = ContentType.MOVIE,
+                savedStateHandle = savedStateHandle,
                 ioDispatcher = testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()

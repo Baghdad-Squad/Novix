@@ -4,7 +4,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import androidx.navigation.toRoute
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.CategoriesRoute.CategoryMoviesScreen
@@ -21,9 +20,7 @@ fun NavGraphBuilder.categoriesNavGraph(navController: NavHostController) {
             DummyScreen("Categories Screen")
         }
         composable<CategoryMoviesScreen> { backStackEntry ->
-            val categoryId =
-                backStackEntry.toRoute<CategoryMoviesScreen>().categoryId
-            com.baghdad.ui.feature.categoryMovies.CategoryMoviesScreen(categoryId = categoryId) {
+            com.baghdad.ui.feature.categoryMovies.CategoryMoviesScreen{
                 handleCategoriesNavEvent(
                     it,
                     navController
@@ -31,9 +28,7 @@ fun NavGraphBuilder.categoriesNavGraph(navController: NavHostController) {
             }
         }
         composable<CategoryTvShowsScreen> { backStackEntry ->
-            val categoryId =
-                backStackEntry.toRoute<CategoryTvShowsScreen>().categoryId
-            com.baghdad.ui.feature.categoryTvShows.CategoryTvShowsScreen(categoryId = categoryId) {
+            com.baghdad.ui.feature.categoryTvShows.CategoryTvShowsScreen {
                 handleCategoriesNavEvent(
                     it,
                     navController

@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.actorDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
@@ -48,7 +49,7 @@ class ActorDetailsViewModelTest {
         coEvery { getActorTvShowUseCase(actorId) } returns createMockTvShows()
         coEvery { getActorGalleryUseCase(actorId) } returns createMockGallery()
         viewModel = ActorDetailsViewModel(
-            actorId = actorId,
+             savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId)),
             getActorInfoUseCase = getActorInfoUseCase,
             getActorMoviesUseCase = getActorMoviesUseCase,
             getActorTvShowUseCase = getActorTvShowUseCase,

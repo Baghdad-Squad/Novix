@@ -3,8 +3,11 @@ package com.baghdad.viewmodel.main
 import com.baghdad.domain.usecase.login.IsLoggedInUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainViewModel(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     private val isLoggedInUseCase: IsLoggedInUseCase,
 ) : BaseViewModel<MainState, MainEffect>(
     MainState()

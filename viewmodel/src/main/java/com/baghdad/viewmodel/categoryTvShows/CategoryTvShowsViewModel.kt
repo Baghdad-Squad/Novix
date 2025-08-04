@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.categoryTvShows
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
@@ -8,16 +9,21 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState.TvShowUiState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
-class CategoryTvShowsViewModel(
-    private val categoryId: Long,
+@HiltViewModel
+class CategoryTvShowsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getTvShowsCategoryUseCase: GetTvShowsByGenreUseCase,
     private val getCategoryNameByIdUseCase: GetTvShowGenreNameByIdUseCase,
     private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<CategoryTvShowsState, CategoryTvShowsEffect>(CategoryTvShowsState()),
     CategoryTvShowsInteractionListener {
+
+    private val categoryId: Long = checkNotNull(savedStateHandle["categoryId"])
 
     init {
         getTvShowsByCategoryId(categoryId = categoryId)
