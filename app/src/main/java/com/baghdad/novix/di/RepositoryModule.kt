@@ -7,6 +7,7 @@ import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.FavoriteGenreRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.domain.repository.RecentlyViewedRepository
+import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.repository.ActorRepositoryImpl
@@ -55,5 +56,7 @@ abstract class RepositoryModule {
     @Binds
     abstract fun provideAuthRepository(authenticationRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
 
+    @Binds
+    abstract fun provideSavedListRepository(savedListRepository: SavedListRepository): SavedListRepository
 
 }
