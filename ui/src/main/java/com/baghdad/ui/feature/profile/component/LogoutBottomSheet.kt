@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.profile.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,18 +42,22 @@ fun LogOutBottomSheet(
             )
             Text(
                 text = stringResource(R.string.log_out_description),
-                style = Theme.typography.title.large,
-                color = Theme.color.title,
+                style = Theme.typography.body.medium,
+                color = Theme.color.body,
+                modifier = Modifier
+                    .padding(bottom = 24.dp)
             )
             NegativeButton(
                 label = stringResource(R.string.log_out),
                 onClick = onLogOutClick,
-                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
             )
         }
     }
-
 }
+
 @Preview
 @Composable
 fun LogOutBottomSheetPrv(){
