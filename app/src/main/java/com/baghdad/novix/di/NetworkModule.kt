@@ -1,10 +1,7 @@
 package com.baghdad.novix.di
 
-import android.content.Context
-import android.net.ConnectivityManager
 import com.baghdad.local_datasource.language.AppLanguageProvider
 import com.baghdad.novix.BuildConfig
-import com.baghdad.novix.util.ConnectivityObserverImpl
 import com.baghdad.remoteDataSource.RemoteActorDataSourceImpl
 import com.baghdad.remoteDataSource.RemoteAuthenticationImpl
 import com.baghdad.remoteDataSource.RemoteEpisodeDataSourceImpl
@@ -21,8 +18,6 @@ import com.baghdad.remoteDataSource.apiService.SearchApiService
 import com.baghdad.remoteDataSource.apiService.TvShowApiService
 import com.baghdad.remoteDataSource.interceptor.CacheInterceptor
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
-import com.baghdad.remoteDataSource.interceptor.OfflineCacheInterceptor
-import com.baghdad.remoteDataSource.util.Connectivity
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
@@ -31,7 +26,6 @@ import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.language.LanguageProvider
-import com.baghdad.viewmodel.util.ConnectivityObserver
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
@@ -70,24 +64,11 @@ val remoteDataSourceModule = module {
         val cacheDir = androidContext().cacheDir
         Cache(File(cacheDir, "http-cache"), cacheSize)
     }
-    single<Connectivity> {
-        Connectivity(androidContext())
-    }
-    single<ConnectivityManager> {
-        androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    }
-    single<ConnectivityObserver> {
-        ConnectivityObserverImpl(
-            connectivityManager = get<ConnectivityManager>()
-        )
 
-    }
     single<CacheInterceptor> {
         CacheInterceptor()
     }
-    single<OfflineCacheInterceptor> {
-        OfflineCacheInterceptor(get<Connectivity>())
-    }
+
     single {
         HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -111,7 +92,6 @@ val remoteDataSourceModule = module {
             .writeTimeout(timeOut, TimeUnit.SECONDS)
             .cache(get())
             .addInterceptor(get<HttpLoggingInterceptor>())
-            .addInterceptor(get<OfflineCacheInterceptor>())
             .addNetworkInterceptor(get<CacheInterceptor>())
             .addInterceptor(get<HeadersSetupInterceptor>())
             .build()
