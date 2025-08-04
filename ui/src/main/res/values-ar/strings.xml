@@ -64,6 +64,7 @@
     <string name="forgot_password">نسيت كلمة المرور؟</string>
     <string name="create_account">انشاء حساب جديد</string>
     <string name="login_successfully">تم تسجيل الدخول بنجاح</string>
+    <string name="logout_successfully">تم تسجيل الخروج بنجاح</string>
     <string name="incorrect_username_or_password">البيانات غير صحيحة</string>
     <string name="trending_tv_shows">المسلسلات الرائجة</string>
     <string name="movies">أفلام</string>
@@ -74,6 +75,8 @@
     <string name="episode_title_template">الحلقة %1$d %2$s</string>
     <string name="movie_card">بطاقة الفيلم</string>
     <string name="trending_movies">الأفلام الرائجة</string>
+    <string name="log_out">تسجيل خروج</string>
+    <string name="log_out_description">هل أنت متأكد أنك تريد المتابعة؟</string>
 
     <string name="popular">شائع</string>
     <string name="continue_watching">متابعة المشاهدة</string>
