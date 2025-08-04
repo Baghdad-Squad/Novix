@@ -2,11 +2,12 @@ package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.SavedListApiService
 import com.baghdad.remoteDataSource.request.CreateListRequest
-import com.baghdad.remoteDataSource.response.AddItemToSavedResponse
 import com.baghdad.remoteDataSource.response.UserListDto
 import com.baghdad.remoteDataSource.response.UserListsResponse
+import com.baghdad.remoteDataSource.response.savedList.AddListItemResponse
 import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
 import com.baghdad.remoteDataSource.response.savedList.ListDetailsResponse
+import com.baghdad.remoteDataSource.response.savedList.RemoveListItemResponse
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.exception.ItemCreationFailedException
 import com.baghdad.repository.exception.UnknownNetworkException
@@ -175,7 +176,7 @@ class RemoteSavedListDataSourceImplTest {
     @Test
     fun `should return success response when adding a movie to list`() = runTest {
         // Given
-        val successResponse = Response.success(AddItemToSavedResponse(1, "Success"))
+        val successResponse = Response.success(AddListItemResponse(1, "Success"))
 
         coEvery {
             savedListApiService.addItemToSavedList(listId, any(), sessionId)
@@ -191,7 +192,7 @@ class RemoteSavedListDataSourceImplTest {
     @Test
     fun `should return success response when adding a tv show to list`() = runTest {
         // Given
-        val successResponse = Response.success(AddItemToSavedResponse(1, "Success"))
+        val successResponse = Response.success(AddListItemResponse(1, "Success"))
         coEvery {
             savedListApiService.addItemToSavedList(listId, any(), sessionId)
         } returns successResponse
@@ -206,7 +207,7 @@ class RemoteSavedListDataSourceImplTest {
     @Test
     fun `should throw exception when api returns error response`() = runTest {
         // Given
-        val errorResponse = Response.error<AddItemToSavedResponse>(
+        val errorResponse = Response.error<AddListItemResponse>(
             401, "Unauthorized".toResponseBody("application/json".toMediaTypeOrNull())
         )
 
@@ -225,7 +226,7 @@ class RemoteSavedListDataSourceImplTest {
     @Test
     fun `should throw exception when network call fails`() = runTest {
         // Given
-        val errorResponse = Response.error<AddItemToSavedResponse>(
+        val errorResponse = Response.error<AddListItemResponse>(
             401, "Unauthorized".toResponseBody("application/json".toMediaTypeOrNull())
         )
 
@@ -239,6 +240,32 @@ class RemoteSavedListDataSourceImplTest {
         }
 
         coVerify { savedListApiService.addItemToSavedList(listId, any(), sessionId) }
+    }
+
+    @Test
+    fun `should remove movie form saved list when the movie removed successfully`() = runTest {
+        // Given
+        coEvery { savedListApiService.removeItemFromSavedList(listId, any(), sessionId) } returns
+                Response.success(RemoveListItemResponse(1, "Success"))
+
+        // When
+        remoteSource.removeMovieFromSavedList(listId, movieId, sessionId)
+
+        // Then
+        coVerify { savedListApiService.removeItemFromSavedList(listId, any(), sessionId) }
+    }
+
+    @Test
+    fun `should remove tv show form saved list when the tv show removed successfully`() = runTest {
+        // Given
+        coEvery { savedListApiService.removeItemFromSavedList(listId, any(), sessionId) } returns
+                Response.success(RemoveListItemResponse(1, "Success"))
+
+        // When
+        remoteSource.removeTvShowFromSavedList(listId, tvShowId, sessionId)
+
+        // Then
+        coVerify { savedListApiService.removeItemFromSavedList(listId, any(), sessionId) }
     }
 
     @Test
@@ -320,6 +347,7 @@ class RemoteSavedListDataSourceImplTest {
             assertThat(thrown).isInstanceOf(UnknownNetworkException::class.java)
             coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID, page) }
         }
+
     companion object {
         private const val page = 1
         private const val pageSize = 20

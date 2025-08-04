@@ -33,6 +33,7 @@ class SavedListRepositoryImplTest {
 
     val listId = 22L
     val movieId = 22002L
+    val tvShowId = 2L
     val sessionId = "session_id"
     val title = "Favorite"
 
@@ -223,6 +224,32 @@ class SavedListRepositoryImplTest {
 
             coVerify { remoteSource.addTvShowToSavedList(listId, movieId, sessionId) }
         }
+
+    @Test
+    fun `should remove movie from saved list when the movie removed successfully`() = runTest {
+        // Given
+        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+
+        // When
+        repository.removeMovieFromSavedList(listId, movieId)
+
+        // Then
+        coVerify { remoteSource.removeMovieFromSavedList(listId, movieId, sessionId) }
+    }
+
+    @Test
+    fun `should remove tvShow from saved list when the tvShow removed successfully`() = runTest {
+        // Given
+        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+
+        // When
+        repository.removeTvShowFromSavedList(listId, tvShowId)
+
+        // Then
+        coVerify {
+            remoteSource.removeTvShowFromSavedList(listId, tvShowId, sessionId)
+        }
+    }
 
     @Test
     fun `should createSavedList not crash when session ID is null`() =
