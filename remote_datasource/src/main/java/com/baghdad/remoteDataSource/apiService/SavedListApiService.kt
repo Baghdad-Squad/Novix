@@ -3,8 +3,10 @@ package com.baghdad.remoteDataSource.apiService
 import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.request.AddItemRequest
 import com.baghdad.remoteDataSource.response.AddItemToSavedResponse
+import com.baghdad.remoteDataSource.response.UserListsResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -18,7 +20,16 @@ interface SavedListApiService {
         @Query("session_id") sessionId: String
     ): Response<AddItemToSavedResponse>
 
+    @Authenticated
+    @GET(LISTS_ENDPOINT)
+    suspend fun getSavedLists(
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
+        @Query("page") page: Int,
+    ): Response<UserListsResponse>
+
     companion object {
+        private const val LISTS_ENDPOINT = "account/{account_id}/lists"
         private const val ADD_ITEM_TO_SAVED_LIST_ENDPOINT = "/list/{list_id}/add_item"
     }
 }

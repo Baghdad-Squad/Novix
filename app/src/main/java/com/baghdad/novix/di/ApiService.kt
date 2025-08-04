@@ -5,6 +5,7 @@ import com.baghdad.remoteDataSource.apiService.AuthenticationApiService
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
 import com.baghdad.remoteDataSource.apiService.GenreApiService
 import com.baghdad.remoteDataSource.apiService.MovieApiService
+import com.baghdad.remoteDataSource.apiService.SavedListApiService
 import com.baghdad.remoteDataSource.apiService.SearchApiService
 import com.baghdad.remoteDataSource.apiService.TvShowApiService
 import dagger.Module
@@ -51,4 +52,10 @@ object ApiServiceModule {
     fun provideTvShowApiService(retrofit: Retrofit): TvShowApiService {
         return retrofit.create(TvShowApiService::class.java)
     }
+
+    @Provides
+    fun provideSavedListService(retrofit: Retrofit): SavedListApiService{
+        return retrofit.create(SavedListApiService::class.java)
+    }
+
 }
