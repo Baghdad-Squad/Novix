@@ -24,6 +24,7 @@ interface SavedListApiService {
     @POST(CREATE_SAVED_LIST)
     suspend fun createSavedList(
         @Body body: CreateListRequest,
+        @Query("session_id") sessionId: String,
     ): Response<CreateSavedListResponse>
 
     @Authenticated

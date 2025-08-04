@@ -27,7 +27,8 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         val result = handleRequest<CreateSavedListResponse>(
             apiCall = {
                 savedListApiService.createSavedList(
-                    body = CreateListRequest(name = title)
+                    body = CreateListRequest(name = title),
+                    sessionId = sessionId,
                 )
             },
             logger = logger,
