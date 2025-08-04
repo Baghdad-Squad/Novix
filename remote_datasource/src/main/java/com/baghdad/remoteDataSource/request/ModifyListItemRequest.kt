@@ -2,6 +2,6 @@ package com.baghdad.remoteDataSource.request
 
 import com.google.gson.annotations.SerializedName
 
-data class AddItemRequest(
+data class ModifyListItemRequest(
     @SerializedName("media_id") val mediaId: Long
 )
