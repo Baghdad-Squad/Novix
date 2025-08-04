@@ -14,7 +14,7 @@ class OnBoardingViewModel : BaseViewModel<OnBoardingState, OnBoardingEffect>(OnB
     override fun onNextButtonClick() {
         if (currentState.currentPage < currentState.onBoardingInfo.size) {
             updateState { it.copy(currentPage = currentState.currentPage + 1) }
-        } else if (currentState.currentPage == currentState.onBoardingInfo.size){
+        } else if (currentState.currentPage == currentState.onBoardingInfo.size) {
             sendEffect(OnBoardingEffect.NavigateToWelcomeToNovix)
         }
     }
@@ -25,7 +25,8 @@ class OnBoardingViewModel : BaseViewModel<OnBoardingState, OnBoardingEffect>(OnB
         }
     }
 
-    override fun onClickedOnSkip() {
+    override fun onSkipButtonClick() {
+        updateState { it.copy(currentPage = 0) }
         sendEffect(OnBoardingEffect.NavigateToWelcomeToNovix)
     }
 
