@@ -1,11 +1,17 @@
 package com.baghdad.remoteDataSource.apiService
 
 import com.baghdad.remoteDataSource.interceptor.Authenticated
+import com.baghdad.remoteDataSource.request.AddItemRequest
 import com.baghdad.remoteDataSource.request.CreateListRequest
+import com.baghdad.remoteDataSource.response.AddItemToSavedResponse
+import com.baghdad.remoteDataSource.response.UserListsResponse
 import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface SavedListApiService {
     @Authenticated
