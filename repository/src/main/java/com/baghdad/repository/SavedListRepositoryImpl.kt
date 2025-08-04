@@ -78,4 +78,11 @@ class SavedListRepositoryImpl @Inject constructor(
         executeSafely {
             remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toEntity()
         }
+
+    override suspend fun deleteSavedListById(listId: Long) {
+        val sessionId = localSessionDataStore.getSessionId()
+        executeAuthorizedSafely(sessionId) { sessionId ->
+            remoteSavedListSource.deleteSavedListById(listId, sessionId)
+        }
+    }
 }
