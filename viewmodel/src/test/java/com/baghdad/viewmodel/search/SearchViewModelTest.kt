@@ -23,10 +23,8 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -521,7 +519,7 @@ class SearchViewModelTest {
 
         viewModel.onActorItemClick(actorId)
 
-        assertThat((expectedEffect as SearchScreenEffect.NavigateToActorDetails).actorId).isEqualTo(
+        assertThat((expectedEffect).actorId).isEqualTo(
             actorId
         )
     }
@@ -538,7 +536,7 @@ class SearchViewModelTest {
 
         method.invoke(viewModel, contentId)
 
-        assertThat((expectedEffect as SearchScreenEffect.NavigateToTvShowDetails).tvShowId).isEqualTo(
+        assertThat((expectedEffect).tvShowId).isEqualTo(
             contentId
         )
     }
@@ -553,7 +551,7 @@ class SearchViewModelTest {
 
         viewModel.onTvShowItemClick(contentId, imageUrl)
 
-        assertThat((expectedEffect as SearchScreenEffect.NavigateToTvShowDetails).tvShowId).isEqualTo(
+        assertThat((expectedEffect).tvShowId).isEqualTo(
             contentId
         )
     }
@@ -568,7 +566,7 @@ class SearchViewModelTest {
 
         viewModel.onTvShowItemClick(contentId, imageUrl)
 
-        assertThat((expectedEffect as SearchScreenEffect.NavigateToTvShowDetails).tvShowId).isEqualTo(
+        assertThat((expectedEffect).tvShowId).isEqualTo(
             contentId
         )
     }
@@ -584,7 +582,7 @@ class SearchViewModelTest {
 
         method.invoke(viewModel, contentId)
 
-        assertThat((expectedEffect as SearchScreenEffect.NavigateToMovieDetails).movieId).isEqualTo(
+        assertThat((expectedEffect).movieId).isEqualTo(
             contentId
         )
     }
@@ -610,7 +608,7 @@ class SearchViewModelTest {
 
         viewModel.onMovieItemClick(contentId, imageUrl)
 
-        assertThat((expectedEffect as SearchScreenEffect.NavigateToMovieDetails).movieId).isEqualTo(
+        assertThat((expectedEffect).movieId).isEqualTo(
             contentId
         )
     }
@@ -637,7 +635,7 @@ class SearchViewModelTest {
 
         viewModel.onRecentlyViewedClick(contentId, imageUrl)
 
-        assertThat((expectedEffect as SearchScreenEffect.NavigateToMovieDetails).movieId).isEqualTo(
+        assertThat((expectedEffect).movieId).isEqualTo(
             contentId
         )
     }
@@ -652,7 +650,7 @@ class SearchViewModelTest {
 
         viewModel.onRecentlyViewedClick(contentId, imageUrl)
 
-        assertThat((expectedEffect as SearchScreenEffect.NavigateToTvShowDetails).tvShowId).isEqualTo(
+        assertThat((expectedEffect).tvShowId).isEqualTo(
             contentId
         )
     }
