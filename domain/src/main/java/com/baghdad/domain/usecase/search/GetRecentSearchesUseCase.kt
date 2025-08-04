@@ -4,8 +4,9 @@ import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.entity.search.RecentSearch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class GetRecentSearchesUseCase(
+class GetRecentSearchesUseCase @Inject constructor(
     private val searchRepository: SearchRepository
 ) {
     operator fun invoke(): Flow<List<RecentSearch>> {

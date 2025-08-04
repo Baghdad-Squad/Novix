@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     jacoco
+    kotlin("kapt")
 }
 
 android {
@@ -47,4 +48,10 @@ dependencies {
     implementation(libs.bundles.coroutines)
     implementation(libs.kotlinx.datetime)
     testImplementation(libs.bundles.test.core)
+    implementation(libs.bundles.hilt)
+    kapt(libs.hilt.compiler)
+}
+
+kapt{
+    correctErrorTypes = true
 }

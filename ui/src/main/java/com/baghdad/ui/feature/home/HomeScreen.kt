@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -42,11 +43,10 @@ import com.baghdad.viewmodel.home.HomeInteractionListener
 import com.baghdad.viewmodel.home.HomeScreenEffect
 import com.baghdad.viewmodel.home.HomeScreenState
 import com.baghdad.viewmodel.home.HomeViewModel
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
