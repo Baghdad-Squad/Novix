@@ -13,11 +13,7 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import com.google.common.truth.Truth.assertThat
-import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -247,7 +243,6 @@ class RemoteSavedListDataSourceImplTest {
         private const val page = 1
         private const val pageSize = 20
         private const val accountId = 12345L
-        private const val sessionId = "test_session_id"
 
         private val successResponse = UserListsResponse(
             page = page,
