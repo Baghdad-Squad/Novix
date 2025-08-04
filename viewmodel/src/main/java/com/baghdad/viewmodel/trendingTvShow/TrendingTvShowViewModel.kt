@@ -7,9 +7,12 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 
-class TrendingTvShowViewModel(
+@HiltViewModel
+class TrendingTvShowViewModel @Inject constructor(
     private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase,
     private val getGenresUseCase: GetGenresUseCase,
     private val ioDispatcher: CoroutineDispatcher ,

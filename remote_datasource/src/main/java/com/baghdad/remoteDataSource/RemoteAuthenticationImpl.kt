@@ -8,8 +8,9 @@ import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.UserDto
+import javax.inject.Inject
 
-class RemoteAuthenticationImpl(
+class RemoteAuthenticationImpl @Inject constructor(
     private val authenticationApiService: AuthenticationApiService,
     private val logger: Logger
 ) : RemoteAuthenticationDataSource {

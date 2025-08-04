@@ -12,9 +12,10 @@ import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getLocalPagedSafely
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class ContinueWatchingRepositoryImpl(
-    private val localContinueWatchingDataSource: LocalContinueWatchingDataSource,
+class ContinueWatchingRepositoryImpl @Inject constructor(
+    private val localContinueWatchingDataSource: LocalContinueWatchingDataSource
 ) : ContinueWatchingRepository {
     override suspend fun getContinueWatching(
         page: Int,

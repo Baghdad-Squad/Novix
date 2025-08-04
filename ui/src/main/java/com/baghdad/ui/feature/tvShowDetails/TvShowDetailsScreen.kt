@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
@@ -60,13 +61,11 @@ import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsInteractionListener
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenEffect
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun TvShowDetailsScreen(
     tvShowId: Long,
-    viewModel: TvShowDetailsViewModel = koinViewModel(parameters = { parametersOf(tvShowId) }),
+    viewModel: TvShowDetailsViewModel = hiltViewModel(),
     handleNavigation: (TvShowDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -103,8 +102,9 @@ private fun handleEffect(
 
         is TvShowDetailsScreenEffect.NavigateToEpisodeDetails -> handleNavigation(
             NavigateToEpisodeDetails(
-                effect.seasonNumber,
-                effect.episodeNumber
+                tvShowId = effect.tvShowId,
+                seasonNumber = effect.seasonNumber,
+                episodeNumber = effect.episodeNumber
             )
         )
 

@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.episodeDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
 import com.baghdad.entity.media.Episode
@@ -35,13 +36,18 @@ class EpisodeDetailsViewModelTest {
         coEvery { getEpisodeCastMembersUseCase(any(), any(), any()) } returns createMockCastMembers()
         coEvery { getEpisodeDetailsUseCase(any(), any(), any()) } returns createMockEpisode()
 
+        val savedStateHandle = SavedStateHandle(mapOf(
+            "tvShowId" to 1L,
+            "seasonNumber" to seasonNumber,
+            "episodeNumber" to episodeNumber,
+
+        ))
+
         episodeDetailsViewModel = EpisodeDetailsViewModel(
-            tvShowId = tvShowId,
-            seasonNumber = seasonNumber,
-            episodeNumber = episodeNumber,
             getEpisodeCastMembersUseCase = getEpisodeCastMembersUseCase,
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
-            ioDispatcher = testDispatcher
+            ioDispatcher = testDispatcher,
+            savedStateHandle = savedStateHandle
         )
     }
 
@@ -200,10 +206,14 @@ class EpisodeDetailsViewModelTest {
         val exception = RuntimeException()
         coEvery { getEpisodeDetailsUseCase(any(), any(), any()) } throws exception
 
+        val savedStateHandle = SavedStateHandle(mapOf(
+            "tvShowId" to tvShowId,
+            "seasonNumber" to seasonNumber,
+            "episodeNumber" to episodeNumber,
+
+            ))
         episodeDetailsViewModel = EpisodeDetailsViewModel(
-            tvShowId = tvShowId,
-            seasonNumber = seasonNumber,
-            episodeNumber = episodeNumber,
+            savedStateHandle,
             getEpisodeCastMembersUseCase = getEpisodeCastMembersUseCase,
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
             ioDispatcher = testDispatcher
@@ -222,11 +232,14 @@ class EpisodeDetailsViewModelTest {
         // Given
         val exception = RuntimeException()
         coEvery { getEpisodeCastMembersUseCase(any(), any(), any()) } throws exception
+        val savedStateHandle = SavedStateHandle(mapOf(
+            "tvShowId" to tvShowId,
+            "seasonNumber" to seasonNumber,
+            "episodeNumber" to episodeNumber,
 
+            ))
         episodeDetailsViewModel = EpisodeDetailsViewModel(
-            tvShowId = tvShowId,
-            seasonNumber = seasonNumber,
-            episodeNumber = episodeNumber,
+            savedStateHandle = savedStateHandle,
             getEpisodeCastMembersUseCase = getEpisodeCastMembersUseCase,
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
             ioDispatcher = testDispatcher

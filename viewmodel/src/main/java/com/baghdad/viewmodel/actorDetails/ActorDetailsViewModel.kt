@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.actorDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
@@ -12,9 +13,12 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ActorDetailsViewModel(
-    private val actorId: Long,
+@HiltViewModel
+class ActorDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getActorInfoUseCase: GetActorInfoUseCase,
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
@@ -23,6 +27,8 @@ class ActorDetailsViewModel(
     ) :
     BaseViewModel<ActorDetailsScreenState, ActorDetailsScreenEffect>(ActorDetailsScreenState()),
     ActorDetailsInteractionListener {
+
+    private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
     init {
         loadData()
     }
@@ -169,15 +175,15 @@ class ActorDetailsViewModel(
     }
 
     override fun onViewAllGalleryClick() {
-        sendEffect(ActorDetailsScreenEffect.NavigateToActorGallery)
+        sendEffect(ActorDetailsScreenEffect.NavigateToActorGallery(actorId = actorId))
     }
 
     override fun onViewAllTopMoviesPicksClick() {
-        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopMoviePicks)
+        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopMoviePicks(actorId = actorId))
     }
 
     override fun onViewAllTopTvShowsClick() {
-        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks)
+        sendEffect(ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks(actorId = actorId))
     }
 
     override fun onMovieCardClick(movieId: Long) {
