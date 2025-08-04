@@ -21,6 +21,7 @@ import com.baghdad.repository.LanguageProviderImpl
 import com.baghdad.repository.AppearanceRepositoryImpl
 import com.baghdad.repository.MovieRepositoryImpl
 import com.baghdad.repository.RecentlyViewedRepositoryImpl
+import com.baghdad.repository.SavedListRepositoryImpl
 import com.baghdad.repository.SearchRepositoryImpl
 import com.baghdad.repository.TvShowRepositoryImpl
 import dagger.Binds
@@ -61,6 +62,7 @@ abstract class RepositoryModule {
     abstract fun provideAuthRepository(authenticationRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
 
     @Binds
+    abstract fun provideSavedListRepository(savedListRepository: SavedListRepositoryImpl): SavedListRepository
     abstract fun provideSavedListRepository(savedListRepository: SavedListRepository): SavedListRepository
     @Binds
     abstract fun provideLanguageProviderRepository(languageProviderImpl: LanguageProviderImpl): LanguageProviderRepository
