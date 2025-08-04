@@ -1,7 +1,6 @@
-package com.baghdad.domain.usecase.tvShow
+package com.baghdad.domain.usecase.savedList
 
 import com.baghdad.domain.repository.SavedListRepository
-import com.baghdad.domain.usecase.movie.AddMovieToSavedListUseCase
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify

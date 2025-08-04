@@ -37,8 +37,6 @@ class SavedListsResponseMapperTest {
     @Test
     fun `toPagedSavedListsDtos should return empty list when results is null`() {
         // Given
-
-
         val response = UserListsResponse(
             page = 1,
             results = null,
