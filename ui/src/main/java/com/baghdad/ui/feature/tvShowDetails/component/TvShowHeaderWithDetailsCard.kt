@@ -29,19 +29,16 @@ fun TvShowHeaderWithDetailsCard(
     listener: TvShowDetailsInteractionListener,
     modifier: Modifier = Modifier
 ) {
-    val pagerState = rememberPagerState(pageCount = { uiState.tvShowInfo.headerImagesURLs.size })
+    val images = if (uiState.tvShowInfo.headerImagesURLs.isEmpty())  listOf(uiState.tvShowInfo.posterPictureURL)  else  uiState.tvShowInfo.headerImagesURLs
+    val pagerState = rememberPagerState(pageCount = { images.size })
+    val aspectRatio = if (uiState.tvShowInfo.headerImagesURLs.isNotEmpty()) 1.778f  else  1.2f
 
-    val singlePagerState = rememberPagerState(pageCount = { 1 } )
-
-    val images = if (uiState.tvShowInfo.headerImagesURLs.isEmpty()) { listOf(uiState.tvShowInfo.posterPictureURL) } else { uiState.tvShowInfo.headerImagesURLs }
-    val aspectRatio = if (uiState.tvShowInfo.headerImagesURLs.isNotEmpty()){ 1.778f } else { 1.2f }
-    val currentPagerState = if (uiState.tvShowInfo.headerImagesURLs.isEmpty()) { singlePagerState } else { pagerState }
 
     Box(modifier = modifier) {
         AutoSlidingImageCarousel(
             imageUrls = images,
             imageAspectRatio = aspectRatio,
-            pagerState = currentPagerState
+            pagerState = pagerState
         )
 
             Column(

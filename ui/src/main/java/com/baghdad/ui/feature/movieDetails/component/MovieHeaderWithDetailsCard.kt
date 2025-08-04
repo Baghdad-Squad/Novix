@@ -30,19 +30,16 @@ fun MovieHeaderWithDetailsCard(
     listener: MovieDetailsInteractionListener,
     modifier: Modifier = Modifier
 ) {
-    val pagerState = rememberPagerState(pageCount = { uiState.movieImages.size })
-
-    val singlePagerState = rememberPagerState(pageCount = { 1 } )
-
     val images = if (uiState.movieImages.isEmpty()) listOf(uiState.posterImageURL) else { uiState.movieImages }
+    val pagerState = rememberPagerState(pageCount = { images.size })
     val aspectRatio = if (uiState.movieImages.isNotEmpty()) { 1.778f } else { 1.2f }
-    val currentPagerState = if (uiState.movieImages.isEmpty()){ singlePagerState } else { pagerState }
+
 
     Box(modifier = modifier) {
         AutoSlidingImageCarousel(
             imageUrls = images,
             imageAspectRatio = aspectRatio,
-            pagerState = currentPagerState
+            pagerState = pagerState
         )
 
         Column(
