@@ -14,7 +14,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -91,7 +90,6 @@ fun OnBoardingHorizontalPagerContent(
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 32.dp)
         ) { page ->
             val pageOffset =
                 (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
