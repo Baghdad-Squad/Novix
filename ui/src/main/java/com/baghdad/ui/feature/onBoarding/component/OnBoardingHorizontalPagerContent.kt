@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -45,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
+import com.baghdad.viewmodel.onBoarding.OnBoardingInfo
 import com.baghdad.viewmodel.onBoarding.OnBoardingState
 import kotlin.math.abs
 
@@ -94,67 +94,88 @@ fun OnBoardingHorizontalPagerContent(
         ) { page ->
             val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
-            Column(
-                modifier = modifier
-                    .graphicsLayer {
-                        translationX = pageOffset * size.width * 0.2f
-                        alpha = 1f - (0.9f * abs(pageOffset))
-                    }
-                    .animateContentSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Crossfade(
-                    targetState = page,
-                    animationSpec = tween(durationMillis = 500)
-                ) { currentPage ->
-                    Image(
-                        painter = painterResource(
-                            when (currentPage) {
-                                0 -> R.drawable.img_on_boarding_1
-                                1 -> R.drawable.img_on_boarding_2
-                                else -> R.drawable.img_on_boarding_3
-                            }
-                        ),
-                        contentDescription = stringResource(state.onBoardingInfo[currentPage].title),
-                        modifier = Modifier
-                            .fillMaxWidth(imageWidthFraction)
-                            .graphicsLayer {
-                                val scale = 1f - (0.9f * abs(pageOffset))
-                                scaleX = scale
-                                scaleY = scale
-                            }
-                    )
-                }
+            ImageAnimated(
+                page = page,
+                state = state,
+                pageOffset = pageOffset,
+                imageWidthFraction = imageWidthFraction
+            )
 
-                AnimatedVisibility(
-                    visible = abs(pageOffset) < 0.5f,
-                    enter = fadeIn() + slideInVertically { it / 2 },
-                    exit = fadeOut() + slideOutVertically { it / 2 }
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = stringResource(state.onBoardingInfo[page].title),
-                            style = Theme.typography.title.large,
-                            color = Theme.color.title,
-                            modifier = Modifier.padding(top = 32.dp),
-                            textAlign = TextAlign.Center,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis,
-                        )
+            TextSlidingAnimationVisibility(
+                onBoardingInfo = state.onBoardingInfo,
+                currentPage = page,
+                pageOffset = pageOffset
+            )
+        }
+    }
+}
 
-                        Text(
-                            text = stringResource(state.onBoardingInfo[page].description),
-                            style = Theme.typography.body.medium,
-                            color = Theme.color.body,
-                            modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp),
-                            lineHeight = TextUnit(24f, TextUnitType.Sp),
-                            textAlign = TextAlign.Center,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
+
+
+@Composable
+private fun ImageAnimated(
+    page: Int,
+    state: OnBoardingState,
+    pageOffset: Float,
+    imageWidthFraction: Float = if (isTablet()) 0.50f else 0.80f,
+) {
+    Crossfade(
+        targetState = page,
+        animationSpec = tween(durationMillis = 500)
+    ) { currentPage ->
+        Image(
+            painter = painterResource(
+                when (currentPage) {
+                    0 -> R.drawable.img_on_boarding_1
+                    1 -> R.drawable.img_on_boarding_2
+                    else -> R.drawable.img_on_boarding_3
                 }
-            }
+            ),
+            contentDescription = stringResource(state.onBoardingInfo[currentPage].title),
+            modifier = Modifier
+                .fillMaxWidth(imageWidthFraction)
+                .graphicsLayer {
+                    val scale = 1f - (0.9f * abs(pageOffset))
+                    scaleX = scale
+                    scaleY = scale
+                }
+        )
+    }
+
+}
+
+@Composable
+private fun TextSlidingAnimationVisibility(
+    onBoardingInfo: List<OnBoardingInfo>,
+    currentPage: Int,
+    pageOffset: Float,
+) {
+    AnimatedVisibility(
+        visible = abs(pageOffset) < 0.5f,
+        enter = fadeIn() + slideInVertically { it / 2 },
+        exit = fadeOut() + slideOutVertically { it / 2 }
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = stringResource(onBoardingInfo[currentPage].title),
+                style = Theme.typography.title.large,
+                color = Theme.color.title,
+                modifier = Modifier.padding(top = 32.dp),
+                textAlign = TextAlign.Center,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            Text(
+                text = stringResource(onBoardingInfo[currentPage].description),
+                style = Theme.typography.body.medium,
+                color = Theme.color.body,
+                modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp),
+                lineHeight = TextUnit(24f, TextUnitType.Sp),
+                textAlign = TextAlign.Center,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }
