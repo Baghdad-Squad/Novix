@@ -33,6 +33,7 @@ class SavedListRepositoryImplTest {
 
     val listId = 22L
     val movieId = 22002L
+    val tvShowId = 2L
     val sessionId = "session_id"
     val title = "Favorite"
 
@@ -227,9 +228,11 @@ class SavedListRepositoryImplTest {
     @Test
     fun `should remove movie from saved list when the movie removed successfully`() = runTest {
         // Given
-        coEvery { remoteSource.removeMovieFromSavedList(listId, movieId, sessionId) } returns Unit
+        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+
         // When
         repository.removeMovieFromSavedList(listId, movieId)
+
         // Then
         coVerify { remoteSource.removeMovieFromSavedList(listId, movieId, sessionId) }
     }
@@ -237,11 +240,15 @@ class SavedListRepositoryImplTest {
     @Test
     fun `should remove tvShow from saved list when the tvShow removed successfully`() = runTest {
         // Given
-        coEvery { remoteSource.removeTvShowFromSavedList(listId, movieId, sessionId) } returns Unit
+        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+
         // When
-        repository.removeTvShowFromSavedList(listId, movieId)
+        repository.removeTvShowFromSavedList(listId, tvShowId)
+
         // Then
-        coVerify { remoteSource.removeTvShowFromSavedList(listId, movieId, sessionId) }
+        coVerify {
+            remoteSource.removeTvShowFromSavedList(listId, tvShowId, sessionId)
+        }
     }
 
     @Test
