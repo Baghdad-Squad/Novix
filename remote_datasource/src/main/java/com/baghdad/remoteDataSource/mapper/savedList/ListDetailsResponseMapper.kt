@@ -29,7 +29,7 @@ private fun ListDetailsResponse.Item.toSavedListItemDto(): SavedListItemDto? {
     )
 }
 
-fun mapMediaType(type: String?) =
+private fun mapMediaType(type: String?) =
     when (type?.lowercase()) {
         "movie" -> SavedListItemDto.Type.MOVIE
         "tv" -> SavedListItemDto.Type.TV_SHOW
