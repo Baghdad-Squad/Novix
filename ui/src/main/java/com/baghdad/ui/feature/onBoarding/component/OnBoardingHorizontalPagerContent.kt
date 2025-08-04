@@ -90,7 +90,6 @@ fun OnBoardingHorizontalPagerContent(
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
-            pageSpacing = 16.dp,
             contentPadding = PaddingValues(horizontal = 32.dp)
         ) { page ->
             val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
