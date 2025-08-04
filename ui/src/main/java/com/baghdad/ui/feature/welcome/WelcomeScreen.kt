@@ -1,29 +1,23 @@
 package com.baghdad.ui.feature.welcome
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Icon
-import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.button.OutlinedButton
 import com.baghdad.design_system.component.button.PrimaryButton
@@ -41,45 +35,41 @@ fun WelcomeScreen(
     viewModel: WelcomeViewModel = koinViewModel(),
     handleNavigation: (OnBoardingNavEvent) -> Unit
 ) {
-
-    ObserveAsEffect(
-        viewModel.uiEffect
-    ) { effect ->
+    ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
             WelcomeEffect.NavigateToContinueAsGuest -> handleNavigation(OnBoardingNavEvent.NavigateToHome)
             WelcomeEffect.NavigateToLogin -> handleNavigation(OnBoardingNavEvent.NavigateToLogin)
         }
     }
 
-    WelcomeScreenContent(
-        listener = viewModel
-    )
+    WelcomeScreenContent(listener = viewModel)
 }
 
-
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
-fun WelcomeScreenContent(
+private fun WelcomeScreenContent(
     listener: WelcomeInteractionListener
 ) {
-    Scaffold(
-        modifier =
-            Modifier
-                .background(Theme.color.surface)
-                .fillMaxSize()
-                .navigationBarsPadding(),
+    val imageHeight = (LocalConfiguration.current.screenHeightDp.dp * 0.8f).coerceIn(300.dp, 650.dp)
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(modifier = Modifier.weight(1f)) {
+        item {
+            Box(
+                modifier = Modifier.height(imageHeight)
+            ) {
                 Image(
                     painter = painterResource(R.drawable.img_welcome_background),
                     contentDescription = stringResource(R.string.welcome_screen_background),
-                    modifier = Modifier.fillMaxWidth().offset(y = 32.dp),
-                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
+
                 Box(
                     modifier = Modifier
-                        .matchParentSize()
-                        .offset(y = 32.dp)
+                        .fillMaxSize()
                         .background(
                             Brush.verticalGradient(
                                 colorStops = arrayOf(
@@ -88,12 +78,12 @@ fun WelcomeScreenContent(
                                     0.45f to Theme.color.surface.copy(alpha = 0.35f),
                                     0.75f to Theme.color.surface.copy(alpha = 0.70f),
                                     0.90f to Theme.color.surface.copy(alpha = 0.85f),
-                                    1.00f to Theme.color.surface.copy(alpha = 1f),
+                                    1.00f to Theme.color.surface.copy(alpha = 1f)
                                 )
                             )
                         )
-,
                 )
+
                 Icon(
                     imageVector = ImageVector.vectorResource(com.baghdad.design_system.R.drawable.logo_design),
                     contentDescription = stringResource(R.string.login_icon),
@@ -105,15 +95,21 @@ fun WelcomeScreenContent(
                 )
             }
 
-            WelcomeDetails(Modifier.padding(horizontal = 16.dp))
+            WelcomeDetails(
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 24.dp,
+                    bottom = 32.dp
+                )
+            )
+        }
+
+        item {
             ActionButtons(
-                onClickLogin = {
-                    listener.onClickLogin()
-                },
-                onClickContinueAsGuest = {
-                    listener.onClickContinueAsGuest()
-                },
-                Modifier
+                onClickLogin = { listener.onClickLogin() },
+                onClickContinueAsGuest = { listener.onClickContinueAsGuest() },
+                modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .navigationBarsPadding()
             )
@@ -122,8 +118,11 @@ fun WelcomeScreenContent(
 }
 
 @Composable
-fun WelcomeDetails(modifier: Modifier = Modifier) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+private fun WelcomeDetails(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(
             text = stringResource(R.string.welcome_to_novix),
             style = Theme.typography.title.large,
@@ -136,33 +135,32 @@ fun WelcomeDetails(modifier: Modifier = Modifier) {
             text = stringResource(R.string.welcome_screen_content_details),
             style = Theme.typography.body.small,
             color = Theme.color.body,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 32.dp)
+            textAlign = TextAlign.Center
         )
     }
 }
 
 @Composable
-fun ActionButtons(
+private fun ActionButtons(
     onClickLogin: () -> Unit,
     onClickContinueAsGuest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         PrimaryButton(
             label = stringResource(R.string.login),
-            onClick = { onClickLogin() },
+            onClick = onClickLogin,
             modifier = Modifier
                 .padding(bottom = 12.dp)
                 .fillMaxWidth()
         )
         OutlinedButton(
             label = stringResource(R.string.continue_as_guest),
-            onClick = { onClickContinueAsGuest() },
-            modifier = Modifier
-                .fillMaxWidth()
+            onClick = onClickContinueAsGuest,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
-
-
