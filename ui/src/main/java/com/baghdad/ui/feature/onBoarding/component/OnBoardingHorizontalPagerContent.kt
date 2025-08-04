@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -92,24 +93,34 @@ fun OnBoardingHorizontalPagerContent(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 32.dp)
         ) { page ->
-            val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+            val pageOffset =
+                (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
-            ImageAnimated(
-                page = page,
-                state = state,
-                pageOffset = pageOffset,
-                imageWidthFraction = imageWidthFraction
-            )
+            Column(
+                modifier = modifier
+                    .graphicsLayer {
+                        translationX = pageOffset * size.width * 0.2f
+                        alpha = 1f - (0.9f * abs(pageOffset))
+                    }
+                    .animateContentSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ImageAnimated(
+                    page = page,
+                    state = state,
+                    pageOffset = pageOffset,
+                    imageWidthFraction = imageWidthFraction
+                )
 
-            TextSlidingAnimationVisibility(
-                onBoardingInfo = state.onBoardingInfo,
-                currentPage = page,
-                pageOffset = pageOffset
-            )
+                TextSlidingAnimationVisibility(
+                    onBoardingInfo = state.onBoardingInfo,
+                    currentPage = page,
+                    pageOffset = pageOffset
+                )
+            }
         }
     }
 }
-
 
 
 @Composable
