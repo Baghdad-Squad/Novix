@@ -29,7 +29,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val getGenresUseCase: GetGenresUseCase,
     private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
     private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase,
