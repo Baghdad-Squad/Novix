@@ -64,4 +64,16 @@ class SavedListRepositoryImpl @Inject constructor(
         executeSafely {
             remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toEntity()
         }
+
+    override suspend fun removeMovieFromSavedList(listId: Long, movieId: Long) {
+        executeSafely {
+            remoteSavedListSource.removeMovieFromSavedList(listId, movieId)
+        }
+    }
+
+    override suspend fun removeTvShowFromSavedList(listId: Long, tvShowId: Long) {
+        executeSafely {
+            remoteSavedListSource.removeTvShowFromSavedList(listId, tvShowId)
+        }
+    }
 }
