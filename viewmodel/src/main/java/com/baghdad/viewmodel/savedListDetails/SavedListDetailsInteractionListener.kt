@@ -1,0 +1,3 @@
+package com.baghdad.viewmodel.savedListDetails
+
+interface SavedListDetailsInteractionListener
