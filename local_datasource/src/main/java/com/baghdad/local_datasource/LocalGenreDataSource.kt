@@ -7,8 +7,9 @@ import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
+import javax.inject.Inject
 
-class LocalGenreDataSourceImpl(
+class LocalGenreDataSourceImpl @Inject constructor(
     private val genreDao: GenreDao,
     private val logger: Logger
 ) : LocalGenreDataSource {

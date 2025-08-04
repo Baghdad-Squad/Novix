@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.topTvShowPicks
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.entity.media.Genre
@@ -27,18 +28,23 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class TopTvShowPicksViewModelTest {
     private lateinit var getActorTvShowUseCase: GetActorTvShowUseCase
-    private lateinit var topTvShowPicksViewModel: TopTvShowPicksViewModel
+    private lateinit var topTvShowPicksViewModel: TopTvShowViewModel
     private val actorId = 123L
     private val tvShowId = 1L
     private val testDispatcher = StandardTestDispatcher()
 
+    val savedStateHandle = SavedStateHandle(
+        mapOf(
+            "actorId" to actorId,
+        )
+    )
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         getActorTvShowUseCase = mockk(relaxed = true)
         coEvery { getActorTvShowUseCase(actorId) } returns mockedTvShow()
         topTvShowPicksViewModel =
-            TopTvShowPicksViewModel(actorId, getActorTvShowUseCase, testDispatcher)
+            TopTvShowViewModel(savedStateHandle = savedStateHandle, getActorTvShowUseCase, testDispatcher)
     }
 
     @AfterEach
@@ -103,28 +109,31 @@ class TopTvShowPicksViewModelTest {
     }
 
     @Test
-    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
-        // Given
-        coEvery { getActorTvShowUseCase(actorId) } throws NoInternetException()
-        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() =
+        runTest {
+            // Given
+            coEvery { getActorTvShowUseCase(actorId) } throws NoInternetException()
+            val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
 
-        val job = launch {
-            topTvShowPicksViewModel.snackBarState.collect {
-                emittedSnackBarMessages.add(it.message)
+            val job = launch {
+                topTvShowPicksViewModel.snackBarState.collect {
+                    emittedSnackBarMessages.add(it.message)
+                }
             }
+
+            // When
+            topTvShowPicksViewModel.onSnackBarActionLabelClick()
+            advanceUntilIdle()
+
+            // Then
+            assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+            job.cancel()
         }
-
-        // When
-        topTvShowPicksViewModel.onSnackBarActionLabelClick()
-        advanceUntilIdle()
-
-        // Then
-        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
-        job.cancel()
-    }
 
 
     companion object {
+
+
         private fun mockedTvShow(): List<TvShow> = listOf(
             TvShow(
                 id = 1L,

@@ -11,8 +11,9 @@ import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.RecentlyViewedDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class LocalRecentlyViewedDataSourceImpl(
+class LocalRecentlyViewedDataSourceImpl @Inject constructor(
     private val recentlyViewedDao: RecentlyViewedDao,
     private val logger: Logger
 ) : LocalRecentlyViewedDataSource {

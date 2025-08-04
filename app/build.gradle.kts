@@ -11,6 +11,9 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
     jacoco
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.kapt)
+
 }
 
 val formattedDate: String = ZonedDateTime.now(ZoneId.of("Africa/Cairo"))
@@ -35,6 +38,7 @@ android {
 
         val apiKey = properties.getProperty("API_KEY") ?: ""
         val baseUrl = properties.getProperty("BASE_URL") ?: ""
+        val token = properties.getProperty("AUTHORIZATION_TOKEN") ?: ""
 
         buildConfigField(
             type = "String",
@@ -46,6 +50,12 @@ android {
             type = "String",
             name = "BASE_URL",
             value = baseUrl
+        )
+
+        buildConfigField(
+            type = "String",
+            name = "AUTHORIZATION_TOKEN",
+            value = token
         )
 
     }
@@ -119,7 +129,6 @@ dependencies {
     implementation(libs.bundles.androidx.core)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.androidx.compose.ui)
-    implementation(libs.bundles.koin)
     implementation(libs.navigation.compose)
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
@@ -128,6 +137,8 @@ dependencies {
     implementation(libs.bundles.room)
     implementation(libs.bundles.retrofit)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.bundles.hilt)
+    kapt(libs.hilt.android.compiler)
 
 }
 
@@ -160,4 +171,8 @@ tasks.register("installGitHooks") {
 
 gradle.projectsEvaluated {
     tasks["build"].dependsOn("installGitHooks")
+}
+
+kapt {
+    correctErrorTypes = true
 }
