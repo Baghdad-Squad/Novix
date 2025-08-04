@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
+import coil3.ImageLoader
 import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
@@ -45,9 +46,11 @@ fun SafeImage(
             )
         )
         .memoryCachePolicy(CachePolicy.DISABLED)
+        //.diskCachePolicy(policy = CachePolicy.ENABLED)
         .crossfade(true)
         .build()
     SubcomposeAsyncImage(
+        imageLoader = CustomImageLoader.get() ?: ImageLoader(context = context),
         modifier = modifier,
         model = request,
         contentDescription = contentDescription,

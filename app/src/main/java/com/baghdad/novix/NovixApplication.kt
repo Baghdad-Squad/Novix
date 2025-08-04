@@ -1,6 +1,7 @@
 package com.baghdad.novix
 
 import android.app.Application
+import com.baghdad.islamic_image_loader.ui.CustomImageLoader
 import com.baghdad.novix.di.localDataSourceModule
 import com.baghdad.novix.di.loggerModule
 import com.baghdad.novix.di.remoteDataSourceModule
@@ -9,7 +10,6 @@ import com.baghdad.novix.di.useCaseModule
 import com.baghdad.novix.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
-import org.koin.core.module.Module
 
 class NovixApplication : Application() {
     override fun onCreate() {
@@ -27,5 +27,6 @@ class NovixApplication : Application() {
                 )
             )
         }
+        CustomImageLoader.init(this@NovixApplication)
     }
 }
