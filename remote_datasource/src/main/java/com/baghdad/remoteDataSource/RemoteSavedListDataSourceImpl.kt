@@ -3,8 +3,9 @@ package com.baghdad.remoteDataSource
 import com.baghdad.remoteDataSource.apiService.SavedListApiService
 import com.baghdad.remoteDataSource.mapper.savedList.toSavedListDetailsDto
 import com.baghdad.remoteDataSource.mapper.toPagedSavedListsDtos
+import com.baghdad.remoteDataSource.request.AddListItemRequest
 import com.baghdad.remoteDataSource.request.CreateListRequest
-import com.baghdad.remoteDataSource.request.ModifyListItemRequest
+import com.baghdad.remoteDataSource.request.RemoveListItemRequest
 import com.baghdad.remoteDataSource.response.UserListsResponse
 import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
 import com.baghdad.remoteDataSource.response.savedList.ListDetailsResponse
@@ -58,7 +59,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     }
 
     override suspend fun addMovieToSavedList(listId: Long, movieId: Long, sessionId: String) {
-        val body = ModifyListItemRequest(mediaId = movieId)
+        val body = AddListItemRequest(mediaId = movieId)
 
         handleRequest(
             apiCall = { savedListApiService.addItemToSavedList(listId, body, sessionId) },
@@ -67,7 +68,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     }
 
     override suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long, sessionId: String) {
-        val body = ModifyListItemRequest(mediaId = tvShowId)
+        val body = AddListItemRequest(mediaId = tvShowId)
 
         handleRequest(
             apiCall = { savedListApiService.addItemToSavedList(listId, body, sessionId) },
@@ -75,18 +76,26 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun removeMovieFromSavedList(listId: Long, movieId: Long) {
-        val body = ModifyListItemRequest(mediaId = movieId)
+    override suspend fun removeMovieFromSavedList(
+        listId: Long,
+        movieId: Long,
+        sessionId: String
+    ) {
+        val body = RemoveListItemRequest(mediaId = movieId)
         handleRequest(
-            apiCall = { savedListApiService.removeItemFromSavedList(listId, body) },
+            apiCall = { savedListApiService.removeItemFromSavedList(listId, body, sessionId) },
             logger = logger
         )
     }
 
-    override suspend fun removeTvShowFromSavedList(listId: Long, tvShowId: Long) {
-        val body = ModifyListItemRequest(mediaId = tvShowId)
+    override suspend fun removeTvShowFromSavedList(
+        listId: Long,
+        tvShowId: Long,
+        sessionId: String
+    ) {
+        val body = RemoveListItemRequest(mediaId = tvShowId)
         handleRequest(
-            apiCall = { savedListApiService.removeItemFromSavedList(listId, body) },
+            apiCall = { savedListApiService.removeItemFromSavedList(listId, body, sessionId) },
             logger = logger
         )
     }
