@@ -57,14 +57,16 @@ class SavedListRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removeMovieFromSavedList(listId: Long, movieId: Long) {
-        executeSafely {
-            remoteSavedListSource.removeMovieFromSavedList(listId, movieId)
+        val sessionId = localSessionDataStore.getSessionId()
+        executeAuthorizedSafely(sessionId) { sessionId ->
+            remoteSavedListSource.removeMovieFromSavedList(listId, movieId, sessionId)
         }
     }
 
     override suspend fun removeTvShowFromSavedList(listId: Long, tvShowId: Long) {
-        executeSafely {
-            remoteSavedListSource.removeTvShowFromSavedList(listId, tvShowId)
+        val sessionId = localSessionDataStore.getSessionId()
+        executeAuthorizedSafely(sessionId) { sessionId ->
+            remoteSavedListSource.removeTvShowFromSavedList(listId, tvShowId, sessionId)
         }
     }
 

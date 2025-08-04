@@ -1,12 +1,14 @@
 package com.baghdad.remoteDataSource.apiService
 
 import com.baghdad.remoteDataSource.interceptor.Authenticated
+import com.baghdad.remoteDataSource.request.AddListItemRequest
 import com.baghdad.remoteDataSource.request.CreateListRequest
-import com.baghdad.remoteDataSource.request.ModifyListItemRequest
+import com.baghdad.remoteDataSource.request.RemoveListItemRequest
 import com.baghdad.remoteDataSource.response.UserListsResponse
+import com.baghdad.remoteDataSource.response.savedList.AddListItemResponse
 import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
 import com.baghdad.remoteDataSource.response.savedList.ListDetailsResponse
-import com.baghdad.remoteDataSource.response.savedList.ModifyListItemResponse
+import com.baghdad.remoteDataSource.response.savedList.RemoveListItemResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -26,16 +28,17 @@ interface SavedListApiService {
     @POST(ADD_ITEM_TO_SAVED_LIST_ENDPOINT)
     suspend fun addItemToSavedList(
         @Path("list_id") listId: Long,
-        @Body body: ModifyListItemRequest,
-        @Query("session_id") sessionId: String,
-    ): Response<ModifyListItemResponse>
+        @Body body: AddListItemRequest,
+        @Query("session_id") sessionId: String
+    ): Response<AddListItemResponse>
 
     @Authenticated
     @POST(REMOVE_ITEM_TO_SAVED_LIST_ENDPOINT)
     suspend fun removeItemFromSavedList(
         @Path("list_id") listId: Long,
-        @Body body: ModifyListItemRequest,
-    ): Response<ModifyListItemResponse>
+        @Body body: RemoveListItemRequest,
+        @Query("session_id") sessionId: String
+    ): Response<RemoveListItemResponse>
 
     @Authenticated
     @GET(LISTS_ENDPOINT)

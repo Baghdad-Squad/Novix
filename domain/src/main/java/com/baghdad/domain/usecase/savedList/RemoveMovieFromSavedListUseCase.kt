@@ -5,7 +5,7 @@ import com.baghdad.domain.repository.SavedListRepository
 class RemoveMovieFromSavedListUseCase(
     private val savedListRepository: SavedListRepository
 ) {
-    suspend operator fun invoke(listId: Long, movieItem: Long) {
-        return savedListRepository.removeMovieFromSavedList(listId, movieItem)
+    suspend operator fun invoke(listId: Long, movieId: Long) {
+        return savedListRepository.removeMovieFromSavedList(listId, movieId)
     }
 }
