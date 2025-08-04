@@ -47,17 +47,18 @@ interface SavedListApiService {
     ): Response<ListDetailsResponse>
 
     @Authenticated
-    @DELETE(DELETE_SAVED_LIST_BY_TITLE_ENDPOINT)
-    suspend fun deleteSavedListByTitle(
-        @Path("list_id") listId: Long
+    @DELETE(DELETE_SAVED_LIST_BY_ID_ENDPOINT)
+    suspend fun deleteSavedListById(
+        @Path("list_id") listId: Long,
+        @Query("session_id") sessionId: String,
     ): Response<DeleteSavedListResponse>
 
     companion object {
         private const val LISTS_ENDPOINT = "account/{account_id}/lists"
-        private const val ADD_ITEM_TO_SAVED_LIST_ENDPOINT = "/list/{list_id}/add_item"
+        private const val ADD_ITEM_TO_SAVED_LIST_ENDPOINT = "list/{list_id}/add_item"
         private const val CREATE_SAVED_LIST = "list"
         private const val GET_LIST_DETAILS_ENDPOINT = "list/{list_id}"
-        private const val DELETE_SAVED_LIST_BY_TITLE_ENDPOINT = "list/{list_id}"
+        private const val DELETE_SAVED_LIST_BY_ID_ENDPOINT = "list/{list_id}"
     }
 }
 

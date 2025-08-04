@@ -21,5 +21,5 @@ interface RemoteSavedListDataSource {
         page: Int,
         pageSize: Int): SavedListDetailsDto
 
-    suspend fun deleteSavedListByTitle(title: String)
+    suspend fun deleteSavedListById(listId: Long, sessionId: String)
 }
