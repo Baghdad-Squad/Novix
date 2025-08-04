@@ -2,8 +2,9 @@ package com.baghdad.domain.usecase.tvShow
 
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Episode
+import javax.inject.Inject
 
-class GetTvShowSeasonEpisodesUseCase(
+class GetTvShowSeasonEpisodesUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository
 ) {
     suspend operator fun invoke(tvId: Long, seasonNumber: Int): List<Episode> {

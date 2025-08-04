@@ -15,8 +15,9 @@ import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
+import javax.inject.Inject
 
-class RemoteActorDataSourceImpl(
+class RemoteActorDataSourceImpl @Inject constructor(
     private val actorApiService: ActorApiService,
     private val logger: Logger,
 ): RemoteActorDataSource {

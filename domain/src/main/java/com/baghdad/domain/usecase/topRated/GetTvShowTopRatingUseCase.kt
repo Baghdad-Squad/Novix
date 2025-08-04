@@ -3,8 +3,9 @@ package com.baghdad.domain.usecase.topRated
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.TvShow
+import javax.inject.Inject
 
-class GetTvShowTopRatingUseCase(
+class GetTvShowTopRatingUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository
 ) {
     suspend operator fun invoke(

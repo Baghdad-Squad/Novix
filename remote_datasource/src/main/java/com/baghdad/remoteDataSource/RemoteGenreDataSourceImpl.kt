@@ -7,8 +7,9 @@ import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
+import javax.inject.Inject
 
-class RemoteGenreDataSourceImpl(
+class RemoteGenreDataSourceImpl @Inject constructor(
     private val genreApiService: GenreApiService,
     private val logger: Logger,
 ): RemoteGenreDataSource {
