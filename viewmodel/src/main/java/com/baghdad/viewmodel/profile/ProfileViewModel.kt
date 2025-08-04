@@ -14,4 +14,35 @@ class ProfileViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override fun onSnackBarActionLabelClick() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onclickWatchingHistory() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onclickMyRating() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onclickContentRestriction() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onclickChangePassword() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onclickAppearance() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onclickLanguage() {
+        TODO("Not yet implemented")
+    }
+
+    override fun ontClickLogOut() {
+        TODO("Not yet implemented")
+    }
 }
