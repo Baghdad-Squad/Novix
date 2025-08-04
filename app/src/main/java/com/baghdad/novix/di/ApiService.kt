@@ -57,5 +57,4 @@ object ApiServiceModule {
     fun provideSavedListService(retrofit: Retrofit): SavedListApiService{
         return retrofit.create(SavedListApiService::class.java)
     }
-
 }

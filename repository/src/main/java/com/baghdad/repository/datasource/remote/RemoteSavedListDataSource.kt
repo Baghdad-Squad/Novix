@@ -4,12 +4,14 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 
 interface RemoteSavedListDataSource {
+    suspend fun createSavedList(title: String, sessionId: String)
     suspend fun getSavedLists(
         page: Int,
         pageSize: Int,
-        accountId :Long,
+        accountId: Long,
         sessionId: String,
-        ): PagedResultDto<SavedListDto>
+    ): PagedResultDto<SavedListDto>
+
     suspend fun addMovieToSavedList(listId: Long, movieId: Long, sessionId: String)
     suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long, sessionId: String)
 }
