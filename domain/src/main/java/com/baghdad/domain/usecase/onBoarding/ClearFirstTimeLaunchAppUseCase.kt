@@ -1,0 +1,13 @@
+package com.baghdad.domain.usecase.onBoarding
+
+import com.baghdad.domain.repository.OnBoardingRepository
+import javax.inject.Inject
+
+class ClearFirstTimeLaunchAppUseCase @Inject constructor(
+    private val repository: OnBoardingRepository
+) {
+
+    suspend operator fun invoke(){
+        repository.clearFirstTimeUser()
+    }
+}
