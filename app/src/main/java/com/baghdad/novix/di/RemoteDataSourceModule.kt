@@ -50,5 +50,4 @@ abstract class RemoteDataSourceModule {
 
     @Binds
     abstract fun provideRemoteSavedListDataSource(remoteSavedListDataSourceImpl: RemoteSavedListDataSourceImpl): RemoteSavedListDataSource
-
 }

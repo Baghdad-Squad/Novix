@@ -1,18 +1,20 @@
 package com.baghdad.repository
 
-import com.baghdad.entity.savedList.SavedList
+import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.repository.datasource.local.LocalSessionDataStore
+import com.baghdad.entity.savedList.SavedList
 import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
+import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
+import io.mockk.coVerify
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.UserDto
-import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
-import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,13 +29,37 @@ class SavedListRepositoryImplTest {
     val listId = 22L
     val movieId = 22002L
     val sessionId = "session_id"
+    val title = "Favorite"
 
     @BeforeEach
     fun setUp() {
         remoteSource = mockk(relaxed = true)
         localSessionDataStore = mockk(relaxed = true)
         localUserDataStore = mockk(relaxed = true)
-        repository = SavedListRepositoryImpl(remoteSource, localSessionDataStore, localUserDataStore)
+        repository = SavedListRepositoryImpl(
+            remoteSavedListSource = remoteSource,
+            localSessionDataStore = localSessionDataStore,
+            localUserDataStore = localUserDataStore
+        )
+    }
+
+
+    @Test
+    fun `should createSavedList call remote source with correct session ID`() = runTest {
+        // Given
+        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+        coEvery { remoteSource.createSavedList(title, sessionId) } returns Unit
+
+        // When
+        repository.createSavedList(title)
+
+        // Then
+        coVerify(exactly = 1) { localSessionDataStore.getSessionId() }
+        coVerify(exactly = 1) { remoteSource.createSavedList(title, sessionId) }
+        localSessionDataStore = mockk(relaxed = true)
+        localUserDataStore = mockk(relaxed = true)
+        repository =
+            SavedListRepositoryImpl(remoteSource, localSessionDataStore, localUserDataStore)
     }
 
     @Test
@@ -187,6 +213,37 @@ class SavedListRepositoryImplTest {
 
             coVerify { remoteSource.addTvShowToSavedList(listId, movieId, sessionId) }
         }
+
+    @Test
+    fun `should createSavedList not crash when session ID is null`() = runBlocking {
+        // Given
+        val title = "Empty Session Test"
+        coEvery { localSessionDataStore.getSessionId() } returns null
+        coEvery { remoteSource.createSavedList(title, any()) } returns Unit
+
+        // When
+        val exception = runCatching { repository.createSavedList(title) }.exceptionOrNull()
+
+        // Then
+        assertThat(exception).isInstanceOf(UnAuthorizedException::class.java)
+        coVerify { localSessionDataStore.getSessionId() }
+    }
+
+    @Test
+    fun `createSavedList() should propagate exception when remote source fails`() = runTest {
+        // Given
+        val exception = RuntimeException("Network failure")
+
+        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+        coEvery { remoteSource.createSavedList(title, sessionId) } throws exception
+
+        // When
+        val resultException = runCatching { repository.createSavedList(title) }.exceptionOrNull()
+
+        // Then
+        coVerify(exactly = 1) { localSessionDataStore.getSessionId() }
+        assertThat(resultException).isNotNull()
+    }
 
     companion object {
         private const val PAGE = 1

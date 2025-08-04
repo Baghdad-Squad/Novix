@@ -2,8 +2,8 @@ package com.baghdad.repository
 
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.SavedListRepository
-import com.baghdad.entity.savedList.SavedList
 import com.baghdad.repository.datasource.local.LocalSessionDataStore
+import com.baghdad.entity.savedList.SavedList
 import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.mapper.toEntity
@@ -17,6 +17,13 @@ class SavedListRepositoryImpl @Inject constructor(
     private val localSessionDataStore: LocalSessionDataStore,
     private val localUserDataStore: LocalUserDataStore,
 ) : SavedListRepository {
+    override suspend fun createSavedList(title: String) {
+        val sessionId = localSessionDataStore.getSessionId()
+        return executeAuthorizedSafely(sessionId) { sessionId ->
+            remoteSavedListSource.createSavedList(title, sessionId)
+        }
+    }
+
     override suspend fun getSavedLists(
         page: Int,
         pageSize: Int,
@@ -32,7 +39,6 @@ class SavedListRepositoryImpl @Inject constructor(
             ).toPagedResult(SavedListDto::toEntity)
         }
     }
-
 
     override suspend fun addMovieToSavedList(listId: Long, movieId: Long) {
         val sessionId = localSessionDataStore.getSessionId()
