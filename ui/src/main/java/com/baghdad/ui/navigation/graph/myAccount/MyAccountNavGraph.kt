@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.baghdad.ui.feature.profile.ProfileScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.MyAccountRoute
@@ -13,7 +14,7 @@ fun NavGraphBuilder.myAccountNavGraph(navController: NavHostController) {
         startDestination = MyAccountRoute.MyAccountScreen
     ) {
         composable<MyAccountRoute.MyAccountScreen> {
-            DummyScreen("My Account Screen")
+            ProfileScreen()
         }
         composable<MyAccountRoute.MyRatingsScreen> {
             DummyScreen("My Ratings Screen")
