@@ -5,6 +5,7 @@ import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.domain.exception.UnknownException
 import com.baghdad.repository.exception.DatabaseException
+import com.baghdad.repository.exception.ItemCreationFailedException
 import com.baghdad.repository.exception.NetworkException
 import com.baghdad.repository.exception.NoInternetNetworkException
 import com.baghdad.repository.exception.RequestTimeoutNetworkException
@@ -17,11 +18,11 @@ import com.baghdad.domain.exception.StorageFullException as DomainStorageFullExc
 
 suspend fun <T> executeAuthorizedSafely(
     sessionId: String?,
-    block: suspend () -> T,
+    block: suspend (String) -> T,
 ): T {
     if (sessionId == null) throw UnAuthorizedException()
     return try {
-        block()
+        block(sessionId)
     } catch (_: NoInternetNetworkException) {
         throw NoInternetException()
     } catch (_: SerializationNetworkException) {
@@ -38,6 +39,8 @@ suspend fun <T> executeAuthorizedSafely(
         throw NetworkException()
     } catch (_: DatabaseException) {
         throw LocalDataBaseException()
+    } catch (_: ItemCreationFailedException) {
+        throw NetworkException()
     } catch (_: Exception) {
         throw UnknownException()
     }

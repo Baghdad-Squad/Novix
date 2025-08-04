@@ -1,4 +1,4 @@
-package com.baghdad.domain.usecase.tvShow
+package com.baghdad.domain.usecase.savedList
 
 import com.baghdad.domain.repository.SavedListRepository
 import io.mockk.Runs

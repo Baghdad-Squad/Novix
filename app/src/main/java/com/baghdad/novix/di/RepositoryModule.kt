@@ -9,6 +9,7 @@ import com.baghdad.domain.repository.LanguageProviderRepository
 import com.baghdad.domain.repository.AppearanceRepository  // Fixed: Changed from ThemeModeRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.domain.repository.RecentlyViewedRepository
+import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.repository.ActorRepositoryImpl
@@ -59,6 +60,8 @@ abstract class RepositoryModule {
     @Binds
     abstract fun provideAuthRepository(authenticationRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
 
+    @Binds
+    abstract fun provideSavedListRepository(savedListRepository: SavedListRepository): SavedListRepository
     @Binds
     abstract fun provideLanguageProviderRepository(languageProviderImpl: LanguageProviderImpl): LanguageProviderRepository
 

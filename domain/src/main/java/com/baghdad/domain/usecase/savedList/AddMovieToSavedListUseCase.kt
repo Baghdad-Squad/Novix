@@ -1,4 +1,4 @@
-package com.baghdad.domain.usecase.movie
+package com.baghdad.domain.usecase.savedList
 
 import com.baghdad.domain.repository.SavedListRepository
 
