@@ -1,7 +1,6 @@
 package com.baghdad.viewmodel.movieDetails
 
 interface MovieDetailsInteractionListener {
-    fun onStarMovieClick()
     fun onSaveCurrentMovieClick()
     fun onSaveMoreLikeThisMedia(id: Long)
     fun onExtendOverviewClick()
@@ -13,4 +12,9 @@ interface MovieDetailsInteractionListener {
     fun onBackClick()
     fun onClickPlayTrailer()
     fun onSnackBarActionLabelClick()
+    fun onClickStarButton()
+    fun onRatingChanged(rating: Int)
+    fun onClickSubmitRating(rating: Int)
+    fun onDismissRatingBottomSheet()
+    fun onLoginClick()
 }

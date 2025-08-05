@@ -1,20 +1,8 @@
 package com.baghdad.viewmodel.movieDetails
 
-import kotlin.math.roundToInt
+import com.baghdad.domain.model.MediaAccountStates
 
-fun Double.roundToFirstDecimal(): Double {
-    return (this * 10).roundToInt() / 10.0
-}
-
-fun Int.formatDuration(): String {
-    val hours = this / 60
-    val minutes = this % 60
-    return when {
-        this <= 0 -> ""
-        else -> if (hours > 0) {
-            "$hours hr $minutes min"
-        } else {
-            "$minutes min"
-        }
-    }
-}
+fun MediaAccountStates.toUiState() =
+    MovieDetailsState(
+        isRated = isMediaRated,
+    )
