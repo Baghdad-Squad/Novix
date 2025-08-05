@@ -15,7 +15,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
-
+    configurations.all {
+        exclude(group = "com.intellij", module = "annotations")
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
