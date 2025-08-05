@@ -29,7 +29,6 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
-import com.baghdad.ui.feature.savedListDetails.component.MediaCategoriesSection
 import com.baghdad.ui.navigation.graph.myLists.MyListsNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -38,7 +37,6 @@ import com.baghdad.viewmodel.savedListDetails.SavedListDetailsEffect
 import com.baghdad.viewmodel.savedListDetails.SavedListDetailsInteractionListener
 import com.baghdad.viewmodel.savedListDetails.SavedListDetailsScreenState
 import com.baghdad.viewmodel.savedListDetails.SavedListDetailsViewModel
-import com.baghdad.viewmodel.savedListDetails.SavedListTab
 
 @Composable
 fun SavedListDetailsScreen(
@@ -103,16 +101,7 @@ fun SavedListDetailsContent(
                         onClick = { listener.onDeleteClick(uiState.savedList.id) }
                     )
                 }
-                MediaCategoriesSection(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    mediaCategories = listOf(
-                        SavedListTab.ALL,
-                        SavedListTab.MOVIES,
-                        SavedListTab.TV_SHOWS
-                    ),
-                    selectedCategory = uiState.selectedTab,
-                    onCategorySelected = listener::onCategoryClick
-                )
+
             }
         },
         snackbar = {
@@ -136,18 +125,15 @@ fun SavedListDetailsContent(
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) { media ->
+        ) { movie ->
             HomeCard(
-                url = media.posterUrl,
+                url = movie.posterUrl,
                 isSaved = true,
-                contentDescription = stringResource(R.string.media_card),
+                contentDescription = stringResource(R.string.movie_card),
                 onSavedClick = {
-                    listener.onRemoveSavedMediaClick(
-                        media.id,
-                        contentType = media.contentType
-                    )
+                    listener.onRemoveSavedMovieClick(movie.id)
                 },
-                onClick = { listener.onMediaClick(media.id, media.contentType) }
+                onClick = { listener.onMovieClick(movie.id) }
             )
         }
     }
