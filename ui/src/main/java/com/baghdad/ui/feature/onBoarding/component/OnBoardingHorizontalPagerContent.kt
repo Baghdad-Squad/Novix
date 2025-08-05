@@ -1,14 +1,9 @@
 package com.baghdad.ui.feature.onBoarding.component
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,12 +62,12 @@ fun OnBoardingHorizontalPagerContent(
     Box(modifier = Modifier.offset(y = (-100).dp)) {
         Box(
             modifier = modifier
-                .offset(y = 64.dp)
-                .height(250.dp)
+                .offset(y = 84.dp)
+                .height(150.dp)
                 .dropShadow(
                     CircleShape,
                     color = Theme.color.primary.copy(0.4f),
-                    alpha = 0.4f,
+                    alpha = 0.2f,
                     blur = 100.dp,
                     offsetY = (-24).dp,
                     offsetX = 0.dp,
@@ -107,7 +102,6 @@ fun OnBoardingHorizontalPagerContent(
                 TextSlidingAnimationVisibility(
                     onBoardingInfo = onBoardingInfo,
                     currentPage = page,
-                    pageOffset = pageOffset
                 )
             }
         }
@@ -147,13 +141,7 @@ private fun ImageAnimated(
 private fun TextSlidingAnimationVisibility(
     onBoardingInfo: List<OnBoardingInfo>,
     currentPage: Int,
-    pageOffset: Float,
 ) {
-    AnimatedVisibility(
-        visible = abs(pageOffset) < 0.5f,
-        enter = fadeIn() + slideInVertically { it / 2 },
-        exit = fadeOut() + slideOutVertically { it / 2 }
-    ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = stringResource(onBoardingInfo[currentPage].title),
@@ -175,7 +163,6 @@ private fun TextSlidingAnimationVisibility(
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
-        }
     }
 }
 

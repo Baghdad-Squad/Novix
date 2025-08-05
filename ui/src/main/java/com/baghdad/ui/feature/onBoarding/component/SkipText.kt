@@ -27,13 +27,12 @@ fun SkipText(onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .offset(x = (-50).dp, y = (-100).dp)
-            .size(150.dp)
+            .size(100.dp)
             .dropShadow(
                 CircleShape,
                 color = color,
-                alpha = 0.4f,
+                alpha = 0.2f,
                 blur = 150.dp,
-                offsetY = -24.dp,
                 offsetX = 0.dp,
                 spread = 20.dp,
             )
