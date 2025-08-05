@@ -45,6 +45,7 @@ class TvShowDetailsViewModel @Inject constructor(
         getTvShowCast(tvShowId)
         onClickSeasonTab(0)
         getTvShowAccountStates()
+        isUserLoggedIn()
     }
 
     private fun getTvShowDetails(tvShowId: Long) {
@@ -112,7 +113,13 @@ class TvShowDetailsViewModel @Inject constructor(
     }
 
     override fun onClickEpisode(seasonNumber: Int, episodeNumber: Int) {
-        sendEffect(TvShowDetailsScreenEffect.NavigateToEpisodeDetails(tvShowId = tvShowId , seasonNumber, episodeNumber))
+        sendEffect(
+            TvShowDetailsScreenEffect.NavigateToEpisodeDetails(
+                tvShowId = tvShowId,
+                seasonNumber,
+                episodeNumber
+            )
+        )
     }
 
     override fun onClickReviews() {
@@ -124,6 +131,16 @@ class TvShowDetailsViewModel @Inject constructor(
     }
 
     override fun onClickStarButton() {
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = true,
+                )
+            )
+        }
+    }
+
+    private fun isUserLoggedIn() {
         tryToExecute(
             callee = { isLoggedInUseCase() },
             dispatcher = ioDispatcher,
@@ -131,6 +148,7 @@ class TvShowDetailsViewModel @Inject constructor(
             onError = ::onLoadDataError
         )
     }
+
 
     private fun onIsUserLoggedInSuccess(isLoggedIn: Boolean) {
         val newBottomSheetType = if (isLoggedIn) {
@@ -142,7 +160,6 @@ class TvShowDetailsViewModel @Inject constructor(
         updateState {
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
-                    isBottomSheetVisible = true,
                     bottomSheetType = newBottomSheetType
                 )
             )

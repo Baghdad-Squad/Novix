@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.episodeDetails
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.MediaAccountStates
@@ -43,6 +44,7 @@ class EpisodeDetailsViewModel @Inject constructor(
         getEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
         getEpisodeCastMembers(tvShowId, seasonNumber, episodeNumber)
         getEpisodeAccountStates()
+        isUserLoggedIn()
     }
 
     private fun getEpisodeDetails(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
@@ -140,6 +142,16 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     override fun onClickStarButton() {
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = true,
+                )
+            )
+        }
+    }
+
+    private fun isUserLoggedIn() {
         tryToExecute(
             callee = { isLoggedInUseCase() },
             dispatcher = ioDispatcher,
@@ -147,6 +159,7 @@ class EpisodeDetailsViewModel @Inject constructor(
             onError = ::onError
         )
     }
+
 
     private fun onIsUserLoggedInSuccess(isLoggedIn: Boolean) {
         val newBottomSheetType = if (isLoggedIn) {
@@ -158,7 +171,6 @@ class EpisodeDetailsViewModel @Inject constructor(
         updateState {
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
-                    isBottomSheetVisible = true,
                     bottomSheetType = newBottomSheetType
                 )
             )
@@ -188,10 +200,10 @@ class EpisodeDetailsViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 addEpisodeRateUseCase(
-                    tvShowId,
-                    currentState.episode.currentSeason,
-                    currentState.episode.episodeNumber,
-                    rating
+                    seriesId = tvShowId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber,
+                    rating = rating
                 )
             },
             onSuccess = { onSubmitRatingSuccess() },
@@ -221,16 +233,14 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     private fun getEpisodeAccountStates() {
+        Log.e("malak", "$tvShowId $seasonNumber $episodeNumber")
         tryToExecute(
             callee = {
                 getEpisodeAccountStatesUseCase(
                     tvShowId = tvShowId,
-                    seasonNumber = currentState.episode.currentSeason,
-                    episodeNumber = currentState.episode.episodeNumber
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber
                 )
-            },
-            onStart = {
-                delay(1000L)
             },
             dispatcher = ioDispatcher,
             onSuccess = ::onGetEpisodeStatesSuccess,

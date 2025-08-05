@@ -50,6 +50,7 @@ class MovieDetailsViewModel @Inject constructor(
         getCastMembers()
         getMoreLikeThisShow()
         getMovieAccountStates()
+        isUserLoggedIn()
     }
 
     override fun onSaveCurrentMovieClick() {
@@ -144,6 +145,16 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onClickStarButton() {
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = true,
+                )
+            )
+        }
+    }
+
+    private fun isUserLoggedIn() {
         tryToExecute(
             callee = { isLoggedInUseCase() },
             dispatcher = ioDispatcher,
@@ -151,6 +162,7 @@ class MovieDetailsViewModel @Inject constructor(
             onError = ::onError
         )
     }
+
 
     private fun onIsUserLoggedInSuccess(isLoggedIn: Boolean) {
         val newBottomSheetType = if (isLoggedIn) {
@@ -162,7 +174,6 @@ class MovieDetailsViewModel @Inject constructor(
         updateState {
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
-                    isBottomSheetVisible = true,
                     bottomSheetType = newBottomSheetType
                 )
             )
