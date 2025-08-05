@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.home
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.ContinueWatching.ContentType
 import com.baghdad.entity.media.TvShow
-import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
+import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test

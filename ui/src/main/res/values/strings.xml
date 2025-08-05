@@ -25,6 +25,7 @@
     <string name="snackbar_unknown_error">An unknown error occurred</string>
     <string name="snackbar_removed_success">Item removed successfully</string>
     <string name="snackbar_saved_success">Item saved successfully</string>
+    <string name="snackbar_rated_success">Item rated successfully</string>
     <string name="empty_string"> </string>
     <string name="birth_place">birth Place</string>
     <string name="more_like_this">More like this</string>
@@ -53,7 +54,7 @@
     <string name="save">Save</string>
     <string name="log_out_description">Are you sure to continue?</string>
     <string name="create_new_list">Create new list</string>
-    <string name="select_how_mush_you_like_it">Select how mush you like it</string>
+    <string name="select_how_much_you_like_it">Select how much you like it</string>
     <string name="save_to_list">Save to list</string>
     <string name="guests_of_honor">Guests of honor</string>
     <string name="season_template">S%1$s</string>
@@ -112,6 +113,8 @@
     <string name="minutes">Minutes</string>
     <string name="duration_combined">%1$s %2$s</string>
     <string name="an_error_occurred_while_loading_genres">An error occurred while loading genres</string>
+    <string name="submit">Submit</string>
+    <string name="please_login_to_rate">Please login to rate your favorite items.</string>
     <string name="media_card">Media Card</string>
 
 </resources>
