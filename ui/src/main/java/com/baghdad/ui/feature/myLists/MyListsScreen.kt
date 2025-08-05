@@ -26,6 +26,7 @@ import com.baghdad.ui.feature.myLists.component.SavedListsVerticalGrid
 import com.baghdad.ui.navigation.graph.myLists.MyListsNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.errorStates.MyListsSnackBarMessage
 import com.baghdad.viewmodel.myLists.MyListsInteractionListener
 import com.baghdad.viewmodel.myLists.MyListsScreenEffect
 import com.baghdad.viewmodel.myLists.MyListsScreenState
@@ -123,4 +124,9 @@ private fun handleEffect(
 }
 
 @Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
+private fun snackBarMessage(type: BaseSnackBarMessage): Int =
+    when (type) {
+        MyListsSnackBarMessage.SavedListCreatedSuccessfully -> R.string.added_list_successfully
+        MyListsSnackBarMessage.SavedListDeletedSuccessfully -> R.string.deleted_list_successfully
+        else -> type.toStringResource()
+    }
