@@ -11,5 +11,6 @@ data class EpisodeDto(
     val currentSeason: Int,
     val overview: String,
     val genres: List<GenreDto>,
+    val userRating: Int?,
     val headerPictures: List<String>,
 )

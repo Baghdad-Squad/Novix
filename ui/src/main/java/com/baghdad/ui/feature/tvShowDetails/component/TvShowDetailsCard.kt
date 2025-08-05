@@ -26,13 +26,12 @@ import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 
 @Composable
 fun TvShowDetailsCard(
-    tvShowId: Long,
     title: String,
     genres: List<TvShowDetailsScreenState.GenreUiState>,
     rating: Double,
     date: String,
     seasonsCount: Int,
-    onReviewClick: (tvShowId: Long) -> Unit,
+    onReviewClick: () -> Unit,
     onGenreClick: (genreId: Long?) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -110,7 +109,7 @@ fun TvShowDetailsCard(
             style = Theme.typography.label.medium,
             color = Theme.color.primary,
             modifier = Modifier.noRippleClickable {
-                onReviewClick(tvShowId)
+                onReviewClick()
             }
         )
     }

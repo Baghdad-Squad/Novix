@@ -118,6 +118,7 @@ class TvShowDetailsMapperTest {
         overview = "Test episode overview",
         headerPictures = listOf("/header1.jpg", "/header2.jpg"),
         trailerUrl = "https://example.com/trailer.mp4",
+        userRating = 5,
         genres = emptyList(),
     )
 }

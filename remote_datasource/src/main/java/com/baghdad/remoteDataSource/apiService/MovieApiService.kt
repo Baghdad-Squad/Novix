@@ -2,7 +2,9 @@ package com.baghdad.remoteDataSource.apiService
 
 import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.interceptor.ForceLocaleEnglish
+import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
 import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
@@ -11,8 +13,11 @@ import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
 import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
+import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -91,6 +96,21 @@ interface MovieApiService {
     @GET(POPULAR_MOVIES_ENDPOINT)
     suspend fun getPopularMovies(): Response<PopularMoviesResponse>
 
+    @Authenticated
+    @POST(RATE_MOVIE_ENDPOINT)
+    suspend fun addMovieRate(
+        @Path("movie_id") movieId: Long,
+        @Query("session_id") sessionId: String,
+        @Body rating: RatingRequest
+    ): Response<RatingResponse>
+
+    @Authenticated
+    @GET(MOVIE_ACCOUNT_STATES)
+    suspend fun getMovieAccountStates(
+        @Path("movie_id") movieId: Long,
+        @Query("session_id") sessionId: String
+    ): Response<MediaAccountStatesResponse>
+
     companion object {
         private const val SIMILAR_MOVIES_ENDPOINT = "movie/{movie_id}/similar"
         private const val MOVIE_DETAILS_ENDPOINT = "movie/{movie_id}"
@@ -103,5 +123,7 @@ interface MovieApiService {
         private const val TOP_RATED_MOVIES_ENDPOINT = "movie/top_rated"
         private const val DISCOVER_MOVIES_ENDPOINT = "discover/movie"
         private const val POPULAR_MOVIES_ENDPOINT = "movie/popular"
+        private const val RATE_MOVIE_ENDPOINT = "movie/{movie_id}/rating"
+        private const val MOVIE_ACCOUNT_STATES = "movie/{movie_id}/account_states"
     }
 }

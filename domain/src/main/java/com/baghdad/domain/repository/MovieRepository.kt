@@ -1,5 +1,6 @@
 package com.baghdad.domain.repository
 
+import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -24,4 +25,8 @@ interface MovieRepository {
     suspend fun getPopularMovies(): List<Movie>
 
     suspend fun getUpcomingMovies(genreId: Long?): List<Movie>
+    suspend fun addMovieRate(movieId: Long, rating: Int)
+
+    suspend fun getMovieStates(movieId: Long): MediaAccountStates
+
 }

@@ -88,6 +88,7 @@ class TvShowMapperTest {
             overview = "",
             genres = emptyList(),
             headerPictures = emptyList(),
+            userRating = 0,
             trailerUrl = ""
         )
 

@@ -1,10 +1,11 @@
 package com.baghdad.viewmodel.tvShowDetails
 
+import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
-import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
+import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMMYYYYFormat
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
@@ -17,6 +18,7 @@ fun TvShow.toUiState() =
         seasonCount = numberOfSeasons,
         overView = overview,
         trailerURL = trailerURL,
+        userRating = userRating?.toInt(),
         posterPictureURL = posterImageURL,
         headerImagesURLs = headerImagesURLs,
     )

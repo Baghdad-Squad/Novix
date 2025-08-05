@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.authentication.ForgotPasswordWebViewScreen
 import com.baghdad.ui.feature.authentication.LoginScreen
+import com.baghdad.ui.feature.authentication.ResetPasswordWebViewScreen
 import com.baghdad.ui.feature.authentication.SignUpWebViewScreen
 import com.baghdad.ui.feature.welcome.WelcomeScreen
 import com.baghdad.ui.navigation.route.AuthenticationRoute
@@ -52,6 +53,18 @@ fun NavGraphBuilder.authenticationNavGraph(navController: NavHostController) {
                 }
             )
         }
+        composable<AuthenticationRoute.ResetPasswordWebViewScreen> { backStackEntry ->
+            val resetToken = backStackEntry.arguments?.getString("resetToken") ?: ""
+            ResetPasswordWebViewScreen(
+                resetToken = resetToken,
+                handleNavigation = {
+                    handleAuthenticationNavigation(
+                        event = it,
+                        navController = navController
+                    )
+                }
+            )
+        }
     }
 }
 
@@ -83,6 +96,13 @@ private fun handleAuthenticationNavigation(
 
         AuthenticationNavEvent.NavigateToLogin ->{
             navController.navigate(AuthenticationRoute.LoginScreen)
+        }
+        AuthenticationNavEvent.NavigateToLogin -> {
+            navController.navigate(AuthenticationRoute.LoginScreen) {
+                popUpTo(Graph.AuthenticationGraph) {
+                    inclusive = true
+                }
+            }
         }
     }
 }

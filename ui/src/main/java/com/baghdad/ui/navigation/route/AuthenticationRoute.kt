@@ -14,4 +14,7 @@ sealed interface AuthenticationRoute : Route {
 
     @Serializable
     data object ForgotPasswordScreen : AuthenticationRoute
+
+    @Serializable
+    data class ResetPasswordWebViewScreen(val resetToken: String) : AuthenticationRoute
 }
