@@ -55,6 +55,7 @@ fun ActorCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .background(color = Theme.color.surface)
             .noRippleClickable { onClick() }) {
         IslamicImage(
             imageUrl = actorImage,
@@ -71,6 +72,7 @@ fun ActorCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .widthIn(min = 218.dp)
+                .background(Theme.color.surface)
                 .threeSidedBorder(
                     width = 1.dp,
                     color = Theme.color.stroke,
