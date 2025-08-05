@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.episodeDetails
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.person.CastMember
-import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
+import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
 fun Episode.toUiState() = EpisodeDetailsScreenState.EpisodeUiState(
@@ -16,6 +16,7 @@ fun Episode.toUiState() = EpisodeDetailsScreenState.EpisodeUiState(
     currentSeason = currentSeason,
     overview = overview,
     headerPictures = headerPictures,
+    userRating = userRating?.toInt(),
     categories = genres.toUiStates(),
 )
 

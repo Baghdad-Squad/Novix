@@ -1,17 +1,20 @@
 package com.baghdad.repository
 
 import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
+import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.TvShowDto
+import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
@@ -19,6 +22,7 @@ import javax.inject.Inject
 
 class TvShowRepositoryImpl @Inject constructor(
     val remoteGenreDataSource: RemoteGenreDataSource,
+    val localSessionDataStore: LocalSessionDataStore,
     val tvShowRemoteDataSource: RemoteTvShowDataSource
 ) : TvShowRepository {
     override suspend fun getGenres(): List<Genre> {
@@ -108,6 +112,33 @@ class TvShowRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun addTvShowRate(
+        tvShowId: Long,
+        rating: Int
+    ) {
+        executeAuthorizedSafely(
+            sessionId = localSessionDataStore.getSessionId(),
+            block = {
+                tvShowRemoteDataSource.addTvShowRate(
+                    tvShowId = tvShowId,
+                    rating = rating,
+                    sessionId = it
+                )
+            }
+        )
+    }
+
+    override suspend fun getTvShowAccountStates(tvShowId: Long): MediaAccountStates {
+         return executeAuthorizedSafely (
+            sessionId = localSessionDataStore.getSessionId(),
+            block = {
+                tvShowRemoteDataSource.getTvShowAccountStates(
+                    tvShowId = tvShowId,
+                    sessionId = it
+                ).toEntity()
+            }
+        )
+    }
 
     companion object {
         private const val MAX_IMAGE_COUNT = 10

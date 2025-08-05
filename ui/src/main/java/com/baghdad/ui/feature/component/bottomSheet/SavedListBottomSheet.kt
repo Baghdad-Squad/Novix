@@ -20,7 +20,7 @@ import com.baghdad.design_system.shared.Selectable
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
-import com.baghdad.viewmodel.share.ListUiState
+import com.baghdad.viewmodel.shared.ListUiState
 
 @Composable
 fun SavedListBottomSheet(

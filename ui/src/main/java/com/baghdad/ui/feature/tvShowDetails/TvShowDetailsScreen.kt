@@ -42,6 +42,8 @@ import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
+import com.baghdad.ui.feature.component.bottomSheet.LoginRequiredSheet
+import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
 import com.baghdad.ui.feature.tvShowDetails.component.CastMembersSection
 import com.baghdad.ui.feature.tvShowDetails.component.EpisodeCard
 import com.baghdad.ui.feature.tvShowDetails.component.SeasonSection
@@ -57,15 +59,15 @@ import com.baghdad.ui.util.isArabicSystemLocale
 import com.baghdad.ui.util.openYouTubeLink
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.movieDetails.formatDuration
+import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsInteractionListener
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenEffect
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
+import com.baghdad.viewmodel.util.formatDuration
 
 @Composable
 fun TvShowDetailsScreen(
-    tvShowId: Long,
     viewModel: TvShowDetailsViewModel = hiltViewModel(),
     handleNavigation: (TvShowDetailsNavEvent) -> Unit
 ) {
@@ -76,7 +78,6 @@ fun TvShowDetailsScreen(
         handleEffect(effect, context, handleNavigation)
     }
     TvShowDetailsContent(
-        tvShowId = tvShowId,
         uiState = uiState,
         listener = viewModel,
         snackBarState = snackBarState
@@ -124,7 +125,6 @@ private fun handleEffect(
 
 @Composable
 fun TvShowDetailsContent(
-    tvShowId: Long,
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
     snackBarState: SnackBarState,
@@ -166,9 +166,9 @@ fun TvShowDetailsContent(
         bottomBar = {
             DetailsScreenBottomBar(
                 hasTrailer = uiState.tvShowInfo.trailerURL.isNotBlank(),
-                onRateClicked = { listener.onClickAddRating() },
+                onRateClicked = { listener.onClickStarButton() },
                 onPlayTrailerClicked = { listener.onClickPlayTrailer() },
-                isRated = uiState.isTvShowRated,
+                isRated = uiState.isRated,
                 isLoading = false /*TODO*/
             )
         },
@@ -190,6 +190,23 @@ fun TvShowDetailsContent(
                 .fillMaxSize()
                 .navigationBarsPadding()
         ) {
+
+            RatingBottomSheet(
+                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                rate = uiState.tvShowInfo.userRating ?: 0,
+                onRateChanged = { listener.onRatingChanged(it) },
+                onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating ?: 0) }
+            )
+
+            LoginRequiredSheet(
+                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                onLoginClick = { listener.onClickLoginButton() },
+                title = stringResource(R.string.rate_it),
+                description = stringResource(R.string.please_login_to_rate)
+            )
+
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -199,11 +216,11 @@ fun TvShowDetailsContent(
 
                 item {
                     TvShowHeaderWithDetailsCard(
-                        tvShowId = tvShowId,
                         uiState = uiState,
                         listener = listener
                     )
                 }
+
 
                 item {
                     Spacer(Modifier.height(136.dp))
@@ -275,31 +292,32 @@ fun TvShowDetailsContent(
                     }
                 }
             }
-
-            TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(animatedColor)
-                    .zIndex(1f)
-                    .padding(top = 56.dp, bottom = 8.dp),
-                onGoBackClick = {
-                    listener.onClickBackIcon()
-                },
-                content = {
-                    SaveIcon(
-                        tint = Theme.color.title,
-                        size = 40,
-                        backgroundColor = Theme.color.iconBackgroundLow,
-                        isSaved = uiState.isTvShowSaved,
-                        onClick = {
-                            listener.onClickSaveTvShow(tvShowId)
-                        }
-                    )
-                }
-            )
         }
+
+        TopAppBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(animatedColor)
+                .zIndex(1f)
+                .padding(top = 56.dp, bottom = 8.dp),
+            onGoBackClick = {
+                listener.onClickBackIcon()
+            },
+            content = {
+                SaveIcon(
+                    tint = Theme.color.title,
+                    size = 40,
+                    backgroundColor = Theme.color.iconBackgroundLow,
+                    isSaved = uiState.isSaved,
+                    onClick = {
+                        listener.onClickSaveTvShow()
+                    }
+                )
+            }
+        )
     }
 }
+
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
