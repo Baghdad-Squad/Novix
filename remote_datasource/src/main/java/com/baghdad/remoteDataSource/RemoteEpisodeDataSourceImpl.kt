@@ -1,10 +1,15 @@
 package com.baghdad.remoteDataSource
 
+import android.util.Log
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.episode.mapToYoutubeTrailerUrl
 import com.baghdad.remoteDataSource.mapper.episode.toDto
+import com.baghdad.remoteDataSource.request.RatingRequest
+import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
@@ -13,13 +18,18 @@ import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.repository.model.MediaAccountStateDto
 
 class RemoteEpisodeDataSourceImpl(
     private val episodeApiService: EpisodeApiService,
     private val logger: Logger,
-): RemoteEpisodeDataSource {
+) : RemoteEpisodeDataSource {
 
-    override suspend fun getEpisodeDetails(tvId: Long, seasonNumber: Int, episodeNumber: Int): EpisodeDto {
+    override suspend fun getEpisodeDetails(
+        tvId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): EpisodeDto {
         return handleRequest<EpisodeDetailsResponse>(
             apiCall = {
                 episodeApiService.getEpisodeDetails(
@@ -30,10 +40,14 @@ class RemoteEpisodeDataSourceImpl(
             },
             logger = logger,
 
-        ).toDto()
+            ).toDto()
     }
 
-    override suspend fun getEpisodeCastMembers(tvId: Long, seasonNumber: Int, episodeNumber: Int): List<CastMemberDto> {
+    override suspend fun getEpisodeCastMembers(
+        tvId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): List<CastMemberDto> {
         return handleRequest<CastMembersResponse>(
             apiCall = {
                 episodeApiService.getEpisodeCastMembers(
@@ -46,7 +60,11 @@ class RemoteEpisodeDataSourceImpl(
         ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
     }
 
-    override suspend fun getEpisodeImages(tvId: Long, seasonNumber: Int, episodeNumber: Int): List<String> {
+    override suspend fun getEpisodeImages(
+        tvId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): List<String> {
         return handleRequest<EpisodeImageResponse>(
             apiCall = {
                 episodeApiService.getEpisodeImages(
@@ -76,4 +94,43 @@ class RemoteEpisodeDataSourceImpl(
         ).mapToYoutubeTrailerUrl()
     }
 
+    override suspend fun addEpisodeRate(
+        tvShowId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int,
+        sessionId: String,
+        rating: Int
+    ) {
+        handleRequest<RatingResponse>(
+            apiCall = {
+                episodeApiService.addEpisodeRate(
+                    seriesId = tvShowId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber,
+                    sessionId = sessionId,
+                    rating = RatingRequest(rating)
+                )
+            },
+            logger = logger,
+        )
+    }
+
+    override suspend fun getEpisodeAccountStates(
+        tvShowId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int,
+        sessionId: String,
+    ): MediaAccountStateDto {
+        return handleRequest<MediaAccountStatesResponse>(
+            apiCall = {
+                episodeApiService.getEpisodeAccountStates(
+                    seriesId = tvShowId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber,
+                    sessionId = sessionId
+                )
+            },
+            logger = logger
+        ).toDto()
+    }
 }
