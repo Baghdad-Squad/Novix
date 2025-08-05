@@ -73,18 +73,20 @@ private fun OnBoardingContent(
         ),
     )
     val pagerState =
-        rememberPagerState(initialPage = state.currentPage, pageCount = {onBoardingInfo.size })
+        rememberPagerState(initialPage = state.currentPage, pageCount = { onBoardingInfo.size })
 
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Theme.color.surface)
-            .padding(horizontal = 16.dp),
+            .background(Theme.color.surface),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         item {
-            SkipText(onClick = { listener.onSkipButtonClick() })
+            SkipText(
+                onClick = { listener.onSkipButtonClick() },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
 
         item {
@@ -92,7 +94,7 @@ private fun OnBoardingContent(
                 pagerState = pagerState,
                 onBoardingInfo = onBoardingInfo,
                 onNext = { listener.onNextButtonClick(onBoardingInfo.size) },
-                onBack = {listener.onBackButtonClick()},
+                onBack = { listener.onBackButtonClick() },
             )
             BottomSlidingSection(
                 pagerState = pagerState,
@@ -115,7 +117,6 @@ private fun OnBoardingContent(
                 }
             )
         }
-
     }
 
 }

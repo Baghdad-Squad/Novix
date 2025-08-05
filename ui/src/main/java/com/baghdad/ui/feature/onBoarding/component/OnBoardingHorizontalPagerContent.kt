@@ -5,6 +5,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -73,6 +74,7 @@ fun OnBoardingHorizontalPagerContent(
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 16.dp)
         ) { page ->
             val pageOffset =
                 (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
@@ -87,11 +89,15 @@ fun OnBoardingHorizontalPagerContent(
                     pageOffset = pageOffset,
                     imageWidthFraction = imageWidthFraction
                 )
-                Column(modifier = Modifier.padding(top = 32.dp).height(150.dp)){
+                Column(
+                    modifier = Modifier
+                        .padding(top = 32.dp)
+                        .height(156.dp)
+                ) {
                     TextSlidingAnimationVisibility(
                         onBoardingInfo = onBoardingInfo,
                         currentPage = page,
-                        pageOffset = pageOffset
+                        pageOffset = pageOffset,
                     )
                 }
             }
@@ -130,34 +136,30 @@ private fun ImageAnimated(
 private fun TextSlidingAnimationVisibility(
     onBoardingInfo: List<OnBoardingInfo>,
     currentPage: Int,
-    pageOffset: Float = 0f,
+    pageOffset: Float = 0f
 ) {
-        Column(
-            modifier = Modifier.graphicsLayer {
-                val scale = 1f - (0.5f * abs(pageOffset))
-                scaleX = scale
-                scaleY = scale
-            },
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = stringResource(onBoardingInfo[currentPage].title),
-                style = Theme.typography.title.large,
-                color = Theme.color.title,
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-            )
+    Column(
+        modifier = Modifier.graphicsLayer {
+            val scale = 1f - (0.5f * abs(pageOffset))
+            scaleX = scale
+            scaleY = scale
+        },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(onBoardingInfo[currentPage].title),
+            style = Theme.typography.title.large,
+            color = Theme.color.title,
+            textAlign = TextAlign.Center,
+        )
 
-            Text(
-                text = stringResource(onBoardingInfo[currentPage].description),
-                style = Theme.typography.body.medium,
-                color = Theme.color.body,
-                modifier = Modifier.padding(top = 4.dp),
-                lineHeight = TextUnit(24f, TextUnitType.Sp),
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-            )
+        Text(
+            text = stringResource(onBoardingInfo[currentPage].description),
+            style = Theme.typography.body.medium,
+            color = Theme.color.body,
+            modifier = Modifier.padding(top = 4.dp),
+            textAlign = TextAlign.Center,
+        )
     }
 }
 

@@ -31,11 +31,9 @@ class LocalOnboardingDatastoreImp @Inject constructor(
     override suspend fun isFirstTime(): Boolean {
         return safeDataStoreCall(
             block = {
-                val test = dataStore.data.map { preferences ->
+                dataStore.data.map { preferences ->
                     preferences[booleanPreferencesKey(name = IS_FIRST_TIME_LAUNCH_APP)] != false
                 }.first()
-                test
-
             },
             logger = logger
         ) ?: true

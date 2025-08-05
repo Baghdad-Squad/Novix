@@ -31,9 +31,6 @@ class OnBoardingViewModel @Inject constructor(
                     sendEffect(OnBoardingEffect.NavigateToWelcomeToNovix)
                 }
             },
-            onError = {
-                LocalDataBaseException()
-            },
             dispatcher = ioDispatcher
         )
     }
@@ -53,9 +50,6 @@ class OnBoardingViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 setFirstTimeLaunchApp(true)
-            },
-            onError = {
-                LocalDataBaseException()
             },
             dispatcher = ioDispatcher
         )
