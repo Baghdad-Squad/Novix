@@ -44,4 +44,18 @@ class LocalContinueWatchingDataSourceImpl @Inject constructor(
         executeFlowWithErrorHandling(logger = logger) {
             continueWatchingDao.observeContinueWatching(userId).map(List<ContinueWatching>::toDtos)
         }
+
+    override fun getAllContinueWatchingMovies(userId: Long): Flow<List<ContinueWatchingDto>> {
+        return executeFlowWithErrorHandling(logger = logger) {
+            continueWatchingDao.getAllContinueWatchingMovies(userId)
+                .map(List<ContinueWatching>::toDtos)
+        }
+    }
+
+    override fun getAllContinueWatchingTvShows(userId: Long): Flow<List<ContinueWatchingDto>> {
+        return executeFlowWithErrorHandling(logger = logger) {
+            continueWatchingDao.getAllContinueWatchingTvShows(userId)
+                .map(List<ContinueWatching>::toDtos)
+        }
+    }
 }
