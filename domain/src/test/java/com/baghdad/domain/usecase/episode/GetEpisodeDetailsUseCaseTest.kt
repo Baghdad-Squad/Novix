@@ -28,10 +28,12 @@ class GetEpisodeDetailsUseCaseTest {
         trailerUrl = "https://www.youtube.com/watch?v=example",
         currentSeason = 1,
         overview = "King Viserys hosts a tournament to celebrate the birth of his second child.",
+        userRating = 9,
         genres = listOf(Genre(1L, "Drama"), Genre(2L, "Fantasy")),
         headerPictures = listOf(
             "https://image.tmdb.org/t/p/w500/header1.jpg",
-            "https://image.tmdb.org/t/p/w500/header2.jpg"
+            "https://image.tmdb.org/t/p/w500/header2.jpg",
+
         )
     )
 
