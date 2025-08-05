@@ -35,6 +35,7 @@ class MovieRepositoryImplTest {
         remoteMovieDataSource = mockk()
         movieRepositoryImpl = MovieRepositoryImpl(
             remoteGenreDataSource = remoteGenreDataSource,
+            localSessionDataStore = mockk(),
             remoteMovieDataSource = remoteMovieDataSource
         )
     }
