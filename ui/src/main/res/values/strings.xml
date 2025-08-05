@@ -102,5 +102,9 @@
     <string name="minutes">Minutes</string>
     <string name="duration_combined">%1$s %2$s</string>
     <string name="an_error_occurred_while_loading_genres">An error occurred while loading genres</string>
+    <string name="my_lists">My Lists</string>
+    <string name="my_lists_empty_list_caption">There is no saved list yet, click on + button to add a new list!</string>
+    <string name="my_lists_no_login_caption">Please login to create lists and add your favorite items to it!</string>
+    <string name="list_title">List title</string>
 
 </resources>
