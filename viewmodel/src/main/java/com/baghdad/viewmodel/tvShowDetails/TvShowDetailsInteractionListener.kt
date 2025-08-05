@@ -8,8 +8,12 @@ interface TvShowDetailsInteractionListener {
     fun onClickEpisode(seasonNumber: Int, episodeNumber: Int)
     fun onClickReviews(tvShowId: Long)
     fun onClickSaveTvShow(tvShowId: Long)
-    fun onClickAddRating()
+    fun onClickStarButton()
+    fun onRatingChanged(rating: Int)
+    fun onClickSubmitRating(rating: Int)
+    fun onDismissRatingBottomSheet()
     fun onClickSeasonTab(seasonIndex: Int)
     fun onClickPlayTrailer()
     fun onSnackBarActionLabelClick()
+    fun onClickLoginButton()
 }
