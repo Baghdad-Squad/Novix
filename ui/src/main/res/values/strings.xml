@@ -114,5 +114,7 @@
     <string name="logout">Logout</string>
     <string name="logout_icon">logout icon</string>
     <string name="profile_setting_item">profile setting item</string>
+    <string name="unlogged_in_user">Please login to access your account \n details and other features!</string>
+    <string name="loggedout_profile_icon">logged out user icon</string>
 
 </resources>

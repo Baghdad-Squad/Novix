@@ -122,7 +122,8 @@
     <string name="logout">تسجيل الخروج</string>
     <string name="logout_icon">ايقونة تسجيل الخروج</string>
     <string name="profile_setting_item">عنصر اعدادات الملف الشخصي</string>
-
+    <string name="unlogged_in_user">الرجاء تسجيل الدخول للوصول الى تفاصيل حسابك والميزات الاخرى</string>
+    <string name="loggedout_profile_icon">ايقونة المستخدم الذي تم تسجيل خروجه</string>
 
 </resources>
 
