@@ -4,7 +4,7 @@ import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
-import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
+import com.baghdad.viewmodel.util.roundToFirstDecimal
 
 fun Genre.toUiState(): HomeScreenState.GenreUiState {
     return HomeScreenState.GenreUiState(

@@ -18,8 +18,7 @@ fun NavGraphBuilder.tvShowDetailsNavGraph(navController: NavHostController) {
         startDestination = TvShowDetailsRoute.TvShowDetailsScreen
     ) {
         composable<TvShowDetailsRoute.TvShowDetailsScreen> { backStackEntry ->
-            val tvShowId = backStackEntry.toGraph<Graph.TvShowDetailsGraph>(navController).tvShowId
-            TvShowDetailsScreen(tvShowId) { event ->
+            TvShowDetailsScreen { event ->
                 handleTvShowDetailsNavEvent(event, navController)
             }
         }
