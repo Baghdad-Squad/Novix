@@ -6,6 +6,7 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ fun Selection(
     option: Selectable<String>,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    description: String? = null,
     trailingText: String? = null,
 ) {
     val transition = updateTransition(
@@ -65,12 +67,26 @@ fun Selection(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
-        Text(
-            text = option.value,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
-            color = Theme.color.body,
-            style = Theme.typography.label.large
-        )
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 12.dp, vertical = 16.dp)
+                .weight(1f)
+        ) {
+            Text(
+                text = option.value,
+                color = Theme.color.body,
+                style = Theme.typography.label.large
+            )
+
+            description?.let {
+                Text(
+                    text = it,
+                    color = Theme.color.hint,
+                    style = Theme.typography.label.small,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+        }
 
         trailingText?.let {
             Text(
