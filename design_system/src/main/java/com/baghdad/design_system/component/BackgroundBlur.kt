@@ -74,7 +74,6 @@ internal fun GlowingTriangle(
     rotationDegrees: Float = 180f
 ) {
     Canvas(modifier = modifier) {
-        // Choose the smaller of width or height to scale triangle size
         val baseSize = minOf(size.width, size.height)
         val side = baseSize * sideFraction
         val height = (sqrt(3f) / 2f) * side
