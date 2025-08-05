@@ -42,7 +42,7 @@ fun MovieHeaderWithDetailsCard(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .offset(y = 128.dp)
+                .offset(y = 116.dp)
         ) {
             if (state.movieImages.size > 1) {
                 Row(
@@ -67,7 +67,7 @@ fun MovieHeaderWithDetailsCard(
                 title = state.movieName,
                 releaseDate = state.date,
                 rating = state.rating,
-                duration = if(isArabicSystemLocale()) arabicDuration(state.duration) else state.duration.formatDuration(),
+                duration = if (isArabicSystemLocale()) arabicDuration(state.duration) else state.duration.formatDuration(),
                 categories = state.categories,
                 onViewReviewClicked = {
                     listener.onReviewClick(state.movieId)
@@ -77,6 +77,7 @@ fun MovieHeaderWithDetailsCard(
                     .padding(bottom = 16.dp)
                     .padding(horizontal = 16.dp)
                     .align(Alignment.CenterHorizontally)
+                    .then(Modifier.padding(bottom = if (state.categories.isEmpty()) 24.dp else 0.dp))
             )
         }
     }

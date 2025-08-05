@@ -6,8 +6,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -24,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
@@ -45,14 +48,11 @@ import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenState
 import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
+
 
 @Composable
 fun ActorDetailsScreen(
-    actorId: Long,
-    viewModel: ActorDetailsViewModel =
-        koinViewModel(key = actorId.toString(), parameters = { parametersOf(actorId) }),
+    viewModel: ActorDetailsViewModel = hiltViewModel(),
     handleNavigation: (ActorDetailsNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -87,19 +87,19 @@ private fun handleEffect(
                 NavigateToTvShowDetails(effect.tvShowId),
             )
 
-        ActorDetailsScreenEffect.NavigateToActorGallery ->
+        is ActorDetailsScreenEffect.NavigateToActorGallery ->
             handleNavigation(
-                ActorDetailsNavEvent.NavigateToActorGallery,
+                ActorDetailsNavEvent.NavigateToActorGallery(actorId = effect.actorId),
             )
 
-        ActorDetailsScreenEffect.NavigateToActorTopMoviePicks ->
+        is ActorDetailsScreenEffect.NavigateToActorTopMoviePicks ->
             handleNavigation(
-                ActorDetailsNavEvent.NavigateToActorTopMoviePicks,
+                ActorDetailsNavEvent.NavigateToActorTopMoviePicks(actorId = effect.actorId),
             )
 
-        ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks ->
+        is ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks ->
             handleNavigation(
-                ActorDetailsNavEvent.NavigateToActorTopTvShowPicks,
+                ActorDetailsNavEvent.NavigateToActorTopTvShowPicks(actorId = effect.actorId),
             )
 
         ActorDetailsScreenEffect.NavigateToLogin ->
@@ -165,6 +165,8 @@ fun ActorDetailsContent(
                     .padding(bottom = 24.dp),
             ) {
                 ActorHeaderWithDetailsCard(uiState = uiState)
+
+                Spacer(Modifier.height(84.dp))
 
                 if (uiState.actorInfo.biography.isNotBlank()) {
                     ActorBiographySection(

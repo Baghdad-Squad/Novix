@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -37,12 +38,12 @@ import com.baghdad.viewmodel.trendingMovie.TrendingMoviesEffect
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesInteractionListener
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesScreenState
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
-import org.koin.androidx.compose.koinViewModel
+
 
 
 @Composable
 fun TrendingMoviesScreen(
-    viewModel: TrendingMoviesViewModel = koinViewModel(),
+    viewModel: TrendingMoviesViewModel = hiltViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

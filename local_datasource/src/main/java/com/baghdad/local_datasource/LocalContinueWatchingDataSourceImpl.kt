@@ -13,8 +13,9 @@ import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ContinueWatchingDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class LocalContinueWatchingDataSourceImpl(
+class LocalContinueWatchingDataSourceImpl @Inject constructor(
     private val continueWatchingDao: ContinueWatchingDao,
     private val logger: Logger,
 ) : LocalContinueWatchingDataSource {

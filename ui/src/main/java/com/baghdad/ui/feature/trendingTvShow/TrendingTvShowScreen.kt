@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -41,11 +42,10 @@ import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowInteractionListener
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowScreenEffect
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowScreenState
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TrendingTvShowScreen(
-    viewModel: TrendingTvShowViewModel = koinViewModel(),
+    viewModel: TrendingTvShowViewModel = hiltViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

@@ -8,8 +8,9 @@ import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntities
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.util.executeSafely
+import javax.inject.Inject
 
-class EpisodeRepositoryImpl(
+class EpisodeRepositoryImpl @Inject constructor(
     private val remoteEpisodeDataSource: RemoteEpisodeDataSource,
     private val remoteTvShowDataSource: RemoteTvShowDataSource
 ) : EpisodeRepository {

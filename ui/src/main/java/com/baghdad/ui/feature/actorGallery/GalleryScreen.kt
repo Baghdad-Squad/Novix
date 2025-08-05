@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
@@ -41,15 +42,11 @@ import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenState
 import com.baghdad.viewmodel.actorGallery.ActorGalleryViewModel
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
+
 
 @Composable
 fun GalleryScreen(
-    actorId: Long,
-    viewModel: ActorGalleryViewModel = koinViewModel(
-        key = actorId.toString(),
-        parameters = { parametersOf(actorId) }),
+    viewModel: ActorGalleryViewModel = hiltViewModel(),
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

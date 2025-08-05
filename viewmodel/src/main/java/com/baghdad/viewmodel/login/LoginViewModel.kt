@@ -6,9 +6,12 @@ import com.baghdad.domain.exception.UnKnownNetworkException
 import com.baghdad.domain.usecase.login.LoginUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 
-class LoginViewModel(
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<LoginUiState, LoginUiEffect>(

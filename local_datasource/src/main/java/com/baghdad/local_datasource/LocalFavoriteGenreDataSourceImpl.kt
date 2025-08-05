@@ -6,8 +6,9 @@ import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
 import com.baghdad.repository.datasource.local.LocalFavoriteGenreDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.FavoriteGenreDto
+import javax.inject.Inject
 
-class LocalFavoriteGenreDataSourceImpl(
+class LocalFavoriteGenreDataSourceImpl @Inject constructor(
     private val favoriteGenreDao: FavoriteGenreDao,
     private val logger: Logger
 ) : LocalFavoriteGenreDataSource {

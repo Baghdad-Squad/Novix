@@ -91,6 +91,12 @@
     <string name="password_reset_main_page_header">اعادة تعيين كلمة المرور</string>
     <string name="sign_up_for_an_account">سجّل للحصول على حساب</string>
     <string name="login_to_your_account_success_message">سجل الدخول لحسابك</string>
+    <string name="password_reset_completed_successfully">تم تغيير كلمة المرور بنجاح</string>
+    <string name="invalid_or_expired_reset_token">رابط إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية</string>
+    <string name="reset_your_password">إعادة تعيين كلمة المرور</string>
+    <string name="reset_link_expired">انتهت صلاحية رابط إعادة التعيين</string>
+    <string name="password_reset_success_redirecting_to_login">تم تغيير كلمة المرور بنجاح، جاري التوجيه لصفحة تسجيل الدخول...</string>
+    <string name="reset_password_failed">فشل في إعادة تعيين كلمة المرور</string>
 
     <!-- Corrected string resources for Arabic duration formatting -->
     <string name="reviewer_avatar">صورة المراجع</string>

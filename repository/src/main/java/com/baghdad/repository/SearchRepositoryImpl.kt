@@ -25,8 +25,9 @@ import com.baghdad.repository.util.getPagedSafely
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.Locale
+import javax.inject.Inject
 
-class SearchRepositoryImpl(
+class SearchRepositoryImpl @Inject constructor(
     private val searchRemoteDataSource: RemoteSearchDataSource,
     private val remoteGenreDataSource: RemoteGenreDataSource,
     private val localRecentSearchDataSource: LocalRecentSearchDataSource,

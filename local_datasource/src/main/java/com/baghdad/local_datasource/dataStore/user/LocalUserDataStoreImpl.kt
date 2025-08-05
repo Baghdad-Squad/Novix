@@ -7,9 +7,11 @@ import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.UserDto
 import com.example.application.proto.User
 import kotlinx.coroutines.flow.firstOrNull
+import javax.inject.Inject
+import javax.inject.Named
 
-class LocalUserDataStoreImpl(
-    private val dataStore: DataStore<User>, private val logger: Logger
+class LocalUserDataStoreImpl @Inject constructor(
+    @Named("user") private val dataStore: DataStore<User>, private val logger: Logger
 ) : LocalUserDataStore {
     override suspend fun saveUser(
         id: Long, userName: String, imageUrl: String

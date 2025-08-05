@@ -15,8 +15,11 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val getGenresUseCase: GetGenresUseCase,
     private val observeContinueWatchingUseCase: ObserveContinueWatchingUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
