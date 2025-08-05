@@ -9,6 +9,8 @@ import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
 import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
+import com.baghdad.domain.usecase.episode.AddEpisodeRateUseCase
+import com.baghdad.domain.usecase.episode.GetEpisodeAccountStatesUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -16,6 +18,8 @@ import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
 import com.baghdad.domain.usecase.login.IsLoggedInUseCase
 import com.baghdad.domain.usecase.login.LoginUseCase
+import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
+import com.baghdad.domain.usecase.movie.GetMovieAccountStatesUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCategoryUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
@@ -38,8 +42,10 @@ import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
 import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.topRated.GetTvShowTopRatingUseCase
+import com.baghdad.domain.usecase.tvShow.AddTvShowRateUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowAccountStatesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowImagesUseCase
@@ -94,5 +100,11 @@ val useCaseModule = module {
     singleOf(::GetPopularMoviesUseCase)
     singleOf(::GetPopularTvShowsUseCase)
     singleOf(::IsLoggedInUseCase)
+    singleOf(::AddMovieRateUseCase)
+    singleOf(::AddTvShowRateUseCase)
+    singleOf(::AddEpisodeRateUseCase)
+    singleOf(::GetTvShowAccountStatesUseCase)
+    singleOf(::GetMovieAccountStatesUseCase)
+    singleOf(::GetEpisodeAccountStatesUseCase)
 }
 
