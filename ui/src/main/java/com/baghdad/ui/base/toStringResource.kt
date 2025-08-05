@@ -15,6 +15,7 @@ fun BaseSnackBarMessage.toStringResource(): Int {
         BaseSnackBarMessage.LoginSuccessfully -> R.string.login_successfully
         BaseSnackBarMessage.InvalidCredential -> R.string.incorrect_username_or_password
         BaseSnackBarMessage.NoInternetException -> R.string.snackbar_network_error
+        BaseSnackBarMessage.LoginOutSuccessfully-> R.string.logout_successfully
         else -> R.string.empty_string
     }
 }
