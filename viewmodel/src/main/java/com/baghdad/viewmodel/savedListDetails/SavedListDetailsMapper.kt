@@ -7,7 +7,6 @@ fun SavedListItem.toUIState() = SavedListDetailsScreenState.SavedListDetailsMovi
     id = this.id,
     name= this.title,
     posterUrl = this.posterUrl,
-    contentType = SavedListDetailsScreenState.SavedListDetailsMovieUiState.ContentType.valueOf(this.type.name)
 )
 fun SavedList.toUIState() = SavedListDetailsScreenState.SavedListUiState(
     id = this.id,
