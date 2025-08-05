@@ -87,7 +87,7 @@ fun OnBoardingHorizontalPagerContent(
                     pageOffset = pageOffset,
                     imageWidthFraction = imageWidthFraction
                 )
-                Column(modifier = Modifier.height(150.dp)){
+                Column(modifier = Modifier.padding(top = 32.dp).height(150.dp)){
                     TextSlidingAnimationVisibility(
                         onBoardingInfo = onBoardingInfo,
                         currentPage = page,
