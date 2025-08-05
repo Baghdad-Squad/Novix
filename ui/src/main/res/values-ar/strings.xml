@@ -123,6 +123,7 @@
     <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
     <string name="submit">إدخال</string>
     <string name="please_login_to_rate">سجل دخولك لتستطيع تقييم أعمالك المفضلة.</string>
+    <string name="media_card">"بطاقة الوسائط "</string>
 
 </resources>
 
