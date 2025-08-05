@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="retry">أعد المحاولة</string>
+    <string name="added_list_successfully">تم اضافة القائمة بنجاح</string>
 </resources>
