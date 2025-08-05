@@ -33,6 +33,7 @@ class SavedListRepositoryImplTest {
 
     val listId = 22L
     val movieId = 22002L
+    val tvShowId = 2L
     val sessionId = "session_id"
     val title = "Favorite"
 
@@ -225,6 +226,32 @@ class SavedListRepositoryImplTest {
         }
 
     @Test
+    fun `should remove movie from saved list when the movie removed successfully`() = runTest {
+        // Given
+        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+
+        // When
+        repository.removeMovieFromSavedList(listId, movieId)
+
+        // Then
+        coVerify { remoteSource.removeMovieFromSavedList(listId, movieId, sessionId) }
+    }
+
+    @Test
+    fun `should remove tvShow from saved list when the tvShow removed successfully`() = runTest {
+        // Given
+        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+
+        // When
+        repository.removeTvShowFromSavedList(listId, tvShowId)
+
+        // Then
+        coVerify {
+            remoteSource.removeTvShowFromSavedList(listId, tvShowId, sessionId)
+        }
+    }
+
+    @Test
     fun `should createSavedList not crash when session ID is null`() =
         runBlocking {
             // Given
@@ -270,12 +297,22 @@ class SavedListRepositoryImplTest {
                         PagedResultDto(
                             data =
                                 listOf(
-                            SavedListItemDto(100, SavedListItemDto.Type.MOVIE, "Oppenheimer", "poster1"),
-                            SavedListItemDto(101, SavedListItemDto.Type.TV_SHOW, "Dark", "poster2"),
+                                    SavedListItemDto(
+                                        100,
+                                        SavedListItemDto.Type.MOVIE,
+                                        "Oppenheimer",
+                                        "poster1"
+                                    ),
+                                    SavedListItemDto(
+                                        101,
+                                        SavedListItemDto.Type.TV_SHOW,
+                                        "Dark",
+                                        "poster2"
+                                    ),
                                 ),
                             nextKey = null,
                             prevKey = 1
-                    ),
+                        ),
                 )
             val expectedEntity = dto.toEntity()
 
@@ -312,7 +349,51 @@ class SavedListRepositoryImplTest {
             coVerify(exactly = 1) { remoteSource.getSavedListDetails(listId, PAGE, PAGE_SIZE) }
         }
 
+    @Test
+    fun `should delete saved list when enter session ID`() =
+        runTest {
+            // Given
+            coEvery { localSessionDataStore.getSessionId() } returns "test_session_id"
+            coEvery { remoteSource.deleteSavedListById(LIST_ID, SESSION_ID) } just Runs
+
+            //When
+            repository.deleteSavedListById(LIST_ID)
+
+            // Then
+            coVerify { localSessionDataStore.getSessionId() }
+        }
+
+    @Test
+    fun `should not call remote when session ID is missing`() =
+        runTest {
+            // Given
+            coEvery { localSessionDataStore.getSessionId() } returns ""
+
+            // When
+            repository.deleteSavedListById(LIST_ID)
+
+            // Then
+            coVerify { localSessionDataStore.getSessionId() }
+        }
+
+    @Test
+    fun `should throw exception when remote delete fails`() =
+        runTest {
+            // Given
+            coEvery { localSessionDataStore.getSessionId() } returns SESSION_ID
+            coEvery {
+                remoteSource.deleteSavedListById(LIST_ID, SESSION_ID)
+            } throws RuntimeException("Remote failure")
+
+            // When & Then
+            assertThrows<RuntimeException> {
+                runTest { repository.deleteSavedListById(LIST_ID) }
+            }
+        }
+
+
     companion object {
+        private const val LIST_ID = 1L
         private const val PAGE = 1
         private const val PAGE_SIZE = 20
         private const val SESSION_ID = "test_session_id"
