@@ -36,6 +36,9 @@ val viewModelModule = module {
             getMovieImagesUseCase = get(),
             getMoreLikeThisPosterImageUseCase = get(),
             addContinueWatchingUseCase = get(),
+            addMovieRateUseCase = get(),
+            isLoggedInUseCase = get(),
+            getMovieAccountStatesUseCase = get(),
             ioDispatcher = get(),
         )
     }
@@ -54,6 +57,9 @@ val viewModelModule = module {
             getTvShowCastMembersUseCase = get(),
             getTvShowSeasonEpisodesUseCase = get(),
             addContinueWatchingUseCase = get(),
+            addTvShowRateUseCase = get(),
+            isLoggedInUseCase = get(),
+            getTvShowAccountStatesUseCase = get(),
             ioDispatcher = get()
         )
     }
@@ -69,7 +75,7 @@ val viewModelModule = module {
         TopTvShowPicksViewModel(actorId, get(), get())
     }
     viewModel { (tvShowId: Long, seasonNumber: Int, episodeNumber: Int) ->
-        EpisodeDetailsViewModel(tvShowId, seasonNumber, episodeNumber, get(), get(),get())
+        EpisodeDetailsViewModel(tvShowId, seasonNumber, episodeNumber, get(), get(),get(), get(),get(), get())
     }
     viewModel { (categoryId: Long) ->
         CategoryTvShowsViewModel(categoryId, get(), get(), get())
