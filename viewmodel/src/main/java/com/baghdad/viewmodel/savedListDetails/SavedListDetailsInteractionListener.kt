@@ -8,4 +8,5 @@ interface SavedListDetailsInteractionListener {
     fun onMovieClick(movieId: Long)
     fun onRemoveSavedMovieClick(movieId: Long)
     fun onRemoveSavedTvShowClick(tvShowId: Long)
+    fun onSnackBarActionLabelClick()
 }
