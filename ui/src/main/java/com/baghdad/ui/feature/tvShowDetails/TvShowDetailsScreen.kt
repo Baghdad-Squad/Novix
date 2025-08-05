@@ -64,12 +64,9 @@ import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenEffect
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
 import com.baghdad.viewmodel.util.formatDuration
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun TvShowDetailsScreen(
-    tvShowId: Long,
     viewModel: TvShowDetailsViewModel = hiltViewModel(),
     handleNavigation: (TvShowDetailsNavEvent) -> Unit
 ) {
@@ -80,7 +77,6 @@ fun TvShowDetailsScreen(
         handleEffect(effect, context, handleNavigation)
     }
     TvShowDetailsContent(
-        tvShowId = tvShowId,
         uiState = uiState,
         listener = viewModel,
         snackBarState = snackBarState
@@ -128,7 +124,6 @@ private fun handleEffect(
 
 @Composable
 fun TvShowDetailsContent(
-    tvShowId: Long,
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
     snackBarState: SnackBarState,
@@ -202,7 +197,6 @@ fun TvShowDetailsContent(
 
                 item {
                     TvShowHeaderWithDetailsCard(
-                        tvShowId = tvShowId,
                         uiState = uiState,
                         listener = listener
                     )
@@ -314,9 +308,9 @@ fun TvShowDetailsContent(
                         tint = Theme.color.title,
                         size = 40,
                         backgroundColor = Theme.color.iconBackgroundLow,
-                        isSaved = uiState.isTvShowSaved,
+                        isSaved = uiState.isSaved,
                         onClick = {
-                            listener.onClickSaveTvShow(tvShowId)
+                            listener.onClickSaveTvShow()
                         }
                     )
                 }

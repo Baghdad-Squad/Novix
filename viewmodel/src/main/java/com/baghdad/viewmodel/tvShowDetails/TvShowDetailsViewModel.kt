@@ -115,11 +115,11 @@ class TvShowDetailsViewModel @Inject constructor(
         sendEffect(TvShowDetailsScreenEffect.NavigateToEpisodeDetails(tvShowId = tvShowId , seasonNumber, episodeNumber))
     }
 
-    override fun onClickReviews(tvShowId: Long) {
+    override fun onClickReviews() {
         sendEffect(TvShowDetailsScreenEffect.NavigateToReviews(tvShowId))
     }
 
-    override fun onClickSaveTvShow(tvShowId: Long) {
+    override fun onClickSaveTvShow() {
 //        TODO("Not yet implemented")
     }
 
