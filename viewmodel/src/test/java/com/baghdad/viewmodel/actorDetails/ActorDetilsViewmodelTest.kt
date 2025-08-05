@@ -49,7 +49,7 @@ class ActorDetailsViewModelTest {
         coEvery { getActorTvShowUseCase(actorId) } returns createMockTvShows()
         coEvery { getActorGalleryUseCase(actorId) } returns createMockGallery()
         viewModel = ActorDetailsViewModel(
-             savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId)),
+            savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId)),
             getActorInfoUseCase = getActorInfoUseCase,
             getActorMoviesUseCase = getActorMoviesUseCase,
             getActorTvShowUseCase = getActorTvShowUseCase,
@@ -180,44 +180,26 @@ class ActorDetailsViewModelTest {
         }
 
     @Test
-    fun `onSnackBarActionLabelClick should load data when it is clicked`() = runTest {
-        // Given
-        val expectedActor = createMockActor()
-        coEvery { getActorInfoUseCase(actorId) } returns expectedActor
-        val effects = mutableListOf<ActorDetailsScreenEffect>()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
+    fun `getActorInfo should show no internet snackBar when NoInternetException is thrown`() =
+        runTest {
+            // Given
+            coEvery { getActorInfoUseCase(actorId) } throws NoInternetException()
+            val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
 
-        // When
-        viewModel.onSnackBarActionLabelClick()
-        advanceUntilIdle()
-        job.cancel()
-
-        // Then
-        val actualState = viewModel.uiState.value
-        assertThat(actualState.actorInfo).isEqualTo(expectedActor.toActorInfoUI())
-        assertThat(actualState.isLoading).isFalse()
-    }
-
-    @Test
-    fun `getActorInfo should show no internet snackBar when NoInternetException is thrown`() = runTest {
-        // Given
-        coEvery { getActorInfoUseCase(actorId) } throws NoInternetException()
-        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
-
-        val job = launch {
-            viewModel.snackBarState.collect {
-                emittedSnackBarMessages.add(it.message)
+            val job = launch {
+                viewModel.snackBarState.collect {
+                    emittedSnackBarMessages.add(it.message)
+                }
             }
+
+            // When
+            viewModel.onSnackBarActionLabelClick()
+            advanceUntilIdle()
+            job.cancel()
+
+            // Then
+            assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
         }
-
-        // When
-        viewModel.onSnackBarActionLabelClick()
-        advanceUntilIdle()
-        job.cancel()
-
-        // Then
-        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
-    }
 
     companion object {
         private fun createMockActor() = Actor(

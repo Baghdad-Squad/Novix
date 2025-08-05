@@ -24,7 +24,6 @@ import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 
 @Composable
 fun TvShowHeaderWithDetailsCard(
-    tvShowId: Long,
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
     modifier: Modifier = Modifier
@@ -65,6 +64,7 @@ fun TvShowHeaderWithDetailsCard(
                         )
                     }
                 }
+
 
                 TvShowDetailsCard(
                     tvShowId = tvShowId,

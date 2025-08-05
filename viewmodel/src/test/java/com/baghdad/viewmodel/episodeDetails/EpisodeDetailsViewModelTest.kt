@@ -1,8 +1,12 @@
 package com.baghdad.viewmodel.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
+import com.baghdad.domain.model.MediaAccountStates
+import com.baghdad.domain.usecase.episode.AddEpisodeRateUseCase
+import com.baghdad.domain.usecase.episode.GetEpisodeAccountStatesUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
+import com.baghdad.domain.usecase.login.IsLoggedInUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.person.Actor
@@ -32,9 +36,16 @@ class EpisodeDetailsViewModelTest {
 
         getEpisodeCastMembersUseCase = mockk()
         getEpisodeDetailsUseCase = mockk()
+        getEpisodeAccountStatesUseCase = mockk()
+        isLoggedInUseCase = mockk()
+        addEpisodeRateUseCase = mockk()
+
 
         coEvery { getEpisodeCastMembersUseCase(any(), any(), any()) } returns createMockCastMembers()
         coEvery { getEpisodeDetailsUseCase(any(), any(), any()) } returns createMockEpisode()
+        coEvery { getEpisodeAccountStatesUseCase(any(), any(), any()) } returns createMockAccountStates()
+        coEvery { isLoggedInUseCase() } returns true
+        coEvery { addEpisodeRateUseCase(any(), any(), any(), any()) } returns Unit
 
         val savedStateHandle = SavedStateHandle(mapOf(
             "tvShowId" to 1L,
@@ -46,6 +57,9 @@ class EpisodeDetailsViewModelTest {
         episodeDetailsViewModel = EpisodeDetailsViewModel(
             getEpisodeCastMembersUseCase = getEpisodeCastMembersUseCase,
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
+            addEpisodeRateUseCase = addEpisodeRateUseCase,
+            getEpisodeAccountStatesUseCase = getEpisodeAccountStatesUseCase,
+            isLoggedInUseCase = isLoggedInUseCase,
             ioDispatcher = testDispatcher,
             savedStateHandle = savedStateHandle
         )
@@ -189,7 +203,7 @@ class EpisodeDetailsViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Given
-        episodeDetailsViewModel.onRateEpisodeClick()
+        episodeDetailsViewModel.onClickStarButton()
         testDispatcher.scheduler.advanceUntilIdle()
 
         // When
@@ -216,6 +230,9 @@ class EpisodeDetailsViewModelTest {
             savedStateHandle,
             getEpisodeCastMembersUseCase = getEpisodeCastMembersUseCase,
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
+            addEpisodeRateUseCase = addEpisodeRateUseCase,
+            getEpisodeAccountStatesUseCase = getEpisodeAccountStatesUseCase,
+            isLoggedInUseCase = isLoggedInUseCase,
             ioDispatcher = testDispatcher
         )
 
@@ -242,6 +259,9 @@ class EpisodeDetailsViewModelTest {
             savedStateHandle = savedStateHandle,
             getEpisodeCastMembersUseCase = getEpisodeCastMembersUseCase,
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
+            addEpisodeRateUseCase = addEpisodeRateUseCase,
+            getEpisodeAccountStatesUseCase = getEpisodeAccountStatesUseCase,
+            isLoggedInUseCase = isLoggedInUseCase,
             ioDispatcher = testDispatcher
         )
 
@@ -351,6 +371,7 @@ class EpisodeDetailsViewModelTest {
                 Genre(28L, "Action"),
                 Genre(35L, "Comedy")
             ),
+            userRating = 5,
             headerPictures = listOf(
                 "/header1.jpg",
                 "/header2.jpg"
@@ -388,10 +409,16 @@ class EpisodeDetailsViewModelTest {
             )
         )
     }
+    private fun createMockAccountStates() = MediaAccountStates(
+        isMediaRated = true
+    )
 
     private lateinit var getEpisodeCastMembersUseCase: GetEpisodeCastMembersUseCase
     private lateinit var getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase
     private lateinit var episodeDetailsViewModel: EpisodeDetailsViewModel
+    private lateinit var getEpisodeAccountStatesUseCase: GetEpisodeAccountStatesUseCase
+    private lateinit var isLoggedInUseCase: IsLoggedInUseCase
+    private lateinit var addEpisodeRateUseCase: AddEpisodeRateUseCase
 
     private val testDispatcher = StandardTestDispatcher()
     private val tvShowId = 123L

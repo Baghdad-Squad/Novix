@@ -11,6 +11,7 @@ data class Episode(
     val releasedDate: LocalDate?,
     val trailerUrl: String,
     val currentSeason: Int,
+    val userRating: Int?,
     val overview: String,
     val genres: List<Genre>,
     val headerPictures: List<String>,

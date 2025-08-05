@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.mapper
 
-import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
+import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
