@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.movieDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.MediaAccountStates
@@ -18,21 +19,26 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 
-class MovieDetailsViewModel(
+@HiltViewModel
+class MovieDetailsViewModel @Inject constructor(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
     private val getCastsInfoUseCase: GetMovieCastMembersUseCase,
     private val getMovieImagesUseCase: GetMovieGalleryUseCase,
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
-    private val movieId: Long,
     private val ioDispatcher: CoroutineDispatcher,
     private val addMovieRateUseCase: AddMovieRateUseCase,
     private val getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase,
     private val isLoggedInUseCase: IsLoggedInUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
     MovieDetailsInteractionListener {
+
+    private val movieId: Long = checkNotNull(savedStateHandle["movieId"])
 
     init {
         loadInitData()

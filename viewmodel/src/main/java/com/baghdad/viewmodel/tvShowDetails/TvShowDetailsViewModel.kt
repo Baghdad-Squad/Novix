@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.tvShowDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.MediaAccountStates
@@ -17,10 +18,13 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.BottomSheetType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Inject
 
-class TvShowDetailsViewModel(
-    private val tvShowId: Long,
+@HiltViewModel
+class TvShowDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getTvShowDetailsUseCase: GetTvShowDetailsUseCase,
     private val getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase,
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
@@ -32,6 +36,9 @@ class TvShowDetailsViewModel(
 ) :
     BaseViewModel<TvShowDetailsScreenState, TvShowDetailsScreenEffect>(TvShowDetailsScreenState()),
     TvShowDetailsInteractionListener {
+
+    private val tvShowId: Long = checkNotNull(savedStateHandle["tvShowId"])
+
 
     init {
         getTvShowDetails(tvShowId)
@@ -105,7 +112,7 @@ class TvShowDetailsViewModel(
     }
 
     override fun onClickEpisode(seasonNumber: Int, episodeNumber: Int) {
-        sendEffect(TvShowDetailsScreenEffect.NavigateToEpisodeDetails(seasonNumber, episodeNumber))
+        sendEffect(TvShowDetailsScreenEffect.NavigateToEpisodeDetails(tvShowId = tvShowId , seasonNumber, episodeNumber))
     }
 
     override fun onClickReviews(tvShowId: Long) {

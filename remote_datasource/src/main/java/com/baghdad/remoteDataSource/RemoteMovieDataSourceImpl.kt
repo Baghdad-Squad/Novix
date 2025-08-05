@@ -32,10 +32,11 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-class RemoteMovieDataSourceImpl(
+class RemoteMovieDataSourceImpl @Inject constructor(
     private val movieApiService: MovieApiService,
     private val logger: Logger
 ) : RemoteMovieDataSource {

@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
@@ -74,8 +75,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun MovieDetailsScreen(
-    movieId: Long,
-    viewModel: MovieDetailsViewModel = koinViewModel(parameters = { parametersOf(movieId) }),
+    viewModel: MovieDetailsViewModel = hiltViewModel(),
     handleNavigation: (MovieDetailsNavEvent) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()

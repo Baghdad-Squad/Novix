@@ -17,8 +17,9 @@ import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
+import javax.inject.Inject
 
-class MovieRepositoryImpl(
+class MovieRepositoryImpl @Inject constructor(
     private val remoteGenreDataSource: RemoteGenreDataSource,
     private val localSessionDataStore: LocalSessionDataStore,
     private val remoteMovieDataSource: RemoteMovieDataSource,

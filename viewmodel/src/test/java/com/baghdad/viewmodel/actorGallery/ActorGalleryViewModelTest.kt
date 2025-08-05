@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.actorGallery
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.dummyData.DummyDataFactory.createMockGallery
@@ -28,9 +29,10 @@ class ActorGalleryViewModelTest {
         Dispatchers.setMain(testDispatcher)
         getGalleryImagesUseCase = mockk()
         coEvery { getGalleryImagesUseCase.invoke(any()) } returns createMockGallery()
+        val savedStateHandle = SavedStateHandle(mapOf("actorId" to ACTOR_ID))
         viewModel = ActorGalleryViewModel(
+            savedStateHandle,
             getGalleryImagesUseCase = getGalleryImagesUseCase,
-            actorId = ACTOR_ID,
             ioDispatcher = testDispatcher
         )
     }

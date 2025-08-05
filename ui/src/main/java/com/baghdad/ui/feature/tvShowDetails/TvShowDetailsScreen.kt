@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
@@ -69,7 +70,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun TvShowDetailsScreen(
     tvShowId: Long,
-    viewModel: TvShowDetailsViewModel = koinViewModel(parameters = { parametersOf(tvShowId) }),
+    viewModel: TvShowDetailsViewModel = hiltViewModel(),
     handleNavigation: (TvShowDetailsNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -106,8 +107,9 @@ private fun handleEffect(
 
         is TvShowDetailsScreenEffect.NavigateToEpisodeDetails -> handleNavigation(
             NavigateToEpisodeDetails(
-                effect.seasonNumber,
-                effect.episodeNumber
+                tvShowId = effect.tvShowId,
+                seasonNumber = effect.seasonNumber,
+                episodeNumber = effect.episodeNumber
             )
         )
 
@@ -197,6 +199,7 @@ fun TvShowDetailsContent(
                     .fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 72.dp)
             ) {
+
                 item {
                     TvShowHeaderWithDetailsCard(
                         tvShowId = tvShowId,
@@ -297,29 +300,30 @@ fun TvShowDetailsContent(
             }
         }
 
-        TopAppBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(animatedColor)
-                .zIndex(1f)
-                .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = {
-                listener.onClickBackIcon()
-            },
-            content = {
-                SaveIcon(
-                    tint = Theme.color.title,
-                    size = 40,
-                    backgroundColor = Theme.color.iconBackgroundLow,
-                    isSaved = uiState.isSaved,
-                    onClick = {
-                        listener.onClickSaveTvShow(tvShowId)
-                    }
-                )
-            }
-        )
+            TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(animatedColor)
+                    .zIndex(1f)
+                    .padding(top = 56.dp, bottom = 8.dp),
+                onGoBackClick = {
+                    listener.onClickBackIcon()
+                },
+                content = {
+                    SaveIcon(
+                        tint = Theme.color.title,
+                        size = 40,
+                        backgroundColor = Theme.color.iconBackgroundLow,
+                        isSaved = uiState.isTvShowSaved,
+                        onClick = {
+                            listener.onClickSaveTvShow(tvShowId)
+                        }
+                    )
+                }
+            )
+        }
     }
-}
+
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {

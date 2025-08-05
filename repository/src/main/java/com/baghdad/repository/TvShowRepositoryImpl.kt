@@ -18,8 +18,9 @@ import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
+import javax.inject.Inject
 
-class TvShowRepositoryImpl(
+class TvShowRepositoryImpl @Inject constructor(
     val remoteGenreDataSource: RemoteGenreDataSource,
     val localSessionDataStore: LocalSessionDataStore,
     val tvShowRemoteDataSource: RemoteTvShowDataSource

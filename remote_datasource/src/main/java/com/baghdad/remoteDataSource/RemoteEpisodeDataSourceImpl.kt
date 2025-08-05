@@ -1,6 +1,5 @@
 package com.baghdad.remoteDataSource
 
-import android.util.Log
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.episode.mapToYoutubeTrailerUrl
@@ -18,9 +17,10 @@ import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import javax.inject.Inject
 import com.baghdad.repository.model.MediaAccountStateDto
 
-class RemoteEpisodeDataSourceImpl(
+class RemoteEpisodeDataSourceImpl @Inject constructor(
     private val episodeApiService: EpisodeApiService,
     private val logger: Logger,
 ) : RemoteEpisodeDataSource {
@@ -39,7 +39,6 @@ class RemoteEpisodeDataSourceImpl(
                 )
             },
             logger = logger,
-
             ).toDto()
     }
 
