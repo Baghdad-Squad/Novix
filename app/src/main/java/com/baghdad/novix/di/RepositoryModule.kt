@@ -5,6 +5,8 @@ import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.FavoriteGenreRepository
+import com.baghdad.domain.repository.LanguageProviderRepository
+import com.baghdad.domain.repository.AppearanceRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.domain.repository.RecentlyViewedRepository
 import com.baghdad.domain.repository.SavedListRepository
@@ -15,6 +17,8 @@ import com.baghdad.repository.AuthenticationRepositoryImpl
 import com.baghdad.repository.ContinueWatchingRepositoryImpl
 import com.baghdad.repository.EpisodeRepositoryImpl
 import com.baghdad.repository.FavoriteGenreRepositoryImpl
+import com.baghdad.repository.LanguageProviderImpl
+import com.baghdad.repository.AppearanceRepositoryImpl
 import com.baghdad.repository.MovieRepositoryImpl
 import com.baghdad.repository.RecentlyViewedRepositoryImpl
 import com.baghdad.repository.SavedListRepositoryImpl
@@ -59,5 +63,11 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideSavedListRepository(savedListRepository: SavedListRepositoryImpl): SavedListRepository
+
+    @Binds
+    abstract fun provideLanguageProviderRepository(languageProviderImpl: LanguageProviderImpl): LanguageProviderRepository
+
+    @Binds
+    abstract fun provideAppearanceRepository(appearanceRepositoryImpl: AppearanceRepositoryImpl): AppearanceRepository
 
 }
