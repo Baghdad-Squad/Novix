@@ -73,7 +73,7 @@ fun MovieHeaderWithDetailsCard(
                 duration = if (isArabicSystemLocale()) arabicDuration(uiState.duration) else uiState.duration.formatDuration(),
                 categories = uiState.categories,
                 onViewReviewClicked = {
-                    listener.onReviewClick(uiState.movieId)
+                    listener.onReviewClick()
                 },
                 onCategoryClick = { listener.onCategoryClick(it) },
                 modifier = Modifier
