@@ -119,5 +119,7 @@
     <string name="my_lists_empty_list_caption">There is no saved list yet, click on + button to add a new list!</string>
     <string name="my_lists_no_login_caption">Please login to create lists and add your favorite items to it!</string>
     <string name="list_title">List title</string>
+    <string name="added_list_successfully">Added list successfully</string>
+    <string name="deleted_list_successfully">Deleted list successfully</string>
 
 </resources>

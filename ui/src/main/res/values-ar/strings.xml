@@ -128,6 +128,8 @@
     <string name="my_lists_empty_list_caption">لا توجد أي قوائم محفوظة بعد، انقر على زر + لإضافة قائمة جديدة!</string>
     <string name="my_lists_no_login_caption">"يرجى تسجيل الدخول لإنشاء القوائم وإضافة عناصرك المفضلة إليها! "</string>
     <string name="list_title">عنوان القائمة</string>
+    <string name="added_list_successfully">" تم إنشاء القائمة بنجاح"</string>
+    <string name="deleted_list_successfully">تم حذف القائمة بنجاح</string>
 
 </resources>
 
