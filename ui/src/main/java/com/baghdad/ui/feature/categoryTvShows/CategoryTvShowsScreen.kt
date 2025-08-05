@@ -1,8 +1,6 @@
 package com.baghdad.ui.feature.categoryTvShows
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -27,7 +26,6 @@ import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
-import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
@@ -115,8 +113,9 @@ private fun CategoryTvShowsContent(
             )
         },
         isLoading = uiState.isLoading,
-        backgroundBlur = { BackgroundBlur() }
-    ) {
+        backgroundBlur = {
+            BackgroundBlur(modifier = Modifier.zIndex(999f))
+        }) {
         Column {
             LazyPagingVerticalGrid(
                 items = lazyPagingTvShows,

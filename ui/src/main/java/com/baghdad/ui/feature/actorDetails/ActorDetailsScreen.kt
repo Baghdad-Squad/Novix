@@ -146,8 +146,9 @@ fun ActorDetailsContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
-        backgroundBlur = { BackgroundBlur() }
-    ) {
+        backgroundBlur = {
+            BackgroundBlur(modifier = Modifier.zIndex(999f))
+        }) {
         LaunchedEffect(scrollState) {
             snapshotFlow { scrollState.value }.collect { scrollValue ->
                 shouldShowBackground = scrollValue > 450

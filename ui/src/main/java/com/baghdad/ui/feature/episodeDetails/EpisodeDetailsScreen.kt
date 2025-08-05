@@ -128,8 +128,9 @@ fun EpisodeDetailsContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
-        backgroundBlur = { BackgroundBlur() }
-    ) {
+        backgroundBlur = {
+            BackgroundBlur(modifier = Modifier.zIndex(999f))
+        }) {
         LazyColumn(
             state = listState,
             contentPadding = PaddingValues(bottom = 72.dp),

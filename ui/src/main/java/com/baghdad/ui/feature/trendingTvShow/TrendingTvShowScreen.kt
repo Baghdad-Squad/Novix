@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -100,7 +101,7 @@ fun TrendingTvShowContent(
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = {listener.onSnackBarActionLabelClick(uiState.selectedGenreId)},
+                onActionClick = { listener.onSnackBarActionLabelClick(uiState.selectedGenreId) },
             )
         },
         isLoading = uiState.isLoading,
@@ -125,8 +126,9 @@ fun TrendingTvShowContent(
                 )
             }
         },
-        backgroundBlur = { BackgroundBlur() }
-    ) {
+        backgroundBlur = {
+            BackgroundBlur(modifier = Modifier.zIndex(999f))
+        }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

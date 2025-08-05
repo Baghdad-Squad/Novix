@@ -17,8 +17,6 @@ import androidx.compose.ui.graphics.withSave
 import com.baghdad.design_system.theme.Theme
 import kotlin.math.sqrt
 
-val alpha = 1f
-
 @Composable
 fun BackgroundBlur(
     modifier: Modifier = Modifier
@@ -26,8 +24,7 @@ fun BackgroundBlur(
     Box(modifier) {
         GlowingTriangle(
             modifier = Modifier.fillMaxSize(),
-//            color = Theme.color.primary.copy(alpha = 0.09f),
-            color = Theme.color.primary.copy(alpha = alpha),
+            color = Theme.color.primary.copy(alpha = 0.08f),
             offsetYFraction = -0.10f,
             offsetXFraction = -0.35f,
             sideFraction = 1.025f,
@@ -36,8 +33,7 @@ fun BackgroundBlur(
 
         GlowingTriangle(
             modifier = Modifier.fillMaxSize(),
-//            color = Theme.color.secondary.copy(alpha = 0.07f),
-            color = Theme.color.secondary.copy(alpha = alpha),
+            color = Theme.color.secondary.copy(alpha = 0.05f),
             offsetXFraction = 0.50f,
             offsetYFraction = 0.15f,
             rotationDegrees = 180f,
@@ -48,8 +44,7 @@ fun BackgroundBlur(
 
         GlowingTriangle(
             modifier = Modifier.fillMaxSize(),
-//            color = Theme.color.primary.copy(alpha = 0.03f),
-            color = Theme.color.primary.copy(alpha = alpha),
+            color = Theme.color.primary.copy(alpha = 0.02f),
             offsetXFraction = -0.35f,
             offsetYFraction = 0.5f,
             sideFraction = 1.025f,
@@ -58,8 +53,7 @@ fun BackgroundBlur(
 
         GlowingTriangle(
             modifier = Modifier.fillMaxSize(),
-//            color = Theme.color.primary.copy(alpha = 0.01f),
-            color = Theme.color.primary.copy(alpha = alpha),
+            color = Theme.color.primary.copy(alpha = 0.01f),
             blurRadius = 150f,
             sideFraction = 1.025f,
             offsetXFraction = 0.50f,

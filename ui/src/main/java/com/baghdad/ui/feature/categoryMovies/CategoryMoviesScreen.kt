@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -123,8 +124,9 @@ private fun CategoryMoviesContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
-        backgroundBlur = { BackgroundBlur() }
-    ) {
+        backgroundBlur = {
+            BackgroundBlur(modifier = Modifier.zIndex(999f))
+        }) {
         Column {
             LazyPagingVerticalGrid<CategoryMoviesState.MovieUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),

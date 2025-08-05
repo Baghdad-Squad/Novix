@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
@@ -94,8 +95,9 @@ fun ActorGalleryScreenContent(
                     .padding(top = 12.dp)
             ) {}
         },
-        backgroundBlur = { BackgroundBlur() }
-    ) {
+        backgroundBlur = {
+            BackgroundBlur(modifier = Modifier.zIndex(999f))
+        }) {
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize()) {
                 WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))

@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -38,7 +39,6 @@ import com.baghdad.viewmodel.trendingMovie.TrendingMoviesEffect
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesInteractionListener
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesScreenState
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
-
 
 
 @Composable
@@ -119,8 +119,9 @@ private fun TrendingMoviesContent(
             )
         },
         isLoading = uiState.isLoading,
-        backgroundBlur = { BackgroundBlur() }
-    ) {
+        backgroundBlur = {
+            BackgroundBlur(modifier = Modifier.zIndex(999f))
+        }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

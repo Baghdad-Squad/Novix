@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
@@ -127,8 +128,9 @@ fun SearchContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
-        backgroundBlur = { BackgroundBlur() }
-    ) {
+        backgroundBlur = {
+            BackgroundBlur(modifier = Modifier.zIndex(999f))
+        }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -253,8 +255,7 @@ private fun RecentContentList(
 ) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Theme.color.surface),
+            .fillMaxSize(),
         contentPadding = PaddingValues(bottom = 8.dp)
     ) {
         addRecentlyViewedSection(
