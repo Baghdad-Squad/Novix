@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.savedListDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.savedList.SavedListItem
 import com.baghdad.domain.usecase.savedList.DeleteSavedListUseCase
@@ -10,17 +11,19 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.savedListDetails.SavedListDetailsScreenState.SavedListDetailsMovieUiState.ContentType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+@HiltViewModel
 class SavedListDetailsViewModel @Inject constructor(
-    private var currentListId: Long = 0,
+    savedStateHandle: SavedStateHandle,
     private val getSavedListDetailsUseCase: GetSavedListDetailsUseCase,
     private val deleteSavedListUseCase: DeleteSavedListUseCase,
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
     private val removeTvShowFromSavedListUseCase: RemoveTvShowFromSavedListUseCase
 ) : BaseViewModel<SavedListDetailsScreenState, SavedListDetailsEffect>(SavedListDetailsScreenState()),
     SavedListDetailsInteractionListener {
-
+    private val currentListId: Long = checkNotNull(savedStateHandle["listId"])
     init {
         getListDetails()
     }

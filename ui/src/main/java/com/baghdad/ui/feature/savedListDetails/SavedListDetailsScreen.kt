@@ -66,7 +66,7 @@ private fun handleEffect(
     handleNavigation: (MyListsNavEvent) -> Unit
 ) {
     when (effect) {
-        is SavedListDetailsEffect.NavigateBack -> handleNavigation(MyListsNavEvent.NavigateBack)
+        is SavedListDetailsEffect.NavigateBack -> handleNavigation(MyListsNavEvent.NavigateToMyLists)
 
         is SavedListDetailsEffect.NavigateToMovieDetails ->
             handleNavigation(MyListsNavEvent.NavigateToMovieDetails(effect.movieId))
