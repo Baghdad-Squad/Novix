@@ -17,11 +17,11 @@ import com.baghdad.domain.exception.StorageFullException as DomainStorageFullExc
 
 suspend fun <T> executeAuthorizedSafely(
     sessionId: String?,
-    block: suspend () -> T,
+    block: suspend (String) -> T,
 ): T {
     if (sessionId == null) throw UnAuthorizedException()
     return try {
-        block()
+        block(sessionId)
     } catch (_: NoInternetNetworkException) {
         throw NoInternetException()
     } catch (_: SerializationNetworkException) {

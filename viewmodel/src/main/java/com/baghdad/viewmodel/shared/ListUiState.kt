@@ -1,4 +1,4 @@
-package com.baghdad.viewmodel.share
+package com.baghdad.viewmodel.shared
 
 data class ListUiState(
     val id: Long,

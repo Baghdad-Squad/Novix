@@ -22,7 +22,7 @@ import com.baghdad.ui.util.arabicDuration
 import com.baghdad.ui.util.isArabicSystemLocale
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
-import com.baghdad.viewmodel.movieDetails.formatDuration
+import com.baghdad.viewmodel.util.formatDuration
 
 @Composable
 fun MovieHeaderWithDetailsCard(
