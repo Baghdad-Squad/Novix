@@ -122,4 +122,18 @@
     <string name="added_list_successfully">Added list successfully</string>
     <string name="deleted_list_successfully">Deleted list successfully</string>
 
+    <string name="my_account">My account</string>
+    <string name="profile_image" translatable="false">Profile Image</string>
+    <string name="watching_history">Watching History</string>
+    <string name="my_rating">My rating</string>
+    <string name="content_restriction">Content Restriction</string>
+    <string name="change_password">Change password</string>
+    <string name="appearance">Appearance</string>
+    <string name="language">Language</string>
+    <string name="logout">Logout</string>
+    <string name="logout_icon">logout icon</string>
+    <string name="profile_setting_item">profile setting item</string>
+    <string name="unlogged_in_user">Please login to access your account \n details and other features!</string>
+    <string name="loggedout_profile_icon">logged out user icon</string>
+
 </resources>

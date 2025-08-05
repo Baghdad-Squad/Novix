@@ -131,5 +131,18 @@
     <string name="added_list_successfully">" تم إنشاء القائمة بنجاح"</string>
     <string name="deleted_list_successfully">تم حذف القائمة بنجاح</string>
 
+    <string name="my_account">حسابي</string>
+    <string name="watching_history">سجل المشاهدة</string>
+    <string name="my_rating">تقييمي</string>
+    <string name="content_restriction">تقييد المحتوى</string>
+    <string name="change_password">تغيير كلمة السر</string>
+    <string name="appearance">المظهر</string>
+    <string name="language">اللغة</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="logout_icon">ايقونة تسجيل الخروج</string>
+    <string name="profile_setting_item">عنصر اعدادات الملف الشخصي</string>
+    <string name="unlogged_in_user">الرجاء تسجيل الدخول للوصول الى تفاصيل حسابك والميزات الاخرى</string>
+    <string name="loggedout_profile_icon">ايقونة المستخدم الذي تم تسجيل خروجه</string>
+
 </resources>
 
