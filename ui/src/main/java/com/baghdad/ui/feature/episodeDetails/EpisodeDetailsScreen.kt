@@ -50,8 +50,6 @@ import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenState
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.BottomSheetType
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun EpisodeDetailsScreen(
