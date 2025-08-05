@@ -28,12 +28,12 @@ fun EmptyStateContent(
     modifier: Modifier = Modifier,
 ) {
     if (isUserLoggedIn) {
+        EmptyListContent(modifier)
+    } else {
         NoLoginPrompt(
             onLoginClick = onLoginClick,
             modifier = modifier,
         )
-    } else {
-        EmptyListContent(modifier)
     }
 }
 
