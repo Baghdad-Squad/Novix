@@ -18,4 +18,7 @@ interface ContinueWatchingRepository {
         contentImageUrl: String,
         contentType: ContinueWatching.ContentType,
     )
+
+    suspend fun getAllContinueWatchingMovies(): Flow<List<ContinueWatching>>
+    suspend fun getAllContinueWatchingTvShows(): Flow<List<ContinueWatching>>
 }
