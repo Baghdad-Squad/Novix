@@ -60,8 +60,8 @@ fun OnBoardingHorizontalPagerContent(
 
     Box(modifier = Modifier.offset(y = (-100).dp)) {
         Box(
-            modifier = modifier
-                .offset(y = 84.dp)
+            modifier = Modifier
+                .align(Alignment.Center)
                 .fillMaxWidth(imageWidthFraction)
                 .height(150.dp)
                 .dropShadow(
@@ -70,9 +70,8 @@ fun OnBoardingHorizontalPagerContent(
                     alpha = 0.2f,
                     blur = 50.dp,
                     offsetY = (-24).dp,
-                    spread = 5.dp,
+                    spread = 1.dp,
                 )
-
         )
 
         HorizontalPager(
@@ -101,6 +100,7 @@ fun OnBoardingHorizontalPagerContent(
                 TextSlidingAnimationVisibility(
                     onBoardingInfo = onBoardingInfo,
                     currentPage = page,
+                    pageOffset = pageOffset
                 )
             }
         }
@@ -139,8 +139,15 @@ private fun ImageAnimated(
 private fun TextSlidingAnimationVisibility(
     onBoardingInfo: List<OnBoardingInfo>,
     currentPage: Int,
+    pageOffset: Float = 0f,
 ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.graphicsLayer {
+                val scale = 1f - (0.9f * abs(pageOffset))
+                scaleX = scale
+                scaleY = scale
+            },
+            horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = stringResource(onBoardingInfo[currentPage].title),
                 style = Theme.typography.title.large,
