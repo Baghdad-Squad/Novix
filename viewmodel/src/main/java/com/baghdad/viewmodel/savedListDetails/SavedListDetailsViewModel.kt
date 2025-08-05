@@ -5,16 +5,19 @@ import com.baghdad.domain.model.savedList.SavedListItem
 import com.baghdad.domain.usecase.savedList.DeleteSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListDetailsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
+import com.baghdad.domain.usecase.savedList.RemoveTvShowFromSavedListUseCase
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.savedListDetails.SavedListDetailsScreenState.SavedListDetailsMovieUiState.ContentType
 import javax.inject.Inject
 
 class SavedListDetailsViewModel @Inject constructor(
     private var currentListId: Long = 0,
     private val getSavedListDetailsUseCase: GetSavedListDetailsUseCase,
     private val deleteSavedListUseCase: DeleteSavedListUseCase,
-    private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase
+    private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
+    private val removeTvShowFromSavedListUseCase: RemoveTvShowFromSavedListUseCase
 ) : BaseViewModel<SavedListDetailsScreenState, SavedListDetailsEffect>(SavedListDetailsScreenState()),
     SavedListDetailsInteractionListener {
 
@@ -29,8 +32,8 @@ class SavedListDetailsViewModel @Inject constructor(
         sendEffect(SavedListDetailsEffect.NavigateBack)
     }
 
-
     private fun getListDetails() {
+        hideSnackBar()
         collectPagingFlow(
             loadData = { page ->
                 getSavedListDetailsUseCase.invoke(currentListId, page, 20).pagedItems
@@ -79,17 +82,37 @@ class SavedListDetailsViewModel @Inject constructor(
         )
     }
 
-    override fun onCategoryClick(categoryId: Long) {
+    override fun onCategoryClick(category: SavedListTab) {
+        updateState { it.copy(selectedTab = category) }
+        refreshList()
     }
 
-    override fun onTvShowClick(tvShowId: Long) {
+    override fun onMediaClick(
+        mediaId: Long,
+        contentType: ContentType
+    ) {
+        when (contentType) {
+            ContentType.MOVIE ->
+                sendEffect(SavedListDetailsEffect.NavigateToMovieDetails(mediaId))
+
+            ContentType.TV_SHOW ->
+                sendEffect(SavedListDetailsEffect.NavigateToTvShowDetails(mediaId))
+        }
+
     }
 
-    override fun onMovieClick(movieId: Long) {
-        sendEffect(SavedListDetailsEffect.NavigateToMovieDetails(movieId))
+    override fun onRemoveSavedMediaClick(mediaId: Long, contentType: ContentType) {
+        when (contentType) {
+            ContentType.MOVIE ->
+                onRemoveSavedMovieClick(mediaId)
+
+            ContentType.TV_SHOW ->
+                onRemoveSavedTvShowClick(mediaId)
+        }
     }
 
-    override fun onRemoveSavedMovieClick(movieId: Long) {
+
+    private fun onRemoveSavedMovieClick(movieId: Long) {
         tryToExecute(
             callee = { removeMovieFromSavedListUseCase(currentListId, movieId) },
             onSuccess = {
@@ -105,7 +128,20 @@ class SavedListDetailsViewModel @Inject constructor(
         )
     }
 
-    override fun onRemoveSavedTvShowClick(tvShowId: Long) {
+    private fun onRemoveSavedTvShowClick(tvShowId: Long) {
+        tryToExecute(
+            callee = { removeTvShowFromSavedListUseCase(currentListId, tvShowId) },
+            onSuccess = {
+                showSnackBar(
+                    message = BaseSnackBarMessage.DefaultMessage,
+                    isSuccess = true
+                )
+                refreshList()
+            },
+            onError = ::onError,
+            onStart = { updateState { it.copy(isLoading = true) } },
+            onFinally = { updateState { it.copy(isLoading = false) } }
+        )
     }
 
     override fun onSnackBarActionLabelClick() {

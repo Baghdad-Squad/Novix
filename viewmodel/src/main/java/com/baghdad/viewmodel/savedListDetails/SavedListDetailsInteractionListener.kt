@@ -7,6 +7,6 @@ interface SavedListDetailsInteractionListener {
     fun onDeleteClick(listId: Long)
     fun onCategoryClick(category: SavedListTab)
     fun onMediaClick(mediaId: Long, contentType: SavedListDetailsMovieUiState.ContentType)
-    fun onRemoveSavedMediaClick(mediaId: Long)
+    fun onRemoveSavedMediaClick(mediaId: Long, contentType: SavedListDetailsMovieUiState.ContentType)
     fun onSnackBarActionLabelClick()
 }
