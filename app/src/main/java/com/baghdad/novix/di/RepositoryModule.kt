@@ -58,6 +58,6 @@ abstract class RepositoryModule {
     abstract fun provideAuthRepository(authenticationRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
 
     @Binds
-    abstract fun provideSavedListRepository(savedListRepository: SavedListRepositoryImpl):SavedListRepository
+    abstract fun provideSavedListRepository(savedListRepository: SavedListRepositoryImpl): SavedListRepository
 
 }
