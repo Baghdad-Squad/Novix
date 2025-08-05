@@ -14,7 +14,7 @@ data class SavedListDetailsScreenState(
 
     data class SavedListUiState(
         val id: Long = 0,
-        val name : String ="",
+        val name: String = "",
         val itemCount: Int = 0
     )
 
