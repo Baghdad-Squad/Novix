@@ -2,7 +2,6 @@ package com.baghdad.viewmodel.search
 
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.search.RecentlyViewed
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
@@ -12,7 +11,6 @@ import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
-import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -46,7 +44,8 @@ class SearchViewModel @Inject constructor(
         observeSearchQueryChanges()
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     override fun onSearchTextChanged(text: String) {
         updateState { it.copy(searchText = text, isLoading = true) }
@@ -222,10 +221,9 @@ class SearchViewModel @Inject constructor(
     override fun onSaveRecentlyViewedClick(id: Long) {
         updateState {
             it.copy(
-                recentViewed =
-                    it.recentViewed.map { item ->
-                        if (item.id == id) item.copy(isSaved = item.isSaved.not()) else item
-                    },
+                recentViewed = it.recentViewed.map { item ->
+                    if (item.id == id) item.copy(isSaved = item.isSaved.not()) else item
+                },
             )
         }
     }
@@ -245,7 +243,12 @@ class SearchViewModel @Inject constructor(
     override fun onClearRecentSearchClick() {
         tryToExecute(
             callee = { deleteAllRecentSearchesUseCase() },
-            onSuccess = { onClearRecentSearchSuccess() },
+            onSuccess = {
+                onClearRecentSearchSuccess()
+                updateState {
+                    it.copy(recentSearch = emptyList())
+                }
+            },
             onStart = ::onLoading,
             onFinally = ::onFinally,
         )
@@ -261,7 +264,13 @@ class SearchViewModel @Inject constructor(
     override fun onRemoveRecentSearchItemClick(id: Long) {
         tryToExecute(
             callee = { deleteRecentSearchUseCase(id) },
-            onSuccess = { onRemoveRecentSearchItemSuccess() },
+            onSuccess = {
+                onRemoveRecentSearchItemSuccess()
+                updateState { searchScreenState ->
+                    searchScreenState.copy(
+                        recentSearch = searchScreenState.recentSearch.filter { it.id != id })
+                }
+            },
             onStart = ::onLoading,
             onFinally = ::onFinally,
         )
@@ -312,8 +321,8 @@ class SearchViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 addRecentlyViewedUseCase.invoke(
-                    contentId =  contentId,
-                    contentImageUrl= contentImageUrl,
+                    contentId = contentId,
+                    contentImageUrl = contentImageUrl,
                     mediaGenres = emptyList(),
                     contentType = RecentlyViewed.ContentType.MOVIE
                 )
@@ -335,10 +344,10 @@ class SearchViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 addRecentlyViewedUseCase(
-                    contentId =  contentId,
+                    contentId = contentId,
                     contentImageUrl = contentImageUrl,
                     mediaGenres = emptyList(),
-                   contentType = RecentlyViewed.ContentType.TV_SHOW,
+                    contentType = RecentlyViewed.ContentType.TV_SHOW,
                 )
             },
             onSuccess = { onAddRecentlyViewedTvShowSuccess(contentId) },
