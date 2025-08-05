@@ -2,15 +2,12 @@ package com.baghdad.ui.feature.onBoarding.component
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -44,7 +41,6 @@ fun OnBoardingHorizontalPagerContent(
     onBoardingInfo: List<OnBoardingInfo>,
     onNext: () -> Unit,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier,
     imageWidthFraction: Float = if (isTablet()) 0.50f else 0.80f,
 ) {
     var previousPage by remember { mutableIntStateOf(pagerState.currentPage) }
@@ -58,7 +54,7 @@ fun OnBoardingHorizontalPagerContent(
         previousPage = pagerState.currentPage
     }
 
-    Box(modifier = Modifier.offset(y = (-100).dp)) {
+    Box() {
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -82,13 +78,8 @@ fun OnBoardingHorizontalPagerContent(
                 (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
             Column(
-                modifier = modifier
-                    .graphicsLayer {
-                        translationX = pageOffset * size.width * 0.2f
-                        alpha = 1f - (0.9f * abs(pageOffset))
-                    }
-                    .animateContentSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 ImageAnimated(
                     page = page,
@@ -96,12 +87,13 @@ fun OnBoardingHorizontalPagerContent(
                     pageOffset = pageOffset,
                     imageWidthFraction = imageWidthFraction
                 )
-
-                TextSlidingAnimationVisibility(
-                    onBoardingInfo = onBoardingInfo,
-                    currentPage = page,
-                    pageOffset = pageOffset
-                )
+                Column(modifier = Modifier.height(150.dp)){
+                    TextSlidingAnimationVisibility(
+                        onBoardingInfo = onBoardingInfo,
+                        currentPage = page,
+                        pageOffset = pageOffset
+                    )
+                }
             }
         }
     }
@@ -117,7 +109,6 @@ private fun ImageAnimated(
 ) {
     Crossfade(
         targetState = page,
-        animationSpec = tween(durationMillis = 500)
     ) { currentPage ->
         Image(
             painter = painterResource(onBoardingInfo[currentPage].imageIndex),
@@ -152,7 +143,6 @@ private fun TextSlidingAnimationVisibility(
                 text = stringResource(onBoardingInfo[currentPage].title),
                 style = Theme.typography.title.large,
                 color = Theme.color.title,
-                modifier = Modifier.padding(top = 32.dp),
                 textAlign = TextAlign.Center,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
@@ -162,7 +152,7 @@ private fun TextSlidingAnimationVisibility(
                 text = stringResource(onBoardingInfo[currentPage].description),
                 style = Theme.typography.body.medium,
                 color = Theme.color.body,
-                modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp),
+                modifier = Modifier.padding(top = 4.dp),
                 lineHeight = TextUnit(24f, TextUnitType.Sp),
                 textAlign = TextAlign.Center,
                 maxLines = 3,

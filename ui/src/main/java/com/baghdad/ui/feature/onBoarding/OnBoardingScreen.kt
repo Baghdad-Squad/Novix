@@ -91,7 +91,6 @@ private fun OnBoardingContent(
             OnBoardingHorizontalPagerContent(
                 pagerState = pagerState,
                 onBoardingInfo = onBoardingInfo,
-                modifier = Modifier.fillParentMaxWidth().fillMaxSize(),
                 onNext = { listener.onNextButtonClick(onBoardingInfo.size) },
                 onBack = {listener.onBackButtonClick()},
             )
