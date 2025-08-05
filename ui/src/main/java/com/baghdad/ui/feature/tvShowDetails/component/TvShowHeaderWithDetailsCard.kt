@@ -24,7 +24,6 @@ import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 
 @Composable
 fun TvShowHeaderWithDetailsCard(
-    tvShowId: Long,
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
     modifier: Modifier = Modifier
@@ -64,13 +63,12 @@ fun TvShowHeaderWithDetailsCard(
             }
 
             TvShowDetailsCard(
-                tvShowId = tvShowId,
                 title = uiState.tvShowInfo.title,
                 genres = uiState.tvShowInfo.genres,
                 rating = uiState.tvShowInfo.rating,
                 date = uiState.tvShowInfo.releaseDate,
                 seasonsCount = uiState.tvShowInfo.seasonCount,
-                onReviewClick = { listener.onClickReviews(tvShowId) },
+                onReviewClick = { listener.onClickReviews() },
                 onGenreClick = { genreId ->
                     genreId?.let { listener.onClickGenre(it) }
                 },

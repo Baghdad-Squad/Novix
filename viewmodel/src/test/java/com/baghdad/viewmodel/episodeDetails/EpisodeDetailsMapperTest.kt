@@ -24,6 +24,7 @@ class EpisodeExtensionsTest {
             overview = "",
             headerPictures = emptyList(),
             genres = emptyList(),
+            userRating = 5,
             trailerUrl = ""
         )
 
@@ -48,6 +49,7 @@ class EpisodeExtensionsTest {
             overview = "",
             headerPictures = emptyList(),
             genres = emptyList(),
+            userRating = 5,
             trailerUrl = ""
         )
 

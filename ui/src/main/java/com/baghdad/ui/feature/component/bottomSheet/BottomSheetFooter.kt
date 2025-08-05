@@ -14,7 +14,7 @@ import com.baghdad.design_system.component.button.PrimaryButton
 @Composable
 fun BottomSheetFooter(
     onApplyClick: () -> Unit,
-    onClearClick: () -> Unit,
+    onClearClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     applyLabel: String = stringResource(R.string.apply),
     clearLabel: String = stringResource(R.string.clear),
@@ -29,10 +29,12 @@ fun BottomSheetFooter(
             onClick = onApplyClick,
             modifier = Modifier.fillMaxWidth()
         )
-        OutlinedButton(
-            label = clearLabel,
-            onClick = onClearClick,
-            modifier = Modifier.fillMaxWidth()
-        )
+        if (onClearClick != null) {
+            OutlinedButton(
+                label = clearLabel,
+                onClick = onClearClick,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
