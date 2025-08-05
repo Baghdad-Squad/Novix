@@ -29,7 +29,7 @@ fun EmptyMediaState(
     contentDescription: String,
     message: String,
     modifier: Modifier = Modifier,
-    imgSize: Dp = 128.dp,
+    imgSize: Dp = 100.dp,
 ) {
     Column(
         modifier = modifier
@@ -41,6 +41,7 @@ fun EmptyMediaState(
             contentDescription = contentDescription,
             modifier = Modifier
                 .size(imgSize)
+                .padding(bottom = 24.dp)
         )
         Text(
             text = message,
@@ -49,8 +50,7 @@ fun EmptyMediaState(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(horizontal = 48.dp)
-                .offset(y = (-24).dp)
-                .width(232.dp)
+                .fillMaxWidth()
         )
     }
 }

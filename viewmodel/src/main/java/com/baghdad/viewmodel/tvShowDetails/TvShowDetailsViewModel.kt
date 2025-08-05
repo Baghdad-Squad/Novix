@@ -3,7 +3,11 @@ package com.baghdad.viewmodel.tvShowDetails
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
+import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.tvShow.AddTvShowRateUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowAccountStatesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
@@ -13,6 +17,7 @@ import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.shared.BottomSheetType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
@@ -24,8 +29,11 @@ class TvShowDetailsViewModel @Inject constructor(
     private val getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase,
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
+    private val addTvShowRateUseCase: AddTvShowRateUseCase,
+    private val isLoggedInUseCase: IsLoggedInUseCase,
+    private val getTvShowAccountStatesUseCase: GetTvShowAccountStatesUseCase,
     private val ioDispatcher: CoroutineDispatcher,
-    ) :
+) :
     BaseViewModel<TvShowDetailsScreenState, TvShowDetailsScreenEffect>(TvShowDetailsScreenState()),
     TvShowDetailsInteractionListener {
 
@@ -36,6 +44,8 @@ class TvShowDetailsViewModel @Inject constructor(
         getTvShowDetails(tvShowId)
         getTvShowCast(tvShowId)
         onClickSeasonTab(0)
+        getTvShowAccountStates()
+        isUserLoggedIn()
     }
 
     private fun getTvShowDetails(tvShowId: Long) {
@@ -103,19 +113,119 @@ class TvShowDetailsViewModel @Inject constructor(
     }
 
     override fun onClickEpisode(seasonNumber: Int, episodeNumber: Int) {
-        sendEffect(TvShowDetailsScreenEffect.NavigateToEpisodeDetails(tvShowId = tvShowId , seasonNumber, episodeNumber))
+        sendEffect(
+            TvShowDetailsScreenEffect.NavigateToEpisodeDetails(
+                tvShowId = tvShowId,
+                seasonNumber,
+                episodeNumber
+            )
+        )
     }
 
-    override fun onClickReviews(tvShowId: Long) {
+    override fun onClickReviews() {
         sendEffect(TvShowDetailsScreenEffect.NavigateToReviews(tvShowId))
     }
 
-    override fun onClickSaveTvShow(tvShowId: Long) {
+    override fun onClickSaveTvShow() {
 //        TODO("Not yet implemented")
     }
 
-    override fun onClickAddRating() {
-//        TODO("Not yet implemented")
+    override fun onClickStarButton() {
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = true,
+                )
+            )
+        }
+    }
+
+    private fun isUserLoggedIn() {
+        tryToExecute(
+            callee = { isLoggedInUseCase() },
+            dispatcher = ioDispatcher,
+            onSuccess = ::onIsUserLoggedInSuccess,
+            onError = ::onLoadDataError
+        )
+    }
+
+
+    private fun onIsUserLoggedInSuccess(isLoggedIn: Boolean) {
+        val newBottomSheetType = if (isLoggedIn) {
+            BottomSheetType.ShowRating
+        } else {
+            BottomSheetType.RequireLogin
+        }
+
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    bottomSheetType = newBottomSheetType
+                )
+            )
+        }
+    }
+
+    override fun onRatingChanged(rating: Int) {
+        updateState {
+            it.copy(
+                tvShowInfo = it.tvShowInfo.copy(userRating = rating)
+            )
+        }
+    }
+
+    override fun onDismissRatingBottomSheet() {
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = false,
+                    bottomSheetType = BottomSheetType.Hidden
+                )
+            )
+        }
+    }
+
+
+    override fun onClickSubmitRating(rating: Int) {
+        tryToExecute(
+            callee = { addTvShowRateUseCase(tvShowId, rating) },
+            onSuccess = { onSubmitRatingSuccess() },
+            dispatcher = ioDispatcher,
+            onError = ::onLoadDataError
+        )
+    }
+
+    private fun onSubmitRatingSuccess() {
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = false,
+                    bottomSheetType = BottomSheetType.Hidden,
+                ),
+                isRated = true
+            )
+        }
+        showSnackBar(
+            message = BaseSnackBarMessage.ItemRateSuccessfully,
+            isSuccess = true
+        )
+    }
+
+    private fun getTvShowAccountStates() {
+        tryToExecute(
+            callee = { getTvShowAccountStatesUseCase(tvShowId) },
+            dispatcher = ioDispatcher,
+            onSuccess = ::onGetTvShowAccountStatesSuccess,
+            onError = ::onLoadDataError
+        )
+    }
+
+    private fun onGetTvShowAccountStatesSuccess(accountStates: MediaAccountStates) {
+        updateState {
+            it.copy(
+                isRated = accountStates.isMediaRated,
+            )
+        }
     }
 
     override fun onClickSeasonTab(seasonIndex: Int) {
@@ -124,8 +234,8 @@ class TvShowDetailsViewModel @Inject constructor(
             callee = { getTvShowSeasonEpisodesUseCase(tvShowId, seasonIndex + 1) },
             dispatcher = ioDispatcher,
             onSuccess = ::onGetTvShowEpisodesSuccess,
-            onStart = {updateState { it.copy(isEpisodesLoading = true) }},
-            onFinally = {updateState { it.copy(isEpisodesLoading = false) }},
+            onStart = { updateState { it.copy(isEpisodesLoading = true) } },
+            onFinally = { updateState { it.copy(isEpisodesLoading = false) } },
             onError = ::onLoadDataError
         )
     }
@@ -148,6 +258,10 @@ class TvShowDetailsViewModel @Inject constructor(
         getTvShowDetails(tvShowId)
         getTvShowCast(tvShowId)
         onClickSeasonTab(0)
+    }
+
+    override fun onClickLoginButton() {
+        sendEffect(TvShowDetailsScreenEffect.NavigateToLogin)
     }
 
 
