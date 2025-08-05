@@ -1,8 +1,10 @@
 package com.baghdad.domain.usecase.recentlyViewed
 
+import android.provider.MediaStore.Audio.Media
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.repository.RecentlyViewedRepository
 import com.baghdad.domain.util.now
+import com.baghdad.entity.media.Genre
 import kotlinx.datetime.LocalDateTime
 import javax.inject.Inject
 
@@ -12,6 +14,7 @@ class AddRecentlyViewedUseCase @Inject constructor(
     suspend operator fun invoke(
         contentId: Long,
         contentImageUrl: String,
+        mediaGenres: List<Genre>,
         contentType: RecentlyViewed.ContentType
     ) {
         recentlyViewedRepository.addRecentlyViewed(
@@ -20,7 +23,9 @@ class AddRecentlyViewedUseCase @Inject constructor(
                 contentImageUrl = contentImageUrl,
                 contentType = contentType,
                 viewedAt = LocalDateTime.now()
-            )
+
+            ),
+            mediaGenres = mediaGenres
         )
     }
 }

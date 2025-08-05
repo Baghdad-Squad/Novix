@@ -6,7 +6,6 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
@@ -19,7 +18,6 @@ import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
     private val remoteGenreDataSource: RemoteGenreDataSource,
-    private val localGenreDataSource: LocalGenreDataSource,
     private val remoteMovieDataSource: RemoteMovieDataSource,
 ) : MovieRepository {
     override suspend fun getGenres(): List<Genre> =

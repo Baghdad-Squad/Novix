@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class LocalSearchDataSourceImpl @Inject constructor(
+class LocalRecentSearchDataSourceImpl @Inject constructor(
     private val recentSearchDao: RecentSearchDao,
     private val logger: Logger,
 ) : LocalRecentSearchDataSource {

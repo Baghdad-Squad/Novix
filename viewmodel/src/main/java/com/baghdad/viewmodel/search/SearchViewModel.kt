@@ -12,6 +12,7 @@ import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
+import com.baghdad.entity.media.Genre
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -28,7 +29,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val getGenresUseCase: GetGenresUseCase,
     private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
     private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase,
@@ -50,6 +50,8 @@ class SearchViewModel @Inject constructor(
 
     override fun onSearchTextChanged(text: String) {
         updateState { it.copy(searchText = text, isLoading = true) }
+        getRecentSearches()
+        getRecentViewed()
         if (text.trim() == currentState.lastProcessedQuery) {
             updateState { it.copy(isLoading = false) }
             return
@@ -309,10 +311,11 @@ class SearchViewModel @Inject constructor(
     ) {
         tryToExecute(
             callee = {
-                addRecentlyViewedUseCase(
-                    contentId,
-                    contentImageUrl,
-                    RecentlyViewed.ContentType.MOVIE,
+                addRecentlyViewedUseCase.invoke(
+                    contentId =  contentId,
+                    contentImageUrl= contentImageUrl,
+                    mediaGenres = emptyList(),
+                    contentType = RecentlyViewed.ContentType.MOVIE
                 )
             },
             onSuccess = { onAddRecentlyViewedMovieSuccess(contentId) },
@@ -332,9 +335,10 @@ class SearchViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 addRecentlyViewedUseCase(
-                    contentId,
-                    contentImageUrl,
-                    RecentlyViewed.ContentType.TV_SHOW,
+                    contentId =  contentId,
+                    contentImageUrl = contentImageUrl,
+                    mediaGenres = emptyList(),
+                   contentType = RecentlyViewed.ContentType.TV_SHOW,
                 )
             },
             onSuccess = { onAddRecentlyViewedTvShowSuccess(contentId) },
