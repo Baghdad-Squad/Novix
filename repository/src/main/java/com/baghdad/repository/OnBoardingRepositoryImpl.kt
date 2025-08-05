@@ -14,8 +14,4 @@ class OnBoardingRepositoryImpl @Inject constructor(
     override suspend fun setFirstTimeUser(firstTime: Boolean) {
         localOnboardingDatastore.setFirstTimeStatus()
     }
-
-    override suspend fun clearFirstTimeUser() {
-        localOnboardingDatastore.clearFirstTimeStatus()
-    }
 }

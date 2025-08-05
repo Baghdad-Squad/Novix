@@ -1,6 +1,5 @@
 package com.baghdad.local_datasource.dataStore.session
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -35,23 +34,11 @@ class LocalOnboardingDatastoreImp @Inject constructor(
                 val test = dataStore.data.map { preferences ->
                     preferences[booleanPreferencesKey(name = IS_FIRST_TIME_LAUNCH_APP)] != false
                 }.first()
-                Log.i("Test Logging ", test.toString())
                 test
 
             },
             logger = logger
         ) ?: true
-    }
-
-    override suspend fun clearFirstTimeStatus() {
-        safeDataStoreCall(
-            block = {
-                dataStore.edit { preferences ->
-                    preferences.remove(booleanPreferencesKey(name = IS_FIRST_TIME_LAUNCH_APP))
-                }
-            },
-            logger = logger
-        )
     }
 
     companion object {
