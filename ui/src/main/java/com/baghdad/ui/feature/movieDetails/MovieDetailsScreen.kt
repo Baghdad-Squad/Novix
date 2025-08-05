@@ -203,6 +203,24 @@ private fun MovieDetailsContent(
                 .fillMaxSize()
                 .navigationBarsPadding()
         ) {
+
+            RatingBottomSheet(
+                isVisible = state.ratingStatus.isBottomSheetVisible,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                rate = state.userRating ?: 0,
+                onRateChanged = { listener.onRatingChanged(it) },
+                onSubmitClick = { listener.onClickSubmitRating(state.userRating ?: 0) }
+            )
+
+
+            LoginRequiredSheet(
+                isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                onLoginClick = { listener.onLoginClick()},
+                title = stringResource(R.string.rate_it),
+                description = stringResource(R.string.please_login_to_rate)
+            )
+
             LazyVerticalGrid(
                 state = lazyState,
                 columns = GridCells.Adaptive(150.dp),
@@ -222,26 +240,6 @@ private fun MovieDetailsContent(
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Spacer(Modifier.height(104.dp))
-                }
-
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    RatingBottomSheet(
-                        isVisible = state.ratingStatus.isBottomSheetVisible,
-                        onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                        rate = state.userRating ?: 0,
-                        onRateChanged = { listener.onRatingChanged(it) },
-                        onSubmitClick = { listener.onClickSubmitRating(state.userRating ?: 0) }
-                    )
-                }
-
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    LoginRequiredSheet(
-                        isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
-                        onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                        onLoginClick = { listener.onLoginClick()},
-                        title = stringResource(R.string.rate_it),
-                        description = stringResource(R.string.please_login_to_rate)
-                    )
                 }
 
                 if (state.overView.isNotBlank()) {

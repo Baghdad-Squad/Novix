@@ -233,7 +233,6 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     private fun getEpisodeAccountStates() {
-        Log.e("malak", "$tvShowId $seasonNumber $episodeNumber")
         tryToExecute(
             callee = {
                 getEpisodeAccountStatesUseCase(

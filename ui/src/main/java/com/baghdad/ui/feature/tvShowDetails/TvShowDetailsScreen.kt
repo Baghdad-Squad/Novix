@@ -181,6 +181,7 @@ fun TvShowDetailsContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         }
+
     ) {
         Box(
             modifier = modifier
@@ -188,6 +189,23 @@ fun TvShowDetailsContent(
                 .fillMaxSize()
                 .navigationBarsPadding()
         ) {
+
+            RatingBottomSheet(
+                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                rate = uiState.tvShowInfo.userRating ?: 0,
+                onRateChanged = { listener.onRatingChanged(it) },
+                onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating ?: 0) }
+            )
+
+            LoginRequiredSheet(
+                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                onLoginClick = { listener.onClickLoginButton() },
+                title = stringResource(R.string.rate_it),
+                description = stringResource(R.string.please_login_to_rate)
+            )
+
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -202,25 +220,6 @@ fun TvShowDetailsContent(
                     )
                 }
 
-                item {
-                    RatingBottomSheet(
-                        isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
-                        onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                        rate = uiState.tvShowInfo.userRating ?: 0,
-                        onRateChanged = { listener.onRatingChanged(it) },
-                        onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating?:0) }
-                    )
-                }
-
-                item {
-                    LoginRequiredSheet(
-                        isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
-                        onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                        onLoginClick = { listener.onClickLoginButton()},
-                        title = stringResource(R.string.rate_it),
-                        description = stringResource(R.string.please_login_to_rate)
-                    )
-                }
 
                 item {
                     Spacer(Modifier.height(136.dp))
@@ -294,29 +293,29 @@ fun TvShowDetailsContent(
             }
         }
 
-            TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(animatedColor)
-                    .zIndex(1f)
-                    .padding(top = 56.dp, bottom = 8.dp),
-                onGoBackClick = {
-                    listener.onClickBackIcon()
-                },
-                content = {
-                    SaveIcon(
-                        tint = Theme.color.title,
-                        size = 40,
-                        backgroundColor = Theme.color.iconBackgroundLow,
-                        isSaved = uiState.isSaved,
-                        onClick = {
-                            listener.onClickSaveTvShow()
-                        }
-                    )
-                }
-            )
-        }
+        TopAppBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(animatedColor)
+                .zIndex(1f)
+                .padding(top = 56.dp, bottom = 8.dp),
+            onGoBackClick = {
+                listener.onClickBackIcon()
+            },
+            content = {
+                SaveIcon(
+                    tint = Theme.color.title,
+                    size = 40,
+                    backgroundColor = Theme.color.iconBackgroundLow,
+                    isSaved = uiState.isSaved,
+                    onClick = {
+                        listener.onClickSaveTvShow()
+                    }
+                )
+            }
+        )
     }
+}
 
 
 @Composable
