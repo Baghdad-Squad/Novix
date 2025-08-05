@@ -30,9 +30,9 @@ fun MovieHeaderWithDetailsCard(
     listener: MovieDetailsInteractionListener,
     modifier: Modifier = Modifier
 ) {
-    val images = if (uiState.movieImages.isEmpty()) listOf(uiState.posterImageURL) else { uiState.movieImages }
+    val images = if (uiState.movieImages.isEmpty()) listOf(uiState.posterImageURL) else  uiState.movieImages
     val pagerState = rememberPagerState(pageCount = { images.size })
-    val aspectRatio = if (uiState.movieImages.isNotEmpty()) { 1.778f } else { 1.2f }
+    val aspectRatio = if (uiState.movieImages.isNotEmpty()) 1.778f  else  1.2f
 
 
     Box(modifier = modifier) {
