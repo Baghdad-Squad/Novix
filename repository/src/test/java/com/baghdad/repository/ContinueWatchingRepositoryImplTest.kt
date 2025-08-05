@@ -2,6 +2,7 @@ package com.baghdad.repository
 
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.PagedResult
+import com.baghdad.entity.User
 import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.model.ContinueWatchingDto
 import com.google.common.truth.Truth.assertThat
@@ -16,12 +17,15 @@ class ContinueWatchingRepositoryImplTest {
 
     private lateinit var localContinueWatchingDataSource: LocalContinueWatchingDataSource
     private lateinit var continueWatchingRepositoryImpl: ContinueWatchingRepositoryImpl
+    private lateinit var authenticationRepositoryImpl: AuthenticationRepositoryImpl
 
     @BeforeEach
     fun setUp() {
         localContinueWatchingDataSource = mockk()
+        authenticationRepositoryImpl = mockk()
         continueWatchingRepositoryImpl = ContinueWatchingRepositoryImpl(
-            localContinueWatchingDataSource = localContinueWatchingDataSource
+            localContinueWatchingDataSource = localContinueWatchingDataSource,
+            authenticationRepository = authenticationRepositoryImpl
         )
     }
 
@@ -47,6 +51,11 @@ class ContinueWatchingRepositoryImplTest {
         coEvery {
             localContinueWatchingDataSource.getContinueWatching(1, pageSize, page)
         } returns mockContinueWatchingList
+        coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns User(
+            id = 1L,
+            userName = "testuser",
+            imageUrl = "https://example.com/avatar.jpg"
+        )
         // When
         val result = continueWatchingRepositoryImpl.getContinueWatching(page, pageSize)
         // Then
@@ -68,6 +77,7 @@ class ContinueWatchingRepositoryImplTest {
             coEvery {
                 localContinueWatchingDataSource.getContinueWatching(1, pageSize, page)
             } returns emptyList()
+            coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns createMockUser()
             // When
             val result = continueWatchingRepositoryImpl.getContinueWatching(page, pageSize)
             // Then
@@ -98,6 +108,7 @@ class ContinueWatchingRepositoryImplTest {
             coEvery {
                 localContinueWatchingDataSource.getContinueWatching(1, pageSize, page)
             } returns mockContinueWatchingList
+            coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns createMockUser()
 
             // When
             val result = continueWatchingRepositoryImpl.getContinueWatching(page, pageSize)
@@ -124,7 +135,7 @@ class ContinueWatchingRepositoryImplTest {
             )
 
             coEvery { localContinueWatchingDataSource.addContinueWatching(expectedDto) } returns Unit
-
+            coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns createMockUser()
             // When
             continueWatchingRepositoryImpl.addContinueWatching(
                 contentId = contentId,
@@ -154,7 +165,7 @@ class ContinueWatchingRepositoryImplTest {
             )
 
             coEvery { localContinueWatchingDataSource.addContinueWatching(expectedDto) } returns Unit
-
+            coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns createMockUser()
             // When
             continueWatchingRepositoryImpl.addContinueWatching(
                 contentId = contentId,
@@ -169,33 +180,35 @@ class ContinueWatchingRepositoryImplTest {
 
 
     @Test
-    fun `addContinueWatching should handle large genre list when large genre is provided`() = runTest {
-        // Given
-        val contentId = 999L
-        val genreIds = (1L..20L).toList()
-        val contentImageUrl = "https://example.com/large.jpg"
-        val contentType = ContinueWatching.ContentType.TV_SHOW
-        val expectedDto = ContinueWatchingDto(
-            contentId = contentId,
-            genreIds = genreIds,
-            contentImageUrl = contentImageUrl,
-            contentType = ContinueWatchingDto.ContentType.TV_SHOW,
-            userId = 1L
-        )
+    fun `addContinueWatching should handle large genre list when large genre is provided`() =
+        runTest {
+            // Given
+            val contentId = 999L
+            val genreIds = (1L..20L).toList()
+            val contentImageUrl = "https://example.com/large.jpg"
+            val contentType = ContinueWatching.ContentType.TV_SHOW
+            val expectedDto = ContinueWatchingDto(
+                contentId = contentId,
+                genreIds = genreIds,
+                contentImageUrl = contentImageUrl,
+                contentType = ContinueWatchingDto.ContentType.TV_SHOW,
+                userId = 1L
+            )
 
-        coEvery { localContinueWatchingDataSource.addContinueWatching(expectedDto) } returns Unit
+            coEvery { localContinueWatchingDataSource.addContinueWatching(expectedDto) } returns Unit
+            coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns createMockUser()
+            // When
+            continueWatchingRepositoryImpl.addContinueWatching(
+                contentId = contentId,
+                genreIds = genreIds,
+                contentImageUrl = contentImageUrl,
+                contentType = contentType
+            )
 
-        // When
-        continueWatchingRepositoryImpl.addContinueWatching(
-            contentId = contentId,
-            genreIds = genreIds,
-            contentImageUrl = contentImageUrl,
-            contentType = contentType
-        )
+            // Then
+            coVerify { localContinueWatchingDataSource.addContinueWatching(expectedDto) }
 
-        // Then
-        coVerify { localContinueWatchingDataSource.addContinueWatching(expectedDto) }
-    }
+        }
 
     companion object {
         private fun createMockContinueWatchingDto(
@@ -207,6 +220,12 @@ class ContinueWatchingRepositoryImplTest {
             contentImageUrl = "https://example.com/image$contentId.jpg",
             contentType = contentType,
             userId = 1L
+        )
+
+        private fun createMockUser() = User(
+            id = 1L,
+            userName = "testuser",
+            imageUrl = "https://example.com/avatar.jpg"
         )
 
         private fun createMockContinueWatching(

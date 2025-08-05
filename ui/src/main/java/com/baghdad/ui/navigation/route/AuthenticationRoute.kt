@@ -4,6 +4,9 @@ import kotlinx.serialization.Serializable
 
 sealed interface AuthenticationRoute : Route {
     @Serializable
+    data object WelcomeScreen : OnBoardingRoute
+
+    @Serializable
     data object LoginScreen : AuthenticationRoute
 
     @Serializable
