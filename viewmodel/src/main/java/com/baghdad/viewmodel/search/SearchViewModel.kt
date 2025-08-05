@@ -243,12 +243,7 @@ class SearchViewModel @Inject constructor(
     override fun onClearRecentSearchClick() {
         tryToExecute(
             callee = { deleteAllRecentSearchesUseCase() },
-            onSuccess = {
-                onClearRecentSearchSuccess()
-                updateState {
-                    it.copy(recentSearch = emptyList())
-                }
-            },
+            onSuccess = { onClearRecentSearchSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
         )
@@ -259,28 +254,29 @@ class SearchViewModel @Inject constructor(
             message = SearchSnackBarMessage.RemovedItemSuccessfully,
             isSuccess = true,
         )
+        updateState { searchScreenState ->
+            searchScreenState.copy(recentSearch = emptyList())
+        }
     }
 
     override fun onRemoveRecentSearchItemClick(id: Long) {
         tryToExecute(
             callee = { deleteRecentSearchUseCase(id) },
-            onSuccess = {
-                onRemoveRecentSearchItemSuccess()
-                updateState { searchScreenState ->
-                    searchScreenState.copy(
-                        recentSearch = searchScreenState.recentSearch.filter { it.id != id })
-                }
-            },
+            onSuccess = { onRemoveRecentSearchItemSuccess(id) },
             onStart = ::onLoading,
             onFinally = ::onFinally,
         )
     }
 
-    private fun onRemoveRecentSearchItemSuccess() {
+    private fun onRemoveRecentSearchItemSuccess(id: Long) {
         showSnackBar(
             message = SearchSnackBarMessage.RemovedItemSuccessfully,
             isSuccess = true,
         )
+        updateState { searchScreenState ->
+            searchScreenState.copy(
+                recentSearch = searchScreenState.recentSearch.filter { it.id != id })
+        }
     }
 
     override fun onRecentSearchItemClick(id: Long) {
