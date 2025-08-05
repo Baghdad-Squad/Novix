@@ -21,7 +21,7 @@ import com.baghdad.ui.R
 import com.baghdad.ui.feature.component.bottomSheet.BottomSheetFooter
 import com.baghdad.ui.feature.component.bottomSheet.toSelectable
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
-import com.baghdad.viewmodel.share.ListUiState
+import com.baghdad.viewmodel.shared.ListUiState
 
 @Composable
 fun ProfileBottomSheet(

@@ -112,7 +112,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
 
     protected fun <Entity : Any, UiState : Any> collectPagingFlow(
         loadData: suspend (page: Int) -> PagedResult<Entity>,
-        onInitialLoadFinished: suspend () -> Unit,
+        onInitialLoadFinished: suspend () -> Unit = {},
         onInitialLoadError: (Throwable) -> Unit = ::handleError,
         pageSize: Int = 20,
         mapEntityToUiState: (Entity) -> UiState,

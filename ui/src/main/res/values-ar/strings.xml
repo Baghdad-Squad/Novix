@@ -23,6 +23,7 @@
     <string name="snackbar_unknown_error">حدث خطأ غير معروف</string>
     <string name="snackbar_removed_success">تمت الإزالة بنجاح</string>
     <string name="snackbar_saved_success">تم حفظ العنصر بنجاح</string>
+    <string name="snackbar_rated_success">تم تقييم العنصر بنجاح</string>
     <string name="empty_string"> </string>
     <string name="read_less">إخفاء</string>
     <string name="read_more">عرض المزيد</string>
@@ -49,10 +50,10 @@
     <string name="please_login_to_rate_your_favorite_items">الرجاء تسجيل الدخول لتقييم العناصر المفضاه لديك</string>
     <string name="my_favorite">أُفضله</string>
     <string name="my_movies">افلامي</string>
-    <string name="add">اضافه</string>
+    <string name="add">إضافة</string>
     <string name="save">حفظ</string>
     <string name="create_new_list">إنشاء قائمة جديدة</string>
-    <string name="select_how_mush_you_like_it">حدد مدى إعجابك به</string>
+    <string name="select_how_much_you_like_it">حدد مدى إعجابك به</string>
     <string name="save_to_list">حفظ الى القائمه</string>
     <string name="guests_of_honor">ضيوف الشرف</string>
     <string name="season_template">موسم %1$s</string>
@@ -121,6 +122,27 @@
     <string name="duration_combined">%1$s  و %2$s</string>
     <string name="default_image">"الصورة الافتراضية "</string>
     <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
+    <string name="submit">إدخال</string>
+    <string name="please_login_to_rate">سجل دخولك لتستطيع تقييم أعمالك المفضلة.</string>
+    <string name="my_lists">قوائمي</string>
+    <string name="my_lists_empty_list_caption">لا توجد أي قوائم محفوظة بعد، انقر على زر + لإضافة قائمة جديدة!</string>
+    <string name="my_lists_no_login_caption">"يرجى تسجيل الدخول لإنشاء القوائم وإضافة عناصرك المفضلة إليها! "</string>
+    <string name="list_title">عنوان القائمة</string>
+    <string name="added_list_successfully">" تم إنشاء القائمة بنجاح"</string>
+    <string name="deleted_list_successfully">تم حذف القائمة بنجاح</string>
+
+    <string name="my_account">حسابي</string>
+    <string name="watching_history">سجل المشاهدة</string>
+    <string name="my_rating">تقييمي</string>
+    <string name="content_restriction">تقييد المحتوى</string>
+    <string name="change_password">تغيير كلمة السر</string>
+    <string name="appearance">المظهر</string>
+    <string name="language">اللغة</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="logout_icon">ايقونة تسجيل الخروج</string>
+    <string name="profile_setting_item">عنصر اعدادات الملف الشخصي</string>
+    <string name="unlogged_in_user">الرجاء تسجيل الدخول للوصول الى تفاصيل حسابك والميزات الاخرى</string>
+    <string name="loggedout_profile_icon">ايقونة المستخدم الذي تم تسجيل خروجه</string>
 
 
     <string name="skip">تخطي</string>

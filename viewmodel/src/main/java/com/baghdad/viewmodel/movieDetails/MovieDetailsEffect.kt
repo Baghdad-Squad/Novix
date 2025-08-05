@@ -23,4 +23,6 @@ sealed interface MovieDetailsEffect : BaseUiEffect{
         val youtubeLink: String
     ) : MovieDetailsEffect
     data object NavigateBack: MovieDetailsEffect
+
+    data object NavigateToLogin: MovieDetailsEffect
 }
