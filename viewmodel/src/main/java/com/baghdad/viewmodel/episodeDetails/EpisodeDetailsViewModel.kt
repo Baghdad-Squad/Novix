@@ -200,7 +200,7 @@ class EpisodeDetailsViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 addEpisodeRateUseCase(
-                    seriesId = tvShowId,
+                    tvShowId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
                     rating = rating
