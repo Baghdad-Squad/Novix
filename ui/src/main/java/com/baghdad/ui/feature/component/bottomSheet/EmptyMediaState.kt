@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,8 +38,8 @@ fun EmptyMediaState(
             painter = painterResource(id = imagePath),
             contentDescription = contentDescription,
             modifier = Modifier
+                .padding(bottom = 12.dp)
                 .size(imgSize)
-                .padding(bottom = 24.dp)
         )
         Text(
             text = message,
