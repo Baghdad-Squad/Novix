@@ -1,14 +1,20 @@
 package com.baghdad.viewmodel.episodeDetails
 
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.model.MediaAccountStates
+import com.baghdad.domain.usecase.episode.AddEpisodeRateUseCase
+import com.baghdad.domain.usecase.episode.GetEpisodeAccountStatesUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
+import com.baghdad.domain.usecase.login.IsLoggedInUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.shared.BottomSheetType
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 
 class EpisodeDetailsViewModel(
     private val tvShowId: Long,
@@ -16,6 +22,9 @@ class EpisodeDetailsViewModel(
     private val episodeNumber: Int,
     private val getEpisodeCastMembersUseCase: GetEpisodeCastMembersUseCase,
     private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase,
+    private val addEpisodeRateUseCase: AddEpisodeRateUseCase,
+    private val getEpisodeAccountStatesUseCase: GetEpisodeAccountStatesUseCase,
+    private val isLoggedInUseCase: IsLoggedInUseCase,
     private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<EpisodeDetailsScreenState, EpisodeDetailsScreenEffect>(EpisodeDetailsScreenState()),
     EpisodeDetailsInteractionListener {
@@ -27,6 +36,7 @@ class EpisodeDetailsViewModel(
     private fun loadInitData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
         getEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
         getEpisodeCastMembers(tvShowId, seasonNumber, episodeNumber)
+        getEpisodeAccountStates()
     }
 
     private fun getEpisodeDetails(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
@@ -123,15 +133,113 @@ class EpisodeDetailsViewModel(
 //        TODO("Not yet implemented")
     }
 
-    override fun onRateEpisodeClick() {
-        // TODO("Not yet implemented")
+    override fun onClickStarButton() {
+        tryToExecute(
+            callee = { isLoggedInUseCase() },
+            dispatcher = ioDispatcher,
+            onSuccess = ::onIsUserLoggedInSuccess,
+            onError = ::onError
+        )
+    }
+
+    private fun onIsUserLoggedInSuccess(isLoggedIn: Boolean) {
+        val newBottomSheetType = if (isLoggedIn) {
+            BottomSheetType.ShowRating
+        } else {
+            BottomSheetType.RequireLogin
+        }
+
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = true,
+                    bottomSheetType = newBottomSheetType
+                )
+            )
+        }
+    }
+
+    override fun onRatingChanged(rating: Int) {
+        updateState {
+            it.copy(
+                episode = it.episode.copy(userRating = rating)
+            )
+        }
     }
 
     override fun onDismissRatingBottomSheet() {
         updateState {
-            it.copy(rateEpisodeBottomSheetState = it.rateEpisodeBottomSheetState.copy(isVisible = false))
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = false,
+                    bottomSheetType = BottomSheetType.Hidden
+                )
+            )
         }
     }
+
+    override fun onClickSubmitRating(rating: Int) {
+        tryToExecute(
+            callee = {
+                addEpisodeRateUseCase(
+                    tvShowId,
+                    currentState.episode.currentSeason,
+                    currentState.episode.episodeNumber,
+                    rating
+                )
+            },
+            onSuccess = { onSubmitRatingSuccess() },
+            dispatcher = ioDispatcher,
+            onError = ::onError
+        )
+    }
+
+    override fun onClickLoginButton() {
+        sendEffect(EpisodeDetailsScreenEffect.NavigateToLogin)
+    }
+
+    private fun onSubmitRatingSuccess() {
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = false,
+                    bottomSheetType = BottomSheetType.Hidden,
+                ),
+                isRated = true
+            )
+        }
+        showSnackBar(
+            message = BaseSnackBarMessage.ItemRateSuccessfully,
+            isSuccess = true
+        )
+    }
+
+    private fun getEpisodeAccountStates() {
+        tryToExecute(
+            callee = {
+                getEpisodeAccountStatesUseCase(
+                    tvShowId = tvShowId,
+                    seasonNumber = currentState.episode.currentSeason,
+                    episodeNumber = currentState.episode.episodeNumber
+                )
+            },
+            onStart = {
+                delay(1000L)
+            },
+            dispatcher = ioDispatcher,
+            onSuccess = ::onGetEpisodeStatesSuccess,
+            onError = ::onError
+        )
+    }
+
+    private fun onGetEpisodeStatesSuccess(accountStates: MediaAccountStates) {
+        updateState {
+            it.copy(
+                isRated = accountStates.isMediaRated,
+            )
+        }
+    }
+
 
     private fun onError(throwable: Throwable) {
         when (throwable) {
