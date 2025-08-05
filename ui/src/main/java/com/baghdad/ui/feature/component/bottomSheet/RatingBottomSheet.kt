@@ -49,11 +49,11 @@ fun RatingBottomSheet(
 
             BottomSheetHeader(
                 onCloseClick = { onBottomSheetCloseClick() },
-                title = "Rate it",
+                title = stringResource(R.string.rate_it),
             )
 
             Text(
-                text = stringResource(R.string.select_how_mush_you_like_it),
+                text = stringResource(R.string.select_how_much_you_like_it),
                 style = Theme.typography.body.medium,
                 color = Theme.color.body,
                 textAlign = TextAlign.Start,
@@ -70,9 +70,10 @@ fun RatingBottomSheet(
             )
 
             PrimaryButton(
-                label = "Submit",
+                label = stringResource(R.string.submit),
                 onClick = onSubmitClick,
                 modifier = Modifier.fillMaxWidth()
+                    .padding(bottom = 24.dp)
             )
         }
     }
@@ -86,13 +87,13 @@ private fun StarsRate(
 ) {
     FlowRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        repeat(5) {
+        repeat(10) {
             Star(
                 isFilled = it < rate,
                 onClick = { onRatingChanged(it + 1) },
-                starSize = 32.dp
+                starSize = 24.dp
             )
         }
     }
