@@ -53,19 +53,6 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onSaveCurrentMovieClick() {
-        tryToExecute(
-            callee = { currentState.movieId },
-            dispatcher = ioDispatcher,
-            onSuccess = {
-                updateState {
-                    it.copy(
-                        isSaved = !currentState.isSaved,
-                    )
-                }
-            },
-            onStart = ::onMoreLikeThisStarted,
-            onFinally = ::onMoreLikeThisFinished
-        )
         // TODO: save logic
     }
 
@@ -123,8 +110,8 @@ class MovieDetailsViewModel @Inject constructor(
         sendEffect(MovieDetailsEffect.NavigateToActorDetails(id))
     }
 
-    override fun onReviewClick(id: Long) {
-        sendEffect(MovieDetailsEffect.NavigateToReviewDetails(id))
+    override fun onReviewClick() {
+        sendEffect(MovieDetailsEffect.NavigateToReviewDetails(movieId))
     }
 
     override fun onMovieClick(id: Long) {
@@ -303,7 +290,6 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onGetMovieDetailsSuccess(details: Movie) {
         updateState { state ->
             state.copy(
-                movieId = details.id,
                 movieName = details.title,
                 movieTrailerURL = details.trailerURL,
                 overView = details.overview,

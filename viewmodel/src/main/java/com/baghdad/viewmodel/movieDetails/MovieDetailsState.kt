@@ -8,7 +8,6 @@ data class MovieDetailsState(
     val isMovieDetailsLoading: Boolean = false,
     val isCastMemberLoading: Boolean = false,
     val isMoreLikeThisMovieLoading: Boolean = false,
-    val movieId: Long = 0L,
     val movieImages: List<String> = emptyList(),
     val movieName: String = "",
     val movieTrailerURL: String = "",
