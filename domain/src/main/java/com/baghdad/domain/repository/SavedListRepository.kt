@@ -18,4 +18,8 @@ interface SavedListRepository {
         listId: Long,
         page: Int,
         pageSize: Int): SavedListDetails
+    suspend fun removeMovieFromSavedList(listId: Long, movieId: Long)
+    suspend fun removeTvShowFromSavedList(listId: Long, tvShowId: Long)
+
+    suspend fun deleteSavedListById(listId: Long)
 }

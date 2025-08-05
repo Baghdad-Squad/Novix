@@ -34,7 +34,7 @@ jobs:
       - name: Create secrets.properties file
         run: |
           echo "API_KEY=\"${{ secrets.API_KEY }}\"" > app/secrets.properties
-          echo "BASE_URL=\"https://api.themoviedb.org/3\"" >> app/secrets.properties
+          echo "BASE_URL=\"${{ secrets.BASE_URL }}\"" >> app/secrets.properties
           echo "AUTHORIZATION_TOKEN=\"${{ secrets.AUTHORIZATION_TOKEN }}\"" >> app/secrets.properties
 
       - name: Decode keystore
