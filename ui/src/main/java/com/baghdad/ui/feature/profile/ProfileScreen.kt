@@ -13,11 +13,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.profile.component.ProfileHeaderWithOption
 import com.baghdad.ui.feature.profile.component.ProfileScreenItemsList
+import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.profile.ProfileInteractionListener
 import com.baghdad.viewmodel.profile.ProfileScreenUIState
 import com.baghdad.viewmodel.profile.ProfileViewModel
@@ -27,9 +31,11 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     ProfileScreenContent(
         state = state,
         listener = viewModel,
+        snackBarState = snackBarState,
     )
 }
 
@@ -37,6 +43,7 @@ fun ProfileScreen(
 private fun ProfileScreenContent(
     state: ProfileScreenUIState,
     listener: ProfileInteractionListener,
+    snackBarState: SnackBarState,
 ) {
     Scaffold(
         modifier = Modifier
@@ -53,6 +60,17 @@ private fun ProfileScreenContent(
                     .padding(vertical = 25.dp),
             )
         },
+        isLoading = state.isLoading,
+        snackbar = {
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
+            )
+        }
+
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
@@ -75,3 +93,6 @@ private fun ProfileScreenContent(
         }
     }
 }
+
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
