@@ -105,20 +105,12 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         listId: Long,
         page: Int,
         pageSize: Int,
-    ): PagedResultDto<SavedListDetailsDto> {
+    ): SavedListDetailsDto {
         val response = handleRequest<ListDetailsResponse>(
             apiCall = { savedListApiService.getListDetails(listId, page) },
             logger = logger,
         )
-
-        val detailsDto = response.toSavedListDetailsDto()
-
-        return PagedResultDto(
-            data = listOf(detailsDto),
-            nextKey = null,
-            prevKey = null
-        )
-
+        return response.toSavedListDetailsDto()
     }
 
 

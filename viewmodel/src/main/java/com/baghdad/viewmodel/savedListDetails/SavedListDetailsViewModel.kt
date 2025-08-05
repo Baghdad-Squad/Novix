@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.savedListDetails
 
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.model.savedList.SavedListItem
 import com.baghdad.domain.usecase.savedList.DeleteSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListDetailsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
@@ -28,24 +29,15 @@ class SavedListDetailsViewModel @Inject constructor(
         sendEffect(SavedListDetailsEffect.NavigateBack)
     }
 
+
     private fun getListDetails() {
         collectPagingFlow(
             loadData = { page ->
-                val result = getSavedListDetailsUseCase(currentListId, page, 20)
-                result.copy(
-                    data = result.data.filter { it.type == com.baghdad.domain.model.savedList.SavedListItem.Type.MOVIE }
-                )
+                getSavedListDetailsUseCase.invoke(currentListId, page, 20).pagedItems
             },
             onInitialLoadFinished = ::onFinally,
             onInitialLoadError = ::onError,
-            mapEntityToUiState = { savedListItem ->
-                SavedListDetailsScreenState.SavedListDetailsMovieUiState(
-                    id = savedListItem.id,
-                    posterUrl = savedListItem.posterUrl,
-                    name = savedListItem.title,
-                    contentType = SavedListDetailsScreenState.SavedListDetailsMovieUiState.ContentType.MOVIE
-                )
-            },
+            mapEntityToUiState = SavedListItem::toUIState,
             onFlowCreated = { mediaFlow ->
                 updateState { it.copy(mediaFlow = mediaFlow) }
             },
@@ -57,10 +49,10 @@ class SavedListDetailsViewModel @Inject constructor(
 
     private fun getSavedListInfo() {
         tryToExecute(
-            callee = { getSavedListDetailsUseCase(currentListId, 1, 1) },
+            callee = { getSavedListDetailsUseCase.invoke(currentListId, 1, 1) },
             onSuccess = { result ->
                 updateState {
-                    it.copy(savedList = result.data.)
+                    it.copy(savedList = result.savedList.toUIState())
                 }
             },
             onError = ::onError

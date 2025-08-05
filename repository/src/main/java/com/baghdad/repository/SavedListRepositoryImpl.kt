@@ -10,7 +10,6 @@ import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.SavedListDto
-import com.baghdad.repository.model.savedList.SavedListDetailsDto
 import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
@@ -75,13 +74,11 @@ class SavedListRepositoryImpl @Inject constructor(
         listId: Long,
         page: Int,
         pageSize: Int,
-    ): PagedResult<SavedListDetails> {
-        return executeSafely {
-            remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toPagedResult(
-                SavedListDetailsDto::toEntity
-            )
+    ): SavedListDetails =
+        executeSafely {
+            remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toEntity()
         }
-    }
+
 
     override suspend fun deleteSavedListById(listId: Long) {
         val sessionId = localSessionDataStore.getSessionId()
