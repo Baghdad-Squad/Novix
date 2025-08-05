@@ -43,6 +43,10 @@ private fun handleOnBoardingNavigation(event: OnBoardingNavEvent, navController:
             }
         }
 
-        OnBoardingNavEvent.NavigateToWelcome -> navController.navigate(OnBoardingRoute.WelcomeScreen)
+        OnBoardingNavEvent.NavigateToWelcome -> navController.navigate(OnBoardingRoute.WelcomeScreen){
+            popUpTo(Graph.OnBoardingGraph) {
+                inclusive = true
+            }
+        }
     }
 }

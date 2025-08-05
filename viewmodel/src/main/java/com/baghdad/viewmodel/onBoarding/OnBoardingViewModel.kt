@@ -23,8 +23,12 @@ class OnBoardingViewModel @Inject constructor(
     override fun onNextButtonClick(sizeOfBoardingInfo: Int) {
         tryToExecute(
             callee = {
-                if (currentState.currentPage < sizeOfBoardingInfo) {
+                if (currentState.currentPage <= sizeOfBoardingInfo) {
                     updateState { it.copy(currentPage = currentState.currentPage + 1) }
+                }
+                else if (currentState.currentPage == sizeOfBoardingInfo + 1 ) {
+                    onFirstTimeLaunch()
+                    sendEffect(OnBoardingEffect.NavigateToWelcomeToNovix)
                 }
             },
             onError = {

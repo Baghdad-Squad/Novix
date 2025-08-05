@@ -97,10 +97,12 @@ private fun OnBoardingContent(
             BottomSlidingSection(
                 pagerState = pagerState,
                 onClickNext = {
-                    if (pagerState.currentPage < pagerState.pageCount - 1) {
-                        coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                    } else {
-                        listener.onSkipButtonClick()
+                    listener.onNextButtonClick(onBoardingInfo.size)
+
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(
+                            pagerState.currentPage + 1
+                        )
                     }
                 },
                 onClickBack = {
