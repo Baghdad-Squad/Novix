@@ -19,13 +19,11 @@ import org.junit.jupiter.api.Test
 class SearchMoviesUseCaseTest {
 
     private lateinit var searchRepository: SearchRepository
-    private lateinit var favoriteGenreRepository: FavoriteGenreRepository
     private lateinit var searchMoviesUseCase: SearchMoviesUseCase
 
     @BeforeEach
     fun setUp() {
         searchRepository = mockk()
-        favoriteGenreRepository = mockk() // مش هيتستخدم، بس موجود عشان ما يحصلش كراش
         searchMoviesUseCase = SearchMoviesUseCase(searchRepository)
     }
 
