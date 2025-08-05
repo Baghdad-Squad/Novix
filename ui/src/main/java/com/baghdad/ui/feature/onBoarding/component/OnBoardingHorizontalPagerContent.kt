@@ -62,14 +62,14 @@ fun OnBoardingHorizontalPagerContent(
         Box(
             modifier = modifier
                 .offset(y = 84.dp)
+                .fillMaxWidth(imageWidthFraction)
                 .height(150.dp)
                 .dropShadow(
                     CircleShape,
-                    color = Theme.color.primary.copy(0.4f),
+                    color = Theme.color.primary.copy(0.2f),
                     alpha = 0.2f,
-                    blur = 100.dp,
+                    blur = 50.dp,
                     offsetY = (-24).dp,
-                    offsetX = 0.dp,
                     spread = 5.dp,
                 )
 
