@@ -17,6 +17,7 @@ fun TopRatingSection(
     onViewAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     HomeHorizontalCarouselSection(
         title = stringResource(R.string.top_rating),
         isLoading = isLoading,
