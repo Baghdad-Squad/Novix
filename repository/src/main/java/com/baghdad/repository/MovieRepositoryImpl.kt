@@ -1,24 +1,26 @@
 package com.baghdad.repository
 
+import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.LocalGenreDataSource
+import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
 
 class MovieRepositoryImpl(
     private val remoteGenreDataSource: RemoteGenreDataSource,
-    private val localGenreDataSource: LocalGenreDataSource,
+    private val localSessionDataStore: LocalSessionDataStore,
     private val remoteMovieDataSource: RemoteMovieDataSource,
 ) : MovieRepository {
     override suspend fun getGenres(): List<Genre> =
@@ -77,7 +79,7 @@ class MovieRepositoryImpl(
 
     override suspend fun getMovieImages(movieId: Long): List<String> =
         executeSafely {
-            remoteMovieDataSource.getMovieImages(movieId)
+            remoteMovieDataSource.getMovieImages(movieId).take(MAX_MOVIES_IMAGES)
         }
 
     override suspend fun getTopRatedMovies(page: Int): PagedResult<Movie> =
@@ -101,4 +103,33 @@ class MovieRepositoryImpl(
         executeSafely {
             remoteMovieDataSource.getUpcomingMovies(genreId).map(MovieDto::toEntity)
         }
+
+    override suspend fun addMovieRate(movieId: Long, rating: Int) {
+        executeAuthorizedSafely(
+            sessionId = localSessionDataStore.getSessionId(),
+            block = {
+                remoteMovieDataSource.addMovieRate(
+                    movieId = movieId,
+                    rating = rating,
+                    sessionId = it
+                )
+            }
+        )
+    }
+
+    override suspend fun getMovieStates(movieId: Long): MediaAccountStates {
+        return executeAuthorizedSafely(
+            sessionId = localSessionDataStore.getSessionId(),
+            block = {
+                remoteMovieDataSource.getMovieAccountStates(
+                    movieId = movieId,
+                    sessionId = it
+                ).toEntity()
+            }
+        )
+    }
+
+    companion object {
+        private const val MAX_MOVIES_IMAGES = 10
+    }
 }
