@@ -49,7 +49,7 @@ class EpisodeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addTvEpisodeRate(
-        seriesId: Long,
+        tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
         rating: Int
@@ -58,7 +58,7 @@ class EpisodeRepositoryImpl @Inject constructor(
             sessionId = localSessionDataStore.getSessionId(),
             block = {
                 remoteEpisodeDataSource.addEpisodeRate(
-                    tvShowId = seriesId,
+                    tvShowId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
                     sessionId = it,

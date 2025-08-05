@@ -13,7 +13,7 @@ interface EpisodeRepository {
     ): List<CastMember>
 
     suspend fun addTvEpisodeRate(
-        seriesId: Long,
+        tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
         rating: Int

@@ -7,11 +7,11 @@ class AddEpisodeRateUseCase @Inject constructor(
     private val episodeRepository: EpisodeRepository
 ) {
     suspend operator fun invoke(
-        seriesId: Long,
+        tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
         rating: Int
     ) {
-        episodeRepository.addTvEpisodeRate(seriesId, seasonNumber, episodeNumber, rating)
+        episodeRepository.addTvEpisodeRate(tvShowId, seasonNumber, episodeNumber, rating)
     }
 }
