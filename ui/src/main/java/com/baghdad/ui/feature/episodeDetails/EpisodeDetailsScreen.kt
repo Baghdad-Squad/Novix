@@ -32,9 +32,12 @@ import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
+import com.baghdad.ui.feature.component.bottomSheet.LoginRequiredSheet
+import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
 import com.baghdad.ui.feature.episodeDetails.component.EpisodeHeaderWithDetailsCard
 import com.baghdad.ui.feature.episodeDetails.component.guestsOfHonorItems
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
@@ -45,6 +48,7 @@ import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenEffect
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenState
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.shared.BottomSheetType
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -120,7 +124,7 @@ fun EpisodeDetailsContent(
         bottomBar = {
             DetailsScreenBottomBar(
                 isRated = state.isRated,
-                onRateClicked = listener::onRateEpisodeClick,
+                onRateClicked = listener::onClickStarButton,
                 hasTrailer = state.episode.trailerUrl.isNotBlank(),
                 isLoading = state.isEpisodeDetailsLoading,
                 onPlayTrailerClicked = listener::onPlayTrailerClick,
@@ -148,6 +152,26 @@ fun EpisodeDetailsContent(
                 EpisodeHeaderWithDetailsCard(
                     state = state,
                     listener = listener,
+                )
+            }
+
+            item {
+                RatingBottomSheet(
+                    isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
+                    onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                    rate = state.episode.userRating ?: 0,
+                    onRateChanged = { listener.onRatingChanged(it) },
+                    onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating ?: 0) }
+                )
+            }
+
+            item {
+                LoginRequiredSheet(
+                    isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
+                    onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                    onLoginClick = { listener.onClickLoginButton()},
+                    title = stringResource(R.string.rate_it),
+                    description = stringResource(R.string.please_login_to_rate)
                 )
             }
 

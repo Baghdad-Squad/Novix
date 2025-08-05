@@ -51,7 +51,7 @@
     <string name="my_movies">افلامي</string>
     <string name="add">اضافه</string>
     <string name="create_new_list">إنشاء قائمة جديدة</string>
-    <string name="select_how_mush_you_like_it">حدد مدى إعجابك به</string>
+    <string name="select_how_much_you_like_it">حدد مدى إعجابك به</string>
     <string name="save_to_list">حفظ الى القائمه</string>
     <string name="guests_of_honor">ضيوف الشرف</string>
     <string name="season_template">موسم %1$s</string>
@@ -111,6 +111,8 @@
     <string name="duration_combined">%1$s  و %2$s</string>
     <string name="default_image">"الصورة الافتراضية "</string>
     <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
+    <string name="submit">إدخال</string>
+    <string name="please_login_to_rate">سجل دخولك لتستطيع تقييم أعمالك المفضلة.</string>
 
 </resources>
 

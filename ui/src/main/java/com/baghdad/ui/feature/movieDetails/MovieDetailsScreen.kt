@@ -48,6 +48,8 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
 import com.baghdad.ui.feature.component.HomeCard
+import com.baghdad.ui.feature.component.bottomSheet.LoginRequiredSheet
+import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
 import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieHeaderWithDetailsCard
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
@@ -55,6 +57,7 @@ import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateBack
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToActorDetails
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToCategoryMovies
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToLogin
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToReviews
 import com.baghdad.ui.util.openYouTubeLink
@@ -64,6 +67,7 @@ import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
+import com.baghdad.viewmodel.shared.BottomSheetType
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -127,6 +131,10 @@ private fun handleEffect(
         )
 
         is MovieDetailsEffect.OpenYoutubeLink -> openYouTubeLink(context, effect.youtubeLink)
+
+        MovieDetailsEffect.NavigateToLogin -> handleNavigation(
+            NavigateToLogin
+        )
     }
 }
 
@@ -176,9 +184,9 @@ private fun MovieDetailsContent(
         bottomBar = {
             DetailsScreenBottomBar(
                 hasTrailer = state.movieTrailerURL.isNotBlank(),
-                onRateClicked = { listener.onStarMovieClick() },
+                onRateClicked = { listener.onClickStarButton() },
                 onPlayTrailerClicked = { listener.onClickPlayTrailer() },
-                isRated = state.isStared,
+                isRated = state.isRated,
                 isLoading = false /*TODO*/
             )
         }, snackbar = {
@@ -206,6 +214,7 @@ private fun MovieDetailsContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(bottom = 80.dp)
             ) {
+
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     MovieHeaderWithDetailsCard(
                         state = state,
@@ -215,6 +224,26 @@ private fun MovieDetailsContent(
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Spacer(Modifier.height(104.dp))
+                }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    RatingBottomSheet(
+                        isVisible = state.ratingStatus.isBottomSheetVisible,
+                        onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                        rate = state.userRating ?: 0,
+                        onRateChanged = { listener.onRatingChanged(it) },
+                        onSubmitClick = { listener.onClickSubmitRating(state.userRating ?: 0) }
+                    )
+                }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    LoginRequiredSheet(
+                        isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
+                        onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                        onLoginClick = { listener.onLoginClick()},
+                        title = stringResource(R.string.rate_it),
+                        description = stringResource(R.string.please_login_to_rate)
+                    )
                 }
 
                 if (state.overView.isNotBlank()) {
