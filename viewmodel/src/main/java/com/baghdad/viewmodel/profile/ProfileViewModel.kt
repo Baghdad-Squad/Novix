@@ -1,7 +1,10 @@
 package com.baghdad.viewmodel.profile
 
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.usecase.login.IsLoggedInUseCase
 import com.baghdad.domain.usecase.login.LogOutUseCase
+import com.baghdad.domain.usecase.login.LoggedInUserUseCase
+import com.baghdad.entity.User
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -10,7 +13,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val logOutUseCase: LogOutUseCase
+    private val logOutUseCase: LogOutUseCase,
+    private val loggedInUserUseCase: LoggedInUserUseCase,
+    private val isLoggedInUserUseCase: IsLoggedInUseCase,
 ) : BaseViewModel<ProfileScreenUIState, ProfileEffect>(ProfileScreenUIState()),
     ProfileInteractionListener {
 
@@ -19,7 +24,43 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun loadData() {
+        tryToExecute(
+            callee = { isLoggedInUserUseCase.invoke() },
+            onSuccess = ::onSuccessLogin,
+            onError = ::onError,
+        )
+    }
 
+    private fun onSuccessLogin(result: Boolean) {
+        updateState { profileScreenUIState ->
+            profileScreenUIState.copy(
+                isLogin = result
+            )
+        }
+        if (result) {
+            getUserInfo()
+        }
+    }
+
+    private fun getUserInfo() {
+        tryToExecute(
+            callee = { loggedInUserUseCase.invoke() },
+            onSuccess = ::onSuccessLoadData,
+            onError = ::onError,
+        )
+    }
+
+    private fun onSuccessLoadData(user: User?) {
+        user?.let {
+            updateState { profileScreenUIState ->
+                profileScreenUIState.copy(
+                    userInfo = ProfileScreenUIState.User(
+                        userName = user.userName,
+                        imageUrl = user.imageUrl
+                    )
+                )
+            }
+        }
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
@@ -27,11 +68,11 @@ class ProfileViewModel @Inject constructor(
 
 
     override fun onclickWatchingHistory() {
-        TODO("Not yet implemented")
+        sendEffect(ProfileEffect.NavigateToWatchingHistory)
     }
 
     override fun onclickMyRating() {
-        TODO("Not yet implemented")
+        sendEffect(ProfileEffect.NavigateToMyRatings)
     }
 
     override fun onclickContentRestriction() {
@@ -50,15 +91,18 @@ class ProfileViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override fun ontClickLogIn() {
+        sendEffect(ProfileEffect.NavigateToLogin)
+    }
     override fun ontClickLogOut() {
         tryToExecute(
             callee = { logOutUseCase.invoke() },
-            onSuccess = ::onSuccess,
-            onError = { onError(it) },
+            onSuccess = ::onSuccessLogOut,
+            onError = ::onError,
         )
     }
 
-    private fun onSuccess(result: Boolean) {
+    private fun onSuccessLogOut(result: Boolean) {
         updateState { profileScreenUIState ->
             profileScreenUIState.copy(
                 isLogin = result

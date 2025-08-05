@@ -9,4 +9,6 @@ interface ProfileInteractionListener {
     fun onclickAppearance()
     fun onclickLanguage()
     fun ontClickLogOut()
+    fun ontClickLogIn()
+
 }

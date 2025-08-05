@@ -17,11 +17,15 @@ import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
+import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.feature.profile.component.LoggedOutUserScreen
 import com.baghdad.ui.feature.profile.component.ProfileHeaderWithOption
 import com.baghdad.ui.feature.profile.component.ProfileScreenItemsList
+import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.profile.ProfileEffect
 import com.baghdad.viewmodel.profile.ProfileInteractionListener
 import com.baghdad.viewmodel.profile.ProfileScreenUIState
 import com.baghdad.viewmodel.profile.ProfileViewModel
@@ -29,14 +33,46 @@ import com.baghdad.viewmodel.profile.ProfileViewModel
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
+    handleNavigation: (MyAccountNavEvent) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+
+    ObserveAsEffect(viewModel.uiEffect) { effect ->
+        handleEffect(effect, handleNavigation)
+    }
     ProfileScreenContent(
         state = state,
         listener = viewModel,
         snackBarState = snackBarState,
     )
+}
+
+private fun handleEffect(
+    effect: ProfileEffect,
+    handleNavigation: (MyAccountNavEvent) -> Unit,
+) {
+    when (effect) {
+        is ProfileEffect.NavigateBack ->
+            handleNavigation(
+                MyAccountNavEvent.NavigateBack,
+            )
+
+        is ProfileEffect.NavigateToMyRatings ->
+            handleNavigation(
+                MyAccountNavEvent.NavigateToMyRatings,
+            )
+
+        is ProfileEffect.NavigateToWatchingHistory ->
+            handleNavigation(
+                MyAccountNavEvent.NavigateToWatchingHistory,
+            )
+
+        is ProfileEffect.NavigateToLogin ->
+            handleNavigation(
+                MyAccountNavEvent.NavigateToLogin,
+            )
+    }
 }
 
 @Composable
@@ -72,25 +108,30 @@ private fun ProfileScreenContent(
         }
 
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp)
-        ) {
-            ProfileHeaderWithOption(
-                userName = state.userName,
-                imageUrl = state.imageUrl,
-                onLogoutClick = listener::ontClickLogOut,
-            )
-            ProfileScreenItemsList(
-                appearance = state.appearance,
-                language = state.language,
-                onclickWatchingHistory = listener::onclickWatchingHistory,
-                onclickMyRating = listener::onclickMyRating,
-                onclickContentRestriction = listener::onclickContentRestriction,
-                onclickChangePassword = listener::onclickChangePassword,
-                onclickAppearance = listener::onclickAppearance,
-                onclickLanguage = listener::onclickLanguage,
-            )
+        if (state.isLogin) {
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                ProfileHeaderWithOption(
+                    userName = state.userInfo.userName,
+                    imageUrl = state.userInfo.imageUrl,
+                    onLogoutClick = listener::ontClickLogOut,
+                )
+                ProfileScreenItemsList(
+                    appearance = state.userSettings.appearance,
+                    language = state.userSettings.language,
+                    onclickWatchingHistory = listener::onclickWatchingHistory,
+                    onclickMyRating = listener::onclickMyRating,
+                    onclickContentRestriction = listener::onclickContentRestriction,
+                    onclickChangePassword = listener::onclickChangePassword,
+                    onclickAppearance = listener::onclickAppearance,
+                    onclickLanguage = listener::onclickLanguage,
+                )
+            }
+        } else {
+            LoggedOutUserScreen(listener::ontClickLogIn)
         }
+
     }
 }
 

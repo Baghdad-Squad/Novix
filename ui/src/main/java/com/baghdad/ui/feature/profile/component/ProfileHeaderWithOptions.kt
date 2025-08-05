@@ -2,7 +2,6 @@ package com.baghdad.ui.feature.profile.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -80,7 +79,7 @@ fun ProfileHeaderWithOption(
                 painter = painterResource(R.drawable.more_vertical),
                 contentDescription = "more_icon_list",
                 tint = Theme.color.body,
-                modifier = Modifier.clickable { expanded = !expanded }
+                modifier = Modifier.noRippleClickable { expanded = !expanded }
             )
 
             DropDownMenu(
