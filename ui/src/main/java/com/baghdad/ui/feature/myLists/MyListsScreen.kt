@@ -2,10 +2,14 @@ package com.baghdad.ui.feature.myLists
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -53,7 +57,11 @@ private fun MyListsScreenContent(
     val savedLists = uiState.savedLists.collectAsLazyPagingItems()
     Scaffold(isLoading = uiState.isLoading, topBar = {
         TopAppBar(
-            screenTitle = stringResource(R.string.my_lists),
+            modifier =
+                Modifier
+                    .statusBarsPadding()
+                    .padding(vertical = 12.dp),
+                screenTitle = stringResource(R.string.my_lists),
         )
     }, snackbar = {
         SnackBar(
@@ -101,7 +109,17 @@ private fun handleEffect(
     effect: MyListsScreenEffect,
     handleNavigation: (MyListsNavEvent) -> Unit,
 ) {
-    TODO("Not yet implemented")
+    when (effect) {
+        MyListsScreenEffect.NavigateToLogin ->
+            handleNavigation(
+                MyListsNavEvent.NavigateToLogin,
+            )
+
+        is MyListsScreenEffect.NavigateToViewSavedDetails ->
+            handleNavigation(
+                MyListsNavEvent.NavigateToListDetails(effect.listId)
+        )
+    }
 }
 
 @Composable
