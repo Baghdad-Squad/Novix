@@ -23,6 +23,7 @@
     <string name="snackbar_unknown_error">حدث خطأ غير معروف</string>
     <string name="snackbar_removed_success">تمت الإزالة بنجاح</string>
     <string name="snackbar_saved_success">تم حفظ العنصر بنجاح</string>
+    <string name="snackbar_rated_success">تم تقييم العنصر بنجاح</string>
     <string name="empty_string"> </string>
     <string name="read_less">إخفاء</string>
     <string name="read_more">عرض المزيد</string>
@@ -49,7 +50,7 @@
     <string name="please_login_to_rate_your_favorite_items">الرجاء تسجيل الدخول لتقييم العناصر المفضاه لديك</string>
     <string name="my_favorite">أُفضله</string>
     <string name="my_movies">افلامي</string>
-    <string name="add">اضافه</string>
+    <string name="add">إضافة</string>
     <string name="save">حفظ</string>
     <string name="create_new_list">إنشاء قائمة جديدة</string>
     <string name="select_how_much_you_like_it">حدد مدى إعجابك به</string>
@@ -123,6 +124,10 @@
     <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
     <string name="submit">إدخال</string>
     <string name="please_login_to_rate">سجل دخولك لتستطيع تقييم أعمالك المفضلة.</string>
+    <string name="my_lists">قوائمي</string>
+    <string name="my_lists_empty_list_caption">لا توجد أي قوائم محفوظة بعد، انقر على زر + لإضافة قائمة جديدة!</string>
+    <string name="my_lists_no_login_caption">"يرجى تسجيل الدخول لإنشاء القوائم وإضافة عناصرك المفضلة إليها! "</string>
+    <string name="list_title">عنوان القائمة</string>
     <string name="media_card">"بطاقة الوسائط "</string>
 
 </resources>

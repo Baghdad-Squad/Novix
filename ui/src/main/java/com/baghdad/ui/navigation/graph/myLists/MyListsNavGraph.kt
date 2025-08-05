@@ -5,6 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.savedListDetails.SavedListDetailsScreen
+import androidx.navigation.toRoute
+import com.baghdad.ui.feature.myLists.MyListsScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.MyListsRoute
@@ -14,7 +16,9 @@ fun NavGraphBuilder.myListsNavGraph(navController: NavHostController) {
         startDestination = MyListsRoute.MyListsScreen
     ) {
         composable<MyListsRoute.MyListsScreen> {
-            DummyScreen(title = "My Lists Screen")
+            MyListsScreen {
+                handleMyListsNavEvent(it, navController)
+            }
         }
         composable<MyListsRoute.ListDetailsScreen> { backStackEntry ->
             SavedListDetailsScreen {
