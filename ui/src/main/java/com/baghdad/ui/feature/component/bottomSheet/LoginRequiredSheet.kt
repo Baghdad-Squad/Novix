@@ -16,12 +16,12 @@ import com.baghdad.design_system.component.button.OutlinedButton
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
 
 @Composable
-fun SignInToRateBottomSheet(
+fun LoginRequiredSheet(
     onBottomSheetCloseClick: () -> Unit,
     title: String,
     description: String,
     isVisible: Boolean,
-    onClearClick: () -> Unit,
+    onLoginClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -52,11 +52,10 @@ fun SignInToRateBottomSheet(
             )
 
             OutlinedButton(
-                label = stringResource(com.baghdad.ui.R.string.rate_it),
-                onClick = onClearClick,
+                label = stringResource(com.baghdad.ui.R.string.login),
+                onClick = onLoginClick,
                 modifier = Modifier.fillMaxWidth()
             )
-
         }
     }
 }

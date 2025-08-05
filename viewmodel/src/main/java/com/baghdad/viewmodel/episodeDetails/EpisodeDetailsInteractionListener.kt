@@ -9,7 +9,10 @@ interface EpisodeDetailsInteractionListener {
     fun onDismissAddToListBottomSheetClick()
     fun onLoginClick()
     fun onPlayTrailerClick()
-    fun onRateEpisodeClick()
     fun onDismissRatingBottomSheet()
     fun onSnackBarActionLabelClick()
+    fun onClickStarButton()
+    fun onRatingChanged(rating: Int)
+    fun onClickSubmitRating(rating: Int)
+    fun onClickLoginButton()
 }
