@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 data class MyListsScreenState(
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val savedLists: Flow<PagingData<SavedListUiState>> = flowOf(),
     val isUsedLoggedIn: Boolean = true,
     val addListBottomSheetState: AddListBottomSheetState = AddListBottomSheetState(),
