@@ -5,4 +5,5 @@ sealed interface AuthenticationNavEvent {
     data object NavigateBack : AuthenticationNavEvent
     data object NavigateToRegister : AuthenticationNavEvent
     data object NavigateToForgotPassword : AuthenticationNavEvent
+    data object NavigateToLogin : AuthenticationNavEvent
 }
