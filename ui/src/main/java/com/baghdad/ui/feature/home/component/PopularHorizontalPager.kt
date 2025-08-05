@@ -125,6 +125,7 @@ fun PopularCardPager(
                             onSavedClick = { onSaveClick(item) },
                             isSaved = item.isSaved,
                             isCentralCard = currentPageOffset == 0f,
+                            isSaveToListVisible = item.type == PopularItemUiState.Type.MOVIE,
                             modifier =
                                 Modifier.graphicsLayer {
                                     rotationZ = rotation
@@ -196,7 +197,8 @@ private fun LoadingPopularCardPager(
                         scaleX = xScale
                         scaleY = yScale
                         translationY = yTranslation
-                    }.fillMaxWidth(),
+                    }
+                    .fillMaxWidth(),
         )
     }
 }
