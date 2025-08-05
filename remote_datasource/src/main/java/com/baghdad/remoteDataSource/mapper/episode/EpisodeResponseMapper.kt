@@ -15,6 +15,7 @@ fun EpisodeResponse.toDto(): EpisodeDto {
         overview = this.overview.orEmpty(),
         headerPictures = emptyList(),
         trailerUrl = "",
+        userRating = 0,
         genres = emptyList()
     )
 }
