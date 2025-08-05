@@ -51,6 +51,8 @@
     <string name="my_favorite">My favorite</string>
     <string name="my_movies">My movies</string>
     <string name="add">Add</string>
+    <string name="save">Save</string>
+    <string name="log_out_description">Are you sure to continue?</string>
     <string name="create_new_list">Create new list</string>
     <string name="select_how_much_you_like_it">Select how much you like it</string>
     <string name="save_to_list">Save to list</string>
@@ -74,6 +76,7 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="create_account">Create account</string>
     <string name="login_successfully">Login Successfully</string>
+    <string name="logout_successfully">LogOut Successfully</string>
     <string name="incorrect_username_or_password">Invalid Credentials</string>
     <string name="movie_card">Movie Card</string>
     <string name="trending_movies">Trending movies</string>
@@ -86,11 +89,18 @@
     <string name="automatically_redirecting_to_login">Automatically redirecting to login in 5 seconds…</string>
     <string name="oops_we_can_t_find_the_page">Oops! We can\'t find the page you\'re looking for</string>
     <string name="there_was_a_problem">There was a problem</string>
+    <string name="password_reset_completed_successfully">Password reset completed successfully</string>
+    <string name="invalid_or_expired_reset_token">Invalid or expired reset token</string>
+    <string name="reset_your_password">Reset Your Password</string>
+    <string name="reset_link_expired">Reset link has expired</string>
+    <string name="password_reset_success_redirecting_to_login">Password reset successful, redirecting to login...</string>
+    <string name="reset_password_failed">Password reset failed</string>
     <string name="password_reset_success_message">Password Reset</string>
     <string name="password_reset_main_page_header">Reset password</string>
     <string name="sign_up_for_an_account">Sign up for an account</string>
     <string name="login_to_your_account_success_message">Login to your account</string>
     <string name="min">%1$s min</string>
+    <string name="log_out">Logout</string>
     <string name="one_minute">Minute</string>
     <string name="default_image">Default Image</string>
     <string name="reviewer_avatar">Reviewer Avatar</string>x
