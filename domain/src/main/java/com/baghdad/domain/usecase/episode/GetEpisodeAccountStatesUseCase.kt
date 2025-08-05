@@ -3,8 +3,10 @@ package com.baghdad.domain.usecase.episode
 import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.TvShowRepository
+import javax.inject.Inject
 
-class GetEpisodeAccountStatesUseCase(
+
+class GetEpisodeAccountStatesUseCase @Inject constructor(
     private val episodeRepository: EpisodeRepository
 ) {
     suspend operator fun invoke(

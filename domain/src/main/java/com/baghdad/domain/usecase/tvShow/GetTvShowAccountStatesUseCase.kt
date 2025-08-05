@@ -4,10 +4,12 @@ import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.TvShowRepository
 
-class GetTvShowAccountStatesUseCase(
+import javax.inject.Inject
+
+class GetTvShowAccountStatesUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository
 ) {
-    suspend operator fun invoke(tvShowId: Long, ): MediaAccountStates {
-        return tvShowRepository.getTvShowAccountStates(tvShowId = tvShowId,)
+    suspend operator fun invoke(tvShowId: Long): MediaAccountStates {
+        return tvShowRepository.getTvShowAccountStates(tvShowId = tvShowId)
     }
 }

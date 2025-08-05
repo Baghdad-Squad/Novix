@@ -1,8 +1,9 @@
 package com.baghdad.domain.usecase.episode
 
 import com.baghdad.domain.repository.EpisodeRepository
+import javax.inject.Inject
 
-class AddEpisodeRateUseCase(
+class AddEpisodeRateUseCase @Inject constructor(
     private val episodeRepository: EpisodeRepository
 ) {
     suspend operator fun invoke(
