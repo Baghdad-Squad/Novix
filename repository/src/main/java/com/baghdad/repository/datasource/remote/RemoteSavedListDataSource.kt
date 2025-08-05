@@ -20,7 +20,7 @@ interface RemoteSavedListDataSource {
     suspend fun getSavedListDetails(
         listId: Long,
         page: Int,
-        pageSize: Int): SavedListDetailsDto
+        pageSize: Int): PagedResultDto<SavedListDetailsDto>
 
     suspend fun deleteSavedListById(listId: Long, sessionId: String)
 }

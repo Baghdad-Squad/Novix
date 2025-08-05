@@ -105,11 +105,22 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         listId: Long,
         page: Int,
         pageSize: Int,
-    ): SavedListDetailsDto =
-        handleRequest<ListDetailsResponse>(
+    ): PagedResultDto<SavedListDetailsDto> {
+        val response = handleRequest<ListDetailsResponse>(
             apiCall = { savedListApiService.getListDetails(listId, page) },
             logger = logger,
-        ).toSavedListDetailsDto()
+        )
+
+        val detailsDto = response.toSavedListDetailsDto()
+
+        return PagedResultDto(
+            data = listOf(detailsDto),
+            nextKey = null,
+            prevKey = null
+        )
+
+    }
+
 
     override suspend fun deleteSavedListById(listId: Long, sessionId: String) {
         handleRequest(
