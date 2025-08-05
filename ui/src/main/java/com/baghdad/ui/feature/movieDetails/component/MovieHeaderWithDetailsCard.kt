@@ -22,7 +22,7 @@ import com.baghdad.ui.util.arabicDuration
 import com.baghdad.ui.util.isArabicSystemLocale
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
-import com.baghdad.viewmodel.movieDetails.formatDuration
+import com.baghdad.viewmodel.util.formatDuration
 
 @Composable
 fun MovieHeaderWithDetailsCard(
@@ -70,7 +70,7 @@ fun MovieHeaderWithDetailsCard(
                 duration = if (isArabicSystemLocale()) arabicDuration(state.duration) else state.duration.formatDuration(),
                 categories = state.categories,
                 onViewReviewClicked = {
-                    listener.onReviewClick(state.movieId)
+                    listener.onReviewClick()
                 },
                 onCategoryClick = { listener.onCategoryClick(it) },
                 modifier = Modifier
