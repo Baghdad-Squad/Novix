@@ -143,7 +143,7 @@ private fun TextSlidingAnimationVisibility(
 ) {
         Column(
             modifier = Modifier.graphicsLayer {
-                val scale = 1f - (0.9f * abs(pageOffset))
+                val scale = 1f - (0.5f * abs(pageOffset))
                 scaleX = scale
                 scaleY = scale
             },

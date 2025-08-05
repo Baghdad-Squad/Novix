@@ -86,16 +86,15 @@ private fun OnBoardingContent(
         item {
             SkipText(onClick = { listener.onSkipButtonClick() })
         }
+
         item {
             OnBoardingHorizontalPagerContent(
                 pagerState = pagerState,
                 onBoardingInfo = onBoardingInfo,
-                modifier = Modifier.fillParentMaxWidth(),
+                modifier = Modifier.fillParentMaxWidth().fillMaxSize(),
                 onNext = { listener.onNextButtonClick(onBoardingInfo.size) },
                 onBack = {listener.onBackButtonClick()},
             )
-        }
-        item {
             BottomSlidingSection(
                 pagerState = pagerState,
                 onClickNext = {
