@@ -24,11 +24,12 @@ class ActorDetailsViewModel @Inject constructor(
     private val getActorTvShowUseCase: GetActorTvShowUseCase,
     private val getActorGalleryUseCase: GetActorGalleryUseCase,
     private val ioDispatcher: CoroutineDispatcher,
-    ) :
+) :
     BaseViewModel<ActorDetailsScreenState, ActorDetailsScreenEffect>(ActorDetailsScreenState()),
     ActorDetailsInteractionListener {
 
     private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
+
     init {
         loadData()
     }
@@ -40,7 +41,8 @@ class ActorDetailsViewModel @Inject constructor(
         getActorTvShows(actorId)
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     private fun getActorInfo(actorId: Long) {
         tryToExecute(
@@ -157,7 +159,16 @@ class ActorDetailsViewModel @Inject constructor(
         }
     }
 
+
     private fun showNoInternetSnackBar() {
+        updateState {
+            it.copy(
+                isActorInfoLoading = true,
+                isGalleryLoading = true,
+                isTopMoviePicksLoading = true,
+                isTopTvShowPicksLoading = true,
+            )
+        }
         showSnackBar(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
