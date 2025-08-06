@@ -11,6 +11,7 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.MyListsSnackBarMessage
+import com.baghdad.viewmodel.shared.AddListBottomSheetState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -100,7 +101,7 @@ class MyListsViewModel
             updateState {
                 it.copy(
                     addListBottomSheetState =
-                        MyListsScreenState.AddListBottomSheetState(
+                        AddListBottomSheetState(
                             isVisible = true,
                         ),
                 )

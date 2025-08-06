@@ -10,6 +10,7 @@ import com.baghdad.local_datasource.LocalSearchDataSourceImpl
 import com.baghdad.local_datasource.LocalSearchQueryDataSourceImpl
 import com.baghdad.local_datasource.LocalAppearanceDataSourceImpl
 import com.baghdad.local_datasource.LocalTvShowDataSourceImpl
+import com.baghdad.local_datasource.dataStore.session.LocalOnboardingDatastoreImp
 import com.baghdad.local_datasource.dataStore.session.LocalSessionDataStoreImpl
 import com.baghdad.local_datasource.dataStore.user.LocalUserDataStoreImpl
 import com.baghdad.repository.datasource.local.LocalActorDataSource
@@ -18,6 +19,7 @@ import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.datasource.local.LocalFavoriteGenreDataSource
 import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.datasource.local.LocalMovieDataSource
+import com.baghdad.repository.datasource.local.LocalOnboardingDatastore
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
 import com.baghdad.repository.datasource.local.LocalSearchQueryDataSource
@@ -69,6 +71,8 @@ abstract class LocalDataSourceModule {
     @Binds
     abstract fun provideLocalAppearanceDataSource(localAppearanceDataSourceImpl: LocalAppearanceDataSourceImpl): LocalAppearanceDataSource
 
+    @Binds
+    abstract fun provideLocalOnBoardingDataStore(localOnboardingDatastore: LocalOnboardingDatastoreImp): LocalOnboardingDatastore
 }
 
 

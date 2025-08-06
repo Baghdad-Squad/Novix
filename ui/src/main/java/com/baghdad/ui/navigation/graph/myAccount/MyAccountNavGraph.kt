@@ -4,9 +4,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.baghdad.ui.feature.profile.ProfileScreen
 import com.baghdad.ui.feature.myRating.MyRatingScreen
-import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.Graph
+import com.baghdad.ui.navigation.route.HomeRoute
 import com.baghdad.ui.navigation.route.MyAccountRoute
 
 fun NavGraphBuilder.myAccountNavGraph(navController: NavHostController) {
@@ -14,13 +15,12 @@ fun NavGraphBuilder.myAccountNavGraph(navController: NavHostController) {
         startDestination = MyAccountRoute.MyAccountScreen
     ) {
         composable<MyAccountRoute.MyAccountScreen> {
-            DummyScreen("My Account Screen")
+            ProfileScreen {
+                handleMyAccountNavigation(it, navController)
+            }
         }
         composable<MyAccountRoute.MyRatingsScreen> {
             MyRatingScreen()
-        }
-        composable<MyAccountRoute.WatchingHistoryScreen> {
-            DummyScreen("Watching History Screen")
         }
     }
 }
@@ -39,7 +39,7 @@ private fun handleMyAccountNavigation(
         )
 
         MyAccountNavEvent.NavigateToWatchingHistory -> navController.navigate(
-            MyAccountRoute.WatchingHistoryScreen
+            HomeRoute.ContinueWatchingScreen
         )
 
         is MyAccountNavEvent.NavigateToMovieDetails -> navController.navigate(
