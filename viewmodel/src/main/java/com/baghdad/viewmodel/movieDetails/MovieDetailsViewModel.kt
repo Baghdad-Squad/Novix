@@ -136,6 +136,14 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun showNoInternetSnackBar() {
+        updateState {
+            it.copy(
+                isMovieDetailsLoading = true,
+                isMovieGalleryLoading = true,
+                isCastMemberLoading = true,
+                isMoreLikeThisMovieLoading = true,
+            )
+        }
         showSnackBar(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
@@ -241,7 +249,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onGetMovieAccountStatesSuccess(accountStates: MediaAccountStates) {
         updateState {
             it.copy(
-               isRated = accountStates.isMediaRated,
+                isRated = accountStates.isMediaRated,
             )
         }
     }
