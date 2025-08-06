@@ -52,6 +52,7 @@ fun PopularCard(
     onSavedClick: () -> Unit,
     isSaved: Boolean,
     modifier: Modifier = Modifier,
+    isSaveToListVisible: Boolean = true,
     isCentralCard: Boolean = false,
 ) {
     val overlayAlpha by animateFloatAsState(
@@ -113,7 +114,7 @@ fun PopularCard(
                     },
         )
         AnimatedVisibility(
-            visible = isCentralCard,
+            visible = isCentralCard && isSaveToListVisible,
             enter = ENTER_ANIMATION_SPEC,
             exit = EXIT_ANIMATION_SPEC,
             modifier =

@@ -39,7 +39,8 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -57,7 +58,8 @@ fun MainScreen(
         animationSpec = BOTTOM_BAR_ANIMATION_SPEC
     )
 
-    state.value.isLoggedIn?.let { isLoggedIn ->
+
+    state.isLoggedIn?.let { isLoggedIn ->
 
         Scaffold(
             modifier = modifier
@@ -82,7 +84,7 @@ fun MainScreen(
             NovixNavHost(
                 modifier = Modifier.padding(bottom = animatedBottomPadding),
                 navController = navController,
-                startDestination = if (isLoggedIn == true) Graph.HomeGraph else Graph.AuthenticationGraph
+                startDestination = if (state.isFirstTimeUser == true) Graph.OnBoardingGraph else if (isLoggedIn) Graph.HomeGraph else Graph.AuthenticationGraph
             )
         }
     }

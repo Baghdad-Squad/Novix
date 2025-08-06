@@ -122,6 +122,10 @@
     <string name="duration_combined">%1$s  و %2$s</string>
     <string name="default_image">"الصورة الافتراضية "</string>
     <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
+    <string name="welcome_screen_background">welcome screen background</string>
+    <string name="welcome_screen_content_details">Discover the world’s greatest movies and series. Search, watch, and save your favorites all in one place.</string>
+    <string name="welcome_to_novix">Welcome to Novix</string>
+    <string name="continue_as_guest">Continue as guest</string>
     <string name="submit">إدخال</string>
     <string name="please_login_to_rate">سجل دخولك لتستطيع تقييم أعمالك المفضلة.</string>
     <string name="my_lists">قوائمي</string>
@@ -131,6 +135,24 @@
     <string name="media_card">"بطاقة الوسائط "</string>
     <string name="added_list_successfully">" تم إنشاء القائمة بنجاح"</string>
     <string name="deleted_list_successfully">تم حذف القائمة بنجاح</string>
+    <string name="list_item_count_placeholder">%1$d items</string>
+
+    <string name="my_account">حسابي</string>
+    <string name="watching_history">سجل المشاهدة</string>
+    <string name="my_rating">تقييمي</string>
+    <string name="content_restriction">تقييد المحتوى</string>
+    <string name="change_password">تغيير كلمة السر</string>
+    <string name="appearance">المظهر</string>
+    <string name="language">اللغة</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="logout_icon">ايقونة تسجيل الخروج</string>
+    <string name="profile_setting_item">عنصر اعدادات الملف الشخصي</string>
+    <string name="unlogged_in_user">الرجاء تسجيل الدخول للوصول الى تفاصيل حسابك والميزات الاخرى</string>
+    <string name="loggedout_profile_icon">ايقونة المستخدم الذي تم تسجيل خروجه</string>
+
+
+    <string name="skip">تخطي</string>
+
 
 </resources>
 

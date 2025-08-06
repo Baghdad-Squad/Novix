@@ -21,7 +21,6 @@ import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 fun HomeCard(
     url: String,
     contentDescription: String?,
-
     isSaved: Boolean,
     onSavedClick: () -> Unit,
     onClick:() -> Unit,
