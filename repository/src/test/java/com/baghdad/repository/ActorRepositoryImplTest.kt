@@ -2,7 +2,6 @@ package com.baghdad.repository
 
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
-import com.baghdad.repository.datasource.local.LocalActorDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.dummyData.DummyDataFactory.createMockActor
 import com.baghdad.repository.dummyData.DummyDataFactory.createMockActorDto
@@ -21,14 +20,12 @@ import org.junit.jupiter.api.Test
 class ActorRepositoryImplTest {
 
     private lateinit var remoteActorDataSource: RemoteActorDataSource
-    private lateinit var localActorDataSource: LocalActorDataSource
     private lateinit var actorRepositoryImpl: ActorRepositoryImpl
     val actorId = 123L
 
     @BeforeEach
     fun setUp() {
         remoteActorDataSource = mockk()
-        localActorDataSource = mockk()
         actorRepositoryImpl = ActorRepositoryImpl(
             remoteActorDataSource = remoteActorDataSource,
         )

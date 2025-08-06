@@ -39,7 +39,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val getGenresUseCase: GetGenresUseCase,
     private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
     private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase,
@@ -111,6 +110,8 @@ class SearchViewModel @Inject constructor(
 
     override fun onSearchTextChanged(text: String) {
         updateState { it.copy(searchText = text, isLoading = true) }
+        getRecentSearches()
+        getRecentViewed()
         if (text.trim() == currentState.lastProcessedQuery) {
             updateState { it.copy(isLoading = false) }
             return
