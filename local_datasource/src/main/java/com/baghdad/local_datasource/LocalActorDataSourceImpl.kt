@@ -13,7 +13,9 @@ import com.baghdad.repository.model.ActorDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LocalActorDataSourceImpl @Inject constructor(
     private val actorDao: ActorDao,
     private val logger: Logger

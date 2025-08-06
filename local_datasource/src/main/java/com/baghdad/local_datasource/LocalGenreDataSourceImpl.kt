@@ -8,7 +8,9 @@ import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LocalGenreDataSourceImpl @Inject constructor(
     private val genreDao: GenreDao,
     private val logger: Logger
