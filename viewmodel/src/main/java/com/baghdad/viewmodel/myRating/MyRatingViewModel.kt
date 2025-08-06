@@ -117,11 +117,11 @@ class MyRatingViewModel @Inject constructor(
     }
 
     private fun onDeletedSuccess() {
-        fetchUserRatedMedia()
         showSnackBar(
             message = BaseSnackBarMessage.RemovedItemSuccessfully,
             isSuccess = true
         )
+        fetchUserRatedMedia()
     }
 
     private fun onFinally() {
