@@ -140,5 +140,6 @@
     <string name="welcome_to_novix">Welcome to Novix</string>
     <string name="continue_as_guest">Continue as guest</string>
     <string name="skip">Skip</string>
+    <string name="theme">Theme</string>
 
 </resources>
