@@ -121,5 +121,6 @@
     <string name="list_title">List title</string>
     <string name="added_list_successfully">Added list successfully</string>
     <string name="deleted_list_successfully">Deleted list successfully</string>
+    <string name="my_rating">My rating</string>
 
 </resources>
