@@ -17,7 +17,7 @@ import javax.inject.Inject
 class RecentlyViewedRepositoryImpl @Inject constructor(
     val localRecentlyViewedDataSource: LocalRecentlyViewedDataSource
 ) : RecentlyViewedRepository {
-    override suspend fun getAllRecentlyViewed(): Flow<List<RecentlyViewed>> {
+    override fun getAllRecentlyViewed(): Flow<List<RecentlyViewed>> {
         return getFlowSafely {
             localRecentlyViewedDataSource.getAllRecentlyViewed()
                 .map { it.map(RecentlyViewedDto::toEntity) }
@@ -30,7 +30,7 @@ class RecentlyViewedRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addRecentlyViewed(recentlyViewed: RecentlyViewed, mediaGenres: List<Genre>) {
+    override suspend fun addRecentlyViewed(recentlyViewed: RecentlyViewed) {
         executeSafely {
             localRecentlyViewedDataSource.addMediaToRecentlyViewed(
                 recentlyViewed.toDto()

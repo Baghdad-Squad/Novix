@@ -13,7 +13,6 @@ class AddRecentlyViewedUseCase @Inject constructor(
     suspend operator fun invoke(
         contentId: Long,
         contentImageUrl: String,
-        mediaGenres: List<Genre>,
         contentType: RecentlyViewed.ContentType
     ) {
         recentlyViewedRepository.addRecentlyViewed(
@@ -24,7 +23,6 @@ class AddRecentlyViewedUseCase @Inject constructor(
                 viewedAt = LocalDateTime.now()
 
             ),
-            mediaGenres = mediaGenres
         )
     }
 }

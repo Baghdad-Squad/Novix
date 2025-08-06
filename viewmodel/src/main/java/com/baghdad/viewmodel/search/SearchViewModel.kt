@@ -184,7 +184,7 @@ class SearchViewModel @Inject constructor(
     private fun getRecentViewed() {
         tryToCollect(
             flowProvider = { getRecentlyViewedUseCase() },
-            onNewValue = ::onGetRecentViewedSuccess,
+            onNewValue = { onGetRecentViewedSuccess(it) },
         )
     }
 
@@ -319,7 +319,6 @@ class SearchViewModel @Inject constructor(
                 addRecentlyViewedUseCase.invoke(
                     contentId = contentId,
                     contentImageUrl = contentImageUrl,
-                    mediaGenres = emptyList(),
                     contentType = RecentlyViewed.ContentType.MOVIE
                 )
             },
@@ -342,7 +341,6 @@ class SearchViewModel @Inject constructor(
                 addRecentlyViewedUseCase(
                     contentId = contentId,
                     contentImageUrl = contentImageUrl,
-                    mediaGenres = emptyList(),
                     contentType = RecentlyViewed.ContentType.TV_SHOW,
                 )
             },

@@ -35,7 +35,6 @@ class AddRecentlyViewedUseCaseTest {
         addRecentlyViewedUseCase(
             contentId = movie.contentId,
             contentImageUrl = movie.contentImageUrl,
-            mediaGenres = dummyGenres,
             contentType = movie.contentType
         )
 
@@ -47,7 +46,7 @@ class AddRecentlyViewedUseCaseTest {
                     assertThat(it.contentType).isEqualTo(ContentType.MOVIE)
                     assertThat(it.viewedAt).isNotNull()
                 },
-                mediaGenres = dummyGenres
+
             )
         }
     }
@@ -59,7 +58,6 @@ class AddRecentlyViewedUseCaseTest {
         addRecentlyViewedUseCase(
             contentId = tvShow.contentId,
             contentImageUrl = tvShow.contentImageUrl,
-            mediaGenres = dummyGenres,
             contentType = tvShow.contentType
         )
 
@@ -71,7 +69,6 @@ class AddRecentlyViewedUseCaseTest {
                     assertThat(it.contentType).isEqualTo(ContentType.TV_SHOW)
                     assertThat(it.viewedAt).isNotNull()
                 },
-                mediaGenres = dummyGenres
             )
         }
     }
@@ -81,14 +78,13 @@ class AddRecentlyViewedUseCaseTest {
         val recentlyViewed = getRecentlyViewedItem()
 
         coEvery {
-            recentlyViewedRepository.addRecentlyViewed(any(), any())
+            recentlyViewedRepository.addRecentlyViewed(any())
         } throws RuntimeException("Database error")
 
         val exception = runCatching {
             addRecentlyViewedUseCase(
                 contentId = recentlyViewed.contentId,
                 contentImageUrl = recentlyViewed.contentImageUrl,
-                mediaGenres = dummyGenres,
                 contentType = recentlyViewed.contentType
             )
         }.exceptionOrNull()
