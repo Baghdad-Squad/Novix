@@ -32,7 +32,9 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RemoteTvShowDataSourceImpl @Inject constructor(
     private val tvShowApiService: TvShowApiService,
     private val logger: Logger,
@@ -120,6 +122,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
             logger = logger
         )
     }
+
     override suspend fun deleteTvShowRate(
         tvShowId: Long,
         sessionId: String
@@ -158,7 +161,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         page: Int
     ): PagedResultDto<TvShowDto> {
         return handleRequest<MyRatingTvShowResponse>(
-            apiCall = { tvShowApiService.getUserRatedTvShows(accountId , sessionId, page) },
+            apiCall = { tvShowApiService.getUserRatedTvShows(accountId, sessionId, page) },
             logger = logger
         ).toPagedTvShowDtos()
     }

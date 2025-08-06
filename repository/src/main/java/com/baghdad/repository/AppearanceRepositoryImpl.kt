@@ -2,10 +2,12 @@ package com.baghdad.repository
 
 import com.baghdad.domain.repository.AppearanceRepository
 import com.baghdad.repository.datasource.local.LocalAppearanceDataSource
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.baghdad.domain.model.AppAppearanceMode as DomainAppThemeMode
 import com.baghdad.repository.model.AppAppearanceMode as RepositoryAppThemeMode
-import javax.inject.Inject
 
+@Singleton
 class AppearanceRepositoryImpl@Inject constructor(
     private val localDataSource: LocalAppearanceDataSource
 ) : AppearanceRepository {

@@ -3,7 +3,9 @@ package com.baghdad.repository
 import com.baghdad.domain.repository.OnBoardingRepository
 import com.baghdad.repository.datasource.local.LocalOnboardingDatastore
 import jakarta.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class OnBoardingRepositoryImpl @Inject constructor(
     private val localOnboardingDatastore: LocalOnboardingDatastore,
 ) : OnBoardingRepository {
