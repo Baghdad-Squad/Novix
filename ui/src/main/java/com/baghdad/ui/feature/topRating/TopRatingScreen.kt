@@ -219,7 +219,7 @@ private fun TopRatingContent(
                         url = movie.posterPictureURL,
                         contentDescription = null,
                         isSaved = movie.isSaved,
-                        onSavedClick = { listener.onTopRatingItemSaveClick(movie) }, // ✅ Correct
+                        onSavedClick = { listener.onTopRatingItemSaveClick(movie) },
                         onClick = { listener.onMovieDetailsClick(movie.id) },
                         modifier = Modifier.aspectRatio(0.8f)
                     )
