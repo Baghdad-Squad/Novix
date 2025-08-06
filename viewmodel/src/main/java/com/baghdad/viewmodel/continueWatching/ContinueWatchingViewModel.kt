@@ -8,7 +8,7 @@ import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenre
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
 import com.baghdad.domain.usecase.continueWatching.GetCurrentContinueWatchingMovieGenres
 import com.baghdad.domain.usecase.continueWatching.GetCurrentContinueWatchingTvShowGenres
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
@@ -33,7 +33,7 @@ class ContinueWatchingViewModel @Inject constructor(
     private val getCurrentContinueWatchingMovieGenres: GetCurrentContinueWatchingMovieGenres,
     private val getAllContinueWatchingUseCase: GetAllContinueWatchingUseCase,
     private val getAllContinueWatchingByGenreUseCase: GetAllContinueWatchingByGenreUseCase,
-    private val isUserLoggedInUseCase: IsLoggedInUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val createSavedListUseCase: CreateSavedListUseCase,
