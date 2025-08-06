@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.NovixTextField
 import com.baghdad.design_system.component.Scaffold
@@ -101,6 +102,7 @@ fun LoginScreenContent(
         topBar = {
             TopBar(listener)
         },
+        backgroundBlur = { BackgroundBlur() }
     ) {
 
         Column(
@@ -123,7 +125,6 @@ private fun TopBar(listener: LoginInteractionListener) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Theme.color.surface)
             .statusBarsPadding()
             .padding(vertical = 12.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
