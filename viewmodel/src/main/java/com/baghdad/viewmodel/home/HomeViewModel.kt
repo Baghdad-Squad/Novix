@@ -11,6 +11,7 @@ import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.entity.media.Genre
@@ -42,6 +43,7 @@ class HomeViewModel
         private val getSavedListsUseCase: GetSavedListsUseCase,
         private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
         private val createSavedListUseCase: CreateSavedListUseCase,
+        private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
         private val defaultDispatcher: CoroutineDispatcher,
     ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
         HomeInteractionListener {
@@ -267,14 +269,60 @@ class HomeViewModel
         }
 
         override fun onPopularItemSaveClicked(item: HomeScreenState.PopularItemUiState) {
+            onSaveButtonClicked(item.savedListId, item.id, item.isSaved)
+        }
+
+        private fun onSaveButtonClicked(
+            listId: Long,
+            itemId: Long,
+            isSaved: Boolean,
+        ) {
+            if (isSaved) {
+                removeSavedItem(listId, itemId)
+            } else {
+                updateState {
+                    it.copy(
+                        addToListBottomSheetState =
+                            it.addToListBottomSheetState.copy(
+                                isVisible = true,
+                                selectedItemId = itemId,
+                                selectedListId = null,
+                            ),
+                    )
+                }
+            }
+        }
+
+        private fun removeSavedItem(
+            listId: Long,
+            itemId: Long,
+        ) {
+            tryToExecute(
+                callee = { removeMovieFromSavedListUseCase(listId = listId, movieId = itemId) },
+                onSuccess = { onRemoveSavedItemSuccess() },
+                dispatcher = defaultDispatcher,
+                onFinally = ::onRemoveSavedItemFinished,
+            )
+        }
+
+        private fun onRemoveSavedItemSuccess() {
+            showItemRemovedSuccessfullySnackBar()
+        }
+
+        private fun showItemRemovedSuccessfullySnackBar() {
+            showSnackBar(
+                message = BaseSnackBarMessage.RemovedItemSuccessfully,
+                isSuccess = true,
+            )
+        }
+
+        private fun onRemoveSavedItemFinished() {
             updateState {
                 it.copy(
                     addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
-                            isVisible = true,
-                            selectedListId = null,
-                            selectedItemId = item.id,
-                        ),
+                        isVisible = false,
+                    ),
                 )
             }
         }
@@ -284,7 +332,7 @@ class HomeViewModel
         }
 
         override fun onTvShowsClicked() {
-        sendEffect(HomeScreenEffect.NavigateToTvShows)
+            sendEffect(HomeScreenEffect.NavigateToTvShows)
         }
 
         override fun onActorsClicked() {
@@ -296,7 +344,7 @@ class HomeViewModel
         }
 
         override fun onTopRatingItemSaveClicked(item: HomeScreenState.TopRatingItemUiState) {
-//        TODO("Implement when saving lists is implemented")
+            onSaveButtonClicked(item.savedListId, item.id, item.isSaved)
         }
 
         override fun onViewAllTopRatingClicked() {
@@ -304,11 +352,11 @@ class HomeViewModel
         }
 
         override fun onContinueWatchingItemClicked(item: HomeScreenState.ContinueWatchingItemUiState) {
-        sendEffect(HomeScreenEffect.NavigateToMovieDetails(item.id))
+            sendEffect(HomeScreenEffect.NavigateToMovieDetails(item.id))
         }
 
         override fun onContinueWatchingItemSaveClicked(item: HomeScreenState.ContinueWatchingItemUiState) {
-//        TODO("Implement when saving lists is implemented")
+            onSaveButtonClicked(item.savedListId, item.id, item.isSaved)
         }
 
         override fun onViewAllContinueWatchingClicked() {
@@ -329,7 +377,7 @@ class HomeViewModel
         }
 
         override fun onUpcomingItemSaveClicked(item: HomeScreenState.UpcomingItemUiState) {
-//        TODO("Implement when saving lists is implemented")
+            onSaveButtonClicked(item.savedListId, item.id, item.isSaved)
         }
 
         override fun onSnackBarActionLabelClicked() {
@@ -355,6 +403,14 @@ class HomeViewModel
 
         private fun onAddItemToListSuccess() {
             onSaveToListBottomSheetDismiss()
+            showItemSavedSuccessfullySnackBar()
+        }
+
+    private fun showItemSavedSuccessfullySnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.SavedItemSuccessfully,
+            isSuccess = true,
+        )
         }
 
         private fun onAddItemToListStart() {
@@ -456,49 +512,49 @@ class HomeViewModel
                     )
                 },
                 onSuccess = { onCreateListSuccess() },
-            dispatcher = defaultDispatcher,
-            onStart = ::onCreateListStart,
-            onFinally = ::onCreateListFinished,
-        )
-    }
-
-    private fun onCreateListSuccess() {
-        onCreateListBottomSheetDismiss()
-        getUserSavedLists()
-    }
-
-    private fun onCreateListStart() {
-        updateState {
-            it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isLoading = true,
-                    ),
+                dispatcher = defaultDispatcher,
+                onStart = ::onCreateListStart,
+                onFinally = ::onCreateListFinished,
             )
         }
-    }
 
-    private fun onCreateListFinished() {
-        updateState {
-            it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isLoading = false,
-                    ),
+        private fun onCreateListSuccess() {
+            onCreateListBottomSheetDismiss()
+            getUserSavedLists()
+        }
+
+        private fun onCreateListStart() {
+            updateState {
+                it.copy(
+                    addListBottomSheetState =
+                        it.addListBottomSheetState.copy(
+                            isLoading = true,
+                        ),
+                )
+            }
+        }
+
+        private fun onCreateListFinished() {
+            updateState {
+                it.copy(
+                    addListBottomSheetState =
+                        it.addListBottomSheetState.copy(
+                            isLoading = false,
+                        ),
+                )
+            }
+        }
+
+        private fun showNoInternetSnackBar() {
+            showSnackBar(
+                message = BaseSnackBarMessage.NetworkError,
+                actionLabelRes = R.string.retry,
+                isSuccess = false,
+                durationMillis = Int.MAX_VALUE.toLong(),
             )
         }
-    }
 
-    private fun showNoInternetSnackBar() {
-        showSnackBar(
-            message = BaseSnackBarMessage.NetworkError,
-            actionLabelRes = R.string.retry,
-            isSuccess = false,
-            durationMillis = Int.MAX_VALUE.toLong(),
-        )
-    }
-
-    companion object {
+        companion object {
         private const val POPULAR_MOVIES_LIMIT = 5
         private const val POPULAR_TV_SHOWS_LIMIT = 5
         private const val TOP_RATING_MOVIES_LIMIT = 10
