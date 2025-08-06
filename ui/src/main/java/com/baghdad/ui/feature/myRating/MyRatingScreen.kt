@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.myRating
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,6 +57,7 @@ fun MyRatingScreen(
                     effect.movieId
                 )
             )
+
             is MyRatingEffect.NavigateToTvShowDetails -> handleNavigation(
                 MyAccountNavEvent.NavigateToTvShowDetails(
                     effect.tvShowId
@@ -108,34 +110,36 @@ fun MyRatingContent(
             )
         }
     ) {
-        MediaTabs(
-            selectedTab = uiState.selectedMediaTab,
-            onTabClick = { listener.onMediaTabClick(it) },
-            genresScrollState = rememberLazyListState(),
-            modifier = Modifier.padding(vertical = 12.dp)
-        )
-
-        LazyPagingVerticalGrid<MyRatingState.MediaItemUiState>(
-            columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 12.dp,
-            ),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            items = mediaItems,
-        ) { media ->
-            RatingCard(
-                url = media.posterPictureURL,
-                rating = media.rating,
-                contentDescription = null,
-                onClick = { listener.onMediaClick(media.id, media.contentType) },
-                onDeleteClick = { listener.onDeleteClick(media.id, media.contentType) }
+        Column() {
+            MediaTabs(
+                selectedTab = uiState.selectedMediaTab,
+                onTabClick = { listener.onMediaTabClick(it) },
+                genresScrollState = rememberLazyListState(),
+                modifier = Modifier.padding(vertical = 12.dp)
             )
+
+            LazyPagingVerticalGrid<MyRatingState.MediaItemUiState>(
+                columns = GridCells.Adaptive(minSize = 150.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.color.surface),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 12.dp,
+                ),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                items = mediaItems,
+            ) { media ->
+                RatingCard(
+                    url = media.posterPictureURL,
+                    rating = media.rating,
+                    contentDescription = null,
+                    onClick = { listener.onMediaClick(media.id, media.contentType) },
+                    onDeleteClick = { listener.onDeleteClick(media.id, media.contentType) }
+                )
+            }
         }
     }
 }
