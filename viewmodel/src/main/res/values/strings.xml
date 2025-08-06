@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="retry">Retry</string>
+    <string name="discover_best_movies_and_series">Discover best movies and series</string>
+    <string name="browse_the_latest_releases_trends_and_content_tailored_to_your_taste_all_in_one_place">Browse the latest releases, trends, and content tailored to your taste — all in one place.</string>
+    <string name="search_easily_and_watch_to_your_taste">Search easily... and watch to your taste</string>
+    <string name="use_smart_search_and_filters_to_find_exactly_what_you_love_action_drama_crime_anime_and_more">Use smart search and filters to find exactly what you love — action, drama, crime, anime and more!</string>
+    <string name="rate_save_and_create_your_own_lists">Rate, save, and create your own lists.</string>
+    <string name="rate_movies_track_your_viewing_history_and_easily_save_your_favorite_lists">Rate movies, track your viewing history, and easily save your favorite lists.</string>
     <string name="added_list_successfully">added list successfully</string>
 </resources>

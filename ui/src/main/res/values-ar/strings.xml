@@ -148,5 +148,9 @@
     <string name="unlogged_in_user">الرجاء تسجيل الدخول للوصول الى تفاصيل حسابك والميزات الاخرى</string>
     <string name="loggedout_profile_icon">ايقونة المستخدم الذي تم تسجيل خروجه</string>
 
+
+    <string name="skip">تخطي</string>
+
+
 </resources>
 

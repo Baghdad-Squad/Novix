@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.welcome.WelcomeScreen
+import com.baghdad.ui.feature.onBoarding.OnBoardingScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.Graph
@@ -15,7 +16,14 @@ import com.baghdad.ui.navigation.route.OnBoardingRoute
 fun NavGraphBuilder.onBoardingNavGraph(navController: NavHostController) {
     navigation<Graph.OnBoardingGraph>(startDestination = OnBoardingRoute.OnBoardingScreen) {
         composable<OnBoardingRoute.OnBoardingScreen> {
-            DummyScreen(title = "OnBoarding Screen")
+            OnBoardingScreen(
+                handleNavigation = {event ->
+                    handleOnBoardingNavigation(
+                        event = event,
+                        navController = navController
+                    )
+                }
+            )
         }
     }
 }
@@ -34,6 +42,10 @@ private fun handleOnBoardingNavigation(event: OnBoardingNavEvent, navController:
             }
         }
 
-        OnBoardingNavEvent.NavigateToWelcome -> navController.navigate(AuthenticationRoute.WelcomeScreen)
+        OnBoardingNavEvent.NavigateToWelcome -> navController.navigate(AuthenticationRoute.WelcomeScreen){
+            popUpTo(Graph.OnBoardingGraph) {
+                inclusive = true
+            }
+        }
     }
 }
