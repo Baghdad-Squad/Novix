@@ -124,7 +124,7 @@
     <string name="welcome_screen_content_details">اكتشف أعظم الأفلام والمسلسلات في العالم. ابحث، شاهد، واحفظ مفضلاتك في مكان واحد.</string>
     <string name="oops_we_can_t_find_the_page">عذرًا! لا يمكننا العثور على الصفحة التي تبحث عنها</string>
     <string name="welcome_screen_background">خلفية شاشة الترحيب</string>
-    <string name="there_was_a_problem">حدثت مشكلة</string>
+    <string name="there_was_a_problem">حدثت مشكلة ما</string>
     <string name="continue_as_guest">المتابعة كضيف</string>
     <string name="list_item_count_placeholder">%1$d عنصر</string>
 
