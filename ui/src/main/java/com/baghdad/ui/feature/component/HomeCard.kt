@@ -26,7 +26,7 @@ fun HomeCard(
     onSavedClick: () -> Unit = {},
     isSaved: Boolean = false,
     isSaveToListVisible: Boolean = true,
-    isLoadingEnabled: Boolean = true
+    isLoadingEnabled: Boolean = true,
 ) {
     Box(
         modifier
