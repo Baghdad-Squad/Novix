@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.episodeDetails
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.MediaAccountStates
@@ -16,9 +15,8 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.BottomSheetType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 @HiltViewModel
 class EpisodeDetailsViewModel @Inject constructor(
@@ -171,8 +169,9 @@ class EpisodeDetailsViewModel @Inject constructor(
         updateState {
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
-                    bottomSheetType = newBottomSheetType
-                )
+                    bottomSheetType = newBottomSheetType,
+                ),
+                isRated = it.isRated && isLoggedIn,
             )
         }
     }

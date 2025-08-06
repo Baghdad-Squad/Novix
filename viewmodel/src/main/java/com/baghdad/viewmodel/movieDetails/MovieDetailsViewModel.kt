@@ -20,8 +20,8 @@ import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
@@ -173,8 +173,9 @@ class MovieDetailsViewModel @Inject constructor(
         updateState {
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
-                    bottomSheetType = newBottomSheetType
-                )
+                    bottomSheetType = newBottomSheetType,
+                ),
+                isRated = it.isRated && isLoggedIn,
             )
         }
     }
