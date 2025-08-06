@@ -142,7 +142,7 @@
     <string name="my_account">حسابي</string>
     <string name="watching_history">سجل المشاهدة</string>
     <string name="my_rating">تقييمي</string>
-    <string name="content_restriction">تقييد المحتوى</string>
+    <string name="content_restriction">حجب المحتوى</string>
     <string name="change_password">تغيير كلمة السر</string>
     <string name="appearance">المظهر</string>
     <string name="language">اللغة</string>
@@ -153,6 +153,8 @@
     <string name="loggedout_profile_icon">ايقونة المستخدم الذي تم تسجيل خروجه</string>
     <string name="skip">تخطي</string>
     <string name="delete_description">سيؤدي حذف القائمة المحفوظة إلى حذف جميع العناصر الموجودة فيها. هل أنت متأكد من رغبتك في المتابعة؟</string>
+    <string name="theme">المظهر</string>
+
 
 </resources>
 

@@ -145,5 +145,6 @@
     <string name="continue_as_guest">Continue as guest</string>
     <string name="skip">Skip</string>
     <string name="delete_description">Deleting the saved list will remove all items it contains. Are you sure you want to proceed?</string>
+    <string name="theme">Theme</string>
 
 </resources>
