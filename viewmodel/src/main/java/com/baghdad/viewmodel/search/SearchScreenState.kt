@@ -3,6 +3,8 @@ package com.baghdad.viewmodel.search
 import androidx.paging.PagingData
 import com.baghdad.domain.model.search.RecentlyViewed.ContentType
 import com.baghdad.viewmodel.base.BaseUiState
+import com.baghdad.viewmodel.shared.AddListBottomSheetState
+import com.baghdad.viewmodel.shared.AddToListBottomSheetState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -16,13 +18,17 @@ data class SearchScreenState(
     val actorsFlow: Flow<PagingData<ActorUiState>> = flowOf(),
     val recentViewed: List<RecentlyViewedUiState> = emptyList(),
     val recentSearch: List<RecentSearchUiState> = emptyList(),
+    val isUserLoggedIn: Boolean = false,
+    val addToListBottomSheetState: AddToListBottomSheetState = AddToListBottomSheetState(),
+    val addListBottomSheetState: AddListBottomSheetState = AddListBottomSheetState(),
     val isLoading: Boolean = false,
 ) : BaseUiState {
 
     data class MovieUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
-        val isSaved: Boolean = false
+        val isSaved: Boolean = false,
+        val savedListId: Long = -1L,
     )
 
     data class TvShowUiState(
@@ -46,7 +52,8 @@ data class SearchScreenState(
         val id: Long = 0,
         val posterPictureURL: String = "",
         val contentType: ContentType = ContentType.MOVIE,
-        val isSaved: Boolean = false
+        val isSaved: Boolean = false,
+        val savedListId: Long = -1L,
     )
 
     data class RecentSearchUiState(

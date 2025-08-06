@@ -113,15 +113,19 @@
     <string name="minutes">Minutes</string>
     <string name="duration_combined">%1$s %2$s</string>
     <string name="an_error_occurred_while_loading_genres">An error occurred while loading genres</string>
+    <string name="background_alpha">background_alpha</string>
     <string name="submit">Submit</string>
     <string name="please_login_to_rate">Please login to rate your favorite items.</string>
     <string name="my_lists">My Lists</string>
     <string name="my_lists_empty_list_caption">There is no saved list yet, click on + button to add a new list!</string>
     <string name="my_lists_no_login_caption">Please login to create lists and add your favorite items to it!</string>
     <string name="list_title">List title</string>
+    <string name="media_card">Media Card</string>
     <string name="added_list_successfully">Added list successfully</string>
     <string name="deleted_list_successfully">Deleted list successfully</string>
+    <string name="deleted_list">Delete list</string>
     <string name="list_item_count_placeholder">%1$d items</string>
+    <string name="delete">Delete</string>
 
     <string name="my_account">My account</string>
     <string name="profile_image" translatable="false">Profile Image</string>
@@ -141,6 +145,7 @@
     <string name="welcome_to_novix">Welcome to Novix</string>
     <string name="continue_as_guest">Continue as guest</string>
     <string name="skip">Skip</string>
+    <string name="delete_description">Deleting the saved list will remove all items it contains. Are you sure you want to proceed?</string>
     <string name="theme">Theme</string>
 
 </resources>

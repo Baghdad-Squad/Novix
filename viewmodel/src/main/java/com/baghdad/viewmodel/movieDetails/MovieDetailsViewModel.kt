@@ -124,7 +124,6 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onClickPlayTrailer() {
-        addToContinueWatching()
         sendEffect(MovieDetailsEffect.OpenYoutubeLink(currentState.movieTrailerURL))
     }
 
@@ -289,7 +288,7 @@ class MovieDetailsViewModel @Inject constructor(
             onSuccess = ::onGetMovieDetailsSuccess,
             dispatcher = ioDispatcher,
             onStart = ::onGetMovieDetailsStarted,
-            onFinally = ::onFinally,
+            onFinally = ::onFinallyAndAddToContinueWatching,
             onError = ::onError
         )
     }
@@ -393,8 +392,9 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
 
-    private fun onFinally() {
+    private fun onFinallyAndAddToContinueWatching() {
         updateState { state -> state.copy(isMovieDetailsLoading = false) }
+        addToContinueWatching()
     }
 
 

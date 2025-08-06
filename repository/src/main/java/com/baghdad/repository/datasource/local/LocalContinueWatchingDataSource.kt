@@ -13,4 +13,7 @@ interface LocalContinueWatchingDataSource {
     ): List<ContinueWatchingDto>
 
     fun observeContinueWatching(userId: Long): Flow<List<ContinueWatchingDto>>
+
+    fun getAllContinueWatchingMovies(userId: Long): Flow<List<ContinueWatchingDto>>
+    fun getAllContinueWatchingTvShows(userId: Long): Flow<List<ContinueWatchingDto>>
 }
