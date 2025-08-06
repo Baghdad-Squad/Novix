@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -50,8 +52,10 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
 import com.baghdad.ui.feature.component.HomeCard
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
 import com.baghdad.ui.feature.component.bottomSheet.LoginRequiredSheet
 import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieHeaderWithDetailsCard
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
@@ -70,6 +74,7 @@ import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.baghdad.viewmodel.shared.BottomSheetType
+import com.baghdad.viewmodel.shared.SavedListUiState
 
 
 @Composable
@@ -80,6 +85,8 @@ fun MovieDetailsScreen(
     val state by viewModel.uiState.collectAsState()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, context, handleNavigation)
     }
@@ -87,7 +94,9 @@ fun MovieDetailsScreen(
     MovieDetailsContent(
         listener = viewModel,
         state = state,
-        snackBarState = snackBarState
+        snackBarState = snackBarState,
+        savedLists = savedLists
+
     )
 }
 
@@ -143,6 +152,7 @@ private fun MovieDetailsContent(
     listener: MovieDetailsInteractionListener,
     state: MovieDetailsState,
     snackBarState: SnackBarState,
+    savedLists: LazyPagingItems<SavedListUiState>,
     modifier: Modifier = Modifier
 ) {
 
@@ -222,11 +232,10 @@ private fun MovieDetailsContent(
                 onSubmitClick = { listener.onClickSubmitRating(state.userRating ?: 0) }
             )
 
-
             LoginRequiredSheet(
                 isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                onLoginClick = { listener.onLoginClick()},
+                onLoginClick = { listener.onLoginClick() },
                 title = stringResource(R.string.rate_it),
                 description = stringResource(R.string.please_login_to_rate)
             )
@@ -332,6 +341,26 @@ private fun MovieDetailsContent(
         }
     }
 
+    SavedListBottomSheet(
+        isVisible = state.addToListBottomSheetState.isVisible,
+        isUserLoggedIn = state.isUserLoggedIn,
+        onAddClick = listener::onSaveItemToListClicked,
+        onCreateNewListClick = listener::onCreateNewListClicked,
+        onLoginClick = listener::onLoginClicked,
+        onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
+        lists = savedLists,
+        selectedListId = state.addToListBottomSheetState.selectedListId,
+        onListSelected = listener::onListSelected,
+    )
+
+    AddListBottomSheet(
+        isVisible = state.addListBottomSheetState.isVisible,
+        isLoading = state.addListBottomSheetState.isLoading,
+        listName = state.addListBottomSheetState.listName,
+        onDismiss = listener::onCreateListBottomSheetDismiss,
+        onAddClick = listener::onCreateListBottomSheetAddClick,
+        onListNameChange = listener::onCreatedListNameChanged,
+    )
 }
 
 
