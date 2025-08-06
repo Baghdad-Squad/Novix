@@ -72,6 +72,10 @@ private fun handleEffect(
             handleNavigation(
                 MyAccountNavEvent.NavigateToLogin,
             )
+        is ProfileEffect.NavigateToChangePassword ->
+            handleNavigation(
+                MyAccountNavEvent.NavigateToChangePassword,
+            )
     }
 }
 
