@@ -12,7 +12,7 @@ import javax.inject.Inject
 class OnBoardingViewModel @Inject constructor(
     private val setFirstTimeLaunchApp: SetFirstTimeLaunchAppUseCase,
     private val ioDispatcher: CoroutineDispatcher,
-): BaseViewModel<OnBoardingState, OnBoardingEffect>(OnBoardingState()),
+) : BaseViewModel<OnBoardingState, OnBoardingEffect>(OnBoardingState()),
     OnBoardingInteractionListener {
 
 
@@ -23,12 +23,11 @@ class OnBoardingViewModel @Inject constructor(
     override fun onNextButtonClick(sizeOfBoardingInfo: Int) {
         tryToExecute(
             callee = {
-                if (currentState.currentPage <= sizeOfBoardingInfo) {
-                    updateState { it.copy(currentPage = currentState.currentPage + 1) }
-                }
-                else if (currentState.currentPage == sizeOfBoardingInfo + 1 ) {
+                val currentPage = currentState.currentPage
+                if (currentPage < sizeOfBoardingInfo - 1) {
+                    updateState { it.copy(currentPage = currentPage + 1) }
+                } else {
                     onFirstTimeLaunch()
-                    sendEffect(OnBoardingEffect.NavigateToWelcomeToNovix)
                 }
             },
             dispatcher = ioDispatcher
@@ -51,9 +50,12 @@ class OnBoardingViewModel @Inject constructor(
             callee = {
                 setFirstTimeLaunchApp(true)
             },
+            onSuccess = { onCompleteOnBoardingSuccess() },
             dispatcher = ioDispatcher
         )
     }
 
-
+    private fun onCompleteOnBoardingSuccess() {
+        sendEffect(OnBoardingEffect.NavigateToWelcomeToNovix)
+    }
 }

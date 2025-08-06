@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -54,7 +55,6 @@ private fun OnBoardingContent(
     state: OnBoardingState,
     listener: OnBoardingInteractionListener,
 ) {
-    val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val onBoardingInfo: List<OnBoardingInfo> = listOf(
         OnBoardingInfo(
             imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_1,
@@ -72,9 +72,11 @@ private fun OnBoardingContent(
             description = R.string.rate_movies_track_your_viewing_history_and_easily_save_your_favorite_lists
         ),
     )
-    val pagerState =
-        rememberPagerState(initialPage = state.currentPage, pageCount = { onBoardingInfo.size })
+    val pagerState = rememberPagerState { onBoardingInfo.size }
 
+    LaunchedEffect(state.currentPage) {
+        pagerState.animateScrollToPage(state.currentPage)
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -93,28 +95,11 @@ private fun OnBoardingContent(
             OnBoardingHorizontalPagerContent(
                 pagerState = pagerState,
                 onBoardingInfo = onBoardingInfo,
-                onNext = { listener.onNextButtonClick(onBoardingInfo.size) },
-                onBack = { listener.onBackButtonClick() },
             )
             BottomSlidingSection(
                 pagerState = pagerState,
-                onClickNext = {
-                    listener.onNextButtonClick(onBoardingInfo.size)
-
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(
-                            pagerState.currentPage + 1
-                        )
-                    }
-                },
-                onClickBack = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(
-                            pagerState.currentPage - 1
-                        )
-
-                    }
-                }
+                onClickNext = { listener.onNextButtonClick(onBoardingInfo.size) },
+                onClickBack = { listener.onBackButtonClick() }
             )
         }
     }

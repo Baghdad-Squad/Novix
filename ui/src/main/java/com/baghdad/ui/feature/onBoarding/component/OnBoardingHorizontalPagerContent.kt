@@ -40,20 +40,8 @@ import kotlin.math.abs
 fun OnBoardingHorizontalPagerContent(
     pagerState: PagerState,
     onBoardingInfo: List<OnBoardingInfo>,
-    onNext: () -> Unit,
-    onBack: () -> Unit,
     imageWidthFraction: Float = if (isTablet()) 0.50f else 0.80f,
 ) {
-    var previousPage by remember { mutableIntStateOf(pagerState.currentPage) }
-
-    LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage > previousPage) {
-            onNext()
-        } else if (pagerState.currentPage < previousPage) {
-            onBack()
-        }
-        previousPage = pagerState.currentPage
-    }
 
     Box() {
         Box(
