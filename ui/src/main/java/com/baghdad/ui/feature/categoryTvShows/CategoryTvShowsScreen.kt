@@ -116,6 +116,11 @@ private fun CategoryTvShowsContent(
         },
         isLoading = uiState.isLoading
     ) {
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
         Column {
             LazyPagingVerticalGrid(
                 items = lazyPagingTvShows,
