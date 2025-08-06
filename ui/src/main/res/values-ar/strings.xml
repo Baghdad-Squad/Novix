@@ -90,8 +90,6 @@
     <string name="episodes">عدد الحلقات %1$d </string>
     <string name="season_number_template">الموسم %1$d </string>
     <string name="automatically_redirecting_to_login">سيتم توجيهك تلقائيا لتسجيل الدخول في ٥ ثواني …</string>
-    <string name="oops_we_can_t_find_the_page">Oops! We can\'t find the page you\'re looking for</string>
-    <string name="there_was_a_problem">There was a problem</string>
     <string name="password_reset_success_message">استعادة كلمة المرور</string>
     <string name="password_reset_main_page_header">اعادة تعيين كلمة المرور</string>
     <string name="sign_up_for_an_account">سجّل للحصول على حساب</string>
@@ -122,10 +120,14 @@
     <string name="duration_combined">%1$s  و %2$s</string>
     <string name="default_image">"الصورة الافتراضية "</string>
     <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
-    <string name="welcome_screen_background">welcome screen background</string>
-    <string name="welcome_screen_content_details">Discover the world’s greatest movies and series. Search, watch, and save your favorites all in one place.</string>
-    <string name="welcome_to_novix">Welcome to Novix</string>
-    <string name="continue_as_guest">Continue as guest</string>
+    <string name="welcome_to_novix">مرحبا بك في نوفيكس</string>
+    <string name="welcome_screen_content_details">اكتشف أعظم الأفلام والمسلسلات في العالم. ابحث، شاهد، واحفظ مفضلاتك في مكان واحد.</string>
+    <string name="oops_we_can_t_find_the_page">عذرًا! لا يمكننا العثور على الصفحة التي تبحث عنها</string>
+    <string name="welcome_screen_background">خلفية شاشة الترحيب</string>
+    <string name="there_was_a_problem">حدثت مشكلة</string>
+    <string name="continue_as_guest">المتابعة كضيف</string>
+    <string name="list_item_count_placeholder">%1$d عنصر</string>
+
     <string name="submit">إدخال</string>
     <string name="please_login_to_rate">سجل دخولك لتستطيع تقييم أعمالك المفضلة.</string>
     <string name="my_lists">قوائمي</string>
@@ -137,7 +139,6 @@
     <string name="deleted_list_successfully">تم حذف القائمة بنجاح</string>
     <string name="deleted_list">حذف القائمة</string>
     <string name="delete">حذف</string>
-    <string name="list_item_count_placeholder">%1$d items</string>
 
     <string name="my_account">حسابي</string>
     <string name="watching_history">سجل المشاهدة</string>
