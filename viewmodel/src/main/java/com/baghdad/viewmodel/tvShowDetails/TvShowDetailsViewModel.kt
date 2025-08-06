@@ -126,10 +126,6 @@ class TvShowDetailsViewModel @Inject constructor(
         sendEffect(TvShowDetailsScreenEffect.NavigateToReviews(tvShowId))
     }
 
-    override fun onClickSaveTvShow() {
-//        TODO("Not yet implemented")
-    }
-
     override fun onClickStarButton() {
         updateState {
             it.copy(
