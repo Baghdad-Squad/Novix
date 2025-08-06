@@ -9,6 +9,7 @@ import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
@@ -16,9 +17,9 @@ import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
+import com.baghdad.remoteDataSource.response.movie.MyRatingMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
-import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
@@ -109,13 +110,13 @@ class RemoteMovieDataSourceImpl @Inject constructor(
     }
 
 
-
     override suspend fun getTrendingMovies(page: Int): PagedResultDto<MovieDto> {
         return handleRequest<TrendingMovieResponse>(
             apiCall = { movieApiService.getTrendingMovies(page) },
             logger = logger
         ).toMovieDtos()
     }
+
     @OptIn(ExperimentalTime::class)
     override suspend fun getUpcomingMovies(genreId: Long?): List<MovieDto> {
         val today: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
@@ -150,11 +151,23 @@ class RemoteMovieDataSourceImpl @Inject constructor(
     }
 
     override suspend fun addMovieRate(movieId: Long, rating: Int, sessionId: String) {
-         handleRequest<RatingResponse>(
+        handleRequest<RatingResponse>(
             apiCall = {
                 movieApiService.addMovieRate(
                     movieId = movieId,
                     rating = RatingRequest(rating),
+                    sessionId = sessionId
+                )
+            },
+            logger = logger,
+        )
+    }
+
+    override suspend fun deleteMovieRate(movieId: Long, sessionId: String) {
+        handleRequest<RatingResponse>(
+            apiCall = {
+                movieApiService.deleteMovieRate(
+                    movieId = movieId,
                     sessionId = sessionId
                 )
             },
@@ -170,5 +183,12 @@ class RemoteMovieDataSourceImpl @Inject constructor(
             apiCall = { movieApiService.getMovieAccountStates(movieId, sessionId) },
             logger = logger
         ).toDto()
+    }
+
+    override suspend fun getUserRatedMovies(accountId: Long, page: Int): PagedResultDto<MovieDto> {
+        return handleRequest<MyRatingMoviesResponse>(
+            apiCall = { movieApiService.getRatedMovies(accountId, page) },
+            logger = logger
+        ).toPagedMovieDtos()
     }
 }
