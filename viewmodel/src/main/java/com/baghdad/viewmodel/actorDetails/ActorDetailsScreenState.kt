@@ -1,6 +1,8 @@
 package com.baghdad.viewmodel.actorDetails
 
 import com.baghdad.viewmodel.base.BaseUiState
+import com.baghdad.viewmodel.shared.AddListBottomSheetState
+import com.baghdad.viewmodel.shared.AddToListBottomSheetState
 
 data class ActorDetailsScreenState(
     val isActorInfoLoading: Boolean = false,
@@ -12,6 +14,10 @@ data class ActorDetailsScreenState(
     val isTopTvShowPicksLoading: Boolean = false,
     val topTvShowsPicks: List<TvShowUiState> = emptyList(),
     val isTextExpanded: Boolean = false,
+    val isUserLoggedIn: Boolean = false,
+    val selectedMovieId: Long? = null,
+    val addToListBottomSheetState: AddToListBottomSheetState = AddToListBottomSheetState(),
+    val addListBottomSheetState: AddListBottomSheetState = AddListBottomSheetState(),
 ) : BaseUiState {
     val isLoading: Boolean
         get() = isActorInfoLoading || isGalleryLoading || isTopMoviePicksLoading || isTopTvShowPicksLoading
@@ -19,7 +25,8 @@ data class ActorDetailsScreenState(
     data class MovieUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
-        val isSaved: Boolean = false
+        val isSaved: Boolean = false,
+        val savedListId: Long = -1L
     )
 
     data class TvShowUiState(

@@ -33,7 +33,6 @@ class SavedListRepositoryImplTest {
 
     val listId = 22L
     val movieId = 22002L
-    val tvShowId = 2L
     val sessionId = "session_id"
     val title = "Favorite"
 

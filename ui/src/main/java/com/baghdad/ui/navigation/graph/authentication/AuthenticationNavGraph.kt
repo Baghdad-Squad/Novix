@@ -53,18 +53,6 @@ fun NavGraphBuilder.authenticationNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable<AuthenticationRoute.ResetPasswordWebViewScreen> { backStackEntry ->
-            val resetToken = backStackEntry.arguments?.getString("resetToken") ?: ""
-            ResetPasswordWebViewScreen(
-                resetToken = resetToken,
-                handleNavigation = {
-                    handleAuthenticationNavigation(
-                        event = it,
-                        navController = navController
-                    )
-                }
-            )
-        }
     }
 }
 

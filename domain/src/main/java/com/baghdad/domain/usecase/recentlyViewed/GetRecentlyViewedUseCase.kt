@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetRecentlyViewedUseCase @Inject constructor(
     private val recentlyViewedRepository: RecentlyViewedRepository
 ) {
-    suspend operator fun invoke(): Flow<List<RecentlyViewed>> {
+     operator fun invoke(): Flow<List<RecentlyViewed>> {
         return recentlyViewedRepository.getAllRecentlyViewed().sortedByMostRecent()
     }
 

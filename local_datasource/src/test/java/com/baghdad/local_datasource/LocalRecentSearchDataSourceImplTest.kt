@@ -16,11 +16,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class LocalSearchDataSourceImplTest {
+class LocalRecentSearchDataSourceImplTest {
     lateinit var recentSearchDao: RecentSearchDao
     lateinit var logger: Logger
 
-    lateinit var localSearchDataSourceImpl: LocalSearchDataSourceImpl
+    lateinit var localSearchDataSourceImpl: LocalRecentSearchDataSourceImpl
 
     @BeforeEach
     fun setUp() {
@@ -28,7 +28,7 @@ class LocalSearchDataSourceImplTest {
         logger = mockk()
 
         localSearchDataSourceImpl =
-            LocalSearchDataSourceImpl(recentSearchDao = recentSearchDao, logger = logger)
+            LocalRecentSearchDataSourceImpl(recentSearchDao = recentSearchDao, logger = logger)
     }
 
     @Test

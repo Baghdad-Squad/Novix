@@ -49,7 +49,12 @@ class CategoryMoviesViewModelTest {
             savedStateHandle,
             getGenreMoviesUseCase = getGenreMoviesUseCase,
             getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
-            ioDispatcher = testDispatcher
+            ioDispatcher = testDispatcher,
+            isUserLoggedInUseCase = mockk(),
+            getSavedListsUseCase = mockk(),
+            addMovieToSavedListUseCase = mockk(),
+            createSavedListUseCase = mockk(),
+            removeMovieFromSavedListUseCase = mockk(),
         )
     }
 
@@ -85,7 +90,7 @@ class CategoryMoviesViewModelTest {
         val effects = mutableListOf<CategoryMoviesEffect>()
         val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
 
-        viewModel.onBackClicked()
+        viewModel.onBackClick()
         advanceUntilIdle()
 
         assertThat(effects).containsExactly(CategoryMoviesEffect.NavigateBack)
@@ -122,7 +127,12 @@ class CategoryMoviesViewModelTest {
             savedStateHandle = savedStateHandle,
             getGenreMoviesUseCase = getGenreMoviesUseCase,
             getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
-            ioDispatcher = testDispatcher
+            ioDispatcher = testDispatcher,
+            isUserLoggedInUseCase = mockk(),
+            getSavedListsUseCase = mockk(),
+            addMovieToSavedListUseCase = mockk(),
+            createSavedListUseCase = mockk(),
+            removeMovieFromSavedListUseCase = mockk(),
         )
 
         val states = mutableListOf<CategoryMoviesState>()
@@ -181,7 +191,12 @@ class CategoryMoviesViewModelTest {
                 savedStateHandle = savedStateHandle,
                 getGenreMoviesUseCase = getGenreMoviesUseCase,
                 getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
-                ioDispatcher = testDispatcher
+                ioDispatcher = testDispatcher,
+                isUserLoggedInUseCase = mockk(),
+                getSavedListsUseCase = mockk(),
+                addMovieToSavedListUseCase = mockk(),
+                createSavedListUseCase = mockk(),
+                removeMovieFromSavedListUseCase = mockk(),
             )
 
             advanceUntilIdle()
