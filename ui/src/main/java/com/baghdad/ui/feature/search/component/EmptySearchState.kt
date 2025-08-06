@@ -60,7 +60,7 @@ private fun EmptySearchScreenPreview() {
             verticalArrangement = Arrangement.Center
         ) {
             EmptySearchState(
-                imagePath = R.drawable.start_explore,
+                imagePath = R.drawable.start_explore_night,
                 contentDescription = "Search",
                 message = "Start exploring! Search for your favorite movies, series and shows"
             )

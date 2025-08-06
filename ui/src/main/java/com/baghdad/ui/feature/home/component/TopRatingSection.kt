@@ -31,7 +31,7 @@ fun TopRatingSection(
             isSaved = item.isSaved,
             onSavedClick = { onSaveClick(item) },
             onClick = { onClick(item) },
-            showSaveIcon = showSaveIcon,
+            isSaveToListVisible = showSaveIcon,
             modifier = Modifier.aspectRatio(0.8f)
         )
     }

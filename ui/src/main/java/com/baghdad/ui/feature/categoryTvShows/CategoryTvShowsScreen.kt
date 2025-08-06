@@ -36,6 +36,7 @@ import com.baghdad.ui.feature.util.rememberSaveableLazyGridState
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsEffect
+import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsInteractionListener
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -72,7 +73,9 @@ private fun handleEffect(
 
 @Composable
 private fun CategoryTvShowsContent(
-    uiState: CategoryTvShowsState, listener: CategoryTvShowsViewModel, snackBarState: SnackBarState
+    uiState: CategoryTvShowsState,
+    listener: CategoryTvShowsInteractionListener,
+    snackBarState: SnackBarState,
 ) {
     val lazyPagingTvShows = uiState.tvShowsFlow.collectAsLazyPagingItems()
 
@@ -133,9 +136,8 @@ private fun CategoryTvShowsContent(
                 HomeCard(
                     url = tvShow.posterPictureURL,
                     contentDescription = null,
-                    isSaved = tvShow.isSaved,
-                    onSavedClick = { listener.onSavedClick(tvShow.id) },
                     onClick = { listener.onTvShowClicked(tvShow.id) },
+                    isSaveToListVisible = false,
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }

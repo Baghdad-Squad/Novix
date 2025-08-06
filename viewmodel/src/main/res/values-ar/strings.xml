@@ -8,4 +8,9 @@
     <string name="search_easily_and_watch_to_your_taste">ابحث بسهولة... وشاهد ما يناسب ذوقك</string>
     <string name="use_smart_search_and_filters_to_find_exactly_what_you_love_action_drama_crime_anime_and_more">استخدم البحث الذكي والفلاتر لتجد بالضبط ما تحب — أكشن، دراما، إجرام، أنمي والمزيد!</string>
     <string name="added_list_successfully">تم اضافة القائمة بنجاح</string>
+
+    <string name="light">فاتح</string>
+    <string name="dark">غامق</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
 </resources>

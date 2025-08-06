@@ -10,5 +10,10 @@ sealed interface MyAccountRoute : Route {
     data object WatchingHistoryScreen : MyAccountRoute
 
     @Serializable
-    data object MyRatingsScreen
+    data object MyRatingsScreen: MyAccountRoute
+
+    @Serializable
+    data object ResetPasswordScreen : MyAccountRoute
+
+
 }

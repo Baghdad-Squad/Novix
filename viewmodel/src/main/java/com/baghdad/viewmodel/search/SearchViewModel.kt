@@ -3,8 +3,7 @@ package com.baghdad.viewmodel.search
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.search.RecentlyViewed
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
@@ -39,7 +38,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val getGenresUseCase: GetGenresUseCase,
     private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
     private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase,
@@ -49,7 +47,7 @@ class SearchViewModel @Inject constructor(
     private val searchMoviesUseCase: SearchMoviesUseCase,
     private val searchTvShowsUseCase: SearchTvShowsUseCase,
     private val searchActorsUseCase: SearchActorsUseCase,
-    private val isUserLoggedInUseCase: IsLoggedInUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val createSavedListUseCase: CreateSavedListUseCase,
@@ -111,6 +109,8 @@ class SearchViewModel @Inject constructor(
 
     override fun onSearchTextChanged(text: String) {
         updateState { it.copy(searchText = text, isLoading = true) }
+        getRecentSearches()
+        getRecentViewed()
         if (text.trim() == currentState.lastProcessedQuery) {
             updateState { it.copy(isLoading = false) }
             return
@@ -585,6 +585,8 @@ class SearchViewModel @Inject constructor(
                 addListBottomSheetState =
                     it.addListBottomSheetState.copy(
                         isVisible = false,
+                        listName = "",
+                        isLoading = false,
                     ),
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(

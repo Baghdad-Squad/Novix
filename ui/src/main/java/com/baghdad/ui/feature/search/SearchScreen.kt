@@ -273,7 +273,11 @@ private fun EmptySearchStateSection() {
         contentAlignment = Alignment.Center
     ) {
         EmptySearchState(
-            imagePath = com.baghdad.design_system.R.drawable.start_explore,
+            imagePath = if (Theme.isDarkTheme) {
+                com.baghdad.design_system.R.drawable.no_search_results_night
+            } else {
+                com.baghdad.design_system.R.drawable.no_search_results
+            },
             contentDescription = stringResource(R.string.start_exploring),
             message = stringResource(R.string.start_exploring),
             modifier = Modifier.padding(bottom = 60.dp)

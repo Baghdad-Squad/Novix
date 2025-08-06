@@ -31,7 +31,6 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
@@ -313,17 +312,6 @@ fun TvShowDetailsContent(
                 .padding(top = 56.dp, bottom = 8.dp),
             onGoBackClick = {
                 listener.onClickBackIcon()
-            },
-            content = {
-                SaveIcon(
-                    tint = Theme.color.title,
-                    size = 40,
-                    backgroundColor = Theme.color.iconBackgroundLow,
-                    isSaved = uiState.isSaved,
-                    onClick = {
-                        listener.onClickSaveTvShow()
-                    }
-                )
             }
         )
     }

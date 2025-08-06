@@ -8,5 +8,6 @@ interface ProfileEffect : BaseUiEffect {
     data object NavigateToMyRatings : ProfileEffect
     data object NavigateToWatchingHistory : ProfileEffect
     data object NavigateToLogin : ProfileEffect
+    data object NavigateToChangePassword : ProfileEffect
 
 }

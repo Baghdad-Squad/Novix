@@ -16,15 +16,15 @@ import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.shared.Selectable
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
-import kotlin.collections.forEach
+import com.baghdad.viewmodel.profile.ThemePreferences
 
 
 @Composable
 fun AppThemeBottomSheet(
     onBottomSheetCloseClick: () -> Unit,
     isVisible: Boolean,
-    themeOptions: List<Selectable<String>>,
-    onThemeSelected: (String) -> Unit,
+    themeOptions: List<Selectable<ThemePreferences>>,
+    onThemeSelected: (ThemePreferences) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -46,7 +46,10 @@ fun AppThemeBottomSheet(
 
             themeOptions.forEach { theme ->
                 Selection(
-                    option = theme,
+                    option = Selectable(
+                        value = stringResource(theme.value.title),
+                        isSelected = theme.isSelected
+                    ),
                     onClick = { onThemeSelected(theme.value) },
                     modifier = Modifier.padding(bottom = 12.dp)
                 )

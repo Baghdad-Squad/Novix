@@ -177,11 +177,13 @@ class GetTvShowSeasonEpisodesUseCaseTest {
             releasedDate = LocalDate(2023, 1, 1),
             trailerUrl = "https://example.com/trailer.mp4",
             currentSeason = 1,
+            userRating = 9,
             genres = listOf(Genre(id = 1, "Drama"), Genre(id = 2, "Action")),
             headerPictures = listOf(
                 "https://example.com/episode.jpg",
                 "https://example.com/episode2.jpg"
-            )
+            ),
+            userRating = 9
         )
     }
 }

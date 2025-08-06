@@ -23,14 +23,6 @@ fun MovieDto.toEntity(): Movie {
     )
 }
 
-fun MovieDto.toSearchQueryDto(query: String): SearchQueryDto {
-    return SearchQueryDto(
-        queryName = query,
-        mediaId = this.id,
-        mediaType = SearchQueryDto.MediaType.MOVIE,
-    )
-}
-
 fun Movie.toDto(): MovieDto {
     return MovieDto(
         id = id,

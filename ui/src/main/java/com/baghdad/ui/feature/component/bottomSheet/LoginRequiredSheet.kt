@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BaseBottomSheet
 import com.baghdad.design_system.component.button.OutlinedButton
+import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
 
 @Composable
@@ -43,7 +44,11 @@ fun LoginRequiredSheet(
             )
 
             EmptyMediaState(
-                imagePath = R.drawable.user_person_profile,
+                imagePath = if (Theme.isDarkTheme) {
+                    R.drawable.user_person_profile_night
+                } else {
+                    R.drawable.user_person_profile
+                },
                 contentDescription = stringResource(com.baghdad.ui.R.string.bottom_sheet_content_description),
                 message = description,
                 modifier = Modifier
@@ -54,7 +59,9 @@ fun LoginRequiredSheet(
             OutlinedButton(
                 label = stringResource(com.baghdad.ui.R.string.login),
                 onClick = onLoginClick,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
             )
         }
     }

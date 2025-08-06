@@ -118,8 +118,7 @@ private fun TopTvShowPicksContent(
                 HomeCard(
                     url = tvShow.posterPictureURL,
                     contentDescription = null,
-                    isSaved = tvShow.isSaved,
-                    onSavedClick = { listener.onSaveTvShowClick(tvShow.id) },
+                    isSaveToListVisible = false,
                     onClick = { listener.onTvShowDetailsClick(tvShow.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )

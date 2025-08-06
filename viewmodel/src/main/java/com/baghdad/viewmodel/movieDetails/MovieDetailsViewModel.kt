@@ -5,7 +5,7 @@ import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
 import com.baghdad.domain.usecase.movie.GetMovieAccountStatesUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
@@ -20,8 +20,8 @@ import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
@@ -33,7 +33,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
     private val addMovieRateUseCase: AddMovieRateUseCase,
     private val getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase,
-    private val isLoggedInUseCase: IsLoggedInUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
     MovieDetailsInteractionListener {
@@ -155,7 +155,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun isUserLoggedIn() {
         tryToExecute(
-            callee = { isLoggedInUseCase() },
+            callee = { isUserLoggedInUseCase() },
             dispatcher = ioDispatcher,
             onSuccess = ::onIsUserLoggedInSuccess,
             onError = ::onError
@@ -173,8 +173,9 @@ class MovieDetailsViewModel @Inject constructor(
         updateState {
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
-                    bottomSheetType = newBottomSheetType
-                )
+                    bottomSheetType = newBottomSheetType,
+                ),
+                isRated = it.isRated && isLoggedIn,
             )
         }
     }

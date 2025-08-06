@@ -33,7 +33,7 @@ private fun ListDetailsResponse.Item.toSavedListItemDto(): SavedListItemDto? {
         id = this.id ?: return null,
         type = mapMediaType(mediaType) ?: return null,
         title = this.title ?: this.originalTitle ?: return null,
-        posterUrl = this.posterPath.orEmpty(),
+        posterUrl = "https://image.tmdb.org/t/p/w500" + this.posterPath.orEmpty(),
     )
 }
 

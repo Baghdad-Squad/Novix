@@ -23,7 +23,7 @@ fun ContinueWatchingSection(
         items = items,
         onViewAllClick = onViewAllClick,
         modifier = modifier,
-    ) { item , showSaveIcon ->
+    ) { item, showSaveIcon ->
         HomeCard(
             url = item.imageUrl,
             contentDescription = stringResource(R.string.continue_watching_item),
@@ -31,7 +31,7 @@ fun ContinueWatchingSection(
             onSavedClick = { onSaveClick(item) },
             onClick = { onClick(item) },
             modifier = Modifier.aspectRatio(0.8f),
-            showSaveIcon = showSaveIcon
+            isSaveToListVisible = showSaveIcon && item.contentType == HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE,
         )
     }
 }

@@ -12,7 +12,6 @@ data class TvShowDetailsScreenState(
     val isTextExpanded: Boolean = false,
     val hasTrailer: Boolean = true,
     val isRated: Boolean = true,
-    val isSaved: Boolean = false,
     val isCastMembersLoading: Boolean = false,
     val isEpisodesLoading: Boolean = false,
     val isTvShowDetailsLoading: Boolean = false,

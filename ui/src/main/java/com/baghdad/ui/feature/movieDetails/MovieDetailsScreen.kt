@@ -3,6 +3,7 @@ package com.baghdad.ui.feature.movieDetails
 import android.content.Context
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -148,7 +149,14 @@ private fun MovieDetailsContent(
 
     val lazyState = rememberLazyGridState()
     var shouldShowBackground by remember { mutableStateOf(false) }
-
+    val backgroundAlpha by animateFloatAsState(
+        targetValue = if (shouldShowBackground) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = 400,
+            easing = FastOutSlowInEasing
+        ),
+        label = stringResource(R.string.background_alpha)
+    )
     val animatedColor by animateColorAsState(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
@@ -201,10 +209,13 @@ private fun MovieDetailsContent(
             BackgroundBlur(modifier = Modifier.zIndex(999f))
         }
     ) {
+
         Box(
             modifier = modifier
+                .background(Theme.color.surface.copy(backgroundAlpha))
                 .fillMaxSize()
                 .navigationBarsPadding()
+
         ) {
 
             RatingBottomSheet(
@@ -236,7 +247,7 @@ private fun MovieDetailsContent(
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     MovieHeaderWithDetailsCard(
-                        state = state,
+                        uiState = state,
                         listener = listener
                     )
                 }
