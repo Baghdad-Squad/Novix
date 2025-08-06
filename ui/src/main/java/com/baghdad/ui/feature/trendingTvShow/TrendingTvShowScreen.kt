@@ -126,6 +126,11 @@ fun TrendingTvShowContent(
             }
         }
     ) {
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
         Column(
             modifier = Modifier
                 .background(Theme.color.surface)
