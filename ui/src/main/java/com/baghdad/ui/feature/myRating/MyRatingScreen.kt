@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -97,52 +96,52 @@ fun MyRatingContent(
             )
         },
         topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(top = 22.dp, bottom = 8.dp)
-                    .background(Theme.color.surface),
-                onGoBackClick = {
-                    listener.onBackClick()
-                },
-                screenTitle = stringResource(com.baghdad.ui.R.string.my_rating),
-            )
-        }
-    ) {
-        Column() {
-            MediaTabs(
-                selectedTab = uiState.selectedMediaTab,
-                onTabClick = { listener.onMediaTabClick(it) },
-                genresScrollState = rememberLazyListState(),
-                modifier = Modifier.padding(vertical = 12.dp)
-            )
-
-            LazyPagingVerticalGrid<MyRatingState.MediaItemUiState>(
-                columns = GridCells.Adaptive(minSize = 150.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface),
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 12.dp,
-                ),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                items = mediaItems,
-            ) { media ->
-                RatingCard(
-                    url = media.posterPictureURL,
-                    rating = media.rating,
-                    contentDescription = null,
-                    onClick = { listener.onMediaClick(media.id, media.contentType) },
-                    onDeleteClick = { listener.onDeleteClick(media.id, media.contentType) }
+            Column {
+                TopAppBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(top = 22.dp, bottom = 8.dp)
+                        .background(Theme.color.surface),
+                    onGoBackClick = {
+                        listener.onBackClick()
+                    },
+                    screenTitle = stringResource(com.baghdad.ui.R.string.my_rating),
+                )
+                MediaTabs(
+                    selectedTab = uiState.selectedMediaTab,
+                    onTabClick = { listener.onMediaTabClick(it) },
+                    genresScrollState = rememberLazyListState(),
+                    modifier = Modifier.padding(vertical = 12.dp)
                 )
             }
         }
+    ) {
+        LazyPagingVerticalGrid<MyRatingState.MediaItemUiState>(
+            columns = GridCells.Adaptive(minSize = 150.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.color.surface),
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 12.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            items = mediaItems,
+        ) { media ->
+            RatingCard(
+                url = media.posterPictureURL,
+                rating = media.rating,
+                contentDescription = null,
+                onClick = { listener.onMediaClick(media.id, media.contentType) },
+                onDeleteClick = { listener.onDeleteClick(media.id, media.contentType) }
+            )
+        }
     }
 }
+
 
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return type.toStringResource()
@@ -168,11 +167,18 @@ private fun MediaTabs(
                 onClick = { onTabClick(null) }
             )
         }
-        items(MyRatingState.MediaTab.entries) { tab ->
+        item {
             Chip(
-                title = tab.name,
-                isSelected = selectedTab == tab,
-                onClick = { onTabClick(tab) }
+                title = stringResource(com.baghdad.ui.R.string.tab_movies),
+                isSelected = selectedTab == MyRatingState.MediaTab.MOVIE,
+                onClick = { onTabClick(MyRatingState.MediaTab.MOVIE) }
+            )
+        }
+        item {
+            Chip(
+                title = stringResource(com.baghdad.ui.R.string.tab_tv_shows),
+                isSelected = selectedTab == MyRatingState.MediaTab.TV_SHOW,
+                onClick = { onTabClick(MyRatingState.MediaTab.TV_SHOW) }
             )
         }
     }
