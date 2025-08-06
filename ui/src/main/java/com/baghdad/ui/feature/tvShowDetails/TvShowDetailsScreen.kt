@@ -47,6 +47,7 @@ import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
 import com.baghdad.ui.feature.tvShowDetails.component.CastMembersSection
 import com.baghdad.ui.feature.tvShowDetails.component.EpisodeCard
 import com.baghdad.ui.feature.tvShowDetails.component.SeasonSection
+import com.baghdad.ui.feature.tvShowDetails.component.ShimmeringEpisodeCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowHeaderWithDetailsCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
@@ -69,7 +70,7 @@ import com.baghdad.viewmodel.util.formatDuration
 @Composable
 fun TvShowDetailsScreen(
     viewModel: TvShowDetailsViewModel = hiltViewModel(),
-    handleNavigation: (TvShowDetailsNavEvent) -> Unit
+    handleNavigation: (TvShowDetailsNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
@@ -87,7 +88,7 @@ fun TvShowDetailsScreen(
 private fun handleEffect(
     effect: TvShowDetailsScreenEffect,
     context: Context,
-    handleNavigation: (TvShowDetailsNavEvent) -> Unit
+    handleNavigation: (TvShowDetailsNavEvent) -> Unit,
 ) {
     when (effect) {
         is TvShowDetailsScreenEffect.NavigateBack -> handleNavigation(
@@ -128,7 +129,7 @@ fun TvShowDetailsContent(
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
     snackBarState: SnackBarState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
     var shouldShowBackground by remember { mutableStateOf(false) }
@@ -269,29 +270,39 @@ fun TvShowDetailsContent(
                     )
                 }
 
-
-                if (uiState.episodes.isNotEmpty()) {
-                    items(uiState.episodes) { episode ->
-                        EpisodeCard(
-                            episodeNumber = episode.episodeNumber,
-                            imageUrl = uiState.tvShowInfo.posterPictureURL,
-                            episodeName = episode.name,
-                            releaseDate = episode.releaseDate,
-                            duration = if (isArabicSystemLocale()) arabicDuration(episode.duration) else episode.duration.formatDuration(),
-                            rating = episode.rating,
+                if (!uiState.isEpisodesLoading) {
+                    if (uiState.episodes.isNotEmpty()) {
+                        items(uiState.episodes) { episode ->
+                            EpisodeCard(
+                                episodeNumber = episode.episodeNumber,
+                                imageUrl = uiState.tvShowInfo.posterPictureURL,
+                                episodeName = episode.name,
+                                releaseDate = episode.releaseDate,
+                                duration = if (isArabicSystemLocale()) arabicDuration(episode.duration) else episode.duration.formatDuration(),
+                                rating = episode.rating,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 8.dp)
+                                    .noRippleClickable {
+                                        listener.onClickEpisode(
+                                            episode.currentSeason,
+                                            episode.episodeNumber
+                                        )
+                                    }
+                            )
+                        }
+                    }
+                } else {
+                    items(5) {
+                        ShimmeringEpisodeCard(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .padding(bottom = 8.dp)
-                                .noRippleClickable {
-                                    listener.onClickEpisode(
-                                        episode.currentSeason,
-                                        episode.episodeNumber
-                                    )
-                                }
                         )
                     }
                 }
             }
+
         }
 
         TopAppBar(
@@ -323,3 +334,4 @@ fun TvShowDetailsContent(
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return type.toStringResource()
 }
+

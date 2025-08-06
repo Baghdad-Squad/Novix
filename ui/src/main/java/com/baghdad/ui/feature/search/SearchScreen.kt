@@ -37,6 +37,8 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.feature.search.component.EmptySearchState
 import com.baghdad.ui.feature.search.component.RecentSearchItem
 import com.baghdad.ui.feature.search.component.RecentlyViewedSection
@@ -46,6 +48,10 @@ import com.baghdad.ui.feature.search.component.SectionHeaderWithAction
 import com.baghdad.ui.feature.util.remeberSaveableLazyListState
 import com.baghdad.ui.feature.util.rememberSaveableLazyGridState
 import com.baghdad.ui.navigation.graph.search.SearchNavEvent
+import com.baghdad.ui.navigation.graph.search.SearchNavEvent.NavigateToActorDetails
+import com.baghdad.ui.navigation.graph.search.SearchNavEvent.NavigateToLogin
+import com.baghdad.ui.navigation.graph.search.SearchNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.navigation.graph.search.SearchNavEvent.NavigateToTvShowDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
@@ -53,6 +59,7 @@ import com.baghdad.viewmodel.search.SearchInteractionListener
 import com.baghdad.viewmodel.search.SearchScreenEffect
 import com.baghdad.viewmodel.search.SearchScreenState
 import com.baghdad.viewmodel.search.SearchViewModel
+import com.baghdad.viewmodel.shared.SavedListUiState
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
@@ -66,6 +73,7 @@ fun SearchScreen(
     val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
     val actorItems = uiState.actorsFlow.collectAsLazyPagingItems()
     val tvShowItems = uiState.tvShowsFlow.collectAsLazyPagingItems()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     SearchContent(
         uiState = uiState,
@@ -73,7 +81,8 @@ fun SearchScreen(
         snackBarState = snackBarState,
         movieItems = movieItems,
         actorItems = actorItems,
-        tvShowItems = tvShowItems
+        tvShowItems = tvShowItems,
+        savedLists = savedLists,
     )
 
     HandleNavigationEffects(
@@ -90,15 +99,19 @@ private fun HandleNavigationEffects(
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
             is SearchScreenEffect.NavigateToActorDetails -> {
-                handleNavigation(SearchNavEvent.NavigateToActorDetails(effect.actorId))
+                handleNavigation(NavigateToActorDetails(effect.actorId))
             }
 
             is SearchScreenEffect.NavigateToMovieDetails -> {
-                handleNavigation(SearchNavEvent.NavigateToMovieDetails(effect.movieId))
+                handleNavigation(NavigateToMovieDetails(effect.movieId))
             }
 
             is SearchScreenEffect.NavigateToTvShowDetails -> {
-                handleNavigation(SearchNavEvent.NavigateToTvShowDetails(effect.tvShowId))
+                handleNavigation(NavigateToTvShowDetails(effect.tvShowId))
+            }
+
+            SearchScreenEffect.NavigateToLogin -> {
+                handleNavigation(NavigateToLogin)
             }
         }
     }
@@ -111,7 +124,8 @@ fun SearchContent(
     snackBarState: SnackBarState,
     movieItems: LazyPagingItems<SearchScreenState.MovieUiState>,
     actorItems: LazyPagingItems<SearchScreenState.ActorUiState>,
-    tvShowItems: LazyPagingItems<SearchScreenState.TvShowUiState>
+    tvShowItems: LazyPagingItems<SearchScreenState.TvShowUiState>,
+    savedLists: LazyPagingItems<SavedListUiState>,
 ) {
     val moviesState = rememberSaveableLazyGridState(key = "movies_grid")
     val actorsState = remeberSaveableLazyListState(key = "actors_list")
@@ -156,6 +170,25 @@ fun SearchContent(
             )
 
         }
+        SavedListBottomSheet(
+            isVisible = uiState.addToListBottomSheetState.isVisible,
+            isUserLoggedIn = uiState.isUserLoggedIn,
+            onAddClick = listener::onSaveItemToListClicked,
+            onCreateNewListClick = listener::onCreateNewListClicked,
+            onLoginClick = listener::onLoginClicked,
+            onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
+            lists = savedLists,
+            selectedListId = uiState.addToListBottomSheetState.selectedListId,
+            onListSelected = listener::onListSelected,
+        )
+        AddListBottomSheet(
+            isVisible = uiState.addListBottomSheetState.isVisible,
+            isLoading = uiState.addListBottomSheetState.isLoading,
+            listName = uiState.addListBottomSheetState.listName,
+            onDismiss = listener::onCreateListBottomSheetDismiss,
+            onAddClick = listener::onCreateListBottomSheetAddClick,
+            onListNameChange = listener::onCreatedListNameChanged,
+        )
     }
 }
 
@@ -190,7 +223,7 @@ private fun SearchContentSection(
             SearchResultContent(
                 selectedTab = uiState.selectedSearchTab,
                 onTabSelected = listener::onSelectedSearchTabChanged,
-                onSavedClick = listener::onSaveRecentlyViewedClick,
+                onSaveMovieClick = listener::onSaveMovieClick,
                 movies = movieItems,
                 tvShows = tvShowItems,
                 actors = actorItems,
@@ -362,7 +395,8 @@ private fun SearchScreenPreview() {
             snackBarState = SnackBarState(),
             movieItems = flowOf(PagingData.empty<SearchScreenState.MovieUiState>()).collectAsLazyPagingItems(),
             actorItems = flowOf(PagingData.empty<SearchScreenState.ActorUiState>()).collectAsLazyPagingItems(),
-            tvShowItems = flowOf(PagingData.empty<SearchScreenState.TvShowUiState>()).collectAsLazyPagingItems()
+            tvShowItems = flowOf(PagingData.empty<SearchScreenState.TvShowUiState>()).collectAsLazyPagingItems(),
+            savedLists = flowOf(PagingData.empty<SavedListUiState>()).collectAsLazyPagingItems(),
         )
     }
 }
@@ -373,11 +407,30 @@ private fun createPreviewListener() = object : SearchInteractionListener {
     override fun onClearRecentSearchClick() {}
     override fun onRemoveRecentSearchItemClick(id: Long) {}
     override fun onRecentSearchItemClick(id: Long) {}
+
+    override fun onSaveMovieClick(movie: SearchScreenState.MovieUiState) {}
+
+    override fun onSaveRecentlyViewedClick(recentlyViewed: SearchScreenState.RecentlyViewedUiState) {}
     override fun onActorItemClick(id: Long) {}
-    override fun onSaveRecentlyViewedClick(item: Long) {}
     override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {}
     override fun onRecentlyViewedClick(id: Long, imageUrl: String) {}
     override fun onMovieItemClick(contentId: Long, contentImageUrl: String) {}
     override fun onTvShowItemClick(contentId: Long, contentImageUrl: String) {}
     override fun onSnackBarActionLabelClick() {}
+
+    override fun onSaveItemToListClicked() {}
+
+    override fun onCreateNewListClicked() {}
+
+    override fun onLoginClicked() {}
+
+    override fun onSaveToListBottomSheetDismiss() {}
+
+    override fun onListSelected(listId: Long) {}
+
+    override fun onCreatedListNameChanged(name: String) {}
+
+    override fun onCreateListBottomSheetDismiss() {}
+
+    override fun onCreateListBottomSheetAddClick() {}
 }
