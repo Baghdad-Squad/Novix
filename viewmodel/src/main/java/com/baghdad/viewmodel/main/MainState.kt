@@ -5,5 +5,7 @@ import com.baghdad.viewmodel.base.BaseUiState
 data class MainState(
     val isFirstTimeUser: Boolean? = null,
     val isLoggedIn: Boolean? = null,
+    val isAppInDarkTheme: Boolean? = true,
+    val appLanguage: String = "ar",
     val isLoading: Boolean = true
 ) : BaseUiState

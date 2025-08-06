@@ -8,4 +8,9 @@
     <string name="rate_save_and_create_your_own_lists">Rate, save, and create your own lists.</string>
     <string name="rate_movies_track_your_viewing_history_and_easily_save_your_favorite_lists">Rate movies, track your viewing history, and easily save your favorite lists.</string>
     <string name="added_list_successfully">added list successfully</string>
+
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
 </resources>

@@ -6,7 +6,7 @@ import com.baghdad.domain.usecase.episode.AddEpisodeRateUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeAccountStatesUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.person.Actor
@@ -37,14 +37,14 @@ class EpisodeDetailsViewModelTest {
         getEpisodeCastMembersUseCase = mockk()
         getEpisodeDetailsUseCase = mockk()
         getEpisodeAccountStatesUseCase = mockk()
-        isLoggedInUseCase = mockk()
+        isUserLoggedInUseCase = mockk()
         addEpisodeRateUseCase = mockk()
 
 
         coEvery { getEpisodeCastMembersUseCase(any(), any(), any()) } returns createMockCastMembers()
         coEvery { getEpisodeDetailsUseCase(any(), any(), any()) } returns createMockEpisode()
         coEvery { getEpisodeAccountStatesUseCase(any(), any(), any()) } returns createMockAccountStates()
-        coEvery { isLoggedInUseCase() } returns true
+        coEvery { isUserLoggedInUseCase() } returns true
         coEvery { addEpisodeRateUseCase(any(), any(), any(), any()) } returns Unit
 
         val savedStateHandle = SavedStateHandle(mapOf(
@@ -59,7 +59,7 @@ class EpisodeDetailsViewModelTest {
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
             addEpisodeRateUseCase = addEpisodeRateUseCase,
             getEpisodeAccountStatesUseCase = getEpisodeAccountStatesUseCase,
-            isLoggedInUseCase = isLoggedInUseCase,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
             ioDispatcher = testDispatcher,
             savedStateHandle = savedStateHandle
         )
@@ -232,7 +232,7 @@ class EpisodeDetailsViewModelTest {
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
             addEpisodeRateUseCase = addEpisodeRateUseCase,
             getEpisodeAccountStatesUseCase = getEpisodeAccountStatesUseCase,
-            isLoggedInUseCase = isLoggedInUseCase,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
             ioDispatcher = testDispatcher
         )
 
@@ -261,7 +261,7 @@ class EpisodeDetailsViewModelTest {
             getEpisodeDetailsUseCase = getEpisodeDetailsUseCase,
             addEpisodeRateUseCase = addEpisodeRateUseCase,
             getEpisodeAccountStatesUseCase = getEpisodeAccountStatesUseCase,
-            isLoggedInUseCase = isLoggedInUseCase,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
             ioDispatcher = testDispatcher
         )
 
@@ -417,7 +417,7 @@ class EpisodeDetailsViewModelTest {
     private lateinit var getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase
     private lateinit var episodeDetailsViewModel: EpisodeDetailsViewModel
     private lateinit var getEpisodeAccountStatesUseCase: GetEpisodeAccountStatesUseCase
-    private lateinit var isLoggedInUseCase: IsLoggedInUseCase
+    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
     private lateinit var addEpisodeRateUseCase: AddEpisodeRateUseCase
 
     private val testDispatcher = StandardTestDispatcher()

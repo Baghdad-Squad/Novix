@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.tvShowDetails
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.tvShow.AddTvShowRateUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowAccountStatesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
@@ -37,7 +37,7 @@ class TvShowDetailsViewModelTest {
     private lateinit var addContinueWatchingUseCase: AddContinueWatchingUseCase
     private lateinit var getTvShowAccountStatesUseCase: GetTvShowAccountStatesUseCase
     private lateinit var addTvShowRateUseCase: AddTvShowRateUseCase
-    private lateinit var isLoggedInUseCase: IsLoggedInUseCase
+    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
     private val testDispatcher = StandardTestDispatcher()
 
     @BeforeEach
@@ -50,7 +50,7 @@ class TvShowDetailsViewModelTest {
         addContinueWatchingUseCase = mockk()
         getTvShowAccountStatesUseCase = mockk()
         addTvShowRateUseCase = mockk()
-        isLoggedInUseCase = mockk()
+        isUserLoggedInUseCase = mockk()
 
         tvShowDetailsViewModel = TvShowDetailsViewModel(
             savedStateHandle = savedStateHandle,
@@ -60,7 +60,7 @@ class TvShowDetailsViewModelTest {
             addContinueWatchingUseCase = addContinueWatchingUseCase,
             getTvShowAccountStatesUseCase = getTvShowAccountStatesUseCase,
             addTvShowRateUseCase = addTvShowRateUseCase,
-            isLoggedInUseCase = isLoggedInUseCase,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
             ioDispatcher = testDispatcher
         )
     }
