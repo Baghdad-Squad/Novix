@@ -81,7 +81,7 @@ class LoginViewModel @Inject constructor(
     }
 
     override fun onNavigateBackClicked() {
-//        sendEffect(LoginUiEffect.NavigateBack)
+        sendEffect(LoginUiEffect.NavigateBack)
     }
 
     override fun onPasswordValueChange(value: String) {

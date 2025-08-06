@@ -18,30 +18,38 @@ import javax.inject.Inject
 
 class ContinueWatchingRepositoryImpl @Inject constructor(
     private val localContinueWatchingDataSource: LocalContinueWatchingDataSource,
-    private val authenticationRepositoryImpl: AuthenticationRepository
+    private val authenticationRepository: AuthenticationRepository
 ) : ContinueWatchingRepository {
     override suspend fun getContinueWatching(
         page: Int,
         pageSize: Int,
-    ): PagedResult<ContinueWatching> =
-        getLocalPagedSafely(
-            page = page,
-            pageSize = pageSize,
-            onStart = { },
-            getCachedPage = { _, _ ->
-                localContinueWatchingDataSource.getContinueWatching(
-                    1,
-                    pageSize,
-                    page,
-                ) // TODO : Add Authentication here
-            },
-            mapToEntity = ContinueWatchingDto::toEntity,
-        )
+    ): PagedResult<ContinueWatching> {
+        authenticationRepository.getLoggedInUser()?.let {
+            return getLocalPagedSafely(
+                page = page,
+                pageSize = pageSize,
+                onStart = { },
+                getCachedPage = { _, _ ->
+                    localContinueWatchingDataSource.getContinueWatching(
+                        it.id,
+                        pageSize,
+                        page,
+                    )
+                },
+                mapToEntity = ContinueWatchingDto::toEntity,
+            )
+        }
+        return PagedResult(emptyList(), 0, 0)
+    }
 
-    override fun observeContinueWatching(): Flow<List<ContinueWatching>> =
-        localContinueWatchingDataSource
-            .observeContinueWatching(1) // TODO : Add Authentication here
-            .map(List<ContinueWatchingDto>::toEntities)
+    override suspend fun observeContinueWatching(): Flow<List<ContinueWatching>> {
+        authenticationRepository.getLoggedInUser()?.let {
+            return localContinueWatchingDataSource
+                .observeContinueWatching(it.id)
+                .map(List<ContinueWatchingDto>::toEntities)
+        }
+        return flowOf(emptyList())
+    }
 
     override suspend fun addContinueWatching(
         contentId: Long,
@@ -49,21 +57,22 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
         contentImageUrl: String,
         contentType: ContinueWatching.ContentType,
     ) {
-        val continueWatching =
-            ContinueWatching(
-                contentId = contentId,
-                genreIds = genreIds,
-                contentImageUrl = contentImageUrl,
-                contentType = contentType,
-                userId = 1, // TODO : Add Authentication here
-            )
         executeSafely {
+            val userId = authenticationRepository.getLoggedInUser()?.id ?: return@executeSafely
+            val continueWatching =
+                ContinueWatching(
+                    contentId = contentId,
+                    genreIds = genreIds,
+                    contentImageUrl = contentImageUrl,
+                    contentType = contentType,
+                    userId = userId,
+                )
             localContinueWatchingDataSource.addContinueWatching(continueWatching.toDto())
         }
     }
 
     override suspend fun getAllContinueWatchingMovies(): Flow<List<ContinueWatching>> {
-        authenticationRepositoryImpl.getLoggedInUser()?.let {
+        authenticationRepository.getLoggedInUser()?.let {
             return localContinueWatchingDataSource.getAllContinueWatchingMovies(1)
                 .map(List<ContinueWatchingDto>::toEntities) // TODO : it.id instead of 1
         }
@@ -71,7 +80,7 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllContinueWatchingTvShows(): Flow<List<ContinueWatching>> {
-        authenticationRepositoryImpl.getLoggedInUser()?.let {
+        authenticationRepository.getLoggedInUser()?.let {
             return localContinueWatchingDataSource.getAllContinueWatchingTvShows(1)
                 .map(List<ContinueWatchingDto>::toEntities) // TODO : it.id instead of 1
         }

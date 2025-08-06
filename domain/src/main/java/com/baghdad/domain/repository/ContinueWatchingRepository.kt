@@ -10,7 +10,7 @@ interface ContinueWatchingRepository {
         pageSize: Int,
     ): PagedResult<ContinueWatching>
 
-    fun observeContinueWatching(): Flow<List<ContinueWatching>>
+    suspend fun observeContinueWatching(): Flow<List<ContinueWatching>>
 
     suspend fun addContinueWatching(
         contentId: Long,
