@@ -57,6 +57,7 @@ fun ProfileHeaderWithOption(
         ) {
             IslamicImage(
                 imageUrl = imageUrl,
+                errorContent = { PlaceHolderUserDefaultImage() },
                 contentDescription = "Profile Image",
                 modifier = Modifier
                     .size(48.dp)
