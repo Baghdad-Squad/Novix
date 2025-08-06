@@ -8,7 +8,7 @@
     <string name="recent_viewed">تم مشاهدته مؤخرًا</string>
     <string name="recent_search">تم البحث عنه مؤخرا</string>
     <string name="clock_icon">ايقونة ساعة</string>
-    <string name="cancel_icon">ايقونة اغلاك</string>
+    <string name="cancel_icon">ايقونة اغلاق</string>
     <string name="start_exploring">ابدأ الاستكشاف! ابحث عن أفلامك ومسلسلاتك وبرامجك المفضلة</string>
     <string name="search">البحث</string>
     <string name="search_hint">ابحث...</string>
@@ -31,7 +31,7 @@
     <string name="more_like_this">المزيد مثل هذا</string>
     <string name="overview">نظرة عامة</string>
     <string name="play_trailer">عرض المقطع الدعائي</string>
-    <string name="card_movie_image">صورة كارد الفلم</string>
+    <string name="card_movie_image">صورة بطاقة الفلم</string>
     <string name="birth_place">مكان الميلاد</string>
     <string name="top_tv_shows_picks">أفضل المسلسلات المختارة</string>
     <string name="top_movies_picks">أفضل الأفلام المختارة</string>
@@ -43,11 +43,11 @@
     <string name="episode">حلقة %1$s</string>
     <string name="view_reviews">عرض المراجعات</string>
     <string name="add_to_list">إضافة إلى القائمة</string>
-    <string name="please_login_to_save_to_list">الرجاء تسجيل الدخول لحفظ القائمه</string>
+    <string name="please_login_to_save_to_list">الرجاء تسجيل الدخول لحفظ القائمة</string>
     <string name="bottom_sheet_content_description">وصف محتوى الصفحة السفلية</string>
     <string name="login">تسجيل الدخول</string>
     <string name="rate_it">قيمه</string>
-    <string name="please_login_to_rate_your_favorite_items">الرجاء تسجيل الدخول لتقييم العناصر المفضاه لديك</string>
+    <string name="please_login_to_rate_your_favorite_items">الرجاء تسجيل الدخول لتقييم العناصر المفضلة لديك</string>
     <string name="my_favorite">أُفضله</string>
     <string name="my_movies">افلامي</string>
     <string name="add">إضافة</string>
@@ -89,9 +89,9 @@
 
     <string name="episodes">عدد الحلقات %1$d </string>
     <string name="season_number_template">الموسم %1$d </string>
-    <string name="automatically_redirecting_to_login">سيتم توجيهك تلقائيا لتسجيل الدخول في ٥ ثواني …</string>
-    <string name="oops_we_can_t_find_the_page">Oops! We can\'t find the page you\'re looking for</string>
-    <string name="there_was_a_problem">There was a problem</string>
+    <string name="automatically_redirecting_to_login">سيتم توجيهك تلقائيا لتسجيل الدخول بعد ٥ ثواني …</string>
+    <string name="oops_we_can_t_find_the_page">عذرًا! لم نتمكن من العثور على الصفحة التي تبحث عنها</string>
+    <string name="there_was_a_problem">هناك مشكلة</string>
     <string name="password_reset_success_message">استعادة كلمة المرور</string>
     <string name="password_reset_main_page_header">اعادة تعيين كلمة المرور</string>
     <string name="sign_up_for_an_account">سجّل للحصول على حساب</string>
@@ -122,10 +122,10 @@
     <string name="duration_combined">%1$s  و %2$s</string>
     <string name="default_image">"الصورة الافتراضية "</string>
     <string name="an_error_occurred_while_loading_genres">حدث خطأ أثناء تحميل الفئات</string>
-    <string name="welcome_screen_background">welcome screen background</string>
-    <string name="welcome_screen_content_details">Discover the world’s greatest movies and series. Search, watch, and save your favorites all in one place.</string>
-    <string name="welcome_to_novix">Welcome to Novix</string>
-    <string name="continue_as_guest">Continue as guest</string>
+    <string name="welcome_screen_background">خلفية شاشة الترحيب</string>
+    <string name="welcome_screen_content_details">استكشف أفضل الأفلام والمسلسلات. ابحث، شاهد، واحفظ كل ما تحبه في مكان واحد.</string>
+    <string name="welcome_to_novix">أهلًا بك في نوفيكس</string>
+    <string name="continue_as_guest">الدخول كضيف</string>
     <string name="submit">إدخال</string>
     <string name="please_login_to_rate">سجل دخولك لتستطيع تقييم أعمالك المفضلة.</string>
     <string name="my_lists">قوائمي</string>
@@ -140,6 +140,7 @@
     <string name="list_item_count_placeholder">%1$d items</string>
 
     <string name="my_account">حسابي</string>
+    <string name="profile_image">صورة الحساب</string>
     <string name="watching_history">سجل المشاهدة</string>
     <string name="my_rating">تقييمي</string>
     <string name="content_restriction">حجب المحتوى</string>
