@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.tvShowDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.MediaAccountStates
@@ -20,6 +21,8 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.BottomSheetType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,7 +57,7 @@ class TvShowDetailsViewModel @Inject constructor(
             dispatcher = ioDispatcher,
             onSuccess = ::onGetTvShowDetailsSuccess,
             onStart = { updateState { it.copy(isTvShowDetailsLoading = true) } },
-            onFinally = ::onFinally,
+            onFinally = ::onFinallyAndAddToContinueWatching,
             onError = ::onLoadDataError
         )
     }
@@ -250,7 +253,6 @@ class TvShowDetailsViewModel @Inject constructor(
     }
 
     override fun onClickPlayTrailer() {
-        addToContinueWatching()
         sendEffect(TvShowDetailsScreenEffect.OpenYoutubeLink(currentState.tvShowInfo.trailerURL))
     }
 
@@ -265,8 +267,9 @@ class TvShowDetailsViewModel @Inject constructor(
     }
 
 
-    private fun onFinally() {
+    private fun onFinallyAndAddToContinueWatching() {
         updateState { it.copy(isTvShowDetailsLoading = false) }
+        addToContinueWatching()
     }
 
     private fun showNoInternetSnackBar() {

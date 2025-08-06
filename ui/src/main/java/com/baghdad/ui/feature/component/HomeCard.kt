@@ -22,9 +22,9 @@ fun HomeCard(
     url: String,
     contentDescription: String?,
     isSaved: Boolean,
-    onSavedClick: () -> Unit,
     onClick:() -> Unit,
     modifier: Modifier = Modifier,
+    onSavedClick: () -> Unit = {},
     isLoadingEnabled: Boolean = true,
     showSaveIcon: Boolean = true
 ) {

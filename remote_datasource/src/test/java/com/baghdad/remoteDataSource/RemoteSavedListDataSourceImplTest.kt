@@ -190,30 +190,16 @@ class RemoteSavedListDataSourceImplTest {
         val successResponse = Response.success(AddListItemResponse(1, "Success"))
 
         coEvery {
-            savedListApiService.addItemToSavedList(listId, any(), sessionId)
+            savedListApiService.addMovieToSavedList(listId, any(), sessionId)
         } returns successResponse
 
         // When
         remoteSource.addMovieToSavedList(listId, movieId, sessionId)
 
         // Then
-        coVerify { savedListApiService.addItemToSavedList(listId, any(), sessionId) }
+        coVerify { savedListApiService.addMovieToSavedList(listId, any(), sessionId) }
     }
 
-    @Test
-    fun `should return success response when adding a tv show to list`() = runTest {
-        // Given
-        val successResponse = Response.success(AddListItemResponse(1, "Success"))
-        coEvery {
-            savedListApiService.addItemToSavedList(listId, any(), sessionId)
-        } returns successResponse
-
-        // When
-        remoteSource.addTvShowToSavedList(listId, tvShowId, sessionId)
-
-        // Then
-        coVerify { savedListApiService.addItemToSavedList(listId, any(), sessionId) }
-    }
 
     @Test
     fun `should throw exception when api returns error response`() = runTest {
@@ -223,7 +209,7 @@ class RemoteSavedListDataSourceImplTest {
         )
 
         coEvery {
-            savedListApiService.addItemToSavedList(listId, any(), sessionId)
+            savedListApiService.addMovieToSavedList(listId, any(), sessionId)
         } returns errorResponse
 
         // When & Then
@@ -231,7 +217,7 @@ class RemoteSavedListDataSourceImplTest {
             remoteSource.addMovieToSavedList(listId, movieId, sessionId)
         }
 
-        coVerify { savedListApiService.addItemToSavedList(listId, any(), sessionId) }
+        coVerify { savedListApiService.addMovieToSavedList(listId, any(), sessionId) }
     }
 
     @Test
@@ -242,7 +228,7 @@ class RemoteSavedListDataSourceImplTest {
         )
 
         coEvery {
-            savedListApiService.addItemToSavedList(listId, any(), sessionId)
+            savedListApiService.addMovieToSavedList(listId, any(), sessionId)
         } returns errorResponse
 
         // When & Then
@@ -250,33 +236,20 @@ class RemoteSavedListDataSourceImplTest {
             remoteSource.addMovieToSavedList(listId, tvShowId, sessionId)
         }
 
-        coVerify { savedListApiService.addItemToSavedList(listId, any(), sessionId) }
+        coVerify { savedListApiService.addMovieToSavedList(listId, any(), sessionId) }
     }
 
     @Test
     fun `should remove movie form saved list when the movie removed successfully`() = runTest {
         // Given
-        coEvery { savedListApiService.removeItemFromSavedList(listId, any(), sessionId) } returns
+        coEvery { savedListApiService.removeMovieFromSavedList(listId, any(), sessionId) } returns
                 Response.success(RemoveListItemResponse(1, "Success"))
 
         // When
         remoteSource.removeMovieFromSavedList(listId, movieId, sessionId)
 
         // Then
-        coVerify { savedListApiService.removeItemFromSavedList(listId, any(), sessionId) }
-    }
-
-    @Test
-    fun `should remove tv show form saved list when the tv show removed successfully`() = runTest {
-        // Given
-        coEvery { savedListApiService.removeItemFromSavedList(listId, any(), sessionId) } returns
-                Response.success(RemoveListItemResponse(1, "Success"))
-
-        // When
-        remoteSource.removeTvShowFromSavedList(listId, tvShowId, sessionId)
-
-        // Then
-        coVerify { savedListApiService.removeItemFromSavedList(listId, any(), sessionId) }
+        coVerify { savedListApiService.removeMovieFromSavedList(listId, any(), sessionId) }
     }
 
     @Test

@@ -17,7 +17,7 @@ import com.baghdad.viewmodel.search.SearchScreenState
 fun MovieCardList(
     state: LazyGridState,
     movies: LazyPagingItems<SearchScreenState.MovieUiState>,
-    onSavedClick: (Long) -> Unit,
+    onSavedClick: (SearchScreenState.MovieUiState) -> Unit,
     onMovieClick: (id: Long, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -35,7 +35,7 @@ fun MovieCardList(
             url = movie.posterPictureURL,
             contentDescription = null,
             isSaved = movie.isSaved,
-            onSavedClick = { onSavedClick(movie.id) },
+            onSavedClick = { onSavedClick(movie) },
             onClick = {
                 onMovieClick(
                     movie.id,

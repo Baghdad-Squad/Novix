@@ -10,16 +10,12 @@ interface SavedListRepository {
         page: Int,
         pageSize: Int,
     ): PagedResult<SavedList>
-
     suspend fun addMovieToSavedList(listId: Long, movieId: Long)
-    suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long)
-
     suspend fun getSavedListDetails(
         listId: Long,
         page: Int,
         pageSize: Int): SavedListDetails
     suspend fun removeMovieFromSavedList(listId: Long, movieId: Long)
-    suspend fun removeTvShowFromSavedList(listId: Long, tvShowId: Long)
 
     suspend fun deleteSavedListById(listId: Long)
 }
