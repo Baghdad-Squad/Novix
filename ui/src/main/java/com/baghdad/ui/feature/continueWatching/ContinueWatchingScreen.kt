@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -34,6 +35,7 @@ import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
@@ -137,6 +139,11 @@ fun ContinueWatchingContent(
             )
         }
     ) {
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
         Column(
             modifier = Modifier
                 .background(Theme.color.surface)
