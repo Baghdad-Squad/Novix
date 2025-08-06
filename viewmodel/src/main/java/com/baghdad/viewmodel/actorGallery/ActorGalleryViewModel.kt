@@ -15,7 +15,7 @@ class ActorGalleryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getGalleryImagesUseCase: GetActorGalleryUseCase,
     private val ioDispatcher: CoroutineDispatcher,
-    ) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
+) : BaseViewModel<ActorGalleryScreenState, ActorGalleryScreenEffect>(ActorGalleryScreenState()),
     ActorGalleryInteractionListener {
 
     private val actorId: Long = checkNotNull(savedStateHandle["actorId"])
@@ -52,6 +52,11 @@ class ActorGalleryViewModel @Inject constructor(
 
 
     private fun showNoInternetSnackBar() {
+            updateState {
+                it.copy(
+                    isLoading = true
+                )
+            }
         showSnackBar(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
