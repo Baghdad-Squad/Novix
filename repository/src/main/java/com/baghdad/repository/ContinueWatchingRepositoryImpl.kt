@@ -75,16 +75,16 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
 
     override suspend fun getAllContinueWatchingMovies(): Flow<List<ContinueWatching>> {
         authenticationRepository.getLoggedInUser()?.let {
-            return localContinueWatchingDataSource.getAllContinueWatchingMovies(1)
-                .map(List<ContinueWatchingDto>::toEntities) // TODO : it.id instead of 1
+            return localContinueWatchingDataSource.getAllContinueWatchingMovies(it.id)
+                .map(List<ContinueWatchingDto>::toEntities)
         }
         return flowOf(emptyList())
     }
 
     override suspend fun getAllContinueWatchingTvShows(): Flow<List<ContinueWatching>> {
         authenticationRepository.getLoggedInUser()?.let {
-            return localContinueWatchingDataSource.getAllContinueWatchingTvShows(1)
-                .map(List<ContinueWatchingDto>::toEntities) // TODO : it.id instead of 1
+            return localContinueWatchingDataSource.getAllContinueWatchingTvShows(it.id)
+                .map(List<ContinueWatchingDto>::toEntities)
         }
         return flowOf(emptyList())
     }
