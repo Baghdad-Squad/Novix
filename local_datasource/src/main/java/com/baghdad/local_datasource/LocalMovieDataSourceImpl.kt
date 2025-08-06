@@ -16,7 +16,9 @@ import com.baghdad.repository.model.MovieDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LocalMovieDataSourceImpl @Inject constructor(
     private val movieDao: MovieDao,
     private val genreDao: GenreDao,

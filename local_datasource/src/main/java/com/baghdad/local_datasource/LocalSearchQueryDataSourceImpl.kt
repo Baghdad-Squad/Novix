@@ -13,7 +13,9 @@ import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.SearchQueryDto
 import com.baghdad.repository.model.SearchQueryDto.MediaType
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LocalSearchQueryDataSourceImpl @Inject constructor(
     private val searchQueryDao: SearchQueryDao,
     private val movieDao: MovieDao,

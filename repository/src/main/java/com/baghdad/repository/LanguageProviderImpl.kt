@@ -9,7 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LanguageProviderImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : LanguageProviderRepository {
