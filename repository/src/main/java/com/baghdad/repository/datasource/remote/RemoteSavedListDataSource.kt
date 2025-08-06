@@ -14,13 +14,12 @@ interface RemoteSavedListDataSource {
     ): PagedResultDto<SavedListDto>
 
     suspend fun addMovieToSavedList(listId: Long, movieId: Long, sessionId: String)
-    suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long, sessionId: String)
     suspend fun removeMovieFromSavedList(listId: Long, movieId: Long, sessionId: String)
-    suspend fun removeTvShowFromSavedList(listId: Long, tvShowId: Long, sessionId: String)
     suspend fun getSavedListDetails(
         listId: Long,
         page: Int,
-        pageSize: Int): SavedListDetailsDto
+        pageSize: Int
+    ): SavedListDetailsDto
 
     suspend fun deleteSavedListById(listId: Long, sessionId: String)
 }
