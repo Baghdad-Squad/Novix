@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.tvShowDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.MediaAccountStates
@@ -20,6 +21,8 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.BottomSheetType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
