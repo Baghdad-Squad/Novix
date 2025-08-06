@@ -21,8 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.baghdad.design_system.component.NovixBottomNavigationBar
@@ -35,28 +33,21 @@ import com.baghdad.ui.navigation.bottom.navigateToBottomNavDestination
 import com.baghdad.ui.navigation.bottom.rememberBottomNavSelectedIndex
 import com.baghdad.ui.navigation.bottom.rememberIsTopLevelMainRoute
 import com.baghdad.ui.navigation.route.Graph
-import com.baghdad.viewmodel.main.MainViewModel
+import com.baghdad.viewmodel.main.MainState
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel(),
+    state: MainState
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-
     val navController = rememberNavController()
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-
     val isMainGraphRoute by rememberIsTopLevelMainRoute(
         navBackStackEntry,
         BOTTOM_NAV_ITEMS.keys,
         TOP_LEVEL_ROUTES,
     )
-
-
-
     val selectedIndex by rememberBottomNavSelectedIndex(navBackStackEntry, BOTTOM_NAV_ITEMS.keys)
 
     val animatedBottomPadding by animateDpAsState(
@@ -64,9 +55,7 @@ fun MainScreen(
         animationSpec = BOTTOM_BAR_ANIMATION_SPEC
     )
 
-
     state.isLoggedIn?.let { isLoggedIn ->
-
         Scaffold(
             modifier = modifier
                 .background(Theme.color.surface)

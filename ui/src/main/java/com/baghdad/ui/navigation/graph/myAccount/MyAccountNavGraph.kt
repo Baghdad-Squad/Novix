@@ -17,11 +17,8 @@ fun NavGraphBuilder.myAccountNavGraph(navController: NavHostController) {
         startDestination = MyAccountRoute.MyAccountScreen
     ) {
         composable<MyAccountRoute.MyAccountScreen> {
-            ProfileScreen {
-                handleMyAccountNavigation(
-                    event = it,
-                    navController = navController
-                )
+            ProfileScreen { event ->
+                handleMyAccountNavigation(event, navController)
             }
         }
         composable<MyAccountRoute.MyRatingsScreen> {

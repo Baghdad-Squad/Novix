@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.trendingMovie
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class TrendingMoviesViewModel @Inject constructor(
     private val getTrendingMoviesUseCase: GetTrendingMoviesUseCase,
     private val getGenresUseCase: GetGenresUseCase,
-    private val isUserLoggedInUseCase: IsLoggedInUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val createSavedListUseCase: CreateSavedListUseCase,
