@@ -17,7 +17,9 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.savedList.SavedListDetailsDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RemoteSavedListDataSourceImpl @Inject constructor(
     private val savedListApiService: SavedListApiService,
     private val logger: Logger,

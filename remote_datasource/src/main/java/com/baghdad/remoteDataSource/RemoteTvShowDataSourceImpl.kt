@@ -10,9 +10,9 @@ import com.baghdad.remoteDataSource.mapper.tvShow.toPagedTvShowDtos
 import com.baghdad.remoteDataSource.mapper.tvShow.toTvShowDtos
 import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
-import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.response.tvShow.PopularTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
@@ -31,7 +31,9 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RemoteTvShowDataSourceImpl @Inject constructor(
     private val tvShowApiService: TvShowApiService,
     private val logger: Logger,

@@ -4,8 +4,8 @@ import com.baghdad.remoteDataSource.apiService.EpisodeApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.episode.mapToYoutubeTrailerUrl
 import com.baghdad.remoteDataSource.mapper.episode.toDto
-import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.mapper.toDto
+import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.response.RatingResponse
@@ -17,9 +17,11 @@ import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
-import javax.inject.Inject
 import com.baghdad.repository.model.MediaAccountStateDto
+import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RemoteEpisodeDataSourceImpl @Inject constructor(
     private val episodeApiService: EpisodeApiService,
     private val logger: Logger,
