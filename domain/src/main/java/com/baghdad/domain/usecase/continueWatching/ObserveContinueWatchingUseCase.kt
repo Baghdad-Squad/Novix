@@ -6,5 +6,5 @@ import javax.inject.Inject
 class ObserveContinueWatchingUseCase @Inject constructor(
     private val continueWatchingRepository: ContinueWatchingRepository,
 ) {
-    operator fun invoke() = continueWatchingRepository.observeContinueWatching()
+    suspend operator fun invoke() = continueWatchingRepository.observeContinueWatching()
 }

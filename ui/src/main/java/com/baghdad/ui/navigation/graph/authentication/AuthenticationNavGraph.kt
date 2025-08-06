@@ -8,6 +8,7 @@ import com.baghdad.ui.feature.authentication.ForgotPasswordWebViewScreen
 import com.baghdad.ui.feature.authentication.LoginScreen
 import com.baghdad.ui.feature.authentication.ResetPasswordWebViewScreen
 import com.baghdad.ui.feature.authentication.SignUpWebViewScreen
+import com.baghdad.ui.feature.welcome.WelcomeScreen
 import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.AuthenticationRoute.ForgotPasswordScreen
 import com.baghdad.ui.navigation.route.AuthenticationRoute.SignUpScreen
@@ -15,8 +16,16 @@ import com.baghdad.ui.navigation.route.Graph
 
 fun NavGraphBuilder.authenticationNavGraph(navController: NavHostController) {
     navigation<Graph.AuthenticationGraph>(
-        startDestination = AuthenticationRoute.LoginScreen,
+        startDestination = AuthenticationRoute.WelcomeScreen,
     ) {
+        composable<AuthenticationRoute.WelcomeScreen> {
+            WelcomeScreen(
+                handleNavigation = { event ->
+                    handleAuthenticationNavigation(event, navController)
+                }
+            )
+        }
+
         composable<AuthenticationRoute.LoginScreen> {
             LoginScreen(
                 handleNavigation = { event ->
@@ -80,7 +89,13 @@ private fun handleAuthenticationNavigation(
         }
 
         AuthenticationNavEvent.NavigateBack -> {
-            navController.popBackStack()
+            navController.navigate(AuthenticationRoute.WelcomeScreen){
+                popUpTo(AuthenticationRoute.WelcomeScreen) { inclusive = true }
+            }
+        }
+
+        AuthenticationNavEvent.NavigateToLogin ->{
+            navController.navigate(AuthenticationRoute.LoginScreen)
         }
         AuthenticationNavEvent.NavigateToLogin -> {
             navController.navigate(AuthenticationRoute.LoginScreen) {
