@@ -10,7 +10,7 @@ interface ContinueWatchingRepository {
         pageSize: Int,
     ): PagedResult<ContinueWatching>
 
-    fun observeContinueWatching(): Flow<List<ContinueWatching>>
+    suspend fun observeContinueWatching(): Flow<List<ContinueWatching>>
 
     suspend fun addContinueWatching(
         contentId: Long,
@@ -18,4 +18,7 @@ interface ContinueWatchingRepository {
         contentImageUrl: String,
         contentType: ContinueWatching.ContentType,
     )
+
+    suspend fun getAllContinueWatchingMovies(): Flow<List<ContinueWatching>>
+    suspend fun getAllContinueWatchingTvShows(): Flow<List<ContinueWatching>>
 }

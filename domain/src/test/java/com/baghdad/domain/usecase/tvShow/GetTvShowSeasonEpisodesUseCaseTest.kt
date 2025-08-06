@@ -182,7 +182,8 @@ class GetTvShowSeasonEpisodesUseCaseTest {
             headerPictures = listOf(
                 "https://example.com/episode.jpg",
                 "https://example.com/episode2.jpg"
-            )
+            ),
+            userRating = 9
         )
     }
 }

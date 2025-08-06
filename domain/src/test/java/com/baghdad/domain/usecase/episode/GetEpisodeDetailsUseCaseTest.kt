@@ -18,25 +18,6 @@ class GetEpisodeDetailsUseCaseTest {
     private lateinit var episodeRepository: EpisodeRepository
     private lateinit var getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase
 
-    private val sampleEpisode = Episode(
-        id = 123L,
-        title = "The Heirs of the Dragon",
-        episodeNumber = 1,
-        rating = 8.5,
-        duration = "1h 5m",
-        releasedDate = LocalDate(2022, 8, 21),
-        trailerUrl = "https://www.youtube.com/watch?v=example",
-        currentSeason = 1,
-        overview = "King Viserys hosts a tournament to celebrate the birth of his second child.",
-        userRating = 9,
-        genres = listOf(Genre(1L, "Drama"), Genre(2L, "Fantasy")),
-        headerPictures = listOf(
-            "https://image.tmdb.org/t/p/w500/header1.jpg",
-            "https://image.tmdb.org/t/p/w500/header2.jpg",
-
-        )
-    )
-
     @BeforeEach
     fun setUp() {
         episodeRepository = mockk()
@@ -133,5 +114,24 @@ class GetEpisodeDetailsUseCaseTest {
         assertThat(result.id).isEqualTo(456L)
         assertThat(result.title).isEqualTo("The Long Night")
         assertThat(result.rating).isEqualTo(9.8)
+    }
+    companion object {
+        private val sampleEpisode = Episode(
+            id = 123L,
+            title = "The Heirs of the Dragon",
+            episodeNumber = 1,
+            rating = 8.5,
+            duration = "1h 5m",
+            releasedDate = LocalDate(2022, 8, 21),
+            trailerUrl = "https://www.youtube.com/watch?v=example",
+            currentSeason = 1,
+            overview = "King Viserys hosts a tournament to celebrate the birth of his second child.",
+            genres = listOf(Genre(1L, "Drama"), Genre(2L, "Fantasy")),
+            headerPictures = listOf(
+                "https://image.tmdb.org/t/p/w500/header1.jpg",
+                "https://image.tmdb.org/t/p/w500/header2.jpg"
+            ),
+            userRating = 9
+        )
     }
 }

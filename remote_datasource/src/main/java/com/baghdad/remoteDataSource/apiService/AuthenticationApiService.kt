@@ -8,6 +8,7 @@ import com.baghdad.remoteDataSource.response.SessionResponse
 import com.baghdad.remoteDataSource.response.user.UserResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -32,7 +33,7 @@ interface AuthenticationApiService {
     ): Response<UserResponse>
 
     @Authenticated
-    @POST("authentication/session")
+    @DELETE("authentication/session")
     suspend fun deleteSession(
         @Query("session_id") sessionId: String
     ): Response<SessionResponse>

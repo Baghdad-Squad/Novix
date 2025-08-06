@@ -10,7 +10,9 @@ import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ActorRepositoryImpl @Inject constructor(
     private val remoteActorDataSource: RemoteActorDataSource,
 ) : ActorRepository {

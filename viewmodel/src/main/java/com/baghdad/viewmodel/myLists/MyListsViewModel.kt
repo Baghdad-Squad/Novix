@@ -10,6 +10,8 @@ import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.errorStates.MyListsSnackBarMessage
+import com.baghdad.viewmodel.shared.AddListBottomSheetState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -99,7 +101,7 @@ class MyListsViewModel
             updateState {
                 it.copy(
                     addListBottomSheetState =
-                        MyListsScreenState.AddListBottomSheetState(
+                        AddListBottomSheetState(
                             isVisible = true,
                         ),
                 )
@@ -152,8 +154,16 @@ class MyListsViewModel
                         ),
                 )
             }
+            showAddSuccessSnackBar()
             getSavedLists()
         }
+
+        private fun showAddSuccessSnackBar() {
+            showSnackBar(
+                message = MyListsSnackBarMessage.SavedListCreatedSuccessfully,
+                isSuccess = true,
+            )
+    }
 
         private fun onAddListFinally() {
             updateState {
@@ -170,22 +180,21 @@ class MyListsViewModel
             updateState {
                 it.copy(
                     addListBottomSheetState = it.addListBottomSheetState.copy(isLoading = true),
-            )
+                )
+            }
         }
-    }
 
-    override fun onListClick(listId: Long) {
-        sendEffect(MyListsScreenEffect.NavigateToViewSavedDetails(listId))
-    }
+        override fun onListClick(listId: Long) {
+            sendEffect(MyListsScreenEffect.NavigateToViewSavedDetails(listId))
+        }
 
-    override fun onSnackBarActionLabelClick() {
-        getSavedLists()
-    }
+        override fun onSnackBarActionLabelClick() {
+            getSavedLists()
+        }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
-        BaseSnackBarMessage.UnknownError
+        override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
 
-    companion object {
-        private const val PAGES_SIZE = 20
+        companion object {
+            private const val PAGES_SIZE = 20
     }
 }

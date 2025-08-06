@@ -17,6 +17,7 @@ fun TopRatingSection(
     onViewAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     HomeHorizontalCarouselSection(
         title = stringResource(R.string.top_rating),
         isLoading = isLoading,
@@ -30,7 +31,7 @@ fun TopRatingSection(
             isSaved = item.isSaved,
             onSavedClick = { onSaveClick(item) },
             onClick = { onClick(item) },
-            showSaveIcon = showSaveIcon,
+            isSaveToListVisible = showSaveIcon,
             modifier = Modifier.aspectRatio(0.8f)
         )
     }

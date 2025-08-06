@@ -31,7 +31,7 @@ fun ContinueWatchingSection(
             onSavedClick = { onSaveClick(item) },
             onClick = { onClick(item) },
             modifier = Modifier.aspectRatio(0.8f),
-            showSaveIcon = showSaveIcon
+            isSaveToListVisible = showSaveIcon
         )
     }
 }

@@ -15,7 +15,7 @@ import com.baghdad.viewmodel.search.SearchScreenState
 fun RecentlyViewedSection(
     recentViewed: List<SearchScreenState.RecentlyViewedUiState>,
     onClearRecentlyViewedClick: () -> Unit,
-    onSavedClick: (Long) -> Unit,
+    onSavedClick: (SearchScreenState.RecentlyViewedUiState) -> Unit,
     onRecentlyViewedClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -29,7 +29,7 @@ fun RecentlyViewedSection(
     HorizontalMediaCardList(
         items = recentViewed,
         imageUrl = { it.posterPictureURL },
-        onSavedClick = { onSavedClick(it.id) },
+        onSavedClick = { onSavedClick(it) },
         onCardClick = { onRecentlyViewedClick(it.id, it.posterPictureURL) },
         isSaved = { it.isSaved },
         modifier = Modifier

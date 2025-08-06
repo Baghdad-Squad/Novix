@@ -7,6 +7,7 @@ import com.baghdad.domain.repository.ContinueWatchingRepository
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.LanguageProviderRepository
 import com.baghdad.domain.repository.MovieRepository
+import com.baghdad.domain.repository.OnBoardingRepository
 import com.baghdad.domain.repository.RecentlyViewedRepository
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.domain.repository.SearchRepository
@@ -18,6 +19,7 @@ import com.baghdad.repository.ContinueWatchingRepositoryImpl
 import com.baghdad.repository.EpisodeRepositoryImpl
 import com.baghdad.repository.LanguageProviderImpl
 import com.baghdad.repository.MovieRepositoryImpl
+import com.baghdad.repository.OnBoardingRepositoryImpl
 import com.baghdad.repository.RecentlyViewedRepositoryImpl
 import com.baghdad.repository.SavedListRepositoryImpl
 import com.baghdad.repository.SearchRepositoryImpl
@@ -59,6 +61,9 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideSavedListRepository(savedListRepository: SavedListRepositoryImpl): SavedListRepository
+
+    @Binds
+    abstract fun provideOnBoardingRepository(onBoardingRepository: OnBoardingRepositoryImpl): OnBoardingRepository
 
     @Binds
     abstract fun provideLanguageProviderRepository(languageProviderImpl: LanguageProviderImpl): LanguageProviderRepository

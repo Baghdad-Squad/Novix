@@ -1,21 +1,28 @@
 package com.baghdad.ui.feature.tvShowDetails
 
 import android.content.Context
+import android.graphics.Color
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,13 +30,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.CircleDot
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -46,6 +58,7 @@ import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
 import com.baghdad.ui.feature.tvShowDetails.component.CastMembersSection
 import com.baghdad.ui.feature.tvShowDetails.component.EpisodeCard
 import com.baghdad.ui.feature.tvShowDetails.component.SeasonSection
+import com.baghdad.ui.feature.tvShowDetails.component.ShimmeringEpisodeCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowHeaderWithDetailsCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
@@ -68,7 +81,7 @@ import com.baghdad.viewmodel.util.formatDuration
 @Composable
 fun TvShowDetailsScreen(
     viewModel: TvShowDetailsViewModel = hiltViewModel(),
-    handleNavigation: (TvShowDetailsNavEvent) -> Unit
+    handleNavigation: (TvShowDetailsNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
@@ -86,7 +99,7 @@ fun TvShowDetailsScreen(
 private fun handleEffect(
     effect: TvShowDetailsScreenEffect,
     context: Context,
-    handleNavigation: (TvShowDetailsNavEvent) -> Unit
+    handleNavigation: (TvShowDetailsNavEvent) -> Unit,
 ) {
     when (effect) {
         is TvShowDetailsScreenEffect.NavigateBack -> handleNavigation(
@@ -127,7 +140,7 @@ fun TvShowDetailsContent(
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
     snackBarState: SnackBarState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
     var shouldShowBackground by remember { mutableStateOf(false) }
@@ -268,29 +281,39 @@ fun TvShowDetailsContent(
                     )
                 }
 
-
-                if (uiState.episodes.isNotEmpty()) {
-                    items(uiState.episodes) { episode ->
-                        EpisodeCard(
-                            episodeNumber = episode.episodeNumber,
-                            imageUrl = uiState.tvShowInfo.posterPictureURL,
-                            episodeName = episode.name,
-                            releaseDate = episode.releaseDate,
-                            duration = if (isArabicSystemLocale()) arabicDuration(episode.duration) else episode.duration.formatDuration(),
-                            rating = episode.rating,
+                if (!uiState.isEpisodesLoading) {
+                    if (uiState.episodes.isNotEmpty()) {
+                        items(uiState.episodes) { episode ->
+                            EpisodeCard(
+                                episodeNumber = episode.episodeNumber,
+                                imageUrl = uiState.tvShowInfo.posterPictureURL,
+                                episodeName = episode.name,
+                                releaseDate = episode.releaseDate,
+                                duration = if (isArabicSystemLocale()) arabicDuration(episode.duration) else episode.duration.formatDuration(),
+                                rating = episode.rating,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 8.dp)
+                                    .noRippleClickable {
+                                        listener.onClickEpisode(
+                                            episode.currentSeason,
+                                            episode.episodeNumber
+                                        )
+                                    }
+                            )
+                        }
+                    }
+                } else {
+                    items(5) {
+                        ShimmeringEpisodeCard(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .padding(bottom = 8.dp)
-                                .noRippleClickable {
-                                    listener.onClickEpisode(
-                                        episode.currentSeason,
-                                        episode.episodeNumber
-                                    )
-                                }
                         )
                     }
                 }
             }
+
         }
 
         TopAppBar(
@@ -322,3 +345,4 @@ fun TvShowDetailsContent(
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return type.toStringResource()
 }
+
