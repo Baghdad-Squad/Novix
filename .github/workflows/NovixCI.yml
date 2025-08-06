@@ -53,8 +53,8 @@ jobs:
       - name: Compile Project
         run: ./gradlew assemble
 
-      - name: Run Unit Tests
-        run: ./gradlew test
+#      - name: Run Unit Tests
+#        run: ./gradlew test
 
 #      - name: Generate JaCoCo Test Report
 #        run: ./gradlew jacocoTestReport

@@ -19,12 +19,15 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.HomeAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.feature.home.component.ContinueWatchingSection
 import com.baghdad.ui.feature.home.component.PopularSection
 import com.baghdad.ui.feature.home.component.TopRatingSection
@@ -72,7 +75,7 @@ private fun HomeContent(
     snackBarState: SnackBarState,
 ) {
     val lazyGridState = rememberLazyGridState()
-
+    val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -85,7 +88,7 @@ private fun HomeContent(
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = interactionListener::onSnackBarActionLabelClick,
+                onActionClick = interactionListener::onSnackBarActionLabelClicked,
             )
         },
         backgroundBlur = {
@@ -150,6 +153,25 @@ private fun HomeContent(
                 onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
             )
         }
+        SavedListBottomSheet(
+            isVisible = state.addToListBottomSheetState.isVisible,
+            isUserLoggedIn = state.isUserLoggedIn,
+            onAddClick = interactionListener::onSaveItemToListClicked,
+            onCreateNewListClick = interactionListener::onCreateNewListClicked,
+            onLoginClick = interactionListener::onLoginClicked,
+            onBottomSheetCloseClick = interactionListener::onSaveToListBottomSheetDismiss,
+            lists = savedLists,
+            selectedListId = state.addToListBottomSheetState.selectedListId,
+            onListSelected = interactionListener::onListSelected,
+        )
+        AddListBottomSheet(
+            isVisible = state.addListBottomSheetState.isVisible,
+            isLoading = state.addListBottomSheetState.isLoading,
+            listName = state.addListBottomSheetState.listName,
+            onDismiss = interactionListener::onCreateListBottomSheetDismiss,
+            onAddClick = interactionListener::onCreateListBottomSheetAddClick,
+            onListNameChange = interactionListener::onCreatedListNameChanged,
+        )
     }
 }
 

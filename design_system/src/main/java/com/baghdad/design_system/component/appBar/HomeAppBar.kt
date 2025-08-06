@@ -30,7 +30,7 @@ fun HomeAppBar(
     )
     BasicTopAppBar(modifier = modifier) {
         Icon(
-            painter = painterResource(R.drawable.logo_design),
+            painter = painterResource(R.drawable.app_logo_light),
             contentDescription = stringResource(R.string.home_icon),
             tint = Theme.color.primary,
             modifier =
