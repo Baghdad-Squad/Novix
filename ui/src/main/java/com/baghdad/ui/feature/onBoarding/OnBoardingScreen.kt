@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.onBoarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.onBoarding.component.BottomSlidingSection
@@ -77,33 +79,34 @@ private fun OnBoardingContent(
     LaunchedEffect(state.currentPage) {
         pagerState.animateScrollToPage(state.currentPage)
     }
+    Box() {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.color.surface),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            item {
+                SkipText(
+                    onClick = { listener.onSkipButtonClick() },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Theme.color.surface),
-        verticalArrangement = Arrangement.SpaceBetween,
-    ) {
-        item {
-            SkipText(
-                onClick = { listener.onSkipButtonClick() },
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+            item {
+                OnBoardingHorizontalPagerContent(
+                    pagerState = pagerState,
+                    onBoardingInfo = onBoardingInfo,
+                )
+                BottomSlidingSection(
+                    pagerState = pagerState,
+                    onClickNext = { listener.onNextButtonClick(onBoardingInfo.size) },
+                    onClickBack = { listener.onBackButtonClick() }
+                )
+            }
         }
-
-        item {
-            OnBoardingHorizontalPagerContent(
-                pagerState = pagerState,
-                onBoardingInfo = onBoardingInfo,
-            )
-            BottomSlidingSection(
-                pagerState = pagerState,
-                onClickNext = { listener.onNextButtonClick(onBoardingInfo.size) },
-                onClickBack = { listener.onBackButtonClick() }
-            )
-        }
+        BackgroundBlur()
     }
-
 }
 
 private fun handleEffect(
