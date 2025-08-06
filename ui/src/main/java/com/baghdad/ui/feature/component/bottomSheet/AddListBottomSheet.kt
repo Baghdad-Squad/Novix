@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.myLists.component
+package com.baghdad.ui.feature.component.bottomSheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

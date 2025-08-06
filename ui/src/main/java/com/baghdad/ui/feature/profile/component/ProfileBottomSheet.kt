@@ -21,7 +21,7 @@ import com.baghdad.ui.R
 import com.baghdad.ui.feature.component.bottomSheet.BottomSheetFooter
 import com.baghdad.ui.feature.component.bottomSheet.toSelectable
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
-import com.baghdad.viewmodel.shared.ListUiState
+import com.baghdad.viewmodel.shared.SavedListUiState
 
 @Composable
 fun ProfileBottomSheet(
@@ -29,7 +29,7 @@ fun ProfileBottomSheet(
     onSaveClick: () -> Unit,
     isVisible: Boolean,
     onBottomSheetCloseClick: () -> Unit,
-    lists: List<ListUiState>,
+    lists: List<SavedListUiState>,
     onListSelected: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -49,9 +49,8 @@ fun ProfileBottomSheet(
             )
             lists.forEach {
                 Selection(
-                    option = it.toSelectable(),
+                    option = it.toSelectable(0L),
                     onClick = { onListSelected(it.id) },
-                    description = it.description,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
             }
@@ -68,7 +67,6 @@ fun ProfileBottomSheet(
 @Preview
 @Composable
 fun LanguageBottomSheetRev() {
-    var isSelected by remember { mutableStateOf(true) }
     NovixTheme {
         ProfileBottomSheet(
             title = "Language",
@@ -76,15 +74,13 @@ fun LanguageBottomSheetRev() {
             onBottomSheetCloseClick = {},
             isVisible = true,
             lists = listOf(
-                ListUiState(
+                SavedListUiState(
                     id = 1,
                     name = "English",
-                    isSelected = isSelected
                 ),
-                ListUiState(
+                SavedListUiState(
                     id = 2,
                     name = "Arabic",
-                    isSelected = isSelected
                 )
             ),
             onListSelected = {}
@@ -95,7 +91,6 @@ fun LanguageBottomSheetRev() {
 @Preview
 @Composable
 fun ContentRestrictionBottomSheetPrev() {
-    var isSelected by remember { mutableStateOf(true) }
     NovixTheme {
         ProfileBottomSheet(
             title = "Content Restriction",
@@ -104,24 +99,18 @@ fun ContentRestrictionBottomSheetPrev() {
             isVisible = true,
 
             lists = listOf(
-                ListUiState(
+                SavedListUiState(
                     id = 1,
                     name = "Strict",
-                    isSelected = isSelected,
-                    description = "Blurs all sensitive content."
                 ),
-                ListUiState(
+                SavedListUiState(
                     id = 2,
                     name = "Moderate",
-                    isSelected = isSelected,
-                    description = "Blurs explicit scenes only."
                 ),
-                ListUiState(
+                SavedListUiState(
                     id = 3,
                     name = "Off",
-                    isSelected = isSelected,
-                    description = "No content is blurred."
-                )
+                ),
             ),
             onListSelected = {}
         )

@@ -20,7 +20,7 @@ import com.baghdad.design_system.component.button.FloatingActionButton
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
-import com.baghdad.ui.feature.myLists.component.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
 import com.baghdad.ui.feature.myLists.component.EmptyStateContent
 import com.baghdad.ui.feature.myLists.component.SavedListsVerticalGrid
 import com.baghdad.ui.navigation.graph.myLists.MyListsNavEvent

@@ -134,6 +134,7 @@
     <string name="list_title">عنوان القائمة</string>
     <string name="added_list_successfully">" تم إنشاء القائمة بنجاح"</string>
     <string name="deleted_list_successfully">تم حذف القائمة بنجاح</string>
+    <string name="list_item_count_placeholder">%1$d items</string>
 
     <string name="my_account">حسابي</string>
     <string name="watching_history">سجل المشاهدة</string>
