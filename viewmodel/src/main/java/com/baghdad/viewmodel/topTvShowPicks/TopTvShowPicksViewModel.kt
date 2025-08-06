@@ -1,5 +1,9 @@
 package com.baghdad.viewmodel.topTvShowPicks
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import com.baghdad.domain.exception.NoInternetException
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
@@ -57,6 +61,11 @@ class TopTvShowViewModel @Inject constructor(
     }
 
     private fun showNoInternetSnackBar() {
+        updateState {
+            it.copy(
+                isLoading = true
+            )
+        }
         showSnackBar(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,

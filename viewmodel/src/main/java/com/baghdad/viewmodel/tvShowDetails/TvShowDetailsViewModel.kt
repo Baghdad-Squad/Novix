@@ -270,6 +270,13 @@ class TvShowDetailsViewModel @Inject constructor(
     }
 
     private fun showNoInternetSnackBar() {
+        updateState {
+            it.copy(
+                isTvShowDetailsLoading = true,
+                isCastMembersLoading= true,
+                isEpisodesLoading = true,
+            )
+        }
         showSnackBar(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
