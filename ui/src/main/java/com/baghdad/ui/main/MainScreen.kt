@@ -10,7 +10,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -34,6 +37,7 @@ import com.baghdad.ui.navigation.bottom.rememberIsTopLevelMainRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.viewmodel.main.MainViewModel
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
@@ -50,6 +54,8 @@ fun MainScreen(
         BOTTOM_NAV_ITEMS.keys,
         TOP_LEVEL_ROUTES,
     )
+
+
 
     val selectedIndex by rememberBottomNavSelectedIndex(navBackStackEntry, BOTTOM_NAV_ITEMS.keys)
 
@@ -71,6 +77,7 @@ fun MainScreen(
                     enter = bottomSheetEnterAnimation,
                     exit = bottomSheetExitAnimation
                 ) {
+                    if(!isKeyboardOpen())
                     NovixBottomNavigationBar(
                         items = BOTTOM_NAV_ITEMS.values.toList(), onClick = { index ->
                             if (index != selectedIndex) {
@@ -105,3 +112,9 @@ private val bottomSheetExitAnimation = slideOutVertically(
     animationSpec = tween(150)
 )
 
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun isKeyboardOpen(): Boolean {
+    return WindowInsets.isImeVisible
+}
