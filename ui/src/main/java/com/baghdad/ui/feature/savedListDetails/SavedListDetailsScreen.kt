@@ -70,8 +70,6 @@ private fun handleEffect(
         is SavedListDetailsEffect.NavigateToMovieDetails ->
             handleNavigation(MyListsNavEvent.NavigateToMovieDetails(effect.movieId))
 
-        is SavedListDetailsEffect.NavigateToTvShowDetails ->
-            handleNavigation(MyListsNavEvent.NavigateToTvShowDetails(effect.tvShowId))
     }
 }
 
