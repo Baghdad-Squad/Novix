@@ -119,7 +119,7 @@ fun SavedListDetailsContent(
     ) {
         LazyPagingVerticalGrid(
             items = mediaItems,
-            columns = GridCells.Adaptive(minSize = 158.dp),
+            columns = GridCells.Adaptive(minSize = 150.dp),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
                 start = 16.dp,

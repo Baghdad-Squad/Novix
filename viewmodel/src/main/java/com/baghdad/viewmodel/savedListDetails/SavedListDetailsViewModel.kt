@@ -84,7 +84,7 @@ class SavedListDetailsViewModel @Inject constructor(
             callee = { removeMovieFromSavedListUseCase(currentListId, movieId) },
             onSuccess = {
                 showSnackBar(
-                    message = BaseSnackBarMessage.DefaultMessage,
+                    message = BaseSnackBarMessage.RemovedItemSuccessfully,
                     isSuccess = true
                 )
                 refreshList()
@@ -112,7 +112,7 @@ class SavedListDetailsViewModel @Inject constructor(
             callee = { deleteSavedListUseCase(currentListId) },
             onSuccess = {
                 showSnackBar(
-                    message = BaseSnackBarMessage.DefaultMessage,
+                    message = BaseSnackBarMessage.DeleteListSuccessfully,
                     isSuccess = true
                 )
                 sendEffect(SavedListDetailsEffect.NavigateBack)

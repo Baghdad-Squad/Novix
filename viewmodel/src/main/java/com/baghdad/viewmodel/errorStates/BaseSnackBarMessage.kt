@@ -13,4 +13,5 @@ sealed interface BaseSnackBarMessage {
     data object SavedItemSuccessfully : DetailsScreensSnackBarMessage
     data object RemovedItemSuccessfully : DetailsScreensSnackBarMessage
     data object ItemRateSuccessfully : DetailsScreensSnackBarMessage
+    data object DeleteListSuccessfully: DetailsScreensSnackBarMessage
 }

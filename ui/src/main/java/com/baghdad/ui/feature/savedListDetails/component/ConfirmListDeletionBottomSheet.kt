@@ -34,7 +34,7 @@ fun ConfirmListDeletionBottomSheet(
             verticalArrangement = Arrangement.Center,
             modifier = modifier
                 .verticalScroll(rememberScrollState())
-                .padding(start = 16.dp, end = 16.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 24.dp)
         ) {
 
             BottomSheetHeader(
