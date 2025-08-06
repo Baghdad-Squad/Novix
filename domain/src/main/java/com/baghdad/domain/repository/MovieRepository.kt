@@ -23,10 +23,9 @@ interface MovieRepository {
     suspend fun getTopRatedMovies(page: Int): PagedResult<Movie>
     suspend fun getTrendingMovies(page: Int): PagedResult<Movie>
     suspend fun getPopularMovies(): List<Movie>
-
     suspend fun getUpcomingMovies(genreId: Long?): List<Movie>
     suspend fun addMovieRate(movieId: Long, rating: Int)
-
     suspend fun getMovieStates(movieId: Long): MediaAccountStates
-
+    suspend fun getUserRatedMovies(page: Int, pageSize: Int): PagedResult<Movie>
+    suspend fun deleteMovieRate(movieId: Long)
 }
