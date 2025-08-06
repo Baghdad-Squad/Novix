@@ -55,6 +55,43 @@ fun <T> getFlowSafely(block: () -> Flow<T>): Flow<T> {
     }
 }
 
+suspend fun <TEntity, TDto> getPagedSafely(
+    page: Int,
+    pageSize: Int = 20,
+    onStart: (suspend () -> Unit)? = null,
+    getCachedPage: suspend (Int, Int) -> List<TDto>,
+    getRemoteData: suspend (Int, Int) -> PagedResultDto<TDto>,
+    cacheData: suspend (List<TDto>) -> Unit,
+    mapToEntity: (TDto) -> TEntity
+): PagedResult<TEntity> = executeSafely {
+    onStart?.invoke()
+    val localData = getCachedPage(page, pageSize)
+    if (localData.isNotEmpty()) {
+        PagedResult(
+            data = localData.map(mapToEntity),
+            nextKey = if (localData.size == pageSize) page + 1 else null,
+            prevKey = if (page > 1) page - 1 else null
+        )
+    } else {
+        val remoteData = getRemoteData(page, pageSize)
+        if (remoteData.data.isNotEmpty()) {
+            cacheData(remoteData.data)
+            val localData = getCachedPage(page, pageSize)
+            PagedResult(
+                data = localData.map(mapToEntity),
+                nextKey = remoteData.nextKey,
+                prevKey = remoteData.prevKey
+            )
+        } else {
+            PagedResult(
+                data = emptyList(),
+                nextKey = null,
+                prevKey = if (page > 1) page - 1 else null
+            )
+        }
+    }
+}
+
 suspend fun <TEntity, TDto> getRemotePagedSafely(
     page: Int,
     pageSize: Int = 20,
