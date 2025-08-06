@@ -11,9 +11,11 @@
         android:fullBackupContent="@xml/backup_rules"
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
+        android:windowSoftInputMode="adjustResize"
         android:supportsRtl="true"
         android:theme="@style/Theme.Novix"
         tools:targetApi="31">
+
         <activity
             android:name="com.baghdad.novix.MainActivity"
             android:label="@string/app_name"
