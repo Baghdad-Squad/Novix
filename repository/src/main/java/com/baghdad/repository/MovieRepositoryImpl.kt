@@ -3,6 +3,7 @@ package com.baghdad.repository
 import android.util.Log
 import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.RatedMedia
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
@@ -13,6 +14,7 @@ import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toMedia
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
@@ -146,7 +148,7 @@ class MovieRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getUserRatedMovies(page: Int, pageSize: Int): PagedResult<Movie> {
+    override suspend fun getUserRatedMovies(page: Int, pageSize: Int): PagedResult<RatedMedia> {
         return executeAuthorizedSafely(
             sessionId = localSessionDataStore.getSessionId(),
             block = { sessionId ->
@@ -163,7 +165,7 @@ class MovieRepositoryImpl @Inject constructor(
                         )
                     },
                 ) {
-                    it.toEntity()
+                    it.toMedia()
                 }
             }
         )

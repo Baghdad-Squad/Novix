@@ -2,6 +2,7 @@ package com.baghdad.repository
 
 import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.RatedMedia
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Episode
@@ -13,6 +14,7 @@ import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toMedia
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
@@ -155,7 +157,7 @@ class TvShowRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getUserRatedTvShows(page: Int, pageSize: Int): PagedResult<TvShow> {
+    override suspend fun getUserRatedTvShows(page: Int, pageSize: Int): PagedResult<RatedMedia> {
         return executeAuthorizedSafely(
             sessionId = localSessionDataStore.getSessionId(),
             { sessionId ->
@@ -171,7 +173,7 @@ class TvShowRepositoryImpl @Inject constructor(
                         )
                     },
                 ) {
-                    it.toEntity()
+                    it.toMedia()
                 }
             }
         )

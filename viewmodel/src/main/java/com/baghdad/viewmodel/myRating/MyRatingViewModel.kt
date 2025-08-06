@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.myRating
 
+import com.baghdad.domain.usecase.GetUserMediaRatedUseCase
 import com.baghdad.domain.usecase.movie.DeleteMovieRateUseCase
 import com.baghdad.domain.usecase.movie.GetUserRatedMoviesUseCase
 import com.baghdad.domain.usecase.tvShow.DeleteTvShowRateUseCase
@@ -15,6 +16,7 @@ class MyRatingViewModel @Inject constructor(
     private val getUserRatedTvShowsUseCase: GetUserRatedTvShowsUseCase,
     private val deleteMovieRateUseCase: DeleteMovieRateUseCase,
     private val deleteTvShowRateUseCase: DeleteTvShowRateUseCase,
+    private val getUserMediaRatedUseCase: GetUserMediaRatedUseCase
 ) : BaseViewModel<MyRatingState, MyRatingEffect>(MyRatingState()),
     MyRatingInteractionListener {
 
@@ -27,8 +29,13 @@ class MyRatingViewModel @Inject constructor(
             MyRatingState.MediaTab.MOVIE -> fetchMovies(pageSize = 20)
             MyRatingState.MediaTab.TV_SHOW -> fetchTvShows(pageSize = 20)
             else -> {
-                fetchTvShows(pageSize = 10)
-                fetchMovies(pageSize = 10)
+                collectPagingFlow(
+                    loadData = { page -> getUserMediaRatedUseCase(page, 20) },
+                    onInitialLoadFinished = ::onFinally,
+                    mapEntityToUiState = { it.toMediaItemUiState() },
+                    onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow = mediaFlow) } },
+                    onLoadingChanged = ::onGetMediaLoadingChanged,
+                )
             }
         }
     }
