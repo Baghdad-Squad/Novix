@@ -255,7 +255,9 @@ class TopMoviePicksViewModel @Inject constructor(
             it.copy(
                 addListBottomSheetState =
                     it.addListBottomSheetState.copy(
-                        isVisible = false
+                        isVisible = false,
+                        listName = "",
+                        isLoading = false,
                     ),
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(

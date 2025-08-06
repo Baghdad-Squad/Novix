@@ -113,6 +113,7 @@
     <string name="minutes">Minutes</string>
     <string name="duration_combined">%1$s %2$s</string>
     <string name="an_error_occurred_while_loading_genres">An error occurred while loading genres</string>
+    <string name="background_alpha">background_alpha</string>
     <string name="submit">Submit</string>
     <string name="please_login_to_rate">Please login to rate your favorite items.</string>
     <string name="my_lists">My Lists</string>

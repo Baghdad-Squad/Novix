@@ -3,7 +3,6 @@ package com.baghdad.viewmodel.search
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.search.RecentlyViewed
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.login.IsLoggedInUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
@@ -39,7 +38,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val getGenresUseCase: GetGenresUseCase,
     private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
     private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase,
@@ -111,6 +109,8 @@ class SearchViewModel @Inject constructor(
 
     override fun onSearchTextChanged(text: String) {
         updateState { it.copy(searchText = text, isLoading = true) }
+        getRecentSearches()
+        getRecentViewed()
         if (text.trim() == currentState.lastProcessedQuery) {
             updateState { it.copy(isLoading = false) }
             return
@@ -585,6 +585,8 @@ class SearchViewModel @Inject constructor(
                 addListBottomSheetState =
                     it.addListBottomSheetState.copy(
                         isVisible = false,
+                        listName = "",
+                        isLoading = false,
                     ),
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(

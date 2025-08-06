@@ -21,12 +21,12 @@ import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 fun HomeCard(
     url: String,
     contentDescription: String?,
-    isSaved: Boolean,
-    onClick:() -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     onSavedClick: () -> Unit = {},
+    isSaved: Boolean = false,
+    isSaveToListVisible: Boolean = true,
     isLoadingEnabled: Boolean = true,
-    showSaveIcon: Boolean = true
 ) {
     Box(
         modifier
@@ -46,7 +46,7 @@ fun HomeCard(
                 .fillMaxSize()
                 .align(alignment = Alignment.Center),
         )
-        if (showSaveIcon) {
+        if (isSaveToListVisible) {
             SaveIcon(
                 isSaved = isSaved,
                 onClick = { onSavedClick() },

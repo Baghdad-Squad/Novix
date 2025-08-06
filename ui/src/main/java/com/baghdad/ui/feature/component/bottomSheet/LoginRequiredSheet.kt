@@ -54,7 +54,9 @@ fun LoginRequiredSheet(
             OutlinedButton(
                 label = stringResource(com.baghdad.ui.R.string.login),
                 onClick = onLoginClick,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
             )
         }
     }

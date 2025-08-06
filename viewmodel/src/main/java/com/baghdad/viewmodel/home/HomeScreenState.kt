@@ -47,7 +47,13 @@ data class HomeScreenState(
         val imageUrl: String = "",
         val isSaved: Boolean = false,
         val savedListId: Long = -1L,
-    )
+        val contentType: ContentType,
+    ) {
+        enum class ContentType {
+            MOVIE,
+            TV_SHOW,
+        }
+    }
 
     data class GenreUiState(
         val id: Long = 0,

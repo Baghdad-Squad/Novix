@@ -7,4 +7,5 @@ sealed interface MyAccountNavEvent {
     data object NavigateToWatchingHistory : MyAccountNavEvent
     data class NavigateToMovieDetails(val movieId: Long) : MyAccountNavEvent
     data class NavigateToTvShowDetails(val tvShowId: Long) : MyAccountNavEvent
+    data object NavigateToChangePassword : MyAccountNavEvent
 }

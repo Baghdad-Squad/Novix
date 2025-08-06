@@ -80,7 +80,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     override fun onclickChangePassword() {
-        TODO("Not yet implemented")
+       sendEffect(ProfileEffect.NavigateToChangePassword)
     }
 
     override fun onclickAppearance() {
