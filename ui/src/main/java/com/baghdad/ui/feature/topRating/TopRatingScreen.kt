@@ -29,6 +29,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
@@ -186,6 +187,11 @@ private fun TopRatingContent(
             )
         }
     ) {
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
 
         when (uiState.selectedTab) {
             TopRatingTab.MOVIES -> {
