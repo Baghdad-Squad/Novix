@@ -1,27 +1,32 @@
 package com.baghdad.ui.feature.authentication
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.component.AppWebView
-import com.baghdad.ui.navigation.graph.authentication.AuthenticationNavEvent
+import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
 import kotlinx.coroutines.delay
 import java.util.Locale
 
 @Composable
 fun ResetPasswordWebViewScreen(
-    resetToken: String,
-    handleNavigation: (AuthenticationNavEvent) -> Unit
+    handleNavigation: (MyAccountNavEvent) -> Unit
 ) {
     val shouldNavigateToLogin = remember { mutableStateOf(false) }
     val shouldShowError = remember { mutableStateOf(false) }
     val languageTag = remember { if (Locale.getDefault().language == "ar") "ar-SA" else "en-US" }
 
     ResetPasswordWebViewContent(
-        resetToken = resetToken,
         handleNavigation = handleNavigation,
         shouldNavigateToLogin = shouldNavigateToLogin,
         shouldShowError = shouldShowError,
@@ -31,8 +36,7 @@ fun ResetPasswordWebViewScreen(
 
 @Composable
 private fun ResetPasswordWebViewContent(
-    resetToken: String,
-    handleNavigation: (AuthenticationNavEvent) -> Unit,
+    handleNavigation: (MyAccountNavEvent) -> Unit,
     shouldNavigateToLogin: MutableState<Boolean>,
     shouldShowError: MutableState<Boolean>,
     languageTag: String
@@ -40,7 +44,7 @@ private fun ResetPasswordWebViewContent(
     val context = LocalContext.current
 
     val screenUrl = remember {
-        "https://www.themoviedb.org/reset-password/$resetToken?language=$languageTag"
+        "https://www.themoviedb.org/reset-password?language=$languageTag"
     }
 
     val messages = remember {
@@ -93,13 +97,13 @@ private fun HandleNavigationEvents(
     shouldShowError: MutableState<Boolean>,
     messages: PasswordResetMessages,
     context: android.content.Context,
-    handleNavigation: (AuthenticationNavEvent) -> Unit
+    handleNavigation: (MyAccountNavEvent) -> Unit
 ) {
     LaunchedEffect(shouldNavigateToLogin.value) {
         if (shouldNavigateToLogin.value) {
             Toast.makeText(context, messages.successToast, Toast.LENGTH_LONG).show()
             delay(3000)
-            handleNavigation(AuthenticationNavEvent.NavigateToLogin)
+            handleNavigation(MyAccountNavEvent.NavigateToLogin)
         }
     }
 
@@ -107,7 +111,7 @@ private fun HandleNavigationEvents(
         if (shouldShowError.value) {
             Toast.makeText(context, messages.errorToast, Toast.LENGTH_LONG).show()
             delay(2000)
-            handleNavigation(AuthenticationNavEvent.NavigateBack)
+            handleNavigation(MyAccountNavEvent.NavigateBack)
         }
     }
 }
