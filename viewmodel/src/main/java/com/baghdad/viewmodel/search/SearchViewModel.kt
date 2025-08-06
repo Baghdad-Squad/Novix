@@ -3,7 +3,6 @@ package com.baghdad.viewmodel.search
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.search.RecentlyViewed
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.login.IsLoggedInUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
@@ -586,6 +585,8 @@ class SearchViewModel @Inject constructor(
                 addListBottomSheetState =
                     it.addListBottomSheetState.copy(
                         isVisible = false,
+                        listName = "",
+                        isLoading = false,
                     ),
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(

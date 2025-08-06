@@ -495,6 +495,8 @@ class HomeViewModel
                     addListBottomSheetState =
                         it.addListBottomSheetState.copy(
                             isVisible = false,
+                            listName = "",
+                            isLoading = false,
                         ),
                     addToListBottomSheetState =
                         it.addToListBottomSheetState.copy(
