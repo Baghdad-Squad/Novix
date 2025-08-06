@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.movieDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.MediaAccountStates
@@ -12,16 +13,24 @@ import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
 import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
+import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
+import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.entity.media.Movie
+import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.BottomSheetType
+import com.baghdad.viewmodel.shared.SavedListUiState
+import com.baghdad.viewmodel.shared.toUiState
 import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
@@ -34,6 +43,10 @@ class MovieDetailsViewModel @Inject constructor(
     private val addMovieRateUseCase: AddMovieRateUseCase,
     private val getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase,
     private val isLoggedInUseCase: IsLoggedInUseCase,
+    private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
+    private val getSavedListsUseCase: GetSavedListsUseCase,
+    private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
+    private val createSavedListUseCase: CreateSavedListUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
     MovieDetailsInteractionListener {
@@ -45,6 +58,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun loadInitData() {
+        checkIfUserIsLoggedIn()
         getMovieGallery()
         getMovieDetails()
         getCastMembers()
@@ -54,7 +68,28 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onSaveCurrentMovieClick() {
-        // TODO: save logic
+        tryToExecute(
+            callee = {
+                addMovieToSavedListUseCase(
+                    listId =
+                        currentState.addToListBottomSheetState.selectedListId
+                            ?: return@tryToExecute,
+                    movieId = currentState.addToListBottomSheetState.selectedItemId,
+                )
+            },
+            onSuccess = { onAddItemToListSuccess() },
+            dispatcher = ioDispatcher,
+            onStart = ::onAddItemToListStart,
+            onFinally = ::onAddItemToListFinished,
+        )
+    }
+
+    override fun onSaveMovieClick(listId: Long, itemId: Long, isSaved: Boolean) {
+        onSaveButtonClicked(
+            listId = listId,
+            itemId = itemId,
+            isSaved = isSaved
+        )
     }
 
     override fun onSaveMoreLikeThisMedia(id: Long) {
@@ -202,6 +237,229 @@ class MovieDetailsViewModel @Inject constructor(
         sendEffect(MovieDetailsEffect.NavigateToLogin)
     }
 
+    override fun onSaveItemToListClicked() {
+        tryToExecute(
+            callee = {
+                addMovieToSavedListUseCase(
+                    listId =
+                        currentState.addToListBottomSheetState.selectedListId
+                            ?: return@tryToExecute,
+                    movieId = currentState.addToListBottomSheetState.selectedItemId,
+                )
+            },
+            onSuccess = { onAddItemToListSuccess() },
+            dispatcher = ioDispatcher,
+            onStart = ::onAddItemToListStart,
+            onFinally = ::onAddItemToListFinished,
+        )
+    }
+
+    private fun onCreateListSuccess() {
+        onCreateListBottomSheetDismiss()
+        getUserSavedLists()
+    }
+
+    private fun onCreateListFinished() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isLoading = false,
+                    ),
+            )
+        }
+    }
+
+    private fun onCreateListStart() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isLoading = true,
+                    ),
+            )
+        }
+    }
+
+    private fun onAddItemToListSuccess() {
+        onSaveToListBottomSheetDismiss()
+        showItemSavedSuccessfullySnackBar()
+    }
+
+    private fun showItemSavedSuccessfullySnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.SavedItemSuccessfully,
+            isSuccess = true,
+        )
+    }
+
+    private fun onSaveButtonClicked(
+        listId: Long,
+        itemId: Long,
+        isSaved: Boolean,
+    ) {
+        if (isSaved) {
+            removeSavedItem(listId = listId, itemId = itemId)
+        } else {
+            updateState {
+                it.copy(
+                    addToListBottomSheetState =
+                        it.addToListBottomSheetState.copy(
+                            isVisible = true,
+                            selectedItemId = itemId,
+                            selectedListId = null,
+                        )
+                )
+            }
+        }
+    }
+
+    private fun removeSavedItem(
+        listId: Long,
+        itemId: Long,
+    ) {
+        tryToExecute(
+            callee = { removeMovieFromSavedListUseCase(listId = listId, movieId = itemId) },
+            onSuccess = { onRemoveSavedItemSuccess() },
+            dispatcher = ioDispatcher,
+            onFinally = ::onRemoveSavedItemFinished,
+        )
+    }
+
+    private fun onRemoveSavedItemSuccess() {
+        showItemRemovedSuccessfullySnackBar()
+    }
+
+    private fun showItemRemovedSuccessfullySnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.RemovedItemSuccessfully,
+            isSuccess = true,
+        )
+    }
+
+    private fun onRemoveSavedItemFinished() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = false
+                    )
+            )
+        }
+    }
+
+    private fun onAddItemToListFinished() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isLoading = false,
+                    ),
+            )
+        }
+    }
+
+    private fun onAddItemToListStart() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isLoading = true,
+                    ),
+            )
+        }
+    }
+
+    override fun onCreateNewListClicked() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isVisible = true,
+                    ),
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = false,
+                    ),
+            )
+        }
+    }
+
+    override fun onLoginClicked() {
+        sendEffect(
+            MovieDetailsEffect.NavigateToLogin,
+        )
+    }
+
+    override fun onSaveToListBottomSheetDismiss() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isVisible = false,
+                    ),
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = true,
+                    ),
+            )
+        }
+    }
+
+    override fun onListSelected(listId: Long) {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        selectedListId = listId,
+                    ),
+            )
+        }
+    }
+
+    override fun onCreatedListNameChanged(name: String) {
+        tryToExecute(
+            callee = {
+                createSavedListUseCase(
+                    title = currentState.addListBottomSheetState.listName,
+                )
+            },
+            onSuccess = { onCreateListSuccess() },
+            dispatcher = ioDispatcher,
+            onStart = ::onCreateListStart,
+            onFinally = ::onCreateListFinished,
+        )
+    }
+
+    override fun onCreateListBottomSheetDismiss() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isVisible = false,
+                    ),
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = true,
+                    ),
+            )
+        }
+    }
+
+    override fun onCreateListBottomSheetAddClick() {
+        tryToExecute(
+            callee = {
+                createSavedListUseCase(
+                    title = currentState.addListBottomSheetState.listName,
+                )
+            },
+            onSuccess = { onCreateListSuccess() },
+            dispatcher = ioDispatcher,
+            onStart = ::onCreateListStart,
+            onFinally = ::onCreateListFinished,
+        )
+    }
+
 
     override fun onClickSubmitRating(rating: Int) {
         tryToExecute(
@@ -240,18 +498,14 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onGetMovieAccountStatesSuccess(accountStates: MediaAccountStates) {
         updateState {
             it.copy(
-               isRated = accountStates.isMediaRated,
+                isRated = accountStates.isMediaRated,
             )
         }
     }
 
-
     override fun onSnackBarActionLabelClick() {
         loadInitData()
     }
-
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
-        BaseSnackBarMessage.UnknownError
 
     private fun getMovieGallery() {
         tryToExecute(
@@ -281,6 +535,54 @@ class MovieDetailsViewModel @Inject constructor(
             )
         }
     }
+
+    private fun checkIfUserIsLoggedIn() {
+        tryToExecute(
+            callee = { isLoggedInUseCase() },
+            onSuccess = ::onCheckIfUserIsLoggedInSuccess,
+            dispatcher = ioDispatcher,
+        )
+    }
+
+    private fun onCheckIfUserIsLoggedInSuccess(isLoggedIn: Boolean) {
+        updateState {
+            it.copy(
+
+            )
+        }
+        if (isLoggedIn) {
+            getUserSavedLists()
+        }
+    }
+
+    private fun getUserSavedLists() {
+        collectPagingFlow(
+            loadData = { page ->
+                getSavedListsUseCase(
+                    page = page,
+                    pageSize = DEFAULT_PAGE_SIZE,
+                )
+            },
+            onInitialLoadError = ::onError,
+            pageSize = DEFAULT_PAGE_SIZE,
+            mapEntityToUiState = SavedList::toUiState,
+            onFlowCreated = ::onGetSavedListFlowCreated,
+        )
+    }
+
+    private fun onGetSavedListFlowCreated(flow: Flow<PagingData<SavedListUiState>>) {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        savedLists = flow,
+                    ),
+            )
+        }
+    }
+
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     private fun getMovieDetails() {
         tryToExecute(
@@ -409,6 +711,10 @@ class MovieDetailsViewModel @Inject constructor(
                 )
             },
         )
+    }
+
+    companion object {
+        private const val DEFAULT_PAGE_SIZE = 20
     }
 }
 

@@ -17,4 +17,16 @@ interface MovieDetailsInteractionListener {
     fun onClickSubmitRating(rating: Int)
     fun onDismissRatingBottomSheet()
     fun onLoginClick()
+
+    fun onSaveMovieClick(listId: Long, itemId: Long, isSaved: Boolean)
+    fun onSaveItemToListClicked()
+
+    //    fun onSnackBarActionLabelClick()
+    fun onCreateNewListClicked()
+    fun onLoginClicked()
+    fun onSaveToListBottomSheetDismiss()
+    fun onListSelected(listId: Long)
+    fun onCreatedListNameChanged(name: String)
+    fun onCreateListBottomSheetDismiss()
+    fun onCreateListBottomSheetAddClick()
 }

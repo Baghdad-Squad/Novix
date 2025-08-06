@@ -1,6 +1,8 @@
 package com.baghdad.viewmodel.movieDetails
 
 import com.baghdad.viewmodel.base.BaseUiState
+import com.baghdad.viewmodel.shared.AddListBottomSheetState
+import com.baghdad.viewmodel.shared.AddToListBottomSheetState
 import com.baghdad.viewmodel.shared.BottomSheetType
 
 data class MovieDetailsState(
@@ -25,6 +27,10 @@ data class MovieDetailsState(
     val userRating: Int? = 0,
     val isRated: Boolean = true,
     val ratingStatus: RatingUiState = RatingUiState(),
+    val isUserLoggedIn: Boolean = false,
+    val selectedMovieId: Long? = null,
+    val addToListBottomSheetState: AddToListBottomSheetState = AddToListBottomSheetState(),
+    val addListBottomSheetState: AddListBottomSheetState = AddListBottomSheetState(),
     ) : BaseUiState {
     val isLoading: Boolean
         get() = isMovieDetailsLoading || isMovieGalleryLoading || isCastMemberLoading || isMoreLikeThisMovieLoading
