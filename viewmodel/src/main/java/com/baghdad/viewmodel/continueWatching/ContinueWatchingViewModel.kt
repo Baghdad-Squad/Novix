@@ -42,6 +42,11 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     private fun showNoInternetSnackBar() {
+        updateState {
+            it.copy(
+                isLoading = true
+            )
+        }
         showSnackBar(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
