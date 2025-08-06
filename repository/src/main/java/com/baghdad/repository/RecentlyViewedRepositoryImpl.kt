@@ -15,7 +15,9 @@ import com.baghdad.repository.util.getFlowSafely
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RecentlyViewedRepositoryImpl @Inject constructor(
     val localRecentlyViewedDataSource: LocalRecentlyViewedDataSource,
     val localFavoriteGenreDataSource: LocalFavoriteGenreDataSource,

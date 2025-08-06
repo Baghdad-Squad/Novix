@@ -2,12 +2,14 @@ package com.baghdad.local_datasource
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.baghdad.repository.datasource.local.LocalAppearanceDataSource
 import com.baghdad.repository.model.AppAppearanceMode
-import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LocalAppearanceDataSourceImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : LocalAppearanceDataSource {

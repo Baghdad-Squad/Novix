@@ -26,7 +26,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.Locale
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SearchRepositoryImpl @Inject constructor(
     private val searchRemoteDataSource: RemoteSearchDataSource,
     private val remoteGenreDataSource: RemoteGenreDataSource,

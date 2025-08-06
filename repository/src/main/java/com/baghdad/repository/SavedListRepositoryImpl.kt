@@ -13,7 +13,9 @@ import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SavedListRepositoryImpl @Inject constructor(
     private val remoteSavedListSource: RemoteSavedListDataSource,
     private val localSessionDataStore: LocalSessionDataStore,
