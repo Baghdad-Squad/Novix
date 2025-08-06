@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Named
+import javax.inject.Singleton
 
+@Singleton
 class LocalSessionDataStoreImpl @Inject constructor(
     @Named("preferences") private val dataStore: DataStore<Preferences>,
     private val logger: Logger
