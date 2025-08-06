@@ -14,7 +14,6 @@ data class CategoryTvShowsState(
     data class TvShowUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
-        val isSaved: Boolean = false
     )
 }
 
@@ -22,6 +21,5 @@ fun TvShow.toUiState(): CategoryTvShowsState.TvShowUiState {
     return CategoryTvShowsState.TvShowUiState(
         id = id,
         posterPictureURL = posterImageURL,
-        isSaved = false
     )
 }
