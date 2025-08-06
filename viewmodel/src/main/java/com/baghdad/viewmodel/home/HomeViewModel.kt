@@ -429,7 +429,7 @@ class HomeViewModel
                 it.copy(
                     addToListBottomSheetState =
                         it.addToListBottomSheetState.copy(
-                            isLoading = true,
+                            isLoading = false,
                         ),
                 )
             }
