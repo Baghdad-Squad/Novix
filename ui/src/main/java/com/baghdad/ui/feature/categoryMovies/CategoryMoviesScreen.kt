@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.categoryMovies
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
@@ -123,6 +125,11 @@ private fun CategoryMoviesContent(
             )
         }
     ) {
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize()) {
+                WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
         Column {
             LazyPagingVerticalGrid<CategoryMoviesState.MovieUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
