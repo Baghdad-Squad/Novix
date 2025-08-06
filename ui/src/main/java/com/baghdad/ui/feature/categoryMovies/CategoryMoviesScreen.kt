@@ -150,7 +150,7 @@ private fun CategoryMoviesContent(
                     url = movie.posterPictureURL,
                     contentDescription = null,
                     isSaved = movie.isSaved,
-                    onSavedClick = { listener::onMovieToListClick },
+                    onSavedClick = { listener.onMovieToListClick(movie) },
                     onClick = { listener.onMovieClicked(movie.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
