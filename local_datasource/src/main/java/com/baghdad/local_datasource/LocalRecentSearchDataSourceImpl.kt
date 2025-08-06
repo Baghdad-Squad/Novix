@@ -14,7 +14,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalSearchDataSourceImpl @Inject constructor(
+class LocalRecentSearchDataSourceImpl @Inject constructor(
     private val recentSearchDao: RecentSearchDao,
     private val logger: Logger,
 ) : LocalRecentSearchDataSource {

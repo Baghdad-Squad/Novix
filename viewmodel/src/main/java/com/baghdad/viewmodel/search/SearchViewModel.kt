@@ -63,8 +63,6 @@ class SearchViewModel @Inject constructor(
         observeSearchQueryChanges()
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
-        BaseSnackBarMessage.UnknownError
     private fun checkIfUserIsLoggedIn() {
         tryToExecute(
             callee = { isUserLoggedInUseCase() },

@@ -20,7 +20,6 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.Locale
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
