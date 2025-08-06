@@ -20,7 +20,11 @@ fun NavGraphBuilder.myAccountNavGraph(navController: NavHostController) {
             }
         }
         composable<MyAccountRoute.MyRatingsScreen> {
-            MyRatingScreen()
+            MyRatingScreen(
+                handleNavigation = {
+                    handleMyAccountNavigation(it, navController)
+                }
+            )
         }
     }
 }

@@ -32,7 +32,11 @@ interface RemoteTvShowDataSource {
     suspend fun addTvShowRate(tvShowId: Long, rating: Int, sessionId: String)
 
     suspend fun getTvShowAccountStates(tvShowId: Long, sessionId: String): MediaAccountStateDto
-    suspend fun getUserRatedTvShows(accountId: Long, page: Int): PagedResultDto<TvShowDto>
+    suspend fun getUserRatedTvShows(
+        accountId: Long, sessionId: String,
+        page: Int
+    ): PagedResultDto<TvShowDto>
+
     suspend fun deleteTvShowRate(
         tvShowId: Long,
         sessionId: String

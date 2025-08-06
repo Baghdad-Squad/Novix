@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource
 
+import android.util.Log
 import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
@@ -185,9 +186,13 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         ).toDto()
     }
 
-    override suspend fun getUserRatedMovies(accountId: Long, page: Int): PagedResultDto<MovieDto> {
+    override suspend fun getUserRatedMovies(
+        accountId: Long,
+        sessionId: String,
+        page: Int
+    ): PagedResultDto<MovieDto> {
         return handleRequest<MyRatingMoviesResponse>(
-            apiCall = { movieApiService.getRatedMovies(accountId, page) },
+            apiCall = { movieApiService.getUserRatedMovies(accountId, sessionId, page) },
             logger = logger
         ).toPagedMovieDtos()
     }

@@ -122,8 +122,9 @@ interface MovieApiService {
 
     @Authenticated
     @GET(USER_RATED_MOVIES_ENDPOINT)
-    suspend fun getRatedMovies(
+    suspend fun getUserRatedMovies(
         @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
         @Query("page") page: Int
     ): Response<MyRatingMoviesResponse>
 

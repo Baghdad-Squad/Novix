@@ -113,8 +113,9 @@ interface TvShowApiService {
 
     @Authenticated
     @GET(USER_RATED_TV_SHOW_ENDPOINT)
-    suspend fun getRatedTvShows(
+    suspend fun getUserRatedTvShows(
         @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
         @Query("page") page: Int
     ): Response<MyRatingTvShowResponse>
 

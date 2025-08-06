@@ -154,10 +154,11 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
 
     override suspend fun getUserRatedTvShows(
         accountId: Long,
+        sessionId: String,
         page: Int
     ): PagedResultDto<TvShowDto> {
         return handleRequest<MyRatingTvShowResponse>(
-            apiCall = { tvShowApiService.getRatedTvShows(accountId , page) },
+            apiCall = { tvShowApiService.getUserRatedTvShows(accountId , sessionId, page) },
             logger = logger
         ).toPagedTvShowDtos()
     }

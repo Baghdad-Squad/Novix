@@ -1,5 +1,6 @@
 package com.baghdad.repository
 
+import android.util.Log
 import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.AuthenticationRepository
@@ -121,7 +122,7 @@ class MovieRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun deleteMovieRate(movieId: Long){
+    override suspend fun deleteMovieRate(movieId: Long) {
         executeAuthorizedSafely(
             sessionId = localSessionDataStore.getSessionId(),
             block = {
@@ -146,20 +147,27 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUserRatedMovies(page: Int, pageSize: Int): PagedResult<Movie> {
-        return getRemotePagedSafely(
-            page = page, pageSize = pageSize,
-            getRemoteData = { page, _ ->
-                authenticationRepository.getLoggedInUser()?.let {
-                    remoteMovieDataSource.getUserRatedMovies(it.id, page)
-                } ?: PagedResultDto(
-                    data = emptyList(),
-                    nextKey = null,
-                    prevKey = null
-                )
-            },
-        ) {
-            it.toEntity()
-        }
+        return executeAuthorizedSafely(
+            sessionId = localSessionDataStore.getSessionId(),
+            block = { sessionId ->
+                getRemotePagedSafely(
+                    page = page, pageSize = pageSize,
+                    getRemoteData = { page, _ ->
+                        authenticationRepository.getLoggedInUser()?.let {
+                            Log.d("aboud", it.id.toString())
+                            remoteMovieDataSource.getUserRatedMovies(it.id, sessionId ,page)
+                        } ?: PagedResultDto(
+                            data = emptyList(),
+                            nextKey = null,
+                            prevKey = null
+                        )
+                    },
+                ) {
+                    it.toEntity()
+                }
+            }
+        )
+
     }
 
     companion object {

@@ -24,7 +24,11 @@ interface RemoteMovieDataSource {
     suspend fun addMovieRate(movieId: Long, rating: Int, sessionId: String)
 
     suspend fun getMovieAccountStates(movieId: Long, sessionId: String): MediaAccountStateDto
-    suspend fun getUserRatedMovies(accountId: Long, page: Int): PagedResultDto<MovieDto>
+    suspend fun getUserRatedMovies(
+        accountId: Long, sessionId: String,
+        page: Int
+    ): PagedResultDto<MovieDto>
+
     suspend fun deleteMovieRate(movieId: Long, sessionId: String)
 
 }
