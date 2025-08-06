@@ -12,7 +12,9 @@ import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class EpisodeRepositoryImpl @Inject constructor(
     private val remoteEpisodeDataSource: RemoteEpisodeDataSource,
     private val localSessionDataStore: LocalSessionDataStore,
