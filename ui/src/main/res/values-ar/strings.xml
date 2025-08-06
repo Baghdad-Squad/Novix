@@ -135,6 +135,8 @@
     <string name="media_card">"بطاقة الوسائط "</string>
     <string name="added_list_successfully">" تم إنشاء القائمة بنجاح"</string>
     <string name="deleted_list_successfully">تم حذف القائمة بنجاح</string>
+    <string name="deleted_list">حذف القائمة</string>
+    <string name="delete">حذف</string>
     <string name="list_item_count_placeholder">%1$d items</string>
 
     <string name="my_account">حسابي</string>
@@ -149,10 +151,8 @@
     <string name="profile_setting_item">عنصر اعدادات الملف الشخصي</string>
     <string name="unlogged_in_user">الرجاء تسجيل الدخول للوصول الى تفاصيل حسابك والميزات الاخرى</string>
     <string name="loggedout_profile_icon">ايقونة المستخدم الذي تم تسجيل خروجه</string>
-
-
     <string name="skip">تخطي</string>
-
+    <string name="delete_description">سيؤدي حذف القائمة المحفوظة إلى حذف جميع العناصر الموجودة فيها. هل أنت متأكد من رغبتك في المتابعة؟</string>
 
 </resources>
 
