@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.movieDetails.MovieDetailsScreen
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.MovieDetailsRoute
@@ -31,7 +32,10 @@ private fun handleMovieDetailsNavigation(
     when (event) {
         MovieDetailsNavEvent.NavigateBack -> navController.popBackStack()
 
-        MovieDetailsNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
+        MovieDetailsNavEvent.NavigateToLogin ->
+            navController.navigate(
+                AuthenticationRoute.LoginScreen,
+            )
 
         is MovieDetailsNavEvent.NavigateToCategoryMovies -> navController.navigate(
             CategoriesRoute.CategoryMoviesScreen(event.categoryId)

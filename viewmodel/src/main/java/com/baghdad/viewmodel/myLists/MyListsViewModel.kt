@@ -42,7 +42,10 @@ class MyListsViewModel
 
         private fun onCheckIfUserIsLoggedInSuccess(isLoggedIn: Boolean) {
             updateState {
-                it.copy(isUsedLoggedIn = isLoggedIn)
+                it.copy(
+                    isUsedLoggedIn = isLoggedIn,
+                    isLoading = isLoggedIn,
+                )
             }
             if (isLoggedIn) {
                 getSavedLists()
@@ -163,7 +166,7 @@ class MyListsViewModel
                 message = MyListsSnackBarMessage.SavedListCreatedSuccessfully,
                 isSuccess = true,
             )
-    }
+        }
 
         private fun onAddListFinally() {
             updateState {
@@ -196,5 +199,5 @@ class MyListsViewModel
 
         companion object {
             private const val PAGES_SIZE = 20
+        }
     }
-}

@@ -83,11 +83,7 @@ private fun handleAuthenticationNavigation(
         }
 
         AuthenticationNavEvent.NavigateToLogin -> {
-            navController.navigate(AuthenticationRoute.LoginScreen) {
-                popUpTo(Graph.AuthenticationGraph) {
-                    inclusive = true
-                }
-            }
+            navController.navigate(AuthenticationRoute.LoginScreen)
         }
     }
 }

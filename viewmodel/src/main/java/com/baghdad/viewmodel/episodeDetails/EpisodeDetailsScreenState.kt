@@ -10,7 +10,7 @@ data class EpisodeDetailsScreenState(
     val guestsOfHonor: List<GuestsOfHonerUiState> = emptyList(),
     val isOverviewExpanded: Boolean = false,
     val isSavedToList: Boolean = false,
-    val isRated: Boolean = false,
+    val isRated: Boolean = true,
     val addToListBottomSheetState: AddToListBottomSheetState = AddToListBottomSheetState(),
     val rateEpisodeBottomSheetState: RateEpisodeBottomSheetState = RateEpisodeBottomSheetState(),
     val ratingStatus: RatingUiState = RatingUiState(),

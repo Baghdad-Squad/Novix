@@ -311,7 +311,11 @@ class TrendingMoviesViewModel @Inject constructor(
         updateState {
             it.copy(
                 addListBottomSheetState =
-                    it.addListBottomSheetState.copy(isVisible = false),
+                    it.addListBottomSheetState.copy(
+                        isVisible = false,
+                        listName = "",
+                        isLoading = false,
+                    ),
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(isVisible = true)
             )

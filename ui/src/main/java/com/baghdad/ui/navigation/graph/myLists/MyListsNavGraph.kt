@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.myLists.MyListsScreen
 import com.baghdad.ui.feature.savedListDetails.SavedListDetailsScreen
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.MyListsRoute
 
@@ -49,6 +50,6 @@ private fun handleMyListsNavEvent(
             }
         }
 
-        MyListsNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
+        MyListsNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen)
     }
 }

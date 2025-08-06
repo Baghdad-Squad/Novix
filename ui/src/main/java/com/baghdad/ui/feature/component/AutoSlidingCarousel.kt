@@ -55,12 +55,14 @@ fun AutoSlidingImageCarousel(
                     .drawWithContent {
                         drawContent()
                         drawRect(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    Color(0x4D000000),
-                                    Color(0x14000000)
+                            brush =
+                                Brush.verticalGradient(
+                                    colors =
+                                        listOf(
+                                            Color(0x99000000),
+                                            Color(0x00000000)
                                 ),
-                            )
+                                        )
                         )
                     }
             )
@@ -75,12 +77,14 @@ fun AutoSlidingImageCarousel(
                 .drawWithContent {
                     drawContent()
                     drawRect(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                Color(0x4D000000),
-                                Color(0x14000000)
+                        brush =
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                Color(0x99000000),
+                                Color(0x00000000)
                             ),
-                        )
+                                )
                     )
                 },
             contentAlignment = Alignment.Center

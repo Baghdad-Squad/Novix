@@ -7,6 +7,7 @@ import androidx.navigation.navigation
 import com.baghdad.ui.feature.authentication.ResetPasswordWebViewScreen
 import com.baghdad.ui.feature.profile.ProfileScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.HomeRoute
 import com.baghdad.ui.navigation.route.MyAccountRoute
@@ -47,7 +48,7 @@ private fun handleMyAccountNavigation(
     when (event) {
         MyAccountNavEvent.NavigateBack -> navController.popBackStack()
 
-        MyAccountNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
+        MyAccountNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen)
 
         MyAccountNavEvent.NavigateToMyRatings -> navController.navigate(
             MyAccountRoute.MyRatingsScreen

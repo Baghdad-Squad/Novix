@@ -9,8 +9,8 @@ import com.baghdad.ui.feature.actorGallery.GalleryScreen
 import com.baghdad.ui.feature.topMoviePicks.TopMoviePicksScreen
 import com.baghdad.ui.feature.topTvShowPicks.TopTvShowPicksScreen
 import com.baghdad.ui.navigation.route.ActorDetailsRoute
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.Graph.ActorDetailsGraph
-import com.baghdad.ui.navigation.route.Graph.AuthenticationGraph
 import com.baghdad.ui.navigation.route.Graph.MovieDetailsGraph
 import com.baghdad.ui.navigation.route.Graph.TvShowDetailsGraph
 
@@ -67,7 +67,6 @@ private fun handleActorDetailsNavigation(
             route = TvShowDetailsGraph(event.tvShowId)
         )
 
-        ActorDetailsNavEvent.NavigateToLogin -> navController.navigate(AuthenticationGraph)
-
+        ActorDetailsNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen)
     }
 }
