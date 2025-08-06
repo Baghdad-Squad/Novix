@@ -105,7 +105,7 @@ class ProfileViewModel @Inject constructor(
     private fun onSuccessLogOut(result: Boolean) {
         updateState { profileScreenUIState ->
             profileScreenUIState.copy(
-                isLogin = result
+                isLogin = false
             )
         }
     }
