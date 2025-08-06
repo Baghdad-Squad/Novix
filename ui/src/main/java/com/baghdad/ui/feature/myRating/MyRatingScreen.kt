@@ -29,10 +29,13 @@ import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
+import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.myRating.MyRatingEffect
 import com.baghdad.viewmodel.myRating.MyRatingInteractionListener
 import com.baghdad.viewmodel.myRating.MyRatingState
 import com.baghdad.viewmodel.myRating.MyRatingViewModel
@@ -40,9 +43,27 @@ import com.baghdad.viewmodel.myRating.MyRatingViewModel
 @Composable
 fun MyRatingScreen(
     viewModel: MyRatingViewModel = hiltViewModel(),
+    handleNavigation: (MyAccountNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val mediaItem = uiState.mediaFlow.collectAsLazyPagingItems()
+
+    ObserveAsEffect(viewModel.uiEffect) { effect ->
+        when (effect) {
+            is MyRatingEffect.NavigateBack -> handleNavigation(MyAccountNavEvent.NavigateBack)
+            is MyRatingEffect.NavigateToMovieDetails -> handleNavigation(
+                MyAccountNavEvent.NavigateToMovieDetails(
+                    effect.movieId
+                )
+            )
+            is MyRatingEffect.NavigateToTvShowDetails -> handleNavigation(
+                MyAccountNavEvent.NavigateToTvShowDetails(
+                    effect.tvShowId
+                )
+            )
+        }
+    }
+
     MyRatingContent(
         uiState = uiState,
         listener = viewModel,
