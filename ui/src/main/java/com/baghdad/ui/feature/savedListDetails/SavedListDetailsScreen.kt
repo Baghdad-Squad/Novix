@@ -29,6 +29,7 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
+import com.baghdad.ui.feature.savedListDetails.component.ConfirmListDeletionBottomSheet
 import com.baghdad.ui.navigation.graph.myLists.MyListsNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -98,7 +99,9 @@ fun SavedListDetailsContent(
                     IconButton(
                         icon = painterResource(com.baghdad.design_system.R.drawable.ic_delete),
                         tintIcon = Theme.color.redAccent,
-                        onClick = { listener.onDeleteClick(uiState.savedList.id) }
+                        onClick = {
+                            listener.onDeleteClick()
+                        }
                     )
                 }
 
@@ -136,6 +139,14 @@ fun SavedListDetailsContent(
                 onClick = { listener.onMovieClick(movie.id) }
             )
         }
+
+        ConfirmListDeletionBottomSheet(
+            onBottomSheetCloseClick = {listener.onDeleteListBottomSheetDismiss()} ,
+            title = stringResource(R.string.deleted_list),
+            description = stringResource(R.string.delete_description),
+            isVisible = uiState.isConfirmDeleteDialogVisible ,
+            onDeleteClick = {listener.onDeleteListBottomSheetDeleteClick()},
+        )
     }
 }
 

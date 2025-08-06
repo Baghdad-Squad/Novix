@@ -67,26 +67,15 @@ class SavedListDetailsViewModel @Inject constructor(
         updateState { it.copy(isLoading = isLoading) }
     }
 
-    override fun onDeleteClick(listId: Long) {
-        tryToExecute(
-            callee = { deleteSavedListUseCase(listId) },
-            onSuccess = {
-                showSnackBar(
-                    message = BaseSnackBarMessage.DefaultMessage,
-                    isSuccess = true
-                )
-                sendEffect(SavedListDetailsEffect.NavigateBack)
-            },
-            onError = ::onError,
-            onStart = { updateState { it.copy(isLoading = true) } },
-            onFinally = { updateState { it.copy(isLoading = false) } }
-        )
+    override fun onDeleteClick() {
+        updateState {
+            it.copy(
+                isConfirmDeleteDialogVisible = true
+            )
+        }
     }
 
-
-    override fun onMovieClick(
-        mediaId: Long
-    ) {
+    override fun onMovieClick(mediaId: Long) {
         sendEffect(SavedListDetailsEffect.NavigateToMovieDetails(mediaId))
     }
 
@@ -108,6 +97,30 @@ class SavedListDetailsViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         refreshList()
+    }
+
+    override fun onDeleteListBottomSheetDismiss() {
+        updateState {
+            it.copy(
+                isConfirmDeleteDialogVisible = false
+            )
+        }
+    }
+
+    override fun onDeleteListBottomSheetDeleteClick() {
+        tryToExecute(
+            callee = { deleteSavedListUseCase(currentListId) },
+            onSuccess = {
+                showSnackBar(
+                    message = BaseSnackBarMessage.DefaultMessage,
+                    isSuccess = true
+                )
+                sendEffect(SavedListDetailsEffect.NavigateBack)
+            },
+            onError = ::onError,
+            onStart = { updateState { it.copy(isLoading = true) } },
+            onFinally = { updateState { it.copy(isLoading = false) } }
+        )
     }
 
     private fun refreshList() {

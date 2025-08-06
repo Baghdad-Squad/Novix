@@ -9,6 +9,7 @@ data class SavedListDetailsScreenState(
     val mediaFlow: Flow<PagingData<SavedListDetailsMovieUiState>> = flowOf(),
     val isLoading: Boolean = false,
     val savedList: SavedListUiState = SavedListUiState(),
+    val isConfirmDeleteDialogVisible: Boolean = false,
 ) : BaseUiState {
 
     data class SavedListUiState(
