@@ -4,7 +4,9 @@ import com.baghdad.domain.repository.FavoriteGenreRepository
 import com.baghdad.repository.datasource.local.LocalFavoriteGenreDataSource
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class FavoriteGenreRepositoryImpl @Inject constructor(
     val favoriteGenreDataSource: LocalFavoriteGenreDataSource
 ) : FavoriteGenreRepository {

@@ -11,7 +11,9 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Named
+import javax.inject.Singleton
 
+@Singleton
 class LocalOnboardingDatastoreImp @Inject constructor(
     @Named("preferences") private val dataStore: DataStore<Preferences>,
     private val logger: Logger
@@ -36,7 +38,7 @@ class LocalOnboardingDatastoreImp @Inject constructor(
                 }.first()
             },
             logger = logger
-        ) ?: true
+        ) != false
     }
 
     companion object {

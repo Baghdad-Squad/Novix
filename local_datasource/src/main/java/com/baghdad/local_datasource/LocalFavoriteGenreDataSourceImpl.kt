@@ -7,7 +7,9 @@ import com.baghdad.repository.datasource.local.LocalFavoriteGenreDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.FavoriteGenreDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LocalFavoriteGenreDataSourceImpl @Inject constructor(
     private val favoriteGenreDao: FavoriteGenreDao,
     private val logger: Logger

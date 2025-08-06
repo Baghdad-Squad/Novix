@@ -16,7 +16,9 @@ import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RemoteSearchDataSourceImpl @Inject constructor(
     private val searchApiService: SearchApiService,
     private val logger: Logger,

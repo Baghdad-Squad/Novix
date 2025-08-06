@@ -17,4 +17,10 @@ interface ContinueWatchingDao {
 
     @Query("SELECT * FROM ContinueWatching WHERE userId = :userId ORDER BY viewedAt DESC")
     fun observeContinueWatching(userId: Long): Flow<List<ContinueWatching>>
+
+    @Query("SELECT * FROM ContinueWatching WHERE userId = :userId and contentType = 'MOVIE' ORDER BY viewedAt DESC")
+    fun getAllContinueWatchingMovies(userId: Long):Flow<List<ContinueWatching>>
+
+    @Query("SELECT * FROM ContinueWatching WHERE userId = :userId and contentType = 'TV_SHOW' ORDER BY viewedAt DESC")
+    fun getAllContinueWatchingTvShows(userId: Long): Flow<List<ContinueWatching>>
 }

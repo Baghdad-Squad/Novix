@@ -1,9 +1,29 @@
 package com.baghdad.viewmodel.topMoviePicks
 
-interface TopMoviePicksInteractionListener {
-    fun onMovieDetailsClick(movieId: Long)
-    fun onSaveMovieClick(movieId: Long)
-    fun onBackClick()
+import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksState.MovieUiState
 
-    fun onSnackBarActionLabelClick()
+interface TopMoviePicksInteractionListener {
+    fun onMovieDetailsClicked(movieId: Long)
+
+    fun onSaveMovieClicked(item: MovieUiState)
+
+    fun onBackClicked()
+
+    fun onSnackBarActionLabelClicked()
+
+    fun onSaveItemToListClicked()
+
+    fun onCreateNewListClicked()
+
+    fun onLoginClicked()
+
+    fun onSaveToListBottomSheetDismiss()
+
+    fun onListSelected(listId: Long)
+
+    fun onCreatedListNameChanged(name: String)
+
+    fun onCreateListBottomSheetDismiss()
+
+    fun onCreateListBottomSheetAddClick()
 }

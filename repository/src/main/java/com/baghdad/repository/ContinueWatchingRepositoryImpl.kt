@@ -15,7 +15,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ContinueWatchingRepositoryImpl @Inject constructor(
     private val localContinueWatchingDataSource: LocalContinueWatchingDataSource,
     private val authenticationRepository: AuthenticationRepository
@@ -69,5 +71,21 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
                 )
             localContinueWatchingDataSource.addContinueWatching(continueWatching.toDto())
         }
+    }
+
+    override suspend fun getAllContinueWatchingMovies(): Flow<List<ContinueWatching>> {
+        authenticationRepository.getLoggedInUser()?.let {
+            return localContinueWatchingDataSource.getAllContinueWatchingMovies(it.id)
+                .map(List<ContinueWatchingDto>::toEntities)
+        }
+        return flowOf(emptyList())
+    }
+
+    override suspend fun getAllContinueWatchingTvShows(): Flow<List<ContinueWatching>> {
+        authenticationRepository.getLoggedInUser()?.let {
+            return localContinueWatchingDataSource.getAllContinueWatchingTvShows(it.id)
+                .map(List<ContinueWatchingDto>::toEntities)
+        }
+        return flowOf(emptyList())
     }
 }
