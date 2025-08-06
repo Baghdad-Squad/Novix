@@ -65,16 +65,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         val body = AddListItemRequest(mediaId = movieId)
 
         handleRequest(
-            apiCall = { savedListApiService.addItemToSavedList(listId, body, sessionId) },
-            logger = logger
-        )
-    }
-
-    override suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long, sessionId: String) {
-        val body = AddListItemRequest(mediaId = tvShowId)
-
-        handleRequest(
-            apiCall = { savedListApiService.addItemToSavedList(listId, body, sessionId) },
+            apiCall = { savedListApiService.addMovieToSavedList(listId, body, sessionId) },
             logger = logger
         )
     }
@@ -86,19 +77,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     ) {
         val body = RemoveListItemRequest(mediaId = movieId)
         handleRequest(
-            apiCall = { savedListApiService.removeItemFromSavedList(listId, body, sessionId) },
-            logger = logger
-        )
-    }
-
-    override suspend fun removeTvShowFromSavedList(
-        listId: Long,
-        tvShowId: Long,
-        sessionId: String
-    ) {
-        val body = RemoveListItemRequest(mediaId = tvShowId)
-        handleRequest(
-            apiCall = { savedListApiService.removeItemFromSavedList(listId, body, sessionId) },
+            apiCall = { savedListApiService.removeMovieFromSavedList(listId, body, sessionId) },
             logger = logger
         )
     }
@@ -107,11 +86,14 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         listId: Long,
         page: Int,
         pageSize: Int,
-    ): SavedListDetailsDto =
-        handleRequest<ListDetailsResponse>(
+    ): SavedListDetailsDto {
+        val response = handleRequest<ListDetailsResponse>(
             apiCall = { savedListApiService.getListDetails(listId, page) },
             logger = logger,
-        ).toSavedListDetailsDto()
+        )
+        return response.toSavedListDetailsDto()
+    }
+
 
     override suspend fun deleteSavedListById(listId: Long, sessionId: String) {
         handleRequest(

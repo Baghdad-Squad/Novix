@@ -1,11 +1,12 @@
 package com.baghdad.viewmodel.continueWatching
 
+import com.baghdad.domain.usecase.continueWatching.GetCurrentContinueWatchingMovieGenres
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.usecase.continueWatching.GetCurrentContinueWatchingTvShowGenres
 import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContinueWatchingViewModel @Inject constructor(
-    private val getGenresUseCase: GetGenresUseCase,
+    private val getCurrentContinueWatchingTvShowGenres: GetCurrentContinueWatchingTvShowGenres,
+    private val getCurrentContinueWatchingMovieGenres: GetCurrentContinueWatchingMovieGenres,
     private val getAllContinueWatchingUseCase: GetAllContinueWatchingUseCase,
     private val getAllContinueWatchingByGenreUseCase: GetAllContinueWatchingByGenreUseCase,
 ) : BaseViewModel<ContinueWatchingState, ContinueWatchingScreenEffect>(ContinueWatchingState()),
@@ -27,8 +29,8 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     private fun getGenres() {
-        tryToExecute(
-            { if (currentState.selectedMediaTabIsMovie) getGenresUseCase.getMovieGenres() else getGenresUseCase.getTvShowGenres() },
+        tryToCollect(
+            { if (currentState.selectedMediaTabIsMovie) getCurrentContinueWatchingMovieGenres.invoke() else getCurrentContinueWatchingTvShowGenres.invoke() },
             ::onGenresFetched,
             onError = ::onGetGenresError,
         )
@@ -83,7 +85,7 @@ class ContinueWatchingViewModel @Inject constructor(
         val filteredData =
             result.data.filter { item ->
                 (item.contentType == ContinueWatching.ContentType.MOVIE && currentState.selectedMediaTabIsMovie) ||
-                    (item.contentType == ContinueWatching.ContentType.TV_SHOW && !currentState.selectedMediaTabIsMovie)
+                        (item.contentType == ContinueWatching.ContentType.TV_SHOW && !currentState.selectedMediaTabIsMovie)
             }
 
         return result.copy(data = filteredData)
@@ -101,7 +103,8 @@ class ContinueWatchingViewModel @Inject constructor(
         }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.DefaultMessage
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.DefaultMessage
 
     override fun onBackClick() {
         sendEffect(ContinueWatchingScreenEffect.NavigateBack)
