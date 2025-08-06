@@ -39,7 +39,7 @@ fun <T> HorizontalMediaCardList(
                 isSaved = isSaved(item),
                 onSavedClick = { onSavedClick(item) },
                 onClick = { onCardClick(item) },
-                showSaveIcon = isSaveVisible
+                isSaveToListVisible = isSaveVisible,
             )
         }
     }
