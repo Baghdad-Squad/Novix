@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -50,6 +51,7 @@ import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenState
 import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.shared.SavedListUiState
 
 
 @Composable
@@ -59,6 +61,8 @@ fun ActorDetailsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
@@ -66,6 +70,7 @@ fun ActorDetailsScreen(
         uiState = uiState,
         listener = viewModel,
         snackBarState = snackBarState,
+        savedLists = savedLists
     )
 }
 
@@ -117,10 +122,10 @@ fun ActorDetailsContent(
     listener: ActorDetailsInteractionListener,
     modifier: Modifier = Modifier,
     snackBarState: SnackBarState,
+    savedLists: LazyPagingItems<SavedListUiState>
 ) {
     val scrollState = rememberScrollState()
     var shouldShowBackground by remember { mutableStateOf(false) }
-    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     val animatedColor by animateColorAsState(
         targetValue =
@@ -196,7 +201,7 @@ fun ActorDetailsContent(
                         title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
                         items = uiState.topMoviesPicks,
                         imageUrl = { it.posterPictureURL },
-                        onSavedClick = { listener.onSaveMovieClick() },
+                        onSavedClick = { listener.onSaveMovieClick(movie = it) },
                         onCardClick = { listener.onMovieCardClick(it.id) },
                         isSaved = { it.isSaved },
                         isShowAllVisible = uiState.topMoviesPicks.size >= 10,
@@ -235,7 +240,7 @@ fun ActorDetailsContent(
     SavedListBottomSheet(
         isVisible = uiState.addToListBottomSheetState.isVisible,
         isUserLoggedIn = uiState.isUserLoggedIn,
-        onAddClick = listener::onSaveMovieClick,
+        onAddClick = listener::onSaveItemToListClicked,
         onCreateNewListClick = listener::onCreateNewListClicked,
         onLoginClick = listener::onLoginClicked,
         onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,

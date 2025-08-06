@@ -11,6 +11,7 @@ import com.baghdad.domain.usecase.login.IsLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
@@ -37,6 +38,7 @@ class ActorDetailsViewModel @Inject constructor(
     private val isUserLoggedInUseCase: IsLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val createSavedListUseCase: CreateSavedListUseCase,
+    private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
     private val ioDispatcher: CoroutineDispatcher,
 ) :
     BaseViewModel<ActorDetailsScreenState, ActorDetailsScreenEffect>(ActorDetailsScreenState()),
@@ -254,7 +256,13 @@ class ActorDetailsViewModel @Inject constructor(
         sendEffect(ActorDetailsScreenEffect.NavigateToTvShowDetails(tvShowId))
     }
 
-    override fun onSaveMovieClick() {
+    override fun onSaveMovieClick(movie: ActorDetailsScreenState.MovieUiState) {
+
+        onSaveButtonClicked(listId = movie.savedListId, itemId = movie.id, isSaved = movie.isSaved)
+
+    }
+
+    override fun onSaveItemToListClicked() {
         tryToExecute(
             callee = {
                 addMovieToSavedListUseCase(
@@ -269,6 +277,61 @@ class ActorDetailsViewModel @Inject constructor(
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
         )
+    }
+
+    private fun onSaveButtonClicked(
+        listId: Long,
+        itemId: Long,
+        isSaved: Boolean,
+    ) {
+        if (isSaved) {
+            removeSavedItem(listId = listId, itemId = itemId)
+        } else {
+            updateState {
+                it.copy(
+                    addToListBottomSheetState =
+                        it.addToListBottomSheetState.copy(
+                            isVisible = true,
+                            selectedItemId = itemId,
+                            selectedListId = null,
+                        )
+                )
+            }
+        }
+    }
+
+    private fun removeSavedItem(
+        listId: Long,
+        itemId: Long,
+    ) {
+        tryToExecute(
+            callee = { removeMovieFromSavedListUseCase(listId = listId, movieId = itemId) },
+            onSuccess = { onRemoveSavedItemSuccess() },
+            dispatcher = ioDispatcher,
+            onFinally = ::onRemoveSavedItemFinished,
+        )
+    }
+
+    private fun onRemoveSavedItemSuccess() {
+        showItemRemovedSuccessfullySnackBar()
+    }
+
+    private fun showItemRemovedSuccessfullySnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.RemovedItemSuccessfully,
+            isSuccess = true,
+        )
+    }
+
+    private fun onRemoveSavedItemFinished() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = false
+                    )
+            )
+        }
     }
 
     private fun onAddItemToListFinished() {
