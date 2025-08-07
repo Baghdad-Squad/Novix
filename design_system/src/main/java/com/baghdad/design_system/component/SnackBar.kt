@@ -45,13 +45,13 @@ fun SnackBar(
             fadeIn(tween(animationDuration)) +
                 slideInVertically(
                     animationSpec = tween(animationDuration),
-                    initialOffsetY = { it },
+                    initialOffsetY = { if (actionLabel == null) -it else it },
                 ),
         exit =
             fadeOut(tween(animationDuration)) +
                 slideOutVertically(
                     animationSpec = tween(animationDuration),
-                    targetOffsetY = { it },
+                    targetOffsetY = { if (actionLabel == null) -it else it },
                 ),
     ) {
         Row(
@@ -64,7 +64,8 @@ fun SnackBar(
                         width = 1.dp,
                         color = Theme.color.stroke,
                         shape = RoundedCornerShape(12.dp),
-                    ).padding(horizontal = 12.dp, vertical = 16.dp),
+                    )
+                    .padding(horizontal = 12.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
