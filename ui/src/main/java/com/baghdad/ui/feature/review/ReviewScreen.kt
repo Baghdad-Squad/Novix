@@ -18,8 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -84,14 +86,16 @@ fun ReviewContent(
                 position = position,
             )
         },
+        isLoading = uiState.isLoading,
+        backgroundBlur = {
+            BackgroundBlur()
+        },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        isLoading = uiState.isLoading
-    ) {
+        ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.color.surface)
         ) {
 
             if (uiState.reviews.isEmpty()) {

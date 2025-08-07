@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -206,8 +207,11 @@ private fun MovieDetailsContent(
                 position = position,
             )
         },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-    ) {
+        ) {
 
         Box(
             modifier = modifier

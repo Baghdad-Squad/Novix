@@ -14,9 +14,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -79,8 +81,7 @@ fun TrendingActorsContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(top = 22.dp, bottom = 8.dp)
-                    .background(Theme.color.surface),
+                    .padding(top = 22.dp, bottom = 8.dp),
                 onGoBackClick = {
                     listener.onBackClick()
                 },
@@ -97,12 +98,14 @@ fun TrendingActorsContent(
                 position = position,
             )
         },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-    ) {
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.color.surface)
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
@@ -125,6 +128,7 @@ fun TrendingActorsContent(
         }
     }
 }
+
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return type.toStringResource()

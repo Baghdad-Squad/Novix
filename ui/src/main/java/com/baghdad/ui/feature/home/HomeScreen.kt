@@ -15,8 +15,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -89,6 +91,9 @@ private fun HomeContent(
                 onActionClick = interactionListener::onSnackBarActionLabelClicked,
                 position = position,
             )
+        },
+        backgroundBlur = {
+            BackgroundBlur()
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {

@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -156,6 +157,9 @@ fun ActorDetailsContent(
                 position = position,
             )
         },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         LaunchedEffect(scrollState) {
@@ -163,10 +167,8 @@ fun ActorDetailsContent(
                 shouldShowBackground = scrollValue > 450
             }
         }
-
         Box(
             modifier = modifier
-                .background(Theme.color.surface)
                 .fillMaxSize()
                 .navigationBarsPadding(),
         ) {

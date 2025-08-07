@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -85,6 +86,7 @@ private fun MyListsScreenContent(
                 )
             }
         },
+        backgroundBlur = { BackgroundBlur() }
     ) {
         AnimatedContent(
             targetState = savedLists.itemCount == 0 && uiState.isLoading.not(),

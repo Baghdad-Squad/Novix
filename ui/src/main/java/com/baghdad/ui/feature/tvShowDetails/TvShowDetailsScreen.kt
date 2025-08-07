@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
@@ -182,11 +183,13 @@ fun TvShowDetailsContent(
                 position = position,
             )
         },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Box(
             modifier = modifier
-                .background(Theme.color.surface)
                 .fillMaxSize()
                 .navigationBarsPadding()
         ) {
