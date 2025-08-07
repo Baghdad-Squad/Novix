@@ -1,8 +1,10 @@
 package com.baghdad.viewmodel.movieDetails
 
+import com.baghdad.viewmodel.shared.AddListBottomSheetState
+
 interface MovieDetailsInteractionListener {
-    fun onSaveCurrentMovieClick()
-    fun onSaveMoreLikeThisMedia(id: Long)
+    fun onSaveCurrentMovieClick(movie: AddListBottomSheetState)
+    fun onSaveMoreLikeThisMedia(movie: MovieDetailsState.MoreLikeThisMovie)
     fun onExtendOverviewClick()
     fun onCategoryClick(categoryId: Long)
     fun onBackClicked()
@@ -17,13 +19,8 @@ interface MovieDetailsInteractionListener {
     fun onClickSubmitRating(rating: Int)
     fun onDismissRatingBottomSheet()
     fun onLoginClick()
-
-    fun onSaveMovieClick(listId: Long, itemId: Long, isSaved: Boolean)
-    fun onSaveItemToListClicked()
-
-    //    fun onSnackBarActionLabelClick()
     fun onCreateNewListClicked()
-    fun onLoginClicked()
+    fun onSaveItemToListClicked()
     fun onSaveToListBottomSheetDismiss()
     fun onListSelected(listId: Long)
     fun onCreatedListNameChanged(name: String)

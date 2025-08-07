@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -82,7 +81,7 @@ fun MovieDetailsScreen(
     viewModel: MovieDetailsViewModel = hiltViewModel(),
     handleNavigation: (MovieDetailsNavEvent) -> Unit,
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
@@ -203,7 +202,7 @@ private fun MovieDetailsContent(
                 onRateClicked = { listener.onClickStarButton() },
                 onPlayTrailerClicked = { listener.onClickPlayTrailer() },
                 isRated = state.isRated,
-                isLoading = false /*TODO*/
+                isLoading = false
             )
         }, snackbar = {
             SnackBar(
@@ -296,12 +295,15 @@ private fun MovieDetailsContent(
                         val isFirstInRow = index % itemsPerRow == 0
                         val isLastInRow =
                             (index + 1) % itemsPerRow == 0 || index == state.moreLikeThisMovie.size - 1
+
                         HomeCard(
                             url = movie.imageUrl,
                             contentDescription = stringResource(R.string.card_movie_image),
                             isSaved = movie.isSaved,
                             onSavedClick = {
-                                listener.onSaveMoreLikeThisMedia(movie.id)
+                                listener.onSaveMoreLikeThisMedia(
+                                    movie = state.moreLikeThisMovie[index]
+                                )
                             },
                             onClick = {
                                 listener.onMovieClick(movie.id)
@@ -333,7 +335,9 @@ private fun MovieDetailsContent(
                         backgroundColor = Theme.color.iconBackgroundLow,
                         isSaved = state.isSaved,
                         onClick = {
-                            listener.onSaveCurrentMovieClick()
+                            listener.onSaveMoreLikeThisMedia(
+                                movie = state.moreLikeThisMovie.first()
+                            )
                         }
                     )
                 }
@@ -346,7 +350,7 @@ private fun MovieDetailsContent(
         isUserLoggedIn = state.isUserLoggedIn,
         onAddClick = listener::onSaveItemToListClicked,
         onCreateNewListClick = listener::onCreateNewListClicked,
-        onLoginClick = listener::onLoginClicked,
+        onLoginClick = listener::onLoginClick,
         onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
         lists = savedLists,
         selectedListId = state.addToListBottomSheetState.selectedListId,
@@ -362,7 +366,6 @@ private fun MovieDetailsContent(
         onListNameChange = listener::onCreatedListNameChanged,
     )
 }
-
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {

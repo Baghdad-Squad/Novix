@@ -22,6 +22,8 @@ import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.shared.AddListBottomSheetState
+import com.baghdad.viewmodel.shared.AddToListBottomSheetState
 import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.shared.SavedListUiState
 import com.baghdad.viewmodel.shared.toUiState
@@ -43,7 +45,6 @@ class MovieDetailsViewModel @Inject constructor(
     private val addMovieRateUseCase: AddMovieRateUseCase,
     private val getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
-    private val isLoggedInUseCase: IsLoggedInUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
@@ -68,7 +69,7 @@ class MovieDetailsViewModel @Inject constructor(
         isUserLoggedIn()
     }
 
-    override fun onSaveCurrentMovieClick() {
+    override fun onSaveCurrentMovieClick(movie: AddListBottomSheetState) {
         tryToExecute(
             callee = {
                 addMovieToSavedListUseCase(
@@ -85,45 +86,36 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-    override fun onSaveMovieClick(listId: Long, itemId: Long, isSaved: Boolean) {
-        onSaveButtonClicked(
-            listId = listId,
-            itemId = itemId,
-            isSaved = isSaved
-        )
+
+    private fun onAddItemToListSuccess() {
+        onSaveToListBottomSheetDismiss()
+        showItemSavedSuccessfullySnackBar()
     }
 
-    override fun onSaveMoreLikeThisMedia(id: Long) {
-        tryToExecute(
-            callee = { currentState.moreLikeThisMovie.firstOrNull { it.id == id }?.id ?: 1L },
-            onSuccess = ::onSaveMoreLikeThisMediaSuccess,
-            onStart = ::onMoreLikeThisStarted,
-            dispatcher = ioDispatcher,
-            onFinally = ::onMoreLikeThisFinished
-        )
-    }
-
-    private fun onMoreLikeThisStarted() {
-        updateState { state -> state.copy(isMoreLikeThisMovieLoading = true) }
-    }
-
-    private fun onMoreLikeThisFinished() {
-        updateState { state -> state.copy(isMoreLikeThisMovieLoading = false) }
-    }
-
-    private fun onSaveMoreLikeThisMediaSuccess(id: Long) {
-        updateState { state ->
-            val updatedMovies = state.moreLikeThisMovie.map {
-                if (it.id == id) {
-                    it.copy(isSaved = !it.isSaved)
-                } else {
-                    it
-                }
-            }
-            state.copy(
-                moreLikeThisMovie = updatedMovies,
+    private fun onAddItemToListStart() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isLoading = true,
+                    ),
             )
         }
+    }
+
+    private fun onAddItemToListFinished() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isLoading = false,
+                    ),
+            )
+        }
+    }
+
+    override fun onSaveMoreLikeThisMedia(movie: MovieDetailsState.MoreLikeThisMovie) {
+        onSaveButtonClicked(listId = movie.id, itemId = movie.id, isSaved = movie.isSaved)
     }
 
     override fun onExtendOverviewClick() {
@@ -141,7 +133,6 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onBackClicked() {
         sendEffect(MovieDetailsEffect.NavigateBack)
     }
-
 
     override fun onActorClick(id: Long) {
         sendEffect(MovieDetailsEffect.NavigateToActorDetails(id))
@@ -198,7 +189,6 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-
     private fun onIsUserLoggedInSuccess(isLoggedIn: Boolean) {
         val newBottomSheetType = if (isLoggedIn) {
             BottomSheetType.ShowRating
@@ -237,55 +227,6 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onLoginClick() {
         sendEffect(MovieDetailsEffect.NavigateToLogin)
-    }
-
-    override fun onSaveItemToListClicked() {
-        tryToExecute(
-            callee = {
-                addMovieToSavedListUseCase(
-                    listId =
-                        currentState.addToListBottomSheetState.selectedListId
-                            ?: return@tryToExecute,
-                    movieId = currentState.addToListBottomSheetState.selectedItemId,
-                )
-            },
-            onSuccess = { onAddItemToListSuccess() },
-            dispatcher = ioDispatcher,
-            onStart = ::onAddItemToListStart,
-            onFinally = ::onAddItemToListFinished,
-        )
-    }
-
-    private fun onCreateListSuccess() {
-        onCreateListBottomSheetDismiss()
-        getUserSavedLists()
-    }
-
-    private fun onCreateListFinished() {
-        updateState {
-            it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isLoading = false,
-                    ),
-            )
-        }
-    }
-
-    private fun onCreateListStart() {
-        updateState {
-            it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isLoading = true,
-                    ),
-            )
-        }
-    }
-
-    private fun onAddItemToListSuccess() {
-        onSaveToListBottomSheetDismiss()
-        showItemSavedSuccessfullySnackBar()
     }
 
     private fun showItemSavedSuccessfullySnackBar() {
@@ -350,28 +291,6 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun onAddItemToListFinished() {
-        updateState {
-            it.copy(
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(
-                        isLoading = false,
-                    ),
-            )
-        }
-    }
-
-    private fun onAddItemToListStart() {
-        updateState {
-            it.copy(
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(
-                        isLoading = true,
-                    ),
-            )
-        }
-    }
-
     override fun onCreateNewListClicked() {
         updateState {
             it.copy(
@@ -387,22 +306,12 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onLoginClicked() {
-        sendEffect(
-            MovieDetailsEffect.NavigateToLogin,
-        )
-    }
-
     override fun onSaveToListBottomSheetDismiss() {
         updateState {
             it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isVisible = false,
-                    ),
                 addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(
-                        isVisible = true,
+                    AddToListBottomSheetState(
+                        savedLists = it.addToListBottomSheetState.savedLists,
                     ),
             )
         }
@@ -419,18 +328,59 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onCreatedListNameChanged(name: String) {
+    override fun onSaveItemToListClicked() {
         tryToExecute(
             callee = {
-                createSavedListUseCase(
-                    title = currentState.addListBottomSheetState.listName,
+                addMovieToSavedListUseCase(
+                    listId =
+                        currentState.addToListBottomSheetState.selectedListId
+                            ?: return@tryToExecute,
+                    movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
             },
-            onSuccess = { onCreateListSuccess() },
+            onSuccess = { onAddItemToListSuccess() },
             dispatcher = ioDispatcher,
-            onStart = ::onCreateListStart,
-            onFinally = ::onCreateListFinished,
+            onStart = ::onAddItemToListStart,
+            onFinally = ::onAddItemToListFinished,
         )
+    }
+
+    override fun onCreatedListNameChanged(name: String) {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        listName = name,
+                    ),
+            )
+        }
+    }
+
+    private fun onCreateListSuccess() {
+        onCreateListBottomSheetDismiss()
+        getUserSavedLists()
+    }
+
+    private fun onCreateListStart() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isLoading = true,
+                    ),
+            )
+        }
+    }
+
+    private fun onCreateListFinished() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isLoading = false,
+                    ),
+            )
+        }
     }
 
     override fun onCreateListBottomSheetDismiss() {
@@ -439,6 +389,8 @@ class MovieDetailsViewModel @Inject constructor(
                 addListBottomSheetState =
                     it.addListBottomSheetState.copy(
                         isVisible = false,
+                        listName = "",
+                        isLoading = false,
                     ),
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
@@ -452,7 +404,7 @@ class MovieDetailsViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 createSavedListUseCase(
-                    title = currentState.addListBottomSheetState.listName,
+                    title = currentState.addListBottomSheetState.listName.trim(),
                 )
             },
             onSuccess = { onCreateListSuccess() },
@@ -461,7 +413,6 @@ class MovieDetailsViewModel @Inject constructor(
             onFinally = ::onCreateListFinished,
         )
     }
-
 
     override fun onClickSubmitRating(rating: Int) {
         tryToExecute(
@@ -509,9 +460,6 @@ class MovieDetailsViewModel @Inject constructor(
         loadInitData()
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
-        BaseSnackBarMessage.UnknownError
-
     private fun getMovieGallery() {
         tryToExecute(
             callee = {
@@ -543,7 +491,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun checkIfUserIsLoggedIn() {
         tryToExecute(
-            callee = { isLoggedInUseCase() },
+            callee = { isUserLoggedInUseCase() },
             onSuccess = ::onCheckIfUserIsLoggedInSuccess,
             dispatcher = ioDispatcher,
         )
@@ -551,9 +499,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun onCheckIfUserIsLoggedInSuccess(isLoggedIn: Boolean) {
         updateState {
-            it.copy(
-
-            )
+            it.copy(isUserLoggedIn = isLoggedIn)
         }
         if (isLoggedIn) {
             getUserSavedLists()
@@ -625,7 +571,6 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-
     private fun getCastMembers() {
         tryToExecute(
             callee = { getCastsInfoUseCase(movieId) },
@@ -654,7 +599,6 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onGetCastMembersFinally() {
         updateState { state -> state.copy(isCastMemberLoading = false) }
     }
-
 
     private fun getMoreLikeThisShow() {
         tryToExecute(
@@ -698,12 +642,10 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-
     private fun onFinallyAndAddToContinueWatching() {
         updateState { state -> state.copy(isMovieDetailsLoading = false) }
         addToContinueWatching()
     }
-
 
     private fun addToContinueWatching() {
         tryToExecute(
@@ -722,5 +664,3 @@ class MovieDetailsViewModel @Inject constructor(
         private const val DEFAULT_PAGE_SIZE = 20
     }
 }
-
-
