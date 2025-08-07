@@ -87,8 +87,8 @@
     <string name="top_rating_item">عنصر الأعلى ترتيبا</string>
     <string name="trending_people">الممثلون الرائجون</string>
 
-    <string name="episodes">عدد الحلقات %1$d </string>
-    <string name="season_number_template">الموسم %1$d </string>
+    <string name="episodes">عدد الحلقات %1$s </string>
+    <string name="season_number_template">الموسم %1$s </string>
     <string name="automatically_redirecting_to_login">سيتم توجيهك تلقائيا لتسجيل الدخول في ٥ ثواني …</string>
     <string name="password_reset_success_message">استعادة كلمة المرور</string>
     <string name="password_reset_main_page_header">اعادة تعيين كلمة المرور</string>
