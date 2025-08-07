@@ -108,18 +108,19 @@ private fun ProfileScreenContent(
             )
         },
         isLoading = state.isLoading,
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
-        backgroundBlur = { BackgroundBlur() }
-
-    ) {
+        backgroundBlur = { BackgroundBlur() },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        ) {
         if (state.isUserLoggedIn) {
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp)

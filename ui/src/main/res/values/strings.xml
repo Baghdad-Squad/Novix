@@ -128,7 +128,7 @@
     <string name="delete">Delete</string>
 
     <string name="my_account">My account</string>
-    <string name="profile_image" translatable="false">Profile Image</string>
+    <string name="profile_image">Profile Image</string>
     <string name="watching_history">Watching History</string>
     <string name="my_rating">My rating</string>
     <string name="content_restriction">Content Restriction</string>
@@ -151,6 +151,8 @@
     <string name="dark">Dark</string>
     <string name="english">English</string>
     <string name="arabic">Arabic</string>
+    <string name="there_is_no_items_here">There is no items here!</string>
+    <string name="empty_list">Empty List</string>
     <string name="password_should_be_more_than_3_chars">Password should be more than 3 chars</string>
     <string name="invalid_credentials">Invalid Credentials</string>
 

@@ -59,7 +59,7 @@ fun AppLanguageBottomSheet(
                 onClick = onSaveClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp)
+                    .padding(bottom = 24.dp, top = 12.dp)
             )
         }
     }
