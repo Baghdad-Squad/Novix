@@ -97,7 +97,6 @@ fun SnackBar(
                 TextButton(
                     label = it,
                     onClick = { onActionClick?.invoke() },
-                    noRipple = true,
                     modifier = Modifier.align(Alignment.CenterVertically),
                 )
             }
