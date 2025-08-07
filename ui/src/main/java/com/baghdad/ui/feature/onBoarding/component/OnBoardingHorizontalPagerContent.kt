@@ -148,7 +148,7 @@ private fun TextSlidingAnimationVisibility(
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
-fun isTablet(): Boolean {
+private fun isTablet(): Boolean {
     val configuration = LocalConfiguration.current
     return configuration.screenWidthDp >= 600
 }
