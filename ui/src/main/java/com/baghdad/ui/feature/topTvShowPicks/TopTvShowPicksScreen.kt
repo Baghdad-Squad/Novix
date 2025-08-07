@@ -99,7 +99,7 @@ private fun TopTvShowPicksContent(
         },
         isLoading = uiState.isLoading,
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),

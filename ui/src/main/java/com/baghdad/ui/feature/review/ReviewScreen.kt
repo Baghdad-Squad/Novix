@@ -86,7 +86,7 @@ fun ReviewContent(
         },
         isLoading = uiState.isLoading,
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }
     ) {
 

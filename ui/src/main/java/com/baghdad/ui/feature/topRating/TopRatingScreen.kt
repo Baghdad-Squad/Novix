@@ -197,7 +197,7 @@ private fun TopRatingContent(
             )
         },
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }) {
 
         when (uiState.selectedTab) {

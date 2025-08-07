@@ -157,7 +157,7 @@ fun ActorDetailsContent(
             )
         },
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }) {
         LaunchedEffect(scrollState) {
             snapshotFlow { scrollState.value }.collect { scrollValue ->

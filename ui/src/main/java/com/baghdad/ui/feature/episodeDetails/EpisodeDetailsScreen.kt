@@ -133,7 +133,7 @@ fun EpisodeDetailsContent(
             )
         },
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }
     ) {
 

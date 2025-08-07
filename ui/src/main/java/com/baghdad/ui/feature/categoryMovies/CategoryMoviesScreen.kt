@@ -134,7 +134,7 @@ private fun CategoryMoviesContent(
             )
         },
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }) {
         Column {
             LazyPagingVerticalGrid<CategoryMoviesState.MovieUiState>(

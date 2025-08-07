@@ -183,7 +183,7 @@ fun TvShowDetailsContent(
             )
         },
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }) {
         Box(
             modifier = modifier

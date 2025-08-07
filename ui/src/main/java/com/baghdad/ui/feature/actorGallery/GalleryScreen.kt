@@ -96,7 +96,7 @@ fun ActorGalleryScreenContent(
             ) {}
         },
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }) {
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize()) {

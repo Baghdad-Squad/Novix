@@ -206,7 +206,7 @@ private fun MovieDetailsContent(
             )
         },
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }
     ) {
 

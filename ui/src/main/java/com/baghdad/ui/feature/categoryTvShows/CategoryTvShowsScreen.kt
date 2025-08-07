@@ -117,7 +117,7 @@ private fun CategoryTvShowsContent(
         },
         isLoading = uiState.isLoading,
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }) {
         Column {
             LazyPagingVerticalGrid(

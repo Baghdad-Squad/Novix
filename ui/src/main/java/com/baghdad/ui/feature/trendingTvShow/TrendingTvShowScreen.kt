@@ -124,7 +124,7 @@ fun TrendingTvShowContent(
             }
         },
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }) {
         Column(
             modifier = Modifier

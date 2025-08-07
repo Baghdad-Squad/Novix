@@ -98,7 +98,7 @@ fun TrendingActorsContent(
             )
         },
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }
     ) {
         Column(

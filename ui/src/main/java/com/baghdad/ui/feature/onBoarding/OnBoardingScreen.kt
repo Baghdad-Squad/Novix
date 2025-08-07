@@ -78,12 +78,11 @@ private fun OnBoardingContent(
         pagerState.animateScrollToPage(state.currentPage)
     }
     Scaffold(
-        backgroundBlur = { BackgroundBlur(modifier = Modifier.zIndex(999f)) }
+        backgroundBlur = { BackgroundBlur()}
     ) {
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             item {

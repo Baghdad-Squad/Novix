@@ -142,7 +142,7 @@ fun ContinueWatchingContent(
             )
         },
         backgroundBlur = {
-            BackgroundBlur(modifier = Modifier.zIndex(999f))
+            BackgroundBlur()
         }) {
         Column(
             modifier = Modifier
