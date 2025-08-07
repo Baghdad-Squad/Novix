@@ -27,7 +27,7 @@ data class TvShowDetailsScreenState(
         val overView: String = "",
         val trailerURL: String = "",
         val posterPictureURL: String = "",
-        val userRating: Int? = 0,
+        val userRating: Int = 0,
         val headerImagesURLs: List<String> = emptyList()
     )
 

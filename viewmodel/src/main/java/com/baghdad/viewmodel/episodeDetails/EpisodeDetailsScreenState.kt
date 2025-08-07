@@ -24,7 +24,7 @@ data class EpisodeDetailsScreenState(
         val episodeNumber: Int = 0,
         val rating: Double = 0.0,
         val trailerUrl: String = "",
-        val userRating: Int? = 0,
+        val userRating: Int = 0,
         val duration: String = "",
         val releasedDate: String = "",
         val currentSeason: Int = 0,
