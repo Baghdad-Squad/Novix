@@ -238,7 +238,7 @@ private fun MovieDetailsContent(
             LoginRequiredSheet(
                 isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                onLoginClick = { listener.onLoginClick()},
+                onLoginClick = { listener.onLoginClick() },
                 title = stringResource(R.string.rate_it),
                 description = stringResource(R.string.please_login_to_rate)
             )
