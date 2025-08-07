@@ -197,9 +197,10 @@ fun TvShowDetailsContent(
             RatingBottomSheet(
                 isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                rate = uiState.tvShowInfo.userRating ?: 0,
+                rate = uiState.tvShowInfo.userRating,
+                isButtonEnabled = uiState.tvShowInfo.userRating != 0,
                 onRateChanged = { listener.onRatingChanged(it) },
-                onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating ?: 0) }
+                onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating) }
             )
 
             LoginRequiredSheet(
