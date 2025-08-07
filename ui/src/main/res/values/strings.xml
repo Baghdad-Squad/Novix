@@ -41,6 +41,7 @@
     <string name="cast">Cast</string>
     <string name="season">Season</string>
     <string name="episode">Episode %1$s</string>
+    <string name="episode_title">Episode</string>
     <string name="view_reviews">View reviews</string>
     <string name="add_to_list">Add to list</string>
     <string name="please_login_to_save_to_list">Please login to save to list</string>
