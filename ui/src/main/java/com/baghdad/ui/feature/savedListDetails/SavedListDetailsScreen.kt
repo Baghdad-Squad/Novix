@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -93,27 +94,32 @@ fun SavedListDetailsContent(
                         .background(Theme.color.surface),
                     onGoBackClick = { listener.onBackClick() },
                     screenTitle = uiState.savedList.name,
+                    maxLines = 1,
+                    textEllipsize = TextOverflow.Ellipsis
                 ) {
                     IconButton(
                         icon = painterResource(com.baghdad.design_system.R.drawable.ic_delete),
                         tintIcon = Theme.color.redAccent,
                         onClick = {
                             listener.onDeleteClick()
-                        }
+                        },
+                        modifier = Modifier.padding(start = 8.dp)
                     )
                 }
 
             }
         },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBar.message)),
                 isSuccess = snackBar.isSuccess,
                 isVisible = snackBar.isVisible,
                 actionLabel = snackBar.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
+        isSnackBarWithActionLabel = snackBar.actionLabelRes != null,
     ) {
         LazyPagingVerticalGrid(
             items = mediaItems,

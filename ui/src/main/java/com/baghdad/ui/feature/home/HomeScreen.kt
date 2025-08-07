@@ -82,18 +82,21 @@ private fun HomeContent(
             .background(Theme.color.surface)
             .statusBarsPadding(),
         topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = interactionListener::onSnackBarActionLabelClicked,
+                position = position,
             )
         },
         backgroundBlur = {
             BackgroundBlur()
-        }) {
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+    ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             contentPadding = PaddingValues(bottom = 16.dp, top = 8.dp),

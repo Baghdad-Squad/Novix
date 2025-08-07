@@ -124,18 +124,21 @@ private fun CategoryMoviesContent(
                 )
             }
         },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
         backgroundBlur = {
             BackgroundBlur()
-        }) {
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+    ) {
         Column {
             LazyPagingVerticalGrid<CategoryMoviesState.MovieUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),

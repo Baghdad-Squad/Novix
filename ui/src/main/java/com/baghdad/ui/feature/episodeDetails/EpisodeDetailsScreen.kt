@@ -123,19 +123,21 @@ fun EpisodeDetailsContent(
                 onPlayTrailerClicked = listener::onPlayTrailerClick,
             )
         },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
         backgroundBlur = {
             BackgroundBlur()
-        }
-    ) {
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        ) {
 
         RatingBottomSheet(
             isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
