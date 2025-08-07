@@ -158,7 +158,6 @@ class MovieRepositoryImpl @Inject constructor(
                     page = page, pageSize = pageSize,
                     getRemoteData = { page, _ ->
                         authenticationRepository.getLoggedInUser()?.let {
-                            Log.d("aboud", it.id.toString())
                             remoteMovieDataSource.getUserRatedMovies(it.id, sessionId ,page)
                         } ?: PagedResultDto(
                             data = emptyList(),
