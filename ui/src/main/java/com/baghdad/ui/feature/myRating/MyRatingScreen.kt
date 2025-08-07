@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -101,8 +102,7 @@ fun MyRatingContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(top = 22.dp, bottom = 8.dp)
-                        .background(Theme.color.surface),
+                        .padding(top = 22.dp, bottom = 8.dp),
                     onGoBackClick = {
                         listener.onBackClick()
                     },
@@ -115,13 +115,13 @@ fun MyRatingContent(
                     modifier = Modifier.padding(vertical = 12.dp)
                 )
             }
-        }
+        },
+        backgroundBlur = { BackgroundBlur() }
     ) {
         LazyPagingVerticalGrid<MyRatingState.MediaItemUiState>(
             columns = GridCells.Adaptive(minSize = 150.dp),
             modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface),
+                .fillMaxSize(),
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
