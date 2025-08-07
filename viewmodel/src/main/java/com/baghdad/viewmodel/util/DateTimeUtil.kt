@@ -5,6 +5,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
+import java.util.Locale
 
 fun LocalDate.toYYYYMMDDFormat(): String {
     val format = LocalDate.Format {
@@ -28,14 +29,32 @@ fun LocalDate.toDDMMYYYYFormat(): String {
     return this.format(format)
 }
 
-
 fun LocalDate.toDDMMMYYYYFormat(): String {
+    val currentLocale = Locale.getDefault()
+    val isArabic = currentLocale.language == "ar"
+
+    val monthNames = if (isArabic) {
+        MonthNames(
+            "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+            "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+        )
+    } else {
+        MonthNames.ENGLISH_ABBREVIATED
+    }
+
     val format = LocalDate.Format {
         day(padding = Padding.NONE)
         char(' ')
-        monthName(names = MonthNames.ENGLISH_ABBREVIATED)
+        monthName(names = monthNames)
         char(' ')
         year(padding = Padding.ZERO)
     }
-    return this.format(format)
+
+    val formattedDate = this.format(format)
+
+    return if (isArabic) {
+        formattedDate
+    } else {
+        formattedDate
+    }
 }

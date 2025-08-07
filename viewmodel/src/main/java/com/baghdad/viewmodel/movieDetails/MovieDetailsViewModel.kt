@@ -193,8 +193,8 @@ class MovieDetailsViewModel @Inject constructor(
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
                     isBottomSheetVisible = false,
-                    bottomSheetType = BottomSheetType.Hidden
-                )
+                ),
+                userRating = 0
             )
         }
     }

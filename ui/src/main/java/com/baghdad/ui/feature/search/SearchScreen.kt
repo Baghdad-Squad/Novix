@@ -32,6 +32,7 @@ import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.HorizontalDivider
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
+import com.baghdad.design_system.component.SnackBarPosition
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -136,15 +137,18 @@ fun SearchContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
-        snackbar = {
+        snackbar = { position ->
             SearchSnackBar(
                 snackBarState = snackBarState,
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
         backgroundBlur = {
             BackgroundBlur()
-        }) {
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -196,6 +200,7 @@ fun SearchContent(
 private fun SearchSnackBar(
     snackBarState: SnackBarState,
     onActionClick: () -> Unit,
+    position: SnackBarPosition,
 ) {
     SnackBar(
         message = stringResource(getSnackBarMessage(snackBarState.message)),
@@ -203,6 +208,7 @@ private fun SearchSnackBar(
         isVisible = snackBarState.isVisible,
         actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
         onActionClick = onActionClick,
+        position = position,
     )
 }
 

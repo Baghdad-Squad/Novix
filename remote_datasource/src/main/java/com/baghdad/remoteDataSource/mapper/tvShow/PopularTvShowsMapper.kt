@@ -20,7 +20,7 @@ fun PopularTvShowsResponse.Result.toDto(): TvShowDto {
             )
         } ?: emptyList(),
         imdbRating = voteAverage ?: 0.0,
-        userRating = 0.0,
+        userRating = 0,
         releaseDate = firstAirDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
         overview = "",
         posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
