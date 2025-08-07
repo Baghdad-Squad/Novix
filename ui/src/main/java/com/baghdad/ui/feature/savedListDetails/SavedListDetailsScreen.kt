@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.savedListDetails
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.savedListDetails.component.ConfirmListDeletionBottomSheet
+import com.baghdad.ui.feature.savedListDetails.component.EmptyListScreen
 import com.baghdad.ui.navigation.graph.myLists.MyListsNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -115,35 +117,51 @@ fun SavedListDetailsContent(
             )
         },
     ) {
-        LazyPagingVerticalGrid(
-            items = mediaItems,
-            columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 12.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) { movie ->
-            HomeCard(
-                url = movie.posterUrl,
-                isSaved = true,
-                contentDescription = stringResource(R.string.movie_card),
-                onSavedClick = {
-                    listener.onRemoveSavedMovieClick(movie.id)
-                },
-                onClick = { listener.onMovieClick(movie.id) }
-            )
+        AnimatedContent(
+            targetState = mediaItems.itemCount == 0 && uiState.isLoading.not(),
+        ) { isEmptyList ->
+            if (isEmptyList) {
+                EmptyListScreen()
+            } else {
+                ShowSavedList(listener, mediaItems)
+            }
         }
 
         ConfirmListDeletionBottomSheet(
-            onBottomSheetCloseClick = {listener.onDeleteListBottomSheetDismiss()} ,
+            onBottomSheetCloseClick = { listener.onDeleteListBottomSheetDismiss() },
             title = stringResource(R.string.deleted_list),
             description = stringResource(R.string.delete_description),
-            isVisible = uiState.isConfirmDeleteDialogVisible ,
-            onDeleteClick = {listener.onDeleteListBottomSheetDeleteClick()},
+            isVisible = uiState.isConfirmDeleteDialogVisible,
+            onDeleteClick = { listener.onDeleteListBottomSheetDeleteClick() },
+        )
+    }
+}
+
+@Composable
+fun ShowSavedList(
+    listener: SavedListDetailsInteractionListener,
+    mediaItems: LazyPagingItems<SavedListDetailsScreenState.SavedListDetailsMovieUiState>
+) {
+    LazyPagingVerticalGrid(
+        items = mediaItems,
+        columns = GridCells.Adaptive(minSize = 150.dp),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            bottom = 12.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) { movie ->
+        HomeCard(
+            url = movie.posterUrl,
+            isSaved = true,
+            contentDescription = stringResource(R.string.movie_card),
+            onSavedClick = {
+                listener.onRemoveSavedMovieClick(movie.id)
+            },
+            onClick = { listener.onMovieClick(movie.id) }
         )
     }
 }
