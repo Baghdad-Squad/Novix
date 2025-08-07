@@ -26,11 +26,11 @@ class MyRatingViewModel @Inject constructor(
 
     private fun fetchUserRatedMedia() {
         when (currentState.selectedMediaTab) {
-            MyRatingState.MediaTab.MOVIE -> fetchMovies(pageSize = 20)
-            MyRatingState.MediaTab.TV_SHOW -> fetchTvShows(pageSize = 20)
+            MyRatingState.MediaTab.MOVIE -> fetchMovies()
+            MyRatingState.MediaTab.TV_SHOW -> fetchTvShows()
             else -> {
                 collectPagingFlow(
-                    loadData = { page -> getUserMediaRatedUseCase(page, 20) },
+                    loadData = { page -> getUserMediaRatedUseCase(page, PAGE_SIZE) },
                     onInitialLoadFinished = ::onFinally,
                     mapEntityToUiState = { it.toMediaItemUiState() },
                     onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow = mediaFlow) } },
@@ -40,9 +40,9 @@ class MyRatingViewModel @Inject constructor(
         }
     }
 
-    private fun fetchMovies(pageSize: Int) {
+    private fun fetchMovies() {
         collectPagingFlow(
-            loadData = { page -> getUserRatedMoviesUseCase(page, pageSize) },
+            loadData = { page -> getUserRatedMoviesUseCase(page, PAGE_SIZE) },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toMediaItemUiState() },
             onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow = mediaFlow) } },
@@ -50,9 +50,9 @@ class MyRatingViewModel @Inject constructor(
         )
     }
 
-    private fun fetchTvShows(pageSize: Int) {
+    private fun fetchTvShows() {
         collectPagingFlow(
-            loadData = { page -> getUserRatedTvShowsUseCase(page, pageSize) },
+            loadData = { page -> getUserRatedTvShowsUseCase(page, PAGE_SIZE) },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toMediaItemUiState() },
             onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow = mediaFlow) } },
@@ -118,7 +118,7 @@ class MyRatingViewModel @Inject constructor(
 
     private fun onDeletedSuccess() {
         showSnackBar(
-            message = BaseSnackBarMessage.RemovedItemSuccessfully,
+            message = BaseSnackBarMessage.RatedRemoveSuccessfully,
             isSuccess = true
         )
         fetchUserRatedMedia()
@@ -128,6 +128,10 @@ class MyRatingViewModel @Inject constructor(
         updateState {
             currentState.copy(isLoading = false)
         }
+    }
+
+    private companion object {
+        const val PAGE_SIZE = 20
     }
 
 }

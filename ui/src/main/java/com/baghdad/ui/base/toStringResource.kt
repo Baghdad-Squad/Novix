@@ -20,6 +20,7 @@ fun BaseSnackBarMessage.toStringResource(): Int {
         BaseSnackBarMessage.RemovedItemSuccessfully -> R.string.snackbar_removed_success
         BaseSnackBarMessage.ItemRateSuccessfully -> R.string.snackbar_rated_success
         BaseSnackBarMessage.DeleteListSuccessfully -> R.string.deleted_list_successfully
+        BaseSnackBarMessage.RatedRemoveSuccessfully -> R.string.delete_rating_successfully
         else -> R.string.empty_string
     }
 }

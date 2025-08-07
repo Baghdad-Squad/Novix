@@ -47,7 +47,7 @@ fun MyRatingScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val mediaItem = uiState.mediaFlow.collectAsLazyPagingItems()
-
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
             is MyRatingEffect.NavigateBack -> handleNavigation(MyAccountNavEvent.NavigateBack)
@@ -68,8 +68,8 @@ fun MyRatingScreen(
     MyRatingContent(
         uiState = uiState,
         listener = viewModel,
+        snackBarState = snackBarState,
         mediaItems = mediaItem,
-        snackBarState = SnackBarState(),
     )
 }
 
