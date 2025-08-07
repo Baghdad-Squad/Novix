@@ -189,8 +189,8 @@ class EpisodeDetailsViewModel @Inject constructor(
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
                     isBottomSheetVisible = false,
-                    bottomSheetType = BottomSheetType.Hidden
-                )
+                ),
+                episode = it.episode.copy(userRating = 0)
             )
         }
     }

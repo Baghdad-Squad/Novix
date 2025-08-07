@@ -217,9 +217,10 @@ private fun MovieDetailsContent(
             RatingBottomSheet(
                 isVisible = state.ratingStatus.isBottomSheetVisible,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                rate = state.userRating ?: 0,
+                rate = state.userRating ,
                 onRateChanged = { listener.onRatingChanged(it) },
-                onSubmitClick = { listener.onClickSubmitRating(state.userRating ?: 0) }
+                isButtonEnabled = state.userRating != 0,
+                onSubmitClick = { listener.onClickSubmitRating(state.userRating ) }
             )
 
 

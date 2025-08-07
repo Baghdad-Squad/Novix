@@ -18,7 +18,7 @@ fun TvShow.toUiState() =
         seasonCount = numberOfSeasons,
         overView = overview,
         trailerURL = trailerURL,
-        userRating = userRating?.toInt(),
+        userRating = userRating ?: 0,
         posterPictureURL = posterImageURL,
         headerImagesURLs = headerImagesURLs,
     )

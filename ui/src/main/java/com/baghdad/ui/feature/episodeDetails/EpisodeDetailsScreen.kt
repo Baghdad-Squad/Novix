@@ -136,9 +136,10 @@ fun EpisodeDetailsContent(
         RatingBottomSheet(
             isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
             onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-            rate = state.episode.userRating ?: 0,
+            rate = state.episode.userRating,
+            isButtonEnabled = state.episode.userRating != 0,
             onRateChanged = { listener.onRatingChanged(it) },
-            onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating ?: 0) }
+            onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating) }
         )
 
 
