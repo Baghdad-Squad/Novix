@@ -4,7 +4,6 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.LocalGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.dummyData.DummyDataFactory.createMockCastMember
@@ -27,18 +26,16 @@ import java.util.Locale
 
 class MovieRepositoryImplTest {
     private lateinit var remoteGenreDataSource: RemoteGenreDataSource
-    private lateinit var localGenreDataSource: LocalGenreDataSource
     private lateinit var remoteMovieDataSource: RemoteMovieDataSource
     private lateinit var movieRepositoryImpl: MovieRepositoryImpl
 
     @BeforeEach
     fun setUp() {
         remoteGenreDataSource = mockk()
-        localGenreDataSource = mockk()
         remoteMovieDataSource = mockk()
         movieRepositoryImpl = MovieRepositoryImpl(
             remoteGenreDataSource = remoteGenreDataSource,
-            localGenreDataSource = localGenreDataSource,
+            localSessionDataStore = mockk(),
             remoteMovieDataSource = remoteMovieDataSource
         )
     }

@@ -1,12 +1,11 @@
 package com.baghdad.viewmodel.tvShowDetails
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.tvShow.AddTvShowRateUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowAccountStatesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
@@ -21,8 +20,6 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.BottomSheetType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,7 +30,7 @@ class TvShowDetailsViewModel @Inject constructor(
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
     private val addTvShowRateUseCase: AddTvShowRateUseCase,
-    private val isLoggedInUseCase: IsLoggedInUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getTvShowAccountStatesUseCase: GetTvShowAccountStatesUseCase,
     private val ioDispatcher: CoroutineDispatcher,
 ) :
@@ -129,10 +126,6 @@ class TvShowDetailsViewModel @Inject constructor(
         sendEffect(TvShowDetailsScreenEffect.NavigateToReviews(tvShowId))
     }
 
-    override fun onClickSaveTvShow() {
-//        TODO("Not yet implemented")
-    }
-
     override fun onClickStarButton() {
         updateState {
             it.copy(
@@ -145,7 +138,7 @@ class TvShowDetailsViewModel @Inject constructor(
 
     private fun isUserLoggedIn() {
         tryToExecute(
-            callee = { isLoggedInUseCase() },
+            callee = { isUserLoggedInUseCase() },
             dispatcher = ioDispatcher,
             onSuccess = ::onIsUserLoggedInSuccess,
             onError = ::onLoadDataError
@@ -163,9 +156,10 @@ class TvShowDetailsViewModel @Inject constructor(
         updateState {
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
-                    bottomSheetType = newBottomSheetType
+                    bottomSheetType = newBottomSheetType,
+                    ),
+                    isRated = it.isRated && isLoggedIn,
                 )
-            )
         }
     }
 

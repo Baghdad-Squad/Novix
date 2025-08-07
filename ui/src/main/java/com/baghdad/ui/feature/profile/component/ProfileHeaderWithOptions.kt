@@ -29,6 +29,7 @@ import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
+import com.baghdad.ui.feature.review.component.PlaceHolderReviewerImage
 
 @Composable
 fun ProfileHeaderWithOption(
@@ -57,6 +58,7 @@ fun ProfileHeaderWithOption(
         ) {
             IslamicImage(
                 imageUrl = imageUrl,
+                errorContent = { PlaceHolderReviewerImage() },
                 contentDescription = "Profile Image",
                 modifier = Modifier
                     .size(48.dp)

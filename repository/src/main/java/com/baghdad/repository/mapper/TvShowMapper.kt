@@ -21,11 +21,3 @@ fun TvShowDto.toEntity(): TvShow {
         numberOfSeasons = numberOfSeasons,
     )
 }
-
-fun TvShowDto.toSearchQueryDto(query: String): SearchQueryDto {
-    return SearchQueryDto(
-        queryName = query,
-        mediaId = id,
-        mediaType = SearchQueryDto.MediaType.TV_SHOW
-    )
-}

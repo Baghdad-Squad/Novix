@@ -147,5 +147,9 @@
     <string name="skip">Skip</string>
     <string name="delete_description">Deleting the saved list will remove all items it contains. Are you sure you want to proceed?</string>
     <string name="theme">Theme</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
 
 </resources>

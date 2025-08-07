@@ -12,4 +12,6 @@ object Theme {
         @Composable @ReadOnlyComposable get() = localNovixColor.current
     val typography: NovixTextStyle
         @Composable @ReadOnlyComposable get() = localNovixTextStyle.current
+    val isDarkTheme: Boolean
+        @Composable @ReadOnlyComposable get() = LocalIsDarkTheme.current
 }

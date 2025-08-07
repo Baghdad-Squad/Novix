@@ -15,23 +15,24 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+
 class SearchTvShowsUseCaseTest {
+
+    private lateinit var searchRepository: SearchRepository
+    private lateinit var favoriteGenreRepository: FavoriteGenreRepository
+    private lateinit var searchTvShowsUseCase: SearchTvShowsUseCase
 
     @BeforeEach
     fun setUp() {
         searchRepository = mockk(relaxed = true)
         favoriteGenreRepository = mockk(relaxed = true)
-        searchTvShowsUseCase =
-            SearchTvShowsUseCase(searchRepository, favoriteGenreRepository)
+        searchTvShowsUseCase = SearchTvShowsUseCase(searchRepository)
     }
 
     @Test
-    fun `searchTvShowsUseCase() should sort by favorite genre score correctly when favorite genres exist`() = runTest {
-        val query = "Sort Test"
+    fun `searchTvShowsUseCase() should return tv shows as returned by repository`() = runTest {
+        val query = "Test Query"
         val page = 1
-
-        val favoriteGenres = mapOf("Drama" to 10, "Action" to 5, "Comedy" to 1)
-        coEvery { favoriteGenreRepository.getFavoriteGenres() } returns favoriteGenres
         coEvery { searchRepository.searchTvShowsByName(query, page) } returns sampleTvShows
 
         val result = searchTvShowsUseCase(query, page)
@@ -43,27 +44,19 @@ class SearchTvShowsUseCaseTest {
     }
 
     @Test
-    fun `searchTvShowsUseCase() should make exactly one repository call when executed`() = runTest {
+    fun `searchTvShowsUseCase() should call repository exactly once`() = runTest {
         val query = "Single Call"
         val page = 1
-        SearchFilter(
-            minimumYear = 2010,
-            maximumYear = 2020,
-            selectedGenres = emptyList(),
-            minimumRating = 7
-        )
 
-        coEvery { favoriteGenreRepository.getFavoriteGenres() } returns emptyMap()
         coEvery { searchRepository.searchTvShowsByName(query, page) } returns sampleTvShows
 
         searchTvShowsUseCase(query, page)
 
         coVerify(exactly = 1) { searchRepository.searchTvShowsByName(query, page) }
-        coVerify(exactly = 1) { favoriteGenreRepository.getFavoriteGenres() }
     }
 
     @Test
-    fun `searchTvShowsUseCase() should preserve pagination keys when repository returns paginated result`() = runTest {
+    fun `searchTvShowsUseCase() should preserve pagination keys from repository`() = runTest {
         val query = "Pagination"
         val page = 2
         val paginatedResult = sampleTvShows.copy(
@@ -72,7 +65,6 @@ class SearchTvShowsUseCaseTest {
             data = listOf(sampleTvShows.data[0])
         )
 
-        coEvery { favoriteGenreRepository.getFavoriteGenres() } returns emptyMap()
         coEvery { searchRepository.searchTvShowsByName(query, page) } returns paginatedResult
 
         val result = searchTvShowsUseCase(query, page)
@@ -83,10 +75,6 @@ class SearchTvShowsUseCaseTest {
     }
 
     companion object {
-        private lateinit var searchRepository: SearchRepository
-        private lateinit var favoriteGenreRepository: FavoriteGenreRepository
-        private lateinit var searchTvShowsUseCase: SearchTvShowsUseCase
-
         private val sampleTvShows = PagedResult(
             prevKey = null,
             nextKey = 2,
