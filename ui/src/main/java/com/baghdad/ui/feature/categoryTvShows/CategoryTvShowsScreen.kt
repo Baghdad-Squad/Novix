@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.categoryTvShows
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,10 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
@@ -83,7 +84,6 @@ private fun CategoryTvShowsContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Theme.color.surface)
                     .statusBarsPadding()
                     .padding(
                         top = 12.dp,
@@ -115,15 +115,16 @@ private fun CategoryTvShowsContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
-        isLoading = uiState.isLoading
-    ) {
+        isLoading = uiState.isLoading,
+        backgroundBlur = {
+            BackgroundBlur()
+        }) {
         Column {
             LazyPagingVerticalGrid(
                 items = lazyPagingTvShows,
                 columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface),
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(
                     horizontal = 16.dp,
                     vertical = 8.dp
