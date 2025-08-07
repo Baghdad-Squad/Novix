@@ -114,6 +114,7 @@ fun SavedListDetailsContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
+        isSnackBarWithActionLabel = snackBar.actionLabelRes != null,
     ) {
         LazyPagingVerticalGrid(
             items = mediaItems,

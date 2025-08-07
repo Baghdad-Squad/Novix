@@ -130,7 +130,8 @@ private fun CategoryMoviesContent(
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
-        }
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Column {
             LazyPagingVerticalGrid<CategoryMoviesState.MovieUiState>(

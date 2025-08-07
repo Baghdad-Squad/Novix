@@ -98,6 +98,7 @@ fun LoginScreenContent(
                 isVisible = snackBarState.isVisible
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         topBar = {
             TopBar(listener)
         },

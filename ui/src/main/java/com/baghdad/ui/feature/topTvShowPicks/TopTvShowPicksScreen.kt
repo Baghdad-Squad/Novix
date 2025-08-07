@@ -86,6 +86,7 @@ private fun TopTvShowPicksContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClick,

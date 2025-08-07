@@ -115,6 +115,7 @@ private fun CategoryTvShowsContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         isLoading = uiState.isLoading
     ) {
         Column {

@@ -115,8 +115,8 @@ private fun ProfileScreenContent(
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
-        }
-
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         if (state.isUserLoggedIn) {
             Column(

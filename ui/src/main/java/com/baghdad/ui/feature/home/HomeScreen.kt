@@ -89,6 +89,7 @@ private fun HomeContent(
                 onActionClick = interactionListener::onSnackBarActionLabelClicked,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),

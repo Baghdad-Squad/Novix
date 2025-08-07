@@ -82,6 +82,7 @@ fun ReviewContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         isLoading = uiState.isLoading
     ) {
 

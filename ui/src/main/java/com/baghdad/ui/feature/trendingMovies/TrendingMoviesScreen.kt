@@ -124,6 +124,7 @@ private fun TrendingMoviesContent(
                 onActionClick = { listener.onSnackBarActionLabelClicked(uiState.selectedGenreId) },
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         isLoading = uiState.isLoading
     ) {
         Column(

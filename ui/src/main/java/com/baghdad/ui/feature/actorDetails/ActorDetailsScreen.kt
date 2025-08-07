@@ -155,6 +155,7 @@ fun ActorDetailsContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         LaunchedEffect(scrollState) {
             snapshotFlow { scrollState.value }.collect { scrollValue ->

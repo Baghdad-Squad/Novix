@@ -140,6 +140,7 @@ fun SearchContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Column(
             modifier = Modifier

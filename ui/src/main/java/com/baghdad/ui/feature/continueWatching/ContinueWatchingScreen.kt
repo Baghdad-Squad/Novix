@@ -139,7 +139,8 @@ fun ContinueWatchingContent(
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionClick,
             )
-        }
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Column(
             modifier = Modifier

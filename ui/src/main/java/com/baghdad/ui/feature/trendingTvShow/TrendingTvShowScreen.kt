@@ -99,6 +99,7 @@ fun TrendingTvShowContent(
                 onActionClick = { listener.onSnackBarActionLabelClicked(uiState.selectedGenreId) },
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         isLoading = uiState.isLoading,
         topBar = {
             Column {

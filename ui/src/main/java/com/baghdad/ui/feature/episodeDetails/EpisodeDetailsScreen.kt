@@ -131,6 +131,7 @@ fun EpisodeDetailsContent(
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
 
         RatingBottomSheet(

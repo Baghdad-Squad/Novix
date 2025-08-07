@@ -101,6 +101,7 @@ private fun TopMoviePicksContent(
                 isVisible = snackBarState.isVisible,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClicked,

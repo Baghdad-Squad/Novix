@@ -180,8 +180,8 @@ fun TvShowDetailsContent(
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
-        }
-
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Box(
             modifier = modifier
