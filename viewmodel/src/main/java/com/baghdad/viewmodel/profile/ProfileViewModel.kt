@@ -241,7 +241,7 @@ class ProfileViewModel @Inject constructor(
     private fun onSuccessLogOut(result: Boolean) {
         updateState { profileScreenUIState ->
             profileScreenUIState.copy(
-                isUserLoggedIn = result
+                isUserLoggedIn = false
             )
         }
         sendEffect(ProfileEffect.NavigateToLogin)
