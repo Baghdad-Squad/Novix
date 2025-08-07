@@ -141,6 +141,7 @@
     <string name="delete">حذف</string>
 
     <string name="my_account">حسابي</string>
+    <string name="profile_image">صورة الملف الشخصي</string>
     <string name="watching_history">سجل المشاهدة</string>
     <string name="my_rating">تقييمي</string>
     <string name="content_restriction">حجب المحتوى</string>
@@ -159,6 +160,7 @@
     <string name="dark">غامق</string>
     <string name="english">الإنجليزية</string>
     <string name="arabic">العربية</string>
+    <string name="there_is_no_items_here">لا يوجد أي عناصر هنا</string>
 
 
 </resources>
