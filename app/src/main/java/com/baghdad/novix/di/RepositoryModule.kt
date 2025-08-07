@@ -1,29 +1,27 @@
 package com.baghdad.novix.di
 
 import com.baghdad.domain.repository.ActorRepository
-import com.baghdad.domain.repository.AppearanceRepository
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import com.baghdad.domain.repository.EpisodeRepository
-import com.baghdad.domain.repository.LanguageProviderRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.domain.repository.OnBoardingRepository
 import com.baghdad.domain.repository.RecentlyViewedRepository
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.repository.TvShowRepository
+import com.baghdad.domain.repository.UserPreferencesRepository
 import com.baghdad.repository.ActorRepositoryImpl
-import com.baghdad.repository.AppearanceRepositoryImpl
 import com.baghdad.repository.AuthenticationRepositoryImpl
 import com.baghdad.repository.ContinueWatchingRepositoryImpl
 import com.baghdad.repository.EpisodeRepositoryImpl
-import com.baghdad.repository.LanguageProviderImpl
 import com.baghdad.repository.MovieRepositoryImpl
 import com.baghdad.repository.OnBoardingRepositoryImpl
 import com.baghdad.repository.RecentlyViewedRepositoryImpl
 import com.baghdad.repository.SavedListRepositoryImpl
 import com.baghdad.repository.SearchRepositoryImpl
 import com.baghdad.repository.TvShowRepositoryImpl
+import com.baghdad.repository.UserPreferencesRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -60,15 +58,12 @@ abstract class RepositoryModule {
     abstract fun provideAuthRepository(authenticationRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
 
     @Binds
-    abstract fun provideSavedListRepository(savedListRepository: SavedListRepositoryImpl): SavedListRepository
+    abstract fun provideSavedListRepository(savedListRepositoryImpl: SavedListRepositoryImpl): SavedListRepository
 
     @Binds
     abstract fun provideOnBoardingRepository(onBoardingRepository: OnBoardingRepositoryImpl): OnBoardingRepository
 
     @Binds
-    abstract fun provideLanguageProviderRepository(languageProviderImpl: LanguageProviderImpl): LanguageProviderRepository
-
-    @Binds
-    abstract fun provideAppearanceRepository(appearanceRepositoryImpl: AppearanceRepositoryImpl): AppearanceRepository
+    abstract fun provideUserPreferencesRepository(userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl): UserPreferencesRepository
 
 }

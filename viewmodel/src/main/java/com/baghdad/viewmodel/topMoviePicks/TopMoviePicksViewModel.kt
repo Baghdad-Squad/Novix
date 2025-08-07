@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
@@ -27,7 +27,7 @@ class TopMoviePicksViewModel @Inject constructor(
     private val getActorMoviesUseCase: GetActorMoviesUseCase,
     private val createSavedListUseCase: CreateSavedListUseCase,
     private val ioDispatcher: CoroutineDispatcher,
-    private val isUserLoggedInUseCase: IsLoggedInUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val removeMovieFromListUseCase: AddMovieToSavedListUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,

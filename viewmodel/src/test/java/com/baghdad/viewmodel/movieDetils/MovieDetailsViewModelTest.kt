@@ -4,15 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
 import com.baghdad.domain.usecase.movie.GetMovieAccountStatesUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
 import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
-import com.baghdad.domain.usecase.tvShow.AddTvShowRateUseCase
-import com.baghdad.domain.usecase.tvShow.GetTvShowAccountStatesUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.person.Actor
@@ -44,7 +42,7 @@ class MovieDetailsViewModelTest {
     private lateinit var movieDetailsViewModel: MovieDetailsViewModel
     private lateinit var getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase
     private lateinit var addMovieRateUseCase: AddMovieRateUseCase
-    private lateinit var isLoggedInUseCase: IsLoggedInUseCase
+    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
 
     private val testDispatcher = StandardTestDispatcher()
     private val movieId = 123L
@@ -60,7 +58,7 @@ class MovieDetailsViewModelTest {
         addContinueWatchingUseCase = mockk()
         getMovieAccountStatesUseCase = mockk()
         addMovieRateUseCase = mockk()
-        isLoggedInUseCase = mockk()
+        isUserLoggedInUseCase = mockk()
 
 
         coEvery { getMovieDetailsUseCase(any()) } returns createMockMovie()
@@ -70,7 +68,7 @@ class MovieDetailsViewModelTest {
         coEvery { addContinueWatchingUseCase(any(), any(), any(), any()) } returns Unit
         coEvery { getMovieAccountStatesUseCase(any()) } returns createMockAccountStates()
         coEvery { addMovieRateUseCase(any(), any()) } returns Unit
-        coEvery { isLoggedInUseCase() } returns true
+        coEvery { isUserLoggedInUseCase() } returns true
 
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
@@ -83,7 +81,7 @@ class MovieDetailsViewModelTest {
             savedStateHandle = savedStateHandle,
             getMovieAccountStatesUseCase = getMovieAccountStatesUseCase,
             addMovieRateUseCase = addMovieRateUseCase,
-            isLoggedInUseCase = isLoggedInUseCase,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
             ioDispatcher = testDispatcher,
         )
     }

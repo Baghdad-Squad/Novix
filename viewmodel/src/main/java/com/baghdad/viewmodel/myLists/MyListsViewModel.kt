@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.myLists
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.entity.savedList.SavedList
@@ -24,7 +24,7 @@ class MyListsViewModel
     constructor(
         private val getSavedListsUseCase: GetSavedListsUseCase,
         private val createSavedListUseCase: CreateSavedListUseCase,
-        private val isUserLoggedInUseCase: IsLoggedInUseCase,
+        private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
         private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) : BaseViewModel<MyListsScreenState, MyListsScreenEffect>(MyListsScreenState()),
         MyListsInteractionListener {

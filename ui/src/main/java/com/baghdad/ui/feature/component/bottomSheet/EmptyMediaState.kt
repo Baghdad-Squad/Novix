@@ -64,7 +64,11 @@ private fun EmptySearchScreenPreview() {
             verticalArrangement = Arrangement.Center
         ) {
             EmptyMediaState(
-                imagePath = R.drawable.user_person_profile,
+                imagePath = if (Theme.isDarkTheme) {
+                    R.drawable.user_person_profile_night
+                } else {
+                    R.drawable.user_person_profile
+                },
                 contentDescription = "",
                 message = "Please login to rate your favorite items."
             )

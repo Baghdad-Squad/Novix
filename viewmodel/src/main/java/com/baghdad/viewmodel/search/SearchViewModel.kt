@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.search
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.search.RecentlyViewed
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
@@ -47,7 +47,7 @@ class SearchViewModel @Inject constructor(
     private val searchMoviesUseCase: SearchMoviesUseCase,
     private val searchTvShowsUseCase: SearchTvShowsUseCase,
     private val searchActorsUseCase: SearchActorsUseCase,
-    private val isUserLoggedInUseCase: IsLoggedInUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val createSavedListUseCase: CreateSavedListUseCase,

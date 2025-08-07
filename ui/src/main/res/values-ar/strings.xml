@@ -155,6 +155,10 @@
     <string name="skip">تخطي</string>
     <string name="delete_description">سيؤدي حذف القائمة المحفوظة إلى حذف جميع العناصر الموجودة فيها. هل أنت متأكد من رغبتك في المتابعة؟</string>
     <string name="theme">المظهر</string>
+    <string name="light">فاتح</string>
+    <string name="dark">غامق</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
     <string name="delete_rating_successfully">تم حذف التقييم بنجاح</string>
 
 
