@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.SaveIcon
@@ -212,6 +213,9 @@ private fun MovieDetailsContent(
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
             )
+        },
+        backgroundBlur = {
+            BackgroundBlur()
         }
     ) {
 
@@ -234,7 +238,7 @@ private fun MovieDetailsContent(
             LoginRequiredSheet(
                 isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                onLoginClick = { listener.onLoginClick() },
+                onLoginClick = { listener.onLoginClick()},
                 title = stringResource(R.string.rate_it),
                 description = stringResource(R.string.please_login_to_rate)
             )
@@ -366,6 +370,7 @@ private fun MovieDetailsContent(
         onListNameChange = listener::onCreatedListNameChanged,
     )
 }
+
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
