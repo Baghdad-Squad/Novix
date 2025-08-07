@@ -1,9 +1,8 @@
-package com.baghdad.domain.usecase
+package com.baghdad.domain.usecase.mediaRated
 
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.RatedMedia
-import com.baghdad.domain.usecase.movie.GetUserRatedMoviesUseCase
-import com.baghdad.domain.usecase.tvShow.GetUserRatedTvShowsUseCase
+import com.baghdad.domain.usecase.mediaRated.GetUserRatedMoviesUseCase
 import javax.inject.Inject
 
 class GetUserMediaRatedUseCase @Inject constructor(

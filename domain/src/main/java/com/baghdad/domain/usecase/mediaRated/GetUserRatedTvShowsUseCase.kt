@@ -1,9 +1,8 @@
-package com.baghdad.domain.usecase.tvShow
+package com.baghdad.domain.usecase.mediaRated
 
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.RatedMedia
 import com.baghdad.domain.repository.TvShowRepository
-import com.baghdad.entity.media.TvShow
 import javax.inject.Inject
 
 class GetUserRatedTvShowsUseCase @Inject constructor(
