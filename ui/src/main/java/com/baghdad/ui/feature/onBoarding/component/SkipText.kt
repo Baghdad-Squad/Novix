@@ -35,10 +35,10 @@ fun SkipText(
             .dropShadow(
                 CircleShape,
                 color = color,
-                alpha = 0.4f,
+                alpha = 0.3f,
                 blur = 150.dp,
                 offsetX = 0.dp,
-                spread = 20.dp,
+                spread = 10.dp,
             )
     )
 }

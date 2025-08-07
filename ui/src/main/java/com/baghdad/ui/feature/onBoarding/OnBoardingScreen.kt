@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.onBoarding
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,17 +11,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
-import com.baghdad.ui.feature.episodeDetails.handleEffect
 import com.baghdad.ui.feature.onBoarding.component.BottomSlidingSection
 import com.baghdad.ui.feature.onBoarding.component.OnBoardingHorizontalPagerContent
 import com.baghdad.ui.feature.onBoarding.component.SkipText
-import com.baghdad.ui.feature.onBoarding.component.isTablet
 import com.baghdad.ui.feature.onBoarding.component.isTablet
 import com.baghdad.ui.navigation.graph.onBoarding.OnBoardingNavEvent
 import com.baghdad.viewmodel.R
@@ -81,7 +76,7 @@ private fun OnBoardingContent(
         pagerState.animateScrollToPage(state.currentPage)
     }
     Scaffold(
-        backgroundBlur = { BackgroundBlur()}
+        backgroundBlur = { BackgroundBlur() }
     ) {
         LazyColumn(
             modifier = Modifier
@@ -96,27 +91,25 @@ private fun OnBoardingContent(
             }
 
             item {
+                if (isTablet())
                 OnBoardingHorizontalPagerContent(
                     pagerState = pagerState,
                     onBoardingInfo = onBoardingInfo,
                 )
+
+            }
+            item {
+                if (!isTablet())
+                    OnBoardingHorizontalPagerContent(
+                        pagerState = pagerState,
+                        onBoardingInfo = onBoardingInfo,
+                    )
                 BottomSlidingSection(
                     pagerState = pagerState,
                     onClickNext = { listener.onNextButtonClick(onBoardingInfo.size) },
                     onClickBack = { listener.onBackButtonClick() }
                 )
             }
-        item {
-            if(!isTablet())
-            OnBoardingHorizontalPagerContent(
-                pagerState = pagerState,
-                onBoardingInfo = onBoardingInfo,
-            )
-            BottomSlidingSection(
-                pagerState = pagerState,
-                onClickNext = { listener.onNextButtonClick(onBoardingInfo.size) },
-                onClickBack = { listener.onBackButtonClick() }
-            )
         }
     }
 }
