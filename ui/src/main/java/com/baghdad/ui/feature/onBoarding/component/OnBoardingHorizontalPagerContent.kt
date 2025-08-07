@@ -39,7 +39,7 @@ fun OnBoardingHorizontalPagerContent(
     Box() {
         Box(
             modifier = Modifier
-                .offset(y= -64.dp)
+                .offset(y= (-64).dp)
                 .align(Alignment.Center)
                 .fillMaxWidth(imageWidthFraction)
                 .height(250.dp)
