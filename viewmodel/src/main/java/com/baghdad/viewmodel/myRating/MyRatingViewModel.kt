@@ -121,6 +121,9 @@ class MyRatingViewModel @Inject constructor(
             message = BaseSnackBarMessage.RatedRemoveSuccessfully,
             isSuccess = true
         )
+        updateState {
+            currentState.copy(isLoading = true)
+        }
         fetchUserRatedMedia()
     }
 
