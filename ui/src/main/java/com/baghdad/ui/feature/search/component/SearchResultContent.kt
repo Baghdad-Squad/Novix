@@ -47,7 +47,6 @@ fun SearchResultContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Theme.color.surface)
     ) {
         SearchTabHeader(selectedTab, onTabSelected)
 
