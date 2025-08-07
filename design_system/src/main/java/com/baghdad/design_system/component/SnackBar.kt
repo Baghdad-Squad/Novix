@@ -29,6 +29,11 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.button.TextButton
 import com.baghdad.design_system.theme.Theme
 
+enum class SnackBarPosition {
+    TOP,
+    BOTTOM,
+}
+
 @Composable
 fun SnackBar(
     message: String,
@@ -37,10 +42,15 @@ fun SnackBar(
     isVisible: Boolean,
     animationDuration: Int = 1000,
     actionLabel: String? = null,
+    position: SnackBarPosition = SnackBarPosition.TOP,
     onActionClick: (() -> Unit)? = null,
 ) {
+    val isBottomPosition = position == SnackBarPosition.BOTTOM
+    val hasActionLabel = actionLabel != null
+    val positionMatchesActionType = isBottomPosition == hasActionLabel
+
     AnimatedVisibility(
-        visible = isVisible,
+        visible = isVisible && positionMatchesActionType,
         enter =
             fadeIn(tween(animationDuration)) +
                 slideInVertically(

@@ -92,13 +92,14 @@ private fun TopMoviePicksContent(
                 .systemBarsPadding()
                 .statusBarsPadding(),
         isLoading = uiState.isLoading,
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClicked,
                 isVisible = snackBarState.isVisible,
+                position = position,
             )
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,

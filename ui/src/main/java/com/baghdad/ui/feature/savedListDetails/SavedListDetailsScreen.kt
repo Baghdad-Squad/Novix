@@ -105,13 +105,14 @@ fun SavedListDetailsContent(
 
             }
         },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBar.message)),
                 isSuccess = snackBar.isSuccess,
                 isVisible = snackBar.isVisible,
                 actionLabel = snackBar.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
         isSnackBarWithActionLabel = snackBar.actionLabelRes != null,

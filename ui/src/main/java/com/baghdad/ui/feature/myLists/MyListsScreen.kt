@@ -66,13 +66,14 @@ private fun MyListsScreenContent(
                 screenTitle = stringResource(R.string.my_lists),
             )
         },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 isVisible = snackBarState.isVisible,
                 isSuccess = snackBarState.isSuccess,
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,

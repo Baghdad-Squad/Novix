@@ -115,13 +115,15 @@ private fun TrendingMoviesContent(
                     modifier = Modifier.padding(vertical = 12.dp)
                 )
             }
-        }, snackbar = {
+        },
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = { listener.onSnackBarActionLabelClicked(uiState.selectedGenreId) },
+                position = position,
             )
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,

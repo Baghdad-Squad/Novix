@@ -22,7 +22,7 @@ fun Scaffold(
     isLoading: Boolean? = null,
     topBar: (@Composable () -> Unit)? = null,
     floatingActionButton: (@Composable () -> Unit)? = null,
-    snackbar: (@Composable () -> Unit)? = null,
+    snackbar: (@Composable (SnackBarPosition) -> Unit)? = null,
     isSnackBarWithActionLabel: Boolean = false,
     snackBarPosition: SnackBarPosition = if (isSnackBarWithActionLabel) SnackBarPosition.BOTTOM else SnackBarPosition.TOP,
     bottomBar: (@Composable () -> Unit)? = null,
@@ -62,15 +62,13 @@ fun Scaffold(
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
                     .imePadding(),
-                horizontalAlignment = Alignment.End,
+            horizontalAlignment = Alignment.End,
         ) {
-            if (snackBarPosition == SnackBarPosition.BOTTOM) {
-                snackbar?.let { snackbarContent ->
-                    Box(
-                        modifier = Modifier.padding(16.dp),
-                    ) {
-                        snackbarContent()
-                    }
+            snackbar?.let { snackbarContent ->
+                Box(
+                    modifier = Modifier.padding(16.dp),
+                ) {
+                    snackbarContent(SnackBarPosition.BOTTOM)
                 }
             }
             floatingActionButton?.let { fab ->
@@ -85,23 +83,16 @@ fun Scaffold(
             }
             bottomBar?.invoke()
         }
-        if (snackBarPosition == SnackBarPosition.TOP) {
-            snackbar?.let { snackBarContent ->
-                Box(
-                    modifier =
-                        Modifier
-                            .statusBarsPadding()
-                            .padding(16.dp)
-                            .align(Alignment.TopCenter),
-                ) {
-                    snackBarContent()
-                }
+        snackbar?.let { snackBarContent ->
+            Box(
+                modifier =
+                    Modifier
+                        .statusBarsPadding()
+                        .padding(16.dp)
+                        .align(Alignment.TopCenter),
+                    ) {
+                snackBarContent(SnackBarPosition.TOP)
             }
         }
     }
-}
-
-enum class SnackBarPosition {
-    TOP,
-    BOTTOM,
 }
