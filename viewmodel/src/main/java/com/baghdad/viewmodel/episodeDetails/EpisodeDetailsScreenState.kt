@@ -22,7 +22,7 @@ data class EpisodeDetailsScreenState(
         val id: Long = 0L,
         val title: String = "",
         val episodeNumber: Int = 0,
-        val rating: Double = 0.0,
+        val rating: Int = 0,
         val trailerUrl: String = "",
         val userRating: Int? = 0,
         val duration: String = "",

@@ -6,7 +6,7 @@ data class Episode(
     val id: Long,
     val title: String,
     val episodeNumber: Int,
-    val rating: Double,
+    val rating: Int,
     val duration: String,
     val releasedDate: LocalDate?,
     val trailerUrl: String,
