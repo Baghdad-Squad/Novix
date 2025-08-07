@@ -1,10 +1,10 @@
 package com.baghdad.viewmodel.myRating
 
-import com.baghdad.domain.usecase.GetUserMediaRatedUseCase
+import com.baghdad.domain.usecase.mediaRated.GetUserMediaRatedUseCase
 import com.baghdad.domain.usecase.movie.DeleteMovieRateUseCase
-import com.baghdad.domain.usecase.movie.GetUserRatedMoviesUseCase
+import com.baghdad.domain.usecase.mediaRated.GetUserRatedMoviesUseCase
 import com.baghdad.domain.usecase.tvShow.DeleteTvShowRateUseCase
-import com.baghdad.domain.usecase.tvShow.GetUserRatedTvShowsUseCase
+import com.baghdad.domain.usecase.mediaRated.GetUserRatedTvShowsUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -120,6 +120,7 @@ class MyRatingViewModel @Inject constructor(
         showSnackBar(
             message = BaseSnackBarMessage.RatedRemoveSuccessfully,
             isSuccess = true
+
         )
         updateState {
             currentState.copy(isLoading = true)

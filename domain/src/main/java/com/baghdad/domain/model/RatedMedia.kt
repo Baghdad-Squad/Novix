@@ -2,7 +2,7 @@ package com.baghdad.domain.model
 
 data class RatedMedia(
     val id: Long,
-    val userRating: Double?,
+    val userRating: Int?,
     val posterImageURL: String,
     val contentType: ContentType
 ) {

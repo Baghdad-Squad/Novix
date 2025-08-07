@@ -50,7 +50,7 @@ fun Genre.toDto(): GenreDto {
 fun MovieDto.toMedia(): RatedMedia{
     return RatedMedia(
         id = id,
-        userRating = userRating,
+        userRating = userRating?.toInt(),
         posterImageURL = posterPictureURL,
         contentType = RatedMedia.ContentType.MOVIE
     )

@@ -23,7 +23,7 @@ fun MyRatingTvShowResponse.TvShowItem.toDto(): TvShowDto {
         title = this.name ?: this.originalName ?: "Unknown Title",
         genres = this.genreIds?.map { fakeNameForTvShowGenreMapper(it) } ?: emptyList(),
         imdbRating = this.voteAverage ?: 0.0,
-        userRating = this.rating?.toDouble(),
+        userRating = this.rating,
         releaseDate = this.firstAirDate ?: "Unknown Date",
         overview = this.overview ?: "",
         posterPictureURL = this.posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
