@@ -46,7 +46,7 @@ fun OnBoardingHorizontalPagerContent(
                 .dropShadow(
                     CircleShape,
                     color = Theme.color.primary.copy(0.2f),
-                    alpha = 0.4f,
+                    alpha = 0.3f,
                     blur = 50.dp,
                     offsetY = (-24).dp,
                     spread = 1.dp,
@@ -132,13 +132,15 @@ private fun TextSlidingAnimationVisibility(
             style = Theme.typography.title.large,
             color = Theme.color.title,
             textAlign = TextAlign.Center,
-        )
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+
+            )
 
         Text(
             text = stringResource(onBoardingInfo[currentPage].description),
             style = Theme.typography.body.medium,
             color = Theme.color.body,
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(top = 4.dp, start = 8.dp, end = 8.dp),
             textAlign = TextAlign.Center,
         )
     }
