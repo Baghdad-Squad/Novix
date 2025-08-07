@@ -66,6 +66,7 @@ fun EpisodeHeaderWithDetailsCard(
             }
 
             EpisodeDetailsHeader(
+                title =
                 stringResource(
                     R.string.episode_title_template,
                     state.episode.episodeNumber,
