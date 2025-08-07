@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,6 +18,7 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.onBoarding.component.BottomSlidingSection
 import com.baghdad.ui.feature.onBoarding.component.OnBoardingHorizontalPagerContent
 import com.baghdad.ui.feature.onBoarding.component.SkipText
+import com.baghdad.ui.feature.onBoarding.component.isTablet
 import com.baghdad.ui.navigation.graph.onBoarding.OnBoardingNavEvent
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.onBoarding.OnBoardingEffect
@@ -26,8 +26,6 @@ import com.baghdad.viewmodel.onBoarding.OnBoardingInfo
 import com.baghdad.viewmodel.onBoarding.OnBoardingInteractionListener
 import com.baghdad.viewmodel.onBoarding.OnBoardingState
 import com.baghdad.viewmodel.onBoarding.OnBoardingViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun OnBoardingScreen(
@@ -89,9 +87,16 @@ private fun OnBoardingContent(
                 onClick = { listener.onSkipButtonClick() },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+            if(isTablet()) {
+                OnBoardingHorizontalPagerContent(
+                    pagerState = pagerState,
+                    onBoardingInfo = onBoardingInfo,
+                )
+            }
         }
 
         item {
+            if(!isTablet())
             OnBoardingHorizontalPagerContent(
                 pagerState = pagerState,
                 onBoardingInfo = onBoardingInfo,
