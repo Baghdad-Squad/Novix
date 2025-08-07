@@ -231,7 +231,6 @@ private fun TopRatingContent(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
                         .fillMaxSize(),
-//                        .background(Theme.color.surface),
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         end = 16.dp,
