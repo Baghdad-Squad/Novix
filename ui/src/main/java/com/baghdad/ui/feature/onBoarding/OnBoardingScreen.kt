@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.onBoarding
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
@@ -91,19 +92,15 @@ private fun OnBoardingContent(
             }
 
             item {
-                if (isTablet())
                 OnBoardingHorizontalPagerContent(
+                    modifier = if (isTablet()) Modifier.offset(y = (-64).dp) else Modifier,
                     pagerState = pagerState,
                     onBoardingInfo = onBoardingInfo,
                 )
 
             }
             item {
-                if (!isTablet())
-                    OnBoardingHorizontalPagerContent(
-                        pagerState = pagerState,
-                        onBoardingInfo = onBoardingInfo,
-                    )
+
                 BottomSlidingSection(
                     pagerState = pagerState,
                     onClickNext = { listener.onNextButtonClick(onBoardingInfo.size) },

@@ -33,10 +33,11 @@ import kotlin.math.abs
 fun OnBoardingHorizontalPagerContent(
     pagerState: PagerState,
     onBoardingInfo: List<OnBoardingInfo>,
+    modifier: Modifier = Modifier,
     imageWidthFraction: Float = if (isTablet()) 0.50f else 0.80f,
 ) {
 
-    Box() {
+    Box(modifier) {
         Box(
             modifier = Modifier
                 .offset(y= (-64).dp)
@@ -73,7 +74,6 @@ fun OnBoardingHorizontalPagerContent(
                 Column(
                     modifier = Modifier
                         .padding(top = 32.dp)
-                        .height(156.dp)
                 ) {
                     TextSlidingAnimationVisibility(
                         onBoardingInfo = onBoardingInfo,
