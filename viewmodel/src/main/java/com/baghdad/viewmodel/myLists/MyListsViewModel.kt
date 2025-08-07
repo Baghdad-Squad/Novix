@@ -192,6 +192,7 @@ class MyListsViewModel
         }
 
         override fun onSnackBarActionLabelClick() {
+            hideSnackBar()
             getSavedLists()
         }
 

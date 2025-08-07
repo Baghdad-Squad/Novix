@@ -93,6 +93,7 @@ class TrendingTvShowViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClicked(genreId: Long?) {
+        hideSnackBar()
         getTvShowGenres()
         getTrendingTvShowsByGenre(genreId)
     }

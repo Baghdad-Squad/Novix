@@ -300,6 +300,7 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionClick() {
+        hideSnackBar()
         getGenres()
     }
 

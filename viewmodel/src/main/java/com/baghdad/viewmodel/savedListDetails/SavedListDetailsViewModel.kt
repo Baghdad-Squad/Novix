@@ -96,6 +96,7 @@ class SavedListDetailsViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         refreshList()
     }
 
