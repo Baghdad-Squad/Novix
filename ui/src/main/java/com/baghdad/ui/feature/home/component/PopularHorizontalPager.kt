@@ -59,8 +59,8 @@ fun PopularCardPager(
     autoSlideDuration: Long = 4000L,
 ) {
     LocalConfiguration.current
-    val scaleSideCards = if (LocalConfiguration.current.screenWidthDp >= 600) 0.88f else 0.8f
 
+    val scaleSideCards = if (LocalConfiguration.current.screenWidthDp >= 600) 0.88f else 0.8f
     val virtualPagedCount = if (items.isEmpty()) 0 else items.size * 1000
     val pagerState =
         rememberPagerState(initialPage = 1) { virtualPagedCount }
@@ -69,6 +69,7 @@ fun PopularCardPager(
     val screenWidth = with(density) {
         LocalConfiguration.current.screenWidthDp.dp
     }
+
     val horizontalPadding = (screenWidth - CARD_WIDTH.dp) / 2
 
     if (items.isNotEmpty()) {
@@ -120,8 +121,18 @@ fun PopularCardPager(
                             )
                         )
 
+                        val xScale = lerp(
+                            start = SCALE_CURRENT,
+                            stop = scaleSideCards,
+                            fraction = abs(currentPageOffset).coerceIn(
+                                MIN_FRACTION,
+                                0.25f
+                            )
+                        )
+
                         val item =
-                            items[if (items.isEmpty()) return@HorizontalPager else page % items.size]
+                            items[if (items.isEmpty()) return@HorizontalPager
+                            else page % items.size]
 
                         PopularCard(
                             contentName = item.name,
@@ -142,15 +153,16 @@ fun PopularCardPager(
                                     )
                                 }.then(
                                     if (LocalConfiguration.current.screenWidthDp >= 600)
-                                    Modifier.graphicsLayer(scaleX = yScale)
-                                    else modifier
+                                    Modifier.graphicsLayer(scaleX = xScale)
+                                    else Modifier
                                 )
                             ,
                         )
                     }
                     CarousalDot(
                         totalDots = items.size,
-                        selectedIndex = if (items.isEmpty()) return@Crossfade else (pagerState.currentPage % items.size),
+                        selectedIndex = if (items.isEmpty()) return@Crossfade
+                        else (pagerState.currentPage % items.size),
                     )
                 }
             }
