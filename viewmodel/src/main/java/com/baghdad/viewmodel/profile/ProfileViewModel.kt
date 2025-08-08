@@ -170,16 +170,34 @@ class ProfileViewModel @Inject constructor(
     override fun onAppearanceConfirmed() {
         tryToExecute(
             callee = { setAppThemeUseCase(currentState.themeBottomSheetState.currentTheme.isDark) },
+            onSuccess = {onAppearanceConfirmedSuccess()},
             dispatcher = ioDispatcher
         )
+    }
+
+    private fun onAppearanceConfirmedSuccess() {
+        updateState {
+            it.copy(
+                themeBottomSheetState = it.themeBottomSheetState.copy(isVisible = false)
+            )
+        }
     }
 
 
     override fun onLanguageConfirmed() {
         tryToExecute(
             callee = { setAppLanguageUseCase(currentState.languageBottomSheetState.currentLanguage.languageCode) },
+            onSuccess = { onLanguageConfirmedSuccess() },
             dispatcher = ioDispatcher,
         )
+    }
+
+    private fun onLanguageConfirmedSuccess() {
+        updateState {
+            it.copy(
+                languageBottomSheetState = it.languageBottomSheetState.copy(isVisible = false)
+            )
+        }
     }
 
 
