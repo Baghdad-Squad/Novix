@@ -76,9 +76,12 @@ interface MovieApiService {
     ): Response<TrendingMovieResponse>
 
     @Authenticated
-    @GET(TOP_RATED_MOVIES_ENDPOINT)
+    @GET(DISCOVER_MOVIES_ENDPOINT)
     suspend fun getTopRatedMovies(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("sort_by") sortBy: String = "vote_average.desc",
+        @Query("vote_count.gte") minVoteCount: Int = 200,
+        @Query("language") language: String = "en-US"
     ): Response<SimilarMovieResponse>
 
     @Authenticated
@@ -138,7 +141,6 @@ interface MovieApiService {
         private const val MOVIE_IMAGES_ENDPOINT = "movie/{movie_id}/images"
         private const val MOVIE_VIDEOS_ENDPOINT = "movie/{movie_id}/videos"
         private const val TRENDING_MOVIE_ENDPOINT = "trending/movie/day"
-        private const val TOP_RATED_MOVIES_ENDPOINT = "movie/top_rated"
         private const val DISCOVER_MOVIES_ENDPOINT = "discover/movie"
         private const val POPULAR_MOVIES_ENDPOINT = "movie/popular"
         private const val RATE_MOVIE_ENDPOINT = "movie/{movie_id}/rating"

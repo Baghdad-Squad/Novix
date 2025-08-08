@@ -106,7 +106,13 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         page: Int,
     ): PagedResultDto<MovieDto> {
         val response = handleRequest<SimilarMovieResponse>(
-            apiCall = { movieApiService.getTopRatedMovies(page) },
+            apiCall = {
+                movieApiService.getTopRatedMovies(
+                    page = page,
+                    sortBy = "vote_average.desc",
+                    minVoteCount = 200,
+                )
+            },
             logger = logger,
         )
         return response.toPagedMovieDtos()

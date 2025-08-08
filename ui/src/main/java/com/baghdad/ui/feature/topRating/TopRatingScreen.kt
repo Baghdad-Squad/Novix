@@ -135,7 +135,8 @@ private fun TopRatingContent(
                 ) {
                     val borderColor = Theme.color.stroke
                     Row(
-                        modifier = Modifier
+                        modifier =
+                            Modifier
                             .fillMaxWidth()
                             .padding(top = 4.dp)
                             .drawBehind {
@@ -203,7 +204,8 @@ private fun TopRatingContent(
                 LazyPagingVerticalGrid(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(Theme.color.surface),
                     contentPadding = PaddingValues(
                         bottom = 12.dp,
                         end = 16.dp,
@@ -229,7 +231,8 @@ private fun TopRatingContent(
                 LazyPagingVerticalGrid<TopRatingState.TvShowUiState>(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(Theme.color.surface),
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         end = 16.dp,

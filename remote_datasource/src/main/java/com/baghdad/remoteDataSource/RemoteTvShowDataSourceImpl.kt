@@ -92,7 +92,13 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
 
     override suspend fun getTopRatedTvShows(page: Int): PagedResultDto<TvShowDto> {
         val response = handleRequest<TopRatedTvShowSearchResponse>(
-            apiCall = { tvShowApiService.getTopRatedTvShows(page) },
+            apiCall = {
+                tvShowApiService.getTopRatedTvShows(
+                    page,
+                    sortBy = "vote_average.desc",
+                    minVoteCount = 200,
+                )
+            },
             logger = logger,
         )
         return response.toPagedTvShowDtos()
