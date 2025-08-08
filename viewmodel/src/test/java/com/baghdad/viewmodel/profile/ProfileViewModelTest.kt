@@ -25,8 +25,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ProfileViewModelTest {
 
+class ProfileViewModelTest {
     private lateinit var logOutUseCase: LogOutUseCase
     private lateinit var getCurrentLoggedInUserUseCase: GetCurrentLoggedInUserUseCase
     private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
@@ -55,7 +55,6 @@ class ProfileViewModelTest {
         getAppThemeUseCase = mockk(relaxed = true)
         getAppLanguageUseCase = mockk(relaxed = true)
 
-        // Default mock behaviors
         coEvery { isUserLoggedInUseCase() } returns true
         coEvery { getCurrentLoggedInUserUseCase() } returns mockUser
         coEvery { getAppThemeUseCase() } returns flowOf(false)
@@ -221,7 +220,7 @@ class ProfileViewModelTest {
     @Test
     fun `onAppearanceDialogDismissed should hide theme bottom sheet when dismissed`() = runTest {
         // Given
-        profileViewModel.onAppearanceClick() // Show first
+        profileViewModel.onAppearanceClick()
 
         // When
         profileViewModel.onAppearanceDialogDismissed()
@@ -234,7 +233,7 @@ class ProfileViewModelTest {
     @Test
     fun `onLanguageDialogDismissed should hide language bottom sheet when dismissed`() = runTest {
         // Given
-        profileViewModel.onLanguageClick() // Show first
+        profileViewModel.onLanguageClick()
 
         // When
         profileViewModel.onLanguageDialogDismissed()
@@ -262,12 +261,12 @@ class ProfileViewModelTest {
         // Then
         assertThat(receivedEffect is ProfileEffect.NavigateToLogin).isTrue()
         val currentState = profileViewModel.uiState.value
-        assertThat(currentState.isUserLoggedIn).isTrue() // Should be updated based on result
+        assertThat(currentState.isUserLoggedIn).isTrue()
         job.cancel()
     }
 
     @Test
-    fun `onLogOutConfirmed should show no internet snackbar when NoInternetException thrown`() = runTest {
+    fun `onLogOutConfirmed should show no internet snackBar when NoInternetException thrown`() = runTest {
         // Given
         coEvery { logOutUseCase() } throws NoInternetException()
         val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
@@ -383,7 +382,7 @@ class ProfileViewModelTest {
     @Test
     fun `onAppearanceConfirmed should call setAppThemeUseCase when appearance confirmed`() = runTest {
         // Given
-        profileViewModel.onAppearanceClick() // Show bottom sheet first
+        profileViewModel.onAppearanceClick()
         profileViewModel.onAppearanceChanged(ThemePreferences.DARK)
 
         // When
