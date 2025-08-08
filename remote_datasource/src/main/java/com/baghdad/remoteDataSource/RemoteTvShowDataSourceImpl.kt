@@ -88,9 +88,16 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
             logger = logger
         ).mapToYoutubeURL()
     }
+
     override suspend fun getTopRatedTvShows(page: Int): PagedResultDto<TvShowDto> {
         val response = handleRequest<TopRatedTvShowSearchResponse>(
-            apiCall = { tvShowApiService.getTopRatedTvShows(page) },
+            apiCall = {
+                tvShowApiService.getTopRatedTvShows(
+                    page,
+                    sortBy = "vote_average.desc",
+                    minVoteCount = 200,
+                )
+            },
             logger = logger,
         )
         return response.toPagedTvShowDtos()
@@ -109,8 +116,14 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         rating: Int,
         sessionId: String
     ) {
-         handleRequest<RatingResponse>(
-            apiCall = { tvShowApiService.addTvShowRate(tvShowId, sessionId, RatingRequest(rating)) },
+        handleRequest<RatingResponse>(
+            apiCall = {
+                tvShowApiService.addTvShowRate(
+                    tvShowId,
+                    sessionId,
+                    RatingRequest(rating)
+                )
+            },
             logger = logger
         )
     }

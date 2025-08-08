@@ -72,9 +72,11 @@ interface TvShowApiService {
     ): Response<TVShowVideosResponse>
 
     @Authenticated
-    @GET(TV_SHOW_TOP_RATED_ENDPOINT)
+    @GET(TV_SHOW_DISCOVER_ENDPOINT)
     suspend fun getTopRatedTvShows(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("sort_by") sortBy: String = "vote_average.desc",
+        @Query("vote_count.gte") minVoteCount: Int = 200,
     ): Response<TopRatedTvShowSearchResponse>
 
     @Authenticated
@@ -110,7 +112,7 @@ interface TvShowApiService {
         private const val TV_SHOW_WITH_GENRE_ENDPOINT = "discover/tv"
         private const val TV_SHOW_REVIEWS_ENDPOINT = "tv/{tv_id}/reviews"
         private const val TV_SHOW_VIDEOS_ENDPOINT = "tv/{tv_id}/videos"
-        private const val TV_SHOW_TOP_RATED_ENDPOINT = "tv/top_rated"
+        private const val TV_SHOW_DISCOVER_ENDPOINT = "discover/tv"
         private const val TV_SHOW_TRENDING_ENDPOINT = "trending/tv/day"
         private const val POPULAR_TV_SHOWS_ENDPOINT = "tv/popular"
         private const val RATE_TV_SHOW_ENDPOINT = "tv/{series_id}/rating"
