@@ -60,7 +60,7 @@ dependencies {
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
     implementation(libs.accompanist.systemuicontroller)
-    implementation("androidx.paging:paging-compose:3.4.0-alpha01")
+    implementation(libs.androidx.paging.compose)
 
 }
 
