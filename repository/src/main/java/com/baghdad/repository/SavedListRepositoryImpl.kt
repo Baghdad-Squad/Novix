@@ -10,6 +10,7 @@ import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
+import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.savedList.SavableMovieDto
 import com.baghdad.repository.util.executeAuthorizedSafely
@@ -91,38 +92,56 @@ class SavedListRepositoryImpl
 
         override suspend fun syncSavedMovies() {
             executeAuthorizedSafely(localSessionDataStore.getSessionId()) { sessionId ->
-                val allSavedLists = mutableListOf<SavedListDto>()
-                var page = 1
-                var nextKey: Int? = null
-                val accountId = localUserDataStore.getUser()?.id ?: 0
-                do {
-                    val result =
-                        remoteSavedListSource.getSavedLists(
-                            page = page,
-                            pageSize = 20,
-                            sessionId = sessionId,
-                            accountId = accountId,
-                        )
-                    allSavedLists.addAll(result.data)
-                    nextKey = result.nextKey
-                    page = nextKey ?: -1
-                } while (nextKey != null)
-                allSavedLists.forEach { list ->
-                    val savedMovies = mutableListOf<SavableMovieDto>()
-                    var page = 1
-                    do {
-                        val result =
-                            remoteSavedListSource.getSavedListDetails(
-                                page = page,
-                                pageSize = 20,
-                                listId = list.id,
-                            )
-                        savedMovies.addAll(result.pagedItems.data)
-                        nextKey = result.pagedItems.nextKey
-                    page = nextKey ?: -1
-                } while (nextKey != null)
-                savableMovieDataSource.saveMovies(list.id, savedMovies)
+                val accountId = getUserAccountId()
+                val savedLists = fetchAllSavedLists(sessionId, accountId)
+
+                savedLists.forEach { list ->
+                    val movies = fetchAllMoviesForList(list.id)
+                    savableMovieDataSource.saveMovies(list.id, movies)
+                }
             }
         }
+
+        private suspend fun getUserAccountId(): Long = localUserDataStore.getUser()?.id ?: 0
+
+        private suspend fun fetchAllSavedLists(
+            sessionId: String,
+            accountId: Long,
+        ): List<SavedListDto> =
+            fetchAllPages { page ->
+                remoteSavedListSource.getSavedLists(
+                    page = page,
+                    pageSize = 20,
+                    sessionId = sessionId,
+                    accountId = accountId,
+                )
+            }
+
+        private suspend fun fetchAllMoviesForList(listId: Long): List<SavableMovieDto> =
+            fetchAllPages { page ->
+                val result =
+                    remoteSavedListSource.getSavedListDetails(
+                        page = page,
+                        pageSize = 20,
+                        listId = listId,
+                    )
+                PagedResultDto(
+                    result.pagedItems.data,
+                    result.pagedItems.nextKey,
+                    result.pagedItems.prevKey,
+                )
+            }
+
+        private suspend inline fun <T> fetchAllPages(crossinline fetchPage: suspend (page: Int) -> PagedResultDto<T>): List<T> {
+            val allItems = mutableListOf<T>()
+            var page = 1
+
+            do {
+                val result = fetchPage(page)
+                allItems.addAll(result.data)
+            page = result.nextKey ?: break
+        } while (true)
+
+        return allItems
     }
 }
