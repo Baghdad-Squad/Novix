@@ -73,7 +73,7 @@ class MyRatingViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
-        sendEffect(MyRatingEffect.NavigateBack)
+        fetchUserRatedMedia()
     }
 
     override fun onMediaClick(
