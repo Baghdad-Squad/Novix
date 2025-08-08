@@ -76,28 +76,21 @@ fun PopularCardPager(
 
     val horizontalPadding = (screenWidth - CARD_WIDTH.dp) / 2
 
-    val interactionSource = pagerState.interactionSource
-    var userIsInteracting by remember { mutableStateOf(false) }
+    if (items.isNotEmpty()) {
+        LaunchedEffect(items) {
+            pagerState.animateScrollToPage(items.size + 1)
+            delay(autoSlideDuration)
 
-    LaunchedEffect(interactionSource) {
-        interactionSource.interactions.collect { interaction ->
-            when (interaction) {
-                is DragInteraction.Start -> userIsInteracting = true
-                is DragInteraction.Cancel, is DragInteraction.Stop -> {
-                    userIsInteracting = false
+            while (true) {
+                if (!pagerState.isScrollInProgress) {
+                    val next = (pagerState.currentPage + 1)
+                    pagerState.animateScrollToPage(next)
                 }
+                delay(autoSlideDuration)
             }
         }
     }
 
-    LaunchedEffect(items, pagerState.currentPage, userIsInteracting) {
-        if (items.isEmpty()) return@LaunchedEffect
-        if (!userIsInteracting) {
-            delay(autoSlideDuration)
-            val next = pagerState.currentPage + 1
-            pagerState.animateScrollToPage(next)
-        }
-    }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Crossfade(isLoading) { isLoading ->
