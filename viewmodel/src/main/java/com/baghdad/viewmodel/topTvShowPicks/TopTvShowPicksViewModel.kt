@@ -73,6 +73,7 @@ class TopTvShowViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         getActorTvShow(actorId)
     }
 

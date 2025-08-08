@@ -403,6 +403,7 @@ constructor(
     }
 
     override fun onSnackBarActionLabelClicked() {
+        hideSnackBar()
         loadData()
     }
 

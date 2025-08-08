@@ -40,6 +40,7 @@ class CategoryTvShowsViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         getTvShowsByCategoryId(categoryId = categoryId)
         getCategoryNameById(categoryId = categoryId)
     }
