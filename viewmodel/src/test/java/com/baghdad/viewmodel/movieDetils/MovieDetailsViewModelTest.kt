@@ -11,12 +11,17 @@ import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
 import com.baghdad.domain.usecase.movie.GetSimilarMoviesUseCase
+import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
+import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
+import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -39,10 +44,14 @@ class MovieDetailsViewModelTest {
     private lateinit var getMovieImagesUseCase: GetMovieGalleryUseCase
     private lateinit var getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase
     private lateinit var addContinueWatchingUseCase: AddContinueWatchingUseCase
-    private lateinit var movieDetailsViewModel: MovieDetailsViewModel
     private lateinit var getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase
     private lateinit var addMovieRateUseCase: AddMovieRateUseCase
     private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
+    private lateinit var addMovieToSavedListUseCase: AddMovieToSavedListUseCase
+    private lateinit var createSavedListUseCase: CreateSavedListUseCase
+    private lateinit var getSavedListsUseCase: GetSavedListsUseCase
+    private lateinit var removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase
+    private lateinit var movieDetailsViewModel: MovieDetailsViewModel
 
     private val testDispatcher = StandardTestDispatcher()
     private val movieId = 123L
@@ -59,7 +68,10 @@ class MovieDetailsViewModelTest {
         getMovieAccountStatesUseCase = mockk()
         addMovieRateUseCase = mockk()
         isUserLoggedInUseCase = mockk()
-
+        addMovieToSavedListUseCase = mockk()
+        createSavedListUseCase = mockk()
+        getSavedListsUseCase = mockk()
+        removeMovieFromSavedListUseCase = mockk()
 
         coEvery { getMovieDetailsUseCase(any()) } returns createMockMovie()
         coEvery { getCastsInfoUseCase(any()) } returns createMockCastMembers()
@@ -69,6 +81,9 @@ class MovieDetailsViewModelTest {
         coEvery { getMovieAccountStatesUseCase(any()) } returns createMockAccountStates()
         coEvery { addMovieRateUseCase(any(), any()) } returns Unit
         coEvery { isUserLoggedInUseCase() } returns true
+        coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
+        coEvery { createSavedListUseCase(any()) } returns Unit
+        coEvery { removeMovieFromSavedListUseCase(any(), any()) } returns Unit
 
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
@@ -82,7 +97,11 @@ class MovieDetailsViewModelTest {
             getMovieAccountStatesUseCase = getMovieAccountStatesUseCase,
             addMovieRateUseCase = addMovieRateUseCase,
             isUserLoggedInUseCase = isUserLoggedInUseCase,
-            ioDispatcher = testDispatcher,
+            addMovieToSavedListUseCase = addMovieToSavedListUseCase,
+            getSavedListsUseCase = getSavedListsUseCase,
+            removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
+            createSavedListUseCase = createSavedListUseCase,
+            ioDispatcher = testDispatcher
         )
     }
 
@@ -93,17 +112,17 @@ class MovieDetailsViewModelTest {
             val initialState = movieDetailsViewModel.uiState.value.isExtendText
             // When
             movieDetailsViewModel.onExtendOverviewClick()
+            advanceUntilIdle()
             val finalState = movieDetailsViewModel.uiState.value.isExtendText
             // Then
             assertThat(!initialState == finalState).isTrue()
         }
 
     @Test
-    fun `onCategoryClick should Navigate To Category when clicked`() = runTest {
+    fun `onCategoryClick should navigate to category when clicked`() = runTest {
         // Given
         val categoryId = 28L
         var receivedEffect: MovieDetailsEffect? = null
-
         val job = launch {
             movieDetailsViewModel.uiEffect.collect { effect ->
                 receivedEffect = effect
@@ -113,7 +132,7 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onCategoryClick(categoryId)
         advanceUntilIdle()
         // Then
-        assertThat(MovieDetailsEffect.NavigateToCategory(categoryId) == receivedEffect).isTrue()
+        assertThat(receivedEffect).isEqualTo(MovieDetailsEffect.NavigateToCategory(categoryId))
         job.cancel()
     }
 
@@ -121,17 +140,22 @@ class MovieDetailsViewModelTest {
     fun `onSaveMoreLikeThisMedia should toggle isSaved state for the movie when clicked`() =
         runTest {
             // Given
-            val initialState = movieDetailsViewModel.uiState.value.moreLikeThisMovie.first().isSaved
+            val moreLikeThisMovie = MovieDetailsState.MoreLikeThisMovie(
+                imageUrl = "/similar_movie1.jpg",
+                id = 456L,
+                isSaved = true,
+            )
             // When
-            movieDetailsViewModel.onSaveMoreLikeThisMedia(456L)
+            movieDetailsViewModel.onSaveMoreLikeThisMedia(moreLikeThisMovie)
             advanceUntilIdle()
-            val finalState = movieDetailsViewModel.uiState.value.moreLikeThisMovie.first().isSaved
+            val finalState =
+                movieDetailsViewModel.uiState.value.moreLikeThisMovie.find { it.id == moreLikeThisMovie.id }?.isSaved
             // Then
-            assertThat(!initialState == finalState).isTrue()
+            assertThat(finalState).isFalse() // Expect isSaved to be false after toggling
         }
 
     @Test
-    fun `onBackClicked should Navigate Back when clicked`() = runTest {
+    fun `onBackClicked should navigate back when clicked`() = runTest {
         // Given
         var receivedEffect: MovieDetailsEffect? = null
         val job = launch {
@@ -143,14 +167,14 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onBackClicked()
         advanceUntilIdle()
         // Then
-        assertThat(MovieDetailsEffect.NavigateBack == receivedEffect).isTrue()
+        assertThat(receivedEffect).isEqualTo(MovieDetailsEffect.NavigateBack)
         job.cancel()
     }
 
     @Test
-    fun `onActorClick should send Navigate To ActorDetails when clicked`() = runTest {
+    fun `onActorClick should navigate to actor details when clicked`() = runTest {
         // Given
-        val actorId = 456L
+        val actorId = 1L
         var receivedEffect: MovieDetailsEffect? = null
         val job = launch {
             movieDetailsViewModel.uiEffect.collect { effect ->
@@ -161,14 +185,13 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onActorClick(actorId)
         advanceUntilIdle()
         // Then
-        assertThat(MovieDetailsEffect.NavigateToActorDetails(actorId) == receivedEffect).isTrue()
+        assertThat(receivedEffect).isEqualTo(MovieDetailsEffect.NavigateToActorDetails(actorId))
         job.cancel()
     }
 
     @Test
-    fun `onReviewClick should send Navigate To ReviewDetails when clicked`() = runTest {
+    fun `onReviewClick should navigate to review details when clicked`() = runTest {
         // Given
-        val reviewId = 789L
         var receivedEffect: MovieDetailsEffect? = null
         val job = launch {
             movieDetailsViewModel.uiEffect.collect { effect ->
@@ -179,12 +202,12 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onReviewClick()
         advanceUntilIdle()
         // Then
-        assertThat(MovieDetailsEffect.NavigateToReviewDetails(reviewId) == receivedEffect).isTrue()
+        assertThat(receivedEffect).isEqualTo(MovieDetailsEffect.NavigateToReviewDetails(movieId))
         job.cancel()
     }
 
     @Test
-    fun `onMovieClick should Navigate To Movie when clicked`() = runTest {
+    fun `onMovieClick should navigate to movie when clicked`() = runTest {
         // Given
         val movieId = 321L
         var receivedEffect: MovieDetailsEffect? = null
@@ -197,12 +220,12 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onMovieClick(movieId)
         advanceUntilIdle()
         // Then
-        assertThat(MovieDetailsEffect.NavigateToMovie(movieId) == receivedEffect).isTrue()
+        assertThat(receivedEffect).isEqualTo(MovieDetailsEffect.NavigateToMovie(movieId))
         job.cancel()
     }
 
     @Test
-    fun `onBackClick should send Navigate Back when clicked`() = runTest {
+    fun `onBackClick should navigate back when clicked`() = runTest {
         // Given
         var receivedEffect: MovieDetailsEffect? = null
         val job = launch {
@@ -214,12 +237,12 @@ class MovieDetailsViewModelTest {
         movieDetailsViewModel.onBackClick()
         advanceUntilIdle()
         // Then
-        assertThat(MovieDetailsEffect.NavigateBack == receivedEffect).isTrue()
+        assertThat(receivedEffect).isEqualTo(MovieDetailsEffect.NavigateBack)
         job.cancel()
     }
 
     @Test
-    fun `onTrailerClick should Open Youtube Link with correct URL when clicked`() = runTest {
+    fun `onTrailerClick should open YouTube link with correct URL when clicked`() = runTest {
         // Given
         var receivedEffect: MovieDetailsEffect? = null
         val job = launch {
@@ -232,7 +255,7 @@ class MovieDetailsViewModelTest {
         advanceUntilIdle()
         // Then
         val expectedUrl = movieDetailsViewModel.uiState.value.movieTrailerURL
-        assertThat(MovieDetailsEffect.OpenYoutubeLink(expectedUrl) == receivedEffect).isTrue()
+        assertThat(receivedEffect).isEqualTo(MovieDetailsEffect.OpenYoutubeLink(expectedUrl))
         job.cancel()
     }
 
@@ -253,22 +276,34 @@ class MovieDetailsViewModelTest {
             // Given
             coEvery { getMovieDetailsUseCase(any()) } throws NoInternetException()
             val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
-
             val job = launch {
                 movieDetailsViewModel.snackBarState.collect {
                     emittedSnackBarMessages.add(it.message)
                 }
             }
-
             // When
+            movieDetailsViewModel = MovieDetailsViewModel(
+                getMovieDetailsUseCase = getMovieDetailsUseCase,
+                getCastsInfoUseCase = getCastsInfoUseCase,
+                getMovieImagesUseCase = getMovieImagesUseCase,
+                getMoreLikeThisPosterImageUseCase = getMoreLikeThisPosterImageUseCase,
+                addContinueWatchingUseCase = addContinueWatchingUseCase,
+                savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId)),
+                getMovieAccountStatesUseCase = getMovieAccountStatesUseCase,
+                addMovieRateUseCase = addMovieRateUseCase,
+                isUserLoggedInUseCase = isUserLoggedInUseCase,
+                addMovieToSavedListUseCase = addMovieToSavedListUseCase,
+                getSavedListsUseCase = getSavedListsUseCase,
+                removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
+                createSavedListUseCase = createSavedListUseCase,
+                ioDispatcher = testDispatcher
+            )
             movieDetailsViewModel.onSnackBarActionLabelClick()
             advanceUntilIdle()
-            job.cancel()
-
             // Then
             assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+            job.cancel()
         }
-
 
     companion object {
         private fun createMockMovie() = Movie(
@@ -324,7 +359,7 @@ class MovieDetailsViewModelTest {
             "/image3.jpg"
         )
 
-        private fun createMockSimilarMovies() = listOf(
+        private fun createMockSimilarMovies(): List<Movie> = listOf(
             Movie(
                 id = 456L,
                 title = "Similar Movie 1",
