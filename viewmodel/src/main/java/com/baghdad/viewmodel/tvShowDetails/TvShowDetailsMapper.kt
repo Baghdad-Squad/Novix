@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.tvShowDetails
 
+import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
@@ -41,7 +42,7 @@ fun Episode.toUiState() =
         id = id,
         name = title,
         episodeNumber = episodeNumber,
-        rating = rating.toInt(),
+        rating = rating.roundToFirstDecimal(),
         duration = duration.toIntOrNull() ?: 0,
         releaseDate = releasedDate?.toDDMMMYYYYFormat().orEmpty(),
         currentSeason = currentSeason,

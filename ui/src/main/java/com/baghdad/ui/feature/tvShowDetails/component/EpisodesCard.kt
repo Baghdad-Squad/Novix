@@ -34,7 +34,7 @@ fun EpisodeCard(
     episodeName: String,
     releaseDate: String,
     duration: String,
-    rating: Int,
+    rating: Double,
     modifier: Modifier = Modifier,
 ) {
     Row(
