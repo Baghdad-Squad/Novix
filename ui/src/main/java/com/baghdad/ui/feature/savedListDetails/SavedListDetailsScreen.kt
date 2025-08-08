@@ -118,7 +118,9 @@ fun SavedListDetailsContent(
         LazyPagingVerticalGrid(
             items = mediaItems,
             columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 16.dp),
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
@@ -139,11 +141,11 @@ fun SavedListDetailsContent(
         }
 
         ConfirmListDeletionBottomSheet(
-            onBottomSheetCloseClick = {listener.onDeleteListBottomSheetDismiss()} ,
+            onBottomSheetCloseClick = { listener.onDeleteListBottomSheetDismiss() },
             title = stringResource(R.string.deleted_list),
             description = stringResource(R.string.delete_description),
-            isVisible = uiState.isConfirmDeleteDialogVisible ,
-            onDeleteClick = {listener.onDeleteListBottomSheetDeleteClick()},
+            isVisible = uiState.isConfirmDeleteDialogVisible,
+            onDeleteClick = { listener.onDeleteListBottomSheetDeleteClick() },
         )
     }
 }
