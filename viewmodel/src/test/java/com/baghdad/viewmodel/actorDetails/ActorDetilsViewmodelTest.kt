@@ -6,6 +6,11 @@ import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
+import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
+import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
@@ -33,6 +38,12 @@ class ActorDetailsViewModelTest {
     private lateinit var getActorMoviesUseCase: GetActorMoviesUseCase
     private lateinit var getActorTvShowUseCase: GetActorTvShowUseCase
     private lateinit var getActorGalleryUseCase: GetActorGalleryUseCase
+    private lateinit var addMovieToSavedListUseCase: AddMovieToSavedListUseCase
+    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
+    private lateinit var getSavedListsUseCase: GetSavedListsUseCase
+    private lateinit var createSavedListUseCase: CreateSavedListUseCase
+    private lateinit var removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase
+
     private lateinit var viewModel: ActorDetailsViewModel
     private val testDispatcher = StandardTestDispatcher()
     private val actorId = 123L
@@ -44,6 +55,11 @@ class ActorDetailsViewModelTest {
         getActorMoviesUseCase = mockk()
         getActorTvShowUseCase = mockk()
         getActorGalleryUseCase = mockk()
+        addMovieToSavedListUseCase = mockk()
+        isUserLoggedInUseCase = mockk()
+        getSavedListsUseCase = mockk()
+        createSavedListUseCase = mockk()
+        removeMovieFromSavedListUseCase = mockk()
         coEvery { getActorInfoUseCase(actorId) } returns createMockActor()
         coEvery { getActorMoviesUseCase(actorId) } returns createMockMovies()
         coEvery { getActorTvShowUseCase(actorId) } returns createMockTvShows()
@@ -54,6 +70,11 @@ class ActorDetailsViewModelTest {
             getActorMoviesUseCase = getActorMoviesUseCase,
             getActorTvShowUseCase = getActorTvShowUseCase,
             getActorGalleryUseCase = getActorGalleryUseCase,
+            addMovieToSavedListUseCase = addMovieToSavedListUseCase,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
+            getSavedListsUseCase = getSavedListsUseCase,
+            createSavedListUseCase = createSavedListUseCase,
+            removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
             ioDispatcher = testDispatcher
         )
     }
@@ -239,7 +260,7 @@ class ActorDetailsViewModelTest {
                 title = "TV Show $index",
                 genres = listOf(Genre(1L, "Drama")),
                 averageRating = 7.9,
-                userRating = 8.1,
+                userRating = 8,
                 releaseDate = LocalDate.parse("2023-01-01"),
                 overview = "TV Show overview $index",
                 posterImageURL = "/tv_poster_$index.jpg",
