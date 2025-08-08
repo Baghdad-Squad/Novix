@@ -1,7 +1,12 @@
 package com.baghdad.viewmodel.trendingMovie
 
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
+import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
+import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.entity.media.Genre
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -23,17 +28,35 @@ class TrendingMoviesViewModelTest {
 
     private lateinit var getTrendingMoviesUseCase: GetTrendingMoviesUseCase
     private lateinit var getGenresUseCase: GetGenresUseCase
+    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
+    private lateinit var getSavedListsUseCase: GetSavedListsUseCase
+    private lateinit var addMovieToSavedListUseCase: AddMovieToSavedListUseCase
+    private lateinit var createSavedListUseCase: CreateSavedListUseCase
+    private lateinit var removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase
     private lateinit var viewModel: TrendingMoviesViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
     private val testScope = TestScope(testDispatcher)
-
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         getTrendingMoviesUseCase = mockk()
         getGenresUseCase = mockk()
-        viewModel = TrendingMoviesViewModel(getTrendingMoviesUseCase, getGenresUseCase,testDispatcher)
+        isUserLoggedInUseCase = mockk()
+        getSavedListsUseCase = mockk()
+        addMovieToSavedListUseCase = mockk()
+        createSavedListUseCase = mockk()
+        removeMovieFromSavedListUseCase = mockk()
+        viewModel = TrendingMoviesViewModel(
+            getTrendingMoviesUseCase,
+            getGenresUseCase,
+            isUserLoggedInUseCase,
+            getSavedListsUseCase,
+            addMovieToSavedListUseCase,
+            createSavedListUseCase,
+            removeMovieFromSavedListUseCase,
+            testDispatcher
+        )
     }
 
     @AfterEach
@@ -50,7 +73,7 @@ class TrendingMoviesViewModelTest {
             }
         }
 
-        viewModel.onBackClick()
+        viewModel.onBackClicked()
 
         assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateBack)
         job.cancel()
@@ -66,7 +89,7 @@ class TrendingMoviesViewModelTest {
             }
         }
 
-        viewModel.onMovieClick(movieId)
+        viewModel.onMovieClicked(movieId)
 
         assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateToMovieDetails(movieId))
         job.cancel()
@@ -82,7 +105,7 @@ class TrendingMoviesViewModelTest {
         }
 
         val ids = listOf(123L, 456L, 0L, -1L)
-        ids.forEach { viewModel.onMovieClick(it) }
+        ids.forEach { viewModel.onMovieClicked(it) }
 
         assertThat(effects).containsExactly(
             TrendingMoviesEffect.NavigateToMovieDetails(123L),
@@ -93,14 +116,21 @@ class TrendingMoviesViewModelTest {
         job.cancel()
     }
 
-
     @Test
     fun `should update categories when genres are loaded successfully`() {
         val genres = listOf(Genre(id = 1, name = "Action"), Genre(id = 2, name = "Drama"))
         coEvery { getGenresUseCase.getMovieGenres() } returns genres
 
-        viewModel = TrendingMoviesViewModel(getTrendingMoviesUseCase, getGenresUseCase, testDispatcher)
-
+        viewModel = TrendingMoviesViewModel(
+            getTrendingMoviesUseCase,
+            getGenresUseCase,
+            isUserLoggedInUseCase,
+            getSavedListsUseCase,
+            addMovieToSavedListUseCase,
+            createSavedListUseCase,
+            removeMovieFromSavedListUseCase,
+            testDispatcher
+        )
         assertThat(true).isTrue()
         assertThat(true).isTrue()
     }
