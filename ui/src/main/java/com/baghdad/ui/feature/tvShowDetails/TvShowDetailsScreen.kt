@@ -277,7 +277,11 @@ fun TvShowDetailsContent(
                                 imageUrl = uiState.tvShowInfo.posterPictureURL,
                                 episodeName = episode.name,
                                 releaseDate = episode.releaseDate,
-                                duration = if (isArabicSystemLocale()) "" else episode.duration.formatDuration(),
+                                duration = if (isArabicSystemLocale()) {
+                                    arabicDuration(episode.duration) ?: ""
+                                } else {
+                                    episode.duration.formatDuration() ?: ""
+                                },
                                 rating = episode.rating,
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp)
