@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +26,9 @@ fun Scaffold(
     isLoading: Boolean? = null,
     topBar: (@Composable () -> Unit)? = null,
     floatingActionButton: (@Composable () -> Unit)? = null,
-    snackbar: (@Composable () -> Unit)? = null,
+    snackbar: (@Composable (SnackBarPosition) -> Unit)? = null,
+    isSnackBarWithActionLabel: Boolean = false,
+    snackBarPosition: SnackBarPosition = if (isSnackBarWithActionLabel) SnackBarPosition.BOTTOM else SnackBarPosition.TOP,
     bottomBar: (@Composable () -> Unit)? = null,
     bottomBarHeight: Int = 70,
     backgroundBlur: @Composable () -> Unit = {},
@@ -71,7 +74,7 @@ fun Scaffold(
                 Box(
                     modifier = Modifier.padding(16.dp),
                 ) {
-                    snackbarContent()
+                    snackbarContent(SnackBarPosition.BOTTOM)
                 }
             }
             floatingActionButton?.let { fab ->
@@ -86,9 +89,20 @@ fun Scaffold(
             }
             bottomBar?.invoke()
         }
-
+        snackbar?.let { snackBarContent ->
+            Box(
+                modifier =
+                    Modifier
+                        .statusBarsPadding()
+                        .padding(16.dp)
+                        .align(Alignment.TopCenter),
+                    ) {
+                snackBarContent(SnackBarPosition.TOP)
+            }
+        }
     }
 }
+
 
 @NovixPreviews
 @Composable

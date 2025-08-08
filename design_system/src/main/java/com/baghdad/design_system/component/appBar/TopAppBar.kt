@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
@@ -18,6 +19,8 @@ fun TopAppBar(
     modifier: Modifier = Modifier,
     onGoBackClick: (() -> Unit)? = null,
     screenTitle: String? = null,
+    maxLines: Int = Int.MAX_VALUE,
+    textEllipsize: TextOverflow = TextOverflow.Clip,
     content: (@Composable RowScope.() -> Unit)? = null
 ) {
 
@@ -39,6 +42,8 @@ fun TopAppBar(
                 text = screenTitle,
                 style = Theme.typography.title.large,
                 color = Theme.color.title,
+                maxLines = maxLines,
+                overflow = textEllipsize,
                 modifier = Modifier.weight(1f)
             )
         }

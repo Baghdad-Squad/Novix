@@ -147,18 +147,21 @@ fun ActorDetailsContent(
                 .background(Theme.color.surface)
                 .navigationBarsPadding(),
         isLoading = uiState.isLoading,
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
         backgroundBlur = {
             BackgroundBlur()
-        }) {
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+    ) {
         LaunchedEffect(scrollState) {
             snapshotFlow { scrollState.value }.collect { scrollValue ->
                 shouldShowBackground = scrollValue > 450

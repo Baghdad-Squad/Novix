@@ -20,6 +20,7 @@ import com.baghdad.design_system.component.CarousalDot
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.component.AutoSlidingImageCarousel
+import com.baghdad.ui.util.EpisodeTitle
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsInteractionListener
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenState
 
@@ -30,7 +31,7 @@ fun EpisodeHeaderWithDetailsCard(
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { state.episode.headerPictures.size })
-
+    val episodeTitle = EpisodeTitle(state.episode.title)
     Box(modifier = modifier) {
         AutoSlidingImageCarousel(
             imageUrls = state.episode.headerPictures,
@@ -54,7 +55,7 @@ fun EpisodeHeaderWithDetailsCard(
                             .background(Theme.color.iconBackgroundLow)
                             .border(1.dp, Theme.color.stroke, RoundedCornerShape(8.dp))
                             .padding(horizontal = 12.dp, vertical = 4.dp),
-                        horizontalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.Center,
                 ) {
                     CarousalDot(
                         totalDots = state.episode.headerPictures.size,
@@ -66,13 +67,11 @@ fun EpisodeHeaderWithDetailsCard(
 
             EpisodeDetailsHeader(
                 title =
-                    stringResource(
-                        R.string.episode_title_template,
-                        state.episode.episodeNumber,
-                        state.episode.title
-                            .takeIf { it.isNotBlank() }
-                            ?.let { "- $it" } ?: "",
-                    ),
+                stringResource(
+                    R.string.episode_title_template,
+                    state.episode.episodeNumber,
+                    episodeTitle
+                ),
                 releaseDate = state.episode.releasedDate,
                 rating = state.episode.rating,
                 categories = state.episode.categories,
