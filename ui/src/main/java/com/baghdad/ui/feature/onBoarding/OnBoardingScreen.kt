@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.baghdad.design_system.component.BackgroundBlur
@@ -27,6 +28,7 @@ import com.baghdad.viewmodel.onBoarding.OnBoardingInfo
 import com.baghdad.viewmodel.onBoarding.OnBoardingInteractionListener
 import com.baghdad.viewmodel.onBoarding.OnBoardingState
 import com.baghdad.viewmodel.onBoarding.OnBoardingViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun OnBoardingScreen(
@@ -72,6 +74,15 @@ private fun OnBoardingContent(
         ),
     )
     val pagerState = rememberPagerState { onBoardingInfo.size }
+
+    val systemUiController = rememberSystemUiController()
+
+    LaunchedEffect(Unit) {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+    }
 
     LaunchedEffect(state.currentPage) {
         pagerState.animateScrollToPage(state.currentPage)
