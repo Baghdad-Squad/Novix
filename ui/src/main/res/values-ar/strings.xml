@@ -66,7 +66,7 @@
     <string name="create_account">انشاء حساب جديد</string>
     <string name="login_successfully">تم تسجيل الدخول بنجاح</string>
     <string name="logout_successfully">تم تسجيل الخروج بنجاح</string>
-    <string name="incorrect_username_or_password">البيانات غير صحيحة</string>
+    <string name="empty_field_error">كل الحقول مطلوبة</string>
     <string name="trending_tv_shows">المسلسلات الرائجة</string>
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>
@@ -162,6 +162,8 @@
     <string name="english">الإنجليزية</string>
     <string name="arabic">العربية</string>
     <string name="there_is_no_items_here">لا يوجد أي عناصر هنا</string>
+    <string name="password_should_be_more_than_3_chars">كلمة السر يجب ان تكون اكثر من 3 حروف</string>
+    <string name="invalid_credentials">البيانات غير صحيحة</string>
 
 
 </resources>

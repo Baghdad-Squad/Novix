@@ -41,11 +41,9 @@ class ProfileViewModel @Inject constructor(
 
     private fun getAppLanguage() {
         tryToCollect(
-            flowProvider = { getAppLanguageUseCase.invoke() },
-            onNewValue = { language ->
+            flowProvider = { getAppLanguageUseCase.invoke() }, onNewValue = { language ->
                 onGetAppLanguageSuccess(language)
-            },
-            onError = ::onError
+            }, onError = ::onError
         )
     }
 
@@ -77,8 +75,7 @@ class ProfileViewModel @Inject constructor(
             profileScreenState.copy(
                 userSettings = profileScreenState.userSettings.copy(
                     appearance = if (isDarkTheme) ThemePreferences.DARK else ThemePreferences.LIGHT
-                ),
-                themeBottomSheetState = profileScreenState.themeBottomSheetState.copy(
+                ), themeBottomSheetState = profileScreenState.themeBottomSheetState.copy(
                     currentTheme = if (isDarkTheme) ThemePreferences.DARK else ThemePreferences.LIGHT
                 )
             )
@@ -229,8 +226,19 @@ class ProfileViewModel @Inject constructor(
             dispatcher = ioDispatcher,
             callee = { logOutUseCase.invoke() },
             onSuccess = ::onSuccessLogOut,
-            onError = ::onError
+            onError = {
+                onError(it)
+                hideBottomSheet()
+            }
         )
+    }
+
+    private fun hideBottomSheet() {
+        updateState {
+            it.copy(
+                logoutBottomSheetState = it.logoutBottomSheetState.copy(isVisible = false)
+            )
+        }
     }
 
     private fun onSuccessLogOut(result: Boolean) {
@@ -250,12 +258,13 @@ class ProfileViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
-        loadInitData()
+        hideSnackBar()
+        onLogOutConfirmed()
     }
 
     private fun showNoInternetSnackBar() {
         showSnackBar(
-            message = BaseSnackBarMessage.NetworkError,
+            message = BaseSnackBarMessage.NoInternetException,
             actionLabelRes = R.string.retry,
             isSuccess = false,
             durationMillis = Int.MAX_VALUE.toLong(),
