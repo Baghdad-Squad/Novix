@@ -69,20 +69,9 @@ class MovieDetailsViewModel @Inject constructor(
         isUserLoggedIn()
     }
 
-    override fun onSaveCurrentMovieClick(movie: AddListBottomSheetState) {
-        tryToExecute(
-            callee = {
-                addMovieToSavedListUseCase(
-                    listId =
-                        currentState.addToListBottomSheetState.selectedListId
-                            ?: return@tryToExecute,
-                    movieId = currentState.addToListBottomSheetState.selectedItemId,
-                )
-            },
-            onSuccess = { onAddItemToListSuccess() },
-            dispatcher = ioDispatcher,
-            onStart = ::onAddItemToListStart,
-            onFinally = ::onAddItemToListFinished,
+    override fun onSaveCurrentMovieClick() {
+        onSaveButtonClicked(
+            listId = movieId, itemId = movieId, isSaved = uiState.value.isSaved
         )
     }
 

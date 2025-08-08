@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.movieDetails
 import com.baghdad.viewmodel.shared.AddListBottomSheetState
 
 interface MovieDetailsInteractionListener {
-    fun onSaveCurrentMovieClick(movie: AddListBottomSheetState)
+    fun onSaveCurrentMovieClick()
     fun onSaveMoreLikeThisMedia(movie: MovieDetailsState.MoreLikeThisMovie)
     fun onExtendOverviewClick()
     fun onCategoryClick(categoryId: Long)

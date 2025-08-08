@@ -339,9 +339,7 @@ private fun MovieDetailsContent(
                         backgroundColor = Theme.color.iconBackgroundLow,
                         isSaved = state.isSaved,
                         onClick = {
-                            listener.onSaveMoreLikeThisMedia(
-                                movie = state.moreLikeThisMovie.first()
-                            )
+                            listener.onSaveCurrentMovieClick()
                         }
                     )
                 }
