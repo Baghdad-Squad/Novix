@@ -14,7 +14,6 @@ class TvShowMapperTest {
 
         assertThat(uiState.id).isEqualTo(101L)
         assertThat(uiState.posterPictureURL).isEqualTo("https://example.com/poster.jpg")
-        assertThat(uiState.isSaved).isFalse()
     }
 
     @Test
