@@ -45,7 +45,7 @@ fun LoginRequiredSheet(
 
             EmptyMediaState(
                 imagePath = if (Theme.isDarkTheme) {
-                    R.drawable.user_person_profile_night
+                    R.drawable.user_profile_dark
                 } else {
                     R.drawable.user_person_profile
                 },

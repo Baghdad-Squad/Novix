@@ -222,7 +222,7 @@ private fun MovieDetailsContent(
         ) {
 
             RatingBottomSheet(
-                isVisible = state.ratingStatus.isBottomSheetVisible,
+                isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
                 rate = state.userRating ,
                 onRateChanged = { listener.onRatingChanged(it) },
