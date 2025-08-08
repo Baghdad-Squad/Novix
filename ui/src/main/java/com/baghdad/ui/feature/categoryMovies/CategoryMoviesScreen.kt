@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -97,8 +95,7 @@ private fun CategoryMoviesContent(
 
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding(),
+            .fillMaxSize(),
         isLoading = uiState.isLoading,
         topBar = {
             Row(
@@ -169,7 +166,7 @@ private fun CategoryMoviesContent(
             onCreateNewListClick = listener::onCreateNewListClick,
             onLoginClick = listener::onLoginClick,
             onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
-            lists = savedLists ,
+            lists = savedLists,
             selectedListId = uiState.addToListBottomSheetState.selectedListId,
             onListSelected = listener::onListSelected,
         )

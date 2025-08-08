@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -185,8 +184,7 @@ private fun MovieDetailsContent(
 
     Scaffold(
         modifier = Modifier
-            .background(Theme.color.surface)
-            .navigationBarsPadding(),
+            .background(Theme.color.surface),
         isLoading = state.isLoading,
         bottomBar = {
             DetailsScreenBottomBar(
@@ -211,30 +209,28 @@ private fun MovieDetailsContent(
             BackgroundBlur()
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        ) {
+    ) {
 
         Box(
             modifier = modifier
                 .background(Theme.color.surface.copy(backgroundAlpha))
                 .fillMaxSize()
-                .navigationBarsPadding()
-
         ) {
 
             RatingBottomSheet(
                 isVisible = state.ratingStatus.isBottomSheetVisible,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                rate = state.userRating ,
+                rate = state.userRating,
                 onRateChanged = { listener.onRatingChanged(it) },
                 isButtonEnabled = state.userRating != 0,
-                onSubmitClick = { listener.onClickSubmitRating(state.userRating ) }
+                onSubmitClick = { listener.onClickSubmitRating(state.userRating) }
             )
 
 
             LoginRequiredSheet(
                 isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                onLoginClick = { listener.onLoginClick()},
+                onLoginClick = { listener.onLoginClick() },
                 title = stringResource(R.string.rate_it),
                 description = stringResource(R.string.please_login_to_rate)
             )
