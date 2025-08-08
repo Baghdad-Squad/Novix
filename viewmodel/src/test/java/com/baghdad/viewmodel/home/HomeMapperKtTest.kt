@@ -2,114 +2,144 @@ package com.baghdad.viewmodel.home
 
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.ContinueWatching.ContentType
+import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.entity.media.Genre
+import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
-import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
-class HomeMapperKtTest {
+class HomeScreenMapperTest {
+
+    private val sampleGenre = Genre(id = 101, name = "Drama")
+
+    private val sampleMovie = Movie(
+        id = 1L,
+        title = "Test Movie",
+        genres = listOf(sampleGenre),
+        averageRating = 7.46,
+        userRating = null,
+        releaseDate = LocalDate(2023, 8, 7),
+        overview = "Movie overview",
+        posterImageURL = "https://test.movie/poster.jpg",
+        trailerURL = "https://test.movie/trailer.mp4",
+        runtimeMinutes = 120
+    )
+
+    private val sampleTvShow = TvShow(
+        id = 2L,
+        title = "Test TV Show",
+        genres = listOf(sampleGenre),
+        averageRating = 8.23,
+        userRating = 5,
+        releaseDate = LocalDate(2020, 1, 1),
+        overview = "Tv show overview",
+        posterImageURL = "https://test.tvshow/poster.jpg",
+        trailerURL = "https://test.tvshow/trailer.mp4",
+        headerImagesURLs = listOf("https://test.tvshow/header1.jpg"),
+        numberOfSeasons = 3
+    )
+
+    private val sampleContinueWatching = ContinueWatching(
+        contentId = 10L,
+        genreIds = listOf(101, 102),
+        contentImageUrl = "https://continue.watching/image.jpg",
+        contentType = ContentType.MOVIE,
+        userId = 1234L
+    )
+
     @Test
     fun `should map Genre to GenreUiState when toUiState is called`() {
-        //Given
-        val genre = FakeHomeScreenData.genre
-        // When
-        val genreUiState = genre.toUiState()
+        val uiState = sampleGenre.toUiState()
 
-        // Then
-        assertThat(genre.id).isEqualTo(genreUiState.id)
-        assertThat(genre.name).isEqualTo(genreUiState.name)
+        assertThat(uiState.id).isEqualTo(sampleGenre.id)
+        assertThat(uiState.name).isEqualTo(sampleGenre.name)
     }
 
     @Test
     fun `should map ContinueWatching to ContinueWatchingItemUiState when toUiState is called`() {
-        // Given
-        val continueWatching = ContinueWatching(
-            contentId = 1,
-            genreIds = listOf(1, 2, 3, 4),
-            contentImageUrl = "test",
-            contentType = ContentType.MOVIE,
-            userId = 1
+        val uiState = sampleContinueWatching.toUiState()
+
+        assertThat(uiState.id).isEqualTo(sampleContinueWatching.contentId)
+        assertThat(uiState.imageUrl).isEqualTo(sampleContinueWatching.contentImageUrl)
+        assertThat(uiState.isSaved).isFalse()
+        assertThat(uiState.contentType.name).isEqualTo(sampleContinueWatching.contentType.name)
+    }
+
+    @Test
+    fun `should map SavableMovie when toPopularItemUiState is called`() {
+        val savableMovie = SavableMovie(
+            movie = sampleMovie,
+            isSaved = true,
+            listId = 200L
         )
 
-        // When
-        val continueWatchingItemUiState = continueWatching.toUiState()
+        val uiState = savableMovie.toPopularItemUiState()
 
-        // Then
-        assertThat(continueWatching.contentId).isEqualTo(continueWatchingItemUiState.id)
-        assertThat(continueWatching.contentImageUrl).isEqualTo(continueWatchingItemUiState.imageUrl)
+        assertThat(uiState.id).isEqualTo(sampleMovie.id)
+        assertThat(uiState.name).isEqualTo(sampleMovie.title)
+        assertThat(uiState.rating).isEqualTo(7.5)
+        assertThat(uiState.imageUrl).isEqualTo(sampleMovie.posterImageURL)
+        assertThat(uiState.isSaved).isTrue()
+        assertThat(uiState.savedListId).isEqualTo(200L)
+        assertThat(uiState.type).isEqualTo(HomeScreenState.PopularItemUiState.Type.MOVIE)
     }
 
     @Test
     fun `should map Movie to PopularItemUiState when toPopularItemUiState is called`() {
-        // Given
-        val movie = FakeHomeScreenData.movie
+        val savableMovie = SavableMovie(
+            movie = sampleMovie,
+            isSaved = false,
+            listId = null
+        )
 
-        // When
-        val popularItemUiState = movie.toPopularItemUiState()
+        val uiState = savableMovie.toPopularItemUiState()
 
-        // Then
-        assertThat(movie.id).isEqualTo(popularItemUiState.id)
-        assertThat(movie.title).isEqualTo(popularItemUiState.name)
-        assertThat(movie.averageRating).isEqualTo(popularItemUiState.rating.roundToFirstDecimal())
-        assertThat(movie.posterImageURL).isEqualTo(popularItemUiState.imageUrl)
-        assertThat(popularItemUiState.type).isEqualTo(HomeScreenState.PopularItemUiState.Type.MOVIE)
-        assertThat(popularItemUiState.isSaved).isFalse()
+        assertThat(uiState.savedListId).isEqualTo(-1L)
     }
 
     @Test
     fun `should map TvShow to PopularItemUiState when toPopularItemUiState is called`() {
-        //Given
-        val tvShow = TvShow(
-            id = 1,
-            title = "test",
-            genres = FakeHomeScreenData.genres,
-            averageRating = 1.0,
-            userRating = 1.0,
-            releaseDate = LocalDate(2002, 2, 22),
-            overview = "test",
-            posterImageURL = "test",
-            trailerURL = "test",
-            numberOfSeasons = 1,
-            headerImagesURLs = emptyList()
-        )
+        val uiState = sampleTvShow.toPopularItemUiState()
 
-        // When
-        val popularItemUiState = tvShow.toPopularItemUiState()
-
-        // Then
-        assertThat(tvShow.id).isEqualTo(popularItemUiState.id)
-        assertThat(tvShow.title).isEqualTo(popularItemUiState.name)
-        assertThat(tvShow.averageRating).isEqualTo(popularItemUiState.rating.roundToFirstDecimal())
-        assertThat(tvShow.posterImageURL).isEqualTo(popularItemUiState.imageUrl)
-        assertThat(popularItemUiState.type).isEqualTo(HomeScreenState.PopularItemUiState.Type.TV_SHOW)
-        assertThat(popularItemUiState.isSaved).isFalse()
+        assertThat(uiState.id).isEqualTo(sampleTvShow.id)
+        assertThat(uiState.name).isEqualTo(sampleTvShow.title)
+        assertThat(uiState.rating).isEqualTo(8.2) // rounded 8.23
+        assertThat(uiState.imageUrl).isEqualTo(sampleTvShow.posterImageURL)
+        assertThat(uiState.isSaved).isFalse()
+        assertThat(uiState.type).isEqualTo(HomeScreenState.PopularItemUiState.Type.TV_SHOW)
     }
 
     @Test
     fun `should map Movie to TopRatingItemUiState when toTopRatingItemUiState is called`() {
-        // Given
-        val movie = FakeHomeScreenData.movie
+        val savableMovie = SavableMovie(
+            movie = sampleMovie,
+            isSaved = true,
+            listId = 300L
+        )
 
-        // When
-        val topRatingItemUiState = movie.toTopRatingItemUiState()
+        val uiState = savableMovie.toTopRatingItemUiState()
 
-        // Then
-        assertThat(movie.id).isEqualTo(topRatingItemUiState.id)
-        assertThat(movie.posterImageURL).isEqualTo(topRatingItemUiState.imageUrl)
-        assertThat(topRatingItemUiState.isSaved).isFalse()
+        assertThat(uiState.id).isEqualTo(sampleMovie.id)
+        assertThat(uiState.imageUrl).isEqualTo(sampleMovie.posterImageURL)
+        assertThat(uiState.isSaved).isTrue()
+        assertThat(uiState.savedListId).isEqualTo(300L)
     }
 
     @Test
     fun `should map Movie to UpcomingItemUiState when toUpcomingItemUiState is called`() {
-        // Given
-        val movie = FakeHomeScreenData.movie
-        // When
-        val upcomingItemUiState = movie.toUpcomingItemUiState()
+        val savableMovie = SavableMovie(
+            movie = sampleMovie,
+            isSaved = false,
+            listId = null
+        )
 
-        // Then
-        assertThat(movie.id).isEqualTo(upcomingItemUiState.id)
-        assertThat(movie.posterImageURL).isEqualTo(upcomingItemUiState.imageUrl)
-        assertThat(upcomingItemUiState.isSaved).isFalse()
+        val uiState = savableMovie.toUpcomingItemUiState()
+
+        assertThat(uiState.id).isEqualTo(sampleMovie.id)
+        assertThat(uiState.imageUrl).isEqualTo(sampleMovie.posterImageURL)
+        assertThat(uiState.isSaved).isFalse()
+        assertThat(uiState.savedListId).isEqualTo(-1L)
     }
 }
