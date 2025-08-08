@@ -5,5 +5,5 @@ import com.baghdad.entity.savedList.SavedList
 
 data class SavedListDetails(
     val savedList: SavedList,
-    val pagedItems: PagedResult<SavedListItem>,
+    val pagedItems: PagedResult<SavableMovie>,
 )

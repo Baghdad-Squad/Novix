@@ -3,6 +3,7 @@ package com.baghdad.viewmodel.home
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
@@ -16,7 +17,6 @@ import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.domain.usecase.userPreferences.GetAppLanguageUseCase
 import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
@@ -135,9 +135,10 @@ constructor(
         )
     }
 
-    private fun onGetPopularItemsSuccess(popularItems: Pair<List<Movie>, List<TvShow>>) {
-        val (movies, tvShows) = popularItems
-        val popularMovies = movies.take(POPULAR_MOVIES_LIMIT).map(Movie::toPopularItemUiState)
+        private fun onGetPopularItemsSuccess(popularItems: Pair<List<SavableMovie>, List<TvShow>>) {
+            val (movies, tvShows) = popularItems
+            val popularMovies =
+                movies.take(POPULAR_MOVIES_LIMIT).map(SavableMovie::toPopularItemUiState)
         val popularTvShows = tvShows.take(POPULAR_TV_SHOWS_LIMIT).map(TvShow::toPopularItemUiState)
         updateState {
             it.copy(
@@ -173,16 +174,16 @@ constructor(
             onStart = ::onGetTopRatingMoviesStart,
             onFinally = ::onGetTopRatingMoviesFinished,
             onError = ::onLoadDataError,
-        )
-    }
+            )
+        }
 
-    private fun onGetTopRatingMoviesSuccess(movies: List<Movie>) {
+        private fun onGetTopRatingMoviesSuccess(movies: List<SavableMovie>) {
         updateState {
             it.copy(
                 topRatingItems =
                     movies
                         .take(DEFAULT_PAGE_SIZE)
-                        .map(Movie::toTopRatingItemUiState),
+                            .map(SavableMovie::toTopRatingItemUiState),
             )
         }
     }
@@ -257,13 +258,13 @@ constructor(
             onStart = ::onGetUpcomingStarted,
             onFinally = ::onGetUpcomingFinished,
             onError = ::onLoadDataError,
-        )
-    }
+            )
+        }
 
-    private fun onGetUpcomingSuccess(movies: List<Movie>) {
-        hideSnackBar()
-        updateState {
-            it.copy(upcomingItems = movies.map(Movie::toUpcomingItemUiState))
+        private fun onGetUpcomingSuccess(movies: List<SavableMovie>) {
+            hideSnackBar()
+            updateState {
+                it.copy(upcomingItems = movies.map(SavableMovie::toUpcomingItemUiState))
         }
     }
 
@@ -325,9 +326,10 @@ constructor(
             dispatcher = defaultDispatcher,
             onFinally = ::onRemoveSavedItemFinished,
         )
-    }
+        }
 
-    private fun onRemoveSavedItemSuccess() {
+        private fun onRemoveSavedItemSuccess() {
+        loadData()
         showItemRemovedSuccessfullySnackBar()
     }
 
@@ -421,10 +423,11 @@ constructor(
             dispatcher = defaultDispatcher,
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
-        )
-    }
+            )
+        }
 
     private fun onAddItemToListSuccess() {
+        loadData()
         onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
     }

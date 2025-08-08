@@ -1,5 +1,7 @@
 package com.baghdad.ui.feature.authentication
 
+import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,9 +65,9 @@ fun LoginScreen(
 
     val state = loginViewModel.uiState.collectAsStateWithLifecycle().value
     val snackBarState = loginViewModel.snackBarState.collectAsStateWithLifecycle().value
-
+    val context = LocalContext.current
     ObserveAsEffect(loginViewModel.uiEffect) {
-        handleLoginEffect(it, handleNavigation)
+        handleLoginEffect(it, context, handleNavigation)
     }
 
 
@@ -236,16 +239,28 @@ private fun BottomCreateAccount(listener: LoginInteractionListener) {
 }
 
 private fun handleLoginEffect(
-    effect: LoginUiEffect, handleNavigation: (AuthenticationNavEvent) -> Unit
+    effect: LoginUiEffect,
+    context: Context,
+    handleNavigation: (AuthenticationNavEvent) -> Unit,
 ) {
-    handleNavigation(effect.toNavEvent())
+    if (effect == LoginUiEffect.RecreateActivity) {
+        val activity = context as? AppCompatActivity
+        activity?.let {
+            val intent = it.intent
+            it.finish()
+            it.startActivity(intent)
+        }
+    } else {
+        effect.toNavEvent()?.let { handleNavigation(it) }
+    }
 }
 
-private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent = when (this) {
-    LoginUiEffect.NavigateBack -> AuthenticationNavEvent.NavigateBack
+private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent? =
+    when (this) {
+        LoginUiEffect.NavigateBack -> AuthenticationNavEvent.NavigateBack
     LoginUiEffect.NavigateToForgotPassword -> AuthenticationNavEvent.NavigateToForgotPassword
-    LoginUiEffect.NavigateToHome -> AuthenticationNavEvent.NavigateToHome
     LoginUiEffect.NavigateToRegister -> AuthenticationNavEvent.NavigateToRegister
+        else -> null
 }
 
 @Preview

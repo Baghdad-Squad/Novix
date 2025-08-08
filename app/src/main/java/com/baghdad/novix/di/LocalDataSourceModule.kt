@@ -4,6 +4,7 @@ package com.baghdad.novix.di
 import com.baghdad.local_datasource.LocalContinueWatchingDataSourceImpl
 import com.baghdad.local_datasource.LocalRecentSearchDataSourceImpl
 import com.baghdad.local_datasource.LocalRecentlyViewedDataSourceImpl
+import com.baghdad.local_datasource.LocalSavableMovieDataSourceImpl
 import com.baghdad.local_datasource.dataStore.session.LocalOnboardingDatastoreImp
 import com.baghdad.local_datasource.dataStore.session.LocalSessionDataStoreImpl
 import com.baghdad.local_datasource.dataStore.user.LocalUserDataStoreImpl
@@ -11,6 +12,7 @@ import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.datasource.local.LocalOnboardingDatastore
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
+import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
 import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.local.LocalUserPreferencesDataSource
@@ -43,6 +45,11 @@ abstract class LocalDataSourceModule {
 
     @Binds
     abstract fun provideLocalOnBoardingDataStore(localOnboardingDatastore: LocalOnboardingDatastoreImp): LocalOnboardingDatastore
+
+    @Binds
+    abstract fun provideLocalSavableMovieDataSource(
+        localSavableMovieDataSourceImpl: LocalSavableMovieDataSourceImpl,
+    ): LocalSavableMovieDataSource
 }
 
 

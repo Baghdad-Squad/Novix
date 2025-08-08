@@ -43,7 +43,7 @@ class LoginViewModel @Inject constructor(
         showSnackBar(
             message = BaseSnackBarMessage.LoginSuccessfully, isSuccess = true
         )
-        sendEffect(LoginUiEffect.NavigateToHome)
+        sendEffect(LoginUiEffect.RecreateActivity)
     }
 
     fun onLoginError(t: Throwable) {

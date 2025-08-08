@@ -1,7 +1,7 @@
 package com.baghdad.viewmodel.topRating
 
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 
 
@@ -11,10 +11,12 @@ fun Genre.toTopRatingGenreUiState() =
         name = this.name
     )
 
-fun Movie.toTopRatingMovieUiState() =
+fun SavableMovie.toTopRatingMovieUiState() =
     TopRatingState.MovieUiState(
-        id = this.id,
-        posterPictureURL = this.posterImageURL,
+        id = movie.id,
+        posterPictureURL = movie.posterImageURL,
+        isSaved = isSaved,
+        savedListId = listId ?: -1L,
     )
 fun TvShow.toTopRatingTvShowUiState() =
     TopRatingState.TvShowUiState(

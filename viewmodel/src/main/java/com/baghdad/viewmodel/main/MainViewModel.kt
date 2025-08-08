@@ -2,6 +2,7 @@ package com.baghdad.viewmodel.main
 
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.onBoarding.IsFirstTimeLaunchAppUseCase
+import com.baghdad.domain.usecase.savedList.SyncSavedMoviesUseCase
 import com.baghdad.domain.usecase.userPreferences.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.userPreferences.GetAppThemeUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -14,8 +15,8 @@ class MainViewModel @Inject constructor(
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getAppThemeUseCase: GetAppThemeUseCase,
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
-    private val isFirstTimeLaunchAppUseCase: IsFirstTimeLaunchAppUseCase
-
+    private val isFirstTimeLaunchAppUseCase: IsFirstTimeLaunchAppUseCase,
+    private val syncSavedMoviesUseCase: SyncSavedMoviesUseCase,
 ) : BaseViewModel<MainState, MainEffect>(
     MainState()
 ), MainInteractionListener {
@@ -84,6 +85,12 @@ class MainViewModel @Inject constructor(
             it.copy(
                 isLoggedIn = result,
                 isLoading = false,
+            )
+        }
+        if (result) {
+            tryToExecute(
+                callee = { syncSavedMoviesUseCase() },
+                onSuccess = {},
             )
         }
     }
