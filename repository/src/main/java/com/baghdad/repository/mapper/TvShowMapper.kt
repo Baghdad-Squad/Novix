@@ -1,5 +1,6 @@
 package com.baghdad.repository.mapper
 
+import com.baghdad.domain.model.RatedMedia
 import com.baghdad.entity.media.TvShow
 import com.baghdad.repository.model.SearchQueryDto
 import com.baghdad.repository.model.TvShowDto
@@ -19,5 +20,22 @@ fun TvShowDto.toEntity(): TvShow {
         headerImagesURLs = headerImagesURLs,
         trailerURL = trailerURL,
         numberOfSeasons = numberOfSeasons,
+    )
+}
+
+fun TvShowDto.toSearchQueryDto(query: String): SearchQueryDto {
+    return SearchQueryDto(
+        queryName = query,
+        mediaId = id,
+        mediaType = SearchQueryDto.MediaType.TV_SHOW
+    )
+}
+
+fun TvShowDto.toMedia(): RatedMedia {
+    return RatedMedia(
+        id = id,
+        userRating = userRating,
+        posterImageURL = posterPictureURL,
+        contentType = RatedMedia.ContentType.TV_SHOW
     )
 }

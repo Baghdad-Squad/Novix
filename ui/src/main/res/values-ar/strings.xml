@@ -162,9 +162,8 @@
     <string name="english">الإنجليزية</string>
     <string name="arabic">العربية</string>
     <string name="there_is_no_items_here">لا يوجد أي عناصر هنا</string>
+    <string name="delete_rating_successfully">تم حذف التقييم بنجاح</string>
     <string name="password_should_be_more_than_3_chars">كلمة السر يجب ان تكون اكثر من 3 حروف</string>
     <string name="invalid_credentials">البيانات غير صحيحة</string>
-
-
 </resources>
 

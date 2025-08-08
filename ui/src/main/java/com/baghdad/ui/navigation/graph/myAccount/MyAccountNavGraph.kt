@@ -5,8 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.authentication.ResetPasswordWebViewScreen
+import com.baghdad.ui.feature.myRating.MyRatingScreen
 import com.baghdad.ui.feature.profile.ProfileScreen
-import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.HomeRoute
@@ -22,7 +22,11 @@ fun NavGraphBuilder.myAccountNavGraph(navController: NavHostController) {
             }
         }
         composable<MyAccountRoute.MyRatingsScreen> {
-            DummyScreen("My Ratings Screen")
+            MyRatingScreen(
+                handleNavigation = {
+                    handleMyAccountNavigation(it, navController)
+                }
+            )
         }
         composable<MyAccountRoute.ResetPasswordScreen> {
             ResetPasswordWebViewScreen(
@@ -66,6 +70,7 @@ private fun handleMyAccountNavigation(
         is MyAccountNavEvent.NavigateToTvShowDetails -> navController.navigate(
             Graph.TvShowDetailsGraph(event.tvShowId)
         )
+
         MyAccountNavEvent.NavigateToChangePassword -> navController.navigate(
             MyAccountRoute.ResetPasswordScreen
         )

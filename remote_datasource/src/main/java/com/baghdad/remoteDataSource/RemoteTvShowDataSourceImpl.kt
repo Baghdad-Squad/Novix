@@ -13,6 +13,7 @@ import com.baghdad.remoteDataSource.response.CastMembersResponse
 import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
+import com.baghdad.remoteDataSource.response.tvShow.MyRatingTvShowResponse
 import com.baghdad.remoteDataSource.response.tvShow.PopularTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
@@ -88,6 +89,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
             logger = logger
         ).mapToYoutubeURL()
     }
+
     override suspend fun getTopRatedTvShows(page: Int): PagedResultDto<TvShowDto> {
         val response = handleRequest<TopRatedTvShowSearchResponse>(
             apiCall = { tvShowApiService.getTopRatedTvShows(page) },
@@ -109,8 +111,29 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         rating: Int,
         sessionId: String
     ) {
-         handleRequest<RatingResponse>(
-            apiCall = { tvShowApiService.addTvShowRate(tvShowId, sessionId, RatingRequest(rating)) },
+        handleRequest<RatingResponse>(
+            apiCall = {
+                tvShowApiService.addTvShowRate(
+                    tvShowId,
+                    sessionId,
+                    RatingRequest(rating)
+                )
+            },
+            logger = logger
+        )
+    }
+
+    override suspend fun deleteTvShowRate(
+        tvShowId: Long,
+        sessionId: String
+    ) {
+        handleRequest<RatingResponse>(
+            apiCall = {
+                tvShowApiService.deleteTvShowRate(
+                    tvShowId,
+                    sessionId,
+                )
+            },
             logger = logger
         )
     }
@@ -130,5 +153,16 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
             apiCall = { tvShowApiService.getPopularTvShows() },
             logger = logger
         ).toTvShowDtos()
+    }
+
+    override suspend fun getUserRatedTvShows(
+        accountId: Long,
+        sessionId: String,
+        page: Int
+    ): PagedResultDto<TvShowDto> {
+        return handleRequest<MyRatingTvShowResponse>(
+            apiCall = { tvShowApiService.getUserRatedTvShows(accountId, sessionId, page) },
+            logger = logger
+        ).toPagedTvShowDtos()
     }
 }
