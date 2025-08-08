@@ -77,10 +77,10 @@ abstract class NetworkModule {
                 .connectTimeout(timeOut, TimeUnit.SECONDS)
                 .readTimeout(timeOut, TimeUnit.SECONDS)
                 .writeTimeout(timeOut, TimeUnit.SECONDS)
-//                .cache(cache)
+                .cache(cache)
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(headersSetupInterceptor)
-//                .addNetworkInterceptor(cacheInterceptor)
+                .addNetworkInterceptor(cacheInterceptor)
                 .build()
         }
 
