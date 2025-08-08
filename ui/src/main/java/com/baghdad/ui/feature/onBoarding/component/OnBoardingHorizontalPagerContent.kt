@@ -9,16 +9,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -26,9 +22,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.modifier.dropShadow
@@ -40,19 +33,21 @@ import kotlin.math.abs
 fun OnBoardingHorizontalPagerContent(
     pagerState: PagerState,
     onBoardingInfo: List<OnBoardingInfo>,
+    modifier: Modifier = Modifier,
     imageWidthFraction: Float = if (isTablet()) 0.50f else 0.80f,
 ) {
 
-    Box() {
+    Box(modifier) {
         Box(
             modifier = Modifier
+                .offset(y= (-64).dp)
                 .align(Alignment.Center)
                 .fillMaxWidth(imageWidthFraction)
-                .height(150.dp)
+                .height(250.dp)
                 .dropShadow(
                     CircleShape,
                     color = Theme.color.primary.copy(0.2f),
-                    alpha = 0.2f,
+                    alpha = 0.3f,
                     blur = 50.dp,
                     offsetY = (-24).dp,
                     spread = 1.dp,
@@ -66,7 +61,6 @@ fun OnBoardingHorizontalPagerContent(
         ) { page ->
             val pageOffset =
                 (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
-
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,7 +74,6 @@ fun OnBoardingHorizontalPagerContent(
                 Column(
                     modifier = Modifier
                         .padding(top = 32.dp)
-                        .height(156.dp)
                 ) {
                     TextSlidingAnimationVisibility(
                         onBoardingInfo = onBoardingInfo,
@@ -139,13 +132,15 @@ private fun TextSlidingAnimationVisibility(
             style = Theme.typography.title.large,
             color = Theme.color.title,
             textAlign = TextAlign.Center,
-        )
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+
+            )
 
         Text(
             text = stringResource(onBoardingInfo[currentPage].description),
             style = Theme.typography.body.medium,
             color = Theme.color.body,
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(top = 4.dp, start = 8.dp, end = 8.dp),
             textAlign = TextAlign.Center,
         )
     }
@@ -153,7 +148,7 @@ private fun TextSlidingAnimationVisibility(
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
-private fun isTablet(): Boolean {
+fun isTablet(): Boolean {
     val configuration = LocalConfiguration.current
     return configuration.screenWidthDp >= 600
 }

@@ -1,8 +1,8 @@
 package com.baghdad.ui.feature.onBoarding
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
@@ -12,15 +12,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.onBoarding.component.BottomSlidingSection
 import com.baghdad.ui.feature.onBoarding.component.OnBoardingHorizontalPagerContent
 import com.baghdad.ui.feature.onBoarding.component.SkipText
+import com.baghdad.ui.feature.onBoarding.component.isTablet
 import com.baghdad.ui.navigation.graph.onBoarding.OnBoardingNavEvent
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.onBoarding.OnBoardingEffect
@@ -78,7 +77,7 @@ private fun OnBoardingContent(
         pagerState.animateScrollToPage(state.currentPage)
     }
     Scaffold(
-        backgroundBlur = { BackgroundBlur()}
+        backgroundBlur = { BackgroundBlur() }
     ) {
         LazyColumn(
             modifier = Modifier
@@ -94,9 +93,14 @@ private fun OnBoardingContent(
 
             item {
                 OnBoardingHorizontalPagerContent(
+                    modifier = if (isTablet()) Modifier.offset(y = (-64).dp) else Modifier,
                     pagerState = pagerState,
                     onBoardingInfo = onBoardingInfo,
                 )
+
+            }
+            item {
+
                 BottomSlidingSection(
                     pagerState = pagerState,
                     onClickNext = { listener.onNextButtonClick(onBoardingInfo.size) },
