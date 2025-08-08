@@ -292,7 +292,7 @@ class EpisodeDetailsViewModelTest {
         assertThat(initialState.guestsOfHonor).isEmpty()
         assertThat(initialState.isOverviewExpanded).isFalse()
         assertThat(initialState.isSavedToList).isFalse()
-        assertThat(initialState.isRated).isTrue()
+        assertThat(initialState.isRated).isFalse()
         assertThat(initialState.addToListBottomSheetState.isVisible).isFalse()
         assertThat(initialState.rateEpisodeBottomSheetState.isVisible).isFalse()
     }
@@ -306,7 +306,7 @@ class EpisodeDetailsViewModelTest {
         assertThat(defaultUiState.id).isEqualTo(0L)
         assertThat(defaultUiState.title).isEmpty()
         assertThat(defaultUiState.episodeNumber).isEqualTo(0)
-        assertThat(defaultUiState.rating).isEqualTo(0)
+        assertThat(defaultUiState.rating).isEqualTo(0.0)
         assertThat(defaultUiState.trailerUrl).isEmpty()
         assertThat(defaultUiState.duration).isEmpty()
         assertThat(defaultUiState.releasedDate).isEmpty()
@@ -361,7 +361,7 @@ class EpisodeDetailsViewModelTest {
             id = 123L,
             title = "Test Episode",
             episodeNumber = 1,
-            rating = 8.0,
+            rating = 8.5,
             duration = "45m",
             releasedDate = LocalDate.parse("2023-01-01"),
             trailerUrl = "https://youtube.com/watch?v=test",
