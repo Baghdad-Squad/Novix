@@ -54,6 +54,9 @@ class ProfileViewModel @Inject constructor(
             profileScreenState.copy(
                 userSettings = profileScreenState.userSettings.copy(
                     language = LanguagePreferences.fromLanguageCode(language)
+                ),
+                languageBottomSheetState = profileScreenState.languageBottomSheetState.copy(
+                    currentLanguage = LanguagePreferences.fromLanguageCode(language)
                 )
             )
         }
@@ -233,7 +236,7 @@ class ProfileViewModel @Inject constructor(
     private fun onSuccessLogOut(result: Boolean) {
         updateState { profileScreenUIState ->
             profileScreenUIState.copy(
-                isUserLoggedIn = false
+                isUserLoggedIn = result
             )
         }
         sendEffect(ProfileEffect.NavigateToLogin)

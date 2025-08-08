@@ -8,6 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -53,7 +56,6 @@ import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.Navig
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToCategoryTvShows
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToEpisodeDetails
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToReviews
-import com.baghdad.ui.util.arabicDuration
 import com.baghdad.ui.util.isArabicSystemLocale
 import com.baghdad.ui.util.openYouTubeLink
 import com.baghdad.viewmodel.base.SnackBarState
@@ -158,9 +160,18 @@ fun TvShowDetailsContent(
         }
     }
 
+    val systemUiController = rememberSystemUiController()
+    LaunchedEffect(Unit) {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+    }
+
     Scaffold(
         modifier = Modifier
-            .background(Theme.color.surface),
+            .background(Theme.color.surface)
+            .consumeWindowInsets(WindowInsets(0, 0, 0, 0)),
         bottomBar = {
             DetailsScreenBottomBar(
                 hasTrailer = uiState.tvShowInfo.trailerURL.isNotBlank(),
@@ -278,7 +289,7 @@ fun TvShowDetailsContent(
                                 imageUrl = uiState.tvShowInfo.posterPictureURL,
                                 episodeName = episode.name,
                                 releaseDate = episode.releaseDate,
-                                duration = if (isArabicSystemLocale()) arabicDuration(episode.duration) else episode.duration.formatDuration(),
+                                duration = if (isArabicSystemLocale()) "" else episode.duration.formatDuration(),
                                 rating = episode.rating,
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp)
