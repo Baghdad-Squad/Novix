@@ -47,4 +47,5 @@
     <string name="unsuitable_image">Unsuitable image</string>
     <string name="add_new_list">Add new list</string>
     <string name="add">Add</string>
+    <string name="delete_icon">delete icon</string>
 </resources>

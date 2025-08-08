@@ -20,6 +20,7 @@ data class HomeScreenState(
     val addToListBottomSheetState: AddToListBottomSheetState = AddToListBottomSheetState(),
     val addListBottomSheetState: AddListBottomSheetState = AddListBottomSheetState(),
     val isLoading: Boolean = false,
+    val language: String = "",
 ) : BaseUiState {
     data class PopularItemUiState(
         val id: Long = 0L,

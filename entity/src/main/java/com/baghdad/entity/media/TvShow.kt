@@ -7,7 +7,7 @@ data class TvShow(
     val title: String,
     val genres: List<Genre>,
     val averageRating: Double,
-    val userRating: Double?,
+    val userRating: Int?,
     val releaseDate: LocalDate,
     val overview: String,
     val posterImageURL: String,

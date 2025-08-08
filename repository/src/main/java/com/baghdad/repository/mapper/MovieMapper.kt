@@ -1,6 +1,7 @@
 package com.baghdad.repository.mapper
 
 import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.RatedMedia
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.repository.model.GenreDto
@@ -67,3 +68,13 @@ fun Genre.toDto(): GenreDto =
         name = name,
         type = GenreDto.GenreType.MOVIE,
     )
+}
+
+fun MovieDto.toMedia(): RatedMedia{
+    return RatedMedia(
+        id = id,
+        userRating = userRating?.toInt(),
+        posterImageURL = posterPictureURL,
+        contentType = RatedMedia.ContentType.MOVIE
+    )
+}

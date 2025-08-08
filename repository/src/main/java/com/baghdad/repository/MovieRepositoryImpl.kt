@@ -1,8 +1,11 @@
 package com.baghdad.repository
 
+import android.util.Log
 import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.RatedMedia
+import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -13,9 +16,11 @@ import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toMedia
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.mapper.toSavableMovie
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getRemotePagedSafely
@@ -29,6 +34,7 @@ class MovieRepositoryImpl @Inject constructor(
     private val localSessionDataStore: LocalSessionDataStore,
     private val remoteMovieDataSource: RemoteMovieDataSource,
     private val savableMovieDataSource: LocalSavableMovieDataSource,
+    private val authenticationRepository: AuthenticationRepository
 ) : MovieRepository {
     override suspend fun getGenres(): List<Genre> =
         executeSafely {
@@ -142,6 +148,18 @@ class MovieRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun deleteMovieRate(movieId: Long) {
+        executeAuthorizedSafely(
+            sessionId = localSessionDataStore.getSessionId(),
+            block = {
+                remoteMovieDataSource.deleteMovieRate(
+                    movieId = movieId,
+                    sessionId = it
+                )
+            }
+        )
+    }
+
     override suspend fun getMovieStates(movieId: Long): MediaAccountStates {
         return executeAuthorizedSafely(
             sessionId = localSessionDataStore.getSessionId(),
@@ -152,6 +170,29 @@ class MovieRepositoryImpl @Inject constructor(
                 ).toEntity()
             }
         )
+    }
+
+    override suspend fun getUserRatedMovies(page: Int, pageSize: Int): PagedResult<RatedMedia> {
+        return executeAuthorizedSafely(
+            sessionId = localSessionDataStore.getSessionId(),
+            block = { sessionId ->
+                getRemotePagedSafely(
+                    page = page, pageSize = pageSize,
+                    getRemoteData = { page, _ ->
+                        authenticationRepository.getLoggedInUser()?.let {
+                            remoteMovieDataSource.getUserRatedMovies(it.id, sessionId ,page)
+                        } ?: PagedResultDto(
+                            data = emptyList(),
+                            nextKey = null,
+                            prevKey = null
+                        )
+                    },
+                ) {
+                    it.toMedia()
+                }
+            }
+        )
+
     }
 
     companion object {

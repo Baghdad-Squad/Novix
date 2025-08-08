@@ -1,5 +1,7 @@
 package com.baghdad.viewmodel.login
 
+import com.baghdad.domain.exception.EmptyFieldException
+import com.baghdad.domain.exception.InValidPasswordException
 import com.baghdad.domain.exception.InValidUserCredentialException
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.exception.UnKnownNetworkException
@@ -22,7 +24,6 @@ class LoginViewModel @Inject constructor(
     }
 
     override fun onLoginClicked() {
-        if (uiState.value.userName.length in 4..32 && uiState.value.password.length >= 4) {
             tryToExecute(
                 onStart = { startLoading() },
                 callee = {
@@ -35,11 +36,6 @@ class LoginViewModel @Inject constructor(
                 onSuccess = { onLoginSuccess() },
                 onError = { onLoginError(it) },
                 onFinally = { endLoading() })
-        } else {
-            showSnackBar(
-                message = BaseSnackBarMessage.InvalidCredential, isSuccess = false
-            )
-        }
     }
 
 
@@ -52,8 +48,16 @@ class LoginViewModel @Inject constructor(
 
     fun onLoginError(t: Throwable) {
         when (t) {
+            is EmptyFieldException -> showSnackBar(
+                message = BaseSnackBarMessage.EmptyFieldError, isSuccess = false
+            )
+
+            is InValidPasswordException -> showSnackBar(
+                message = BaseSnackBarMessage.InValidPasswordError, isSuccess = false
+            )
+
             is InValidUserCredentialException -> showSnackBar(
-                message = BaseSnackBarMessage.InvalidCredential, isSuccess = false
+                message = BaseSnackBarMessage.InValidCredentialsError, isSuccess = false
             )
 
             is NoInternetException -> showSnackBar(
@@ -85,21 +89,16 @@ class LoginViewModel @Inject constructor(
     }
 
     override fun onPasswordValueChange(value: String) {
-        if (value.length < 20) {
-            updateState {
-                it.copy(password = value)
-            }
+        updateState {
+            it.copy(password = value)
         }
-
         isAnyFieldEmpty()
 
     }
 
     override fun onUserNameValueChange(value: String) {
-        if (value.length < 20) {
-            updateState {
-                it.copy(userName = value)
-            }
+        updateState {
+            it.copy(userName = value.trim())
         }
         isAnyFieldEmpty()
     }

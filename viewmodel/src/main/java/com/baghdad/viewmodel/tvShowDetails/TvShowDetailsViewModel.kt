@@ -176,8 +176,8 @@ class TvShowDetailsViewModel @Inject constructor(
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
                     isBottomSheetVisible = false,
-                    bottomSheetType = BottomSheetType.Hidden
-                )
+                ),
+                tvShowInfo = it.tvShowInfo.copy(userRating = 0)
             )
         }
     }

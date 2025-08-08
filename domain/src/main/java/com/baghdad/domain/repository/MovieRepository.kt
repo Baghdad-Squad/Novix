@@ -3,6 +3,7 @@ package com.baghdad.domain.repository
 import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.RatedMedia
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
@@ -30,7 +31,7 @@ interface MovieRepository {
 
     suspend fun getUpcomingMovies(genreId: Long?): List<SavableMovie>
     suspend fun addMovieRate(movieId: Long, rating: Int)
-
     suspend fun getMovieStates(movieId: Long): MediaAccountStates
-
+    suspend fun getUserRatedMovies(page: Int, pageSize: Int): PagedResult<RatedMedia>
+    suspend fun deleteMovieRate(movieId: Long)
 }

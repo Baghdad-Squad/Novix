@@ -61,6 +61,7 @@ fun ProfileHeaderWithOption(
                 errorContent = { PlaceHolderReviewerImage() },
                 contentDescription = "Profile Image",
                 modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
                     .size(48.dp)
             )
         }
@@ -105,7 +106,10 @@ fun ProfileHeaderWithOption(
                         .fillMaxSize()
                         .padding(start = 12.dp, top = 12.dp, bottom = 12.dp)
                         .background(color = Theme.color.surface, shape = RoundedCornerShape(8.dp))
-                        .noRippleClickable { onLogoutClick() },
+                        .noRippleClickable {
+                            onLogoutClick()
+                            expanded = false
+                        },
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Icon(

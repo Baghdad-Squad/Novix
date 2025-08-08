@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +18,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
@@ -39,7 +43,6 @@ import kotlin.math.abs
 private const val ROTATION_OFFSET_ADJUSTMENT = 1f
 private const val ROTATION_FRACTION_MULTIPLIER = 0.5f
 private const val SCALE_CURRENT = 1f
-private const val SCALE_SIDE_CARDS = 0.8f
 
 private const val TRANSFORM_ORIGIN_X = 0.5f
 private const val TRANSFORM_ORIGIN_Y = 0.9f
@@ -60,27 +63,42 @@ fun PopularCardPager(
     autoSlideDuration: Long = 4000L,
 ) {
     LocalConfiguration.current
+
+    val scaleSideCards = if (LocalConfiguration.current.screenWidthDp >= 600) 0.88f else 0.8f
     val virtualPagedCount = if (items.isEmpty()) 0 else items.size * 1000
     val pagerState =
-        rememberPagerState(initialPage = 1) { virtualPagedCount }
+        rememberPagerState(initialPage =  5 ) { virtualPagedCount  }
     val density = LocalDensity.current
 
     val screenWidth = with(density) {
         LocalConfiguration.current.screenWidthDp.dp
     }
+
     val horizontalPadding = (screenWidth - CARD_WIDTH.dp) / 2
 
-    if (items.isNotEmpty()) {
-        LaunchedEffect(items) {
-            pagerState.animateScrollToPage(items.size + 1)
-            delay(autoSlideDuration)
-            while (true) {
-                delay(autoSlideDuration)
-                val next = (pagerState.currentPage + 1)
-                pagerState.animateScrollToPage(next)
+    val interactionSource = pagerState.interactionSource
+    var userIsInteracting by remember { mutableStateOf(false) }
+
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is DragInteraction.Start -> userIsInteracting = true
+                is DragInteraction.Cancel, is DragInteraction.Stop -> {
+                    userIsInteracting = false
+                }
             }
         }
     }
+
+    LaunchedEffect(items, pagerState.currentPage, userIsInteracting) {
+        if (items.isEmpty()) return@LaunchedEffect
+        if (!userIsInteracting) {
+            delay(autoSlideDuration)
+            val next = pagerState.currentPage + 1
+            pagerState.animateScrollToPage(next)
+        }
+    }
+
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Crossfade(isLoading) { isLoading ->
             if (isLoading) {
@@ -112,15 +130,25 @@ fun PopularCardPager(
 
                         val yScale = lerp(
                             start = SCALE_CURRENT,
-                            stop = SCALE_SIDE_CARDS,
+                            stop = scaleSideCards,
                             fraction = abs(currentPageOffset).coerceIn(
                                 MIN_FRACTION,
                                 MAX_FRACTION
                             )
                         )
 
+                        val xScale = lerp(
+                            start = SCALE_CURRENT,
+                            stop = scaleSideCards,
+                            fraction = abs(currentPageOffset).coerceIn(
+                                MIN_FRACTION,
+                                0.25f
+                            )
+                        )
+
                         val item =
-                            items[if (items.isEmpty()) return@HorizontalPager else page % items.size]
+                            items[if (items.isEmpty()) return@HorizontalPager
+                            else page % items.size]
 
                         PopularCard(
                             contentName = item.name,
@@ -139,13 +167,18 @@ fun PopularCardPager(
                                         TRANSFORM_ORIGIN_X,
                                         TRANSFORM_ORIGIN_Y
                                     )
-
-                                },
+                                }.then(
+                                    if (LocalConfiguration.current.screenWidthDp >= 600)
+                                    Modifier.graphicsLayer(scaleX = xScale)
+                                    else Modifier
+                                )
+                            ,
                         )
                     }
                     CarousalDot(
                         totalDots = items.size,
-                        selectedIndex = if (items.isEmpty()) return@Crossfade else (pagerState.currentPage % items.size),
+                        selectedIndex = if (items.isEmpty()) return@Crossfade
+                        else (pagerState.currentPage % items.size),
                     )
                 }
             }
@@ -158,7 +191,7 @@ private fun LoadingPopularCardPager(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-    val pagerState = rememberPagerState(initialPage = 1) { 3 }
+    val pagerState = rememberPagerState(initialPage = 5) { 10 }
     HorizontalPager(
         state = pagerState,
         contentPadding = contentPadding,
