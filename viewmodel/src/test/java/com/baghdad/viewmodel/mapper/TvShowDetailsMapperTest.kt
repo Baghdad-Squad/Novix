@@ -52,7 +52,7 @@ class TvShowDetailsMapperTest {
         assertThat(result.id).isEqualTo(101L)
         assertThat(result.name).isEqualTo("Episode Title")
         assertThat(result.episodeNumber).isEqualTo(5)
-        assertThat(result.rating).isEqualTo(8.5)
+        assertThat(result.rating).isEqualTo(8)
         assertThat(result.duration).isEqualTo(45)
         assertThat(result.releaseDate).isNotEmpty()
         assertThat(result.currentSeason).isEqualTo(2)
