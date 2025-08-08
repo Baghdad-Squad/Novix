@@ -60,8 +60,26 @@ constructor(
         observeContinueWatchingItems()
         getMovieGenres()
         getUpcomingItems()
+        observeAppLanguage()
     }
 
+    fun reloadData() {
+        loadData()
+    }
+
+    private fun observeAppLanguage() {
+        tryToCollect(
+            flowProvider = { getAppLanguageUseCase.invoke() },
+            onNewValue = { newLanguage ->
+                updateState {
+                    it.copy(
+                        language = newLanguage
+                    )
+                }
+            },
+            onError = ::onLoadDataError,
+        )
+    }
 
     private fun checkIfUserIsLoggedIn() {
         tryToExecute(
