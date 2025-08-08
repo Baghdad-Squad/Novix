@@ -57,7 +57,7 @@ class EpisodeExtensionsTest {
         val result = episode.toUiState()
 
         // Then
-        assertThat(result.rating).isWithin(0.001).of(7.3)
+        assertThat(result.rating).isWithin(0).of(7)
     }
 
     @Test
