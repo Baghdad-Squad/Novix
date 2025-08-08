@@ -59,7 +59,7 @@ class TrendingTvShowViewModelTest {
         }
         advanceUntilIdle()
 
-        viewModel.onGenreClick(1L)
+        viewModel.onGenreClicked(1L)
         advanceUntilIdle()
 
         val lastState = states.last()
@@ -75,11 +75,11 @@ class TrendingTvShowViewModelTest {
         }
         advanceUntilIdle()
 
-        viewModel.onGenreClick(2L)
+        viewModel.onGenreClicked(2L)
         advanceUntilIdle()
         val countAfterFirst = states.size
 
-        viewModel.onGenreClick(2L)
+        viewModel.onGenreClicked(2L)
         advanceUntilIdle()
         val countAfterSecond = states.size
 
@@ -102,10 +102,6 @@ class TrendingTvShowViewModelTest {
         assertThat(tvShowUi.isSaved).isFalse()
     }
 
-    @Test
-    fun `should do nothing when onSaveTvShowClick called`() {
-        viewModel.onSaveTvShowClick(1L)
-    }
 
     companion object {
         private val genres = listOf(
@@ -118,7 +114,7 @@ class TrendingTvShowViewModelTest {
                 title = "Breaking Show",
                 genres = listOf(genres.first()),
                 averageRating = 8.5,
-                userRating = 7.0,
+                userRating = 7,
                 releaseDate = LocalDate.parse("2022-05-01"),
                 overview = "Good show",
                 posterImageURL = "poster.jpg",
