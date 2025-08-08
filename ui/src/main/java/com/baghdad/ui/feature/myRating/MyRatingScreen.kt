@@ -87,13 +87,15 @@ fun MyRatingContent(
             .systemBarsPadding()
             .statusBarsPadding(),
         isLoading = uiState.isLoading,
-        snackbar = {
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
         topBar = {
