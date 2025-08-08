@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.baghdad.local_datasource.roomDB.dao.ContinueWatchingDao
 import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
 import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
+import com.baghdad.local_datasource.roomDB.dao.SavedListMovieDao
 import com.baghdad.local_datasource.roomDB.database.NovixDatabase
 import dagger.Module
 import dagger.Provides
@@ -29,6 +30,9 @@ object DatabaseModule {
 
     @Provides
     fun provideRecentlyViewedDao(database: NovixDatabase): RecentlyViewedDao = database.recentViewedDao()
+
+    @Provides
+    fun provideSavedListMovieDao(database: NovixDatabase): SavedListMovieDao = database.savedListMovieDao()
 
     @Provides
     fun provideRecentSearchDao(database: NovixDatabase): RecentSearchDao = database.recentSearchDao()
