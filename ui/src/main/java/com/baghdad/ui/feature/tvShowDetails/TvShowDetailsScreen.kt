@@ -278,9 +278,10 @@ fun TvShowDetailsContent(
                                 episodeName = episode.name,
                                 releaseDate = episode.releaseDate,
                                 duration = if (isArabicSystemLocale()) {
-                                    arabicDuration(episode.duration) ?: ""
+                                    val arabicDur = arabicDuration(episode.duration)
+                                    arabicDur.ifBlank { "" }
                                 } else {
-                                    episode.duration.formatDuration() ?: ""
+                                    episode.duration.formatDuration()
                                 },
                                 rating = episode.rating,
                                 modifier = Modifier
