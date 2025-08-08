@@ -19,4 +19,10 @@ interface SavedListMovieDao {
 
     @Query("DELETE FROM saved_list_movies WHERE movieId = :movieId")
     suspend fun deleteByMovieId(movieId: Long)
+
+    @Query("SELECT * FROM saved_list_movies WHERE movieId = :movieId LIMIT 1")
+    suspend fun getSavedMovieById(movieId: Long): SavedListMovie?
+
+    @Query("SELECT * FROM saved_list_movies")
+    suspend fun getSavedMovies(): List<SavedListMovie>
 }

@@ -1,8 +1,8 @@
 package com.baghdad.viewmodel.home
 
 import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.util.roundToFirstDecimal
 
@@ -20,13 +20,14 @@ fun ContinueWatching.toUiState(): HomeScreenState.ContinueWatchingItemUiState =
         contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.valueOf(contentType.name),
     )
 
-fun Movie.toPopularItemUiState(): HomeScreenState.PopularItemUiState =
+fun SavableMovie.toPopularItemUiState(): HomeScreenState.PopularItemUiState =
     HomeScreenState.PopularItemUiState(
-        id = id,
-        name = title,
-        rating = averageRating.roundToFirstDecimal(),
-        imageUrl = posterImageURL,
-        isSaved = false,
+        id = movie.id,
+        name = movie.title,
+        rating = movie.averageRating.roundToFirstDecimal(),
+        imageUrl = movie.posterImageURL,
+        isSaved = isSaved,
+        savedListId = listId ?: -1L,
         type = HomeScreenState.PopularItemUiState.Type.MOVIE,
     )
 
@@ -40,16 +41,18 @@ fun TvShow.toPopularItemUiState(): HomeScreenState.PopularItemUiState =
         type = HomeScreenState.PopularItemUiState.Type.TV_SHOW,
     )
 
-fun Movie.toTopRatingItemUiState(): HomeScreenState.TopRatingItemUiState =
+fun SavableMovie.toTopRatingItemUiState(): HomeScreenState.TopRatingItemUiState =
     HomeScreenState.TopRatingItemUiState(
-        id = id,
-        imageUrl = posterImageURL,
-        isSaved = false,
+        id = movie.id,
+        imageUrl = movie.posterImageURL,
+        isSaved = isSaved,
+        savedListId = listId ?: -1L,
     )
 
-fun Movie.toUpcomingItemUiState(): HomeScreenState.UpcomingItemUiState =
+fun SavableMovie.toUpcomingItemUiState(): HomeScreenState.UpcomingItemUiState =
     HomeScreenState.UpcomingItemUiState(
-        id = id,
-        imageUrl = posterImageURL,
-        isSaved = false,
+        id = this.movie.id,
+        imageUrl = this.movie.posterImageURL,
+        isSaved = this.isSaved,
+        savedListId = this.listId ?: -1L,
     )

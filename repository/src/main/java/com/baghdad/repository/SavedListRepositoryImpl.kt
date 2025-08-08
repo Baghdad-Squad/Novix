@@ -56,66 +56,69 @@ class SavedListRepositoryImpl
         ) {
             val sessionId = localSessionDataStore.getSessionId()
             executeAuthorizedSafely(sessionId) { sessionId ->
-            remoteSavedListSource.addMovieToSavedList(listId, movieId, sessionId)
-        }
-    }
-
-    override suspend fun removeMovieFromSavedList(
-        listId: Long,
-        movieId: Long,
-    ) {
-        val sessionId = localSessionDataStore.getSessionId()
-        executeAuthorizedSafely(sessionId) { sessionId ->
-            remoteSavedListSource.removeMovieFromSavedList(listId, movieId, sessionId)
-        }
-    }
-
-    override suspend fun getSavedListDetails(
-        listId: Long,
-        page: Int,
-        pageSize: Int,
-    ): SavedListDetails =
-        executeSafely {
-            remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toEntity()
+                remoteSavedListSource.addMovieToSavedList(listId, movieId, sessionId)
+                savableMovieDataSource.addSavedMovie(listId, movieId)
+            }
         }
 
-    override suspend fun deleteSavedListById(listId: Long) {
-        val sessionId = localSessionDataStore.getSessionId()
-        executeAuthorizedSafely(sessionId) { sessionId ->
-            remoteSavedListSource.deleteSavedListById(listId, sessionId)
+        override suspend fun removeMovieFromSavedList(
+            listId: Long,
+            movieId: Long,
+        ) {
+            val sessionId = localSessionDataStore.getSessionId()
+            executeAuthorizedSafely(sessionId) { sessionId ->
+                remoteSavedListSource.removeMovieFromSavedList(listId, movieId, sessionId)
+                savableMovieDataSource.deleteSavedMovie(movieId)
+            }
         }
-    }
 
-    override suspend fun syncSavedMovies() {
-        executeAuthorizedSafely(localSessionDataStore.getSessionId()) { sessionId ->
-            val allSavedLists = mutableListOf<SavedListDto>()
-            var page = 1
-            var nextKey: Int? = null
-            val accountId = localUserDataStore.getUser()?.id ?: 0
-            do {
-                val result =
-                    remoteSavedListSource.getSavedLists(
-                        page = page,
-                        pageSize = 20,
-                        sessionId = sessionId,
-                        accountId = accountId,
-                    )
-                allSavedLists.addAll(result.data)
-                nextKey = result.nextKey
-                page = nextKey ?: -1
-            } while (nextKey != null)
-            allSavedLists.forEach { list ->
-                val savedMovies = mutableListOf<SavableMovieDto>()
+        override suspend fun getSavedListDetails(
+            listId: Long,
+            page: Int,
+            pageSize: Int,
+        ): SavedListDetails =
+            executeSafely {
+                remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toEntity()
+            }
+
+        override suspend fun deleteSavedListById(listId: Long) {
+            val sessionId = localSessionDataStore.getSessionId()
+            executeAuthorizedSafely(sessionId) { sessionId ->
+                remoteSavedListSource.deleteSavedListById(listId, sessionId)
+                savableMovieDataSource.deleteListMovies(listId)
+            }
+        }
+
+        override suspend fun syncSavedMovies() {
+            executeAuthorizedSafely(localSessionDataStore.getSessionId()) { sessionId ->
+                val allSavedLists = mutableListOf<SavedListDto>()
                 var page = 1
+                var nextKey: Int? = null
+                val accountId = localUserDataStore.getUser()?.id ?: 0
                 do {
                     val result =
-                        remoteSavedListSource.getSavedListDetails(
+                        remoteSavedListSource.getSavedLists(
                             page = page,
                             pageSize = 20,
-                            listId = list.id,
+                            sessionId = sessionId,
+                            accountId = accountId,
                         )
-                    savedMovies.addAll(result.pagedItems.data)
-                    nextKey = result.pagedItems.nextKey
+                    allSavedLists.addAll(result.data)
+                    nextKey = result.nextKey
+                    page = nextKey ?: -1
+                } while (nextKey != null)
+                allSavedLists.forEach { list ->
+                    val savedMovies = mutableListOf<SavableMovieDto>()
+                    var page = 1
+                    do {
+                        val result =
+                            remoteSavedListSource.getSavedListDetails(
+                                page = page,
+                                pageSize = 20,
+                                listId = list.id,
+                            )
+                        savedMovies.addAll(result.pagedItems.data)
+                        nextKey = result.pagedItems.nextKey
                     page = nextKey ?: -1
                 } while (nextKey != null)
                 savableMovieDataSource.saveMovies(list.id, savedMovies)

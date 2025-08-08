@@ -57,4 +57,11 @@ class LocalSavableMovieDataSourceImpl
                 savedListMovieDao.deleteAllByListId(listId = listId)
             }
         }
+
+        override suspend fun getSavedMovies(): Map<Long, Long> =
+            executeWithErrorHandling(logger) {
+                savedListMovieDao
+                    .getSavedMovies()
+                    .associate { it.movieId to it.listId }
+        }
     }
