@@ -1,14 +1,12 @@
 package com.baghdad.repository
 
-import android.util.Log
 import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.model.RatedMedia
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
@@ -19,7 +17,6 @@ import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toMedia
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.mapper.toSavableMovie
-import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
@@ -43,20 +40,28 @@ class MovieRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getSimilarMovies(movieId: Long): List<Movie> =
+    override suspend fun getSimilarMovies(movieId: Long): List<SavableMovie> =
         executeSafely {
+            val savedMovies = savableMovieDataSource.getSavedMovies()
             remoteMovieDataSource.getSimilarMovies(movieId).map {
-                it.toEntity()
+                it.toSavableMovie(
+                    isSaved = savedMovies.containsKey(it.id),
+                    listId = savedMovies[it.id],
+                )
             }
         }
 
-    override suspend fun getMovieDetails(movieId: Long): Movie =
+    override suspend fun getMovieDetails(movieId: Long): SavableMovie =
         executeSafely {
+            val savedMovies = savableMovieDataSource.getSavedMovies()
             val movieTrailer = remoteMovieDataSource.getMovieTrailer(movieId)
             remoteMovieDataSource
                 .getMovieDetails(movieId)
-                .toEntity()
                 .copy(trailerURL = movieTrailer)
+                .toSavableMovie(
+                    isSaved = savedMovies.containsKey(movieId),
+                    listId = savedMovies[movieId],
+                )
         }
 
     override suspend fun getMovieCastMembers(movieId: Long): List<CastMember> =
@@ -70,15 +75,22 @@ class MovieRepositoryImpl @Inject constructor(
         genreId: Long,
         page: Int,
         pageSize: Int,
-    ): PagedResult<Movie> =
-        getRemotePagedSafely(
+    ): PagedResult<SavableMovie> {
+        val savedMovies = savableMovieDataSource.getSavedMovies()
+        return getRemotePagedSafely(
             page = page,
             pageSize = pageSize,
-            mapToEntity = MovieDto::toEntity,
+            mapToEntity = {
+                it.toSavableMovie(
+                    isSaved = savedMovies.containsKey(it.id),
+                    listId = savedMovies[it.id],
+                )
+            },
             getRemoteData = { page, _ ->
                 remoteMovieDataSource.getMoviesByGenre(genreId, page)
             },
         )
+    }
 
     override suspend fun getMovieReviews(movieId: Long): List<Review> {
         val result =
@@ -117,10 +129,14 @@ class MovieRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getTrendingMovies(page: Int): PagedResult<Movie> =
+    override suspend fun getTrendingMovies(page: Int): PagedResult<SavableMovie> =
         executeSafely {
+            val savedMovies = savableMovieDataSource.getSavedMovies()
             remoteMovieDataSource.getTrendingMovies(page).toPagedResult {
-                it.toEntity()
+                it.toSavableMovie(
+                    isSaved = savedMovies.containsKey(it.id),
+                    listId = savedMovies[it.id],
+                )
             }
         }
 

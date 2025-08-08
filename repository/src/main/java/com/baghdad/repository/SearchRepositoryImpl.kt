@@ -1,17 +1,18 @@
 package com.baghdad.repository
 
 import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.repository.SearchRepository
-import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
+import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toSavableMovie
 import com.baghdad.repository.model.ActorDto
-import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.TvShowDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getFlowSafely
@@ -26,7 +27,8 @@ import javax.inject.Singleton
 class SearchRepositoryImpl @Inject constructor(
     private val searchRemoteDataSource: RemoteSearchDataSource,
     private val remoteGenreDataSource: RemoteGenreDataSource,
-    private val localRecentSearchDataSource: LocalRecentSearchDataSource
+    private val localRecentSearchDataSource: LocalRecentSearchDataSource,
+    private val savableMovieDataSource: LocalSavableMovieDataSource,
 ) : SearchRepository {
 
     override suspend fun searchActorsByName(
@@ -45,12 +47,18 @@ class SearchRepositoryImpl @Inject constructor(
     override suspend fun searchMoviesByTitle(
         title: String,
         page: Int,
-        pageSize: Int
-    ): PagedResult<Movie> {
+        pageSize: Int,
+    ): PagedResult<SavableMovie> {
+        val savedMovies = savableMovieDataSource.getSavedMovies()
         return getRemotePagedSafely(
             page = page,
             pageSize = pageSize,
-            mapToEntity = MovieDto::toEntity,
+            mapToEntity = {
+                it.toSavableMovie(
+                    isSaved = savedMovies.containsKey(it.id),
+                    listId = savedMovies[it.id],
+                )
+            },
             onStart = {
                 if (page == 1)
                     localRecentSearchDataSource.addRecentSearchQuery(title)
