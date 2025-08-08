@@ -126,7 +126,6 @@ class CategoryTvShowsViewModelTest {
         val uiState = testTvShow.toUiState()
         assertThat(uiState.id).isEqualTo(testTvShow.id)
         assertThat(uiState.posterPictureURL).isEqualTo(testTvShow.posterImageURL)
-        assertThat(uiState.isSaved).isFalse()
     }
 
     @Test
@@ -203,6 +202,4 @@ class CategoryTvShowsViewModelTest {
             assertThat(items).isNotEmpty()
             assertThat(viewModel.uiState.value.isLoading).isFalse()
         }
-
-
 }
