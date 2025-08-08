@@ -22,7 +22,7 @@ class LocalSavableMovieDataSourceImpl
         ) {
             executeWithErrorHandling(logger = logger) {
                 val savedMovies =
-                    movies.mapNotNull {
+                    movies.map {
                         SavedListMovie(
                             movieId = it.movie.id,
                             listId = listId,
@@ -58,10 +58,15 @@ class LocalSavableMovieDataSourceImpl
             }
         }
 
-        override suspend fun getSavedMovies(): Map<Long, Long> =
+        override suspend fun deleteAllSavedMovies() {
             executeWithErrorHandling(logger) {
-                savedListMovieDao
-                    .getSavedMovies()
-                    .associate { it.movieId to it.listId }
+                savedListMovieDao.deleteAllSavedMovies()
+            }
+        }
+
+        override suspend fun getSavedMovies(): Map<Long, Long> {
+        return executeWithErrorHandling(logger) {
+            savedListMovieDao.getSavedMovies().associate { it.movieId to it.listId }
         }
     }
+}

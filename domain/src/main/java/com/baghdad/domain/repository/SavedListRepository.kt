@@ -19,5 +19,7 @@ interface SavedListRepository {
 
     suspend fun deleteSavedListById(listId: Long)
 
-    suspend fun syncSavedMovies()
+    suspend fun syncSavedMoviesCache()
+
+    suspend fun clearSavedMoviesCache()
 }

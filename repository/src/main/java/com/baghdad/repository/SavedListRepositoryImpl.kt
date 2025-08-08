@@ -90,8 +90,9 @@ class SavedListRepositoryImpl
             }
         }
 
-        override suspend fun syncSavedMovies() {
+        override suspend fun syncSavedMoviesCache() {
             executeAuthorizedSafely(localSessionDataStore.getSessionId()) { sessionId ->
+                if (shouldPreformSync().not()) return@executeAuthorizedSafely
                 val accountId = getUserAccountId()
                 val savedLists = fetchAllSavedLists(sessionId, accountId)
 
@@ -101,6 +102,14 @@ class SavedListRepositoryImpl
                 }
             }
         }
+
+        override suspend fun clearSavedMoviesCache() {
+            executeSafely {
+                savableMovieDataSource.deleteAllSavedMovies()
+            }
+        }
+
+        private suspend fun shouldPreformSync(): Boolean = savableMovieDataSource.getSavedMovies().isEmpty()
 
         private suspend fun getUserAccountId(): Long = localUserDataStore.getUser()?.id ?: 0
 
@@ -128,17 +137,17 @@ class SavedListRepositoryImpl
                 PagedResultDto(
                     result.pagedItems.data,
                     result.pagedItems.nextKey,
-                    result.pagedItems.prevKey,
-                )
-            }
+                result.pagedItems.prevKey,
+            )
+        }
 
-        private suspend inline fun <T> fetchAllPages(crossinline fetchPage: suspend (page: Int) -> PagedResultDto<T>): List<T> {
-            val allItems = mutableListOf<T>()
-            var page = 1
+    private suspend inline fun <T> fetchAllPages(crossinline fetchPage: suspend (page: Int) -> PagedResultDto<T>): List<T> {
+        val allItems = mutableListOf<T>()
+        var page = 1
 
-            do {
-                val result = fetchPage(page)
-                allItems.addAll(result.data)
+        do {
+            val result = fetchPage(page)
+            allItems.addAll(result.data)
             page = result.nextKey ?: break
         } while (true)
 

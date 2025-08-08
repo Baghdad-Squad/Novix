@@ -17,5 +17,7 @@ interface LocalSavableMovieDataSource {
 
     suspend fun deleteListMovies(listId: Long)
 
+    suspend fun deleteAllSavedMovies()
+
     suspend fun getSavedMovies(): Map<Long, Long>
 }
