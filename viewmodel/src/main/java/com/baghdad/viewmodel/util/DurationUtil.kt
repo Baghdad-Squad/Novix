@@ -6,9 +6,9 @@ fun Int.formatDuration(): String {
     return when {
         this <= 0 -> ""
         else -> if (hours > 0) {
-            "${hours}h ${minutes}m"
+            "$hours hr $minutes min"
         } else {
-            "${minutes}m"
+            "$minutes min"
         }
     }
 }
