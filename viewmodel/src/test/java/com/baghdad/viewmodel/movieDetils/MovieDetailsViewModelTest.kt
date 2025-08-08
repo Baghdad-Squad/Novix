@@ -225,7 +225,7 @@ class MovieDetailsViewModelTest {
     }
 
     @Test
-    fun `onBackClick should navigate back when clicked`() = runTest {
+    fun `should navigate back when clicked onBack`() = runTest {
         // Given
         var receivedEffect: MovieDetailsEffect? = null
         val job = launch {
