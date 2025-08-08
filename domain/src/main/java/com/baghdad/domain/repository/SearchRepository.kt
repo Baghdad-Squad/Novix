@@ -1,7 +1,7 @@
 package com.baghdad.domain.repository
 
 import com.baghdad.domain.model.PagedResult
-import com.baghdad.entity.media.Movie
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.search.RecentSearch
@@ -15,8 +15,8 @@ interface SearchRepository {
     suspend fun searchMoviesByTitle(
         title: String,
         page: Int,
-        pageSize: Int = 20
-    ): PagedResult<Movie>
+        pageSize: Int = 20,
+    ): PagedResult<SavableMovie>
 
     suspend fun searchTvShowsByName(
         title: String,
