@@ -26,7 +26,7 @@ fun EmptyListScreen() {
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(bottom = 52.dp)
+                .padding(bottom = 52.dp, top = 16.dp)
         ) {
             Icon(
                 painter = showIconDependsOnTheme(),
