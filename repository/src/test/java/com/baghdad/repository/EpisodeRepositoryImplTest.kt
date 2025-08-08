@@ -29,6 +29,7 @@ class EpisodeRepositoryImplTest {
         remoteEpisodeDataSource = mockk()
         episodeRepositoryImpl = EpisodeRepositoryImpl(
             remoteEpisodeDataSource = remoteEpisodeDataSource,
+            localSessionDataStore = mockk(),
             remoteTvShowDataSource = remoteTvShowDataSource
         )
     }

@@ -2,6 +2,7 @@ package com.baghdad.viewmodel.main
 
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.onBoarding.IsFirstTimeLaunchAppUseCase
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -23,6 +24,7 @@ class MainViewModelTest {
     // Given
     private val mockAuthRepository: AuthenticationRepository = mockk()
     private val isLoggedInUseCase = IsLoggedInUseCase(mockAuthRepository)
+    private val isFirstTimeLaunchAppUseCase: IsFirstTimeLaunchAppUseCase = mockk()
     private lateinit var viewModel: MainViewModel
     private val testDispatcher = StandardTestDispatcher()
 
@@ -42,7 +44,7 @@ class MainViewModelTest {
         coEvery { mockAuthRepository.isUserLoggedIn() } returns true
 
         // When
-        viewModel = MainViewModel(isLoggedInUseCase)
+        viewModel = MainViewModel(isLoggedInUseCase, isFirstTimeLaunchAppUseCase )
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
@@ -58,7 +60,7 @@ class MainViewModelTest {
         }
 
         // When
-        viewModel = MainViewModel(isLoggedInUseCase)
+        viewModel = MainViewModel(isLoggedInUseCase, isFirstTimeLaunchAppUseCase)
         testDispatcher.scheduler.advanceTimeBy(500)
 
         // Then

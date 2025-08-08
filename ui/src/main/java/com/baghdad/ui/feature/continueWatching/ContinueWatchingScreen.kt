@@ -25,11 +25,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -39,6 +41,8 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
@@ -49,17 +53,17 @@ import com.baghdad.viewmodel.continueWatching.ContinueWatchingScreenEffect
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-
+import com.baghdad.viewmodel.shared.SavedListUiState
 
 @Composable
 fun ContinueWatchingScreen(
     viewModel: ContinueWatchingViewModel = hiltViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit,
-
     ) {
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
@@ -67,6 +71,7 @@ fun ContinueWatchingScreen(
     ContinueWatchingContent(
         uiState = uiState,
         listener = viewModel,
+        savedLists = savedLists,
         mediaItems = mediaItems,
         snackBarState = snackBarState,
     )
@@ -100,6 +105,7 @@ private fun handleEffect(
 fun ContinueWatchingContent(
     uiState: ContinueWatchingState,
     mediaItems: LazyPagingItems<ContinueWatchingState.ContinueWatchingMovieUiState>,
+    savedLists: LazyPagingItems<SavedListUiState>,
     listener: ContinueWatchingInteractionListener,
     snackBarState: SnackBarState,
     modifier: Modifier = Modifier
@@ -118,8 +124,7 @@ fun ContinueWatchingContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(top = 22.dp, bottom = 8.dp)
-                    .background(Theme.color.surface),
+                    .padding(top = 22.dp, bottom = 8.dp),
                 onGoBackClick = {
                     listener.onBackClick()
                 },
@@ -127,19 +132,23 @@ fun ContinueWatchingContent(
 
                 )
         },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionClick,
+                position = position,
             )
-        }
+        },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Column(
             modifier = Modifier
-                .background(Theme.color.surface)
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding()
@@ -152,7 +161,6 @@ fun ContinueWatchingContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Theme.color.surface)
                         .padding(top = 4.dp)
                         .drawBehind {
                             val strokeWidth = 1.dp.toPx()
@@ -193,11 +201,11 @@ fun ContinueWatchingContent(
                 onTabClick = { listener.onGenreClick(it) },
                 modifier = Modifier.padding(vertical = 12.dp)
             )
+
             LazyPagingVerticalGrid<ContinueWatchingState.ContinueWatchingMovieUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface),
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
@@ -207,16 +215,34 @@ fun ContinueWatchingContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 items = mediaItems,
             ) { media ->
-
                 HomeCard(
                     url = media.posterPictureURL,
                     contentDescription = null,
                     isSaved = media.isSaved,
-                    onSavedClick = { listener.onMovieSaveClick(media.id) },
+                    onSavedClick = { listener.onMovieSaveClick(media) },
                     onClick = { listener.onMediaClick(media.id, media.contentType) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }
+            SavedListBottomSheet(
+                isVisible = uiState.addToListBottomSheetState.isVisible,
+                isUserLoggedIn = uiState.isUserLoggedIn,
+                onAddClick = listener::onSaveItemToListClicked,
+                onCreateNewListClick = listener::onCreateNewListClicked,
+                onLoginClick = listener::onLoginClicked,
+                onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
+                lists = savedLists,
+                selectedListId = uiState.addToListBottomSheetState.selectedListId,
+                onListSelected = listener::onListSelected,
+            )
+            AddListBottomSheet(
+                isVisible = uiState.addListBottomSheetState.isVisible,
+                isLoading = uiState.addListBottomSheetState.isLoading,
+                listName = uiState.addListBottomSheetState.listName,
+                onDismiss = listener::onCreateListBottomSheetDismiss,
+                onAddClick = listener::onCreateListBottomSheetAddClick,
+                onListNameChange = listener::onCreatedListNameChanged,
+            )
         }
     }
 

@@ -65,7 +65,7 @@ fun SignUpWebViewContent(
                     ).show()
             }
             delay(5000)
-            handleNavigation(AuthenticationNavEvent.NavigateBack)
+            handleNavigation(AuthenticationNavEvent.NavigateToLogin)
         }
     }
     Box(

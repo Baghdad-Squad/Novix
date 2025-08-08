@@ -9,7 +9,9 @@ import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.UserDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RemoteAuthenticationImpl @Inject constructor(
     private val authenticationApiService: AuthenticationApiService,
     private val logger: Logger

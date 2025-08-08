@@ -22,10 +22,12 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
@@ -34,11 +36,15 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.topRating.component.GenresSection
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateBack
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToLogin
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShowDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
@@ -86,7 +92,11 @@ private fun handleEffect(
         )
 
         is TopRatingEffect.NavigateToTvShowDetails -> handleNavigation(
-            HomeNavEvent.NavigateToTvShowDetails(effect.tvShowId)
+            NavigateToTvShowDetails(effect.tvShowId)
+        )
+
+        TopRatingEffect.NavigateToLogin -> handleNavigation(
+            NavigateToLogin
         )
     }
 }
@@ -101,6 +111,7 @@ private fun TopRatingContent(
 ) {
     val movieGenresScrollState = rememberLazyListState()
     val tvGenresScrollState = rememberLazyListState()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     Scaffold(
         modifier = Modifier
@@ -176,15 +187,20 @@ private fun TopRatingContent(
 
 
         },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
-        }
+        },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
 
         when (uiState.selectedTab) {
@@ -211,7 +227,7 @@ private fun TopRatingContent(
                         url = movie.posterPictureURL,
                         contentDescription = null,
                         isSaved = movie.isSaved,
-                        onSavedClick = { listener.onSaveMovieClick(movie.id) },
+                        onSavedClick = { listener.onTopRatingItemSaveClick(movie) },
                         onClick = { listener.onMovieDetailsClick(movie.id) },
                         modifier = Modifier.aspectRatio(0.8f)
                     )
@@ -238,13 +254,34 @@ private fun TopRatingContent(
                         url = tvShow.posterPictureURL,
                         contentDescription = null,
                         isSaved = tvShow.isSaved,
-                        onSavedClick = { listener.onSaveTvShowClick(tvShow.id) },
+                        isSaveToListVisible = false,
                         onClick = { listener.onTvShowDetailsClick(tvShow.id) },
                         modifier = Modifier.aspectRatio(0.8f)
                     )
                 }
             }
         }
+
+        SavedListBottomSheet(
+            isVisible = uiState.addToListBottomSheetState.isVisible,
+            isUserLoggedIn = uiState.isUserLoggedIn,
+            onAddClick = listener::onSaveMovieClick,
+            onCreateNewListClick = listener::onCreateNewListClick,
+            onLoginClick = listener::onLoginClick,
+            onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
+            lists = savedLists ,
+            selectedListId = uiState.addToListBottomSheetState.selectedListId,
+            onListSelected = listener::onListSelected,
+        )
+
+        AddListBottomSheet(
+            isVisible = uiState.addListBottomSheetState.isVisible,
+            isLoading = uiState.addListBottomSheetState.isLoading,
+            listName = uiState.addListBottomSheetState.listName,
+            onDismiss = listener::onCreateListBottomSheetDismiss,
+            onAddClick = listener::onCreateListBottomSheetAddClick,
+            onListNameChange = listener::onCreatedListNameChanged,
+        )
     }
 }
 

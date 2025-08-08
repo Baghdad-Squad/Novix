@@ -4,8 +4,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import androidx.navigation.toRoute
-import com.baghdad.ui.navigation.graph.DummyScreen
+import com.baghdad.ui.feature.myLists.MyListsScreen
+import com.baghdad.ui.feature.savedListDetails.SavedListDetailsScreen
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.MyListsRoute
 
@@ -14,11 +15,14 @@ fun NavGraphBuilder.myListsNavGraph(navController: NavHostController) {
         startDestination = MyListsRoute.MyListsScreen
     ) {
         composable<MyListsRoute.MyListsScreen> {
-            DummyScreen(title = "My Lists Screen")
+            MyListsScreen {
+                handleMyListsNavEvent(it, navController)
+            }
         }
         composable<MyListsRoute.ListDetailsScreen> { backStackEntry ->
-            val listId = backStackEntry.toRoute<MyListsRoute.ListDetailsScreen>().listId
-            DummyScreen(title = "List Details Screen: $listId")
+            SavedListDetailsScreen {
+                handleMyListsNavEvent(it, navController)
+            }
         }
     }
 }
@@ -40,8 +44,12 @@ private fun handleMyListsNavEvent(
             Graph.TvShowDetailsGraph(event.tvShowId)
         )
 
-        MyListsNavEvent.NavigateBack -> navController.popBackStack()
+        MyListsNavEvent.NavigateToMyLists -> navController.navigate(MyListsRoute.MyListsScreen){
+            popUpTo(MyListsRoute.MyListsScreen){
+                inclusive = true
+            }
+        }
 
-        MyListsNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
+        MyListsNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen)
     }
 }

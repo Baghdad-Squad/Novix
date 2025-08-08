@@ -3,7 +3,8 @@ package com.baghdad.viewmodel.topRating
 import com.baghdad.viewmodel.base.BaseUiEffect
 
 sealed interface TopRatingEffect : BaseUiEffect {
-    data class NavigateToMovieDetails(val movieId: Long): TopRatingEffect
-    data class NavigateToTvShowDetails(val tvShowId: Long): TopRatingEffect
-    data object NavigateBack: TopRatingEffect
+    data class NavigateToMovieDetails(val movieId: Long) : TopRatingEffect
+    data class NavigateToTvShowDetails(val tvShowId: Long) : TopRatingEffect
+    data object NavigateBack : TopRatingEffect
+    data object NavigateToLogin : TopRatingEffect
 }

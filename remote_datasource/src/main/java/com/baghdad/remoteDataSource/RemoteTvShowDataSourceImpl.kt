@@ -8,7 +8,10 @@ import com.baghdad.remoteDataSource.mapper.tvShow.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.tvShow.toDto
 import com.baghdad.remoteDataSource.mapper.tvShow.toPagedTvShowDtos
 import com.baghdad.remoteDataSource.mapper.tvShow.toTvShowDtos
+import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.tvShow.PopularTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
@@ -23,11 +26,14 @@ import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.repository.model.MediaAccountStateDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RemoteTvShowDataSourceImpl @Inject constructor(
     private val tvShowApiService: TvShowApiService,
     private val logger: Logger,
@@ -96,6 +102,27 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
             apiCall = { tvShowApiService.getTrendingTvShows(page) },
             logger = logger,
         ).toPagedTvShowDtos()
+    }
+
+    override suspend fun addTvShowRate(
+        tvShowId: Long,
+        rating: Int,
+        sessionId: String
+    ) {
+         handleRequest<RatingResponse>(
+            apiCall = { tvShowApiService.addTvShowRate(tvShowId, sessionId, RatingRequest(rating)) },
+            logger = logger
+        )
+    }
+
+    override suspend fun getTvShowAccountStates(
+        tvShowId: Long,
+        sessionId: String
+    ): MediaAccountStateDto {
+        return handleRequest<MediaAccountStatesResponse>(
+            apiCall = { tvShowApiService.getTvShowAccountStates(tvShowId, sessionId) },
+            logger = logger
+        ).toDto()
     }
 
     override suspend fun getPopularTvShows(): List<TvShowDto> {

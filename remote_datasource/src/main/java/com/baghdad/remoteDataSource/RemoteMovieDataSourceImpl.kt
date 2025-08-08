@@ -7,7 +7,10 @@ import com.baghdad.remoteDataSource.mapper.movie.toDto
 import com.baghdad.remoteDataSource.mapper.movie.toMovieDtos
 import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
+import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
 import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
@@ -20,6 +23,7 @@ import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
+import com.baghdad.repository.model.MediaAccountStateDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
@@ -29,9 +33,11 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
+@Singleton
 class RemoteMovieDataSourceImpl @Inject constructor(
     private val movieApiService: MovieApiService,
     private val logger: Logger
@@ -145,4 +151,26 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         return response.toMovieDtos()
     }
 
+    override suspend fun addMovieRate(movieId: Long, rating: Int, sessionId: String) {
+         handleRequest<RatingResponse>(
+            apiCall = {
+                movieApiService.addMovieRate(
+                    movieId = movieId,
+                    rating = RatingRequest(rating),
+                    sessionId = sessionId
+                )
+            },
+            logger = logger,
+        )
+    }
+
+    override suspend fun getMovieAccountStates(
+        movieId: Long,
+        sessionId: String
+    ): MediaAccountStateDto {
+        return handleRequest<MediaAccountStatesResponse>(
+            apiCall = { movieApiService.getMovieAccountStates(movieId, sessionId) },
+            logger = logger
+        ).toDto()
+    }
 }

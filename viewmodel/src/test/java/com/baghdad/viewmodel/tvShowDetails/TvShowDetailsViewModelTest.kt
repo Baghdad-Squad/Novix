@@ -3,6 +3,9 @@ package com.baghdad.viewmodel.tvShowDetails
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
+import com.baghdad.domain.usecase.tvShow.AddTvShowRateUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowAccountStatesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
@@ -32,6 +35,9 @@ class TvShowDetailsViewModelTest {
     private lateinit var getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase
     private lateinit var getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase
     private lateinit var addContinueWatchingUseCase: AddContinueWatchingUseCase
+    private lateinit var getTvShowAccountStatesUseCase: GetTvShowAccountStatesUseCase
+    private lateinit var addTvShowRateUseCase: AddTvShowRateUseCase
+    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
     private val testDispatcher = StandardTestDispatcher()
 
     @BeforeEach
@@ -42,12 +48,19 @@ class TvShowDetailsViewModelTest {
         getTvShowCastMembersUseCase = mockk()
         getTvShowSeasonEpisodesUseCase = mockk()
         addContinueWatchingUseCase = mockk()
+        getTvShowAccountStatesUseCase = mockk()
+        addTvShowRateUseCase = mockk()
+        isUserLoggedInUseCase = mockk()
+
         tvShowDetailsViewModel = TvShowDetailsViewModel(
             savedStateHandle = savedStateHandle,
             getTvShowDetailsUseCase = getTvShowDetailsUseCase,
             getTvShowCastMembersUseCase = getTvShowCastMembersUseCase,
             getTvShowSeasonEpisodesUseCase = getTvShowSeasonEpisodesUseCase,
             addContinueWatchingUseCase = addContinueWatchingUseCase,
+            getTvShowAccountStatesUseCase = getTvShowAccountStatesUseCase,
+            addTvShowRateUseCase = addTvShowRateUseCase,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
             ioDispatcher = testDispatcher
         )
     }
@@ -167,7 +180,7 @@ class TvShowDetailsViewModelTest {
             tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
         }
         // When
-        tvShowDetailsViewModel.onClickReviews(tvShowId)
+        tvShowDetailsViewModel.onClickReviews()
         advanceUntilIdle()
         job.cancel()
         // Then
@@ -267,6 +280,7 @@ class TvShowDetailsViewModelTest {
                 currentSeason = 1,
                 overview = "Test episode overview",
                 genres = emptyList(),
+                userRating = 5,
                 headerPictures = listOf("https://example.com/ep-header.jpg")
             )
         )

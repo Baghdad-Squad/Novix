@@ -4,6 +4,9 @@ import kotlinx.serialization.Serializable
 
 sealed interface AuthenticationRoute : Route {
     @Serializable
+    data object WelcomeScreen : OnBoardingRoute
+
+    @Serializable
     data object LoginScreen : AuthenticationRoute
 
     @Serializable
@@ -12,6 +15,4 @@ sealed interface AuthenticationRoute : Route {
     @Serializable
     data object ForgotPasswordScreen : AuthenticationRoute
 
-    @Serializable
-    data class ResetPasswordWebViewScreen(val resetToken: String) : AuthenticationRoute
 }

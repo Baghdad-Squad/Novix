@@ -1,19 +1,24 @@
 package com.baghdad.novix.di
 
+import android.content.Context
 import com.baghdad.local_datasource.language.AppLanguageProvider
 import com.baghdad.novix.BuildConfig
+import com.baghdad.remoteDataSource.interceptor.CacheInterceptor
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
 import com.baghdad.repository.language.LanguageProvider
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Named
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 @Module
@@ -49,17 +54,33 @@ abstract class NetworkModule {
         }
 
         @Provides
+        fun provideCacheInterceptor(): CacheInterceptor {
+            return CacheInterceptor()
+        }
+
+        @Provides
+        fun provideCache(@ApplicationContext context: Context): Cache {
+            val cacheSize = 10 * 1024 * 1024
+            return Cache(File(context.cacheDir, "http-cache"), cacheSize.toLong())
+        }
+
+
+        @Provides
         fun provideOkHttpClient(
             loggingInterceptor: HttpLoggingInterceptor,
-            headersSetupInterceptor: HeadersSetupInterceptor
+            headersSetupInterceptor: HeadersSetupInterceptor,
+            cacheInterceptor: CacheInterceptor,
+            cache: Cache
         ): OkHttpClient {
             return OkHttpClient.Builder()
                 .callTimeout(timeOut, TimeUnit.SECONDS)
                 .connectTimeout(timeOut, TimeUnit.SECONDS)
                 .readTimeout(timeOut, TimeUnit.SECONDS)
                 .writeTimeout(timeOut, TimeUnit.SECONDS)
+//                .cache(cache)
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(headersSetupInterceptor)
+//                .addNetworkInterceptor(cacheInterceptor)
                 .build()
         }
 

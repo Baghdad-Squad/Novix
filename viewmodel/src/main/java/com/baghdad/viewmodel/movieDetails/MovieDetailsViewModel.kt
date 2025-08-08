@@ -3,7 +3,11 @@ package com.baghdad.viewmodel.movieDetails
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
+import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
+import com.baghdad.domain.usecase.movie.GetMovieAccountStatesUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
@@ -12,10 +16,12 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.shared.BottomSheetType
+import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
@@ -25,6 +31,9 @@ class MovieDetailsViewModel @Inject constructor(
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
     private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
     private val ioDispatcher: CoroutineDispatcher,
+    private val addMovieRateUseCase: AddMovieRateUseCase,
+    private val getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MovieDetailsState, MovieDetailsEffect>(MovieDetailsState()),
     MovieDetailsInteractionListener {
@@ -40,26 +49,11 @@ class MovieDetailsViewModel @Inject constructor(
         getMovieDetails()
         getCastMembers()
         getMoreLikeThisShow()
-    }
-
-    override fun onStarMovieClick() {
-        // TODO("Not yet implemented")
+        getMovieAccountStates()
+        isUserLoggedIn()
     }
 
     override fun onSaveCurrentMovieClick() {
-        tryToExecute(
-            callee = { currentState.movieId },
-            dispatcher = ioDispatcher,
-            onSuccess = {
-                updateState {
-                    it.copy(
-                        isSaved = !currentState.isSaved,
-                    )
-                }
-            },
-            onStart = ::onMoreLikeThisStarted,
-            onFinally = ::onMoreLikeThisFinished
-        )
         // TODO: save logic
     }
 
@@ -117,8 +111,8 @@ class MovieDetailsViewModel @Inject constructor(
         sendEffect(MovieDetailsEffect.NavigateToActorDetails(id))
     }
 
-    override fun onReviewClick(id: Long) {
-        sendEffect(MovieDetailsEffect.NavigateToReviewDetails(id))
+    override fun onReviewClick() {
+        sendEffect(MovieDetailsEffect.NavigateToReviewDetails(movieId))
     }
 
     override fun onMovieClick(id: Long) {
@@ -130,7 +124,6 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onClickPlayTrailer() {
-        addToContinueWatching()
         sendEffect(MovieDetailsEffect.OpenYoutubeLink(currentState.movieTrailerURL))
     }
 
@@ -149,6 +142,110 @@ class MovieDetailsViewModel @Inject constructor(
             durationMillis = Int.MAX_VALUE.toLong(),
         )
     }
+
+    override fun onClickStarButton() {
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = true,
+                )
+            )
+        }
+    }
+
+    private fun isUserLoggedIn() {
+        tryToExecute(
+            callee = { isUserLoggedInUseCase() },
+            dispatcher = ioDispatcher,
+            onSuccess = ::onIsUserLoggedInSuccess,
+            onError = ::onError
+        )
+    }
+
+
+    private fun onIsUserLoggedInSuccess(isLoggedIn: Boolean) {
+        val newBottomSheetType = if (isLoggedIn) {
+            BottomSheetType.ShowRating
+        } else {
+            BottomSheetType.RequireLogin
+        }
+
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    bottomSheetType = newBottomSheetType,
+                ),
+                isRated = it.isRated && isLoggedIn,
+            )
+        }
+    }
+
+    override fun onRatingChanged(rating: Int) {
+        updateState {
+            it.copy(
+                userRating = rating
+            )
+        }
+    }
+
+    override fun onDismissRatingBottomSheet() {
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = false,
+                ),
+                userRating = 0
+            )
+        }
+    }
+
+    override fun onLoginClick() {
+        sendEffect(MovieDetailsEffect.NavigateToLogin)
+    }
+
+
+    override fun onClickSubmitRating(rating: Int) {
+        tryToExecute(
+            callee = { addMovieRateUseCase(movieId, rating) },
+            onSuccess = { onSubmitRatingSuccess() },
+            dispatcher = ioDispatcher,
+            onError = ::onError
+        )
+    }
+
+    private fun onSubmitRatingSuccess() {
+        updateState {
+            it.copy(
+                ratingStatus = it.ratingStatus.copy(
+                    isBottomSheetVisible = false,
+                    bottomSheetType = BottomSheetType.Hidden,
+                ),
+                isRated = true
+            )
+        }
+        showSnackBar(
+            message = BaseSnackBarMessage.ItemRateSuccessfully,
+            isSuccess = true
+        )
+    }
+
+    private fun getMovieAccountStates() {
+        tryToExecute(
+            callee = { getMovieAccountStatesUseCase(movieId) },
+            dispatcher = ioDispatcher,
+            onSuccess = ::onGetMovieAccountStatesSuccess,
+            onError = ::onError
+        )
+    }
+
+    private fun onGetMovieAccountStatesSuccess(accountStates: MediaAccountStates) {
+        updateState {
+            it.copy(
+               isRated = accountStates.isMediaRated,
+            )
+        }
+    }
+
 
     override fun onSnackBarActionLabelClick() {
         loadInitData()
@@ -192,7 +289,7 @@ class MovieDetailsViewModel @Inject constructor(
             onSuccess = ::onGetMovieDetailsSuccess,
             dispatcher = ioDispatcher,
             onStart = ::onGetMovieDetailsStarted,
-            onFinally = ::onFinally,
+            onFinally = ::onFinallyAndAddToContinueWatching,
             onError = ::onError
         )
     }
@@ -204,7 +301,6 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onGetMovieDetailsSuccess(details: Movie) {
         updateState { state ->
             state.copy(
-                movieId = details.id,
                 movieName = details.title,
                 movieTrailerURL = details.trailerURL,
                 overView = details.overview,
@@ -262,7 +358,7 @@ class MovieDetailsViewModel @Inject constructor(
             onFinally = ::onGetMovieMoreLikeThisFinished,
             onError = ::onError,
             dispatcher = ioDispatcher,
-            )
+        )
     }
 
     private fun onGetMovieMoreLikeThisStarted() {
@@ -297,8 +393,9 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
 
-    private fun onFinally() {
+    private fun onFinallyAndAddToContinueWatching() {
         updateState { state -> state.copy(isMovieDetailsLoading = false) }
+        addToContinueWatching()
     }
 
 

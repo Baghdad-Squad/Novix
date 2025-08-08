@@ -2,7 +2,7 @@ package com.baghdad.islamic_image_loader.model
 
 import android.content.Context
 import android.graphics.Bitmap
-import com.baghdad.islamic_image_loader.ml.ModelNudeDetector
+import com.baghdad.islamic_image_loader.ml.IslamicImageModel
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
@@ -14,7 +14,7 @@ class HaramImageDetector(private val context: Context) {
     private val inputImageSize = INPUT_IMAGE_SIZE
 
     fun isImageHaram(selectedBitmap: Bitmap): Boolean {
-        val model = ModelNudeDetector.newInstance(context)
+        val model = IslamicImageModel.newInstance(context)
 
         val tensorImage = TensorImage(DataType.FLOAT32)
         tensorImage.load(selectedBitmap)

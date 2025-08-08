@@ -62,6 +62,10 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
         durationMillis: Long = 3000L,
     ) {
         viewModelScope.launch(Dispatchers.Main) {
+            if (snackBarState.value.isVisible) {
+                hideSnackBar()
+                delay(1000L)
+            }
             _snackBarState.update {
                 SnackBarState(
                     message = message,
@@ -112,7 +116,7 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
 
     protected fun <Entity : Any, UiState : Any> collectPagingFlow(
         loadData: suspend (page: Int) -> PagedResult<Entity>,
-        onInitialLoadFinished: suspend () -> Unit,
+        onInitialLoadFinished: suspend () -> Unit = {},
         onInitialLoadError: (Throwable) -> Unit = ::handleError,
         pageSize: Int = 20,
         mapEntityToUiState: (Entity) -> UiState,

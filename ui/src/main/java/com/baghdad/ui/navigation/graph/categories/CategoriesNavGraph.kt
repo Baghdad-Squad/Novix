@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.navigation.graph.DummyScreen
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.CategoriesRoute.CategoryMoviesScreen
 import com.baghdad.ui.navigation.route.CategoriesRoute.CategoryTvShowsScreen
@@ -44,7 +45,7 @@ private fun handleCategoriesNavEvent(
 ) {
     when (event) {
         CategoriesNavEvent.NavigateBack -> navController.popBackStack()
-        CategoriesNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
+        CategoriesNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen)
         is CategoriesNavEvent.NavigateToCategoryMovies -> navController.navigate(
             CategoryMoviesScreen(event.categoryId)
         )

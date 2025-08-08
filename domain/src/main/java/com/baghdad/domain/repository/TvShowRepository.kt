@@ -1,6 +1,7 @@
 package com.baghdad.domain.repository
 
 import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
@@ -22,9 +23,14 @@ interface TvShowRepository {
     suspend fun getTvShowSeasonEpisodes(tvId: Long, seasonNumber: Int): List<Episode>
 
     suspend fun getTvShowReviews(tvId: Long): List<Review>
+
     suspend fun getPopularTvShows(): List<TvShow>
 
     suspend fun getTopRatedTvShows(page: Int): PagedResult<TvShow>
 
     suspend fun getTrendingTvShows(page: Int): PagedResult<TvShow>
+
+    suspend fun addTvShowRate(tvShowId: Long, rating: Int)
+
+    suspend fun getTvShowAccountStates(tvShowId: Long): MediaAccountStates
 }

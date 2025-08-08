@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="retry">أعد المحاولة</string>
+    <string name="rate_save_and_create_your_own_lists">قيِّم، واحفظ، وأنشئ قوائمك الخاصة.</string>
+    <string name="rate_movies_track_your_viewing_history_and_easily_save_your_favorite_lists">  قيّم الأفلام، تتبع سجل مشاهداتك، واحفظ قوائمك المفضلة بسهولة.</string>
+    <string name="discover_best_movies_and_series">اكتشف افضل الافلام والمسلسلات</string>
+    <string name="browse_the_latest_releases_trends_and_content_tailored_to_your_taste_all_in_one_place">تصفّح أحدث الإصدارات، والأكثر مشاهدةً، والمحتوى المخصّص لذوقك — كلّها في مكان واحد.</string>
+    <string name="search_easily_and_watch_to_your_taste">ابحث بسهولة... وشاهد ما يناسب ذوقك</string>
+    <string name="use_smart_search_and_filters_to_find_exactly_what_you_love_action_drama_crime_anime_and_more">استخدم البحث الذكي والفلاتر لتجد بالضبط ما تحب — أكشن، دراما، إجرام، أنمي والمزيد!</string>
+    <string name="added_list_successfully">تم اضافة القائمة بنجاح</string>
+
+    <string name="light">فاتح</string>
+    <string name="dark">غامق</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
 </resources>

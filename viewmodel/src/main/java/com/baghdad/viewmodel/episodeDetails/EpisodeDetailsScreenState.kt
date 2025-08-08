@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.episodeDetails
 
 import com.baghdad.viewmodel.base.BaseUiState
+import com.baghdad.viewmodel.shared.BottomSheetType
 
 data class EpisodeDetailsScreenState(
     val isEpisodeDetailsLoading: Boolean = false,
@@ -9,10 +10,11 @@ data class EpisodeDetailsScreenState(
     val guestsOfHonor: List<GuestsOfHonerUiState> = emptyList(),
     val isOverviewExpanded: Boolean = false,
     val isSavedToList: Boolean = false,
-    val isRated: Boolean = false,
+    val isRated: Boolean = true,
     val addToListBottomSheetState: AddToListBottomSheetState = AddToListBottomSheetState(),
-    val rateEpisodeBottomSheetState: RateEpisodeBottomSheetState = RateEpisodeBottomSheetState()
-): BaseUiState {
+    val rateEpisodeBottomSheetState: RateEpisodeBottomSheetState = RateEpisodeBottomSheetState(),
+    val ratingStatus: RatingUiState = RatingUiState(),
+    ): BaseUiState {
     val isLoading: Boolean
         get() = isEpisodeDetailsLoading || isEpisodeCastMembersLoading
 
@@ -22,6 +24,7 @@ data class EpisodeDetailsScreenState(
         val episodeNumber: Int = 0,
         val rating: Double = 0.0,
         val trailerUrl: String = "",
+        val userRating: Int = 0,
         val duration: String = "",
         val releasedDate: String = "",
         val currentSeason: Int = 0,
@@ -49,4 +52,10 @@ data class EpisodeDetailsScreenState(
     data class RateEpisodeBottomSheetState(
         val isVisible: Boolean = false,
     )
+
+    data class RatingUiState(
+        val isBottomSheetVisible: Boolean = false,
+        val bottomSheetType: BottomSheetType = BottomSheetType.Hidden,
+    )
+
 }

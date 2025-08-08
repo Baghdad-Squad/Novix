@@ -1,23 +1,33 @@
 package com.baghdad.viewmodel.search
 
+import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.search.RecentlyViewed
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.GetRecentlyViewedUseCase
+import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
+import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.search.DeleteAllRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.DeleteRecentSearchUseCase
 import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
+import com.baghdad.entity.savedList.SavedList
 import com.baghdad.entity.search.RecentSearch
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import com.baghdad.viewmodel.shared.AddToListBottomSheetState
+import com.baghdad.viewmodel.shared.SavedListUiState
+import com.baghdad.viewmodel.shared.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
@@ -28,7 +38,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val getGenresUseCase: GetGenresUseCase,
     private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
     private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase,
@@ -38,18 +47,70 @@ class SearchViewModel @Inject constructor(
     private val searchMoviesUseCase: SearchMoviesUseCase,
     private val searchTvShowsUseCase: SearchTvShowsUseCase,
     private val searchActorsUseCase: SearchActorsUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
+    private val getSavedListsUseCase: GetSavedListsUseCase,
+    private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
+    private val createSavedListUseCase: CreateSavedListUseCase,
+    private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
+    private val defaultDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
     init {
+        checkIfUserIsLoggedIn()
         getRecentSearches()
         getRecentViewed()
         observeSearchQueryChanges()
+    }
+
+    private fun checkIfUserIsLoggedIn() {
+        tryToExecute(
+            callee = { isUserLoggedInUseCase() },
+            onSuccess = ::onCheckIfUserIsLoggedInSuccess,
+            dispatcher = defaultDispatcher,
+        )
+    }
+
+    private fun onCheckIfUserIsLoggedInSuccess(isLoggedIn: Boolean) {
+        updateState {
+            it.copy(isUserLoggedIn = isLoggedIn)
+        }
+        if (isLoggedIn) {
+            getUserSavedLists()
+        }
+    }
+
+    private fun getUserSavedLists() {
+        collectPagingFlow(
+            loadData = { page ->
+                getSavedListsUseCase(
+                    page = page,
+                    pageSize = DEFAULT_PAGE_SIZE,
+                )
+            },
+            onInitialLoadError = ::onSearchError,
+            pageSize = DEFAULT_PAGE_SIZE,
+            mapEntityToUiState = SavedList::toUiState,
+            onFlowCreated = ::onGetSavedListFlowCreated,
+        )
+    }
+
+    private fun onGetSavedListFlowCreated(flow: Flow<PagingData<SavedListUiState>>) {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        savedLists = flow,
+                    ),
+            )
+        }
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
 
     override fun onSearchTextChanged(text: String) {
         updateState { it.copy(searchText = text, isLoading = true) }
+        getRecentSearches()
+        getRecentViewed()
         if (text.trim() == currentState.lastProcessedQuery) {
             updateState { it.copy(isLoading = false) }
             return
@@ -217,13 +278,71 @@ class SearchViewModel @Inject constructor(
         )
     }
 
-    override fun onSaveRecentlyViewedClick(id: Long) {
+    override fun onSaveMovieClick(movie: SearchScreenState.MovieUiState) {
+        onSaveMovieClick(movie.isSaved, movie.savedListId, movie.id)
+    }
+
+    private fun onSaveMovieClick(
+        isSaved: Boolean,
+        listId: Long,
+        movieId: Long,
+    ) {
+        if (isSaved) {
+            removeSavedItem(listId, movieId)
+        } else {
+            updateState {
+                it.copy(
+                    addToListBottomSheetState =
+                        it.addToListBottomSheetState.copy(
+                            isVisible = true,
+                            selectedItemId = movieId,
+                            selectedListId = null,
+                        ),
+                )
+            }
+        }
+    }
+
+    override fun onSaveRecentlyViewedClick(recentlyViewed: SearchScreenState.RecentlyViewedUiState) {
+        if (recentlyViewed.contentType == RecentlyViewed.ContentType.MOVIE) {
+            onSaveMovieClick(
+                isSaved = recentlyViewed.isSaved,
+                listId = recentlyViewed.savedListId,
+                movieId = recentlyViewed.id,
+            )
+        }
+    }
+
+    private fun removeSavedItem(
+        listId: Long,
+        itemId: Long,
+    ) {
+        tryToExecute(
+            callee = { removeMovieFromSavedListUseCase(listId = listId, movieId = itemId) },
+            onSuccess = { onRemoveSavedItemSuccess() },
+            dispatcher = defaultDispatcher,
+            onFinally = ::onRemoveSavedItemFinished,
+        )
+    }
+
+    private fun onRemoveSavedItemSuccess() {
+        showItemRemovedSuccessfullySnackBar()
+    }
+
+    private fun showItemRemovedSuccessfullySnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.RemovedItemSuccessfully,
+            isSuccess = true,
+        )
+    }
+
+    private fun onRemoveSavedItemFinished() {
         updateState {
             it.copy(
-                recentViewed =
-                    it.recentViewed.map { item ->
-                        if (item.id == id) item.copy(isSaved = item.isSaved.not()) else item
-                    },
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = false,
+                    ),
             )
         }
     }
@@ -355,6 +474,169 @@ class SearchViewModel @Inject constructor(
         performSearchByTab(currentState.searchText)
     }
 
+    override fun onSaveItemToListClicked() {
+        tryToExecute(
+            callee = {
+                addMovieToSavedListUseCase(
+                    listId =
+                        currentState.addToListBottomSheetState.selectedListId
+                            ?: return@tryToExecute,
+                    movieId = currentState.addToListBottomSheetState.selectedItemId,
+                )
+            },
+            onSuccess = { onAddItemToListSuccess() },
+            dispatcher = defaultDispatcher,
+            onStart = ::onAddItemToListStart,
+            onFinally = ::onAddItemToListFinished,
+        )
+    }
+
+    private fun onAddItemToListSuccess() {
+        onSaveToListBottomSheetDismiss()
+        showItemSavedSuccessfullySnackBar()
+    }
+
+    private fun showItemSavedSuccessfullySnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.SavedItemSuccessfully,
+            isSuccess = true,
+        )
+    }
+
+    private fun onAddItemToListStart() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isLoading = true,
+                    ),
+            )
+        }
+    }
+
+    private fun onAddItemToListFinished() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isLoading = false,
+                    ),
+            )
+        }
+    }
+
+    override fun onCreateNewListClicked() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isVisible = true,
+                    ),
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = false,
+                    ),
+            )
+        }
+    }
+
+    override fun onLoginClicked() {
+        sendEffect(
+            SearchScreenEffect.NavigateToLogin,
+        )
+    }
+
+    override fun onSaveToListBottomSheetDismiss() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    AddToListBottomSheetState(
+                        savedLists = it.addToListBottomSheetState.savedLists,
+                    ),
+            )
+        }
+    }
+
+    override fun onListSelected(listId: Long) {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        selectedListId = listId,
+                    ),
+            )
+        }
+    }
+
+    override fun onCreatedListNameChanged(name: String) {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        listName = name,
+                    ),
+            )
+        }
+    }
+
+    override fun onCreateListBottomSheetDismiss() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isVisible = false,
+                        listName = "",
+                        isLoading = false,
+                    ),
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = true,
+                    ),
+            )
+        }
+    }
+
+    override fun onCreateListBottomSheetAddClick() {
+        tryToExecute(
+            callee = {
+                createSavedListUseCase(
+                    title = currentState.addListBottomSheetState.listName,
+                )
+            },
+            onSuccess = { onCreateListSuccess() },
+            dispatcher = defaultDispatcher,
+            onStart = ::onCreateListStart,
+            onFinally = ::onCreateListFinished,
+        )
+    }
+
+    private fun onCreateListSuccess() {
+        onCreateListBottomSheetDismiss()
+        getUserSavedLists()
+    }
+
+    private fun onCreateListStart() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isLoading = true,
+                    ),
+            )
+        }
+    }
+
+    private fun onCreateListFinished() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isLoading = false,
+                    ),
+            )
+        }
+    }
+
     private fun onLoading() {
         updateState { it.copy(isLoading = true) }
     }
@@ -365,5 +647,6 @@ class SearchViewModel @Inject constructor(
 
     companion object {
         private const val SEARCH_DEBOUNCED_DELAY = 750L
+        private const val DEFAULT_PAGE_SIZE = 20
     }
 }

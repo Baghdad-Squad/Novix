@@ -31,14 +31,8 @@ class NovixDatabaseTest {
 
     @Test
     fun initializeAllDAOs_Successfully() {
-        Assertions.assertNotNull(db.movieDao())
-        Assertions.assertNotNull(db.tvShowDao())
         Assertions.assertNotNull(db.recentViewedDao())
         Assertions.assertNotNull(db.recentSearchDao())
-        Assertions.assertNotNull(db.actorDao())
-        Assertions.assertNotNull(db.genreDao())
-        Assertions.assertNotNull(db.favoriteGenreDao())
-        Assertions.assertNotNull(db.searchQueryDao())
         Assertions.assertNotNull(db.continueWatchingDao())
     }
 }

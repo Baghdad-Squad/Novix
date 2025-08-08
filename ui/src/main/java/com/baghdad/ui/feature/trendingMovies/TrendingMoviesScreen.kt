@@ -15,10 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -27,17 +29,19 @@ import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.trendingMovies.component.GenresSection
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.shared.SavedListUiState
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesEffect
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesInteractionListener
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesScreenState
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
-
 
 
 @Composable
@@ -47,10 +51,8 @@ fun TrendingMoviesScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    val movieItems =
-        uiState.movies.collectAsLazyPagingItems()
-
-
+    val movieItems = uiState.movies.collectAsLazyPagingItems()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
@@ -60,7 +62,8 @@ fun TrendingMoviesScreen(
         movieItems = movieItems,
         uiState = uiState,
         listener = viewModel,
-        snackBarState = snackBarState
+        snackBarState = snackBarState,
+        savedLists = savedLists
     )
 }
 
@@ -76,6 +79,10 @@ private fun handleEffect(
         is TrendingMoviesEffect.NavigateToMovieDetails -> handleNavigation(
             NavigateToMovieDetails(effect.movieId)
         )
+
+        is TrendingMoviesEffect.NavigateToLogin -> handleNavigation(
+            HomeNavEvent.NavigateToLogin
+        )
     }
 }
 
@@ -84,7 +91,8 @@ private fun TrendingMoviesContent(
     movieItems: LazyPagingItems<TrendingMoviesScreenState.TrendingMovieUiState>,
     uiState: TrendingMoviesScreenState,
     listener: TrendingMoviesInteractionListener,
-    snackBarState: SnackBarState
+    snackBarState: SnackBarState,
+    savedLists: LazyPagingItems<SavedListUiState>
 ) {
     Scaffold(
         modifier = Modifier
@@ -97,33 +105,37 @@ private fun TrendingMoviesContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(top = 22.dp, bottom = 8.dp)
-                        .background(Theme.color.surface),
-                    onGoBackClick = listener::onBackClick,
+                        .padding(top = 22.dp, bottom = 8.dp),
+                    onGoBackClick = listener::onBackClicked,
                     screenTitle = stringResource(R.string.trending_movies),
                 )
                 GenresSection(
                     allGenres = uiState.categories,
                     selectedGenre = uiState.selectedGenreId,
-                    onGenreSelected = { listener.onCategoryClick(it?.id) },
+                    onGenreSelected = { listener.onCategoryClicked(it?.id) },
                     modifier = Modifier.padding(vertical = 12.dp)
                 )
             }
-        }, snackbar = {
+        },
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = { listener.onSnackBarActionLabelClick(uiState.selectedGenreId) },
+                onActionClick = { listener.onSnackBarActionLabelClicked(uiState.selectedGenreId) },
+                position = position,
             )
         },
-        isLoading = uiState.isLoading
+        isLoading = uiState.isLoading,
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.color.surface)
         ) {
             LazyPagingVerticalGrid(
                 items = movieItems,
@@ -141,11 +153,31 @@ private fun TrendingMoviesContent(
                     url = movie.posterPictureURL,
                     isSaved = movie.isSaved,
                     contentDescription = stringResource(R.string.movie_card),
-                    onSavedClick = { listener.onToggleSaveMovie(movie.id) },
-                    onClick = { listener.onMovieClick(movie.id) },
+                    onSavedClick = { listener.onSaveMovieClick(movie) },
+                    onClick = { listener.onMovieClicked(movie.id) },
                 )
             }
         }
+
+        SavedListBottomSheet(
+            isVisible = uiState.addToListBottomSheetState.isVisible,
+            isUserLoggedIn = uiState.isUserLoggedIn,
+            onAddClick = listener::onSaveItemToListClicked,
+            onCreateNewListClick = listener::onCreateNewListClicked,
+            onLoginClick = listener::onLoginClicked,
+            onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
+            lists = savedLists,
+            selectedListId = uiState.addToListBottomSheetState.selectedListId,
+            onListSelected = listener::onListSelected,
+        )
+        AddListBottomSheet(
+            isVisible = uiState.addListBottomSheetState.isVisible,
+            isLoading = uiState.addListBottomSheetState.isLoading,
+            listName = uiState.addListBottomSheetState.listName,
+            onDismiss = listener::onCreateListBottomSheetDismiss,
+            onAddClick = listener::onCreateListBottomSheetAddClick,
+            onListNameChange = listener::onCreatedListNameChanged,
+        )
     }
 }
 

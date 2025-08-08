@@ -15,7 +15,6 @@ fun TvShowSearchResponse.toPagedTvShowDtos(genres: List<GenreDto>) = PagedResult
 
 private fun TvShowSearchResponse.Result.toTvShowDto(
     genres: List<GenreDto> = emptyList(),
-    userRating: Double? = null,
     numberOfSeasons: Int = 1
 ): TvShowDto {
     return TvShowDto(
@@ -23,7 +22,7 @@ private fun TvShowSearchResponse.Result.toTvShowDto(
         title = this.title.orEmpty(),
         genres = filterGenres(this.genreIds ?: emptyList<Int>(), genres),
         imdbRating = this.voteAverage ?: 0.0,
-        userRating = userRating,
+        userRating = 0,
         releaseDate = this.releaseDate.orEmpty(),
         overview = this.overview.orEmpty(),
         posterPictureURL = this.posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),

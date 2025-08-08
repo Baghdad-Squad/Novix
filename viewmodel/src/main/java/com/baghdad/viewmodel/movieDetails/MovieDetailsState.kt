@@ -1,13 +1,13 @@
 package com.baghdad.viewmodel.movieDetails
 
 import com.baghdad.viewmodel.base.BaseUiState
+import com.baghdad.viewmodel.shared.BottomSheetType
 
 data class MovieDetailsState(
     val isMovieGalleryLoading: Boolean = false,
     val isMovieDetailsLoading: Boolean = false,
     val isCastMemberLoading: Boolean = false,
     val isMoreLikeThisMovieLoading: Boolean = false,
-    val movieId: Long = 0L,
     val movieImages: List<String> = emptyList(),
     val movieName: String = "",
     val movieTrailerURL: String = "",
@@ -20,10 +20,12 @@ data class MovieDetailsState(
     val posterImageURL: String = "",
     val moreLikeThisMovie: List<MoreLikeThisMovie> = emptyList(),
     val isExtendText: Boolean = false,
-    val isStared: Boolean = false,
     val isSaved: Boolean = false,
     val isHasTrailer: Boolean = true,
-) : BaseUiState {
+    val userRating: Int = 0,
+    val isRated: Boolean = true,
+    val ratingStatus: RatingUiState = RatingUiState(),
+    ) : BaseUiState {
     val isLoading: Boolean
         get() = isMovieDetailsLoading || isMovieGalleryLoading || isCastMemberLoading || isMoreLikeThisMovieLoading
 
@@ -43,5 +45,10 @@ data class MovieDetailsState(
     data class CategoryUiState(
         val id: Long = 0,
         val name: String = "",
+    )
+
+    data class RatingUiState(
+        val isBottomSheetVisible: Boolean = false,
+        val bottomSheetType: BottomSheetType = BottomSheetType.Hidden,
     )
 }

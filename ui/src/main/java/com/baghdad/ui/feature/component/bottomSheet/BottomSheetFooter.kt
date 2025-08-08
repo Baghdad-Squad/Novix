@@ -14,8 +14,9 @@ import com.baghdad.design_system.component.button.PrimaryButton
 @Composable
 fun BottomSheetFooter(
     onApplyClick: () -> Unit,
-    onClearClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    onClearClick: (() -> Unit)? = null,
+    isApplyEnabled: Boolean = true,
     applyLabel: String = stringResource(R.string.apply),
     clearLabel: String = stringResource(R.string.clear),
 ) {
@@ -27,6 +28,7 @@ fun BottomSheetFooter(
         PrimaryButton(
             label = applyLabel,
             onClick = onApplyClick,
+            isEnabled = isApplyEnabled,
             modifier = Modifier.fillMaxWidth()
         )
         if (onClearClick != null) {

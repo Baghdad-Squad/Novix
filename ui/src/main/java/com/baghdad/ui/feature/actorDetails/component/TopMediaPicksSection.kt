@@ -12,12 +12,13 @@ fun <T> TopMediaPicksSection(
     title: String,
     items: List<T>,
     imageUrl: (T) -> String,
-    onSavedClick: (T) -> Unit,
     onCardClick: (T) -> Unit,
     isSaved: (T) -> Boolean,
     isShowAllVisible: Boolean,
+    modifier: Modifier = Modifier,
+    onSavedClick: (T) -> Unit = {},
     onClickShowAll: () -> Unit,
-    modifier: Modifier = Modifier
+    isSaveVisible: Boolean = true,
 ) {
 
     Column(modifier = modifier) {
@@ -33,6 +34,7 @@ fun <T> TopMediaPicksSection(
             onSavedClick = { onSavedClick(it) },
             onCardClick = { onCardClick(it) },
             isSaved = { isSaved(it) },
+            isSaveVisible = isSaveVisible
         )
     }
 }

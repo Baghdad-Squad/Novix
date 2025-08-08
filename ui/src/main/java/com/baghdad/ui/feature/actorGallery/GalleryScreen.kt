@@ -23,8 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.WavyLoadingIndicator
@@ -75,15 +77,17 @@ fun ActorGalleryScreenContent(
             .systemBarsPadding()
             .statusBarsPadding(),
         isLoading = uiState.isLoading,
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClick,
@@ -92,8 +96,10 @@ fun ActorGalleryScreenContent(
                     .padding(vertical = 8.dp)
                     .padding(top = 12.dp)
             ) {}
-        }
-    ) {
+        },
+        backgroundBlur = {
+            BackgroundBlur()
+        }) {
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize()) {
                 WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
@@ -103,11 +109,9 @@ fun ActorGalleryScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.color.surface)
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(104.dp),
                 contentPadding = PaddingValues(16.dp),

@@ -1,17 +1,23 @@
 package com.baghdad.repository
 
+import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
+import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntities
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class EpisodeRepositoryImpl @Inject constructor(
     private val remoteEpisodeDataSource: RemoteEpisodeDataSource,
+    private val localSessionDataStore: LocalSessionDataStore,
     private val remoteTvShowDataSource: RemoteTvShowDataSource
 ) : EpisodeRepository {
     override suspend fun getEpisodeDetails(
@@ -42,6 +48,44 @@ class EpisodeRepositoryImpl @Inject constructor(
             remoteEpisodeDataSource.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
                 .map { it.toEntity() }
         }
+    }
+
+    override suspend fun addTvEpisodeRate(
+        tvShowId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int,
+        rating: Int
+    ) {
+        executeAuthorizedSafely(
+            sessionId = localSessionDataStore.getSessionId(),
+            block = {
+                remoteEpisodeDataSource.addEpisodeRate(
+                    tvShowId = tvShowId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber,
+                    sessionId = it,
+                    rating = rating
+                )
+            }
+        )
+    }
+
+    override suspend fun getEpisodeAccountStates(
+        tvShowId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): MediaAccountStates {
+        return executeAuthorizedSafely(
+            sessionId = localSessionDataStore.getSessionId(),
+            block = {
+                remoteEpisodeDataSource.getEpisodeAccountStates(
+                    tvShowId = tvShowId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber,
+                    sessionId = it
+                ).toEntity()
+            }
+        )
     }
 
     companion object {

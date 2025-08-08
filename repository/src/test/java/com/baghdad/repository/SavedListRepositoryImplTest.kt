@@ -33,7 +33,6 @@ class SavedListRepositoryImplTest {
 
     val listId = 22L
     val movieId = 22002L
-    val tvShowId = 2L
     val sessionId = "session_id"
     val title = "Favorite"
 
@@ -182,20 +181,6 @@ class SavedListRepositoryImplTest {
         }
 
     @Test
-    fun `should return success response when adding a tv show to saved list`() =
-        runTest {
-            // Given
-            coEvery { localSessionDataStore.getSessionId() } returns sessionId
-            coEvery { remoteSource.addTvShowToSavedList(listId, movieId, sessionId) } just Runs
-
-            // When
-            repository.addTvShowToSavedList(listId, movieId)
-
-            // Then
-            coVerify { remoteSource.addTvShowToSavedList(listId, movieId, sessionId) }
-        }
-
-    @Test
     fun `should throw exception when api returns error while adding a movie to saved list`() =
         runTest {
             // Given
@@ -211,21 +196,6 @@ class SavedListRepositoryImplTest {
         }
 
     @Test
-    fun `should throw exception when api returns error while adding a tv show to saved list`() =
-        runTest {
-            // Given
-            coEvery { localSessionDataStore.getSessionId() } returns sessionId
-            coEvery {
-                remoteSource.addTvShowToSavedList(listId, movieId, sessionId)
-            } throws Exception()
-
-            // When & Then
-            assertThrows<Exception> { repository.addTvShowToSavedList(listId, movieId) }
-
-            coVerify { remoteSource.addTvShowToSavedList(listId, movieId, sessionId) }
-        }
-
-    @Test
     fun `should remove movie from saved list when the movie removed successfully`() = runTest {
         // Given
         coEvery { localSessionDataStore.getSessionId() } returns sessionId
@@ -235,20 +205,6 @@ class SavedListRepositoryImplTest {
 
         // Then
         coVerify { remoteSource.removeMovieFromSavedList(listId, movieId, sessionId) }
-    }
-
-    @Test
-    fun `should remove tvShow from saved list when the tvShow removed successfully`() = runTest {
-        // Given
-        coEvery { localSessionDataStore.getSessionId() } returns sessionId
-
-        // When
-        repository.removeTvShowFromSavedList(listId, tvShowId)
-
-        // Then
-        coVerify {
-            remoteSource.removeTvShowFromSavedList(listId, tvShowId, sessionId)
-        }
     }
 
     @Test

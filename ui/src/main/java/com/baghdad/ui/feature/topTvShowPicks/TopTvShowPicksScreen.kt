@@ -16,8 +16,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -77,15 +79,17 @@ private fun TopTvShowPicksContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClick,
@@ -95,13 +99,14 @@ private fun TopTvShowPicksContent(
                     .padding(top = 12.dp)
             )
         },
-        isLoading = uiState.isLoading
-    ) {
+        isLoading = uiState.isLoading,
+        backgroundBlur = {
+            BackgroundBlur()
+        }) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             modifier = Modifier
-                .fillMaxSize()
-                .background(Theme.color.surface),
+                .fillMaxSize(),
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
@@ -115,8 +120,7 @@ private fun TopTvShowPicksContent(
                 HomeCard(
                     url = tvShow.posterPictureURL,
                     contentDescription = null,
-                    isSaved = tvShow.isSaved,
-                    onSavedClick = { listener.onSaveTvShowClick(tvShow.id) },
+                    isSaveToListVisible = false,
                     onClick = { listener.onTvShowDetailsClick(tvShow.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )

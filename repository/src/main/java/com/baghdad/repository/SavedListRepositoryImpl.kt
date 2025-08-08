@@ -13,7 +13,9 @@ import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SavedListRepositoryImpl @Inject constructor(
     private val remoteSavedListSource: RemoteSavedListDataSource,
     private val localSessionDataStore: LocalSessionDataStore,
@@ -49,24 +51,10 @@ class SavedListRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addTvShowToSavedList(listId: Long, tvShowId: Long) {
-        val sessionId = localSessionDataStore.getSessionId()
-        executeAuthorizedSafely(sessionId) { sessionId ->
-            remoteSavedListSource.addTvShowToSavedList(listId, tvShowId, sessionId)
-        }
-    }
-
     override suspend fun removeMovieFromSavedList(listId: Long, movieId: Long) {
         val sessionId = localSessionDataStore.getSessionId()
         executeAuthorizedSafely(sessionId) { sessionId ->
             remoteSavedListSource.removeMovieFromSavedList(listId, movieId, sessionId)
-        }
-    }
-
-    override suspend fun removeTvShowFromSavedList(listId: Long, tvShowId: Long) {
-        val sessionId = localSessionDataStore.getSessionId()
-        executeAuthorizedSafely(sessionId) { sessionId ->
-            remoteSavedListSource.removeTvShowFromSavedList(listId, tvShowId, sessionId)
         }
     }
 
@@ -78,6 +66,7 @@ class SavedListRepositoryImpl @Inject constructor(
         executeSafely {
             remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toEntity()
         }
+
 
     override suspend fun deleteSavedListById(listId: Long) {
         val sessionId = localSessionDataStore.getSessionId()
