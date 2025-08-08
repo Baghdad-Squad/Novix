@@ -14,9 +14,11 @@ import com.baghdad.remoteDataSource.response.tvShow.TVShowVideosResponse
 import com.baghdad.remoteDataSource.response.tvShow.TopRatedTvShowSearchResponse
 import com.baghdad.remoteDataSource.response.tvShow.TrendingTvShowsResponse
 import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.tvShow.MyRatingTvShowResponse
 import com.baghdad.remoteDataSource.response.tvShow.TvShowResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -96,11 +98,27 @@ interface TvShowApiService {
     ): Response<RatingResponse>
 
     @Authenticated
+    @DELETE(RATE_TV_SHOW_ENDPOINT)
+    suspend fun deleteTvShowRate(
+        @Path("series_id") seriesId: Long,
+        @Query("session_id") sessionId: String,
+    ): Response<RatingResponse>
+
+    @Authenticated
     @GET(TV_SHOW_ACCOUNT_STATES)
     suspend fun getTvShowAccountStates(
         @Path("series_id") seriesId: Long,
         @Query("session_id") sessionId: String
     ): Response<MediaAccountStatesResponse>
+
+    @Authenticated
+    @GET(USER_RATED_TV_SHOW_ENDPOINT)
+    suspend fun getUserRatedTvShows(
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
+        @Query("page") page: Int
+    ): Response<MyRatingTvShowResponse>
+
 
     companion object {
         private const val TV_SHOW_DETAILS_ENDPOINT = "tv/{tv_id}"
@@ -115,5 +133,6 @@ interface TvShowApiService {
         private const val POPULAR_TV_SHOWS_ENDPOINT = "tv/popular"
         private const val RATE_TV_SHOW_ENDPOINT = "tv/{series_id}/rating"
         private const val TV_SHOW_ACCOUNT_STATES = "tv/{series_id}/account_states"
+        private const val USER_RATED_TV_SHOW_ENDPOINT = "account/{account_id}/rated/tv"
     }
 }

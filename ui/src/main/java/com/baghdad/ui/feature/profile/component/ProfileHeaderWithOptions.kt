@@ -61,6 +61,7 @@ fun ProfileHeaderWithOption(
                 errorContent = { PlaceHolderReviewerImage() },
                 contentDescription = "Profile Image",
                 modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
                     .size(48.dp)
             )
         }

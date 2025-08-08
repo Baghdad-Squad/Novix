@@ -291,6 +291,7 @@ class TopRatingViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         if (currentState.selectedTab == TopRatingTab.MOVIES) {
             getMovieGenres()
             fetchMoviesByGenre(currentState.selectedMovieGenreId)
@@ -298,6 +299,7 @@ class TopRatingViewModel @Inject constructor(
             getTvShowGenres()
             fetchTvShowsByGenre(currentState.selectedTvShowGenreId)
         }
+
     }
 
     override fun onCreateNewListClick() {

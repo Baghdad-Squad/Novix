@@ -65,6 +65,7 @@ class TrendingActorViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         getTrendingActors()
     }
 

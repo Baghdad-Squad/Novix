@@ -60,8 +60,26 @@ constructor(
         observeContinueWatchingItems()
         getMovieGenres()
         getUpcomingItems()
+        observeAppLanguage()
     }
 
+    fun reloadData() {
+        loadData()
+    }
+
+    private fun observeAppLanguage() {
+        tryToCollect(
+            flowProvider = { getAppLanguageUseCase.invoke() },
+            onNewValue = { newLanguage ->
+                updateState {
+                    it.copy(
+                        language = newLanguage
+                    )
+                }
+            },
+            onError = ::onLoadDataError,
+        )
+    }
 
     private fun checkIfUserIsLoggedIn() {
         tryToExecute(
@@ -163,7 +181,7 @@ constructor(
             it.copy(
                 topRatingItems =
                     movies
-                        .take(TOP_RATING_MOVIES_LIMIT)
+                        .take(DEFAULT_PAGE_SIZE)
                         .map(Movie::toTopRatingItemUiState),
             )
         }
@@ -195,7 +213,7 @@ constructor(
             it.copy(
                 continueWatchingItems =
                     items
-                        .take(CONTINUE_WATCHING_LIMIT)
+                        .take(DEFAULT_PAGE_SIZE)
                         .map(ContinueWatching::toUiState),
                 isContinueWatchingLoading = false,
             )
@@ -385,6 +403,7 @@ constructor(
     }
 
     override fun onSnackBarActionLabelClicked() {
+        hideSnackBar()
         loadData()
     }
 

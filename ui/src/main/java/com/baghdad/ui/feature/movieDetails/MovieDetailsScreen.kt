@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -75,7 +76,7 @@ import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.shared.SavedListUiState
-
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun MovieDetailsScreen(
@@ -192,6 +193,14 @@ private fun MovieDetailsContent(
         }
     }
 
+    val systemUiController = rememberSystemUiController()
+    LaunchedEffect(Unit) {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+    }
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -231,7 +240,7 @@ private fun MovieDetailsContent(
         ) {
 
             RatingBottomSheet(
-                isVisible = state.ratingStatus.isBottomSheetVisible,
+                isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
                 rate = state.userRating ,
                 onRateChanged = { listener.onRatingChanged(it) },

@@ -22,7 +22,7 @@ fun arabicDuration(minutes: Int): String {
 
         hours > 0 -> hoursPart
         remainingMinutes > 0 -> minutesPart
-        else -> stringResource(R.string.unknown)
+        else -> ""
     }
 
 }

@@ -446,6 +446,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         loadInitData()
     }
 
