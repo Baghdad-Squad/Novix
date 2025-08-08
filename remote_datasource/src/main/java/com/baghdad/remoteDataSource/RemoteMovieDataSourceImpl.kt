@@ -104,12 +104,17 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         page: Int,
     ): PagedResultDto<MovieDto> {
         val response = handleRequest<SimilarMovieResponse>(
-            apiCall = { movieApiService.getTopRatedMovies(page) },
+            apiCall = {
+                movieApiService.getTopRatedMovies(
+                    page = page,
+                    sortBy = "vote_average.desc",
+                    minVoteCount = 200,
+                )
+            },
             logger = logger,
         )
         return response.toPagedMovieDtos()
     }
-
 
 
     override suspend fun getTrendingMovies(page: Int): PagedResultDto<MovieDto> {
@@ -118,6 +123,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
             logger = logger
         ).toMovieDtos()
     }
+
     @OptIn(ExperimentalTime::class)
     override suspend fun getUpcomingMovies(genreId: Long?): List<MovieDto> {
         val today: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
@@ -152,7 +158,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
     }
 
     override suspend fun addMovieRate(movieId: Long, rating: Int, sessionId: String) {
-         handleRequest<RatingResponse>(
+        handleRequest<RatingResponse>(
             apiCall = {
                 movieApiService.addMovieRate(
                     movieId = movieId,
