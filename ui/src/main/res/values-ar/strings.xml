@@ -73,7 +73,8 @@
     <string name="what_do_you_want_to_watch">ماذا تريد أن تشاهد؟</string>
     <string name="top_rating">الاعلى تقييم</string>
     <string name="actors">ممثلين</string>
-    <string name="episode_title_template">الحلقة %1$d %2$s</string>
+    <string name="episode_title_template">الحلقة %1$s %2$s</string>
+    <string name="episode_title">الحلقة</string>
     <string name="movie_card">بطاقة الفيلم</string>
     <string name="trending_movies">الأفلام الرائجة</string>
     <string name="log_out">تسجيل خروج</string>
@@ -87,8 +88,8 @@
     <string name="top_rating_item">عنصر الأعلى ترتيبا</string>
     <string name="trending_people">الممثلون الرائجون</string>
 
-    <string name="episodes">عدد الحلقات %1$d </string>
-    <string name="season_number_template">الموسم %1$d </string>
+    <string name="episodes">عدد الحلقات %1$s </string>
+    <string name="season_number_template">الموسم %1$s </string>
     <string name="automatically_redirecting_to_login">سيتم توجيهك تلقائيا لتسجيل الدخول في ٥ ثواني …</string>
     <string name="password_reset_success_message">استعادة كلمة المرور</string>
     <string name="password_reset_main_page_header">اعادة تعيين كلمة المرور</string>
@@ -141,6 +142,7 @@
     <string name="delete">حذف</string>
 
     <string name="my_account">حسابي</string>
+    <string name="profile_image">صورة الملف الشخصي</string>
     <string name="watching_history">سجل المشاهدة</string>
     <string name="my_rating">تقييمي</string>
     <string name="content_restriction">حجب المحتوى</string>
@@ -159,6 +161,7 @@
     <string name="dark">غامق</string>
     <string name="english">الإنجليزية</string>
     <string name="arabic">العربية</string>
+    <string name="there_is_no_items_here">لا يوجد أي عناصر هنا</string>
 
 
 </resources>

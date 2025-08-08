@@ -17,7 +17,6 @@ fun TopRatedTvShowSearchResponse.toPagedTvShowDtos() = PagedResultDto(
 
 
 private fun TopRatedTvShowSearchResponse.Result.toTvShowDto(
-    userRating: Double? = null,
     numberOfSeasons: Int = 1
 ): TvShowDto {
     val tvShowGenres = this.genreIds?.map { GenreDto(it?.toLong() ?: 0L, "", GenreDto.GenreType.TV_SHOW) } ?: emptyList()
@@ -26,7 +25,7 @@ private fun TopRatedTvShowSearchResponse.Result.toTvShowDto(
         title = this.title.orEmpty(),
         genres = tvShowGenres,
         imdbRating = this.voteAverage ?: 0.0,
-        userRating = userRating,
+        userRating = 0,
         releaseDate = this.releaseDate.orEmpty(),
         overview = this.overview.orEmpty(),
         posterPictureURL = this.posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),

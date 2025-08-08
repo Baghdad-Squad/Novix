@@ -57,32 +57,37 @@ private fun MyListsScreenContent(
     snackBarState: SnackBarState,
 ) {
     val savedLists = uiState.savedLists.collectAsLazyPagingItems()
-    Scaffold(isLoading = uiState.isLoading, topBar = {
-        TopAppBar(
-            modifier =
-                Modifier
+    Scaffold(
+        isLoading = uiState.isLoading,
+        topBar = {
+            TopAppBar(
+                modifier = Modifier
                     .statusBarsPadding()
                     .padding(vertical = 12.dp),
                 screenTitle = stringResource(R.string.my_lists),
-        )
-    }, snackbar = {
-        SnackBar(
-            isVisible = snackBarState.isVisible,
-            isSuccess = snackBarState.isSuccess,
-            message = stringResource(snackBarMessage(snackBarState.message)),
-            actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-            onActionClick = listener::onSnackBarActionLabelClick,
-        )
-    }, floatingActionButton = {
-        AnimatedVisibility(uiState.isUsedLoggedIn) {
-            FloatingActionButton(
-                painter = painterResource(R.drawable.ic_add),
-                onClick = listener::onAddListFabClick,
             )
-        }
-    },
+        },
+        snackbar = { position ->
+            SnackBar(
+                isVisible = snackBarState.isVisible,
+                isSuccess = snackBarState.isSuccess,
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
+            )
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        floatingActionButton = {
+            AnimatedVisibility(uiState.isUsedLoggedIn) {
+                FloatingActionButton(
+                    painter = painterResource(R.drawable.ic_add),
+                    onClick = listener::onAddListFabClick,
+                )
+            }
+        },
         backgroundBlur = { BackgroundBlur() }
-        ) {
+    ) {
         AnimatedContent(
             targetState = savedLists.itemCount == 0 && uiState.isLoading.not(),
         ) { isEmptyList ->
@@ -121,8 +126,8 @@ private fun handleEffect(
 
         is MyListsScreenEffect.NavigateToViewSavedDetails ->
             handleNavigation(
-                MyListsNavEvent.NavigateToListDetails(effect.listId)
-        )
+                MyListsNavEvent.NavigateToListDetails(effect.listId),
+            )
     }
 }
 

@@ -32,6 +32,7 @@ fun RatingBottomSheet(
     rate: Int,
     onRateChanged: (Int) -> Unit,
     onSubmitClick: () -> Unit,
+    isButtonEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
 
@@ -72,6 +73,7 @@ fun RatingBottomSheet(
             PrimaryButton(
                 label = stringResource(R.string.submit),
                 onClick = onSubmitClick,
+                isEnabled = isButtonEnabled,
                 modifier = Modifier.fillMaxWidth()
                     .padding(bottom = 24.dp)
             )
@@ -116,6 +118,7 @@ private fun RatingBottomSheetPrev() {
                 rate = 5,
                 onRateChanged = {},
                 onSubmitClick = {},
+                isButtonEnabled = true
             )
         }
     }

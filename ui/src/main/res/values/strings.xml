@@ -41,6 +41,7 @@
     <string name="cast">Cast</string>
     <string name="season">Season</string>
     <string name="episode">Episode %1$s</string>
+    <string name="episode_title">Episode</string>
     <string name="view_reviews">View reviews</string>
     <string name="add_to_list">Add to list</string>
     <string name="please_login_to_save_to_list">Please login to save to list</string>
@@ -128,7 +129,7 @@
     <string name="delete">Delete</string>
 
     <string name="my_account">My account</string>
-    <string name="profile_image" translatable="false">Profile Image</string>
+    <string name="profile_image">Profile Image</string>
     <string name="watching_history">Watching History</string>
     <string name="my_rating">My rating</string>
     <string name="content_restriction">Content Restriction</string>
@@ -151,5 +152,7 @@
     <string name="dark">Dark</string>
     <string name="english">English</string>
     <string name="arabic">Arabic</string>
+    <string name="there_is_no_items_here">There is no items here!</string>
+    <string name="empty_list">Empty List</string>
 
 </resources>
