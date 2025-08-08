@@ -7,8 +7,8 @@ import com.baghdad.domain.usecase.login.LoginUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -47,7 +47,7 @@ class LoginViewModel @Inject constructor(
         showSnackBar(
             message = BaseSnackBarMessage.LoginSuccessfully, isSuccess = true
         )
-        sendEffect(LoginUiEffect.NavigateToHome)
+        sendEffect(LoginUiEffect.RecreateActivity)
     }
 
     fun onLoginError(t: Throwable) {
