@@ -81,6 +81,11 @@ private fun handleHomeNavigation(
             Graph.ActorDetailsGraph(event.actorId)
         )
 
-        HomeNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen)
+        HomeNavEvent.NavigateToLogin ->
+            navController.navigate(AuthenticationRoute.LoginScreen) {
+                popUpTo(HomeRoute.HomeScreen) {
+                    inclusive = true
+                }
+        }
     }
 }

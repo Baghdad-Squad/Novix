@@ -50,7 +50,7 @@ private fun handleMyAccountNavigation(
         MyAccountNavEvent.NavigateBack -> navController.popBackStack()
 
         MyAccountNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen) {
-            popUpTo(AuthenticationRoute.LoginScreen) {
+            popUpTo(HomeRoute.HomeScreen) {
                 inclusive = true
             }
         }
