@@ -125,8 +125,7 @@ private fun TopRatingContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(top = 22.dp, bottom = 8.dp)
-                        .background(Theme.color.surface),
+                        .padding(top = 22.dp, bottom = 8.dp),
                     onGoBackClick = {
                         listener.onBackClick()
                     },
@@ -138,9 +137,9 @@ private fun TopRatingContent(
                 ) {
                     val borderColor = Theme.color.stroke
                     Row(
-                        modifier = Modifier
+                        modifier =
+                            Modifier
                             .fillMaxWidth()
-                            .background(Theme.color.surface)
                             .padding(top = 4.dp)
                             .drawBehind {
                                 val strokeWidth = 1.dp.toPx()
@@ -180,7 +179,6 @@ private fun TopRatingContent(
                     },
                     onGenreSelected = { listener.onGenreClick(it?.id) },
                     modifier = Modifier
-                        .background(Theme.color.surface)
                         .padding(vertical = 12.dp)
                 )
             }
@@ -208,8 +206,7 @@ private fun TopRatingContent(
                 LazyPagingVerticalGrid(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Theme.color.surface),
+                        .fillMaxSize(),
                     contentPadding = PaddingValues(
                         bottom = 12.dp,
                         end = 16.dp,
@@ -219,10 +216,6 @@ private fun TopRatingContent(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     items = movieItems,
                 ) { movie ->
-                    Box(contentAlignment = Alignment.TopCenter) {
-
-                    }
-
                     HomeCard(
                         url = movie.posterPictureURL,
                         contentDescription = null,
@@ -238,8 +231,7 @@ private fun TopRatingContent(
                 LazyPagingVerticalGrid<TopRatingState.TvShowUiState>(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Theme.color.surface),
+                        .fillMaxSize(),
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         end = 16.dp,
