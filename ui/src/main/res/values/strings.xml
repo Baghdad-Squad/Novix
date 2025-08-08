@@ -78,7 +78,7 @@
     <string name="create_account">Create account</string>
     <string name="login_successfully">Login Successfully</string>
     <string name="logout_successfully">LogOut Successfully</string>
-    <string name="incorrect_username_or_password">Invalid Credentials</string>
+    <string name="empty_field_error">All fields are required</string>
     <string name="movie_card">Movie Card</string>
     <string name="trending_movies">Trending movies</string>
     <string name="all">All</string>
@@ -127,7 +127,6 @@
     <string name="deleted_list">Delete list</string>
     <string name="list_item_count_placeholder">%1$d items</string>
     <string name="delete">Delete</string>
-
     <string name="my_account">My account</string>
     <string name="profile_image">Profile Image</string>
     <string name="watching_history">Watching History</string>
@@ -154,5 +153,7 @@
     <string name="arabic">Arabic</string>
     <string name="there_is_no_items_here">There is no items here!</string>
     <string name="empty_list">Empty List</string>
-
+    <string name="delete_rating_successfully">Delete rating successfully</string>
+    <string name="password_should_be_more_than_3_chars">Password should be more than 3 chars</string>
+    <string name="invalid_credentials">Invalid Credentials</string>
 </resources>

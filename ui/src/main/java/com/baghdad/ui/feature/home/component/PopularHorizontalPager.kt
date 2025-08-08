@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +18,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
@@ -63,7 +67,7 @@ fun PopularCardPager(
     val scaleSideCards = if (LocalConfiguration.current.screenWidthDp >= 600) 0.88f else 0.8f
     val virtualPagedCount = if (items.isEmpty()) 0 else items.size * 1000
     val pagerState =
-        rememberPagerState(initialPage = 1) { virtualPagedCount }
+        rememberPagerState(initialPage =  5 ) { virtualPagedCount  }
     val density = LocalDensity.current
 
     val screenWidth = with(density) {
@@ -72,17 +76,29 @@ fun PopularCardPager(
 
     val horizontalPadding = (screenWidth - CARD_WIDTH.dp) / 2
 
-    if (items.isNotEmpty()) {
-        LaunchedEffect(items) {
-            pagerState.animateScrollToPage(items.size + 1)
-            delay(autoSlideDuration)
-            while (true) {
-                delay(autoSlideDuration)
-                val next = (pagerState.currentPage + 1)
-                pagerState.animateScrollToPage(next)
+    val interactionSource = pagerState.interactionSource
+    var userIsInteracting by remember { mutableStateOf(false) }
+
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is DragInteraction.Start -> userIsInteracting = true
+                is DragInteraction.Cancel, is DragInteraction.Stop -> {
+                    userIsInteracting = false
+                }
             }
         }
     }
+
+    LaunchedEffect(items, pagerState.currentPage, userIsInteracting) {
+        if (items.isEmpty()) return@LaunchedEffect
+        if (!userIsInteracting) {
+            delay(autoSlideDuration)
+            val next = pagerState.currentPage + 1
+            pagerState.animateScrollToPage(next)
+        }
+    }
+
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Crossfade(isLoading) { isLoading ->
             if (isLoading) {
@@ -175,7 +191,7 @@ private fun LoadingPopularCardPager(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-    val pagerState = rememberPagerState(initialPage = 1) { 3 }
+    val pagerState = rememberPagerState(initialPage = 5) { 10 }
     HorizontalPager(
         state = pagerState,
         contentPadding = contentPadding,

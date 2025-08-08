@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource
 
+import android.util.Log
 import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
@@ -17,6 +18,7 @@ import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
+import com.baghdad.remoteDataSource.response.movie.MyRatingMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
 import com.baghdad.remoteDataSource.util.handleRequest
@@ -170,6 +172,18 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         )
     }
 
+    override suspend fun deleteMovieRate(movieId: Long, sessionId: String) {
+        handleRequest<RatingResponse>(
+            apiCall = {
+                movieApiService.deleteMovieRate(
+                    movieId = movieId,
+                    sessionId = sessionId
+                )
+            },
+            logger = logger,
+        )
+    }
+
     override suspend fun getMovieAccountStates(
         movieId: Long,
         sessionId: String
@@ -178,5 +192,16 @@ class RemoteMovieDataSourceImpl @Inject constructor(
             apiCall = { movieApiService.getMovieAccountStates(movieId, sessionId) },
             logger = logger
         ).toDto()
+    }
+
+    override suspend fun getUserRatedMovies(
+        accountId: Long,
+        sessionId: String,
+        page: Int
+    ): PagedResultDto<MovieDto> {
+        return handleRequest<MyRatingMoviesResponse>(
+            apiCall = { movieApiService.getUserRatedMovies(accountId, sessionId, page) },
+            logger = logger
+        ).toPagedMovieDtos()
     }
 }

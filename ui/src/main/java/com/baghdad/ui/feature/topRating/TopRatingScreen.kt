@@ -16,13 +16,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -206,7 +204,8 @@ private fun TopRatingContent(
                 LazyPagingVerticalGrid(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(Theme.color.surface),
                     contentPadding = PaddingValues(
                         bottom = 12.dp,
                         end = 16.dp,
@@ -216,6 +215,10 @@ private fun TopRatingContent(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     items = movieItems,
                 ) { movie ->
+                    Box(contentAlignment = Alignment.TopCenter) {
+
+                    }
+
                     HomeCard(
                         url = movie.posterPictureURL,
                         contentDescription = null,
@@ -231,7 +234,8 @@ private fun TopRatingContent(
                 LazyPagingVerticalGrid<TopRatingState.TvShowUiState>(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(Theme.color.surface),
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         end = 16.dp,

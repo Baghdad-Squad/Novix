@@ -4,6 +4,7 @@ import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.interceptor.ForceLocaleEnglish
 import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
@@ -11,11 +12,12 @@ import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
+import com.baghdad.remoteDataSource.response.movie.MyRatingMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
-import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -108,11 +110,27 @@ interface MovieApiService {
     ): Response<RatingResponse>
 
     @Authenticated
+    @DELETE(RATE_MOVIE_ENDPOINT)
+    suspend fun deleteMovieRate(
+        @Path("movie_id") movieId: Long,
+        @Query("session_id") sessionId: String,
+    ): Response<RatingResponse>
+
+    @Authenticated
     @GET(MOVIE_ACCOUNT_STATES)
     suspend fun getMovieAccountStates(
         @Path("movie_id") movieId: Long,
         @Query("session_id") sessionId: String
     ): Response<MediaAccountStatesResponse>
+
+    @Authenticated
+    @GET(USER_RATED_MOVIES_ENDPOINT)
+    suspend fun getUserRatedMovies(
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
+        @Query("page") page: Int
+    ): Response<MyRatingMoviesResponse>
+
 
     companion object {
         private const val SIMILAR_MOVIES_ENDPOINT = "movie/{movie_id}/similar"
@@ -127,5 +145,6 @@ interface MovieApiService {
         private const val POPULAR_MOVIES_ENDPOINT = "movie/popular"
         private const val RATE_MOVIE_ENDPOINT = "movie/{movie_id}/rating"
         private const val MOVIE_ACCOUNT_STATES = "movie/{movie_id}/account_states"
+        private const val USER_RATED_MOVIES_ENDPOINT = "account/{account_id}/rated/movies"
     }
 }
