@@ -105,7 +105,7 @@ class HomeScreenMapperTest {
 
         assertThat(uiState.id).isEqualTo(sampleTvShow.id)
         assertThat(uiState.name).isEqualTo(sampleTvShow.title)
-        assertThat(uiState.rating).isEqualTo(8.2) // rounded 8.23
+        assertThat(uiState.rating).isEqualTo(8.2)
         assertThat(uiState.imageUrl).isEqualTo(sampleTvShow.posterImageURL)
         assertThat(uiState.isSaved).isFalse()
         assertThat(uiState.type).isEqualTo(HomeScreenState.PopularItemUiState.Type.TV_SHOW)
