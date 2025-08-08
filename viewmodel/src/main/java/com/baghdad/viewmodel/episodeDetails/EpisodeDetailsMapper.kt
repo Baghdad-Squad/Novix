@@ -16,7 +16,7 @@ fun Episode.toUiState() = EpisodeDetailsScreenState.EpisodeUiState(
     currentSeason = currentSeason,
     overview = overview,
     headerPictures = headerPictures,
-    userRating = userRating?.toInt(),
+    userRating = userRating ?: 0,
     categories = genres.toUiStates(),
 )
 

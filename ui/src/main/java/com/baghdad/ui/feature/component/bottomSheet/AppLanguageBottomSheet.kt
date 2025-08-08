@@ -16,13 +16,14 @@ import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.shared.Selectable
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
+import com.baghdad.viewmodel.profile.LanguagePreferences
 
 @Composable
 fun AppLanguageBottomSheet(
     onBottomSheetCloseClick: () -> Unit,
     isVisible: Boolean,
-    languageOptions: List<Selectable<String>>,
-    onLanguageSelected: (String) -> Unit,
+    languageOptions: List<Selectable<LanguagePreferences>>,
+    onLanguageSelected: (LanguagePreferences) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -44,7 +45,10 @@ fun AppLanguageBottomSheet(
 
             languageOptions.forEach { language ->
                 Selection(
-                    option = language,
+                    option = Selectable(
+                        value = stringResource(language.value.title),
+                        isSelected = language.isSelected
+                    ),
                     onClick = { onLanguageSelected(language.value) },
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
@@ -55,7 +59,7 @@ fun AppLanguageBottomSheet(
                 onClick = onSaveClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp)
+                    .padding(bottom = 24.dp, top = 12.dp)
             )
         }
     }

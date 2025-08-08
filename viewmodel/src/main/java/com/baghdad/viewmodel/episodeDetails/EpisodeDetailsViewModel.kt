@@ -7,7 +7,7 @@ import com.baghdad.domain.usecase.episode.AddEpisodeRateUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeAccountStatesUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeDetailsUseCase
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.R
@@ -25,7 +25,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase,
     private val addEpisodeRateUseCase: AddEpisodeRateUseCase,
     private val getEpisodeAccountStatesUseCase: GetEpisodeAccountStatesUseCase,
-    private val isLoggedInUseCase: IsLoggedInUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<EpisodeDetailsScreenState, EpisodeDetailsScreenEffect>(EpisodeDetailsScreenState()),
     EpisodeDetailsInteractionListener {
@@ -151,7 +151,7 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     private fun isUserLoggedIn() {
         tryToExecute(
-            callee = { isLoggedInUseCase() },
+            callee = { isUserLoggedInUseCase() },
             dispatcher = ioDispatcher,
             onSuccess = ::onIsUserLoggedInSuccess,
             onError = ::onError
@@ -189,8 +189,8 @@ class EpisodeDetailsViewModel @Inject constructor(
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
                     isBottomSheetVisible = false,
-                    bottomSheetType = BottomSheetType.Hidden
-                )
+                ),
+                episode = it.episode.copy(userRating = 0)
             )
         }
     }

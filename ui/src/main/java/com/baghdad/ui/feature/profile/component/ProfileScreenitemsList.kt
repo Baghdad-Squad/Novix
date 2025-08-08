@@ -19,38 +19,38 @@ fun ProfileScreenItemsList(
     ProfileScreenItem(
         title = stringResource(R.string.watching_history),
         icon = painterResource(com.baghdad.design_system.R.drawable.ic_time_schedule),
-        onClick = onclickWatchingHistory
+        onClick = { onclickWatchingHistory() }
     )
     ProfileScreenDivider()
     ProfileScreenItem(
         title = stringResource(R.string.my_rating),
         icon = painterResource(com.baghdad.design_system.R.drawable.ic_star_square),
-        onClick = onclickMyRating
+        onClick = { onclickMyRating() }
     )
     ProfileScreenDivider()
     ProfileScreenItem(
         title = stringResource(R.string.content_restriction),
         icon = painterResource(R.drawable.shield_energy),
-        onClick = onclickContentRestriction
+        onClick = { onclickContentRestriction() }
     )
     ProfileScreenDivider()
     ProfileScreenItem(
         title = stringResource(R.string.change_password),
         icon = painterResource(com.baghdad.design_system.R.drawable.ic_lock_key),
-        onClick = onclickChangePassword
+        onClick = { onclickChangePassword() }
     )
     ProfileScreenDivider()
     ProfileItemWithDefaults(
         title = stringResource(R.string.appearance),
         icon = painterResource(com.baghdad.design_system.R.drawable.ic_moon),
         defaultValue = appearance,
-        onClick = onclickAppearance
+        onClick = { onclickAppearance() }
     )
     ProfileScreenDivider()
     ProfileItemWithDefaults(
         title = stringResource(R.string.language),
         icon = painterResource(com.baghdad.design_system.R.drawable.ic_language_circle),
         defaultValue = language,
-        onClick = onclickLanguage
+        onClick = { onclickLanguage() }
     )
 }

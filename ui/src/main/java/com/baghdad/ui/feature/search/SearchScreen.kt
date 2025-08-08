@@ -22,14 +22,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.HorizontalDivider
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
+import com.baghdad.design_system.component.SnackBarPosition
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -134,16 +137,20 @@ fun SearchContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
-        snackbar = {
+        snackbar = { position ->
             SearchSnackBar(
                 snackBarState = snackBarState,
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Column(
             modifier = Modifier
-                .background(Theme.color.surface)
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding()
@@ -193,6 +200,7 @@ fun SearchContent(
 private fun SearchSnackBar(
     snackBarState: SnackBarState,
     onActionClick: () -> Unit,
+    position: SnackBarPosition,
 ) {
     SnackBar(
         message = stringResource(getSnackBarMessage(snackBarState.message)),
@@ -200,6 +208,7 @@ private fun SearchSnackBar(
         isVisible = snackBarState.isVisible,
         actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
         onActionClick = onActionClick,
+        position = position,
     )
 }
 
@@ -270,7 +279,11 @@ private fun EmptySearchStateSection() {
         contentAlignment = Alignment.Center
     ) {
         EmptySearchState(
-            imagePath = com.baghdad.design_system.R.drawable.start_explore,
+            imagePath = if (Theme.isDarkTheme) {
+                com.baghdad.design_system.R.drawable.no_search_results_night
+            } else {
+                com.baghdad.design_system.R.drawable.no_search_results
+            },
             contentDescription = stringResource(R.string.start_exploring),
             message = stringResource(R.string.start_exploring),
             modifier = Modifier.padding(bottom = 60.dp)
@@ -285,8 +298,7 @@ private fun RecentContentList(
 ) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Theme.color.surface),
+            .fillMaxSize(),
         contentPadding = PaddingValues(bottom = 8.dp)
     ) {
         addRecentlyViewedSection(

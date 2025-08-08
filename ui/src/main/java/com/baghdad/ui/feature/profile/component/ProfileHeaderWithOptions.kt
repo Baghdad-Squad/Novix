@@ -29,6 +29,7 @@ import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
+import com.baghdad.ui.feature.review.component.PlaceHolderReviewerImage
 
 @Composable
 fun ProfileHeaderWithOption(
@@ -57,6 +58,7 @@ fun ProfileHeaderWithOption(
         ) {
             IslamicImage(
                 imageUrl = imageUrl,
+                errorContent = { PlaceHolderReviewerImage() },
                 contentDescription = "Profile Image",
                 modifier = Modifier
                     .size(48.dp)
@@ -103,7 +105,10 @@ fun ProfileHeaderWithOption(
                         .fillMaxSize()
                         .padding(start = 12.dp, top = 12.dp, bottom = 12.dp)
                         .background(color = Theme.color.surface, shape = RoundedCornerShape(8.dp))
-                        .noRippleClickable { onLogoutClick() },
+                        .noRippleClickable {
+                            onLogoutClick()
+                            expanded = false
+                        },
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Icon(

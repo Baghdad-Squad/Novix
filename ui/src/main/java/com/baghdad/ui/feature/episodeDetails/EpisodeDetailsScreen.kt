@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -122,23 +123,29 @@ fun EpisodeDetailsContent(
                 onPlayTrailerClicked = listener::onPlayTrailerClick,
             )
         },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
-    ) {
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        ) {
 
         RatingBottomSheet(
             isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
             onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-            rate = state.episode.userRating ?: 0,
+            rate = state.episode.userRating,
+            isButtonEnabled = state.episode.userRating != 0,
             onRateChanged = { listener.onRatingChanged(it) },
-            onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating ?: 0) }
+            onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating) }
         )
 
 
@@ -155,8 +162,7 @@ fun EpisodeDetailsContent(
             contentPadding = PaddingValues(bottom = 72.dp),
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface),
+                    .fillMaxSize(),
         ) {
             item {
                 EpisodeHeaderWithDetailsCard(

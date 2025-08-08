@@ -31,18 +31,6 @@ import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 
-private val CardHeight = 55.dp
-private val ActorImageSize = 78.dp
-private val RoundedShapeValue = 12.dp
-
-private val ImageShape = RoundedCornerShape(
-    topEnd = RoundedShapeValue, topStart = RoundedShapeValue, bottomStart = RoundedShapeValue
-)
-private val CardShape = RoundedCornerShape(
-    topEnd = RoundedShapeValue,
-    bottomEnd = RoundedShapeValue,
-)
-
 @Composable
 fun ActorCard(
     actorName: String,
@@ -52,6 +40,10 @@ fun ActorCard(
     characterName: String? = null
 ) {
     val isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val imageShape = RoundedCornerShape(
+        topEnd = 12.dp, topStart = 12.dp, bottomStart = 12.dp
+    )
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -61,9 +53,9 @@ fun ActorCard(
             imageUrl = actorImage,
             contentDescription = stringResource(R.string.actor_image),
             modifier = Modifier
-                .size(ActorImageSize)
-                .clip(ImageShape)
-                .border(1.dp, Theme.color.stroke, ImageShape),
+                .size(78.dp)
+                .clip(imageShape)
+                .border(1.dp, Theme.color.stroke, imageShape),
             contentScale = ContentScale.Crop
         )
 
@@ -72,15 +64,14 @@ fun ActorCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .widthIn(min = 218.dp)
-                .background(Theme.color.surface)
                 .threeSidedBorder(
                     width = 1.dp,
                     color = Theme.color.stroke,
-                    cornerRadius = RoundedShapeValue,
+                    cornerRadius = 12.dp,
                     isRTL = isRTL
                 )
-                .clip(CardShape)
-                .height(CardHeight)
+                .clip(RoundedCornerShape(12.dp))
+                .height(55.dp)
                 .padding(horizontal = 8.dp)
                 .align(alignment = Alignment.Bottom)
         ) {
@@ -91,22 +82,27 @@ fun ActorCard(
                 style = Theme.typography.title.medium.copy(color = Theme.color.body)
             )
 
-            if (!characterName.isNullOrBlank()) {
-                Text(
-                    text = characterName,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = Theme.typography.title.small.copy(color = Theme.color.hint)
-                )
-            }
+            CharacterName(characterName)
         }
+    }
+}
+
+@Composable
+private fun CharacterName(characterName: String?) {
+    if (!characterName.isNullOrBlank()) {
+        Text(
+            text = characterName,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = Theme.typography.label.small.copy(color = Theme.color.hint)
+        )
     }
 }
 
 @NovixPreviews
 @Composable
 private fun ActorCardPreview() {
-    NovixTheme(isDarkTheme = false) {
+    NovixTheme(isDarkTheme = true) {
         Box(
             modifier = Modifier.background(Theme.color.surface)
         ) {

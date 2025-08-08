@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.topRating
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
-import com.baghdad.domain.usecase.login.IsLoggedInUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
@@ -27,7 +27,7 @@ class TopRatingViewModel @Inject constructor(
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
     private val getTvShowTopRatingUseCase: GetTvShowTopRatingUseCase,
     private val getGenresUseCase: GetGenresUseCase,
-    private val isUserLoggedInUseCase: IsLoggedInUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val createSavedListUseCase: CreateSavedListUseCase,

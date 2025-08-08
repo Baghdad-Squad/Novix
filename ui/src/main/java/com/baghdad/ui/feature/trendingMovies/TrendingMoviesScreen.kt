@@ -15,10 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -103,8 +105,7 @@ private fun TrendingMoviesContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(top = 22.dp, bottom = 8.dp)
-                        .background(Theme.color.surface),
+                        .padding(top = 22.dp, bottom = 8.dp),
                     onGoBackClick = listener::onBackClicked,
                     screenTitle = stringResource(R.string.trending_movies),
                 )
@@ -115,21 +116,26 @@ private fun TrendingMoviesContent(
                     modifier = Modifier.padding(vertical = 12.dp)
                 )
             }
-        }, snackbar = {
+        },
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = { listener.onSnackBarActionLabelClicked(uiState.selectedGenreId) },
+                position = position,
             )
         },
-        isLoading = uiState.isLoading
+        isLoading = uiState.isLoading,
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.color.surface)
         ) {
             LazyPagingVerticalGrid(
                 items = movieItems,

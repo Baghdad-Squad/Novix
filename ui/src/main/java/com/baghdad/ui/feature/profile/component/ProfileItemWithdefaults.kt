@@ -29,7 +29,7 @@ fun ProfileItemWithDefaults(
 ) {
     Row(
         modifier = Modifier.noRippleClickable {
-            onClick
+            onClick()
         },
         verticalAlignment = Alignment.CenterVertically,
     ) {
