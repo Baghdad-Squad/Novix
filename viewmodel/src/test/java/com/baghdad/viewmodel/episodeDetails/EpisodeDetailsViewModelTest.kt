@@ -292,7 +292,7 @@ class EpisodeDetailsViewModelTest {
         assertThat(initialState.guestsOfHonor).isEmpty()
         assertThat(initialState.isOverviewExpanded).isFalse()
         assertThat(initialState.isSavedToList).isFalse()
-        assertThat(initialState.isRated).isFalse()
+        assertThat(initialState.isRated).isTrue()
         assertThat(initialState.addToListBottomSheetState.isVisible).isFalse()
         assertThat(initialState.rateEpisodeBottomSheetState.isVisible).isFalse()
     }
@@ -306,7 +306,7 @@ class EpisodeDetailsViewModelTest {
         assertThat(defaultUiState.id).isEqualTo(0L)
         assertThat(defaultUiState.title).isEmpty()
         assertThat(defaultUiState.episodeNumber).isEqualTo(0)
-        assertThat(defaultUiState.rating).isEqualTo(0.0)
+        assertThat(defaultUiState.rating).isEqualTo(0)
         assertThat(defaultUiState.trailerUrl).isEmpty()
         assertThat(defaultUiState.duration).isEmpty()
         assertThat(defaultUiState.releasedDate).isEmpty()
