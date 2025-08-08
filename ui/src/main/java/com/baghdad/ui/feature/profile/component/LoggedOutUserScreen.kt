@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
@@ -36,15 +36,18 @@ fun LoggedOutUserScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(R.drawable.user_profile),
+                painter =
+                    painterResource(com.baghdad.design_system.R.drawable.user_person_profile),
+
                 contentDescription = stringResource(R.string.loggedout_profile_icon),
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier
+                    .size(128.dp)
+                    .padding(bottom = 12.dp)
             )
             Text(
                 text = stringResource(R.string.unlogged_in_user),
                 style = Theme.typography.body.small,
                 color = Theme.color.body,
-                lineHeight = 22.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 48.dp),
             )

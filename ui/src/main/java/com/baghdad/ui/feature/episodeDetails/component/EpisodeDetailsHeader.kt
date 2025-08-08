@@ -31,7 +31,7 @@ fun EpisodeDetailsHeader(
     title: String,
     categories: List<EpisodeDetailsScreenState.CategoryUiState>,
     onCategoryClicked: (id: Long) -> Unit,
-    rating: Double,
+    rating: Int,
     releaseDate: String,
     seasonNumber: Int,
     modifier: Modifier = Modifier,
@@ -118,7 +118,7 @@ private fun EpisodeDetailsHeaderPreview() {
                     EpisodeDetailsScreenState.CategoryUiState(name = "Drama"),
                 ),
             onCategoryClicked = {},
-            rating = 7.5,
+            rating = 7,
             releaseDate = "1950-05-13",
             seasonNumber = 1,
         )

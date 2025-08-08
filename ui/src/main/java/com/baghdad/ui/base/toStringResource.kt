@@ -13,7 +13,9 @@ fun BaseSnackBarMessage.toStringResource(): Int {
         BaseSnackBarMessage.UnknownError -> R.string.snackbar_unknown_error
         BaseSnackBarMessage.DefaultMessage -> R.string.empty_string
         BaseSnackBarMessage.LoginSuccessfully -> R.string.login_successfully
-        BaseSnackBarMessage.InvalidCredential -> R.string.incorrect_username_or_password
+        BaseSnackBarMessage.EmptyFieldError -> R.string.empty_field_error
+        BaseSnackBarMessage.InValidPasswordError -> R.string.password_should_be_more_than_3_chars
+        BaseSnackBarMessage.InValidCredentialsError -> R.string.invalid_credentials
         BaseSnackBarMessage.NoInternetException -> R.string.snackbar_network_error
         BaseSnackBarMessage.LoginOutSuccessfully-> R.string.logout_successfully
         BaseSnackBarMessage.SavedItemSuccessfully -> R.string.snackbar_saved_success

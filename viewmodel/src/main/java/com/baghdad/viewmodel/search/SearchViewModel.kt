@@ -145,6 +145,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun performSearchByTab(text: String) {
+        if(text.isBlank()) return
         when (currentState.selectedSearchTab) {
             SearchScreenState.SearchTab.MOVIES -> searchMovies(text)
             SearchScreenState.SearchTab.TV_SHOWS -> searchTvShows(text)

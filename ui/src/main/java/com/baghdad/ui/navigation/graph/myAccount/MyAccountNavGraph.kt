@@ -49,7 +49,11 @@ private fun handleMyAccountNavigation(
     when (event) {
         MyAccountNavEvent.NavigateBack -> navController.popBackStack()
 
-        MyAccountNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen)
+        MyAccountNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen) {
+            popUpTo(AuthenticationRoute.LoginScreen) {
+                inclusive = true
+            }
+        }
 
         MyAccountNavEvent.NavigateToMyRatings -> navController.navigate(
             MyAccountRoute.MyRatingsScreen

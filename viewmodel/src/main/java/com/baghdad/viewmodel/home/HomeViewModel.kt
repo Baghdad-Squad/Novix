@@ -163,7 +163,7 @@ constructor(
             it.copy(
                 topRatingItems =
                     movies
-                        .take(TOP_RATING_MOVIES_LIMIT)
+                        .take(DEFAULT_PAGE_SIZE)
                         .map(Movie::toTopRatingItemUiState),
             )
         }
@@ -195,7 +195,7 @@ constructor(
             it.copy(
                 continueWatchingItems =
                     items
-                        .take(CONTINUE_WATCHING_LIMIT)
+                        .take(DEFAULT_PAGE_SIZE)
                         .map(ContinueWatching::toUiState),
                 isContinueWatchingLoading = false,
             )
