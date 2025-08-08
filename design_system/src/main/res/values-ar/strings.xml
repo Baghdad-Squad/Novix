@@ -47,5 +47,6 @@
     <string name="not_set">غير محدد</string>
     <string name="add_new_list">إضافة قائمة جديدة</string>
     <string name="add">إضافة</string>
+    <string name="delete_icon">ايقونة الحذف</string>
 
 </resources>

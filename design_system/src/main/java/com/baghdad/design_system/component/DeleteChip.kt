@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +39,7 @@ fun DeleteChip(
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
-            contentDescription = "delete icon",
+            contentDescription = stringResource(R.string.delete_icon),
             tint = Theme.color.redAccent,
             modifier = Modifier.size(20.dp)
         )
