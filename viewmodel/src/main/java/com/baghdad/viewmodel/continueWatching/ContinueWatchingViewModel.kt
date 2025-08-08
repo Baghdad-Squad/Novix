@@ -278,6 +278,7 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     private fun onRemoveSavedItemSuccess() {
+        refreshSavedItems()
         showItemRemovedSuccessfullySnackBar()
     }
 
@@ -322,8 +323,18 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     private fun onAddItemToListSuccess() {
+        refreshSavedItems()
         onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
+    }
+
+    private fun refreshSavedItems() {
+        if (currentState.selectedMediaTabIsMovie) {
+            getMedia(currentState.selectedMovieGenreId)
+        } else {
+            getMedia(currentState.selectedTvShowGenreId)
+        }
+        getUserSavedLists()
     }
 
     private fun showItemSavedSuccessfullySnackBar() {

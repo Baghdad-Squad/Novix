@@ -327,6 +327,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun onRemoveSavedItemSuccess() {
+        refreshSavedItems()
         showItemRemovedSuccessfullySnackBar()
     }
 
@@ -494,8 +495,15 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun onAddItemToListSuccess() {
+        refreshSavedItems()
         onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
+    }
+
+    private fun refreshSavedItems() {
+        getRecentViewed()
+        performSearchByTab(currentState.searchText)
+        getUserSavedLists()
     }
 
     private fun showItemSavedSuccessfullySnackBar() {

@@ -3,12 +3,13 @@ package com.baghdad.viewmodel.topMoviePicks
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
-import com.baghdad.entity.media.Movie
+import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -29,9 +30,8 @@ class TopMoviePicksViewModel @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
-    private val removeMovieFromListUseCase: AddMovieToSavedListUseCase,
+    private val removeMovieFromListUseCase: RemoveMovieFromSavedListUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
-    private val defaultDispatcher: CoroutineDispatcher
 ) : BaseViewModel<TopMoviePicksState, TopMoviePicksEffect>
     (TopMoviePicksState()), TopMoviePicksInteractionListener {
 
@@ -50,7 +50,7 @@ class TopMoviePicksViewModel @Inject constructor(
         tryToExecute(
             callee = { isUserLoggedInUseCase() },
             onSuccess = ::onCheckIfUserIsLoggedInSuccess,
-            dispatcher = defaultDispatcher
+            dispatcher = ioDispatcher,
         )
     }
 
@@ -72,7 +72,7 @@ class TopMoviePicksViewModel @Inject constructor(
         )
     }
 
-    private fun onGetActorMoviesSuccess(movies: List<Movie>) {
+    private fun onGetActorMoviesSuccess(movies: List<SavableMovie>) {
         hideSnackBar()
         updateState { topMoviePicksState ->
             topMoviePicksState.copy(movies = movies.map { it.toUIState() })
@@ -165,6 +165,7 @@ class TopMoviePicksViewModel @Inject constructor(
     }
 
     private fun onRemoveSavedItemSuccess() {
+        refreshSavedItems()
         showItemRemovedSuccessfullySnackBar()
     }
 
@@ -176,7 +177,13 @@ class TopMoviePicksViewModel @Inject constructor(
     }
 
     private fun onAddItemToListSuccess() {
+        refreshSavedItems()
         onSaveToListBottomSheetDismiss()
+    }
+
+    private fun refreshSavedItems() {
+        loadData()
+        getUserSavedLists()
     }
 
     private fun onAddItemToListStart() {

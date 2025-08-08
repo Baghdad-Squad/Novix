@@ -3,6 +3,7 @@ package com.baghdad.viewmodel.actorDetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
@@ -12,7 +13,6 @@ import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
-import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.savedList.SavedList
@@ -169,8 +169,8 @@ class ActorDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onGetActorMoviesSuccess(movies: List<Movie>) {
-        updateState { actorDetailsScreenState ->
+        private fun onGetActorMoviesSuccess(movies: List<SavableMovie>) {
+            updateState { actorDetailsScreenState ->
             actorDetailsScreenState.copy(
                 topMoviesPicks = movies.take(MAX_TOP_MOVIE_PICKS).map { it.toMovieUI() },
             )
@@ -313,6 +313,7 @@ class ActorDetailsViewModel @Inject constructor(
     }
 
     private fun onRemoveSavedItemSuccess() {
+            refreshSavedItems()
         showItemRemovedSuccessfullySnackBar()
     }
 
@@ -358,7 +359,13 @@ class ActorDetailsViewModel @Inject constructor(
 
     private fun onAddItemToListSuccess() {
         onSaveToListBottomSheetDismiss()
+            refreshSavedItems()
         showItemSavedSuccessfullySnackBar()
+        }
+
+        private fun refreshSavedItems() {
+            getActorMovies(actorId)
+            getUserSavedLists()
     }
 
     private fun showItemSavedSuccessfullySnackBar() {

@@ -32,7 +32,6 @@ data class ActorDetailsScreenState(
     data class TvShowUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
-        val isSaved: Boolean = false
     )
 
     data class ActorInfoUiState(
