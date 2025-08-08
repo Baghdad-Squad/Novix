@@ -205,19 +205,22 @@ private fun MovieDetailsContent(
                 isRated = state.isRated,
                 isLoading = false
             )
-        }, snackbar = {
+        },
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
         backgroundBlur = {
             BackgroundBlur()
-        }
-    ) {
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        ) {
 
         Box(
             modifier = modifier
@@ -230,9 +233,10 @@ private fun MovieDetailsContent(
             RatingBottomSheet(
                 isVisible = state.ratingStatus.isBottomSheetVisible,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                rate = state.userRating ?: 0,
+                rate = state.userRating ,
                 onRateChanged = { listener.onRatingChanged(it) },
-                onSubmitClick = { listener.onClickSubmitRating(state.userRating ?: 0) }
+                isButtonEnabled = state.userRating != 0,
+                onSubmitClick = { listener.onClickSubmitRating(state.userRating ) }
             )
 
             LoginRequiredSheet(

@@ -24,7 +24,7 @@ data class MovieDetailsState(
     val isExtendText: Boolean = false,
     val isSaved: Boolean = false,
     val isHasTrailer: Boolean = true,
-    val userRating: Int? = 0,
+    val userRating: Int = 0,
     val isRated: Boolean = true,
     val ratingStatus: RatingUiState = RatingUiState(),
     val isUserLoggedIn: Boolean = false,

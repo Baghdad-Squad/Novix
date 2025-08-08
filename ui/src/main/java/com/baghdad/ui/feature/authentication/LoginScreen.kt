@@ -92,13 +92,15 @@ fun LoginScreenContent(
             .fillMaxWidth()
             .statusBarsPadding()
             .navigationBarsPadding(),
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarState.message.toStringResource()),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                position = position,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         topBar = {
             TopBar(listener)
         },
