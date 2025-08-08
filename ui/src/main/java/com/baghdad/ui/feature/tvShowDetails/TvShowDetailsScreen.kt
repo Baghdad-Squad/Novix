@@ -8,6 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -65,6 +68,7 @@ import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenEffect
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
 import com.baghdad.viewmodel.util.formatDuration
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun TvShowDetailsScreen(
@@ -159,10 +163,20 @@ fun TvShowDetailsContent(
         }
     }
 
+    val systemUiController = rememberSystemUiController()
+    LaunchedEffect(Unit) {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+    }
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
+            .consumeWindowInsets(WindowInsets(0, 0, 0, 0))
             .navigationBarsPadding(),
+
         bottomBar = {
             DetailsScreenBottomBar(
                 hasTrailer = uiState.tvShowInfo.trailerURL.isNotBlank(),
