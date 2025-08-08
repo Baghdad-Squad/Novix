@@ -220,7 +220,7 @@ fun ActorDetailsContent(
                         imageUrl = { it.posterPictureURL },
                         isSaveVisible = false,
                         onCardClick = { listener.onTvShowCardClick(it.id) },
-                        isSaved = { it.isSaved },
+                        isSaved = { false },
                         isShowAllVisible = uiState.topTvShowsPicks.size >= 10,
                         onClickShowAll = { listener.onViewAllTopTvShowsClick() },
                     )
