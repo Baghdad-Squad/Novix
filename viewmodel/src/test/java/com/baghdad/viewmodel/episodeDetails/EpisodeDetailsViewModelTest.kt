@@ -361,7 +361,7 @@ class EpisodeDetailsViewModelTest {
             id = 123L,
             title = "Test Episode",
             episodeNumber = 1,
-            rating = 8.5,
+            rating = 8.0,
             duration = "45m",
             releasedDate = LocalDate.parse("2023-01-01"),
             trailerUrl = "https://youtube.com/watch?v=test",
