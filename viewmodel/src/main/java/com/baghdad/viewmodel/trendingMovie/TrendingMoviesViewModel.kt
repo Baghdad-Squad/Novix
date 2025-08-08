@@ -216,6 +216,7 @@ class TrendingMoviesViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClicked(categoryId: Long?) {
+        hideSnackBar()
         loadGenres()
         loadMoviesByGenres(categoryId)
     }

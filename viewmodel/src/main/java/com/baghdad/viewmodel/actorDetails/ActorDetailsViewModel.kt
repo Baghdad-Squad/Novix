@@ -369,6 +369,7 @@ class ActorDetailsViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         loadData()
     }
 

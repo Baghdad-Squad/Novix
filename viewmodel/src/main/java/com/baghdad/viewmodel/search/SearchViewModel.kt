@@ -472,6 +472,7 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         performSearchByTab(currentState.searchText)
     }
 

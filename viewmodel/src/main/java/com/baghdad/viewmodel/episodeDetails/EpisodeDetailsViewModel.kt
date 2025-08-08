@@ -272,6 +272,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         loadInitData(
             tvShowId, seasonNumber, episodeNumber
         )

@@ -251,6 +251,7 @@ class TvShowDetailsViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         getTvShowDetails(tvShowId)
         getTvShowCast(tvShowId)
         onClickSeasonTab(0)
