@@ -215,9 +215,6 @@ private fun TopRatingContent(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     items = movieItems,
                 ) { movie ->
-                    Box(contentAlignment = Alignment.TopCenter) {
-
-                    }
 
                     HomeCard(
                         url = movie.posterPictureURL,
