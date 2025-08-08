@@ -66,6 +66,7 @@ import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenEffect
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
 import com.baghdad.viewmodel.util.formatDuration
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun TvShowDetailsScreen(
