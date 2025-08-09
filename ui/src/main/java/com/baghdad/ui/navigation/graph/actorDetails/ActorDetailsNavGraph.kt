@@ -13,6 +13,7 @@ import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.Graph.ActorDetailsGraph
 import com.baghdad.ui.navigation.route.Graph.MovieDetailsGraph
 import com.baghdad.ui.navigation.route.Graph.TvShowDetailsGraph
+import com.baghdad.ui.navigation.route.HomeRoute
 
 fun NavGraphBuilder.actorDetailsNavGraph(navController: NavHostController) {
     navigation<ActorDetailsGraph>(
@@ -67,6 +68,11 @@ private fun handleActorDetailsNavigation(
             route = TvShowDetailsGraph(event.tvShowId)
         )
 
-        ActorDetailsNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen)
+        ActorDetailsNavEvent.NavigateToLogin ->
+            navController.navigate(AuthenticationRoute.LoginScreen) {
+                popUpTo(HomeRoute.HomeScreen) {
+                    inclusive = true
+                }
+        }
     }
 }

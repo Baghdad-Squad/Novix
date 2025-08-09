@@ -10,6 +10,7 @@ import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.Graph.ActorDetailsGraph
+import com.baghdad.ui.navigation.route.HomeRoute
 import com.baghdad.ui.navigation.route.TvShowDetailsRoute
 import com.baghdad.viewmodel.review.ContentType
 
@@ -54,9 +55,11 @@ private fun handleTvShowDetailsNavEvent(
         )
 
         TvShowDetailsNavEvent.NavigateToLogin ->
-            navController.navigate(
-                AuthenticationRoute.LoginScreen,
-            )
+            navController.navigate(AuthenticationRoute.LoginScreen) {
+                popUpTo(HomeRoute.HomeScreen) {
+                    inclusive = true
+                }
+        }
 
         is TvShowDetailsNavEvent.NavigateToReviews -> navController.navigate(
             Graph.ReviewsGraph(event.movieId, ContentType.SERIES)

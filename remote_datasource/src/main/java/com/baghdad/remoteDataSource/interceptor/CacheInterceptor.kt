@@ -6,7 +6,7 @@ import okhttp3.Response
 class CacheInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
-        val noCachePaths = listOf<String>("list", "account")
+        val noCachePaths = listOf<String>("list", "account", "authentication")
         if (noCachePaths.any { chain.request().url.encodedPath.contains(it) }) {
             return response
         }
