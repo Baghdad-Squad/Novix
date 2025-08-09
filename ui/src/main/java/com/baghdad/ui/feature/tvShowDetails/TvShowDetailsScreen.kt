@@ -165,7 +165,7 @@ fun TvShowDetailsContent(
 
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(Unit) {
-        systemUiController.setSystemBarsColor(
+        systemUiController.setStatusBarColor(
             color = Color.Transparent,
             darkIcons = false
         )

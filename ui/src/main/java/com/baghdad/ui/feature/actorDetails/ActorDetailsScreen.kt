@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -53,6 +54,7 @@ import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.SavedListUiState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @Composable
@@ -127,6 +129,14 @@ fun ActorDetailsContent(
 ) {
     val scrollState = rememberScrollState()
     var shouldShowBackground by remember { mutableStateOf(false) }
+
+    val systemUiController = rememberSystemUiController()
+    LaunchedEffect(Unit) {
+        systemUiController.setStatusBarColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+    }
 
     val animatedColor by animateColorAsState(
         targetValue =
