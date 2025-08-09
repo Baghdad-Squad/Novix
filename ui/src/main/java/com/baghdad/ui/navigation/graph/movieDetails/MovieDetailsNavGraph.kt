@@ -8,6 +8,7 @@ import com.baghdad.ui.feature.movieDetails.MovieDetailsScreen
 import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.Graph
+import com.baghdad.ui.navigation.route.HomeRoute
 import com.baghdad.ui.navigation.route.MovieDetailsRoute
 import com.baghdad.viewmodel.review.ContentType
 
@@ -33,9 +34,11 @@ private fun handleMovieDetailsNavigation(
         MovieDetailsNavEvent.NavigateBack -> navController.popBackStack()
 
         MovieDetailsNavEvent.NavigateToLogin ->
-            navController.navigate(
-                AuthenticationRoute.LoginScreen,
-            )
+            navController.navigate(AuthenticationRoute.LoginScreen) {
+                popUpTo(HomeRoute.HomeScreen) {
+                    inclusive = true
+                }
+        }
 
         is MovieDetailsNavEvent.NavigateToCategoryMovies -> navController.navigate(
             CategoriesRoute.CategoryMoviesScreen(event.categoryId)

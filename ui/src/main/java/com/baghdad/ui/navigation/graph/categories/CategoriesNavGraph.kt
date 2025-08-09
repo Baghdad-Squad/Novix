@@ -12,6 +12,7 @@ import com.baghdad.ui.navigation.route.CategoriesRoute.CategoryTvShowsScreen
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.Graph.MovieDetailsGraph
 import com.baghdad.ui.navigation.route.Graph.TvShowDetailsGraph
+import com.baghdad.ui.navigation.route.HomeRoute
 
 fun NavGraphBuilder.categoriesNavGraph(navController: NavHostController) {
     navigation<Graph.CategoriesGraph>(
@@ -45,7 +46,12 @@ private fun handleCategoriesNavEvent(
 ) {
     when (event) {
         CategoriesNavEvent.NavigateBack -> navController.popBackStack()
-        CategoriesNavEvent.NavigateToLogin -> navController.navigate(AuthenticationRoute.LoginScreen)
+        CategoriesNavEvent.NavigateToLogin ->
+            navController.navigate(AuthenticationRoute.LoginScreen) {
+                popUpTo(HomeRoute.HomeScreen) {
+                    inclusive = true
+                }
+        }
         is CategoriesNavEvent.NavigateToCategoryMovies -> navController.navigate(
             CategoryMoviesScreen(event.categoryId)
         )
