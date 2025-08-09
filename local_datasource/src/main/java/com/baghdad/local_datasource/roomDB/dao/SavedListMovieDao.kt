@@ -25,4 +25,7 @@ interface SavedListMovieDao {
 
     @Query("SELECT * FROM saved_list_movies")
     suspend fun getSavedMovies(): List<SavedListMovie>
+
+    @Query("DELETE FROM saved_list_movies")
+    suspend fun deleteAllSavedMovies()
 }

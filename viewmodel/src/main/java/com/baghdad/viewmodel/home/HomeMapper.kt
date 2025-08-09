@@ -16,7 +16,8 @@ fun ContinueWatching.toUiState(): HomeScreenState.ContinueWatchingItemUiState =
     HomeScreenState.ContinueWatchingItemUiState(
         id = contentId,
         imageUrl = contentImageUrl,
-        isSaved = false,
+        isSaved = isSaved,
+        savedListId = listId ?: -1L,
         contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.valueOf(contentType.name),
     )
 

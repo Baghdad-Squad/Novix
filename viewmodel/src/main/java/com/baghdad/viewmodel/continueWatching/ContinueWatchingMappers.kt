@@ -11,6 +11,7 @@ fun Genre.toContinueWatchingUiState() = ContinueWatchingState.GenreUiState(
 fun ContinueWatching.toContinueWatchingUiState() = ContinueWatchingState.ContinueWatchingMovieUiState(
     id = contentId,
     posterPictureURL = contentImageUrl,
-    isSaved = false,
+    isSaved = isSaved,
+    savedListId = listId ?: -1L,
     contentType = ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.valueOf(contentType.name)
 )

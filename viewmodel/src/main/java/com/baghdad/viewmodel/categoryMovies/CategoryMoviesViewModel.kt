@@ -149,6 +149,7 @@ class CategoryMoviesViewModel @Inject constructor(
     }
 
     private fun onRemoveSavedItemSuccess() {
+        refreshSavedItems()
         showItemRemovedSuccessfullySnackBar()
     }
 
@@ -184,8 +185,14 @@ class CategoryMoviesViewModel @Inject constructor(
     }
 
     private fun onAddItemToListSuccess() {
+        refreshSavedItems()
         onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
+    }
+
+    private fun refreshSavedItems() {
+        loadInitData()
+        getUserSavedLists()
     }
 
     private fun showItemSavedSuccessfullySnackBar() {

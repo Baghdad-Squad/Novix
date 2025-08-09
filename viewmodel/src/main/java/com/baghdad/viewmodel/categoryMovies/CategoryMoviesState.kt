@@ -1,7 +1,7 @@
 package com.baghdad.viewmodel.categoryMovies
 
 import androidx.paging.PagingData
-import com.baghdad.entity.media.Movie
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.viewmodel.base.BaseUiState
 import com.baghdad.viewmodel.shared.AddListBottomSheetState
 import com.baghdad.viewmodel.shared.AddToListBottomSheetState
@@ -24,10 +24,10 @@ data class CategoryMoviesState(
     )
 }
 
-fun Movie.toUiState(): CategoryMoviesState.MovieUiState {
-    return CategoryMoviesState.MovieUiState(
-        id = id,
-        posterPictureURL = posterImageURL,
-        isSaved = false
+fun SavableMovie.toUiState(): CategoryMoviesState.MovieUiState =
+    CategoryMoviesState.MovieUiState(
+        id = movie.id,
+        posterPictureURL = movie.posterImageURL,
+        isSaved = isSaved,
+        savedListId = listId ?: -1L,
     )
-}

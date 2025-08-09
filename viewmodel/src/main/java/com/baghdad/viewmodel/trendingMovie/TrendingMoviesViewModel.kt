@@ -188,6 +188,7 @@ class TrendingMoviesViewModel @Inject constructor(
     }
 
     private fun onRemoveSavedItemSuccess() {
+        refreshSavedItems()
         showItemRemovedSuccessfullySnackBar()
     }
 
@@ -239,8 +240,14 @@ class TrendingMoviesViewModel @Inject constructor(
     }
 
     private fun onAddItemToListSuccess() {
+        refreshSavedItems()
         onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
+    }
+
+    private fun refreshSavedItems() {
+        loadMoviesByGenres(currentState.selectedGenreId)
+        getUserSavedLists()
     }
 
     private fun showItemSavedSuccessfullySnackBar() {

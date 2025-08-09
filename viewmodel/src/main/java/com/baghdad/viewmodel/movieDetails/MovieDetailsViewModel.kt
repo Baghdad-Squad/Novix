@@ -5,6 +5,7 @@ import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.MediaAccountStates
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
@@ -17,12 +18,10 @@ import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
-import com.baghdad.entity.media.Movie
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.shared.AddListBottomSheetState
 import com.baghdad.viewmodel.shared.AddToListBottomSheetState
 import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.shared.SavedListUiState
@@ -30,9 +29,9 @@ import com.baghdad.viewmodel.shared.toUiState
 import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
@@ -71,14 +70,22 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onSaveCurrentMovieClick() {
         onSaveButtonClicked(
-            listId = movieId, itemId = movieId, isSaved = uiState.value.isSaved
+            listId = currentState.savedListId,
+            itemId = movieId,
+            isSaved = uiState.value.isSaved
         )
     }
 
 
     private fun onAddItemToListSuccess() {
         onSaveToListBottomSheetDismiss()
+        refreshSavedItems()
         showItemSavedSuccessfullySnackBar()
+    }
+
+    private fun refreshSavedItems() {
+        loadInitData()
+        getUserSavedLists()
     }
 
     private fun onAddItemToListStart() {
@@ -104,7 +111,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onSaveMoreLikeThisMedia(movie: MovieDetailsState.MoreLikeThisMovie) {
-        onSaveButtonClicked(listId = movie.id, itemId = movie.id, isSaved = movie.isSaved)
+        onSaveButtonClicked(listId = movie.savedListId, itemId = movie.id, isSaved = movie.isSaved)
     }
 
     override fun onExtendOverviewClick() {
@@ -259,6 +266,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onRemoveSavedItemSuccess() {
+        refreshSavedItems()
         showItemRemovedSuccessfullySnackBar()
     }
 
@@ -540,18 +548,20 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { state -> state.copy(isMovieDetailsLoading = true) }
     }
 
-    private fun onGetMovieDetailsSuccess(details: Movie) {
+    private fun onGetMovieDetailsSuccess(details: SavableMovie) {
         updateState { state ->
             state.copy(
-                movieName = details.title,
-                movieTrailerURL = details.trailerURL,
-                overView = details.overview,
-                rating = details.averageRating.roundToFirstDecimal(),
-                duration = details.runtimeMinutes,
-                posterImageURL = details.posterImageURL,
-                date = details.releaseDate.toDDMMYYYYFormat(),
-                isSaved = state.isSaved,
-                categories = details.genres.map {
+                movieName = details.movie.title,
+                movieTrailerURL = details.movie.trailerURL,
+                overView = details.movie.overview,
+                rating = details.movie.averageRating.roundToFirstDecimal(),
+                duration = details.movie.runtimeMinutes,
+                posterImageURL = details.movie.posterImageURL,
+                date = details.movie.releaseDate.toDDMMYYYYFormat(),
+                isSaved = details.isSaved,
+                savedListId = details.listId ?: -1,
+                categories =
+                    details.movie.genres.map {
                     MovieDetailsState.CategoryUiState(
                         id = it.id,
                         name = it.name
@@ -609,18 +619,20 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { state -> state.copy(isMoreLikeThisMovieLoading = false) }
     }
 
-    private fun onGetMovieMoreLikeThisSuccess(movies: List<Movie>) {
+    private fun onGetMovieMoreLikeThisSuccess(savableMovies: List<SavableMovie>) {
         hideSnackBar()
         updateState { state ->
             state.copy(
-                moreLikeThisMovie = movies.map { movie ->
-                    MovieDetailsState.MoreLikeThisMovie(
-                        imageUrl = movie.posterImageURL,
-                        id = movie.id,
-                        isSaved = false
+                moreLikeThisMovie =
+                    savableMovies.map { savableMovie ->
+                        MovieDetailsState.MoreLikeThisMovie(
+                            imageUrl = savableMovie.movie.posterImageURL,
+                            id = savableMovie.movie.id,
+                            isSaved = savableMovie.isSaved,
+                            savedListId = savableMovie.listId ?: -1L
                     )
                 },
-            )
+                    )
         }
     }
 

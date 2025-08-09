@@ -23,6 +23,7 @@ data class MovieDetailsState(
     val moreLikeThisMovie: List<MoreLikeThisMovie> = emptyList(),
     val isExtendText: Boolean = false,
     val isSaved: Boolean = false,
+    val savedListId: Long = -1L,
     val isHasTrailer: Boolean = true,
     val userRating: Int = 0,
     val isRated: Boolean = true,
@@ -46,6 +47,7 @@ data class MovieDetailsState(
         val imageUrl: String = "",
         val id: Long = 0,
         val isSaved: Boolean = false,
+        val savedListId: Long = -1L,
     )
 
     data class CategoryUiState(

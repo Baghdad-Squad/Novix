@@ -1,10 +1,8 @@
 package com.baghdad.domain.usecase.search
 
 import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.search.SearchFilter
-import com.baghdad.domain.repository.FavoriteGenreRepository
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.repository.SearchRepository
-import com.baghdad.entity.media.Movie
 import javax.inject.Inject
 
 class SearchMoviesUseCase @Inject constructor(
@@ -12,8 +10,8 @@ class SearchMoviesUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         query: String,
-        page: Int
-    ): PagedResult<Movie> {
+        page: Int,
+    ): PagedResult<SavableMovie> {
         val searchResults = searchRepository.searchMoviesByTitle(query, page)
 
         val filteredMovies = searchResults.data

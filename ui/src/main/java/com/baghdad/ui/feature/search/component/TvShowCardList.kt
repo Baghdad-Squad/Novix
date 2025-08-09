@@ -32,7 +32,7 @@ fun TvShowCardList(
         HomeCard(
             url = tvShow.posterPictureURL,
             contentDescription = null,
-            isSaved = tvShow.isSaved,
+            isSaved = false,
             isSaveToListVisible = false,
             onClick = {
                 onTVShowClick(

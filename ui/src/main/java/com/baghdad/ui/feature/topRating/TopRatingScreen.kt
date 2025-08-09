@@ -137,18 +137,18 @@ private fun TopRatingContent(
                     Row(
                         modifier =
                             Modifier
-                            .fillMaxWidth()
-                            .padding(top = 4.dp)
-                            .drawBehind {
-                                val strokeWidth = 1.dp.toPx()
-                                val y = size.height - strokeWidth / 2
-                                drawLine(
-                                    color = borderColor,
-                                    start = Offset(0f, y),
-                                    end = Offset(size.width, y),
-                                    strokeWidth = strokeWidth
-                                )
-                            },
+                                .fillMaxWidth()
+                                .padding(top = 4.dp)
+                                .drawBehind {
+                                    val strokeWidth = 1.dp.toPx()
+                                    val y = size.height - strokeWidth / 2
+                                    drawLine(
+                                        color = borderColor,
+                                        start = Offset(0f, y),
+                                        end = Offset(size.width, y),
+                                        strokeWidth = strokeWidth
+                                    )
+                                },
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Tab(
@@ -204,8 +204,7 @@ private fun TopRatingContent(
                 LazyPagingVerticalGrid(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Theme.color.surface),
+                        .fillMaxSize(),
                     contentPadding = PaddingValues(
                         bottom = 12.dp,
                         end = 16.dp,
@@ -231,8 +230,7 @@ private fun TopRatingContent(
                 LazyPagingVerticalGrid<TopRatingState.TvShowUiState>(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Theme.color.surface),
+                        .fillMaxSize(),
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         end = 16.dp,

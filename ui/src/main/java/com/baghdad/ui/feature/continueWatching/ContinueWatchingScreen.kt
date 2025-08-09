@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -218,6 +217,7 @@ fun ContinueWatchingContent(
                 HomeCard(
                     url = media.posterPictureURL,
                     contentDescription = null,
+                    isSaveToListVisible = media.contentType == ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE,
                     isSaved = media.isSaved,
                     onSavedClick = { listener.onMovieSaveClick(media) },
                     onClick = { listener.onMediaClick(media.id, media.contentType) },

@@ -9,6 +9,6 @@ class SyncSavedMoviesUseCase
         private val savedListRepository: SavedListRepository,
     ) {
         suspend operator fun invoke() {
-            savedListRepository.syncSavedMovies()
+            savedListRepository.syncSavedMoviesCache()
         }
     }
