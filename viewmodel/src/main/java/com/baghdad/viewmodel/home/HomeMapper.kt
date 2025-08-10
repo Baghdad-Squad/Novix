@@ -1,60 +1,59 @@
 package com.baghdad.viewmodel.home
 
 import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
-import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
+import com.baghdad.viewmodel.util.roundToFirstDecimal
 
-fun Genre.toUiState(): HomeScreenState.GenreUiState {
-    return HomeScreenState.GenreUiState(
+fun Genre.toUiState(): HomeScreenState.GenreUiState =
+    HomeScreenState.GenreUiState(
         id = id,
         name = name,
     )
-}
 
-fun ContinueWatching.toUiState(): HomeScreenState.ContinueWatchingItemUiState {
-    return HomeScreenState.ContinueWatchingItemUiState(
+fun ContinueWatching.toUiState(): HomeScreenState.ContinueWatchingItemUiState =
+    HomeScreenState.ContinueWatchingItemUiState(
         id = contentId,
         imageUrl = contentImageUrl,
-        isSaved = false
+        isSaved = isSaved,
+        savedListId = listId ?: -1L,
+        contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.valueOf(contentType.name),
     )
-}
 
-fun Movie.toPopularItemUiState(): HomeScreenState.PopularItemUiState {
-    return HomeScreenState.PopularItemUiState(
+fun SavableMovie.toPopularItemUiState(): HomeScreenState.PopularItemUiState =
+    HomeScreenState.PopularItemUiState(
+        id = movie.id,
+        name = movie.title,
+        rating = movie.averageRating.roundToFirstDecimal(),
+        imageUrl = movie.posterImageURL,
+        isSaved = isSaved,
+        savedListId = listId ?: -1L,
+        type = HomeScreenState.PopularItemUiState.Type.MOVIE,
+    )
+
+fun TvShow.toPopularItemUiState(): HomeScreenState.PopularItemUiState =
+    HomeScreenState.PopularItemUiState(
         id = id,
         name = title,
         rating = averageRating.roundToFirstDecimal(),
         imageUrl = posterImageURL,
         isSaved = false,
-        type = HomeScreenState.PopularItemUiState.Type.MOVIE
+        type = HomeScreenState.PopularItemUiState.Type.TV_SHOW,
     )
-}
 
-fun TvShow.toPopularItemUiState(): HomeScreenState.PopularItemUiState {
-    return HomeScreenState.PopularItemUiState(
-        id = id,
-        name = title,
-        rating = averageRating.roundToFirstDecimal(),
-        imageUrl = posterImageURL,
-        isSaved = false,
-        type = HomeScreenState.PopularItemUiState.Type.TV_SHOW
+fun SavableMovie.toTopRatingItemUiState(): HomeScreenState.TopRatingItemUiState =
+    HomeScreenState.TopRatingItemUiState(
+        id = movie.id,
+        imageUrl = movie.posterImageURL,
+        isSaved = isSaved,
+        savedListId = listId ?: -1L,
     )
-}
 
-fun Movie.toTopRatingItemUiState(): HomeScreenState.TopRatingItemUiState {
-    return HomeScreenState.TopRatingItemUiState(
-        id = id,
-        imageUrl = posterImageURL,
-        isSaved = false
+fun SavableMovie.toUpcomingItemUiState(): HomeScreenState.UpcomingItemUiState =
+    HomeScreenState.UpcomingItemUiState(
+        id = this.movie.id,
+        imageUrl = this.movie.posterImageURL,
+        isSaved = this.isSaved,
+        savedListId = this.listId ?: -1L,
     )
-}
-
-fun Movie.toUpcomingItemUiState(): HomeScreenState.UpcomingItemUiState {
-    return HomeScreenState.UpcomingItemUiState(
-        id = id,
-        imageUrl = posterImageURL,
-        isSaved = false
-    )
-}

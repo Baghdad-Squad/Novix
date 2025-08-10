@@ -1,112 +1,167 @@
 package com.baghdad.ui.feature.component.bottomSheet
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BaseBottomSheet
 import com.baghdad.design_system.component.Selection
+import com.baghdad.design_system.component.button.OutlinedButton
 import com.baghdad.design_system.shared.Selectable
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.ui.R
+import com.baghdad.ui.feature.component.lazyPaging.LazyPagingColumn
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
-import com.baghdad.viewmodel.share.ListUiState
+import com.baghdad.viewmodel.shared.SavedListUiState
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun SavedListBottomSheet(
-    onAddClick: () -> Unit,
-    createNewListClick: () -> Unit,
     isVisible: Boolean,
+    isUserLoggedIn: Boolean,
+    onAddClick: () -> Unit,
+    onCreateNewListClick: () -> Unit,
+    onLoginClick: () -> Unit,
     onBottomSheetCloseClick: () -> Unit,
-    lists: List<ListUiState>,
+    lists: LazyPagingItems<SavedListUiState>,
+    selectedListId: Long?,
     onListSelected: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = { onBottomSheetCloseClick() },
     ) {
-
         Column(
             verticalArrangement = Arrangement.Center,
-            modifier = modifier
-                .verticalScroll(rememberScrollState())
-                .padding(start = 16.dp, end = 16.dp)
+            modifier =
+                modifier
+                    .padding(start = 16.dp, end = 16.dp),
         ) {
-
             BottomSheetHeader(
                 onCloseClick = { onBottomSheetCloseClick() },
                 title = stringResource(R.string.save_to_list),
             )
-
-            lists.forEach {
-                Selection(
-                    option = it.toSelectable(),
-                    onClick = { onListSelected(it.id) },
-                    trailingText = "${it.itemsCount} items",
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
+            AnimatedContent(isUserLoggedIn) { isLoggedIn ->
+                if (isLoggedIn) {
+                    SavedListsBottomSheetContent(
+                        lists = lists,
+                        selectedListId = selectedListId,
+                        onListSelected = onListSelected,
+                        onAddClick = onAddClick,
+                        onCreateNewListClick = onCreateNewListClick,
+                        modifier = Modifier.padding(top = 12.dp),
+                    )
+                } else {
+                    NoLoginContent(
+                        onLoginClick = onLoginClick,
+                    )
+                }
             }
-
-            BottomSheetFooter(
-                applyLabel = stringResource(R.string.add),
-                clearLabel = stringResource(R.string.create_new_list),
-                onApplyClick = onAddClick,
-                onClearClick = createNewListClick,
-                modifier = Modifier.padding(top = 12.dp)
-            )
         }
     }
 }
 
-fun ListUiState.toSelectable(): Selectable<String> {
-    return Selectable(
-        value = this.name,
-        isSelected = this.isSelected,
-    )
+@Composable
+private fun SavedListsBottomSheetContent(
+    lists: LazyPagingItems<SavedListUiState>,
+    selectedListId: Long?,
+    onListSelected: (Long) -> Unit,
+    onAddClick: () -> Unit,
+    onCreateNewListClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val listState = rememberLazyListState()
+    Column(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        LazyPagingColumn(
+            modifier = Modifier.weight(1f),
+            items = lists,
+            state = listState,
+            contentPadding = PaddingValues(vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            key = { it.id },
+        ) { list ->
+            Selection(
+                option = list.toSelectable(selectedListId),
+                onClick = { onListSelected(list.id) },
+                description = stringResource(R.string.list_item_count_placeholder, list.itemsCount),
+            )
+        }
+        BottomSheetFooter(
+            applyLabel = stringResource(R.string.add),
+            clearLabel = stringResource(R.string.create_new_list),
+            onApplyClick = onAddClick,
+            isApplyEnabled = selectedListId != null,
+            onClearClick = onCreateNewListClick,
+            modifier = Modifier.padding(top = 12.dp, bottom = 24.dp),
+        )
+    }
 }
 
-@Preview
 @Composable
-private fun SavedListBottomSheetPrev() {
-    var isSelectedFavorite by remember { mutableStateOf(true) }
+private fun NoLoginContent(
+    onLoginClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Center,
+    ) {
+        EmptyMediaState(
+            imagePath = com.baghdad.design_system.R.drawable.user_person_profile,
+            contentDescription = stringResource(R.string.bottom_sheet_content_description),
+            message = stringResource(R.string.please_login_to_save_to_list),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+        )
+
+        OutlinedButton(
+            label = stringResource(R.string.login),
+            onClick = onLoginClick,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+        )
+    }
+}
+
+fun SavedListUiState.toSelectable(selectedListId: Long?): Selectable<String> =
+    Selectable(
+        value = this.name,
+        isSelected = this.id == selectedListId,
+    )
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewSavedListBottomSheet() {
     NovixTheme {
         SavedListBottomSheet(
-            onAddClick = {},
-            createNewListClick = {},
-            onBottomSheetCloseClick = {},
             isVisible = true,
-            lists = listOf(
-                ListUiState(
-                    id = 1,
-                    name = "Favorites",
-                    itemsCount = 5,
-                    isSelected = isSelectedFavorite
-                ),
-                ListUiState(
-                    id = 2,
-                    name = "Watch Later",
-                    itemsCount = 10,
-                    isSelected = isSelectedFavorite
-                ),
-                ListUiState(
-                    id = 3,
-                    name = "My Movies",
-                    itemsCount = 15,
-                    isSelected = isSelectedFavorite
-                )
-            ),
-            onListSelected = {}
+            isUserLoggedIn = true,
+            onAddClick = {},
+            onCreateNewListClick = {},
+            onLoginClick = {},
+            onBottomSheetCloseClick = {},
+            lists = flowOf<PagingData<SavedListUiState>>().collectAsLazyPagingItems(),
+            selectedListId = 2L,
+            onListSelected = {},
         )
     }
 }

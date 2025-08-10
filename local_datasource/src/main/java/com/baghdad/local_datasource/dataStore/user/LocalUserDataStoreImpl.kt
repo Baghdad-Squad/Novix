@@ -9,7 +9,9 @@ import com.example.application.proto.User
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 import javax.inject.Named
+import javax.inject.Singleton
 
+@Singleton
 class LocalUserDataStoreImpl @Inject constructor(
     @Named("user") private val dataStore: DataStore<User>, private val logger: Logger
 ) : LocalUserDataStore {

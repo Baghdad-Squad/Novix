@@ -4,7 +4,7 @@ import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
-import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
+import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMMYYYYFormat
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
@@ -17,6 +17,7 @@ fun TvShow.toUiState() =
         seasonCount = numberOfSeasons,
         overView = overview,
         trailerURL = trailerURL,
+        userRating = userRating ?: 0,
         posterPictureURL = posterImageURL,
         headerImagesURLs = headerImagesURLs,
     )
@@ -40,7 +41,7 @@ fun Episode.toUiState() =
         id = id,
         name = title,
         episodeNumber = episodeNumber,
-        rating = rating.roundToFirstDecimal(),
+        rating = rating.toInt(),
         duration = duration.toIntOrNull() ?: 0,
         releaseDate = releasedDate?.toDDMMMYYYYFormat().orEmpty(),
         currentSeason = currentSeason,

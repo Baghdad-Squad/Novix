@@ -2,7 +2,6 @@ package com.baghdad.ui.feature.trendingTvShow
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -15,17 +14,17 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
-import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -92,16 +91,17 @@ fun TrendingTvShowContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
-
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = {listener.onSnackBarActionLabelClick(uiState.selectedGenreId)},
+                onActionClick = { listener.onSnackBarActionLabelClicked(uiState.selectedGenreId) },
+                position = position,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         isLoading = uiState.isLoading,
         topBar = {
             Column {
@@ -109,10 +109,9 @@ fun TrendingTvShowContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(top = 22.dp, bottom = 8.dp)
-                        .background(Theme.color.surface),
+                        .padding(top = 22.dp, bottom = 8.dp),
                     onGoBackClick = {
-                        listener.onBackIconClick()
+                        listener.onBackIconClicked()
                     },
                     screenTitle = stringResource(R.string.trending_tv_shows),
 
@@ -120,25 +119,24 @@ fun TrendingTvShowContent(
                 GenresSection(
                     allGenres = uiState.genres,
                     selectedGenre = uiState.selectedGenreId,
-                    onGenreSelected = { listener.onGenreClick(it?.id) },
+                    onGenreSelected = { listener.onGenreClicked(it?.id) },
                     modifier = Modifier.padding(vertical = 12.dp)
                 )
             }
-        }
-    ) {
+        },
+        backgroundBlur = {
+            BackgroundBlur()
+        }) {
         Column(
             modifier = Modifier
-                .background(Theme.color.surface)
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-
             LazyPagingVerticalGrid<TrendingTvShowScreenState.TvShowUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface),
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
@@ -148,16 +146,13 @@ fun TrendingTvShowContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 items = trendingTvShows,
             ) { tvShow ->
-
                 HomeCard(
                     url = tvShow.posterPictureURL,
                     contentDescription = null,
-                    isSaved = tvShow.isSaved,
-                    onSavedClick = { listener.onSaveTvShowClick(tvShow.id) },
-                    onClick = { listener.onTvShowClick(tvShow.id) },
+                    isSaveToListVisible = false,
+                    onClick = { listener.onTvShowClicked(tvShow.id) },
                     modifier = Modifier.aspectRatio(0.8f)
                 )
-
             }
         }
     }

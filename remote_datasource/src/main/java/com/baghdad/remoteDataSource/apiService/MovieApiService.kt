@@ -2,17 +2,24 @@ package com.baghdad.remoteDataSource.apiService
 
 import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.interceptor.ForceLocaleEnglish
+import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
 import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
+import com.baghdad.remoteDataSource.response.movie.MyRatingMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
 import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -69,9 +76,12 @@ interface MovieApiService {
     ): Response<TrendingMovieResponse>
 
     @Authenticated
-    @GET(TOP_RATED_MOVIES_ENDPOINT)
+    @GET(DISCOVER_MOVIES_ENDPOINT)
     suspend fun getTopRatedMovies(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("sort_by") sortBy: String = "vote_average.desc",
+        @Query("vote_count.gte") minVoteCount: Int = 200,
+        @Query("language") language: String = "en-US"
     ): Response<SimilarMovieResponse>
 
     @Authenticated
@@ -91,6 +101,37 @@ interface MovieApiService {
     @GET(POPULAR_MOVIES_ENDPOINT)
     suspend fun getPopularMovies(): Response<PopularMoviesResponse>
 
+    @Authenticated
+    @POST(RATE_MOVIE_ENDPOINT)
+    suspend fun addMovieRate(
+        @Path("movie_id") movieId: Long,
+        @Query("session_id") sessionId: String,
+        @Body rating: RatingRequest
+    ): Response<RatingResponse>
+
+    @Authenticated
+    @DELETE(RATE_MOVIE_ENDPOINT)
+    suspend fun deleteMovieRate(
+        @Path("movie_id") movieId: Long,
+        @Query("session_id") sessionId: String,
+    ): Response<RatingResponse>
+
+    @Authenticated
+    @GET(MOVIE_ACCOUNT_STATES)
+    suspend fun getMovieAccountStates(
+        @Path("movie_id") movieId: Long,
+        @Query("session_id") sessionId: String
+    ): Response<MediaAccountStatesResponse>
+
+    @Authenticated
+    @GET(USER_RATED_MOVIES_ENDPOINT)
+    suspend fun getUserRatedMovies(
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
+        @Query("page") page: Int
+    ): Response<MyRatingMoviesResponse>
+
+
     companion object {
         private const val SIMILAR_MOVIES_ENDPOINT = "movie/{movie_id}/similar"
         private const val MOVIE_DETAILS_ENDPOINT = "movie/{movie_id}"
@@ -100,8 +141,10 @@ interface MovieApiService {
         private const val MOVIE_IMAGES_ENDPOINT = "movie/{movie_id}/images"
         private const val MOVIE_VIDEOS_ENDPOINT = "movie/{movie_id}/videos"
         private const val TRENDING_MOVIE_ENDPOINT = "trending/movie/day"
-        private const val TOP_RATED_MOVIES_ENDPOINT = "movie/top_rated"
         private const val DISCOVER_MOVIES_ENDPOINT = "discover/movie"
         private const val POPULAR_MOVIES_ENDPOINT = "movie/popular"
+        private const val RATE_MOVIE_ENDPOINT = "movie/{movie_id}/rating"
+        private const val MOVIE_ACCOUNT_STATES = "movie/{movie_id}/account_states"
+        private const val USER_RATED_MOVIES_ENDPOINT = "account/{account_id}/rated/movies"
     }
 }

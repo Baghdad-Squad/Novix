@@ -3,6 +3,7 @@ package com.baghdad.ui.feature.movieDetails
 import android.content.Context
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +23,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -38,6 +39,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -49,6 +53,10 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
 import com.baghdad.ui.feature.component.HomeCard
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.LoginRequiredSheet
+import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.feature.movieDetails.component.ActorsSection
 import com.baghdad.ui.feature.movieDetails.component.MovieHeaderWithDetailsCard
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
@@ -56,6 +64,7 @@ import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateBack
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToActorDetails
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToCategoryMovies
+import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToLogin
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToReviews
 import com.baghdad.ui.util.openYouTubeLink
@@ -65,16 +74,20 @@ import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
 import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
-
+import com.baghdad.viewmodel.shared.BottomSheetType
+import com.baghdad.viewmodel.shared.SavedListUiState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun MovieDetailsScreen(
     viewModel: MovieDetailsViewModel = hiltViewModel(),
     handleNavigation: (MovieDetailsNavEvent) -> Unit,
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, context, handleNavigation)
     }
@@ -82,7 +95,9 @@ fun MovieDetailsScreen(
     MovieDetailsContent(
         listener = viewModel,
         state = state,
-        snackBarState = snackBarState
+        snackBarState = snackBarState,
+        savedLists = savedLists
+
     )
 }
 
@@ -125,6 +140,10 @@ private fun handleEffect(
         )
 
         is MovieDetailsEffect.OpenYoutubeLink -> openYouTubeLink(context, effect.youtubeLink)
+
+        MovieDetailsEffect.NavigateToLogin -> handleNavigation(
+            NavigateToLogin
+        )
     }
 }
 
@@ -134,12 +153,20 @@ private fun MovieDetailsContent(
     listener: MovieDetailsInteractionListener,
     state: MovieDetailsState,
     snackBarState: SnackBarState,
+    savedLists: LazyPagingItems<SavedListUiState>,
     modifier: Modifier = Modifier
 ) {
 
     val lazyState = rememberLazyGridState()
     var shouldShowBackground by remember { mutableStateOf(false) }
-
+    val backgroundAlpha by animateFloatAsState(
+        targetValue = if (shouldShowBackground) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = 400,
+            easing = FastOutSlowInEasing
+        ),
+        label = stringResource(R.string.background_alpha)
+    )
     val animatedColor by animateColorAsState(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
@@ -166,6 +193,14 @@ private fun MovieDetailsContent(
         }
     }
 
+    val systemUiController = rememberSystemUiController()
+    LaunchedEffect(Unit) {
+        systemUiController.setStatusBarColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+    }
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -174,27 +209,53 @@ private fun MovieDetailsContent(
         bottomBar = {
             DetailsScreenBottomBar(
                 hasTrailer = state.movieTrailerURL.isNotBlank(),
-                onRateClicked = { listener.onStarMovieClick() },
+                onRateClicked = { listener.onClickStarButton() },
                 onPlayTrailerClicked = { listener.onClickPlayTrailer() },
-                isRated = state.isStared,
-                isLoading = false /*TODO*/
+                isRated = state.isRated,
+                isLoading = false
             )
-        }, snackbar = {
+        },
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
-        }
-    ) {
+        },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        ) {
+
         Box(
             modifier = modifier
-                .background(Theme.color.surface)
+                .background(Theme.color.surface.copy(backgroundAlpha))
                 .fillMaxSize()
                 .navigationBarsPadding()
+
         ) {
+
+            RatingBottomSheet(
+                isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                rate = state.userRating ,
+                onRateChanged = { listener.onRatingChanged(it) },
+                isButtonEnabled = state.userRating != 0,
+                onSubmitClick = { listener.onClickSubmitRating(state.userRating ) }
+            )
+
+            LoginRequiredSheet(
+                isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                onLoginClick = { listener.onLoginClick() },
+                title = stringResource(R.string.rate_it),
+                description = stringResource(R.string.please_login_to_rate)
+            )
+
             LazyVerticalGrid(
                 state = lazyState,
                 columns = GridCells.Adaptive(150.dp),
@@ -204,9 +265,10 @@ private fun MovieDetailsContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(bottom = 80.dp)
             ) {
+
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     MovieHeaderWithDetailsCard(
-                        state = state,
+                        uiState = state,
                         listener = listener
                     )
                 }
@@ -250,12 +312,15 @@ private fun MovieDetailsContent(
                         val isFirstInRow = index % itemsPerRow == 0
                         val isLastInRow =
                             (index + 1) % itemsPerRow == 0 || index == state.moreLikeThisMovie.size - 1
+
                         HomeCard(
                             url = movie.imageUrl,
                             contentDescription = stringResource(R.string.card_movie_image),
                             isSaved = movie.isSaved,
                             onSavedClick = {
-                                listener.onSaveMoreLikeThisMedia(movie.id)
+                                listener.onSaveMoreLikeThisMedia(
+                                    movie = state.moreLikeThisMovie[index]
+                                )
                             },
                             onClick = {
                                 listener.onMovieClick(movie.id)
@@ -295,6 +360,26 @@ private fun MovieDetailsContent(
         }
     }
 
+    SavedListBottomSheet(
+        isVisible = state.addToListBottomSheetState.isVisible,
+        isUserLoggedIn = state.isUserLoggedIn,
+        onAddClick = listener::onSaveItemToListClicked,
+        onCreateNewListClick = listener::onCreateNewListClicked,
+        onLoginClick = listener::onLoginClick,
+        onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
+        lists = savedLists,
+        selectedListId = state.addToListBottomSheetState.selectedListId,
+        onListSelected = listener::onListSelected,
+    )
+
+    AddListBottomSheet(
+        isVisible = state.addListBottomSheetState.isVisible,
+        isLoading = state.addListBottomSheetState.isLoading,
+        listName = state.addListBottomSheetState.listName,
+        onDismiss = listener::onCreateListBottomSheetDismiss,
+        onAddClick = listener::onCreateListBottomSheetAddClick,
+        onListNameChange = listener::onCreatedListNameChanged,
+    )
 }
 
 

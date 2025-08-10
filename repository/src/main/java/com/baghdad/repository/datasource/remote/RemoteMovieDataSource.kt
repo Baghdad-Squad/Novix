@@ -1,6 +1,7 @@
 package com.baghdad.repository.datasource.remote
 
 import com.baghdad.repository.model.CastMemberDto
+import com.baghdad.repository.model.MediaAccountStateDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
@@ -19,4 +20,15 @@ interface RemoteMovieDataSource {
     suspend fun getUpcomingMovies(genreId: Long?): List<MovieDto>
 
     suspend fun getPopularMovies(): List<MovieDto>
+
+    suspend fun addMovieRate(movieId: Long, rating: Int, sessionId: String)
+
+    suspend fun getMovieAccountStates(movieId: Long, sessionId: String): MediaAccountStateDto
+    suspend fun getUserRatedMovies(
+        accountId: Long, sessionId: String,
+        page: Int
+    ): PagedResultDto<MovieDto>
+
+    suspend fun deleteMovieRate(movieId: Long, sessionId: String)
+
 }

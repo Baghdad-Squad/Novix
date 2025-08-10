@@ -29,7 +29,7 @@ class RemoteActorDataSourceImplTest {
 
     @BeforeEach
     fun setUp() {
-        apiService = mockk(relaxed = true)
+        apiService = mockk()
         logger = mockk(relaxed = true)
         dataSource = RemoteActorDataSourceImpl(apiService, logger)
     }

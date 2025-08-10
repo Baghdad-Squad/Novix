@@ -5,7 +5,6 @@ import com.baghdad.repository.dummyData.DummyDataFactory.createMockGenre
 import com.baghdad.repository.dummyData.DummyDataFactory.createMockGenreDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
-import com.baghdad.repository.model.SearchQueryDto
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
@@ -47,20 +46,6 @@ class MovieMapperTest {
         assertThat(result.userRating).isNull()
     }
 
-    @Test
-    fun `MovieDto toSearchQueryDto should map correctly when it is provided`() {
-        // Given
-        val movieDto = createMockMovieDto()
-        val query = "test query"
-
-        // When
-        val result = movieDto.toSearchQueryDto(query)
-
-        // Then
-        assertThat(result.queryName).isEqualTo(query)
-        assertThat(result.mediaId).isEqualTo(movieDto.id)
-        assertThat(result.mediaType).isEqualTo(SearchQueryDto.MediaType.MOVIE)
-    }
 
     @Test
     fun `Movie toDto should map correctly when it is provided`() {
@@ -127,4 +112,4 @@ class MovieMapperTest {
             trailerURL = " "
         )
     }
-} 
+}

@@ -39,13 +39,12 @@ fun <T> HorizontalCarousel(
         contentPadding = contentPadding
     ) { i ->
         val item = items[i]
-
         Box(
             modifier =Modifier
                 .fillMaxWidth()
                 .maskClip(shape)
         ) {
-            itemContent(item, true)
+            itemContent(item , true)
         }
     }
 }

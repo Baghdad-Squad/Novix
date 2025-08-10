@@ -7,8 +7,11 @@ import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.model.toEntity
 import com.baghdad.repository.util.executeLoginSafely
+import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AuthenticationRepositoryImpl @Inject constructor(
     private val remoteAuthenticationDataSource: RemoteAuthenticationDataSource,
     private val localSessionDataStore: LocalSessionDataStore,
@@ -44,13 +47,17 @@ class AuthenticationRepositoryImpl @Inject constructor(
 
 
     override suspend fun logOut(): Boolean {
-        val sessionId = localSessionDataStore.getSessionId()
-        return if (sessionId != null) {
-            remoteAuthenticationDataSource.deleteSession(sessionId)
-            localSessionDataStore.deleteSessionId()
-            true
-        } else {
-            false
+        return executeSafely {
+            val sessionId = localSessionDataStore.getSessionId()
+            if (sessionId != null) {
+                remoteAuthenticationDataSource.deleteSession(sessionId)
+                localSessionDataStore.deleteSessionId()
+                true
+            } else {
+                false
+            }
         }
+
+
     }
 }

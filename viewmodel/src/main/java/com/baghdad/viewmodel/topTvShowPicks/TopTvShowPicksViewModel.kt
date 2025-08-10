@@ -1,15 +1,14 @@
 package com.baghdad.viewmodel.topTvShowPicks
 
-import com.baghdad.domain.exception.NoInternetException
 import androidx.lifecycle.SavedStateHandle
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
-import kotlinx.coroutines.CoroutineDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 @HiltViewModel
@@ -69,24 +68,12 @@ class TopTvShowViewModel @Inject constructor(
         sendEffect(TopTvShowPicksEffect.NavigateToTvShowDetails(tvShowId))
     }
 
-    override fun onSaveTvShowClick(tvShowId: Long) {
-        updateState {
-            it.copy(
-                tvShows = it.tvShows.map { item ->
-                    if (item.id == tvShowId) item.copy(isSaved = item.isSaved.not()) else item
-                }
-            )
-        }
-        showSnackBar(
-            message = SearchSnackBarMessage.SavedItemSuccessfully, isSuccess = true
-        )
-    }
-
     override fun onBackClick() {
         sendEffect(TopTvShowPicksEffect.NavigateBack)
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         getActorTvShow(actorId)
     }
 

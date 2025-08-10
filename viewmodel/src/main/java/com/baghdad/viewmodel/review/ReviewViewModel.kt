@@ -105,6 +105,7 @@ class ReviewViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         loadData()
     }
 

@@ -5,7 +5,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.search.SearchScreen
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.Graph
+import com.baghdad.ui.navigation.route.HomeRoute
 import com.baghdad.ui.navigation.route.SearchRoute
 
 fun NavGraphBuilder.searchNavGraph(navController: NavHostController) {
@@ -37,6 +39,11 @@ private fun handleSearchNavigation(
             Graph.ActorDetailsGraph(event.actorId)
         )
 
-        SearchNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
+        SearchNavEvent.NavigateToLogin ->
+            navController.navigate(AuthenticationRoute.LoginScreen) {
+                popUpTo(HomeRoute.HomeScreen) {
+                    inclusive = true
+                }
+        }
     }
 }

@@ -78,6 +78,7 @@ class ActorGalleryViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         loadData()
     }
 }

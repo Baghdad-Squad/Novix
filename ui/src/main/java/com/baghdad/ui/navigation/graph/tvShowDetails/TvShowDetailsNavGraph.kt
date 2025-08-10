@@ -6,10 +6,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.episodeDetails.EpisodeDetailsScreen
 import com.baghdad.ui.feature.tvShowDetails.TvShowDetailsScreen
-import com.baghdad.ui.navigation.graph.util.toGraph
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.Graph.ActorDetailsGraph
+import com.baghdad.ui.navigation.route.HomeRoute
 import com.baghdad.ui.navigation.route.TvShowDetailsRoute
 import com.baghdad.viewmodel.review.ContentType
 
@@ -18,8 +19,7 @@ fun NavGraphBuilder.tvShowDetailsNavGraph(navController: NavHostController) {
         startDestination = TvShowDetailsRoute.TvShowDetailsScreen
     ) {
         composable<TvShowDetailsRoute.TvShowDetailsScreen> { backStackEntry ->
-            val tvShowId = backStackEntry.toGraph<Graph.TvShowDetailsGraph>(navController).tvShowId
-            TvShowDetailsScreen(tvShowId) { event ->
+            TvShowDetailsScreen { event ->
                 handleTvShowDetailsNavEvent(event, navController)
             }
         }
@@ -54,7 +54,12 @@ private fun handleTvShowDetailsNavEvent(
             CategoriesRoute.CategoryTvShowsScreen(event.categoryId)
         )
 
-        TvShowDetailsNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
+        TvShowDetailsNavEvent.NavigateToLogin ->
+            navController.navigate(AuthenticationRoute.LoginScreen) {
+                popUpTo(HomeRoute.HomeScreen) {
+                    inclusive = true
+                }
+        }
 
         is TvShowDetailsNavEvent.NavigateToReviews -> navController.navigate(
             Graph.ReviewsGraph(event.movieId, ContentType.SERIES)

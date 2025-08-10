@@ -1,11 +1,14 @@
 package com.baghdad.viewmodel.trendingMovie
 
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.Movie
 
-fun Movie.toMovieUiState() = TrendingMoviesScreenState.TrendingMovieUiState(
-    id = id,
-    posterPictureURL = posterImageURL
+fun SavableMovie.toMovieUiState() =
+    TrendingMoviesScreenState.TrendingMovieUiState(
+        id = movie.id,
+        posterPictureURL = movie.posterImageURL,
+        isSaved = isSaved,
+        savedListId = listId ?: -1L,
 )
 
 fun Genre.toGenreUiState() = TrendingMoviesScreenState.TrendingCategoryUiState(

@@ -21,5 +21,22 @@ interface HomeInteractionListener {
     fun onUpcomingGenreSelected(genre: GenreUiState?)
     fun onUpcomingItemClicked(item: UpcomingItemUiState)
     fun onUpcomingItemSaveClicked(item: UpcomingItemUiState)
-    fun onSnackBarActionLabelClick()
+
+    fun onSnackBarActionLabelClicked()
+
+    fun onSaveItemToListClicked()
+
+    fun onCreateNewListClicked()
+
+    fun onLoginClicked()
+
+    fun onSaveToListBottomSheetDismiss()
+
+    fun onListSelected(listId: Long)
+
+    fun onCreatedListNameChanged(name: String)
+
+    fun onCreateListBottomSheetDismiss()
+
+    fun onCreateListBottomSheetAddClick()
 }

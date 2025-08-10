@@ -29,6 +29,11 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.button.TextButton
 import com.baghdad.design_system.theme.Theme
 
+enum class SnackBarPosition {
+    TOP,
+    BOTTOM,
+}
+
 @Composable
 fun SnackBar(
     message: String,
@@ -37,21 +42,26 @@ fun SnackBar(
     isVisible: Boolean,
     animationDuration: Int = 1000,
     actionLabel: String? = null,
+    position: SnackBarPosition = SnackBarPosition.TOP,
     onActionClick: (() -> Unit)? = null,
 ) {
+    val isBottomPosition = position == SnackBarPosition.BOTTOM
+    val hasActionLabel = actionLabel != null
+    val positionMatchesActionType = isBottomPosition == hasActionLabel
+
     AnimatedVisibility(
-        visible = isVisible,
+        visible = isVisible && positionMatchesActionType,
         enter =
             fadeIn(tween(animationDuration)) +
                 slideInVertically(
                     animationSpec = tween(animationDuration),
-                    initialOffsetY = { it },
+                    initialOffsetY = { if (actionLabel == null) -it else it },
                 ),
         exit =
             fadeOut(tween(animationDuration)) +
                 slideOutVertically(
                     animationSpec = tween(animationDuration),
-                    targetOffsetY = { it },
+                    targetOffsetY = { if (actionLabel == null) -it else it },
                 ),
     ) {
         Row(
@@ -64,7 +74,8 @@ fun SnackBar(
                         width = 1.dp,
                         color = Theme.color.stroke,
                         shape = RoundedCornerShape(12.dp),
-                    ).padding(horizontal = 12.dp, vertical = 16.dp),
+                    )
+                    .padding(horizontal = 12.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -86,7 +97,6 @@ fun SnackBar(
                 TextButton(
                     label = it,
                     onClick = { onActionClick?.invoke() },
-                    noRipple = true,
                     modifier = Modifier.align(Alignment.CenterVertically),
                 )
             }

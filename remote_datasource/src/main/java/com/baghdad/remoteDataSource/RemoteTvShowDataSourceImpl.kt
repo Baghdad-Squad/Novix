@@ -8,8 +8,12 @@ import com.baghdad.remoteDataSource.mapper.tvShow.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.tvShow.toDto
 import com.baghdad.remoteDataSource.mapper.tvShow.toPagedTvShowDtos
 import com.baghdad.remoteDataSource.mapper.tvShow.toTvShowDtos
+import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
+import com.baghdad.remoteDataSource.response.tvShow.MyRatingTvShowResponse
 import com.baghdad.remoteDataSource.response.tvShow.PopularTvShowsResponse
 import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowDetailsResponse
@@ -23,11 +27,14 @@ import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.repository.model.MediaAccountStateDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RemoteTvShowDataSourceImpl @Inject constructor(
     private val tvShowApiService: TvShowApiService,
     private val logger: Logger,
@@ -82,9 +89,16 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
             logger = logger
         ).mapToYoutubeURL()
     }
+
     override suspend fun getTopRatedTvShows(page: Int): PagedResultDto<TvShowDto> {
         val response = handleRequest<TopRatedTvShowSearchResponse>(
-            apiCall = { tvShowApiService.getTopRatedTvShows(page) },
+            apiCall = {
+                tvShowApiService.getTopRatedTvShows(
+                    page,
+                    sortBy = "vote_average.desc",
+                    minVoteCount = 200,
+                )
+            },
             logger = logger,
         )
         return response.toPagedTvShowDtos()
@@ -98,10 +112,63 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         ).toPagedTvShowDtos()
     }
 
+    override suspend fun addTvShowRate(
+        tvShowId: Long,
+        rating: Int,
+        sessionId: String
+    ) {
+        handleRequest<RatingResponse>(
+            apiCall = {
+                tvShowApiService.addTvShowRate(
+                    tvShowId,
+                    sessionId,
+                    RatingRequest(rating)
+                )
+            },
+            logger = logger
+        )
+    }
+
+    override suspend fun deleteTvShowRate(
+        tvShowId: Long,
+        sessionId: String
+    ) {
+        handleRequest<RatingResponse>(
+            apiCall = {
+                tvShowApiService.deleteTvShowRate(
+                    tvShowId,
+                    sessionId,
+                )
+            },
+            logger = logger
+        )
+    }
+
+    override suspend fun getTvShowAccountStates(
+        tvShowId: Long,
+        sessionId: String
+    ): MediaAccountStateDto {
+        return handleRequest<MediaAccountStatesResponse>(
+            apiCall = { tvShowApiService.getTvShowAccountStates(tvShowId, sessionId) },
+            logger = logger
+        ).toDto()
+    }
+
     override suspend fun getPopularTvShows(): List<TvShowDto> {
         return handleRequest<PopularTvShowsResponse>(
             apiCall = { tvShowApiService.getPopularTvShows() },
             logger = logger
         ).toTvShowDtos()
+    }
+
+    override suspend fun getUserRatedTvShows(
+        accountId: Long,
+        sessionId: String,
+        page: Int
+    ): PagedResultDto<TvShowDto> {
+        return handleRequest<MyRatingTvShowResponse>(
+            apiCall = { tvShowApiService.getUserRatedTvShows(accountId, sessionId, page) },
+            logger = logger
+        ).toPagedTvShowDtos()
     }
 }

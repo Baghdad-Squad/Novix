@@ -5,12 +5,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.feature.continueWatching.ContinueWatchingScreen
-import com.baghdad.ui.feature.topRating.TopRatingScreen
 import com.baghdad.ui.feature.home.HomeScreen
+import com.baghdad.ui.feature.topRating.TopRatingScreen
 import com.baghdad.ui.feature.trendingActors.TrendingActorsScreen
 import com.baghdad.ui.feature.trendingMovies.TrendingMoviesScreen
 import com.baghdad.ui.feature.trendingTvShow.TrendingTvShowScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.HomeRoute
 
@@ -80,6 +81,11 @@ private fun handleHomeNavigation(
             Graph.ActorDetailsGraph(event.actorId)
         )
 
-        HomeNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
+        HomeNavEvent.NavigateToLogin ->
+            navController.navigate(AuthenticationRoute.LoginScreen) {
+                popUpTo(HomeRoute.HomeScreen) {
+                    inclusive = true
+                }
+        }
     }
 }

@@ -17,7 +17,6 @@ import com.baghdad.viewmodel.search.SearchScreenState
 fun TvShowCardList(
     tvShows: LazyPagingItems<SearchScreenState.TvShowUiState>,
     state: LazyGridState,
-    onSavedClick: (Long) -> Unit,
     onTVShowClick: (id: Long, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -33,8 +32,8 @@ fun TvShowCardList(
         HomeCard(
             url = tvShow.posterPictureURL,
             contentDescription = null,
-            isSaved = tvShow.isSaved,
-            onSavedClick = { onSavedClick(tvShow.id) },
+            isSaved = false,
+            isSaveToListVisible = false,
             onClick = {
                 onTVShowClick(
                     tvShow.id,

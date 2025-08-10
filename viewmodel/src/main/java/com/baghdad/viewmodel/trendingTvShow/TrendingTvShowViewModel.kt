@@ -8,16 +8,17 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Inject
 
 @HiltViewModel
 class TrendingTvShowViewModel @Inject constructor(
     private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase,
     private val getGenresUseCase: GetGenresUseCase,
-    private val ioDispatcher: CoroutineDispatcher ,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<TrendingTvShowScreenState, TrendingTvShowScreenEffect>(TrendingTvShowScreenState()),
     TrendingTvShowInteractionListener {
+
     init {
         getTvShowGenres()
         getTrendingTvShowsByGenre(null)
@@ -77,27 +78,24 @@ class TrendingTvShowViewModel @Inject constructor(
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
         BaseSnackBarMessage.UnknownError
 
-    override fun onTvShowClick(tvShowId: Long) {
+    override fun onTvShowClicked(tvShowId: Long) {
         sendEffect(TrendingTvShowScreenEffect.NavigateToTvShowDetails(tvShowId))
     }
 
-    override fun onBackIconClick() {
+    override fun onBackIconClicked() {
         sendEffect(TrendingTvShowScreenEffect.NavigateBack)
     }
 
-    override fun onGenreClick(genreId: Long?) {
+    override fun onGenreClicked(genreId: Long?) {
         if (genreId != currentState.selectedGenreId) {
             getTrendingTvShowsByGenre(genreId)
         }
     }
 
-    override fun onSnackBarActionLabelClick(genreId: Long?) {
+    override fun onSnackBarActionLabelClicked(genreId: Long?) {
+        hideSnackBar()
         getTvShowGenres()
         getTrendingTvShowsByGenre(genreId)
-    }
-
-    override fun onSaveTvShowClick(tvShowId: Long) {
-//        TODO("Not yet implemented")
     }
 
     private fun onFinally() {

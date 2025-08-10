@@ -1,5 +1,7 @@
 package com.baghdad.ui.feature.authentication
 
+import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.R
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.NovixTextField
 import com.baghdad.design_system.component.Scaffold
@@ -61,9 +65,9 @@ fun LoginScreen(
 
     val state = loginViewModel.uiState.collectAsStateWithLifecycle().value
     val snackBarState = loginViewModel.snackBarState.collectAsStateWithLifecycle().value
-
+    val context = LocalContext.current
     ObserveAsEffect(loginViewModel.uiEffect) {
-        handleLoginEffect(it, handleNavigation)
+        handleLoginEffect(it, context, handleNavigation)
     }
 
 
@@ -91,16 +95,19 @@ fun LoginScreenContent(
             .fillMaxWidth()
             .statusBarsPadding()
             .navigationBarsPadding(),
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarState.message.toStringResource()),
                 isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible
+                isVisible = snackBarState.isVisible,
+                position = position,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         topBar = {
             TopBar(listener)
         },
+        backgroundBlur = { BackgroundBlur() }
     ) {
 
         Column(
@@ -123,7 +130,6 @@ private fun TopBar(listener: LoginInteractionListener) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Theme.color.surface)
             .statusBarsPadding()
             .padding(vertical = 12.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -146,7 +152,7 @@ private fun LoginForm(
     state: LoginUiState, listener: LoginInteractionListener
 ) {
     Icon(
-        imageVector = ImageVector.vectorResource(R.drawable.logo_design),
+        imageVector = ImageVector.vectorResource(R.drawable.app_logo_light),
         contentDescription = stringResource(com.baghdad.ui.R.string.login_icon),
         tint = Theme.color.primary,
         modifier = Modifier
@@ -233,16 +239,28 @@ private fun BottomCreateAccount(listener: LoginInteractionListener) {
 }
 
 private fun handleLoginEffect(
-    effect: LoginUiEffect, handleNavigation: (AuthenticationNavEvent) -> Unit
+    effect: LoginUiEffect,
+    context: Context,
+    handleNavigation: (AuthenticationNavEvent) -> Unit,
 ) {
-    handleNavigation(effect.toNavEvent())
+    if (effect == LoginUiEffect.RecreateActivity) {
+        val activity = context as? AppCompatActivity
+        activity?.let {
+            val intent = it.intent
+            it.finish()
+            it.startActivity(intent)
+        }
+    } else {
+        effect.toNavEvent()?.let { handleNavigation(it) }
+    }
 }
 
-private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent = when (this) {
-    LoginUiEffect.NavigateBack -> AuthenticationNavEvent.NavigateBack
+private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent? =
+    when (this) {
+        LoginUiEffect.NavigateBack -> AuthenticationNavEvent.NavigateBack
     LoginUiEffect.NavigateToForgotPassword -> AuthenticationNavEvent.NavigateToForgotPassword
-    LoginUiEffect.NavigateToHome -> AuthenticationNavEvent.NavigateToHome
     LoginUiEffect.NavigateToRegister -> AuthenticationNavEvent.NavigateToRegister
+        else -> null
 }
 
 @Preview

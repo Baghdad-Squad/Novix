@@ -35,15 +35,12 @@ class CategoryTvShowsViewModel @Inject constructor(
         sendEffect(CategoryTvShowsEffect.NavigateBack)
     }
 
-    override fun onSavedClick(tvShowId: Long) {
-
-    }
-
     override fun onTvShowClicked(tvShowId: Long) {
         sendEffect(CategoryTvShowsEffect.NavigateToTvShowDetails(tvShowId))
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         getTvShowsByCategoryId(categoryId = categoryId)
         getCategoryNameById(categoryId = categoryId)
     }
@@ -103,6 +100,4 @@ class CategoryTvShowsViewModel @Inject constructor(
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
     }
-
-
 }

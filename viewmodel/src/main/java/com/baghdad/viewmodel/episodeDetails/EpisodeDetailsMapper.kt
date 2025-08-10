@@ -3,19 +3,19 @@ package com.baghdad.viewmodel.episodeDetails
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.person.CastMember
-import com.baghdad.viewmodel.movieDetails.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
 fun Episode.toUiState() = EpisodeDetailsScreenState.EpisodeUiState(
     id = id,
     title = title,
     episodeNumber = episodeNumber,
-    rating = rating.roundToFirstDecimal(),
+    rating = rating.toInt(),
     duration = duration,
     releasedDate = releasedDate?.toDDMMYYYYFormat().orEmpty(),
     currentSeason = currentSeason,
     overview = overview,
     headerPictures = headerPictures,
+    userRating = userRating ?: 0,
     categories = genres.toUiStates(),
 )
 

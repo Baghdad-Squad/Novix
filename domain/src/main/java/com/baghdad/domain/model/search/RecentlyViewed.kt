@@ -6,6 +6,8 @@ data class RecentlyViewed(
     val contentId: Long,
     val contentImageUrl: String,
     val contentType: ContentType,
+    val isSaved: Boolean,
+    val listId: Long?,
     val viewedAt: LocalDateTime
 ) {
     enum class ContentType {

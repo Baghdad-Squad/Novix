@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +27,7 @@ fun EmptyMediaState(
     contentDescription: String,
     message: String,
     modifier: Modifier = Modifier,
-    imgSize: Dp = 128.dp,
+    imgSize: Dp = 100.dp,
 ) {
     Column(
         modifier = modifier
@@ -40,6 +38,7 @@ fun EmptyMediaState(
             painter = painterResource(id = imagePath),
             contentDescription = contentDescription,
             modifier = Modifier
+                .padding(bottom = 12.dp)
                 .size(imgSize)
         )
         Text(
@@ -49,8 +48,7 @@ fun EmptyMediaState(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(horizontal = 48.dp)
-                .offset(y = (-24).dp)
-                .width(232.dp)
+                .fillMaxWidth()
         )
     }
 }
@@ -66,7 +64,11 @@ private fun EmptySearchScreenPreview() {
             verticalArrangement = Arrangement.Center
         ) {
             EmptyMediaState(
-                imagePath = R.drawable.user_person_profile,
+                imagePath = if (Theme.isDarkTheme) {
+                    R.drawable.user_person_profile_night
+                } else {
+                    R.drawable.user_person_profile
+                },
                 contentDescription = "",
                 message = "Please login to rate your favorite items."
             )

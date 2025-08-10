@@ -1,15 +1,25 @@
 package com.baghdad.viewmodel.topRating
 
+import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
+import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
+import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.topRated.GetTvShowTopRatingUseCase
 import com.baghdad.entity.media.Genre
+import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
+import com.baghdad.viewmodel.shared.AddToListBottomSheetState
+import com.baghdad.viewmodel.shared.SavedListUiState
+import com.baghdad.viewmodel.shared.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,10 +27,16 @@ class TopRatingViewModel @Inject constructor(
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
     private val getTvShowTopRatingUseCase: GetTvShowTopRatingUseCase,
     private val getGenresUseCase: GetGenresUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
+    private val getSavedListsUseCase: GetSavedListsUseCase,
+    private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
+    private val createSavedListUseCase: CreateSavedListUseCase,
+    private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
 ) : BaseViewModel<TopRatingState, TopRatingEffect>(TopRatingState()),
     TopRatingInteractionListener {
     init {
         loadInitData()
+        checkIfUserIsLoggedIn()
     }
 
     private fun loadInitData() {
@@ -126,12 +142,48 @@ class TopRatingViewModel @Inject constructor(
         }
     }
 
-    override fun onSaveTvShowClick(tvShowId: Long) {
-        //         TODO: save logic
+    private fun onSaveButtonClicked(
+        listId: Long,
+        itemId: Long,
+        isSaved: Boolean,
+    ) {
+        if (isSaved) {
+            removeSavedItem(listId, itemId)
+        } else {
+            updateState {
+                it.copy(
+                    addToListBottomSheetState =
+                        it.addToListBottomSheetState.copy(
+                            isVisible = true,
+                            selectedItemId = itemId,
+                            selectedListId = null,
+                        ),
+                )
+            }
+        }
     }
 
-    override fun onSaveMovieClick(movieId: Long) {
-        //         TODO: save logic
+    override fun onSaveMovieClick() {
+        tryToExecute(
+            callee = {
+                addMovieToSavedListUseCase(
+                    listId =
+                        currentState.addToListBottomSheetState.selectedListId
+                            ?: return@tryToExecute,
+                    movieId = currentState.addToListBottomSheetState.selectedItemId,
+                )
+            },
+            onSuccess = { onAddItemToListSuccess() },
+            onStart = ::onAddItemToListStart,
+            onFinally = ::onAddItemToListFinished,
+        )
+    }
+
+    private fun checkIfUserIsLoggedIn() {
+        tryToExecute(
+            callee = { isUserLoggedInUseCase() },
+            onSuccess = ::onCheckIfUserIsLoggedInSuccess,
+        )
     }
 
     override fun onBackClick() {
@@ -158,6 +210,77 @@ class TopRatingViewModel @Inject constructor(
         }
     }
 
+    private fun showItemRemovedSuccessfullySnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.RemovedItemSuccessfully,
+            isSuccess = true,
+        )
+    }
+
+    private fun removeSavedItem(listId: Long, itemId: Long) {
+        tryToExecute(
+            callee = { removeMovieFromSavedListUseCase(listId = listId, movieId = itemId) },
+            onSuccess = { onRemoveSavedItemSuccess() },
+            onFinally = ::onRemoveSavedItemFinished,
+        )
+    }
+
+    private fun onRemoveSavedItemSuccess() {
+        refreshSavedItems()
+        showItemRemovedSuccessfullySnackBar()
+    }
+
+    private fun onRemoveSavedItemFinished() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = false,
+                    ),
+            )
+        }
+    }
+
+    private fun onAddItemToListSuccess() {
+        refreshSavedItems()
+        onSaveToListBottomSheetDismiss()
+        showItemSavedSuccessfullySnackBar()
+    }
+
+    private fun refreshSavedItems() {
+        loadInitData()
+        getUserSavedLists()
+    }
+
+    private fun showItemSavedSuccessfullySnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.SavedItemSuccessfully,
+            isSuccess = true,
+        )
+    }
+
+    private fun onAddItemToListStart() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isLoading = true,
+                    ),
+            )
+        }
+    }
+
+    private fun onAddItemToListFinished() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isLoading = false,
+                    ),
+            )
+        }
+    }
+
     private fun onError(throwable: Throwable) {
         when (throwable) {
             is NoInternetException -> showNoInternetSnackBar()
@@ -175,12 +298,161 @@ class TopRatingViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         if (currentState.selectedTab == TopRatingTab.MOVIES) {
             getMovieGenres()
             fetchMoviesByGenre(currentState.selectedMovieGenreId)
         } else {
             getTvShowGenres()
             fetchTvShowsByGenre(currentState.selectedTvShowGenreId)
+        }
+
+    }
+
+    override fun onCreateNewListClick() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isVisible = true,
+                    ),
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = false,
+                    ),
+            )
+        }
+    }
+
+    override fun onLoginClick() {
+        sendEffect(TopRatingEffect.NavigateToLogin)
+    }
+
+    override fun onSaveToListBottomSheetDismiss() {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    AddToListBottomSheetState(
+                        savedLists = it.addToListBottomSheetState.savedLists,
+                    ),
+            )
+        }
+    }
+
+    override fun onListSelected(listId: Long) {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        selectedListId = listId,
+                    ),
+            )
+        }
+    }
+
+    override fun onCreatedListNameChanged(name: String) {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        listName = name,
+                    ),
+            )
+        }
+    }
+
+    override fun onCreateListBottomSheetDismiss() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isVisible = false,
+                        listName = "",
+                        isLoading = false,
+                    ),
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = true,
+                    ),
+            )
+        }
+    }
+
+    override fun onCreateListBottomSheetAddClick() {
+        tryToExecute(
+            callee = {
+                createSavedListUseCase(
+                    title = currentState.addListBottomSheetState.listName,
+                )
+            },
+            onSuccess = { onCreateListSuccess() },
+            onStart = ::onCreateListStart,
+            onFinally = ::onCreateListFinished,
+        )
+    }
+
+    override fun onTopRatingItemSaveClick(item: TopRatingState.MovieUiState) {
+        onSaveButtonClicked(item.savedListId, item.id, item.isSaved)
+    }
+
+    private fun onCreateListSuccess() {
+        onCreateListBottomSheetDismiss()
+        getUserSavedLists()
+    }
+
+    private fun onCheckIfUserIsLoggedInSuccess(isLoggedIn: Boolean) {
+        updateState {
+            it.copy(isUserLoggedIn = isLoggedIn)
+        }
+        if (isLoggedIn) {
+            getUserSavedLists()
+        }
+    }
+
+    private fun onCreateListStart() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isLoading = true,
+                    ),
+            )
+        }
+    }
+
+    private fun onCreateListFinished() {
+        updateState {
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isLoading = false,
+                    ),
+            )
+        }
+    }
+
+    private fun getUserSavedLists() {
+        collectPagingFlow(
+            loadData = { page ->
+                getSavedListsUseCase(
+                    page = page,
+                    pageSize = 20,
+                )
+            },
+            onInitialLoadError = ::onError,
+            mapEntityToUiState = SavedList::toUiState,
+            onFlowCreated = ::onGetSavedListFlowCreated,
+        )
+    }
+
+    private fun onGetSavedListFlowCreated(flow: Flow<PagingData<SavedListUiState>>) {
+        updateState {
+            it.copy(
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        savedLists = flow,
+                    ),
+            )
         }
     }
 

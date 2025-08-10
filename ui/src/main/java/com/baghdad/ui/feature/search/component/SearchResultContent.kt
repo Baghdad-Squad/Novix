@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.flowOf
 fun SearchResultContent(
     selectedTab: SearchScreenState.SearchTab,
     onTabSelected: (SearchScreenState.SearchTab) -> Unit,
-    onSavedClick: (Long) -> Unit,
+    onSaveMovieClick: (SearchScreenState.MovieUiState) -> Unit,
     moviesState: LazyGridState,
     tvShowsState: LazyGridState,
     actorsState: LazyListState,
@@ -47,7 +47,6 @@ fun SearchResultContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Theme.color.surface)
     ) {
         SearchTabHeader(selectedTab, onTabSelected)
 
@@ -56,11 +55,11 @@ fun SearchResultContent(
         } else {
             when (selectedTab) {
                 SearchScreenState.SearchTab.MOVIES -> {
-                    RenderMovieResults(movies, moviesState, onSavedClick, onMovieClick)
+                    RenderMovieResults(movies, moviesState, onSaveMovieClick, onMovieClick)
                 }
 
                 SearchScreenState.SearchTab.TV_SHOWS -> {
-                    RenderTvShowResults(tvShows, tvShowsState, onSavedClick, onTvShowClick)
+                    RenderTvShowResults(tvShows, tvShowsState, onTvShowClick)
                 }
 
                 SearchScreenState.SearchTab.ACTORS -> {
@@ -112,7 +111,7 @@ private fun LoadingContent() {
 private fun RenderMovieResults(
     movies: LazyPagingItems<SearchScreenState.MovieUiState>,
     state: LazyGridState,
-    onSavedClick: (Long) -> Unit,
+    onSavedClick: (SearchScreenState.MovieUiState) -> Unit,
     onMovieClick: (Long, String) -> Unit
 ) {
     if (movies.itemCount != 0) {
@@ -131,14 +130,12 @@ private fun RenderMovieResults(
 private fun RenderTvShowResults(
     tvShows: LazyPagingItems<SearchScreenState.TvShowUiState>,
     state: LazyGridState,
-    onSavedClick: (Long) -> Unit,
     onTvShowClick: (Long, String) -> Unit
 ) {
     if (tvShows.itemCount != 0) {
         TvShowCardList(
             state = state,
             tvShows = tvShows,
-            onSavedClick = onSavedClick,
             onTVShowClick = onTvShowClick,
         )
     } else {
@@ -170,7 +167,11 @@ private fun EmptyStateContent() {
         contentAlignment = Alignment.Center
     ) {
         EmptySearchState(
-            imagePath = com.baghdad.design_system.R.drawable.no_search_results,
+            imagePath = if (Theme.isDarkTheme) {
+                com.baghdad.design_system.R.drawable.no_search_results_night
+            } else {
+                com.baghdad.design_system.R.drawable.no_search_results
+            },
             contentDescription = stringResource(R.string.no_search_result_picture),
             message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
             modifier = Modifier.padding(bottom = 60.dp)
@@ -184,7 +185,7 @@ private fun SearchResultContentPreview() {
     SearchResultContent(
         selectedTab = SearchScreenState.SearchTab.MOVIES,
         onTabSelected = {},
-        onSavedClick = {},
+        onSaveMovieClick = {},
         moviesState = LazyGridState(),
         tvShowsState = LazyGridState(),
         actorsState = LazyListState(),

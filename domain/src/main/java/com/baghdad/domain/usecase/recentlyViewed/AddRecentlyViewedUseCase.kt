@@ -19,8 +19,10 @@ class AddRecentlyViewedUseCase @Inject constructor(
                 contentId = contentId,
                 contentImageUrl = contentImageUrl,
                 contentType = contentType,
-                viewedAt = LocalDateTime.now()
-            )
+                viewedAt = LocalDateTime.now(),
+                isSaved = false,
+                listId = null,
+            ),
         )
     }
 }

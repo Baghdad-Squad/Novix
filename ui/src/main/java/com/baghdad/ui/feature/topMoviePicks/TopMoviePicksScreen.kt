@@ -16,8 +16,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -25,10 +29,14 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
+import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToLogin
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToMovieDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.shared.SavedListUiState
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksEffect
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksInteractionListener
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksState
@@ -41,6 +49,8 @@ fun TopMoviePicksScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
@@ -48,6 +58,7 @@ fun TopMoviePicksScreen(
         uiState = uiState,
         listener = viewModel,
         snackBarState = snackBarState,
+        savedLists = savedLists
     )
 }
 
@@ -62,9 +73,10 @@ private fun handleEffect(
             )
 
         is TopMoviePicksEffect.NavigateToMovieDetails ->
-            handleNavigation(
-                NavigateToMovieDetails(effect.movieId),
-            )
+            handleNavigation(NavigateToMovieDetails(effect.movieId))
+
+        is TopMoviePicksEffect.NavigateToLogin ->
+            handleNavigation(NavigateToLogin)
     }
 }
 
@@ -73,6 +85,7 @@ private fun TopMoviePicksContent(
     uiState: TopMoviePicksState,
     listener: TopMoviePicksInteractionListener,
     snackBarState: SnackBarState,
+    savedLists: LazyPagingItems<SavedListUiState>,
 ) {
     Scaffold(
         modifier =
@@ -81,32 +94,35 @@ private fun TopMoviePicksContent(
                 .systemBarsPadding()
                 .statusBarsPadding(),
         isLoading = uiState.isLoading,
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
+                onActionClick = listener::onSnackBarActionLabelClicked,
                 isVisible = snackBarState.isVisible,
+                position = position,
             )
         },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         topBar = {
             TopAppBar(
-                onGoBackClick = listener::onBackClick,
+                onGoBackClick = listener::onBackClicked,
                 screenTitle = stringResource(com.baghdad.ui.R.string.top_movies_picks),
                 modifier =
                     Modifier
                         .padding(vertical = 8.dp)
                         .padding(top = 12.dp),
-                    )
+            )
         },
-    ) {
+        backgroundBlur = {
+            BackgroundBlur()
+        }) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface),
+                    .fillMaxSize(),
             contentPadding =
                 PaddingValues(
                     start = 16.dp,
@@ -122,13 +138,35 @@ private fun TopMoviePicksContent(
                     url = movie.posterPictureURL,
                     contentDescription = null,
                     isSaved = movie.isSaved,
-                    onSavedClick = { listener.onSaveMovieClick(movie.id) },
-                    onClick = { listener.onMovieDetailsClick(movie.id) },
+                    onSavedClick = { listener.onSaveMovieClicked(movie) },
+                    onClick = { listener.onMovieDetailsClicked(movie.id) },
                     modifier = Modifier.aspectRatio(0.8f),
                 )
             }
         }
     }
+
+    SavedListBottomSheet(
+        isVisible = uiState.addToListBottomSheetState.isVisible,
+        isUserLoggedIn = uiState.isUserLoggedIn,
+        onAddClick = listener::onSaveItemToListClicked,
+        onCreateNewListClick = listener::onCreateNewListClicked,
+        onLoginClick = listener::onLoginClicked,
+        onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
+        lists = savedLists,
+        selectedListId = uiState.addToListBottomSheetState.selectedListId,
+        onListSelected = listener::onListSelected,
+    )
+    AddListBottomSheet(
+        isVisible = uiState.addListBottomSheetState.isVisible,
+        isLoading = uiState.addListBottomSheetState.isLoading,
+        listName = uiState.addListBottomSheetState.listName,
+        onDismiss = listener::onCreateListBottomSheetDismiss,
+        onAddClick = listener::onCreateListBottomSheetAddClick,
+        onListNameChange = listener::onCreatedListNameChanged,
+    )
+
+
 }
 
 @Composable

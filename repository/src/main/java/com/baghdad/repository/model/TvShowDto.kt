@@ -6,7 +6,7 @@ data class TvShowDto(
     val title: String,
     val genres: List<GenreDto>,
     val imdbRating: Double,
-    val userRating: Double?,
+    val userRating: Int?,
     val releaseDate: String,
     val overview: String,
     val posterPictureURL: String,

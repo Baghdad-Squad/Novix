@@ -39,7 +39,7 @@ import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 
-private const val ANIMATION_DURATION = 150
+private const val ANIMATION_DURATION = 75
 private val ENTER_ANIMATION_SPEC = fadeIn(animationSpec = tween(ANIMATION_DURATION))
 private val EXIT_ANIMATION_SPEC = fadeOut(animationSpec = tween(ANIMATION_DURATION))
 
@@ -52,6 +52,7 @@ fun PopularCard(
     onSavedClick: () -> Unit,
     isSaved: Boolean,
     modifier: Modifier = Modifier,
+    isSaveToListVisible: Boolean = true,
     isCentralCard: Boolean = false,
 ) {
     val overlayAlpha by animateFloatAsState(
@@ -113,7 +114,7 @@ fun PopularCard(
                     },
         )
         AnimatedVisibility(
-            visible = isCentralCard,
+            visible = isCentralCard && isSaveToListVisible,
             enter = ENTER_ANIMATION_SPEC,
             exit = EXIT_ANIMATION_SPEC,
             modifier =

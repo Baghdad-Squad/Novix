@@ -8,6 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,13 +26,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.baghdad.design_system.component.SaveIcon
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
@@ -41,9 +44,12 @@ import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
+import com.baghdad.ui.feature.component.bottomSheet.LoginRequiredSheet
+import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
 import com.baghdad.ui.feature.tvShowDetails.component.CastMembersSection
 import com.baghdad.ui.feature.tvShowDetails.component.EpisodeCard
 import com.baghdad.ui.feature.tvShowDetails.component.SeasonSection
+import com.baghdad.ui.feature.tvShowDetails.component.ShimmeringEpisodeCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowHeaderWithDetailsCard
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
@@ -56,17 +62,18 @@ import com.baghdad.ui.util.isArabicSystemLocale
 import com.baghdad.ui.util.openYouTubeLink
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.movieDetails.formatDuration
+import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsInteractionListener
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenEffect
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsViewModel
+import com.baghdad.viewmodel.util.formatDuration
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun TvShowDetailsScreen(
-    tvShowId: Long,
     viewModel: TvShowDetailsViewModel = hiltViewModel(),
-    handleNavigation: (TvShowDetailsNavEvent) -> Unit
+    handleNavigation: (TvShowDetailsNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
@@ -75,7 +82,6 @@ fun TvShowDetailsScreen(
         handleEffect(effect, context, handleNavigation)
     }
     TvShowDetailsContent(
-        tvShowId = tvShowId,
         uiState = uiState,
         listener = viewModel,
         snackBarState = snackBarState
@@ -85,7 +91,7 @@ fun TvShowDetailsScreen(
 private fun handleEffect(
     effect: TvShowDetailsScreenEffect,
     context: Context,
-    handleNavigation: (TvShowDetailsNavEvent) -> Unit
+    handleNavigation: (TvShowDetailsNavEvent) -> Unit,
 ) {
     when (effect) {
         is TvShowDetailsScreenEffect.NavigateBack -> handleNavigation(
@@ -123,11 +129,10 @@ private fun handleEffect(
 
 @Composable
 fun TvShowDetailsContent(
-    tvShowId: Long,
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
     snackBarState: SnackBarState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
     var shouldShowBackground by remember { mutableStateOf(false) }
@@ -158,36 +163,68 @@ fun TvShowDetailsContent(
         }
     }
 
+    val systemUiController = rememberSystemUiController()
+    LaunchedEffect(Unit) {
+        systemUiController.setStatusBarColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+    }
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
+            .consumeWindowInsets(WindowInsets(0, 0, 0, 0))
             .navigationBarsPadding(),
+
         bottomBar = {
             DetailsScreenBottomBar(
                 hasTrailer = uiState.tvShowInfo.trailerURL.isNotBlank(),
-                onRateClicked = { listener.onClickAddRating() },
+                onRateClicked = { listener.onClickStarButton() },
                 onPlayTrailerClicked = { listener.onClickPlayTrailer() },
-                isRated = uiState.isTvShowRated,
+                isRated = uiState.isRated,
                 isLoading = false /*TODO*/
             )
         },
         isLoading = uiState.isLoading,
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
-        }
+        },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Box(
             modifier = modifier
-                .background(Theme.color.surface)
                 .fillMaxSize()
                 .navigationBarsPadding()
         ) {
+
+            RatingBottomSheet(
+                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                rate = uiState.tvShowInfo.userRating,
+                isButtonEnabled = uiState.tvShowInfo.userRating != 0,
+                onRateChanged = { listener.onRatingChanged(it) },
+                onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating) }
+            )
+
+            LoginRequiredSheet(
+                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                onLoginClick = { listener.onClickLoginButton() },
+                title = stringResource(R.string.rate_it),
+                description = stringResource(R.string.please_login_to_rate)
+            )
+
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -197,11 +234,11 @@ fun TvShowDetailsContent(
 
                 item {
                     TvShowHeaderWithDetailsCard(
-                        tvShowId = tvShowId,
                         uiState = uiState,
                         listener = listener
                     )
                 }
+
 
                 item {
                     Spacer(Modifier.height(136.dp))
@@ -250,56 +287,57 @@ fun TvShowDetailsContent(
                     )
                 }
 
-
-                if (uiState.episodes.isNotEmpty()) {
-                    items(uiState.episodes) { episode ->
-                        EpisodeCard(
-                            episodeNumber = episode.episodeNumber,
-                            imageUrl = uiState.tvShowInfo.posterPictureURL,
-                            episodeName = episode.name,
-                            releaseDate = episode.releaseDate,
-                            duration = if (isArabicSystemLocale()) arabicDuration(episode.duration) else episode.duration.formatDuration(),
-                            rating = episode.rating,
+                if (!uiState.isEpisodesLoading) {
+                    if (uiState.episodes.isNotEmpty()) {
+                        items(uiState.episodes) { episode ->
+                            EpisodeCard(
+                                episodeNumber = episode.episodeNumber,
+                                imageUrl = uiState.tvShowInfo.posterPictureURL,
+                                episodeName = episode.name,
+                                releaseDate = episode.releaseDate,
+                                duration = if (isArabicSystemLocale()) "" else episode.duration.formatDuration(),
+                                rating = episode.rating,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 8.dp)
+                                    .noRippleClickable {
+                                        listener.onClickEpisode(
+                                            episode.currentSeason,
+                                            episode.episodeNumber
+                                        )
+                                    }
+                            )
+                        }
+                    }
+                } else {
+                    items(5) {
+                        ShimmeringEpisodeCard(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .padding(bottom = 8.dp)
-                                .noRippleClickable {
-                                    listener.onClickEpisode(
-                                        episode.currentSeason,
-                                        episode.episodeNumber
-                                    )
-                                }
                         )
                     }
                 }
             }
 
-            TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(animatedColor)
-                    .zIndex(1f)
-                    .padding(top = 56.dp, bottom = 8.dp),
-                onGoBackClick = {
-                    listener.onClickBackIcon()
-                },
-                content = {
-                    SaveIcon(
-                        tint = Theme.color.title,
-                        size = 40,
-                        backgroundColor = Theme.color.iconBackgroundLow,
-                        isSaved = uiState.isTvShowSaved,
-                        onClick = {
-                            listener.onClickSaveTvShow(tvShowId)
-                        }
-                    )
-                }
-            )
         }
+
+        TopAppBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(animatedColor)
+                .zIndex(1f)
+                .padding(top = 56.dp, bottom = 8.dp),
+            onGoBackClick = {
+                listener.onClickBackIcon()
+            }
+        )
     }
 }
+
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return type.toStringResource()
 }
+

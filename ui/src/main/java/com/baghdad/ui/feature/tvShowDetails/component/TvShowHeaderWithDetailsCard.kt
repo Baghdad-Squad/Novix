@@ -24,61 +24,63 @@ import com.baghdad.viewmodel.tvShowDetails.TvShowDetailsScreenState
 
 @Composable
 fun TvShowHeaderWithDetailsCard(
-    tvShowId: Long,
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
     modifier: Modifier = Modifier
 ) {
-    val pagerState = rememberPagerState(pageCount = { uiState.tvShowInfo.headerImagesURLs.size })
+    val images = if (uiState.tvShowInfo.headerImagesURLs.isEmpty())  listOf(uiState.tvShowInfo.posterPictureURL)  else  uiState.tvShowInfo.headerImagesURLs
+    val pagerState = rememberPagerState(pageCount = { images.size })
+    val aspectRatio = if (uiState.tvShowInfo.headerImagesURLs.isNotEmpty()) 1.778f  else  1.2f
+
 
     Box(modifier = modifier) {
         AutoSlidingImageCarousel(
-            imageUrls = uiState.tvShowInfo.headerImagesURLs,
-            imageAspectRatio = 1.778f,
-            pagerState = pagerState,
+            imageUrls = images,
+            imageAspectRatio = aspectRatio,
+            pagerState = pagerState
         )
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .offset(y = 128.dp)
-                .then(Modifier.padding(top = if (uiState.tvShowInfo.genres.isEmpty()) 24.dp else 0.dp))
-        ) {
-            if (uiState.tvShowInfo.headerImagesURLs.size > 1) {
-                Row(
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Theme.color.iconBackgroundLow)
-                        .border(1.dp, Theme.color.stroke, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    CarousalDot(
-                        totalDots = uiState.tvShowInfo.headerImagesURLs.size,
-                        selectedIndex = pagerState.currentPage,
-                        modifier = Modifier
-                    )
-                }
-            }
-
-            TvShowDetailsCard(
-                tvShowId = tvShowId,
-                title = uiState.tvShowInfo.title,
-                genres = uiState.tvShowInfo.genres,
-                rating = uiState.tvShowInfo.rating,
-                date = uiState.tvShowInfo.releaseDate,
-                seasonsCount = uiState.tvShowInfo.seasonCount,
-                onReviewClick = { listener.onClickReviews(tvShowId) },
-                onGenreClick = { genreId ->
-                    genreId?.let { listener.onClickGenre(it) }
-                },
+            Column(
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .padding(horizontal = 16.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
+                    .align(Alignment.BottomCenter)
+                    .offset(y = 128.dp)
+                    .then(Modifier.padding(top = if (uiState.tvShowInfo.genres.isEmpty()) 24.dp else 0.dp))
+            ) {
+                if (uiState.tvShowInfo.headerImagesURLs.size > 1) {
+                    Row(
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Theme.color.iconBackgroundLow)
+                            .border(1.dp, Theme.color.stroke, RoundedCornerShape(8.dp))
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        CarousalDot(
+                            totalDots = uiState.tvShowInfo.headerImagesURLs.size,
+                            selectedIndex = pagerState.currentPage,
+                            modifier = Modifier
+                        )
+                    }
+                }
+
+
+                TvShowDetailsCard(
+                    title = uiState.tvShowInfo.title,
+                    genres = uiState.tvShowInfo.genres,
+                    rating = uiState.tvShowInfo.rating,
+                    date = uiState.tvShowInfo.releaseDate,
+                    seasonsCount = uiState.tvShowInfo.seasonCount,
+                    onReviewClick = { listener.onClickReviews() },
+                    onGenreClick = { genreId ->
+                        genreId?.let { listener.onClickGenre(it) }
+                    },
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .padding(horizontal = 16.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+            }
         }
     }
-}

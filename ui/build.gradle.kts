@@ -59,7 +59,8 @@ dependencies {
     androidTestImplementation(libs.bundles.test.ui)
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
-    implementation("androidx.paging:paging-compose:3.4.0-alpha01")
+    implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.androidx.paging.compose)
 
 }
 

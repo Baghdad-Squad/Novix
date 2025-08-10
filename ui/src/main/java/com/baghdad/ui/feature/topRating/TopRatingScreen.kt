@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -26,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
@@ -34,11 +34,15 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.topRating.component.GenresSection
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateBack
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToLogin
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShowDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
@@ -86,7 +90,11 @@ private fun handleEffect(
         )
 
         is TopRatingEffect.NavigateToTvShowDetails -> handleNavigation(
-            HomeNavEvent.NavigateToTvShowDetails(effect.tvShowId)
+            NavigateToTvShowDetails(effect.tvShowId)
+        )
+
+        TopRatingEffect.NavigateToLogin -> handleNavigation(
+            NavigateToLogin
         )
     }
 }
@@ -101,6 +109,7 @@ private fun TopRatingContent(
 ) {
     val movieGenresScrollState = rememberLazyListState()
     val tvGenresScrollState = rememberLazyListState()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     Scaffold(
         modifier = Modifier
@@ -114,8 +123,7 @@ private fun TopRatingContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(top = 22.dp, bottom = 8.dp)
-                        .background(Theme.color.surface),
+                        .padding(top = 22.dp, bottom = 8.dp),
                     onGoBackClick = {
                         listener.onBackClick()
                     },
@@ -127,20 +135,20 @@ private fun TopRatingContent(
                 ) {
                     val borderColor = Theme.color.stroke
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Theme.color.surface)
-                            .padding(top = 4.dp)
-                            .drawBehind {
-                                val strokeWidth = 1.dp.toPx()
-                                val y = size.height - strokeWidth / 2
-                                drawLine(
-                                    color = borderColor,
-                                    start = Offset(0f, y),
-                                    end = Offset(size.width, y),
-                                    strokeWidth = strokeWidth
-                                )
-                            },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp)
+                                .drawBehind {
+                                    val strokeWidth = 1.dp.toPx()
+                                    val y = size.height - strokeWidth / 2
+                                    drawLine(
+                                        color = borderColor,
+                                        start = Offset(0f, y),
+                                        end = Offset(size.width, y),
+                                        strokeWidth = strokeWidth
+                                    )
+                                },
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Tab(
@@ -169,22 +177,26 @@ private fun TopRatingContent(
                     },
                     onGenreSelected = { listener.onGenreClick(it?.id) },
                     modifier = Modifier
-                        .background(Theme.color.surface)
                         .padding(vertical = 12.dp)
                 )
             }
 
 
         },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
-        }
+        },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
 
         when (uiState.selectedTab) {
@@ -192,8 +204,7 @@ private fun TopRatingContent(
                 LazyPagingVerticalGrid(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Theme.color.surface),
+                        .fillMaxSize(),
                     contentPadding = PaddingValues(
                         bottom = 12.dp,
                         end = 16.dp,
@@ -203,15 +214,12 @@ private fun TopRatingContent(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     items = movieItems,
                 ) { movie ->
-                    Box(contentAlignment = Alignment.TopCenter) {
-
-                    }
 
                     HomeCard(
                         url = movie.posterPictureURL,
                         contentDescription = null,
                         isSaved = movie.isSaved,
-                        onSavedClick = { listener.onSaveMovieClick(movie.id) },
+                        onSavedClick = { listener.onTopRatingItemSaveClick(movie) },
                         onClick = { listener.onMovieDetailsClick(movie.id) },
                         modifier = Modifier.aspectRatio(0.8f)
                     )
@@ -222,8 +230,7 @@ private fun TopRatingContent(
                 LazyPagingVerticalGrid<TopRatingState.TvShowUiState>(
                     columns = GridCells.Adaptive(minSize = 150.dp),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Theme.color.surface),
+                        .fillMaxSize(),
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         end = 16.dp,
@@ -238,13 +245,34 @@ private fun TopRatingContent(
                         url = tvShow.posterPictureURL,
                         contentDescription = null,
                         isSaved = tvShow.isSaved,
-                        onSavedClick = { listener.onSaveTvShowClick(tvShow.id) },
+                        isSaveToListVisible = false,
                         onClick = { listener.onTvShowDetailsClick(tvShow.id) },
                         modifier = Modifier.aspectRatio(0.8f)
                     )
                 }
             }
         }
+
+        SavedListBottomSheet(
+            isVisible = uiState.addToListBottomSheetState.isVisible,
+            isUserLoggedIn = uiState.isUserLoggedIn,
+            onAddClick = listener::onSaveMovieClick,
+            onCreateNewListClick = listener::onCreateNewListClick,
+            onLoginClick = listener::onLoginClick,
+            onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
+            lists = savedLists ,
+            selectedListId = uiState.addToListBottomSheetState.selectedListId,
+            onListSelected = listener::onListSelected,
+        )
+
+        AddListBottomSheet(
+            isVisible = uiState.addListBottomSheetState.isVisible,
+            isLoading = uiState.addListBottomSheetState.isLoading,
+            listName = uiState.addListBottomSheetState.listName,
+            onDismiss = listener::onCreateListBottomSheetDismiss,
+            onAddClick = listener::onCreateListBottomSheetAddClick,
+            onListNameChange = listener::onCreatedListNameChanged,
+        )
     }
 }
 

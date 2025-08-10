@@ -9,10 +9,15 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
-fun RecentlyViewedDto.toEntity() = RecentlyViewed(
+fun RecentlyViewedDto.toEntity(
+    isSaved: Boolean,
+    listId: Long?,
+) = RecentlyViewed(
     contentId = contentId,
     contentImageUrl = contentImageUrl,
     contentType = RecentlyViewed.ContentType.valueOf(contentType.name),
+    isSaved = isSaved,
+    listId = listId,
     viewedAt = Instant.fromEpochMilliseconds(viewedAtEpochMillis)
         .toLocalDateTime(TimeZone.currentSystemDefault())
 )

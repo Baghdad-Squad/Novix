@@ -5,12 +5,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.baghdad.ui.navigation.graph.DummyScreen
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.CategoriesRoute
 import com.baghdad.ui.navigation.route.CategoriesRoute.CategoryMoviesScreen
 import com.baghdad.ui.navigation.route.CategoriesRoute.CategoryTvShowsScreen
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.Graph.MovieDetailsGraph
 import com.baghdad.ui.navigation.route.Graph.TvShowDetailsGraph
+import com.baghdad.ui.navigation.route.HomeRoute
 
 fun NavGraphBuilder.categoriesNavGraph(navController: NavHostController) {
     navigation<Graph.CategoriesGraph>(
@@ -44,7 +46,12 @@ private fun handleCategoriesNavEvent(
 ) {
     when (event) {
         CategoriesNavEvent.NavigateBack -> navController.popBackStack()
-        CategoriesNavEvent.NavigateToLogin -> navController.navigate(Graph.AuthenticationGraph)
+        CategoriesNavEvent.NavigateToLogin ->
+            navController.navigate(AuthenticationRoute.LoginScreen) {
+                popUpTo(HomeRoute.HomeScreen) {
+                    inclusive = true
+                }
+        }
         is CategoriesNavEvent.NavigateToCategoryMovies -> navController.navigate(
             CategoryMoviesScreen(event.categoryId)
         )

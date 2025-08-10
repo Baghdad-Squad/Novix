@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource
 
+import android.util.Log
 import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
@@ -7,19 +8,24 @@ import com.baghdad.remoteDataSource.mapper.movie.toDto
 import com.baghdad.remoteDataSource.mapper.movie.toMovieDtos
 import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
+import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.RatingResponse
 import com.baghdad.remoteDataSource.response.ReviewsResponse
 import com.baghdad.remoteDataSource.response.SimilarMovieResponse
 import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
+import com.baghdad.remoteDataSource.response.movie.MyRatingMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.CastMemberDto
+import com.baghdad.repository.model.MediaAccountStateDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
@@ -29,9 +35,11 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
+@Singleton
 class RemoteMovieDataSourceImpl @Inject constructor(
     private val movieApiService: MovieApiService,
     private val logger: Logger
@@ -98,12 +106,17 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         page: Int,
     ): PagedResultDto<MovieDto> {
         val response = handleRequest<SimilarMovieResponse>(
-            apiCall = { movieApiService.getTopRatedMovies(page) },
+            apiCall = {
+                movieApiService.getTopRatedMovies(
+                    page = page,
+                    sortBy = "vote_average.desc",
+                    minVoteCount = 200,
+                )
+            },
             logger = logger,
         )
         return response.toPagedMovieDtos()
     }
-
 
 
     override suspend fun getTrendingMovies(page: Int): PagedResultDto<MovieDto> {
@@ -112,6 +125,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
             logger = logger
         ).toMovieDtos()
     }
+
     @OptIn(ExperimentalTime::class)
     override suspend fun getUpcomingMovies(genreId: Long?): List<MovieDto> {
         val today: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
@@ -145,4 +159,49 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         return response.toMovieDtos()
     }
 
+    override suspend fun addMovieRate(movieId: Long, rating: Int, sessionId: String) {
+        handleRequest<RatingResponse>(
+            apiCall = {
+                movieApiService.addMovieRate(
+                    movieId = movieId,
+                    rating = RatingRequest(rating),
+                    sessionId = sessionId
+                )
+            },
+            logger = logger,
+        )
+    }
+
+    override suspend fun deleteMovieRate(movieId: Long, sessionId: String) {
+        handleRequest<RatingResponse>(
+            apiCall = {
+                movieApiService.deleteMovieRate(
+                    movieId = movieId,
+                    sessionId = sessionId
+                )
+            },
+            logger = logger,
+        )
+    }
+
+    override suspend fun getMovieAccountStates(
+        movieId: Long,
+        sessionId: String
+    ): MediaAccountStateDto {
+        return handleRequest<MediaAccountStatesResponse>(
+            apiCall = { movieApiService.getMovieAccountStates(movieId, sessionId) },
+            logger = logger
+        ).toDto()
+    }
+
+    override suspend fun getUserRatedMovies(
+        accountId: Long,
+        sessionId: String,
+        page: Int
+    ): PagedResultDto<MovieDto> {
+        return handleRequest<MyRatingMoviesResponse>(
+            apiCall = { movieApiService.getUserRatedMovies(accountId, sessionId, page) },
+            logger = logger
+        ).toPagedMovieDtos()
+    }
 }

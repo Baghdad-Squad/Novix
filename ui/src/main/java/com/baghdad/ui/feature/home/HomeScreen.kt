@@ -11,18 +11,23 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.HomeAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.feature.home.component.ContinueWatchingSection
 import com.baghdad.ui.feature.home.component.PopularSection
 import com.baghdad.ui.feature.home.component.TopRatingSection
@@ -56,6 +61,10 @@ fun HomeScreen(
         handleEffect(effect, handleNavigation)
     }
 
+    LaunchedEffect(state.language) {
+        viewModel.reloadData()
+    }
+
     HomeContent(
         state = state,
         interactionListener = viewModel,
@@ -70,22 +79,27 @@ private fun HomeContent(
     snackBarState: SnackBarState,
 ) {
     val lazyGridState = rememberLazyGridState()
-
+    val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.color.surface)
             .statusBarsPadding(),
         topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = interactionListener::onSnackBarActionLabelClick,
+                onActionClick = interactionListener::onSnackBarActionLabelClicked,
+                position = position,
             )
         },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
@@ -146,6 +160,25 @@ private fun HomeContent(
                 onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
             )
         }
+        SavedListBottomSheet(
+            isVisible = state.addToListBottomSheetState.isVisible,
+            isUserLoggedIn = state.isUserLoggedIn,
+            onAddClick = interactionListener::onSaveItemToListClicked,
+            onCreateNewListClick = interactionListener::onCreateNewListClicked,
+            onLoginClick = interactionListener::onLoginClicked,
+            onBottomSheetCloseClick = interactionListener::onSaveToListBottomSheetDismiss,
+            lists = savedLists,
+            selectedListId = state.addToListBottomSheetState.selectedListId,
+            onListSelected = interactionListener::onListSelected,
+        )
+        AddListBottomSheet(
+            isVisible = state.addListBottomSheetState.isVisible,
+            isLoading = state.addListBottomSheetState.isLoading,
+            listName = state.addListBottomSheetState.listName,
+            onDismiss = interactionListener::onCreateListBottomSheetDismiss,
+            onAddClick = interactionListener::onCreateListBottomSheetAddClick,
+            onListNameChange = interactionListener::onCreatedListNameChanged,
+        )
     }
 }
 

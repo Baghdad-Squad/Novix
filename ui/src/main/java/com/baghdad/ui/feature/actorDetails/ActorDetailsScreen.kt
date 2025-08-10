@@ -23,11 +23,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -38,6 +42,8 @@ import com.baghdad.ui.feature.actorDetails.component.ActorBiographySection
 import com.baghdad.ui.feature.actorDetails.component.ActorHeaderWithDetailsCard
 import com.baghdad.ui.feature.actorDetails.component.GallerySection
 import com.baghdad.ui.feature.actorDetails.component.TopMediaPicksSection
+import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToTvShowDetails
@@ -47,6 +53,8 @@ import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenState
 import com.baghdad.viewmodel.actorDetails.ActorDetailsViewModel
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.shared.SavedListUiState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @Composable
@@ -56,6 +64,8 @@ fun ActorDetailsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
@@ -63,6 +73,7 @@ fun ActorDetailsScreen(
         uiState = uiState,
         listener = viewModel,
         snackBarState = snackBarState,
+        savedLists = savedLists
     )
 }
 
@@ -114,9 +125,19 @@ fun ActorDetailsContent(
     listener: ActorDetailsInteractionListener,
     modifier: Modifier = Modifier,
     snackBarState: SnackBarState,
+    savedLists: LazyPagingItems<SavedListUiState>
 ) {
     val scrollState = rememberScrollState()
     var shouldShowBackground by remember { mutableStateOf(false) }
+
+    val systemUiController = rememberSystemUiController()
+    LaunchedEffect(Unit) {
+        systemUiController.setStatusBarColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+    }
+
     val animatedColor by animateColorAsState(
         targetValue =
             if (shouldShowBackground) {
@@ -136,25 +157,28 @@ fun ActorDetailsContent(
                 .background(Theme.color.surface)
                 .navigationBarsPadding(),
         isLoading = uiState.isLoading,
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         LaunchedEffect(scrollState) {
             snapshotFlow { scrollState.value }.collect { scrollValue ->
                 shouldShowBackground = scrollValue > 450
             }
         }
-
         Box(
             modifier = modifier
-                .background(Theme.color.surface)
                 .fillMaxSize()
                 .navigationBarsPadding(),
         ) {
@@ -191,7 +215,7 @@ fun ActorDetailsContent(
                         title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
                         items = uiState.topMoviesPicks,
                         imageUrl = { it.posterPictureURL },
-                        onSavedClick = { listener.onSaveMovieClick(it.id) },
+                        onSavedClick = { listener.onSaveMovieClick(movie = it) },
                         onCardClick = { listener.onMovieCardClick(it.id) },
                         isSaved = { it.isSaved },
                         isShowAllVisible = uiState.topMoviesPicks.size >= 10,
@@ -204,9 +228,9 @@ fun ActorDetailsContent(
                         title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
                         items = uiState.topTvShowsPicks,
                         imageUrl = { it.posterPictureURL },
-                        onSavedClick = { listener.onSaveTvShowClick(it.id) },
+                        isSaveVisible = false,
                         onCardClick = { listener.onTvShowCardClick(it.id) },
-                        isSaved = { it.isSaved },
+                        isSaved = { false },
                         isShowAllVisible = uiState.topTvShowsPicks.size >= 10,
                         onClickShowAll = { listener.onViewAllTopTvShowsClick() },
                     )
@@ -226,6 +250,28 @@ fun ActorDetailsContent(
             )
         }
     }
+
+    SavedListBottomSheet(
+        isVisible = uiState.addToListBottomSheetState.isVisible,
+        isUserLoggedIn = uiState.isUserLoggedIn,
+        onAddClick = listener::onSaveItemToListClicked,
+        onCreateNewListClick = listener::onCreateNewListClicked,
+        onLoginClick = listener::onLoginClicked,
+        onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
+        lists = savedLists,
+        selectedListId = uiState.addToListBottomSheetState.selectedListId,
+        onListSelected = listener::onListSelected,
+    )
+
+    AddListBottomSheet(
+        isVisible = uiState.addListBottomSheetState.isVisible,
+        isLoading = uiState.addListBottomSheetState.isLoading,
+        listName = uiState.addListBottomSheetState.listName,
+        onDismiss = listener::onCreateListBottomSheetDismiss,
+        onAddClick = listener::onCreateListBottomSheetAddClick,
+        onListNameChange = listener::onCreatedListNameChanged,
+    )
+
 }
 
 @Composable

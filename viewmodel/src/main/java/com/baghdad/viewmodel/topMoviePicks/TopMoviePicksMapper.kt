@@ -1,8 +1,11 @@
 package com.baghdad.viewmodel.topMoviePicks
 
-import com.baghdad.entity.media.Movie
+import com.baghdad.domain.model.savedList.SavableMovie
 
-fun Movie.toUIState() = TopMoviePicksState.MovieUiState(
-    id = id,
-    posterPictureURL = posterImageURL,
+fun SavableMovie.toUIState() =
+    TopMoviePicksState.MovieUiState(
+        id = movie.id,
+        posterPictureURL = movie.posterImageURL,
+        isSaved = isSaved,
+        savedListId = listId ?: -1L
 )

@@ -126,11 +126,11 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":entity"))
     implementation(project(":islamic_image_loader"))
-    implementation(libs.bundles.androidx.core)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.bundles.androidx.core)
     implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.navigation.compose)
-    implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
     implementation(libs.bundles.ktor.client)
     testImplementation(libs.bundles.test.core)
@@ -139,6 +139,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
+    implementation(libs.accompanist.systemuicontroller)
 
 }
 

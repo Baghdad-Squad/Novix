@@ -23,19 +23,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.DetailsScreenBottomBar
+import com.baghdad.ui.feature.component.bottomSheet.LoginRequiredSheet
+import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
 import com.baghdad.ui.feature.episodeDetails.component.EpisodeHeaderWithDetailsCard
 import com.baghdad.ui.feature.episodeDetails.component.guestsOfHonorItems
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
@@ -46,6 +51,8 @@ import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenEffect
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenState
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.shared.BottomSheetType
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun EpisodeDetailsScreen(
@@ -102,6 +109,14 @@ fun EpisodeDetailsContent(
         }
     }
 
+    val systemUiController = rememberSystemUiController()
+    LaunchedEffect(Unit) {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+    }
+
     Scaffold(
         modifier =
             Modifier
@@ -112,29 +127,52 @@ fun EpisodeDetailsContent(
         bottomBar = {
             DetailsScreenBottomBar(
                 isRated = state.isRated,
-                onRateClicked = listener::onRateEpisodeClick,
+                onRateClicked = listener::onClickStarButton,
                 hasTrailer = state.episode.trailerUrl.isNotBlank(),
                 isLoading = state.isEpisodeDetailsLoading,
                 onPlayTrailerClicked = listener::onPlayTrailerClick,
             )
         },
-        snackbar = {
+        snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
+                position = position,
             )
         },
-    ) {
+        backgroundBlur = {
+            BackgroundBlur()
+        },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        ) {
+
+        RatingBottomSheet(
+            isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
+            onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+            rate = state.episode.userRating,
+            isButtonEnabled = state.episode.userRating != 0,
+            onRateChanged = { listener.onRatingChanged(it) },
+            onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating) }
+        )
+
+
+        LoginRequiredSheet(
+            isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
+            onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+            onLoginClick = { listener.onClickLoginButton() },
+            title = stringResource(R.string.rate_it),
+            description = stringResource(R.string.please_login_to_rate)
+        )
+
         LazyColumn(
             state = listState,
             contentPadding = PaddingValues(bottom = 72.dp),
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .background(Theme.color.surface),
+                    .fillMaxSize(),
         ) {
             item {
                 EpisodeHeaderWithDetailsCard(

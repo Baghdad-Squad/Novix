@@ -2,6 +2,7 @@ package com.baghdad.repository.datasource.remote
 
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.repository.model.MediaAccountStateDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
@@ -27,4 +28,17 @@ interface RemoteTvShowDataSource {
     suspend fun getPopularTvShows(): List<TvShowDto>
 
     suspend fun getTrendingTvShows(page: Int): PagedResultDto<TvShowDto>
+
+    suspend fun addTvShowRate(tvShowId: Long, rating: Int, sessionId: String)
+
+    suspend fun getTvShowAccountStates(tvShowId: Long, sessionId: String): MediaAccountStateDto
+    suspend fun getUserRatedTvShows(
+        accountId: Long, sessionId: String,
+        page: Int
+    ): PagedResultDto<TvShowDto>
+
+    suspend fun deleteTvShowRate(
+        tvShowId: Long,
+        sessionId: String
+    )
 }
