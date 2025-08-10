@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -121,8 +120,7 @@ fun EpisodeDetailsContent(
         modifier =
             Modifier
                 .background(Theme.color.surface)
-                .fillMaxSize()
-                .navigationBarsPadding(),
+                .fillMaxSize(),
         isLoading = state.isLoading,
         bottomBar = {
             DetailsScreenBottomBar(
@@ -147,7 +145,7 @@ fun EpisodeDetailsContent(
             BackgroundBlur()
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        ) {
+    ) {
 
         RatingBottomSheet(
             isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
