@@ -17,7 +17,7 @@ class EpisodeDetailsScreenStateTest {
         assertThat(state.guestsOfHonor).isEmpty()
         assertThat(state.isOverviewExpanded).isFalse()
         assertThat(state.isSavedToList).isFalse()
-        assertThat(state.isRated).isFalse()
+        assertThat(state.isRated).isTrue()
         assertThat(state.addToListBottomSheetState.isVisible).isFalse()
         assertThat(state.rateEpisodeBottomSheetState.isVisible).isFalse()
         assertThat(state.isLoading).isFalse()
@@ -82,7 +82,7 @@ class EpisodeDetailsScreenStateTest {
         assertThat(episodeUiState.id).isEqualTo(0L)
         assertThat(episodeUiState.title).isEmpty()
         assertThat(episodeUiState.episodeNumber).isEqualTo(0)
-        assertThat(episodeUiState.rating).isEqualTo(0.0)
+        assertThat(episodeUiState.rating).isEqualTo(0)
         assertThat(episodeUiState.trailerUrl).isEmpty()
         assertThat(episodeUiState.duration).isEmpty()
         assertThat(episodeUiState.releasedDate).isEmpty()
@@ -350,7 +350,7 @@ class EpisodeDetailsScreenStateTest {
         const val EPISODE_ID = 123L
         const val EPISODE_TITLE = "Test Episode"
         const val EPISODE_NUMBER = 1
-        const val RATING = 8.5
+        const val RATING = 8
         const val DURATION = "45m"
         const val RELEASE_DATE = "2023-01-01"
         const val CURRENT_SEASON = 1

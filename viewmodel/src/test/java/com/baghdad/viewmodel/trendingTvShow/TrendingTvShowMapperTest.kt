@@ -56,7 +56,7 @@ class TrendingTvShowMappersTest {
             title = "No Poster Show",
             genres = emptyList(),
             averageRating = 5.0,
-            userRating = 4.0,
+            userRating = 4,
             releaseDate = LocalDate.parse("2022-01-01"),
             overview = "",
             posterImageURL = "",

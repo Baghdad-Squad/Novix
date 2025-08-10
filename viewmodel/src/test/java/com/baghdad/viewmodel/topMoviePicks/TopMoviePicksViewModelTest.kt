@@ -3,6 +3,10 @@ package com.baghdad.viewmodel.topMoviePicks
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
+import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
+import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -17,13 +21,17 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TopMoviePicksViewModelTest {
     private lateinit var getActorMoviesUseCase: GetActorMoviesUseCase
+    private lateinit var createSavedListUseCase: CreateSavedListUseCase
+    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
+    private lateinit var addMovieToSavedListUseCase: AddMovieToSavedListUseCase
+    private lateinit var removeMovieFromListUseCase: AddMovieToSavedListUseCase
+    private lateinit var getSavedListsUseCase: GetSavedListsUseCase
     private lateinit var topMoviePicksViewModel: TopMoviePicksViewModel
     private val actorId = 123L
     private val movieId = 1L
@@ -33,15 +41,29 @@ class TopMoviePicksViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         getActorMoviesUseCase = mockk(relaxed = true)
+        createSavedListUseCase = mockk(relaxed = true)
+        isUserLoggedInUseCase = mockk(relaxed = true)
+        addMovieToSavedListUseCase = mockk(relaxed = true)
+        removeMovieFromListUseCase = mockk(relaxed = true)
+        getSavedListsUseCase = mockk(relaxed = true)
+
         coEvery { getActorMoviesUseCase(actorId) } returns mockedMovies()
 
-        topMoviePicksViewModel =
-            TopMoviePicksViewModel(savedStateHandle, getActorMoviesUseCase, testDispatcher)
+        topMoviePicksViewModel = TopMoviePicksViewModel(
+            savedStateHandle = savedStateHandle,
+            getActorMoviesUseCase = getActorMoviesUseCase,
+            createSavedListUseCase = createSavedListUseCase,
+            ioDispatcher = testDispatcher,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
+            addMovieToSavedListUseCase = addMovieToSavedListUseCase,
+            removeMovieFromListUseCase = removeMovieFromListUseCase,
+            getSavedListsUseCase = getSavedListsUseCase,
+            defaultDispatcher = testDispatcher
+        )
     }
 
-
     @Test
-    fun `onMovieDetailsClick should Navigate To MovieDetails when clicked`() = runTest {
+    fun `onMovieDetailsClicked should Navigate To MovieDetails when clicked`() = runTest {
         // Given
         var receivedEffect: TopMoviePicksEffect? = null
         val job = launch {
@@ -50,7 +72,7 @@ class TopMoviePicksViewModelTest {
             }
         }
         // When
-        topMoviePicksViewModel.onMovieDetailsClick(movieId)
+        topMoviePicksViewModel.onMovieDetailsClicked(movieId)
         advanceUntilIdle()
         // Then
         assertThat(receivedEffect is TopMoviePicksEffect.NavigateToMovieDetails).isTrue()
@@ -59,21 +81,25 @@ class TopMoviePicksViewModelTest {
     }
 
     @Test
-    fun `onSaveMovieClick should toggle isSaved state for specific movie when clicked`() = runTest {
+    fun `onSaveMovieClicked should open bottom sheet when movie is not saved`() = runTest {
         // Given
         val initialState = topMoviePicksViewModel.uiState.value
-        val initialMovie = initialState.movies.find { it.id == movieId }
-        assertTrue(false == initialMovie?.isSaved)
+        val movie = initialState.movies.find { it.id == movieId }!!
+        assertThat(movie.isSaved).isFalse()
+
         // When
-        topMoviePicksViewModel.onSaveMovieClick(movieId)
+        topMoviePicksViewModel.onSaveMovieClicked(movie)
+        advanceUntilIdle()
+
         // Then
         val updatedState = topMoviePicksViewModel.uiState.value
-        val updatedMovie = updatedState.movies.find { it.id == movieId }
-        assertThat(updatedMovie?.isSaved == true).isTrue()
+        assertThat(updatedState.addToListBottomSheetState.isVisible).isTrue()
+        assertThat(updatedState.addToListBottomSheetState.selectedItemId).isEqualTo(movieId)
     }
 
+
     @Test
-    fun `onBackClick should Navigate Back when clicked`() = runTest {
+    fun `onBackClicked should Navigate Back when clicked`() = runTest {
         // Given
         var receivedEffect: TopMoviePicksEffect? = null
         val job = launch {
@@ -82,7 +108,7 @@ class TopMoviePicksViewModelTest {
             }
         }
         // When
-        topMoviePicksViewModel.onBackClick()
+        topMoviePicksViewModel.onBackClicked()
         advanceUntilIdle()
         // Then
         assertThat(receivedEffect is TopMoviePicksEffect.NavigateBack).isTrue()
@@ -90,7 +116,7 @@ class TopMoviePicksViewModelTest {
     }
 
     @Test
-    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() =
+    fun `onSnackBarActionLabelClicked should show no internet snackBar when NoInternetException is thrown`() =
         runTest {
             // Given
             coEvery { getActorMoviesUseCase(actorId) } throws NoInternetException()
@@ -103,7 +129,7 @@ class TopMoviePicksViewModelTest {
             }
 
             // When
-            topMoviePicksViewModel.onSnackBarActionLabelClick()
+            topMoviePicksViewModel.onSnackBarActionLabelClicked()
             advanceUntilIdle()
             job.cancel()
 
@@ -111,13 +137,13 @@ class TopMoviePicksViewModelTest {
             assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
         }
 
-
     companion object {
         private val savedStateHandle = SavedStateHandle(
             mapOf(
                 "actorId" to 123L,
             )
         )
+
         private fun mockedMovies(): List<Movie> = listOf(
             Movie(
                 id = 1L,

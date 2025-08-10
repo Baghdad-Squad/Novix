@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.home
 
 import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
@@ -44,7 +45,7 @@ object FakeHomeScreenData {
         title = "test",
         genres = genres,
         averageRating = 1.0,
-        userRating = 1.0,
+        userRating = 1,
         releaseDate = LocalDate(2002, 2, 22),
         overview = "test",
         posterImageURL = "test",
@@ -52,7 +53,6 @@ object FakeHomeScreenData {
         headerImagesURLs = listOf("test"),
         numberOfSeasons = 5,
     )
-
 
     val movies = listOf(
         movie,
@@ -64,6 +64,14 @@ object FakeHomeScreenData {
         movie.copy(id = 7, title = "test7"),
         movie.copy(id = 8, title = "test8")
     )
+
+    val savableMovies = movies.map {
+        SavableMovie(
+            movie = it,
+            isSaved = false,
+            listId = null
+        )
+    }
 
     val tvShows = listOf(
         tvShow,
@@ -117,8 +125,16 @@ object FakeHomeScreenData {
     )
 
     val continueWatchingItemsUiState = listOf(
-        ContinueWatchingItemUiState(id = 5, imageUrl = "url5", isSaved = true),
-        ContinueWatchingItemUiState(id = 6, imageUrl = "url6", isSaved = false)
+        ContinueWatchingItemUiState(
+            id = 5,
+            imageUrl = "url5",
+            contentType = ContinueWatchingItemUiState.ContentType.MOVIE
+        ),
+        ContinueWatchingItemUiState(
+            id = 6,
+            imageUrl = "url6",
+            contentType = ContinueWatchingItemUiState.ContentType.TV_SHOW
+        )
     )
 
     val upcomingGenres = listOf(
