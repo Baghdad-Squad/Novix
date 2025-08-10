@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -113,6 +114,7 @@ private fun TopRatingContent(
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
+            .systemBarsPadding()
             .statusBarsPadding(),
         isLoading = uiState.isLoading,
         topBar = {
@@ -258,7 +260,7 @@ private fun TopRatingContent(
             onCreateNewListClick = listener::onCreateNewListClick,
             onLoginClick = listener::onLoginClick,
             onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
-            lists = savedLists,
+            lists = savedLists ,
             selectedListId = uiState.addToListBottomSheetState.selectedListId,
             onListSelected = listener::onListSelected,
         )
