@@ -59,22 +59,22 @@ fun MainScreen(
         Scaffold(
             modifier = modifier
                 .background(Theme.color.surface)
-                .fillMaxSize(), bottomBar = {
+                .fillMaxSize()
+                .navigationBarsPadding(), bottomBar = {
                 AnimatedVisibility(
                     visible = isMainGraphRoute,
                     enter = bottomSheetEnterAnimation,
                     exit = bottomSheetExitAnimation
                 ) {
-                    if (!isKeyboardOpen())
-                        NovixBottomNavigationBar(
-                            items = BOTTOM_NAV_ITEMS.values.toList(), onClick = { index ->
-                                if (index != selectedIndex) {
-                                    val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
-                                    navController.navigateToBottomNavDestination(targetGraph)
-                                }
-                            }, selectedIconIndex = selectedIndex,
-                            modifier = Modifier.navigationBarsPadding()
-                        )
+                    if(!isKeyboardOpen())
+                    NovixBottomNavigationBar(
+                        items = BOTTOM_NAV_ITEMS.values.toList(), onClick = { index ->
+                            if (index != selectedIndex) {
+                                val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
+                                navController.navigateToBottomNavDestination(targetGraph)
+                            }
+                        }, selectedIconIndex = selectedIndex
+                    )
                 }
             }) {
             NovixNavHost(

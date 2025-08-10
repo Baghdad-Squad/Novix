@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -202,7 +203,8 @@ private fun MovieDetailsContent(
 
     Scaffold(
         modifier = Modifier
-            .background(Theme.color.surface),
+            .background(Theme.color.surface)
+            .navigationBarsPadding(),
         isLoading = state.isLoading,
         bottomBar = {
             DetailsScreenBottomBar(
@@ -227,21 +229,23 @@ private fun MovieDetailsContent(
             BackgroundBlur()
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-    ) {
+        ) {
 
         Box(
             modifier = modifier
                 .background(Theme.color.surface.copy(backgroundAlpha))
                 .fillMaxSize()
+                .navigationBarsPadding()
+
         ) {
 
             RatingBottomSheet(
                 isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                rate = state.userRating,
+                rate = state.userRating ,
                 onRateChanged = { listener.onRatingChanged(it) },
                 isButtonEnabled = state.userRating != 0,
-                onSubmitClick = { listener.onClickSubmitRating(state.userRating) }
+                onSubmitClick = { listener.onClickSubmitRating(state.userRating ) }
             )
 
             LoginRequiredSheet(

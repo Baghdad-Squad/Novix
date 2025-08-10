@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -56,7 +58,7 @@ import com.baghdad.viewmodel.shared.SavedListUiState
 fun ContinueWatchingScreen(
     viewModel: ContinueWatchingViewModel = hiltViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit,
-) {
+    ) {
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
@@ -114,6 +116,7 @@ fun ContinueWatchingContent(
     Scaffold(
         modifier = modifier
             .background(Theme.color.surface)
+            .systemBarsPadding()
             .statusBarsPadding(),
         topBar = {
             TopAppBar(
@@ -147,6 +150,7 @@ fun ContinueWatchingContent(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
+                .navigationBarsPadding()
         ) {
             val borderColor = Theme.color.stroke
             Box(
