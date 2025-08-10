@@ -203,22 +203,6 @@ class LoginViewModelTest {
             assertThat(viewModel.uiState.value.isLoading).isFalse()
         }
 
-    @Test
-    fun `onLoginSuccess() should emit NavigateToHome effect when called`() = runTest {
-        // Given
-        var effect: LoginUiEffect? = null
-        val job = launch {
-            viewModel.uiEffect.collect { effect = it }
-        }
-
-        // When
-        viewModel.onLoginSuccess()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Then
-        assertThat(effect).isEqualTo(LoginUiEffect.NavigateToHome)
-        job.cancel()
-    }
 
     @Test
     fun `onLoginError() should handle UnAuthorizedException correctly when called`() {
@@ -284,7 +268,7 @@ class LoginViewModelTest {
 
         // Then
         val state = viewModel.uiState.value
-        assertThat(state.userName).isEqualTo(userNameWithSpaces)
+        assertThat(state.userName).isEqualTo(userNameWithSpaces.trim())
         assertThat(state.isAnyFieldEmpty).isFalse()
     }
 

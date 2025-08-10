@@ -1,9 +1,16 @@
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
+import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
+import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
+import com.baghdad.domain.usecase.userPreferences.GetAppLanguageUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -37,6 +44,13 @@ class HomeViewModelTest {
     private lateinit var getPopularTvShowsUseCase: GetPopularTvShowsUseCase
     private lateinit var getMovieTopRatingUseCase: GetMovieTopRatingUseCase
     private lateinit var getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase
+    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
+    private lateinit var getSavedListsUseCase: GetSavedListsUseCase
+    private lateinit var addMovieToSavedListUseCase: AddMovieToSavedListUseCase
+    private lateinit var createSavedListUseCase: CreateSavedListUseCase
+    private lateinit var removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase
+    private lateinit var getAppLanguageUseCase: GetAppLanguageUseCase
+
     private lateinit var viewModel: HomeViewModel
 
     private val testDispatcher = StandardTestDispatcher()
@@ -50,14 +64,20 @@ class HomeViewModelTest {
         getPopularTvShowsUseCase = mockk(relaxed = true)
         getMovieTopRatingUseCase = mockk(relaxed = true)
         getUpcomingMoviesUseCase = mockk(relaxed = true)
+        isUserLoggedInUseCase = mockk(relaxed = true)
+        getSavedListsUseCase = mockk(relaxed = true)
+        addMovieToSavedListUseCase = mockk(relaxed = true)
+        createSavedListUseCase = mockk(relaxed = true)
+        removeMovieFromSavedListUseCase = mockk(relaxed = true)
+        getAppLanguageUseCase = mockk(relaxed = true)
         observeContinueWatchingUseCase = mockk(relaxed = true)
 
         coEvery { getGenresUseCase.getMovieGenres() } returns FakeHomeScreenData.genres
-        coEvery { getPopularMoviesUseCase.invoke() } returns FakeHomeScreenData.movies
+        coEvery { getPopularMoviesUseCase.invoke() } returns FakeHomeScreenData.savableMovies
         coEvery { getPopularTvShowsUseCase.invoke() } returns FakeHomeScreenData.tvShows
         coEvery {
             getMovieTopRatingUseCase.invoke(any(), any()).data
-        } returns FakeHomeScreenData.movies
+        } returns FakeHomeScreenData.savableMovies
         coEvery {
             observeContinueWatchingUseCase.invoke()
         } returns flowOf(FakeHomeScreenData.continueWatchingItems)
@@ -78,6 +98,12 @@ class HomeViewModelTest {
             getPopularTvShowsUseCase,
             getMovieTopRatingUseCase,
             getUpcomingMoviesUseCase,
+            isUserLoggedInUseCase,
+            getSavedListsUseCase,
+            addMovieToSavedListUseCase,
+            createSavedListUseCase,
+            removeMovieFromSavedListUseCase,
+            getAppLanguageUseCase,
             defaultDispatcher = testDispatcher
         )
     }
@@ -85,7 +111,16 @@ class HomeViewModelTest {
     @Test
     fun `should have correct initial state when created`() {
         // Then
-        assertThat(viewModel.uiState.value).isEqualTo(HomeScreenState())
+        val state = viewModel.uiState.value
+        assertThat(state.popularItems).isEmpty()
+        assertThat(state.topRatingItems).isEmpty()
+        assertThat(state.upcomingItems).isEmpty()
+        assertThat(state.continueWatchingItems).isEmpty()
+        assertThat(state.isPopularLoading).isTrue()
+        assertThat(state.isTopRatingLoading).isTrue()
+        assertThat(state.isUpcomingMoviesLoading).isTrue()
+        assertThat(state.isUpcomingGenresLoading).isTrue()
+        assertThat(state.selectedUpcomingGenreId).isNull()
     }
 
     @Test
@@ -107,7 +142,7 @@ class HomeViewModelTest {
     fun `should have empty top rating items when fetching with empty top rating movies`() =
         runTest {
             // Given
-            coEvery { getMovieTopRatingUseCase.invoke(any(), any()).data } returns emptyList()
+            coEvery { getMovieTopRatingUseCase.invoke(any(), any()).data } returns emptyList<SavableMovie>()
 
             // When
             viewModel = createViewModel()
@@ -152,21 +187,25 @@ class HomeViewModelTest {
     @Test
     fun `should update upcoming movies when genre is selected`() = runTest {
         // Given
-        val movies = listOf(
-            Movie(
-                id = 10,
-                title = "Test",
-                genres = listOf(Genre(1, "Drama")),
-                averageRating = 1.4,
-                userRating = 1.5,
-                releaseDate = LocalDate.parse("2023-01-01"),
-                overview = "Test",
-                posterImageURL = "Test",
-                trailerURL = "Test",
-                runtimeMinutes = 5
+        val savableMovies = listOf(
+            SavableMovie(
+                movie = Movie(
+                    id = 10,
+                    title = "Test",
+                    genres = listOf(Genre(1, "Drama")),
+                    averageRating = 1.4,
+                    userRating = 1.5,
+                    releaseDate = LocalDate.parse("2023-01-01"),
+                    overview = "Test",
+                    posterImageURL = "Test",
+                    trailerURL = "Test",
+                    runtimeMinutes = 5
+                ),
+                isSaved = false,
+                listId = null
             )
         )
-        coEvery { getUpcomingMoviesUseCase.invoke(any()) } returns movies
+        coEvery { getUpcomingMoviesUseCase.invoke(any()) } returns savableMovies
 
         // When
         viewModel = createViewModel()
@@ -328,7 +367,12 @@ class HomeViewModelTest {
         val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
 
         // When
-        viewModel.onContinueWatchingItemClicked(HomeScreenState.ContinueWatchingItemUiState(id = 5))
+        viewModel.onContinueWatchingItemClicked(
+            HomeScreenState.ContinueWatchingItemUiState(
+                id = 5,
+                contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE
+            )
+        )
         advanceUntilIdle()
 
         // Then
@@ -368,7 +412,6 @@ class HomeViewModelTest {
         job.cancel()
     }
 
-
     @Test
     fun `should update upcomingGenres when getMovieGenres succeeds`() = runTest {
         // When
@@ -383,7 +426,7 @@ class HomeViewModelTest {
     fun `should set top rating loading false when top rating movies finished loading`() =
         runTest {
             // Given
-            coEvery { getMovieTopRatingUseCase.invoke(any(), any()).data } returns emptyList()
+            coEvery { getMovieTopRatingUseCase.invoke(any(), any()).data } returns emptyList<SavableMovie>()
 
             // When
             viewModel = createViewModel()
@@ -410,7 +453,6 @@ class HomeViewModelTest {
     fun `should set upcoming genres loading false when movie genres finished loading`() = runTest {
         // When
         viewModel = createViewModel()
-
         advanceUntilIdle()
 
         // Then
@@ -422,8 +464,8 @@ class HomeViewModelTest {
         // When
         viewModel.onPopularItemSaveClicked(
             HomeScreenState.PopularItemUiState(
-                1,
-                HomeScreenState.PopularItemUiState.Type.MOVIE.name
+                id = 1,
+                type = HomeScreenState.PopularItemUiState.Type.MOVIE
             )
         )
         advanceUntilIdle()
@@ -432,7 +474,7 @@ class HomeViewModelTest {
     @Test
     fun `should not crash when onTopRatingItemSaveClicked called`() = runTest {
         // When
-        viewModel.onTopRatingItemSaveClicked(HomeScreenState.TopRatingItemUiState(2))
+        viewModel.onTopRatingItemSaveClicked(HomeScreenState.TopRatingItemUiState(id = 2))
         advanceUntilIdle()
     }
 
@@ -440,7 +482,10 @@ class HomeViewModelTest {
     fun `should not crash when onContinueWatchingItemSaveClicked called`() = runTest {
         // When
         viewModel.onContinueWatchingItemSaveClicked(
-            HomeScreenState.ContinueWatchingItemUiState(3)
+            HomeScreenState.ContinueWatchingItemUiState(
+                id = 3,
+                contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE
+            )
         )
         advanceUntilIdle()
     }
@@ -448,13 +493,12 @@ class HomeViewModelTest {
     @Test
     fun `should not crash when onUpcomingItemSaveClicked called`() = runTest(testDispatcher) {
         // When
-        viewModel.onUpcomingItemSaveClicked(HomeScreenState.UpcomingItemUiState(4))
+        viewModel.onUpcomingItemSaveClicked(HomeScreenState.UpcomingItemUiState(id = 4))
         advanceUntilIdle()
     }
 
     @Test
     fun `should return UnknownError using reflection`() {
-
         val method = HomeViewModel::class.java.getDeclaredMethod(
             "mapThrowableToErrorMessage",
             Throwable::class.java

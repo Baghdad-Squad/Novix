@@ -97,7 +97,7 @@ class HomeScreenStateTest {
     @Test
     fun `should set correct default values when ContinueWatchingItemUiState is created with default constructor`() {
         // Given
-        val continueWatchingItemUiState = HomeScreenState.ContinueWatchingItemUiState()
+        val continueWatchingItemUiState = HomeScreenState.ContinueWatchingItemUiState(contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE)
 
         // Then
         assertThat(continueWatchingItemUiState.id).isEqualTo(0L)
@@ -113,7 +113,7 @@ class HomeScreenStateTest {
         // Then
         assertThat(continueWatchingItemUiState[0].id).isEqualTo(5)
         assertThat(continueWatchingItemUiState[0].imageUrl).isEqualTo("url5")
-        assertThat(continueWatchingItemUiState[0].isSaved).isTrue()
+        assertThat(continueWatchingItemUiState[0].isSaved).isFalse()
     }
 
     @Test

@@ -135,7 +135,7 @@ class ActorDetailsScreenMapperTest {
             title = "Test TV Show",
             genres = listOf(Genre(654L, "Comedy")),
             averageRating = 7.9,
-            userRating = 8.1,
+            userRating = 8,
             releaseDate = LocalDate.parse("2023-01-01"),
             overview = "Test overview for TV Show",
             posterImageURL = "/tv_poster.jpg",

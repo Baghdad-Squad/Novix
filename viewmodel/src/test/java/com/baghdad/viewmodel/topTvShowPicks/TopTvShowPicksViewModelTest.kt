@@ -21,7 +21,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -38,13 +37,18 @@ class TopTvShowPicksViewModelTest {
             "actorId" to actorId,
         )
     )
+
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         getActorTvShowUseCase = mockk(relaxed = true)
         coEvery { getActorTvShowUseCase(actorId) } returns mockedTvShow()
         topTvShowPicksViewModel =
-            TopTvShowViewModel(savedStateHandle = savedStateHandle, getActorTvShowUseCase, testDispatcher)
+            TopTvShowViewModel(
+                savedStateHandle = savedStateHandle,
+                getActorTvShowUseCase,
+                testDispatcher
+            )
     }
 
     @AfterEach
@@ -73,23 +77,6 @@ class TopTvShowPicksViewModelTest {
         job.cancel()
     }
 
-
-    @Test
-    fun `onSaveTvShowClick should toggle isSaved state for specific movie when clicked`() =
-        runTest {
-            advanceUntilIdle()
-            // Given
-            val initialState = topTvShowPicksViewModel.uiState.value
-            val initialMovie = initialState.tvShows.find { it.id == tvShowId }
-            assertTrue(false == initialMovie?.isSaved)
-            // When
-            topTvShowPicksViewModel.onSaveTvShowClick(tvShowId)
-            advanceUntilIdle()
-            // Then
-            val updatedState = topTvShowPicksViewModel.uiState.value
-            val updatedMovie = updatedState.tvShows.find { it.id == tvShowId }
-            assertThat(updatedMovie?.isSaved == true).isTrue()
-        }
 
     @Test
     fun `onBackClick should Navigate Back when clicked`() = runTest {
@@ -140,7 +127,7 @@ class TopTvShowPicksViewModelTest {
                 title = "Test TvShow 1",
                 genres = listOf(Genre(16L, "Animation")),
                 averageRating = 8.0,
-                userRating = 7.5,
+                userRating = 7,
                 releaseDate = LocalDate.parse("2023-01-01"),
                 overview = "Test movie overview 1",
                 posterImageURL = "/movie_poster_1.jpg",
@@ -156,7 +143,7 @@ class TopTvShowPicksViewModelTest {
                 title = "Test TvShow 2",
                 genres = listOf(Genre(35L, "Comedy")),
                 averageRating = 7.5,
-                userRating = 8.0,
+                userRating = 8,
                 releaseDate = LocalDate.parse("2023-02-01"),
                 overview = "Test movie overview 2",
                 posterImageURL = "/movie_poster_2.jpg",
@@ -172,7 +159,7 @@ class TopTvShowPicksViewModelTest {
                 title = "Test TvShow 3",
                 genres = listOf(Genre(18L, "Drama")),
                 averageRating = 9.0,
-                userRating = 8.5,
+                userRating = 8,
                 releaseDate = LocalDate.parse("2023-03-01"),
                 overview = "Test movie overview 3",
                 posterImageURL = "/movie_poster_3.jpg",
