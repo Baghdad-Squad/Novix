@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.search
 
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -14,18 +15,18 @@ import org.junit.jupiter.api.Test
 class SearchMapperTest {
     @Test
     fun `should map Movie to MovieUiState when toMovieUI is called`() {
-        val ui = MOVIE.toMovieUI()
+        val ui = SAVABLE_MOVIE.toMovieUI()
 
-        assertThat(ui.id).isEqualTo(1L)
-        assertThat(ui.posterPictureURL).isEqualTo("https://example.com/posters/echoes.jpg")
+        assertThat(ui.id).isEqualTo(SAVABLE_MOVIE.movie.id)
+        assertThat(ui.posterPictureURL).isEqualTo(SAVABLE_MOVIE.movie.posterImageURL)
     }
 
     @Test
     fun `should map TvShow to TvShowUiState when toTvShowUI is called`() {
         val ui = TV_SHOW.toTvShowUI()
 
-        assertThat(ui.id).isEqualTo(1L)
-        assertThat(ui.posterPictureURL).isEqualTo("https://example.com/posters/avalon.jpg")
+        assertThat(ui.id).isEqualTo(TV_SHOW.id)
+        assertThat(ui.posterPictureURL).isEqualTo(TV_SHOW.posterImageURL)
     }
 
     @Test
@@ -33,18 +34,18 @@ class SearchMapperTest {
         val ui = ACTOR.toActorUI()
 
         assertThat(ui.id).isEqualTo(1L)
-        assertThat(ui.name).isEqualTo("Layla Nasr")
+        assertThat(ui.name).isEqualTo(ACTOR.name)
         assertThat(ui.profilePictureURL)
-            .isEqualTo("https://example.com/profiles/layla_nasr.jpg")
+            .isEqualTo(ACTOR.profilePictureURL)
     }
 
     @Test
     fun `should map RecentlyViewed to RecentlyViewedUiState when toRecentlyViewedUI is called`() {
         val ui = RECENTLY_VIEWED.toRecentlyViewedUI()
 
-        assertThat(ui.id).isEqualTo(1L)
+        assertThat(ui.id).isEqualTo(RECENTLY_VIEWED.listId)
         assertThat(ui.posterPictureURL)
-            .isEqualTo("https://example.com/images/echoes_of_eternity.jpg")
+            .isEqualTo(RECENTLY_VIEWED.contentImageUrl)
         assertThat(ui.contentType).isEqualTo(RecentlyViewed.ContentType.MOVIE)
     }
 
@@ -52,29 +53,35 @@ class SearchMapperTest {
     fun `should map RecentSearch to RecentSearchUiState correctly`() {
         val result = RECENT_SEARCH.toRecentSearchUI()
 
-        assertThat(result.id).isEqualTo(1L)
-        assertThat(result.query).isEqualTo("kotlin")
+        assertThat(result.id).isEqualTo(RECENT_SEARCH.id)
+        assertThat(result.query).isEqualTo(RECENT_SEARCH.query)
     }
 
     companion object {
-        private val MOVIE = Movie(
-            id = 1L,
-            title = "Echoes of Eternity",
-            genres = listOf(Genre(1L, "Fantasy"), Genre(2L, "Adventure")),
-            averageRating = 8.3,
-            userRating = 8.0,
-            releaseDate = LocalDate.Companion.parse("2022-05-10"),
-            overview = "In a world where dreams shape reality, a rogue dreamweaver fights to restore balance.",
-            posterImageURL = "https://example.com/posters/echoes.jpg",
-            trailerURL = "https://example.com/trailers/echoes.mp4",
-            runtimeMinutes = 132
+
+        val MOVIE = Movie(
+            id = 42L,
+            title = "Test Title",
+            genres = listOf(Genre(1L, "Drama")),
+            averageRating = 7.5,
+            userRating = 7.0,
+            releaseDate = LocalDate.parse("2023-01-01"),
+            overview = "Test overview",
+            posterImageURL = "https://example.com/poster.jpg",
+            trailerURL = "https://example.com/trailer.mp4",
+            runtimeMinutes = 120
+        )
+        val SAVABLE_MOVIE = SavableMovie(
+            movie = MOVIE,
+            isSaved = true,
+            listId = 99L
         )
         private val TV_SHOW = TvShow(
             id = 1L,
             title = "Chronicles of Avalon",
             genres = listOf(Genre(1L, "Fantasy"), Genre(2L, "Mystery")),
             averageRating = 9.1,
-            userRating = 8.8,
+            userRating = 8,
             releaseDate = LocalDate(year = 2022, month = 9, day = 22),
             overview = "In a land where ancient magic awakens once more, a young oracle must choose between destiny and freedom.",
             posterImageURL = "https://example.com/posters/avalon.jpg",
@@ -99,7 +106,6 @@ class SearchMapperTest {
             ),
             department = "Acting"
         )
-
         private val RECENTLY_VIEWED = RecentlyViewed(
             contentId = 1L,
             contentImageUrl = "https://example.com/images/echoes_of_eternity.jpg",
@@ -112,7 +118,9 @@ class SearchMapperTest {
                 minute = 15,
                 second = 0,
                 nanosecond = 0
-            )
+            ),
+            isSaved = false,
+            listId = 1L
         )
         private val RECENT_SEARCH = RecentSearch(
             id = 1L,
