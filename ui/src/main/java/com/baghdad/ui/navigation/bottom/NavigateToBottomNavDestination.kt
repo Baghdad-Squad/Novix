@@ -1,15 +1,17 @@
 package com.baghdad.ui.navigation.bottom
 
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.baghdad.ui.navigation.route.Graph
+import com.baghdad.ui.navigation.route.HomeRoute
 
 fun NavController.navigateToBottomNavDestination(newGraph: Graph) {
+    val isNavigatingToHome = newGraph == Graph.HomeGraph
     navigate(newGraph) {
-        popUpTo(graph.findStartDestination().id) {
+        popUpTo(HomeRoute.HomeScreen) {
             saveState = true
+            inclusive = false
         }
         launchSingleTop = true
-        restoreState = true
+        restoreState = isNavigatingToHome
     }
 }
