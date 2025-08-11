@@ -33,13 +33,11 @@ interface RemoteEpisodeDataSource {
         tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
-        sessionId: String,
         rating: Int
     )
     suspend fun getEpisodeAccountStates(
         tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
-        sessionId: String,
     ): MediaAccountStateDto
 }

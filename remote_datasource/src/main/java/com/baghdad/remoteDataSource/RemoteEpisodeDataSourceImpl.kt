@@ -99,7 +99,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
         tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
-        sessionId: String,
         rating: Int
     ) {
         handleRequest<RatingResponse>(
@@ -108,7 +107,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                     seriesId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    sessionId = sessionId,
                     rating = RatingRequest(rating)
                 )
             },
@@ -120,7 +118,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
         tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
-        sessionId: String,
     ): MediaAccountStateDto {
         return handleRequest<MediaAccountStatesResponse>(
             apiCall = {
@@ -128,7 +125,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                     seriesId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    sessionId = sessionId
                 )
             },
             logger = logger
