@@ -1,12 +1,16 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.MovieApiService
+import com.baghdad.remoteDataSource.mapper.actor.toCastMembers
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
+import com.baghdad.remoteDataSource.mapper.movie.toImageUrl
+import com.baghdad.remoteDataSource.mapper.movie.toMovieDto
 import com.baghdad.remoteDataSource.mapper.movie.toMovieDtos
 import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
 import com.baghdad.remoteDataSource.mapper.toDto
+import com.baghdad.remoteDataSource.mapper.toReviewDto
 import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
 import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
@@ -47,7 +51,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         return handleRequest<SimilarMovieResponse>(
             apiCall = { movieApiService.getSimilarMovies(movieId) },
             logger = logger,
-        ).results?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+        ).toMovieDto()
     }
 
     override suspend fun getMovieDetails(movieId: Long): MovieDto {
@@ -61,7 +65,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         return handleRequest<CastMembersResponse>(
             apiCall = { movieApiService.getMovieCastMembers(movieId) },
             logger = logger,
-        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+        ).toCastMembers()
     }
 
     override suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto> {
@@ -84,14 +88,14 @@ class RemoteMovieDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        ).results.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
+        ).toReviewDto()
     }
 
     override suspend fun getMovieImages(movieId: Long): List<String> {
         return handleRequest<MovieImageResponse>(
             apiCall = { movieApiService.getMovieImages(movieId) },
             logger = logger,
-        ).backdrops?.map { "https://image.tmdb.org/t/p/w500" + it.filePath.orEmpty() }.orEmpty()
+        ).toImageUrl()
     }
 
     override suspend fun getMovieTrailer(movieId: Long): String {
@@ -104,8 +108,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
     override suspend fun getTopRatedMovies(
         page: Int,
     ): PagedResultDto<MovieDto> {
-        val response =
-            handleRequest<DiscoverMovieResponse>(
+        return handleRequest<DiscoverMovieResponse>(
                 apiCall = {
                 movieApiService.getTopRatedMovies(
                     page = page,
@@ -114,8 +117,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        )
-        return response.toPagedMovieDtos()
+        ).toPagedMovieDtos()
     }
 
 
@@ -136,7 +138,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
 
         val minimumReleaseDate = today.toString()
         val maximumReleaseDate = thirtyDaysLater.toString()
-        val response = handleRequest<DiscoverMovieResponse>(
+        return handleRequest<DiscoverMovieResponse>(
             apiCall = {
                 movieApiService.getUpcomingMovies(
                     genres = genreId?.toString() ?: "",
@@ -145,18 +147,16 @@ class RemoteMovieDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        )
-        return response.toMovieDtos()
+        ).toMovieDtos()
     }
 
     override suspend fun getPopularMovies(): List<MovieDto> {
-        val response = handleRequest<PopularMoviesResponse>(
+        return handleRequest<PopularMoviesResponse>(
             apiCall = {
                 movieApiService.getPopularMovies()
             },
             logger = logger,
-        )
-        return response.toMovieDtos()
+        ).toMovieDtos()
     }
 
     override suspend fun addMovieRate(movieId: Long, rating: Int, sessionId: String) {

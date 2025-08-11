@@ -34,3 +34,7 @@ fun SimilarMovieResponse.MovieResult.toDto(genreIds: List<Long>? = null): MovieD
         runtimeMinutes = 0,
         trailerURL = "",
     )
+
+fun SimilarMovieResponse.toMovieDto(): List<MovieDto> {
+    return results?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+}

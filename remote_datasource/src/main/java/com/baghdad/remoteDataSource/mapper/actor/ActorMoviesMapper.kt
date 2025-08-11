@@ -17,3 +17,7 @@ fun ActorMoviesResponse.ActorMovieDto.toDto(): MovieDto {
         trailerURL = ""
     )
 }
+
+fun ActorMoviesResponse.toMovieDtoList(): List<MovieDto> {
+    return cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+}

@@ -20,3 +20,6 @@ fun CastMembersResponse.CastMemberResponse.toDto(): CastMemberDto {
         characterName = character ?: "Unknown"
     )
 }
+fun CastMembersResponse.toCastMembers(): List<CastMemberDto> {
+    return cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+}

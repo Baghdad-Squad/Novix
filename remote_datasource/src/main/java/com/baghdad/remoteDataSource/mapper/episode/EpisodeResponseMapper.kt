@@ -19,3 +19,7 @@ fun SeasonDetailResponse.EpisodeResponse.toDto(): EpisodeDto {
         genres = emptyList()
     )
 }
+
+fun SeasonDetailResponse.toEpisodeDto(): List<EpisodeDto> {
+   return episodes.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
+}

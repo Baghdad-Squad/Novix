@@ -1,11 +1,13 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.TvShowApiService
-import com.baghdad.remoteDataSource.mapper.actor.toDto
-import com.baghdad.remoteDataSource.mapper.episode.toDto
+import com.baghdad.remoteDataSource.mapper.actor.toCastMembers
+import com.baghdad.remoteDataSource.mapper.episode.toEpisodeDto
 import com.baghdad.remoteDataSource.mapper.toDto
+import com.baghdad.remoteDataSource.mapper.toReviewDto
 import com.baghdad.remoteDataSource.mapper.tvShow.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.tvShow.toDto
+import com.baghdad.remoteDataSource.mapper.tvShow.toImageUrls
 import com.baghdad.remoteDataSource.mapper.tvShow.toPagedTvShowDtos
 import com.baghdad.remoteDataSource.mapper.tvShow.toTvShowDtos
 import com.baghdad.remoteDataSource.request.RatingRequest
@@ -41,25 +43,24 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
 ) : RemoteTvShowDataSource {
 
     override suspend fun getTvShowDetails(tvId: Long): TvShowDto {
-        val response = handleRequest<TVShowDetailsResponse>(
+       return handleRequest<TVShowDetailsResponse>(
             apiCall = { tvShowApiService.getTvShowDetails(tvId) },
             logger = logger,
-        )
-        return response.toDto()
+        ).toDto()
     }
 
     override suspend fun getTvShowCastMembers(tvId: Long): List<CastMemberDto> {
         return handleRequest<CastMembersResponse>(
             apiCall = { tvShowApiService.getTvShowCastMembers(tvId) },
             logger = logger,
-        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+        ).toCastMembers()
     }
 
     override suspend fun getTvShowImages(tvId: Long): List<String> {
         return handleRequest<TVShowImagesResponse>(
             apiCall = { tvShowApiService.getTvShowImages(tvId) },
             logger = logger,
-        ).backdrops.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
+        ).toImageUrls()
     }
 
     override suspend fun getTvShowsByGenre(genreId: Long, page: Int): PagedResultDto<TvShowDto> {
@@ -73,14 +74,14 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         return handleRequest<SeasonDetailResponse>(
             apiCall = { tvShowApiService.getTvShowEpisodes(tvId, seasonNumber) },
             logger = logger,
-        ).episodes.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
+        ).toEpisodeDto()
     }
 
     override suspend fun getTvShowReviews(tvId: Long): List<ReviewDto> {
         return handleRequest<ReviewsResponse>(
             apiCall = { tvShowApiService.getTvShowReviews(tvId) },
             logger = logger,
-        ).results.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
+        ).toReviewDto()
     }
 
     override suspend fun getTvShowTrailer(tvId: Long): String {
@@ -91,7 +92,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getTopRatedTvShows(page: Int): PagedResultDto<TvShowDto> {
-        val response = handleRequest<TopRatedTvShowSearchResponse>(
+       return handleRequest<TopRatedTvShowSearchResponse>(
             apiCall = {
                 tvShowApiService.getTopRatedTvShows(
                     page,
@@ -100,10 +101,8 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        )
-        return response.toPagedTvShowDtos()
+        ).toPagedTvShowDtos()
     }
-
 
     override suspend fun getTrendingTvShows(page: Int): PagedResultDto<TvShowDto> {
         return handleRequest<TrendingTvShowsResponse>(

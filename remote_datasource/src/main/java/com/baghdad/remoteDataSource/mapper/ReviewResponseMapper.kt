@@ -14,3 +14,7 @@ fun ReviewsResponse.ReviewResponse.toDto(): ReviewDto {
         postedDate = createdAt.takeIf { !it.isNullOrBlank() } ?: "0001-01-01"
     )
 }
+
+fun ReviewsResponse.toReviewDto(): List<ReviewDto> {
+    return results.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
+}

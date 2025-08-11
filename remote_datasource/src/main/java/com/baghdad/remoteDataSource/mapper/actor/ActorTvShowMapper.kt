@@ -1,6 +1,7 @@
 package com.baghdad.remoteDataSource.mapper.actor
 
 import com.baghdad.remoteDataSource.response.actor.ActorTvShowsResponse
+import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.TvShowDto
 
 fun ActorTvShowsResponse.ActorTvShowDto.toDto(
@@ -18,4 +19,8 @@ fun ActorTvShowsResponse.ActorTvShowDto.toDto(
         trailerURL = "",
         headerImagesURLs = emptyList()
     )
+}
+
+fun ActorTvShowsResponse.toActorTvShowList(): List<TvShowDto> {
+    return cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
 }

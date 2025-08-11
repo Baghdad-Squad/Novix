@@ -28,7 +28,7 @@ class RemoteSearchDataSourceImpl @Inject constructor(
         page: Int,
         genres: List<GenreDto>
     ): PagedResultDto<MovieDto> {
-        val searchResponse = handleRequest<MovieSearchResponse>(
+       return handleRequest<MovieSearchResponse>(
             logger = logger,
             apiCall = {
                 searchApiService.searchMovies(
@@ -36,8 +36,7 @@ class RemoteSearchDataSourceImpl @Inject constructor(
                     page = page,
                 )
             },
-        )
-        return searchResponse.toPagedMovieDtos(genres = genres)
+        ).toPagedMovieDtos(genres = genres)
     }
 
     override suspend fun searchTvShows(
@@ -45,7 +44,7 @@ class RemoteSearchDataSourceImpl @Inject constructor(
         page: Int,
         genres: List<GenreDto>
     ): PagedResultDto<TvShowDto> {
-        val searchResponse = handleRequest<TvShowSearchResponse>(
+        return handleRequest<TvShowSearchResponse>(
             apiCall = {
                 searchApiService.searchTvShows(
                     query = query,
@@ -53,15 +52,14 @@ class RemoteSearchDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        )
-        return searchResponse.toPagedTvShowDtos(genres = genres)
+        ).toPagedTvShowDtos(genres = genres)
     }
 
     override suspend fun searchActors(
         query: String,
         page: Int,
     ): PagedResultDto<ActorDto> {
-        val searchResponse = handleRequest<ActorSearchResponse>(
+        return handleRequest<ActorSearchResponse>(
             apiCall = {
                 searchApiService.searchActors(
                     query = query,
@@ -69,7 +67,6 @@ class RemoteSearchDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        )
-        return searchResponse.toPagedActorDtos()
+        ).toPagedActorDtos()
     }
 }

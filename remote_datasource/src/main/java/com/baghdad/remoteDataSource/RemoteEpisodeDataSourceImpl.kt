@@ -1,6 +1,7 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
+import com.baghdad.remoteDataSource.mapper.actor.toCastMembers
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.episode.mapToYoutubeTrailerUrl
 import com.baghdad.remoteDataSource.mapper.episode.toDto
@@ -57,7 +58,7 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+        ).toCastMembers()
     }
     override suspend fun getEpisodeTrailer(
         tvId: Long,
