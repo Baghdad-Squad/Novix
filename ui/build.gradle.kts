@@ -44,9 +44,9 @@ android {
 }
 
 dependencies {
-    api(project(":islamic_image_loader"))
-    implementation(project(":design_system"))
-    implementation(project(":viewmodel"))
+    api(projects.islamicImageLoader)
+    implementation(projects.designSystem)
+    implementation(projects.viewmodel)
     implementation(libs.bundles.androidx.core)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.androidx.compose.ui)
@@ -64,6 +64,6 @@ dependencies {
 
 }
 
-kapt{
+kapt {
     correctErrorTypes = true
 }

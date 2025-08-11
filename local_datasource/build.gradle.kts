@@ -54,7 +54,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":repository"))
+    implementation(projects.repository)
     implementation(libs.bundles.coroutines)
     implementation(libs.bundles.room)
     implementation(libs.androidx.junit.ktx)

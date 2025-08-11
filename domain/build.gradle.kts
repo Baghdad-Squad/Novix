@@ -45,15 +45,15 @@ android {
 }
 
 dependencies {
-    api(project(":entity"))
+    api(projects.entity)
     implementation(libs.bundles.coroutines)
     implementation(libs.kotlinx.datetime)
     testImplementation(libs.bundles.test.core)
     implementation(libs.bundles.hilt)
-    implementation (libs.dagger)
-    kapt (libs.dagger.compiler)
+    implementation(libs.dagger)
+    kapt(libs.dagger.compiler)
 }
 
-kapt{
+kapt {
     correctErrorTypes = true
 }

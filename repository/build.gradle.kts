@@ -44,7 +44,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
+    implementation(projects.domain)
     implementation(libs.bundles.coroutines)
     implementation(libs.kotlinx.datetime)
     testImplementation(libs.bundles.test.core)
@@ -52,6 +52,6 @@ dependencies {
     kapt(libs.hilt.compiler)
 }
 
-kapt{
+kapt {
     correctErrorTypes = true
 }

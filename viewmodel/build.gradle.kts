@@ -48,7 +48,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    implementation(project(":domain"))
+    implementation(projects.domain)
     implementation(libs.bundles.coroutines)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -62,7 +62,7 @@ dependencies {
 
 }
 
-kapt{
+kapt {
     correctErrorTypes = true
 }
 

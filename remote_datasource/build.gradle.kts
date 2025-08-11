@@ -45,7 +45,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":repository"))
+    implementation(projects.repository)
     implementation(libs.bundles.coroutines)
     implementation(libs.bundles.ktor.client)
     implementation(libs.kotlinx.datetime)
@@ -53,11 +53,11 @@ dependencies {
     testImplementation(libs.bundles.test.core)
     testImplementation(libs.ktor.client.mock)
     implementation(libs.bundles.retrofit)
-    testImplementation (libs.mockwebserver)
+    testImplementation(libs.mockwebserver)
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.compiler)
 }
 
-kapt{
+kapt {
     correctErrorTypes = true
 }
