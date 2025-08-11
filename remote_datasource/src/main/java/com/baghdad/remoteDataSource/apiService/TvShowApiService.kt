@@ -6,6 +6,7 @@ import com.baghdad.remoteDataSource.interceptor.ForceLocaleEnglish
 import com.baghdad.remoteDataSource.interceptor.RequiresSession
 import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
+import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.response.rate.RatingResponse
 import com.baghdad.remoteDataSource.response.reviews.ReviewsResponse
 import com.baghdad.remoteDataSource.response.tvShow.MyRatingTvShowResponse
@@ -16,8 +17,6 @@ import com.baghdad.remoteDataSource.response.tvShow.TVShowImagesResponse
 import com.baghdad.remoteDataSource.response.tvShow.TVShowVideosResponse
 import com.baghdad.remoteDataSource.response.tvShow.TopRatedTvShowSearchResponse
 import com.baghdad.remoteDataSource.response.tvShow.TrendingTvShowsResponse
-import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
-import com.baghdad.remoteDataSource.response.tvShow.MyRatingTvShowResponse
 import com.baghdad.remoteDataSource.response.tvShow.TvShowResponse
 import retrofit2.Response
 import retrofit2.http.Body
