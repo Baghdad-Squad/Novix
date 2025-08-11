@@ -2,7 +2,6 @@ package com.baghdad.repository.mapper
 
 import com.baghdad.domain.model.RatedMedia
 import com.baghdad.entity.media.TvShow
-import com.baghdad.repository.model.SearchQueryDto
 import com.baghdad.repository.model.TvShowDto
 import kotlinx.datetime.LocalDate
 
@@ -13,21 +12,15 @@ fun TvShowDto.toEntity(): TvShow {
         genres = genres.map { it.toEntity() },
         averageRating = imdbRating,
         userRating = userRating,
-        releaseDate = releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
-            ?: LocalDate(1990, 1, 1),
+        releaseDate = releaseDate
+            .takeIf { it.isNotBlank() }
+            ?.let { LocalDate.parse(input = it) }
+            ?: LocalDate(year = 1990, month = 1, day = 1),
         overview = overview,
         posterImageURL = posterPictureURL,
         headerImagesURLs = headerImagesURLs,
         trailerURL = trailerURL,
-        numberOfSeasons = numberOfSeasons,
-    )
-}
-
-fun TvShowDto.toSearchQueryDto(query: String): SearchQueryDto {
-    return SearchQueryDto(
-        queryName = query,
-        mediaId = id,
-        mediaType = SearchQueryDto.MediaType.TV_SHOW
+        numberOfSeasons = numberOfSeasons
     )
 }
 

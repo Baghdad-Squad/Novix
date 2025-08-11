@@ -5,8 +5,8 @@ import com.baghdad.repository.model.SavedListDto
 
 fun SavedListDto.toEntity(): SavedList {
     return SavedList(
-        id = this.id,
+        id = id,
         name = this.name,
-        itemCount = this.itemCount,
+        itemCount = this.itemCount
     )
 }

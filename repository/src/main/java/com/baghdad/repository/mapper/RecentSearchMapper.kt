@@ -10,9 +10,9 @@ import kotlin.time.Instant
 @OptIn(ExperimentalTime::class)
 fun RecentSearchDto.toEntity(): RecentSearch {
     return RecentSearch(
-        id = this.id,
-        query = this.query,
-        searchedAt = Instant.fromEpochMilliseconds(this.searchedAt)
+        id = id,
+        query = query,
+        searchedAt = Instant.fromEpochMilliseconds(epochMilliseconds = searchedAt)
             .toLocalDateTime(TimeZone.currentSystemDefault())
     )
 }

@@ -4,9 +4,9 @@ import com.baghdad.domain.model.savedList.SavedListDetails
 import com.baghdad.repository.model.savedList.SavableMovieDto
 import com.baghdad.repository.model.savedList.SavedListDetailsDto
 
-fun SavedListDetailsDto.toEntity() =
-    SavedListDetails(
+fun SavedListDetailsDto.toEntity(): SavedListDetails {
+    return SavedListDetails(
         savedList = savedList.toEntity(),
-        pagedItems =
-            pagedItems.toPagedResult(SavableMovieDto::toEntity),
+        pagedItems = pagedItems.toPagedResult(dataMapper = SavableMovieDto::toEntity),
     )
+}
