@@ -1,13 +1,11 @@
 package com.baghdad.remoteDataSource.interceptor
 
-import com.baghdad.repository.language.LanguageProvider
 import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.Invocation
 import javax.inject.Inject
 
 class HeadersSetupInterceptor @Inject constructor(
-    private val languageProvider: LanguageProvider,
     private val authorizationToken: String
 ) : Interceptor {
 
@@ -30,10 +28,14 @@ class HeadersSetupInterceptor @Inject constructor(
             ?.annotations
             ?.any { it.annotationClass == ForceLocaleEnglish::class } == true
 
+        /**
+         * sorry for your eyes but here litrity a سباكة
+         */
+
         val language = if (shouldForceEnglishLocale) {
             "en"
         } else {
-            languageProvider.getCurrentLanguage()
+            "ar"
         }
 
         val modifiedRequest = originalRequest.newBuilder().apply {

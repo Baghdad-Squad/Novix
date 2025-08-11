@@ -62,7 +62,6 @@ interface SavedListApiService {
     @DELETE(DELETE_SAVED_LIST_BY_ID_ENDPOINT)
     suspend fun deleteSavedListById(
         @Path("list_id") listId: Long,
-        @Query("session_id") sessionId: String,
     ): Response<DeleteSavedListResponse>
 
     companion object {
