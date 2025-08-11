@@ -30,7 +30,6 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
             apiCall = {
                 savedListApiService.createSavedList(
                     body = CreateListRequest(name = title),
-                    sessionId = sessionId,
                 )
             },
             logger = logger,
@@ -53,7 +52,6 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
                 savedListApiService.getSavedLists(
                     page = page,
                     accountId = accountId,
-                    sessionId = sessionId,
                 )
             },
             logger = logger,
@@ -65,7 +63,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         val body = AddListItemRequest(mediaId = movieId)
 
         handleRequest(
-            apiCall = { savedListApiService.addMovieToSavedList(listId, body, sessionId) },
+            apiCall = { savedListApiService.addMovieToSavedList(listId, body) },
             logger = logger
         )
     }
@@ -77,7 +75,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     ) {
         val body = RemoveListItemRequest(mediaId = movieId)
         handleRequest(
-            apiCall = { savedListApiService.removeMovieFromSavedList(listId, body, sessionId) },
+            apiCall = { savedListApiService.removeMovieFromSavedList(listId, body) },
             logger = logger
         )
     }
@@ -97,7 +95,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
 
     override suspend fun deleteSavedListById(listId: Long, sessionId: String) {
         handleRequest(
-            apiCall = { savedListApiService.deleteSavedListById(listId, sessionId) },
+            apiCall = { savedListApiService.deleteSavedListById(listId) },
             logger = logger,
         )
     }

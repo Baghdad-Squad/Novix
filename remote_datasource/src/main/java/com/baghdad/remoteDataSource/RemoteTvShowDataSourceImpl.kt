@@ -121,7 +121,6 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
             apiCall = {
                 tvShowApiService.addTvShowRate(
                     tvShowId,
-                    sessionId,
                     RatingRequest(rating)
                 )
             },
@@ -137,7 +136,6 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
             apiCall = {
                 tvShowApiService.deleteTvShowRate(
                     tvShowId,
-                    sessionId,
                 )
             },
             logger = logger
@@ -149,7 +147,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         sessionId: String
     ): MediaAccountStateDto {
         return handleRequest<MediaAccountStatesResponse>(
-            apiCall = { tvShowApiService.getTvShowAccountStates(tvShowId, sessionId) },
+            apiCall = { tvShowApiService.getTvShowAccountStates(tvShowId) },
             logger = logger
         ).toDto()
     }
@@ -167,7 +165,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         page: Int
     ): PagedResultDto<TvShowDto> {
         return handleRequest<MyRatingTvShowResponse>(
-            apiCall = { tvShowApiService.getUserRatedTvShows(accountId, sessionId, page) },
+            apiCall = { tvShowApiService.getUserRatedTvShows(accountId, page) },
             logger = logger
         ).toPagedTvShowDtos()
     }

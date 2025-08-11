@@ -25,14 +25,14 @@ class HeadersSetupInterceptorTest {
 
     private lateinit var mockWebServer: MockWebServer
     private lateinit var languageProvider: LanguageProvider
-    private lateinit var interceptor: HeadersSetupInterceptor
+    private lateinit var interceptor: AuthenticationInterceptor
 
     @BeforeEach
     fun setUp() {
         mockWebServer = MockWebServer()
         languageProvider = mockk(relaxed = true)
         every { languageProvider.getCurrentLanguage() } returns LANGUAGE
-        interceptor = HeadersSetupInterceptor(languageProvider, AUTHORIZATION_TOKEN)
+        interceptor = AuthenticationInterceptor(languageProvider, AUTHORIZATION_TOKEN)
     }
 
     @AfterEach

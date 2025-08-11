@@ -1,6 +1,5 @@
 package com.baghdad.remoteDataSource
 
-import android.util.Log
 import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
@@ -66,7 +65,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto> {
-        return handleRequest<SimilarMovieResponse>(
+        return handleRequest<DiscoverMovieResponse>(
             apiCall = {
                 movieApiService.getMoviesByGenre(
                     genreId = genreId,
@@ -105,8 +104,9 @@ class RemoteMovieDataSourceImpl @Inject constructor(
     override suspend fun getTopRatedMovies(
         page: Int,
     ): PagedResultDto<MovieDto> {
-        val response = handleRequest<SimilarMovieResponse>(
-            apiCall = {
+        val response =
+            handleRequest<DiscoverMovieResponse>(
+                apiCall = {
                 movieApiService.getTopRatedMovies(
                     page = page,
                     sortBy = "vote_average.desc",
@@ -165,7 +165,6 @@ class RemoteMovieDataSourceImpl @Inject constructor(
                 movieApiService.addMovieRate(
                     movieId = movieId,
                     rating = RatingRequest(rating),
-                    sessionId = sessionId
                 )
             },
             logger = logger,
@@ -177,7 +176,6 @@ class RemoteMovieDataSourceImpl @Inject constructor(
             apiCall = {
                 movieApiService.deleteMovieRate(
                     movieId = movieId,
-                    sessionId = sessionId
                 )
             },
             logger = logger,
@@ -189,7 +187,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         sessionId: String
     ): MediaAccountStateDto {
         return handleRequest<MediaAccountStatesResponse>(
-            apiCall = { movieApiService.getMovieAccountStates(movieId, sessionId) },
+            apiCall = { movieApiService.getMovieAccountStates(movieId) },
             logger = logger
         ).toDto()
     }
@@ -200,7 +198,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         page: Int
     ): PagedResultDto<MovieDto> {
         return handleRequest<MyRatingMoviesResponse>(
-            apiCall = { movieApiService.getUserRatedMovies(accountId, sessionId, page) },
+            apiCall = { movieApiService.getUserRatedMovies(accountId, page) },
             logger = logger
         ).toPagedMovieDtos()
     }

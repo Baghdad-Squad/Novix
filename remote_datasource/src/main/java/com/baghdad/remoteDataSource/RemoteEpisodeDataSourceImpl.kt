@@ -108,7 +108,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                     seriesId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    sessionId = sessionId,
                     rating = RatingRequest(rating)
                 )
             },
@@ -128,7 +127,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                     seriesId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    sessionId = sessionId
                 )
             },
             logger = logger
