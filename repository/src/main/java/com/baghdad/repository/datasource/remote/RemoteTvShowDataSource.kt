@@ -8,37 +8,31 @@ import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 
 interface RemoteTvShowDataSource {
+    suspend fun getPopularTvShows(): List<TvShowDto>
 
-    suspend fun getTvShowDetails(tvId: Long): TvShowDto
+    suspend fun getTvShowDetails(tvShowId: Long): TvShowDto
 
-    suspend fun getTvShowCastMembers(tvId: Long): List<CastMemberDto>
+    suspend fun getTvShowCastMembers(tvShowId: Long): List<CastMemberDto>
 
-    suspend fun getTvShowImages(tvId: Long): List<String>
+    suspend fun getTvShowImages(tvShowId: Long): List<String>
 
-    suspend fun getTvShowsByGenre(genreId: Long, page: Int): PagedResultDto<TvShowDto>
+    suspend fun getTvShowReviews(tvShowId: Long): List<ReviewDto>
 
-    suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<EpisodeDto>
-
-    suspend fun getTvShowReviews(tvId: Long): List<ReviewDto>
-
-    suspend fun getTvShowTrailer(tvId: Long): String
+    suspend fun getTvShowTrailer(tvShowId: Long): String
 
     suspend fun getTopRatedTvShows(page: Int): PagedResultDto<TvShowDto>
 
-    suspend fun getPopularTvShows(): List<TvShowDto>
-
     suspend fun getTrendingTvShows(page: Int): PagedResultDto<TvShowDto>
 
-    suspend fun addTvShowRate(tvShowId: Long, rating: Int, sessionId: String)
+    suspend fun deleteTvShowRate(tvShowId: Long)
 
-    suspend fun getTvShowAccountStates(tvShowId: Long, sessionId: String): MediaAccountStateDto
-    suspend fun getUserRatedTvShows(
-        accountId: Long, sessionId: String,
-        page: Int
-    ): PagedResultDto<TvShowDto>
+    suspend fun getTvShowsByGenre(genreId: Long, page: Int): PagedResultDto<TvShowDto>
 
-    suspend fun deleteTvShowRate(
-        tvShowId: Long,
-        sessionId: String
-    )
+    suspend fun getTvShowEpisodes(tvShowId: Long, seasonNumber: Int): List<EpisodeDto>
+
+    suspend fun getTvShowAccountStates(tvShowId: Long): MediaAccountStateDto
+
+    suspend fun addTvShowRate(tvShowId: Long, rating: Int)
+
+    suspend fun getUserRatedTvShows(accountId: Long, page: Int): PagedResultDto<TvShowDto>
 }

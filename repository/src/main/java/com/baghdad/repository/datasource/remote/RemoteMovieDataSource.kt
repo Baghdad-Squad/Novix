@@ -8,27 +8,40 @@ import com.baghdad.repository.model.ReviewDto
 
 interface RemoteMovieDataSource {
     suspend fun getSimilarMovies(movieId: Long): List<MovieDto>
+
     suspend fun getMovieDetails(movieId: Long): MovieDto
+
     suspend fun getMovieCastMembers(movieId: Long): List<CastMemberDto>
-    suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto>
+
     suspend fun getMovieReviews(movieId: Long): List<ReviewDto>
+
     suspend fun getMovieImages(movieId: Long): List<String>
+
     suspend fun getMovieTrailer(movieId: Long): String
+
     suspend fun getTrendingMovies(page: Int): PagedResultDto<MovieDto>
+
     suspend fun getTopRatedMovies(page: Int): PagedResultDto<MovieDto>
 
     suspend fun getUpcomingMovies(genreId: Long?): List<MovieDto>
 
     suspend fun getPopularMovies(): List<MovieDto>
 
-    suspend fun addMovieRate(movieId: Long, rating: Int, sessionId: String)
+    suspend fun deleteMovieRate(movieId: Long, sessionId: String)
 
     suspend fun getMovieAccountStates(movieId: Long, sessionId: String): MediaAccountStateDto
+
+    suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto>
+
     suspend fun getUserRatedMovies(
-        accountId: Long, sessionId: String,
+        accountId: Long,
+        sessionId: String,
         page: Int
     ): PagedResultDto<MovieDto>
 
-    suspend fun deleteMovieRate(movieId: Long, sessionId: String)
-
+    suspend fun addMovieRate(
+        movieId: Long,
+        rating: Int,
+        sessionId: String
+    )
 }
