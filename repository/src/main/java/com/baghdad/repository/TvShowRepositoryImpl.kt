@@ -18,7 +18,6 @@ import com.baghdad.repository.mapper.toMedia
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
-import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
@@ -123,51 +122,43 @@ class TvShowRepositoryImpl @Inject constructor(
         tvShowId: Long,
         rating: Int
     ) {
-        executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+        executeSafely(
             block = {
                 tvShowRemoteDataSource.addTvShowRate(
                     tvShowId = tvShowId,
                     rating = rating,
-                    sessionId = it
                 )
             }
         )
     }
 
     override suspend fun deleteTvShowRate(tvShowId: Long) {
-        executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+        executeSafely(
             block = {
                 tvShowRemoteDataSource.deleteTvShowRate(
                     tvShowId = tvShowId,
-                    sessionId = it
                 )
             }
         )
     }
 
     override suspend fun getTvShowAccountStates(tvShowId: Long): MediaAccountStates {
-        return executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+        return executeSafely(
             block = {
                 tvShowRemoteDataSource.getTvShowAccountStates(
                     tvShowId = tvShowId,
-                    sessionId = it
                 ).toEntity()
             }
         )
     }
 
     override suspend fun getUserRatedTvShows(page: Int, pageSize: Int): PagedResult<RatedMedia> {
-        return executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
-            { sessionId ->
+        return executeSafely({
                 getRemotePagedSafely(
                     page = page, pageSize = pageSize,
                     getRemoteData = { page, _ ->
                         authenticationRepository.getLoggedInUser()?.let {
-                            tvShowRemoteDataSource.getUserRatedTvShows(it.id, sessionId, page)
+                            tvShowRemoteDataSource.getUserRatedTvShows(it.id, page)
                         } ?: PagedResultDto(
                             data = emptyList(),
                             nextKey = null,

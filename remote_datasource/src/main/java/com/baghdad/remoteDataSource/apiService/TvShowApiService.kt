@@ -95,7 +95,6 @@ interface TvShowApiService {
     @POST(RATE_TV_SHOW_ENDPOINT)
     suspend fun addTvShowRate(
         @Path("series_id") seriesId: Long,
-        @Query("session_id") sessionId: String,
         @Body rating: RatingRequest
     ): Response<RatingResponse>
 
@@ -103,21 +102,18 @@ interface TvShowApiService {
     @DELETE(RATE_TV_SHOW_ENDPOINT)
     suspend fun deleteTvShowRate(
         @Path("series_id") seriesId: Long,
-        @Query("session_id") sessionId: String,
     ): Response<RatingResponse>
 
     @Authenticated
     @GET(TV_SHOW_ACCOUNT_STATES)
     suspend fun getTvShowAccountStates(
         @Path("series_id") seriesId: Long,
-        @Query("session_id") sessionId: String
     ): Response<MediaAccountStatesResponse>
 
     @Authenticated
     @GET(USER_RATED_TV_SHOW_ENDPOINT)
     suspend fun getUserRatedTvShows(
         @Path("account_id") accountId: Long,
-        @Query("session_id") sessionId: String,
         @Query("page") page: Int
     ): Response<MyRatingTvShowResponse>
 
