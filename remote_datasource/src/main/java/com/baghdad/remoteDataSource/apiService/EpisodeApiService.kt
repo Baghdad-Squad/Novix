@@ -4,11 +4,10 @@ import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.interceptor.RequiresSession
 import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
-import com.baghdad.remoteDataSource.response.rate.RatingResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
-import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
 import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.rate.RatingResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -32,14 +31,6 @@ interface EpisodeApiService {
         @Path("season_number") seasonNumber: Int,
         @Path("episode_number") episodeNumber: Int
     ): Response<CastMembersResponse>
-
-    @Authenticated
-    @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/images")
-    suspend fun getEpisodeImages(
-        @Path("tv_id") tvId: Long,
-        @Path("season_number") seasonNumber: Int,
-        @Path("episode_number") episodeNumber: Int
-    ): Response<EpisodeImageResponse>
 
     @Authenticated
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/videos")

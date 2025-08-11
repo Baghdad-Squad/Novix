@@ -34,7 +34,6 @@ class RemoteActorDataSourceImpl @Inject constructor(
         return handleRequest<ActorImagesResponse>(
             apiCall = { actorApiService.getActorImages(personId = personId) },
             logger = logger,
-
         ).profiles.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
 

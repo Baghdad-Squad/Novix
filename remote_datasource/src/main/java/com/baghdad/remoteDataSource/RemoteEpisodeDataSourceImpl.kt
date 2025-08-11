@@ -7,11 +7,10 @@ import com.baghdad.remoteDataSource.mapper.episode.toDto
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
+import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
+import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
 import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.response.rate.RatingResponse
-import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
-import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
-import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.logger.Logger
@@ -60,24 +59,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
             logger = logger,
         ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
     }
-
-    override suspend fun getEpisodeImages(
-        tvId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int
-    ): List<String> {
-        return handleRequest<EpisodeImageResponse>(
-            apiCall = {
-                episodeApiService.getEpisodeImages(
-                    tvId = tvId,
-                    seasonNumber = seasonNumber,
-                    episodeNumber = episodeNumber
-                )
-            },
-            logger = logger,
-        ).episodeFrames.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
-    }
-
     override suspend fun getEpisodeTrailer(
         tvId: Long,
         seasonNumber: Int,
