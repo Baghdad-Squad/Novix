@@ -3,14 +3,11 @@ package com.baghdad.repository.mapper
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.repository.model.ContinueWatchingDto
 
-/**
- * remove this
- */
 fun ContinueWatchingDto.toEntity(
     isSaved: Boolean,
     listId: Long?
-): ContinueWatching =
-    ContinueWatching(
+): ContinueWatching {
+    return ContinueWatching(
         contentId = contentId,
         genreIds = genreIds,
         contentImageUrl = contentImageUrl,
@@ -19,12 +16,14 @@ fun ContinueWatchingDto.toEntity(
         isSaved = isSaved,
         listId = listId,
     )
+}
 
-fun ContinueWatching.toDto(): ContinueWatchingDto =
-    ContinueWatchingDto(
-        contentId = this.contentId,
-        genreIds = this.genreIds,
-        contentImageUrl = this.contentImageUrl,
+fun ContinueWatching.toDto(): ContinueWatchingDto {
+    return ContinueWatchingDto(
+        contentId = contentId,
+        genreIds = genreIds,
+        contentImageUrl = contentImageUrl,
         contentType = ContinueWatchingDto.ContentType.valueOf(contentType.name),
-        userId = this.userId,
+        userId = userId,
     )
+}
