@@ -47,7 +47,6 @@ fun ActorCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = Theme.color.surface)
             .noRippleClickable { onClick() }) {
         IslamicImage(
             imageUrl = actorImage,
@@ -70,8 +69,9 @@ fun ActorCard(
                     cornerRadius = 12.dp,
                     isRTL = isRTL
                 )
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp))
                 .height(55.dp)
+                .background(Theme.color.surface)
                 .padding(horizontal = 8.dp)
                 .align(alignment = Alignment.Bottom)
         ) {
@@ -102,7 +102,7 @@ private fun CharacterName(characterName: String?) {
 @NovixPreviews
 @Composable
 private fun ActorCardPreview() {
-    NovixTheme(isDarkTheme = true) {
+    NovixTheme() {
         Box(
             modifier = Modifier.background(Theme.color.surface)
         ) {
