@@ -3,7 +3,6 @@ package com.baghdad.ui.feature.movieDetails
 import android.content.Context
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,9 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.baghdad.design_system.component.BackgroundBlur
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -159,14 +158,6 @@ private fun MovieDetailsContent(
 
     val lazyState = rememberLazyGridState()
     var shouldShowBackground by remember { mutableStateOf(false) }
-    val backgroundAlpha by animateFloatAsState(
-        targetValue = if (shouldShowBackground) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 400,
-            easing = FastOutSlowInEasing
-        ),
-        label = stringResource(R.string.background_alpha)
-    )
     val animatedColor by animateColorAsState(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
@@ -229,23 +220,21 @@ private fun MovieDetailsContent(
             BackgroundBlur()
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        ) {
+    ) {
 
         Box(
             modifier = modifier
-                .background(Theme.color.surface.copy(backgroundAlpha))
                 .fillMaxSize()
                 .navigationBarsPadding()
 
         ) {
-
             RatingBottomSheet(
                 isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
                 onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                rate = state.userRating ,
+                rate = state.userRating,
                 onRateChanged = { listener.onRatingChanged(it) },
                 isButtonEnabled = state.userRating != 0,
-                onSubmitClick = { listener.onClickSubmitRating(state.userRating ) }
+                onSubmitClick = { listener.onClickSubmitRating(state.userRating) }
             )
 
             LoginRequiredSheet(
