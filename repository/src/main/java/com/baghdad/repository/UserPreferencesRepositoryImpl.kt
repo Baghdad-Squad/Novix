@@ -3,6 +3,8 @@ package com.baghdad.repository
 import com.baghdad.domain.repository.UserPreferencesRepository
 import com.baghdad.repository.datasource.local.LocalUserPreferencesDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import java.util.Locale
 import javax.inject.Inject
 
 class UserPreferencesRepositoryImpl @Inject constructor(
@@ -18,7 +20,12 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAppLanguage(): Flow<String> {
-        return localUserPreferencesDataSource.getAppLanguage()
+        return localUserPreferencesDataSource.getAppLanguage().map {
+            if (it == null) {
+                localUserPreferencesDataSource.setAppLanguage(Locale.getDefault().language)
+                Locale.getDefault().language
+            } else it
+        }
     }
 
     override suspend fun setAppLanguage(language: String) {
