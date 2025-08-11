@@ -5,6 +5,7 @@ import com.baghdad.local_datasource.LocalContinueWatchingDataSourceImpl
 import com.baghdad.local_datasource.LocalRecentSearchDataSourceImpl
 import com.baghdad.local_datasource.LocalRecentlyViewedDataSourceImpl
 import com.baghdad.local_datasource.LocalSavableMovieDataSourceImpl
+import com.baghdad.local_datasource.LocalUserPreferencesDataSourceImpl
 import com.baghdad.local_datasource.dataStore.session.LocalOnboardingDatastoreImp
 import com.baghdad.local_datasource.dataStore.session.LocalSessionDataStoreImpl
 import com.baghdad.local_datasource.dataStore.user.LocalUserDataStoreImpl
@@ -26,30 +27,42 @@ import dagger.hilt.components.SingletonComponent
 abstract class LocalDataSourceModule {
 
     @Binds
-    abstract fun provideLocalSessionDataStore(localSessionDataStoreImpl: LocalSessionDataStoreImpl): LocalSessionDataStore
+    abstract fun provideLocalSessionDataStore(
+        localSessionDataStoreImpl: LocalSessionDataStoreImpl
+    ): LocalSessionDataStore
 
     @Binds
-    abstract fun provideLocalUserDataStore(localUserDataStoreImpl: LocalUserDataStoreImpl): LocalUserDataStore
+    abstract fun provideLocalUserDataStore(
+        localUserDataStoreImpl: LocalUserDataStoreImpl
+    ): LocalUserDataStore
 
     @Binds
-    abstract fun provideLocalRecentSearchDataSource(localRecentSearchDataSourceImpl: LocalRecentSearchDataSourceImpl): LocalRecentSearchDataSource
+    abstract fun provideLocalRecentSearchDataSource(
+        localRecentSearchDataSourceImpl: LocalRecentSearchDataSourceImpl
+    ): LocalRecentSearchDataSource
 
     @Binds
-    abstract fun provideLocalContinueWatchingDataSource(localContinueWatchingDataSourceImpl: LocalContinueWatchingDataSourceImpl): LocalContinueWatchingDataSource
+    abstract fun provideLocalContinueWatchingDataSource(
+        localContinueWatchingDataSourceImpl: LocalContinueWatchingDataSourceImpl
+    ): LocalContinueWatchingDataSource
 
     @Binds
-    abstract fun provideLocalRecentlyViewedDataSource(localRecentlyViewedDataSourceImpl: LocalRecentlyViewedDataSourceImpl): LocalRecentlyViewedDataSource
+    abstract fun provideLocalRecentlyViewedDataSource(
+        localRecentlyViewedDataSourceImpl: LocalRecentlyViewedDataSourceImpl
+    ): LocalRecentlyViewedDataSource
 
     @Binds
-    abstract fun provideLocalUserPreferencesDataSource(localUserPreferencesDataSourceImpl: com.baghdad.local_datasource.LocalUserPreferencesDataSourceImpl): LocalUserPreferencesDataSource
+    abstract fun provideLocalUserPreferencesDataSource(
+        localUserPreferencesDataSourceImpl: LocalUserPreferencesDataSourceImpl
+    ): LocalUserPreferencesDataSource
 
     @Binds
-    abstract fun provideLocalOnBoardingDataStore(localOnboardingDatastore: LocalOnboardingDatastoreImp): LocalOnboardingDatastore
+    abstract fun provideLocalOnBoardingDataStore(
+        localOnboardingDatastore: LocalOnboardingDatastoreImp
+    ): LocalOnboardingDatastore
 
     @Binds
     abstract fun provideLocalSavableMovieDataSource(
-        localSavableMovieDataSourceImpl: LocalSavableMovieDataSourceImpl,
+        localSavableMovieDataSourceImpl: LocalSavableMovieDataSourceImpl
     ): LocalSavableMovieDataSource
 }
-
-

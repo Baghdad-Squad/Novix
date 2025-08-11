@@ -26,10 +26,12 @@ import java.util.concurrent.TimeUnit
 abstract class NetworkModule {
 
     @Binds
-    abstract fun provideLanguageProvider(appLanguageProvider : AppLanguageProvider): LanguageProvider
+    abstract fun provideLanguageProvider(appLanguageProvider: AppLanguageProvider): LanguageProvider
 
     companion object {
-        private const val timeOut = 20L
+        private const val TIME_OUT = 20L
+        private const val CACHE_SIZE_MB = 10
+
 
         @Provides
         fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
@@ -60,8 +62,8 @@ abstract class NetworkModule {
 
         @Provides
         fun provideCache(@ApplicationContext context: Context): Cache {
-            val cacheSize = 10 * 1024 * 1024
-            return Cache(File(context.cacheDir, "http-cache"), cacheSize.toLong())
+            val maximumCacheSize = CACHE_SIZE_MB * 1024 * 1024
+            return Cache(File(context.cacheDir, "http-cache"), maximumCacheSize.toLong())
         }
 
 
@@ -73,10 +75,10 @@ abstract class NetworkModule {
             cache: Cache
         ): OkHttpClient {
             return OkHttpClient.Builder()
-                .callTimeout(timeOut, TimeUnit.SECONDS)
-                .connectTimeout(timeOut, TimeUnit.SECONDS)
-                .readTimeout(timeOut, TimeUnit.SECONDS)
-                .writeTimeout(timeOut, TimeUnit.SECONDS)
+                .callTimeout(TIME_OUT, TimeUnit.SECONDS)
+                .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
+                .readTimeout(TIME_OUT, TimeUnit.SECONDS)
+                .writeTimeout(TIME_OUT, TimeUnit.SECONDS)
                 .cache(cache)
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(headersSetupInterceptor)
