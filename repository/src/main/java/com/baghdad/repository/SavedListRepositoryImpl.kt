@@ -13,131 +13,133 @@ import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.savedList.SavableMovieDto
-import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SavedListRepositoryImpl
-    @Inject
-    constructor(
-        private val remoteSavedListSource: RemoteSavedListDataSource,
-        private val localSessionDataStore: LocalSessionDataStore,
-        private val localUserDataStore: LocalUserDataStore,
-        private val savableMovieDataSource: LocalSavableMovieDataSource,
-    ) : SavedListRepository {
-        override suspend fun createSavedList(title: String) {
-            val sessionId = localSessionDataStore.getSessionId()
-            return executeAuthorizedSafely(sessionId) { sessionId ->
-                remoteSavedListSource.createSavedList(title, sessionId)
+class SavedListRepositoryImpl @Inject constructor(
+    private val remoteSavedListSource: RemoteSavedListDataSource,
+    private val localUserDataStore: LocalUserDataStore,
+    private val savableMovieDataSource: LocalSavableMovieDataSource,
+) : SavedListRepository {
+    override suspend fun createSavedList(title: String) {
+        return executeSafely {
+            remoteSavedListSource.createSavedList(title = title)
+        }
+    }
+
+    override suspend fun getSavedLists(
+        page: Int,
+        pageSize: Int,
+    ): PagedResult<SavedList> {
+        val accountId = localUserDataStore.getUser()?.id ?: 0
+        return executeSafely {
+            remoteSavedListSource
+                .getSavedLists(
+                    page = page,
+                    pageSize = pageSize,
+                    accountId = accountId,
+                ).toPagedResult(dataMapper = SavedListDto::toEntity)
+        }
+    }
+
+    override suspend fun addMovieToSavedList(
+        listId: Long,
+        movieId: Long,
+    ) {
+        executeSafely {
+            remoteSavedListSource.addMovieToSavedList(
+                listId = listId,
+                movieId = movieId,
+            )
+            savableMovieDataSource.addSavedMovie(listId = listId, movieId = movieId)
+        }
+    }
+
+    override suspend fun removeMovieFromSavedList(
+        listId: Long,
+        movieId: Long,
+    ) {
+        executeSafely {
+            remoteSavedListSource.removeMovieFromSavedList(
+                listId = listId,
+                movieId = movieId,
+            )
+            savableMovieDataSource.deleteSavedMovie(movieId = movieId)
+        }
+    }
+
+    override suspend fun getSavedListDetails(
+        listId: Long,
+        page: Int,
+        pageSize: Int,
+    ): SavedListDetails {
+        return executeSafely {
+            remoteSavedListSource.getSavedListDetails(
+                listId = listId,
+                page = page,
+                pageSize = pageSize
+            ).toEntity()
+        }
+    }
+
+    override suspend fun deleteSavedListById(listId: Long) {
+        executeSafely {
+            remoteSavedListSource.deleteSavedListById(listId = listId)
+            savableMovieDataSource.deleteListMovies(listId = listId)
+        }
+    }
+
+    override suspend fun syncSavedMoviesCache() {
+        executeSafely {
+            if (shouldPreformSync().not()) return@executeSafely
+            val accountId = getUserAccountId()
+            val savedLists = fetchAllSavedLists(accountId = accountId)
+
+            savedLists.forEach { list ->
+                val movies = fetchAllMoviesForList(listId = list.id)
+                savableMovieDataSource.saveMovies(listId = list.id, movies)
             }
         }
+    }
 
-        override suspend fun getSavedLists(
-            page: Int,
-            pageSize: Int,
-        ): PagedResult<SavedList> {
-            val sessionId = localSessionDataStore.getSessionId()
-            val accountId = localUserDataStore.getUser()?.id ?: 0
-            return executeAuthorizedSafely(sessionId) { sessionId ->
-                remoteSavedListSource
-                    .getSavedLists(
-                        page = page,
-                        pageSize = pageSize,
-                        accountId = accountId,
-                        sessionId = sessionId,
-                    ).toPagedResult(SavedListDto::toEntity)
-            }
+    override suspend fun clearSavedMoviesCache() {
+        executeSafely {
+            savableMovieDataSource.deleteAllSavedMovies()
         }
+    }
 
-        override suspend fun addMovieToSavedList(
-            listId: Long,
-            movieId: Long,
-        ) {
-            val sessionId = localSessionDataStore.getSessionId()
-            executeAuthorizedSafely(sessionId) { sessionId ->
-                remoteSavedListSource.addMovieToSavedList(listId, movieId, sessionId)
-                savableMovieDataSource.addSavedMovie(listId, movieId)
-            }
+    private fun shouldPreformSync(): Boolean {
+        return savableMovieDataSource.getSavedMovies().isEmpty()
+    }
+
+    private suspend fun getUserAccountId(): Long = localUserDataStore.getUser()?.id ?: 0
+
+    private suspend fun fetchAllSavedLists(
+        accountId: Long,
+    ): List<SavedListDto> {
+        return fetchAllPages { page ->
+            remoteSavedListSource.getSavedLists(
+                page = page,
+                pageSize = 20,
+                accountId = accountId,
+            )
         }
+    }
 
-        override suspend fun removeMovieFromSavedList(
-            listId: Long,
-            movieId: Long,
-        ) {
-            val sessionId = localSessionDataStore.getSessionId()
-            executeAuthorizedSafely(sessionId) { sessionId ->
-                remoteSavedListSource.removeMovieFromSavedList(listId, movieId, sessionId)
-                savableMovieDataSource.deleteSavedMovie(movieId)
-            }
-        }
-
-        override suspend fun getSavedListDetails(
-            listId: Long,
-            page: Int,
-            pageSize: Int,
-        ): SavedListDetails =
-            executeSafely {
-                remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toEntity()
-            }
-
-        override suspend fun deleteSavedListById(listId: Long) {
-            val sessionId = localSessionDataStore.getSessionId()
-            executeAuthorizedSafely(sessionId) { sessionId ->
-                remoteSavedListSource.deleteSavedListById(listId, sessionId)
-                savableMovieDataSource.deleteListMovies(listId)
-            }
-        }
-
-        override suspend fun syncSavedMoviesCache() {
-            executeAuthorizedSafely(localSessionDataStore.getSessionId()) { sessionId ->
-                if (shouldPreformSync().not()) return@executeAuthorizedSafely
-                val accountId = getUserAccountId()
-                val savedLists = fetchAllSavedLists(sessionId, accountId)
-
-                savedLists.forEach { list ->
-                    val movies = fetchAllMoviesForList(list.id)
-                    savableMovieDataSource.saveMovies(list.id, movies)
-                }
-            }
-        }
-
-        override suspend fun clearSavedMoviesCache() {
-            executeSafely {
-                savableMovieDataSource.deleteAllSavedMovies()
-            }
-        }
-
-        private suspend fun shouldPreformSync(): Boolean = savableMovieDataSource.getSavedMovies().isEmpty()
-
-        private suspend fun getUserAccountId(): Long = localUserDataStore.getUser()?.id ?: 0
-
-        private suspend fun fetchAllSavedLists(
-            sessionId: String,
-            accountId: Long,
-        ): List<SavedListDto> =
-            fetchAllPages { page ->
-                remoteSavedListSource.getSavedLists(
+    private suspend fun fetchAllMoviesForList(listId: Long): List<SavableMovieDto> =
+        fetchAllPages { page ->
+            val result =
+                remoteSavedListSource.getSavedListDetails(
                     page = page,
                     pageSize = 20,
-                    sessionId = sessionId,
-                    accountId = accountId,
+                    listId = listId,
                 )
-            }
-
-        private suspend fun fetchAllMoviesForList(listId: Long): List<SavableMovieDto> =
-            fetchAllPages { page ->
-                val result =
-                    remoteSavedListSource.getSavedListDetails(
-                        page = page,
-                        pageSize = 20,
-                        listId = listId,
-                    )
-                PagedResultDto(
-                    result.pagedItems.data,
-                    result.pagedItems.nextKey,
-                result.pagedItems.prevKey,
+            PagedResultDto(
+                data = result.pagedItems.data,
+                nextKey = result.pagedItems.nextKey,
+                prevKey = result.pagedItems.prevKey,
             )
         }
 

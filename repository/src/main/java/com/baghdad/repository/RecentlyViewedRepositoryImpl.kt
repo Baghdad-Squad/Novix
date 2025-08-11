@@ -14,38 +14,35 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RecentlyViewedRepositoryImpl
-    @Inject
-    constructor(
-        val localRecentlyViewedDataSource: LocalRecentlyViewedDataSource,
-        private val savableMovieDataSource: LocalSavableMovieDataSource,
-    ) : RecentlyViewedRepository {
-        override suspend fun getAllRecentlyViewed(): Flow<List<RecentlyViewed>> {
-            val savedMovies = savableMovieDataSource.getSavedMovies()
-            return getFlowSafely {
-                localRecentlyViewedDataSource.getAllRecentlyViewed().map {
-                    it.map { dto ->
-                        dto.toEntity(
-                            isSaved = savedMovies.containsKey(dto.contentId),
-                            listId = savedMovies[dto.contentId],
-                        )
-                    }
+class RecentlyViewedRepositoryImpl @Inject constructor(
+    private val localRecentlyViewedDataSource: LocalRecentlyViewedDataSource,
+    private val savableMovieDataSource: LocalSavableMovieDataSource,
+) : RecentlyViewedRepository {
+    override suspend fun getAllRecentlyViewed(): Flow<List<RecentlyViewed>> {
+        val savedMovies = savableMovieDataSource.getSavedMovies()
+        return getFlowSafely {
+            localRecentlyViewedDataSource.getAllRecentlyViewed().map {
+                it.map { dto ->
+                    dto.toEntity(
+                        isSaved = savedMovies.containsKey(dto.contentId),
+                        listId = savedMovies[dto.contentId],
+                    )
                 }
             }
         }
+    }
 
-        override suspend fun deleteAllRecentlyViewed() {
-            executeSafely {
-                localRecentlyViewedDataSource.deleteAllRecentlyViewed()
-            }
+    override suspend fun deleteAllRecentlyViewed() {
+        executeSafely {
+            localRecentlyViewedDataSource.deleteAllRecentlyViewed()
         }
+    }
 
-        override suspend fun addRecentlyViewed(recentlyViewed: RecentlyViewed) {
-            executeSafely {
-                localRecentlyViewedDataSource.addMediaToRecentlyViewed(
-                    recentlyViewed.toDto(),
-                )
+    override suspend fun addRecentlyViewed(recentlyViewed: RecentlyViewed) {
+        executeSafely {
+            localRecentlyViewedDataSource.addMediaToRecentlyViewed(
+                recentlyViewedDto = recentlyViewed.toDto(),
+            )
         }
-        localRecentlyViewedDataSource.addMediaToRecentlyViewed(recentlyViewed.toDto())
     }
 }
