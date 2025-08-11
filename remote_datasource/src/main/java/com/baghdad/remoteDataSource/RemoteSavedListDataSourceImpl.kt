@@ -29,6 +29,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
             apiCall = {
                 savedListApiService.createSavedList(
                     body = CreateListRequest(name = title),
+                    sessionId = "",
                 )
             },
             logger = logger,

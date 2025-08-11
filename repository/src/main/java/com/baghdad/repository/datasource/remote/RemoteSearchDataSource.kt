@@ -7,8 +7,6 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
 
 interface RemoteSearchDataSource {
-    suspend fun getMoviesResultCount(title: String): Int
-
     suspend fun getTvShowsResultCount(title: String): Int
 
     suspend fun getActorsResultCount(name: String): Int
