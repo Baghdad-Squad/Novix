@@ -1,6 +1,5 @@
 package com.baghdad.remoteDataSource.mapper.search
 
-import com.baghdad.remoteDataSource.mapper.search.filterGenres
 import com.baghdad.remoteDataSource.response.search.MovieSearchResponse
 import com.baghdad.remoteDataSource.util.getNextKey
 import com.baghdad.remoteDataSource.util.getPreviousKey
@@ -22,7 +21,7 @@ internal fun MovieSearchResponse.Result.toMovieDto(
     return MovieDto(
         id = id ?: 0L,
         title = title.orEmpty(),
-        genres = filterGenres(genreIds ?: emptyList<Int>(), genres),
+        genres = filterGenres(genreIds ?: emptyList<Long>(), genres),
         imdbRating = voteAverage ?: 0.0,
         userRating = userRating,
         releaseDate = releaseDate.orEmpty(),
@@ -32,12 +31,12 @@ internal fun MovieSearchResponse.Result.toMovieDto(
         trailerURL = ""
     )
 }
-
 private fun filterGenres(
-    genreIds: List<Int?>,
+    genreIds: List<Long?>,
     genres: List<GenreDto>
 ): List<GenreDto> {
+    val nonNullGenreIds = genreIds.filterNotNull().map { it }
     return genres.filter { genre ->
-        genreIds.contains(genre.id.toInt())
+        nonNullGenreIds.contains(genre.id)
     }
 }

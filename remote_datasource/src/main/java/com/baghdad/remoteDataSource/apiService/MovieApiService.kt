@@ -7,7 +7,6 @@ import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
 import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.response.rate.RatingResponse
 import com.baghdad.remoteDataSource.response.reviews.ReviewsResponse
-import com.baghdad.remoteDataSource.response.SimilarMovieResponse
 import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
@@ -25,12 +24,6 @@ import retrofit2.http.Query
 
 interface MovieApiService {
     @Authenticated
-    @GET(SIMILAR_MOVIES_ENDPOINT)
-    suspend fun getSimilarMovies(
-        @Path("movie_id") movieId: Long
-    ): Response<SimilarMovieResponse>
-
-    @Authenticated
     @GET(MOVIE_DETAILS_ENDPOINT)
     suspend fun getMovieDetails(
         @Path("movie_id") movieId: Long
@@ -41,13 +34,6 @@ interface MovieApiService {
     suspend fun getMovieCastMembers(
         @Path("movie_id") movieId: Long
     ): Response<CastMembersResponse>
-
-    @Authenticated
-    @GET(MOVIE_WITH_GENRE_ENDPOINT)
-    suspend fun getMoviesByGenre(
-        @Query("with_genres") genreId: Long,
-        @Query("page") page: Int
-    ): Response<SimilarMovieResponse>
 
     @ForceLocaleEnglish
     @Authenticated
@@ -74,15 +60,6 @@ interface MovieApiService {
     suspend fun getTrendingMovies(
         @Query("page") page: Int
     ): Response<TrendingMovieResponse>
-
-    @Authenticated
-    @GET(DISCOVER_MOVIES_ENDPOINT)
-    suspend fun getTopRatedMovies(
-        @Query("page") page: Int,
-        @Query("sort_by") sortBy: String = "vote_average.desc",
-        @Query("vote_count.gte") minVoteCount: Int = 200,
-        @Query("language") language: String = "en-US"
-    ): Response<SimilarMovieResponse>
 
     @Authenticated
     @GET(DISCOVER_MOVIES_ENDPOINT)

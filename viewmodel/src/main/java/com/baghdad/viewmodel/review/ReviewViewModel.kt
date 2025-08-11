@@ -91,7 +91,7 @@ class ReviewViewModel @Inject constructor(
         sendEffect(ReviewScreenEffect.NavigateBack)
     }
 
-    override fun onExpandedTextChange(id: String) {
+    override fun onExpandedTextChange(id: Long) {
         updateState { currentState ->
             val updatedReviews = currentState.reviews.map { review ->
                 if (review.id == id) {
