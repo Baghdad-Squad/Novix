@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -49,13 +48,11 @@ class LocalUserPreferencesDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun getAppLanguage(): Flow<String> {
+    override suspend fun getAppLanguage(): Flow<String?> {
         return executeFlowWithErrorHandling(
             block = {
                 dataStore.data.map { preferences ->
                     return@map preferences[APP_LANGUAGE_KEY]
-                        ?: if (Locale.getDefault().language == ARABIC) ARABIC else ENGLISH
-
                 }
             }, logger = logger
         )
@@ -90,7 +87,5 @@ class LocalUserPreferencesDataSourceImpl @Inject constructor(
     companion object {
         private val DARK_THEME_KEY = booleanPreferencesKey("dark_theme")
         private val APP_LANGUAGE_KEY = stringPreferencesKey("app_language")
-        private const val ARABIC = "ar"
-        private const val ENGLISH = "en"
     }
 }
