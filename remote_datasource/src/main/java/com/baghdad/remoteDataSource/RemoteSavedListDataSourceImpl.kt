@@ -24,13 +24,11 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     private val savedListApiService: SavedListApiService,
     private val logger: Logger,
 ) : RemoteSavedListDataSource {
-
-    override suspend fun createSavedList(title: String, sessionId: String) {
+    override suspend fun createSavedList(title: String) {
         val result = handleRequest<CreateSavedListResponse>(
             apiCall = {
                 savedListApiService.createSavedList(
                     body = CreateListRequest(name = title),
-                    sessionId = sessionId,
                 )
             },
             logger = logger,
@@ -46,14 +44,15 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         page: Int,
         pageSize: Int,
         accountId: Long,
-        sessionId: String,
+
     ): PagedResultDto<SavedListDto> {
         val listsResponse = handleRequest<UserListsResponse>(
             apiCall = {
                 savedListApiService.getSavedLists(
                     page = page,
                     accountId = accountId,
-                    sessionId = sessionId,
+                    sessionId = "",
+
                 )
             },
             logger = logger,
@@ -61,11 +60,11 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         return listsResponse.toPagedSavedListsDtos()
     }
 
-    override suspend fun addMovieToSavedList(listId: Long, movieId: Long, sessionId: String) {
+    override suspend fun addMovieToSavedList(listId: Long, movieId: Long) {
         val body = AddListItemRequest(mediaId = movieId)
 
         handleRequest(
-            apiCall = { savedListApiService.addMovieToSavedList(listId, body, sessionId) },
+            apiCall = { savedListApiService.addMovieToSavedList(listId, body,"") },
             logger = logger
         )
     }
@@ -73,11 +72,10 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     override suspend fun removeMovieFromSavedList(
         listId: Long,
         movieId: Long,
-        sessionId: String
     ) {
         val body = RemoveListItemRequest(mediaId = movieId)
         handleRequest(
-            apiCall = { savedListApiService.removeMovieFromSavedList(listId, body, sessionId) },
+            apiCall = { savedListApiService.removeMovieFromSavedList(listId, body,"") },
             logger = logger
         )
     }
@@ -95,9 +93,9 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     }
 
 
-    override suspend fun deleteSavedListById(listId: Long, sessionId: String) {
+    override suspend fun deleteSavedListById(listId: Long) {
         handleRequest(
-            apiCall = { savedListApiService.deleteSavedListById(listId, sessionId) },
+            apiCall = { savedListApiService.deleteSavedListById(listId)},
             logger = logger,
         )
     }
