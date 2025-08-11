@@ -1,6 +1,5 @@
 package com.baghdad.repository.model
 
-
 data class MovieDto(
     val id: Long,
     val title: String,
@@ -11,5 +10,5 @@ data class MovieDto(
     val overview: String,
     val posterPictureURL: String,
     val trailerURL: String,
-    val runtimeMinutes: Int,
+    val runtimeMinutes: Int
 )

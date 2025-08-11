@@ -17,7 +17,7 @@ import javax.inject.Singleton
 class RecentlyViewedRepositoryImpl
     @Inject
     constructor(
-        val localRecentlyViewedDataSource: LocalRecentlyViewedDataSource,
+        private val localRecentlyViewedDataSource: LocalRecentlyViewedDataSource,
         private val savableMovieDataSource: LocalSavableMovieDataSource,
     ) : RecentlyViewedRepository {
         override suspend fun getAllRecentlyViewed(): Flow<List<RecentlyViewed>> {
