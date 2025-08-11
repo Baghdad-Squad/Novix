@@ -74,8 +74,8 @@ class LocalSavableMovieDataSourceImpl
             }
         }
 
-        override suspend fun getSavedMovies(): Map<Long, Long> =
-            executeWithErrorHandling(logger) {
+        override suspend fun getSavedMovies(): Map<Long, Long> {
+            return executeWithErrorHandling(logger) {
                 if (savedMovies.isEmpty()) {
                     val movies = savedListMovieDao.getSavedMovies()
                     savedMovies.clear()
@@ -83,4 +83,4 @@ class LocalSavableMovieDataSourceImpl
                 }
                 savedMovies
         }
-}
+}}

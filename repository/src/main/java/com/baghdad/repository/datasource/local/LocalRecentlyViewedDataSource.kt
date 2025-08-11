@@ -4,9 +4,9 @@ import com.baghdad.repository.model.RecentlyViewedDto
 import kotlinx.coroutines.flow.Flow
 
 interface LocalRecentlyViewedDataSource {
-    fun getAllRecentlyViewed(): Flow<List<RecentlyViewedDto>>
-
     suspend fun deleteAllRecentlyViewed()
+
+    fun getAllRecentlyViewed(): Flow<List<RecentlyViewedDto>>
 
     suspend fun addMediaToRecentlyViewed(recentlyViewedDto: RecentlyViewedDto)
 }

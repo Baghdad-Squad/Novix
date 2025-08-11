@@ -4,8 +4,11 @@ import com.baghdad.repository.model.RecentSearchDto
 import kotlinx.coroutines.flow.Flow
 
 interface LocalRecentSearchDataSource {
-    suspend fun addRecentSearchQuery(query: String)
-    fun getAllRecentSearches(): Flow<List<RecentSearchDto>>
-    suspend fun deleteRecentSearchById(id: Long)
     suspend fun deleteAllRecentSearches()
+
+    suspend fun deleteRecentSearchById(id: Long)
+
+    suspend fun addRecentSearchQuery(query: String)
+
+    fun getAllRecentSearches(): Flow<List<RecentSearchDto>>
 }
