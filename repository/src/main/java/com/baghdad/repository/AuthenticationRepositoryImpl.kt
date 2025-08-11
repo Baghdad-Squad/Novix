@@ -5,7 +5,7 @@ import com.baghdad.entity.User
 import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
-import com.baghdad.repository.model.toEntity
+import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.util.executeLoginSafely
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
@@ -57,7 +57,6 @@ class AuthenticationRepositoryImpl @Inject constructor(
                 false
             }
         }
-
 
     }
 }
