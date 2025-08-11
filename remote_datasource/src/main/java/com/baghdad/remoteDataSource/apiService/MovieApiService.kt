@@ -105,7 +105,6 @@ interface MovieApiService {
     @POST(RATE_MOVIE_ENDPOINT)
     suspend fun addMovieRate(
         @Path("movie_id") movieId: Long,
-        @Query("session_id") sessionId: String,
         @Body rating: RatingRequest
     ): Response<RatingResponse>
 
@@ -113,21 +112,18 @@ interface MovieApiService {
     @DELETE(RATE_MOVIE_ENDPOINT)
     suspend fun deleteMovieRate(
         @Path("movie_id") movieId: Long,
-        @Query("session_id") sessionId: String,
     ): Response<RatingResponse>
 
     @Authenticated
     @GET(MOVIE_ACCOUNT_STATES)
     suspend fun getMovieAccountStates(
         @Path("movie_id") movieId: Long,
-        @Query("session_id") sessionId: String
     ): Response<MediaAccountStatesResponse>
 
     @Authenticated
     @GET(USER_RATED_MOVIES_ENDPOINT)
     suspend fun getUserRatedMovies(
         @Path("account_id") accountId: Long,
-        @Query("session_id") sessionId: String,
         @Query("page") page: Int
     ): Response<MyRatingMoviesResponse>
 

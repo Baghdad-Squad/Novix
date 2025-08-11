@@ -4,12 +4,10 @@ import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntities
 import com.baghdad.repository.mapper.toEntity
-import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +15,6 @@ import javax.inject.Singleton
 @Singleton
 class EpisodeRepositoryImpl @Inject constructor(
     private val remoteEpisodeDataSource: RemoteEpisodeDataSource,
-    private val localSessionDataStore: LocalSessionDataStore,
     private val remoteTvShowDataSource: RemoteTvShowDataSource
 ) : EpisodeRepository {
     override suspend fun getEpisodeDetails(
@@ -28,7 +25,7 @@ class EpisodeRepositoryImpl @Inject constructor(
         return executeSafely {
             val trailerUrl =
                 remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber)
-            val tvShowImages = remoteTvShowDataSource.getTvShowImages(tvId).take(MAX_TV_SHOW_IMAGES)
+            val tvShowImages = remoteTvShowDataSource.getTvShowImages(tvId)
             val tvShowGenres = remoteTvShowDataSource.getTvShowDetails(tvId).genres
             remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber).toEntity()
                 .copy(
@@ -56,14 +53,12 @@ class EpisodeRepositoryImpl @Inject constructor(
         episodeNumber: Int,
         rating: Int
     ) {
-        executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+        executeSafely(
             block = {
                 remoteEpisodeDataSource.addEpisodeRate(
                     tvShowId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    sessionId = it,
                     rating = rating
                 )
             }
@@ -75,20 +70,14 @@ class EpisodeRepositoryImpl @Inject constructor(
         seasonNumber: Int,
         episodeNumber: Int
     ): MediaAccountStates {
-        return executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+        return executeSafely(
             block = {
                 remoteEpisodeDataSource.getEpisodeAccountStates(
                     tvShowId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    sessionId = it
                 ).toEntity()
             }
         )
-    }
-
-    companion object {
-        private const val MAX_TV_SHOW_IMAGES = 10
     }
 }

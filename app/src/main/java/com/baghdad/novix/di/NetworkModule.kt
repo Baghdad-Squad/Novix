@@ -1,12 +1,9 @@
 package com.baghdad.novix.di
 
 import android.content.Context
-import com.baghdad.local_datasource.language.AppLanguageProvider
 import com.baghdad.novix.BuildConfig
 import com.baghdad.remoteDataSource.interceptor.CacheInterceptor
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
-import com.baghdad.repository.language.LanguageProvider
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,9 +21,6 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class NetworkModule {
-
-    @Binds
-    abstract fun provideLanguageProvider(appLanguageProvider : AppLanguageProvider): LanguageProvider
 
     companion object {
         private const val timeOut = 20L
@@ -47,10 +41,9 @@ abstract class NetworkModule {
 
         @Provides
         fun provideHeadersSetupInterceptor(
-            languageProvider: LanguageProvider,
             @Named("AUTHORIZATION_TOKEN") authorizationToken: String
         ): HeadersSetupInterceptor {
-            return HeadersSetupInterceptor(languageProvider, authorizationToken)
+            return HeadersSetupInterceptor(authorizationToken)
         }
 
         @Provides
