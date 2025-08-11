@@ -27,7 +27,7 @@ class LocalUserPreferencesDataSourceImpl @Inject constructor(
     private val logger: Logger,
     @ApplicationContext private val context: Context,
 ) : LocalUserPreferencesDataSource {
-    override suspend fun isAppInDarkTheme(): Flow<Boolean> {
+    override  fun isAppInDarkTheme(): Flow<Boolean> {
         return executeFlowWithErrorHandling(
             block = {
                 dataStore.data
@@ -48,7 +48,7 @@ class LocalUserPreferencesDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun getAppLanguage(): Flow<String?> {
+    override fun getAppLanguage(): Flow<String?> {
         return executeFlowWithErrorHandling(
             block = {
                 dataStore.data.map { preferences ->

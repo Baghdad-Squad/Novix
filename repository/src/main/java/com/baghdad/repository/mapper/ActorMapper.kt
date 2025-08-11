@@ -19,14 +19,19 @@ fun ActorDto.toEntity(): Actor {
         },
         placeOfBirth = placeOfBirth,
         headerPictures = headerPictures,
-        department = department,
+        department = department
     )
 }
 
+/**
+ * we wanna change exaction  fun to dto
+ * طب ليهه
+ * نشيليهااااااااا
+ */
 fun ActorDto.toSearchQueryDto(query: String): SearchQueryDto {
     return SearchQueryDto(
         queryName = query,
         mediaId = id,
-        mediaType = SearchQueryDto.MediaType.ACTOR,
+        mediaType = SearchQueryDto.MediaType.ACTOR
     )
 }

@@ -4,6 +4,9 @@ import com.baghdad.entity.media.Episode
 import com.baghdad.repository.model.EpisodeDto
 import kotlinx.datetime.LocalDate
 
+/**
+ * remove this and comma
+ */
 fun EpisodeDto.toEntity(): Episode =
     Episode(
         id = this.id,

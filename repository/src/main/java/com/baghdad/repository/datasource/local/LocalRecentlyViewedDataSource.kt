@@ -5,7 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalRecentlyViewedDataSource {
     fun getAllRecentlyViewed(): Flow<List<RecentlyViewedDto>>
-    suspend fun deleteAllRecentlyViewed()
-    suspend fun addMediaToRecentlyViewed(recentlyViewedDto: RecentlyViewedDto)
 
+    suspend fun deleteAllRecentlyViewed()
+
+    suspend fun addMediaToRecentlyViewed(recentlyViewedDto: RecentlyViewedDto)
 }

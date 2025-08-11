@@ -7,13 +7,14 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
 
 interface RemoteSearchDataSource {
+
+    suspend fun getMoviesResultCount(title: String): Int
+
     suspend fun searchMovies(
         query: String,
         page: Int,
         genres: List<GenreDto>
     ): PagedResultDto<MovieDto>
-
-    suspend fun getMoviesResultCount(title: String): Int
 
     suspend fun searchTvShows(
         query: String,
@@ -22,6 +23,7 @@ interface RemoteSearchDataSource {
     ): PagedResultDto<TvShowDto>
 
     suspend fun getTvShowsResultCount(title: String): Int
+
     suspend fun searchActors(
         query: String,
         page: Int

@@ -8,6 +8,9 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import kotlinx.datetime.LocalDate
 
+/**
+ * formating and search about the take if
+ */
 fun MovieDto.toEntity(): Movie =
     Movie(
         id = id,
@@ -24,6 +27,9 @@ fun MovieDto.toEntity(): Movie =
         runtimeMinutes = runtimeMinutes,
     )
 
+/**
+ * seach about why we use null for id
+ */
 fun MovieDto.toSavableMovie(
     isSaved: Boolean,
     listId: Long? = null,

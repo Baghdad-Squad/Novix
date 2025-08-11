@@ -4,6 +4,7 @@ import com.baghdad.repository.model.UserDto
 
 interface RemoteAuthenticationDataSource {
     suspend fun getRequestToken(): String
+
     suspend fun validateCredentialWithToken(
         userName: String,
         password: String,

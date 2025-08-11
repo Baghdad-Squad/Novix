@@ -6,6 +6,21 @@ import com.baghdad.repository.model.savedList.SavedListDetailsDto
 
 interface RemoteSavedListDataSource {
     suspend fun createSavedList(title: String, sessionId: String)
+
+    suspend fun deleteSavedListById(listId: Long, sessionId: String)
+
+    suspend fun addMovieToSavedList(
+        listId: Long,
+        movieId: Long,
+        sessionId: String
+    )
+
+    suspend fun removeMovieFromSavedList(
+        listId: Long,
+        movieId: Long,
+        sessionId: String
+    )
+
     suspend fun getSavedLists(
         page: Int,
         pageSize: Int,
@@ -13,13 +28,9 @@ interface RemoteSavedListDataSource {
         sessionId: String,
     ): PagedResultDto<SavedListDto>
 
-    suspend fun addMovieToSavedList(listId: Long, movieId: Long, sessionId: String)
-    suspend fun removeMovieFromSavedList(listId: Long, movieId: Long, sessionId: String)
     suspend fun getSavedListDetails(
         listId: Long,
         page: Int,
         pageSize: Int
     ): SavedListDetailsDto
-
-    suspend fun deleteSavedListById(listId: Long, sessionId: String)
 }
