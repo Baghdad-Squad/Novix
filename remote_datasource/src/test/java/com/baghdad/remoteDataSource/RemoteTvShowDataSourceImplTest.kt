@@ -2,10 +2,10 @@ package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.TvShowApiService
 import com.baghdad.remoteDataSource.response.CastMemberResponse
-import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
 import com.baghdad.remoteDataSource.response.MovieAuthorDetails
 import com.baghdad.remoteDataSource.response.ReviewResponse
-import com.baghdad.remoteDataSource.response.ReviewsResponse
+import com.baghdad.remoteDataSource.response.reviews.ReviewsResponse
 import com.baghdad.remoteDataSource.response.actor.ImageResponse
 import com.baghdad.remoteDataSource.response.tvShow.EpisodeResponse
 import com.baghdad.remoteDataSource.response.tvShow.PopularTvShowsResponse

@@ -2,8 +2,8 @@ package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.AuthenticationApiService
 import com.baghdad.remoteDataSource.request.RequestTokenBody
-import com.baghdad.remoteDataSource.response.RequestTokenResponse
-import com.baghdad.remoteDataSource.response.SessionResponse
+import com.baghdad.remoteDataSource.response.token.RequestTokenResponse
+import com.baghdad.remoteDataSource.response.session.SessionResponse
 import com.baghdad.remoteDataSource.response.user.UserResponse
 import com.baghdad.repository.logger.Logger
 import com.google.common.truth.Truth.assertThat

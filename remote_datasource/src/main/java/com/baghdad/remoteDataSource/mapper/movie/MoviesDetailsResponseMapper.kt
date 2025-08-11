@@ -1,6 +1,5 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
-import com.baghdad.remoteDataSource.response.movie.Genre
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
@@ -20,7 +19,7 @@ fun MovieDetailsResponse.toDto(userRating: Double? = null): MovieDto {
     )
 }
 
-fun Genre.toGenreDto(): GenreDto? {
+fun MovieDetailsResponse.Genre.toGenreDto(): GenreDto? {
     return if (id != null && !name.isNullOrBlank()) {
         GenreDto(
             id = id, name = name,

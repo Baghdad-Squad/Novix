@@ -6,7 +6,7 @@ import com.baghdad.remoteDataSource.mapper.toPagedSavedListsDtos
 import com.baghdad.remoteDataSource.request.AddListItemRequest
 import com.baghdad.remoteDataSource.request.CreateListRequest
 import com.baghdad.remoteDataSource.request.RemoveListItemRequest
-import com.baghdad.remoteDataSource.response.UserListsResponse
+import com.baghdad.remoteDataSource.response.savedList.UserListsResponse
 import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
 import com.baghdad.remoteDataSource.response.savedList.ListDetailsResponse
 import com.baghdad.remoteDataSource.util.handleRequest

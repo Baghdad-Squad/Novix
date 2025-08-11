@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource.mapper.search
 
+import com.baghdad.remoteDataSource.mapper.search.filterGenres
 import com.baghdad.remoteDataSource.response.search.MovieSearchResponse
 import com.baghdad.remoteDataSource.util.getNextKey
 import com.baghdad.remoteDataSource.util.getPreviousKey
@@ -19,14 +20,14 @@ internal fun MovieSearchResponse.Result.toMovieDto(
     runtimeMinutes: Int = 0
 ): MovieDto {
     return MovieDto(
-        id = this.id?.toLong() ?: 0L,
-        title = this.title.orEmpty(),
-        genres = filterGenres(this.genreIds ?: emptyList<Int>(), genres),
-        imdbRating = this.voteAverage ?: 0.0,
+        id = id ?: 0L,
+        title = title.orEmpty(),
+        genres = filterGenres(genreIds ?: emptyList<Int>(), genres),
+        imdbRating = voteAverage ?: 0.0,
         userRating = userRating,
-        releaseDate = this.releaseDate.orEmpty(),
-        overview = this.overview.orEmpty(),
-        posterPictureURL = this.posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
+        releaseDate = releaseDate.orEmpty(),
+        overview = overview.orEmpty(),
+        posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
         runtimeMinutes = runtimeMinutes,
         trailerURL = ""
     )

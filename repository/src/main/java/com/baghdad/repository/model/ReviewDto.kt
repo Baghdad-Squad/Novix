@@ -1,7 +1,7 @@
 package com.baghdad.repository.model
 
 data class ReviewDto(
-    val id: String,
+    val id: Long,
     val authorName: String,
     val authorAvatarUrl: String,
     val contentTitle: String,

@@ -5,14 +5,14 @@ import com.baghdad.repository.model.ActorDto
 
 fun ActorDetailsResponse.toDto(): ActorDto {
     return ActorDto(
-        id = this.id?.toLong() ?: 0,
-        name = this.name.orEmpty(),
-        imageUrl = "https://image.tmdb.org/t/p/w500"+ this.profilePath,
-        biography = this.biography.orEmpty(),
-        birthdayDate = this.birthday,
-        deathDate = this.deathday,
-        placeOfBirth = this.placeOfBirth.orEmpty(),
-        headerPictures = listOf("https://image.tmdb.org/t/p/w500"+ this.profilePath),
-        department = this.knownForDepartment.orEmpty(),
+        id = id ?: 0,
+        name = name.orEmpty(),
+        imageUrl = "https://image.tmdb.org/t/p/w500$profilePath",
+        biography = biography.orEmpty(),
+        birthdayDate = birthday,
+        deathDate = deathday,
+        placeOfBirth = placeOfBirth.orEmpty(),
+        headerPictures = listOf("https://image.tmdb.org/t/p/w500$profilePath"),
+        department = knownForDepartment.orEmpty(),
     )
 }

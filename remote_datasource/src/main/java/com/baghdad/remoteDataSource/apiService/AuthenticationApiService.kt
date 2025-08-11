@@ -3,8 +3,8 @@ package com.baghdad.remoteDataSource.apiService
 import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.request.CredentialDataBody
 import com.baghdad.remoteDataSource.request.RequestTokenBody
-import com.baghdad.remoteDataSource.response.RequestTokenResponse
-import com.baghdad.remoteDataSource.response.SessionResponse
+import com.baghdad.remoteDataSource.response.token.RequestTokenResponse
+import com.baghdad.remoteDataSource.response.session.SessionResponse
 import com.baghdad.remoteDataSource.response.user.UserResponse
 import retrofit2.Response
 import retrofit2.http.Body

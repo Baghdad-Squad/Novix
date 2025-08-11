@@ -3,7 +3,7 @@ package com.baghdad.remoteDataSource
 import com.baghdad.remoteDataSource.apiService.SavedListApiService
 import com.baghdad.remoteDataSource.request.CreateListRequest
 import com.baghdad.remoteDataSource.response.UserListDto
-import com.baghdad.remoteDataSource.response.UserListsResponse
+import com.baghdad.remoteDataSource.response.savedList.UserListsResponse
 import com.baghdad.remoteDataSource.response.savedList.AddListItemResponse
 import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
 import com.baghdad.remoteDataSource.response.savedList.DeleteSavedListResponse

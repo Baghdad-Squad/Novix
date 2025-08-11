@@ -4,7 +4,7 @@ import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.request.AddListItemRequest
 import com.baghdad.remoteDataSource.request.CreateListRequest
 import com.baghdad.remoteDataSource.request.RemoveListItemRequest
-import com.baghdad.remoteDataSource.response.UserListsResponse
+import com.baghdad.remoteDataSource.response.savedList.UserListsResponse
 import com.baghdad.remoteDataSource.response.savedList.AddListItemResponse
 import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
 import com.baghdad.remoteDataSource.response.savedList.DeleteSavedListResponse

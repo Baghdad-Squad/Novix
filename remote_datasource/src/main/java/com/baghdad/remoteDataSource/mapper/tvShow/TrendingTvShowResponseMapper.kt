@@ -10,24 +10,22 @@ import com.baghdad.repository.model.TvShowDto
 
 fun TrendingTvShowsResponse.toPagedTvShowDtos(): PagedResultDto<TvShowDto> {
     return PagedResultDto(
-        data =
-            this.results?.mapNotNull { it?.takeIf { it.id != null }?.toTvShowDto() }
-                ?: emptyList(),
-            nextKey = getNextKey(page, totalPages),
+        data = results?.mapNotNull { it?.takeIf { it.id != null }?.toTvShowDto() } ?: emptyList(),
+        nextKey = getNextKey(page, totalPages),
         prevKey = getPreviousKey(page)
     )
 }
 
 fun TrendingTvShow.toTvShowDto(): TvShowDto {
     return TvShowDto(
-        id = this.id?.toLong() ?: 0L,
-        genres = genreIds?.map { GenreDto(it.toLong(), "", GenreDto.GenreType.TV_SHOW) }
+        id = id ?: 0L,
+        genres = genreIds?.filterNotNull()?.map { GenreDto(it, "", GenreDto.GenreType.TV_SHOW) }
             ?: emptyList(),
         posterPictureURL = "https://image.tmdb.org/t/p/w500" + this.posterPath.orEmpty(),
-        title = this.name ?: "",
-        overview = this.overview ?: "",
-        releaseDate = this.firstAirDate ?: "",
-        imdbRating = this.voteAverage ?: 0.0,
+        title = name ?: "",
+        overview = overview ?: "",
+        releaseDate = firstAirDate ?: "",
+        imdbRating = voteAverage ?: 0.0,
         userRating = null,
         trailerURL = "",
         headerImagesURLs = emptyList(),

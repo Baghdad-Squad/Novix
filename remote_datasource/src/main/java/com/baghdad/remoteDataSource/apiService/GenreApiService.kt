@@ -1,7 +1,7 @@
 package com.baghdad.remoteDataSource.apiService
 
 import com.baghdad.remoteDataSource.interceptor.Authenticated
-import com.baghdad.remoteDataSource.response.GenreListResponse
+import com.baghdad.remoteDataSource.response.genre.GenreListResponse
 import retrofit2.Response
 import retrofit2.http.GET
 
