@@ -55,7 +55,6 @@ interface EpisodeApiService {
         @Path("series_id") seriesId: Long,
         @Path("season_number") seasonNumber: Int,
         @Path("episode_number") episodeNumber: Int,
-        @Query("session_id") sessionId: String,
         @Body rating: RatingRequest
     ): Response<RatingResponse>
 
@@ -65,7 +64,6 @@ interface EpisodeApiService {
         @Path("series_id") seriesId: Long,
         @Path("season_number") seasonNumber: Int,
         @Path("episode_number") episodeNumber: Int,
-        @Query("session_id") sessionId: String,
     ): Response<MediaAccountStatesResponse>
 
 
