@@ -159,25 +159,23 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         return response.toMovieDtos()
     }
 
-    override suspend fun addMovieRate(movieId: Long, rating: Int, sessionId: String) {
+    override suspend fun addMovieRate(movieId: Long, rating: Int) {
         handleRequest<RatingResponse>(
             apiCall = {
                 movieApiService.addMovieRate(
                     movieId = movieId,
                     rating = RatingRequest(rating),
-                    sessionId = sessionId
                 )
             },
             logger = logger,
         )
     }
 
-    override suspend fun deleteMovieRate(movieId: Long, sessionId: String) {
+    override suspend fun deleteMovieRate(movieId: Long) {
         handleRequest<RatingResponse>(
             apiCall = {
                 movieApiService.deleteMovieRate(
                     movieId = movieId,
-                    sessionId = sessionId
                 )
             },
             logger = logger,
@@ -186,21 +184,19 @@ class RemoteMovieDataSourceImpl @Inject constructor(
 
     override suspend fun getMovieAccountStates(
         movieId: Long,
-        sessionId: String
     ): MediaAccountStateDto {
         return handleRequest<MediaAccountStatesResponse>(
-            apiCall = { movieApiService.getMovieAccountStates(movieId, sessionId) },
+            apiCall = { movieApiService.getMovieAccountStates(movieId) },
             logger = logger
         ).toDto()
     }
 
     override suspend fun getUserRatedMovies(
         accountId: Long,
-        sessionId: String,
         page: Int
     ): PagedResultDto<MovieDto> {
         return handleRequest<MyRatingMoviesResponse>(
-            apiCall = { movieApiService.getUserRatedMovies(accountId, sessionId, page) },
+            apiCall = { movieApiService.getUserRatedMovies(accountId, page) },
             logger = logger
         ).toPagedMovieDtos()
     }

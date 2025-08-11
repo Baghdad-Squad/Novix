@@ -22,21 +22,19 @@ interface RemoteMovieDataSource {
 
     suspend fun getPopularMovies(): List<MovieDto>
 
-    suspend fun deleteMovieRate(movieId: Long, sessionId: String)
+    suspend fun deleteMovieRate(movieId: Long)
 
-    suspend fun getMovieAccountStates(movieId: Long, sessionId: String): MediaAccountStateDto
+    suspend fun getMovieAccountStates(movieId: Long): MediaAccountStateDto
 
     suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto>
 
     suspend fun getUserRatedMovies(
         accountId: Long,
-        sessionId: String,
         page: Int
     ): PagedResultDto<MovieDto>
 
     suspend fun addMovieRate(
         movieId: Long,
         rating: Int,
-        sessionId: String
     )
 }
