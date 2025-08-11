@@ -1,13 +1,13 @@
 package com.baghdad.remoteDataSource.mapper.actor
 
-import com.baghdad.remoteDataSource.response.CastMemberResponse
+import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
 
-fun CastMemberResponse.toDto(): CastMemberDto {
+fun CastMembersResponse.CastMemberResponse.toDto(): CastMemberDto {
     return CastMemberDto(
         actor = ActorDto(
-            id = (id ?: 0).toLong(),
+            id = id ?: 0L,
             name = name ?: "Unknown Actor",
             imageUrl = profilePath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
             biography = "",

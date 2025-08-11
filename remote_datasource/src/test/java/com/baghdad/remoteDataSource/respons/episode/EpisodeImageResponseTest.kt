@@ -10,19 +10,19 @@ class EpisodeImageResponseTest {
     fun `should create EpisodeImageResponse with full data when all fields are provided`() {
         // Given
         val expectedFilePath = "/episode1_still.jpg"
-        val expectedStills = listOf(EpisodeImageResponse.Still(filePath = expectedFilePath))
+        val expectedEpisodeFrames = listOf(EpisodeImageResponse.EpisodeFrame(filePath = expectedFilePath))
 
         // When
         val response = EpisodeImageResponse(
             id = 101,
-            stills = expectedStills
+            episodeFrames = expectedEpisodeFrames
         )
 
         // Then
         Truth.assertThat(response.id).isEqualTo(101)
-        Truth.assertThat(response.stills).isNotNull()
-        Truth.assertThat(response.stills!!.size).isEqualTo(1)
-        Truth.assertThat(response.stills[0].filePath).isEqualTo(expectedFilePath)
+        Truth.assertThat(response.episodeFrames).isNotNull()
+        Truth.assertThat(response.episodeFrames!!.size).isEqualTo(1)
+        Truth.assertThat(response.episodeFrames[0].filePath).isEqualTo(expectedFilePath)
     }
 
     @Test
@@ -32,16 +32,16 @@ class EpisodeImageResponseTest {
 
         // Then
         Truth.assertThat(response.id).isNull()
-        Truth.assertThat(response.stills).isNull()
+        Truth.assertThat(response.episodeFrames).isNull()
     }
 
     @Test
     fun `should create Still with default values when no fields are provided`() {
         // Given & When
-        val still = EpisodeImageResponse.Still()
+        val episodeFrame = EpisodeImageResponse.EpisodeFrame()
 
         // Then
-        Truth.assertThat(still.filePath).isNull()
+        Truth.assertThat(episodeFrame.filePath).isNull()
     }
 
     @Test
@@ -49,12 +49,12 @@ class EpisodeImageResponseTest {
         // Given
         val response = EpisodeImageResponse(
             id = 202,
-            stills = emptyList()
+            episodeFrames = emptyList()
         )
 
         // Then
         Truth.assertThat(response.id).isEqualTo(202)
-        Truth.assertThat(response.stills).isEmpty()
+        Truth.assertThat(response.episodeFrames).isEmpty()
     }
 
     @Test
@@ -63,9 +63,9 @@ class EpisodeImageResponseTest {
         val expectedFilePath = "/partial_still.jpg"
 
         // When
-        val still = EpisodeImageResponse.Still(filePath = expectedFilePath)
+        val episodeFrame = EpisodeImageResponse.EpisodeFrame(filePath = expectedFilePath)
 
         // Then
-        Truth.assertThat(still.filePath).isEqualTo(expectedFilePath)
+        Truth.assertThat(episodeFrame.filePath).isEqualTo(expectedFilePath)
     }
 }

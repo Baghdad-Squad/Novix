@@ -13,14 +13,14 @@ fun TvShowSearchResponse.toPagedTvShowDtos(genres: List<GenreDto>) = PagedResult
     prevKey = getPreviousKey(page)
 )
 
-private fun TvShowSearchResponse.Result.toTvShowDto(
+internal fun TvShowSearchResponse.Result.toTvShowDto(
     genres: List<GenreDto> = emptyList(),
     numberOfSeasons: Int = 1
 ): TvShowDto {
     return TvShowDto(
-        id = this.id?.toLong() ?: 0L,
+        id = id ?: 0L,
         title = this.title.orEmpty(),
-        genres = filterGenres(this.genreIds ?: emptyList<Int>(), genres),
+        genres = filterGenres(genreIds ?: emptyList<Long>(), genres),
         imdbRating = this.voteAverage ?: 0.0,
         userRating = 0,
         releaseDate = this.releaseDate.orEmpty(),
@@ -33,10 +33,10 @@ private fun TvShowSearchResponse.Result.toTvShowDto(
 }
 
 private fun filterGenres(
-    genreIds: List<Int?>,
+    genreIds: List<Long?>,
     genres: List<GenreDto>
 ): List<GenreDto> {
     return genres.filter { genre ->
-        genreIds.contains(genre.id.toInt())
+        genreIds.contains(genre.id)
     }
 }

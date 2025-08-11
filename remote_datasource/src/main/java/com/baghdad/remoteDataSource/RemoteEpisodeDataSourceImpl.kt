@@ -6,9 +6,9 @@ import com.baghdad.remoteDataSource.mapper.episode.mapToYoutubeTrailerUrl
 import com.baghdad.remoteDataSource.mapper.episode.toDto
 import com.baghdad.remoteDataSource.mapper.toDto
 import com.baghdad.remoteDataSource.request.RatingRequest
-import com.baghdad.remoteDataSource.response.CastMembersResponse
-import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
-import com.baghdad.remoteDataSource.response.RatingResponse
+import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
+import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.rate.RatingResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
@@ -75,7 +75,7 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        ).stills.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
+        ).episodeFrames.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
     }
 
     override suspend fun getEpisodeTrailer(

@@ -11,7 +11,7 @@ import com.baghdad.repository.model.TvShowDto
 
 fun TopRatedTvShowSearchResponse.toPagedTvShowDtos() = PagedResultDto(
     data = results?.mapNotNull { it?.takeIf { it.id != null }?.toTvShowDto() } ?: emptyList(),
-    nextKey = getNextKey(page, this.totalPages),
+    nextKey = getNextKey(page, totalPages),
     prevKey = getPreviousKey(page)
 )
 
@@ -19,16 +19,16 @@ fun TopRatedTvShowSearchResponse.toPagedTvShowDtos() = PagedResultDto(
 private fun TopRatedTvShowSearchResponse.Result.toTvShowDto(
     numberOfSeasons: Int = 1
 ): TvShowDto {
-    val tvShowGenres = this.genreIds?.map { GenreDto(it?.toLong() ?: 0L, "", GenreDto.GenreType.TV_SHOW) } ?: emptyList()
+    val tvShowGenres = genreIds?.map { GenreDto(it?.toLong() ?: 0L, "", GenreDto.GenreType.TV_SHOW) } ?: emptyList()
     return TvShowDto(
-        id = this.id?.toLong() ?: 0L,
-        title = this.title.orEmpty(),
+        id = id ?: 0L,
+        title = title.orEmpty(),
         genres = tvShowGenres,
-        imdbRating = this.voteAverage ?: 0.0,
+        imdbRating = voteAverage ?: 0.0,
         userRating = 0,
-        releaseDate = this.releaseDate.orEmpty(),
-        overview = this.overview.orEmpty(),
-        posterPictureURL = this.posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
+        releaseDate = releaseDate.orEmpty(),
+        overview = overview.orEmpty(),
+        posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
         numberOfSeasons = numberOfSeasons,
         trailerURL = "",
         headerImagesURLs = emptyList()

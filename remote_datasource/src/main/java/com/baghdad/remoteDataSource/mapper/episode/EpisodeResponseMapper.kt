@@ -1,18 +1,18 @@
 package com.baghdad.remoteDataSource.mapper.episode
 
-import com.baghdad.remoteDataSource.response.tvShow.EpisodeResponse
+import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.repository.model.EpisodeDto
 
-fun EpisodeResponse.toDto(): EpisodeDto {
+fun SeasonDetailResponse.EpisodeResponse.toDto(): EpisodeDto {
     return EpisodeDto(
-        id = this.id?.toLong() ?: 0L,
-        title = this.name.orEmpty(),
-        episodeNumber = this.episodeNumber ?: 0,
-        rating = this.voteAverage ?: 0.0,
-        duration = "${this.runtime ?: 0}",
-        releasedDate = this.airDate,
-        currentSeason = this.seasonNumber ?: 0,
-        overview = this.overview.orEmpty(),
+        id = id ?: 0L,
+        title = name.orEmpty(),
+        episodeNumber = episodeNumber ?: 0,
+        rating = voteAverage ?: 0.0,
+        duration = "${runtime ?: 0}",
+        releasedDate = airDate,
+        currentSeason = seasonNumber ?: 0,
+        overview = overview.orEmpty(),
         headerPictures = emptyList(),
         trailerUrl = "",
         userRating = 0,

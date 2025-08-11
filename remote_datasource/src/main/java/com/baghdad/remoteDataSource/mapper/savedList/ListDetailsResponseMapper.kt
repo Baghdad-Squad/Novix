@@ -13,19 +13,17 @@ fun ListDetailsResponse.toSavedListDetailsDto(): SavedListDetailsDto =
     SavedListDetailsDto(
         savedList =
             SavedListDto(
-                id = this.id ?: -1L,
-                name = this.name.orEmpty(),
-                itemCount = this.itemCount ?: 0,
+                id = id ?: -1L,
+                name = name.orEmpty(),
+                itemCount = itemCount ?: 0,
             ),
         pagedItems =
             PagedResultDto(
-                data =
-                    this.items
-                        .orEmpty()
+                data = items.orEmpty()
                         .filterNotNull()
                         .mapNotNull { it.toSavedListItemDto() },
-                nextKey = getNextKey(this.page, this.totalPages),
-                prevKey = getPreviousKey(this.page),
+                nextKey = getNextKey(page, totalPages),
+                prevKey = getPreviousKey(page),
             ),
     )
 
@@ -33,14 +31,14 @@ private fun ListDetailsResponse.Item.toSavedListItemDto(): SavableMovieDto? {
     return SavableMovieDto(
         movie =
             MovieDto(
-                id = this.id ?: return null,
-                title = this.title ?: this.originalTitle ?: return null,
+                id = id ?: 0L,
+                title = title ?: originalTitle ?: return null,
                 genres = emptyList(),
-                imdbRating = this.voteAverage ?: 0.0,
+                imdbRating = voteAverage ?: 0.0,
                 userRating = null,
-                releaseDate = this.releaseDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
-                overview = this.overview ?: "",
-                posterPictureURL = "https://image.tmdb.org/t/p/w500" + this.posterPath.orEmpty(),
+                releaseDate = releaseDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
+                overview = overview ?: "",
+                posterPictureURL = "https://image.tmdb.org/t/p/w500" + posterPath.orEmpty(),
                 trailerURL = "",
                 runtimeMinutes = 0,
             ),

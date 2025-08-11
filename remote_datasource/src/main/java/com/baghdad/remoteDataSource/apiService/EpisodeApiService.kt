@@ -3,12 +3,12 @@ package com.baghdad.remoteDataSource.apiService
 import com.baghdad.remoteDataSource.interceptor.Authenticated
 import com.baghdad.remoteDataSource.interceptor.RequiresSession
 import com.baghdad.remoteDataSource.request.RatingRequest
-import com.baghdad.remoteDataSource.response.CastMembersResponse
-import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
-import com.baghdad.remoteDataSource.response.RatingResponse
+import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
+import com.baghdad.remoteDataSource.response.rate.RatingResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
+import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

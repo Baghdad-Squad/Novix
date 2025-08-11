@@ -1,8 +1,8 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.GenreApiService
-import com.baghdad.remoteDataSource.response.GenreItemDto
-import com.baghdad.remoteDataSource.response.GenreListResponse
+import com.baghdad.remoteDataSource.response.genre.GenreItemDto
+import com.baghdad.remoteDataSource.response.genre.GenreListResponse
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
 import com.google.common.truth.Truth.assertThat

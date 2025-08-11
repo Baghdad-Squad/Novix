@@ -1,7 +1,7 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
-import com.baghdad.remoteDataSource.response.CastMembersResponse
+import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
@@ -75,9 +75,9 @@ class RemoteEpisodeDataSourceImplTest {
         val seasonNumber = 1
         val episodeNumber = 1
         val response = EpisodeImageResponse(
-            stills = listOf(
-                EpisodeImageResponse.Still(filePath = "/image1.jpg"),
-                EpisodeImageResponse.Still(filePath = "/image2.jpg")
+            episodeFrames = listOf(
+                EpisodeImageResponse.EpisodeFrame(filePath = "/image1.jpg"),
+                EpisodeImageResponse.EpisodeFrame(filePath = "/image2.jpg")
             )
         )
         coEvery {
@@ -99,7 +99,7 @@ class RemoteEpisodeDataSourceImplTest {
         val tvId = 1L
         val seasonNumber = 1
         val episodeNumber = 1
-        val response = EpisodeImageResponse(stills = emptyList())
+        val response = EpisodeImageResponse(episodeFrames = emptyList())
         coEvery {
             apiService.getEpisodeImages(tvId, seasonNumber, episodeNumber)
         } returns Response.success(response)

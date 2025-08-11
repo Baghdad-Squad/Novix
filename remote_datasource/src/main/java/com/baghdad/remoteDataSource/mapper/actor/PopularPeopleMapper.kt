@@ -1,7 +1,6 @@
 package com.baghdad.remoteDataSource.mapper.actor
 
 
-import com.baghdad.remoteDataSource.response.actor.TrendingActorDetails
 import com.baghdad.remoteDataSource.response.actor.TrendingActorResponse
 import com.baghdad.remoteDataSource.util.getNextKey
 import com.baghdad.remoteDataSource.util.getPreviousKey
@@ -16,10 +15,10 @@ fun TrendingActorResponse.toPagedActorDtos(): PagedResultDto<ActorDto> {
     )
 }
 
-fun TrendingActorDetails.toDto(): ActorDto {
-        val actorId = this.id?.toLong() ?: 0L
-        val actorName = this.name ?: ""
-        val imageUrl = "https://image.tmdb.org/t/p/w500" + this.profilePath
+fun TrendingActorResponse.TrendingActorDetails.toDto(): ActorDto {
+        val actorId = id ?: 0L
+        val actorName = name ?: ""
+        val imageUrl = "https://image.tmdb.org/t/p/w500$profilePath"
 
         return ActorDto(
             id = actorId,

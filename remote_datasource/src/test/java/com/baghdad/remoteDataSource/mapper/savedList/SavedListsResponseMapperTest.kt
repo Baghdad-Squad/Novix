@@ -3,7 +3,7 @@ package com.baghdad.remoteDataSource.mapper.savedList
 import com.baghdad.remoteDataSource.mapper.toPagedSavedListsDtos
 import com.baghdad.remoteDataSource.mapper.toSavedListDto
 import com.baghdad.remoteDataSource.response.UserListDto
-import com.baghdad.remoteDataSource.response.UserListsResponse
+import com.baghdad.remoteDataSource.response.savedList.UserListsResponse
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
