@@ -1,7 +1,8 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
+import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 
 fun MovieImageResponse.toImageUrl(): List<String> {
-    return backdrops?.map { "https://image.tmdb.org/t/p/w500" + it.filePath.orEmpty() }.orEmpty()
+    return backdrops?.map { getImageUrlFromPath(it.filePath) }.orEmpty()
 }
