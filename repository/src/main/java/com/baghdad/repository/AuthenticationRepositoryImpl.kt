@@ -26,22 +26,32 @@ class AuthenticationRepositoryImpl @Inject constructor(
         return localUserDataStore.getUser()?.toEntity()
     }
 
-    override suspend fun logOut(): Boolean = executeSafely {
-        localSessionDataStore.getSessionId()?.let { sessionId ->
-            remoteAuthenticationDataSource.deleteSession(sessionId = sessionId)
-            localSessionDataStore.deleteSessionId()
-            true
-        } ?: false
+    override suspend fun logOut(): Boolean {
+        return executeSafely(
+            block = {
+                localSessionDataStore.getSessionId()?.let { sessionId ->
+                    remoteAuthenticationDataSource.deleteSession(sessionId = sessionId)
+                    localSessionDataStore.deleteSessionId()
+                    true
+                } ?: false
+            }
+        )
     }
 
     override suspend fun login(userName: String, password: String) {
-        executeLoginSafely {
-            val requestToken = getRequestToken()
-            val validatedToken = validateCredentials(userName, password, requestToken)
-            val sessionId = createSession(validatedToken)
-            saveSession(sessionId = sessionId)
-            saveUserDetails(sessionId = sessionId)
-        }
+        executeLoginSafely(
+            block = {
+                val requestToken = getRequestToken()
+                val validatedToken = validateCredentials(
+                    userName = userName,
+                    password = password,
+                    requestToken = requestToken
+                )
+                val sessionId = createSession(validatedToken = validatedToken)
+                saveSession(sessionId = sessionId)
+                saveUserDetails(sessionId = sessionId)
+            }
+        )
     }
 
     private suspend fun getRequestToken(): String =
@@ -58,13 +68,13 @@ class AuthenticationRepositoryImpl @Inject constructor(
     )
 
     private suspend fun createSession(validatedToken: String): String =
-        remoteAuthenticationDataSource.createSession(validatedToken)
+        remoteAuthenticationDataSource.createSession(requestToken = validatedToken)
 
     private suspend fun saveSession(sessionId: String) =
-        localSessionDataStore.saveSessionId(sessionId)
+        localSessionDataStore.saveSessionId(sessionId = sessionId)
 
     private suspend fun saveUserDetails(sessionId: String) {
-        val user = remoteAuthenticationDataSource.getUserDetails(sessionId)
+        val user = remoteAuthenticationDataSource.getUserDetails(sessionId = sessionId)
         localUserDataStore.saveUser(
             id = user.id,
             userName = user.userName,
