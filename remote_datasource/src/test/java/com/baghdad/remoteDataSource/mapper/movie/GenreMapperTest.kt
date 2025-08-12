@@ -1,7 +1,7 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
 
-import com.baghdad.remoteDataSource.mapper.mapGenreIdsToGenres
+import com.baghdad.remoteDataSource.mapper.genre.mapGenreIdsToGenres
 import com.baghdad.repository.model.GenreDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
