@@ -8,29 +8,46 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
 
+fun TopRatedTvShowSearchResponse.toPagedTvShowDtos(): PagedResultDto<TvShowDto> {
+    return PagedResultDto(
+        data = toTvShowDtos(),
+        nextKey = getNextKey(page, totalPages),
+        prevKey = getPreviousKey(page),
+    )
+}
 
-fun TopRatedTvShowSearchResponse.toPagedTvShowDtos() = PagedResultDto(
-    data = results?.mapNotNull { it?.takeIf { it.id != null }?.toTvShowDto() } ?: emptyList(),
-    nextKey = getNextKey(page, this.totalPages),
-    prevKey = getPreviousKey(page)
-)
+private fun TopRatedTvShowSearchResponse.toTvShowDtos(): List<TvShowDto> {
+    return results.orEmpty().mapNotNull { it.toTvShowDtoIfValid() }
+}
 
+private fun TopRatedTvShowSearchResponse.Result?.toTvShowDtoIfValid(): TvShowDto? {
+    return this?.takeIf { id != null }?.toTvShowDto()
+}
 
-private fun TopRatedTvShowSearchResponse.Result.toTvShowDto(
-    numberOfSeasons: Int = 1
-): TvShowDto {
-    val tvShowGenres = this.genreIds?.map { GenreDto(it?.toLong() ?: 0L, "", GenreDto.GenreType.TV_SHOW) } ?: emptyList()
+private fun TopRatedTvShowSearchResponse.Result.toTvShowDto(numberOfSeasons: Int = 1): TvShowDto {
     return TvShowDto(
-        id = this.id?.toLong() ?: 0L,
-        title = this.title.orEmpty(),
-        genres = tvShowGenres,
-        imdbRating = this.voteAverage ?: 0.0,
+        id = id ?: 0L,
+        title = title.orEmpty(),
+        genres = genreIds.toTvShowGenreDtos(),
+        imdbRating = voteAverage ?: 0.0,
         userRating = 0,
-        releaseDate = this.releaseDate.orEmpty(),
-        overview = this.overview.orEmpty(),
-        posterPictureURL = this.posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
+        releaseDate = releaseDate.orEmpty(),
+        overview = overview.orEmpty(),
+        posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
         numberOfSeasons = numberOfSeasons,
         trailerURL = "",
         headerImagesURLs = emptyList()
     )
 }
+
+private fun List<Long?>?.toTvShowGenreDtos(): List<GenreDto> =
+    this
+        ?.mapNotNull { genreId ->
+            genreId?.let {
+                GenreDto(
+                    id = it,
+                    name = "",
+                    type = GenreDto.GenreType.TV_SHOW,
+                )
+        }
+    }.orEmpty()

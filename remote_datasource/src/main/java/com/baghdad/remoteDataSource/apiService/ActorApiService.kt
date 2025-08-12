@@ -14,40 +14,32 @@ import retrofit2.http.Query
 interface ActorApiService {
 
     @Authenticated
-    @GET(PERSON_DETAILS_ENDPOINT)
+    @GET("person/{person_id}")
     suspend fun getActorDetails(
         @Path("person_id") personId: Long
     ): Response<ActorDetailsResponse>
 
     @Authenticated
-    @GET(PERSON_IMAGES_ENDPOINT)
+    @GET("person/{person_id}/images")
     suspend fun getActorImages(
         @Path("person_id") personId: Long
     ): Response<ActorImagesResponse>
 
     @Authenticated
-    @GET(PERSON_MOVIES_PICK_ENDPOINT)
+    @GET("person/{person_id}/movie_credits")
     suspend fun getActorMovies(
         @Path("person_id") personId: Long
     ): Response<ActorMoviesResponse>
 
     @Authenticated
-    @GET(PERSON_TV_SHOWS_PICK_ENDPOINT)
+    @GET("person/{person_id}/tv_credits")
     suspend fun getActorTvShows(
         @Path("person_id") personId: Long,
     ): Response<ActorTvShowsResponse>
 
     @Authenticated
-    @GET(TRENDING_ACTORS_ENDPOINT)
+    @GET("trending/person/day")
     suspend fun getTrendingActors(
         @Query("page") page: Int
     ): Response<TrendingActorResponse>
-
-    companion object {
-        private const val PERSON_MOVIES_PICK_ENDPOINT = "person/{person_id}/movie_credits"
-        private const val PERSON_TV_SHOWS_PICK_ENDPOINT = "person/{person_id}/tv_credits"
-        private const val PERSON_IMAGES_ENDPOINT = "person/{person_id}/images"
-        private const val PERSON_DETAILS_ENDPOINT = "person/{person_id}"
-        private const val TRENDING_ACTORS_ENDPOINT = "trending/person/day"
-    }
 }

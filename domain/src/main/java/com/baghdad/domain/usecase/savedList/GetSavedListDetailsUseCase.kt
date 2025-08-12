@@ -11,5 +11,11 @@ class GetSavedListDetailsUseCase @Inject constructor(
         listId: Long,
         page: Int,
         pageSize: Int,
-    ): SavedListDetails = savedListRepository.getSavedListDetails(listId, page, pageSize)
+    ): SavedListDetails {
+        return savedListRepository.getSavedListDetails(
+            listId = listId,
+            page = page,
+            pageSize = pageSize
+        )
+    }
 }

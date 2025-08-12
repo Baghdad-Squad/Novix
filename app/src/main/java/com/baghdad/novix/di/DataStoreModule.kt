@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.baghdad.local_datasource.dataStore.user.UserSerializer
+import com.baghdad.localDatasource.serializer.UserSerializer
 import com.example.application.proto.User
 import dagger.Module
 import dagger.Provides
@@ -14,12 +14,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 
-
-
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
-
 
     @Provides
     @Named("preferences")
@@ -36,6 +33,7 @@ object DataStoreModule {
     val Context.datastore: DataStore<Preferences> by preferencesDataStore(
         name = "app-preferences"
     )
+
     val Context.userDataStore: DataStore<User> by dataStore(
         fileName = "user.pb",
         serializer = UserSerializer

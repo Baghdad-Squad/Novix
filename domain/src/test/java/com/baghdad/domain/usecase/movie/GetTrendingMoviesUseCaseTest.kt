@@ -1,7 +1,9 @@
 package com.baghdad.domain.usecase.movie
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.MovieRepository
+import com.baghdad.domain.testHelper.getSampleMovie
+import com.baghdad.domain.testHelper.getSampleSavedMovie
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.google.common.truth.Truth.assertThat
@@ -16,74 +18,54 @@ import org.junit.jupiter.api.Test
 class GetTrendingMoviesUseCaseTest {
 
     private lateinit var repository: MovieRepository
-    private lateinit var useCase: GetTrendingMoviesUseCase
+    private lateinit var getTrendingMoviesUseCase: GetTrendingMoviesUseCase
+
 
     @BeforeEach
     fun setUp() {
         repository = mockk()
-        useCase = GetTrendingMoviesUseCase(repository)
-    }
-
-    private fun createMovie(id: Long, genreIds: List<Long>): Movie {
-        return Movie(
-            id = id,
-            title = "Movie $id",
-            genres = genreIds.map { Genre(it, "Genre $it") },
-            averageRating = 8.0,
-            userRating = null,
-            releaseDate = LocalDate.parse("2020-01-01"),
-            overview = "Overview",
-            posterImageURL = "poster.jpg",
-            trailerURL = "trailer.mp4",
-            runtimeMinutes = 120
-        )
+        getTrendingMoviesUseCase = GetTrendingMoviesUseCase(repository)
     }
 
     @Test
     fun `invoke() should return all trending movies when genreId is null`() = runTest {
-        // Given
-        val movies = listOf(createMovie(1, listOf(1, 2)), createMovie(2, listOf(3)))
-        val expectedResult = PagedResult(
-            data = movies,
-            nextKey = 2,
-            prevKey = null
-        )
+        coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
 
-        coEvery { repository.getTrendingMovies(1) } returns expectedResult
+        val result = getTrendingMoviesUseCase(1, genreId = null)
 
-        // When
-        val result = useCase(1, genreId = null)
-
-        // Then
-        assertThat(result).isEqualTo(expectedResult)
+        assertThat(result).isEqualTo(sampleSavedMovies)
         coVerify { repository.getTrendingMovies(1) }
     }
 
     @Test
     fun `invoke() should filter trending movies by genreId`() = runTest {
-        // Given
-        val movies = listOf(
-            createMovie(1, listOf(1, 2)),
-            createMovie(2, listOf(3)),
-            createMovie(3, listOf(1))
-        )
-        val expectedResult = PagedResult(
-            data = listOf(movies[0], movies[2]),
-            nextKey = 2,
-            prevKey = null
-        )
+        coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
 
-        coEvery { repository.getTrendingMovies(1) } returns PagedResult(
-            data = movies,
-            nextKey = 2,
-            prevKey = null
-        )
+        val result = getTrendingMoviesUseCase(1, genreId = 1)
 
-        // When
-        val result = useCase(1, genreId = 1)
-
-        // Then
-        assertThat(result).isEqualTo(expectedResult)
+        assertThat(result).isEqualTo(sampleSavedMovies)
         coVerify { repository.getTrendingMovies(1) }
+    }
+
+    companion object{
+        private val sampleSavedMovies = PagedResult(
+            listOf(
+                getSampleSavedMovie(),
+                getSampleSavedMovie(
+                    movie = getSampleMovie(
+                        id = 2L,
+                        genres = listOf(Genre(1L, "Action"), Genre(2L, "Drama")),
+                    )
+                ),
+                getSampleSavedMovie(
+                    movie = getSampleMovie(
+                        id = 3L,
+                        genres = listOf(Genre(3L, "Adventure"), Genre(5L, "Drama")),
+                    )
+                )
+            ),
+            nextKey = 2,
+            prevKey = null
+        )
     }
 }

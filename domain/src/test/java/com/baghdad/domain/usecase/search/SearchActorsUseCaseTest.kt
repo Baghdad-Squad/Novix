@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.search
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.entity.person.Actor
 import com.google.common.truth.Truth.assertThat

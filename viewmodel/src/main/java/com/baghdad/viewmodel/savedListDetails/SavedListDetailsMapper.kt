@@ -1,9 +1,9 @@
 package com.baghdad.viewmodel.savedListDetails
 
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.entity.savedList.SavedList
 
-fun SavableMovie.toUIState() =
+fun SavedMovie.toUIState() =
     SavedListDetailsScreenState.SavedListDetailsMovieUiState(
         id = this.movie.id,
         name = this.movie.title,

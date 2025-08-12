@@ -1,7 +1,7 @@
 package com.baghdad.domain.usecase.continueWatching
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -27,19 +27,23 @@ class GetAllContinueWatchingUseCaseTest {
         // Given
         val page = 1
         val expectedData = listOf(
-            ContinueWatching(
+            UserWatchedMedia(
                 contentId = 1L,
                 genreIds = listOf(1, 2),
                 contentImageUrl = "image_url_1",
-                contentType = ContinueWatching.ContentType.MOVIE,
-                userId = 100
+                contentType = UserWatchedMedia.ContentType.MOVIE,
+                userId = 100,
+                isSaved = true,
+                listId = null
             ),
-            ContinueWatching(
+            UserWatchedMedia(
                 contentId = 2L,
                 genreIds = listOf(3),
                 contentImageUrl = "image_url_2",
-                contentType = ContinueWatching.ContentType.TV_SHOW,
-                userId = 101
+                contentType = UserWatchedMedia.ContentType.TV_SHOW,
+                userId = 101,
+                isSaved = true,
+                listId = null
             )
         )
         val expectedResult = PagedResult(
@@ -51,7 +55,7 @@ class GetAllContinueWatchingUseCaseTest {
         coEvery { repository.getContinueWatching(page, 20) } returns expectedResult
 
         // When
-        val result = useCase(page)
+        val result = useCase(page, 20)
 
         // Then
         assertThat(result).isEqualTo(expectedResult)
@@ -62,7 +66,7 @@ class GetAllContinueWatchingUseCaseTest {
     fun `invoke() should return empty list when no data exists`() = runTest {
         // Given
         val page = 5
-        val expectedResult = PagedResult<ContinueWatching>(
+        val expectedResult = PagedResult<UserWatchedMedia>(
             data = emptyList(),
             nextKey = null,
             prevKey = 4
@@ -71,7 +75,7 @@ class GetAllContinueWatchingUseCaseTest {
         coEvery { repository.getContinueWatching(page, 20) } returns expectedResult
 
         // When
-        val result = useCase(page)
+        val result = useCase(page, 20)
 
         // Then
         assertThat(result).isEqualTo(expectedResult)

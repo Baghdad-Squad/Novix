@@ -1,98 +1,126 @@
 package com.baghdad.remoteDataSource.mapper.episode
 
-import com.baghdad.remoteDataSource.response.tvShow.EpisodeResponse
+import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
+import com.baghdad.repository.model.EpisodeDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class EpisodeResponseMapperTest {
 
-    @Test
-    fun `should map fields correctly when all values are provided`() {
-        // Given
-        val response = EpisodeResponse(
-            id = 101,
-            name = "Pilot Episode",
-            episodeNumber = 1,
-            voteAverage = 8.5,
-            runtime = 45,
-            airDate = "2022-10-01",
-            seasonNumber = 1,
-            overview = "The beginning of an epic journey."
+    companion object {
+        private val COMPLETE_EPISODE = SeasonDetailResponse.EpisodeResponse(
+            id = 1L,
+            airDate = "2023-10-15",
+            episodeNumber = 5,
+            name = "The Breakthrough",
+            overview = "Key events unfold in this episode.",
+            runtime = 42,
+            seasonNumber = 3,
+            voteAverage = 9.1
         )
 
-        // When
-        val episodeResponseDto = response.toDto()
-
-        // Then
-        assertThat(episodeResponseDto.id).isEqualTo(response.id)
-        assertThat(episodeResponseDto.title).isEqualTo(response.name)
-        assertThat(episodeResponseDto.episodeNumber).isEqualTo(response.episodeNumber)
-        assertThat(episodeResponseDto.rating).isEqualTo(response.voteAverage)
-        assertThat(episodeResponseDto.duration).isEqualTo(response.runtime.toString())
-        assertThat(episodeResponseDto.releasedDate).isEqualTo(response.airDate)
-        assertThat(episodeResponseDto.currentSeason).isEqualTo(response.seasonNumber)
-        assertThat(episodeResponseDto.overview).isEqualTo(response.overview)
-        assertThat(episodeResponseDto.headerPictures).isEmpty()
-        assertThat(episodeResponseDto.trailerUrl).isEmpty()
-        assertThat(episodeResponseDto.genres).isEmpty()
-    }
-
-    @Test
-    fun `should use defaults when nullable fields are missing`() {
-        // Given
-        val response = EpisodeResponse(
-            id = null,
-            name = null,
+        private val NULL_VALUES_EPISODE = SeasonDetailResponse.EpisodeResponse(
+            id = 2L,
+            airDate = null,
             episodeNumber = null,
-            voteAverage = null,
+            name = null,
+            overview = null,
             runtime = null,
-            airDate = null,
             seasonNumber = null,
-            overview = null
+            voteAverage = null
         )
 
-        // When
-        val episodeResponseDto = response.toDto()
+        private val NULL_ID_EPISODE = SeasonDetailResponse.EpisodeResponse(
+            id = null,
+            airDate = "2024-01-01",
+            episodeNumber = 1,
+            name = "Pilot",
+            overview = "The first episode.",
+            runtime = 50,
+            seasonNumber = 1,
+            voteAverage = 7.5
+        )
 
-        // Then
-        assertThat(episodeResponseDto.id).isEqualTo(0L)
-        assertThat(episodeResponseDto.title).isEmpty()
-        assertThat(episodeResponseDto.episodeNumber).isEqualTo(0)
-        assertThat(episodeResponseDto.rating).isEqualTo(0.0)
-        assertThat(episodeResponseDto.duration).isEqualTo("0")
-        assertThat(episodeResponseDto.releasedDate).isNull()
-        assertThat(episodeResponseDto.currentSeason).isEqualTo(0)
-        assertThat(episodeResponseDto.overview).isEmpty()
-        assertThat(episodeResponseDto.headerPictures).isEmpty()
-        assertThat(episodeResponseDto.trailerUrl).isEmpty()
-        assertThat(episodeResponseDto.genres).isEmpty()
+        private val EXPECTED_COMPLETE_DTO = EpisodeDto(
+            id = 1L,
+            title = "The Breakthrough",
+            episodeNumber = 5,
+            rating = 9.1,
+            duration = "42",
+            releasedDate = "2023-10-15",
+            currentSeason = 3,
+            overview = "Key events unfold in this episode.",
+            headerPictures = emptyList(),
+            trailerUrl = "",
+            userRating = 0,
+            genres = emptyList()
+        )
+
+        private val EXPECTED_NULL_VALUES_DTO = EpisodeDto(
+            id = 2L,
+            title = "",
+            episodeNumber = 0,
+            rating = 0.0,
+            duration = "",
+            releasedDate = null,
+            currentSeason = 0,
+            overview = "",
+            headerPictures = emptyList(),
+            trailerUrl = "",
+            userRating = 0,
+            genres = emptyList()
+        )
+
+        private val EXPECTED_NULL_ID_DTO = EpisodeDto(
+            id = -1L,
+            title = "Pilot",
+            episodeNumber = 1,
+            rating = 7.5,
+            duration = "50",
+            releasedDate = "2024-01-01",
+            currentSeason = 1,
+            overview = "The first episode.",
+            headerPictures = emptyList(),
+            trailerUrl = "",
+            userRating = 0,
+            genres = emptyList()
+        )
     }
 
     @Test
-    fun `should handle partial null fields correctly`() {
-        // Given
-        val response = EpisodeResponse(
-            id = 55,
-            name = null,
-            episodeNumber = 10,
-            voteAverage = null,
-            runtime = 60,
-            airDate = null,
-            seasonNumber = null,
-            overview = "Special episode."
-        )
+    fun `should map complete episode list to EpisodeDto list`() {
+        val response = SeasonDetailResponse(episodes = listOf(COMPLETE_EPISODE))
 
-        // When
-        val episodeResponseDto = response.toDto()
+        val result = response.toEpisodeDto()
 
-        // Then
-        assertThat(episodeResponseDto.id).isEqualTo(response.id)
-        assertThat(episodeResponseDto.title).isEmpty()
-        assertThat(episodeResponseDto.episodeNumber).isEqualTo(response.episodeNumber)
-        assertThat(episodeResponseDto.rating).isEqualTo(0.0)
-        assertThat(episodeResponseDto.duration).isEqualTo(response.runtime.toString())
-        assertThat(episodeResponseDto.releasedDate).isNull()
-        assertThat(episodeResponseDto.currentSeason).isEqualTo(0)
-        assertThat(episodeResponseDto.overview).isEqualTo(response.overview)
+        assertThat(result).containsExactly(EXPECTED_COMPLETE_DTO)
+    }
+
+    @Test
+    fun `should map null values in episode fields to default values`() {
+        val response = SeasonDetailResponse(episodes = listOf(NULL_VALUES_EPISODE))
+
+        val result = response.toEpisodeDto()
+
+        assertThat(result).containsExactly(EXPECTED_NULL_VALUES_DTO)
+    }
+
+    @Test
+    fun `should return empty list when episodes is null`() {
+        val response = SeasonDetailResponse(episodes = null)
+
+        val result = response.toEpisodeDto()
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `should ignore episodes with null id`() {
+        val episodeWithNullId = NULL_ID_EPISODE.copy(id = null)
+        val response = SeasonDetailResponse(episodes = listOf(episodeWithNullId))
+
+        val result = response.toEpisodeDto()
+
+        assertThat(result).isEmpty()
     }
 }

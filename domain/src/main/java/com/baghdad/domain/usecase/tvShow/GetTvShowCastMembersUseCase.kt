@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetTvShowCastMembersUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository
 ) {
-    suspend operator fun invoke(tvId: Long): List<CastMember> {
-        return tvShowRepository.getTvShowCastMembers(tvId)
+    suspend operator fun invoke(tvShowId: Long): List<CastMember> {
+        return tvShowRepository.getTvShowCastMembers(tvShowId = tvShowId)
     }
 }

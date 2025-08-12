@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.savedList
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.entity.savedList.SavedList
 import com.google.common.truth.Truth.assertThat

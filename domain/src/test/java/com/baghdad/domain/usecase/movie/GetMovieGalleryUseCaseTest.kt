@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GetMovieGalleryUseCaseTest {
+    private lateinit var movieRepository: MovieRepository
+    private lateinit var getMovieGalleryUseCase: GetMovieGalleryUseCase
 
     @BeforeEach
     fun setUp() {
@@ -126,10 +128,5 @@ class GetMovieGalleryUseCaseTest {
 
         // Then
         assertThat(result[0]).contains("?width=500")
-    }
-
-    companion object {
-        private lateinit var movieRepository: MovieRepository
-        private lateinit var getMovieGalleryUseCase: GetMovieGalleryUseCase
     }
 }
