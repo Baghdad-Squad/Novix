@@ -1,8 +1,8 @@
 package com.baghdad.repository
 
 import com.baghdad.entity.User
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
-import com.baghdad.repository.datasource.local.LocalUserDataStore
+import com.baghdad.repository.datasource.local.LocalSessionDataSource
+import com.baghdad.repository.datasource.local.LocalUserDataSource
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.model.UserDto
 import com.google.common.truth.Truth.assertThat
@@ -16,19 +16,19 @@ import org.junit.jupiter.api.Test
 
 class AuthenticationRepositoryImplTest {
     private lateinit var remoteAuthenticationDataSource: RemoteAuthenticationDataSource
-    private lateinit var localSessionDataStore: LocalSessionDataStore
-    private lateinit var localUserDataStore: LocalUserDataStore
+    private lateinit var localSessionDataSource: LocalSessionDataSource
+    private lateinit var localUserDataSource: LocalUserDataSource
     private lateinit var authenticationRepositoryImpl: AuthenticationRepositoryImpl
 
     @BeforeEach
     fun setUp() {
         remoteAuthenticationDataSource = mockk(relaxed = true)
-        localSessionDataStore = mockk(relaxed = true)
-        localUserDataStore = mockk(relaxed = true)
+        localSessionDataSource = mockk(relaxed = true)
+        localUserDataSource = mockk(relaxed = true)
         authenticationRepositoryImpl = AuthenticationRepositoryImpl(
             remoteAuthenticationDataSource = remoteAuthenticationDataSource,
-            localSessionDataStore = localSessionDataStore,
-            localUserDataStore = localUserDataStore
+            localSessionDataSource = localSessionDataSource,
+            localUserDataSource = localUserDataSource
         )
     }
 
@@ -52,9 +52,9 @@ class AuthenticationRepositoryImplTest {
         } returns validatedToken
         coEvery { remoteAuthenticationDataSource.createSession(validatedToken) } returns sessionId
         coEvery { remoteAuthenticationDataSource.getUserDetails(sessionId) } returns userDto
-        coEvery { localSessionDataStore.saveSessionId(sessionId) } returns Unit
+        coEvery { localSessionDataSource.saveSessionId(sessionId) } returns Unit
         coEvery {
-            localUserDataStore.saveUser(
+            localUserDataSource.saveUser(
                 userDto.id,
                 userDto.userName,
                 userDto.imageUrl.orEmpty()
@@ -75,9 +75,9 @@ class AuthenticationRepositoryImplTest {
         }
         coVerify { remoteAuthenticationDataSource.createSession(validatedToken) }
         coVerify { remoteAuthenticationDataSource.getUserDetails(sessionId) }
-        coVerify { localSessionDataStore.saveSessionId(sessionId) }
+        coVerify { localSessionDataSource.saveSessionId(sessionId) }
         coVerify {
-            localUserDataStore.saveUser(
+            localUserDataSource.saveUser(
                 userDto.id,
                 userDto.userName,
                 userDto.imageUrl.orEmpty()
@@ -90,23 +90,23 @@ class AuthenticationRepositoryImplTest {
     fun `isUserLoggedIn should return true when session id exists`() = runTest {
         // Given
         val sessionId = "session_id_123"
-        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+        coEvery { localSessionDataSource.getSessionId() } returns sessionId
         // When
         val result = authenticationRepositoryImpl.isUserLoggedIn()
         // Then
         assertThat(result).isTrue()
-        coVerify { localSessionDataStore.getSessionId() }
+        coVerify { localSessionDataSource.getSessionId() }
     }
 
     @Test
     fun `isUserLoggedIn should return false when session id is null`() = runTest {
         // Given
-        coEvery { localSessionDataStore.getSessionId() } returns null
+        coEvery { localSessionDataSource.getSessionId() } returns null
         // When
         val result = authenticationRepositoryImpl.isUserLoggedIn()
         // Then
         assertFalse(result)
-        coVerify { localSessionDataStore.getSessionId() }
+        coVerify { localSessionDataSource.getSessionId() }
     }
 
     @Test
@@ -114,52 +114,52 @@ class AuthenticationRepositoryImplTest {
         // Given
         val userDto = createMockUserDto()
         val expectedUser = createMockUser()
-        coEvery { localUserDataStore.getUser() } returns userDto
+        coEvery { localUserDataSource.getUser() } returns userDto
         // When
         val result = authenticationRepositoryImpl.getLoggedInUser()
         // Then
         assertThat(expectedUser == result).isTrue()
-        coVerify { localUserDataStore.getUser() }
+        coVerify { localUserDataSource.getUser() }
     }
 
     @Test
     fun `getLoggedInUser should return null when user does not exist`() = runTest {
         // Given
-        coEvery { localUserDataStore.getUser() } returns null
+        coEvery { localUserDataSource.getUser() } returns null
         // When
         val result = authenticationRepositoryImpl.getLoggedInUser()
         // Then
         assertThat(result).isNull()
-        coVerify { localUserDataStore.getUser() }
+        coVerify { localUserDataSource.getUser() }
     }
 
     @Test
     fun `logOut should return true and delete session when session exists`() = runTest {
         // Given
         val sessionId = "session_id_123"
-        coEvery { localSessionDataStore.getSessionId() } returns sessionId
+        coEvery { localSessionDataSource.getSessionId() } returns sessionId
         coEvery { remoteAuthenticationDataSource.deleteSession(sessionId) } returns true
-        coEvery { localSessionDataStore.deleteSessionId() } returns Unit
+        coEvery { localSessionDataSource.deleteSessionId() } returns Unit
         // When
         val result = authenticationRepositoryImpl.logOut()
         // Then
         assertThat(result).isTrue()
-        coVerify { localSessionDataStore.getSessionId() }
+        coVerify { localSessionDataSource.getSessionId() }
         coVerify { remoteAuthenticationDataSource.deleteSession(sessionId) }
-        coVerify { localSessionDataStore.deleteSessionId() }
+        coVerify { localSessionDataSource.deleteSessionId() }
     }
 
     @Test
     fun `logOut should return false when session does not exist`() = runTest {
         // Given
-        coEvery { localSessionDataStore.getSessionId() } returns null
+        coEvery { localSessionDataSource.getSessionId() } returns null
         // When
         val result = authenticationRepositoryImpl.logOut()
         // Then
         assertThat(result).isFalse()
-        coVerify { localSessionDataStore.getSessionId() }
+        coVerify { localSessionDataSource.getSessionId() }
         coVerify(exactly = 0) { remoteAuthenticationDataSource.deleteSession(any()) }
-        coVerify(exactly = 0) { localSessionDataStore.deleteSessionId() }
+        coVerify(exactly = 0) { localSessionDataSource.deleteSessionId() }
     }
 
     companion object {
