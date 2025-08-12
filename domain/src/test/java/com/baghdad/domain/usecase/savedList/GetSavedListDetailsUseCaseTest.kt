@@ -1,10 +1,10 @@
 package com.baghdad.domain.usecase.savedList
 
 import com.baghdad.domain.exception.UnKnownNetworkException
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedListDetails
-import com.baghdad.domain.model.savedList.SavedListItem
 import com.baghdad.domain.repository.SavedListRepository
+import com.baghdad.domain.testHelper.getSampleSavedMovie
 import com.baghdad.entity.savedList.SavedList
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -19,6 +19,7 @@ class GetSavedListDetailsUseCaseTest {
     private lateinit var getSavedListDetailsUseCase: GetSavedListDetailsUseCase
     private val page = 1
     private val pageSize = 20
+    private val sampleSavedMovie = getSampleSavedMovie()
 
     @BeforeEach
     fun setUp() {
@@ -38,8 +39,7 @@ class GetSavedListDetailsUseCaseTest {
                         PagedResult(
                             data =
                                 listOf(
-                            SavedListItem(100L, SavedListItem.Type.MOVIE, "Movie 1", "poster1"),
-                            SavedListItem(101L, SavedListItem.Type.TV_SHOW, "TV Show", "poster2"),
+                                    sampleSavedMovie
                                 ),
                             nextKey = null,
                             prevKey = 1,

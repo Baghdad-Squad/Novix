@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.tvShow
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow

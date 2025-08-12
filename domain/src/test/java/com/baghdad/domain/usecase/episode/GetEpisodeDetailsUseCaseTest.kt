@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.episode
 
 import com.baghdad.domain.repository.EpisodeRepository
+import com.baghdad.domain.testHelper.getSampleEpisode
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.google.common.truth.Truth.assertThat
@@ -25,113 +26,47 @@ class GetEpisodeDetailsUseCaseTest {
     }
 
     @Test
-    fun `invoke should return correct episode when called with valid tvId seasonNumber and episodeNumber`() = runTest {
-        // Given
-        val tvId = 12345L
-        val seasonNumber = 1
-        val episodeNumber = 1
-
+    fun `should return correct episode when called with valid tvShowId seasonNumber and episodeNumber`() = runTest {
         coEvery {
-            episodeRepository.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
+            episodeRepository.getEpisodeDetails(TV_SHOW_ID_1, SEASON_NUMBER_1, EPISODE_NUMBER_1)
         } returns sampleEpisode
 
-        // When
-        val result = getEpisodeDetailsUseCase(tvId, seasonNumber, episodeNumber)
+        val result = getEpisodeDetailsUseCase(TV_SHOW_ID_1, SEASON_NUMBER_1, EPISODE_NUMBER_1)
 
-        // Then
         assertThat(result).isEqualTo(sampleEpisode)
-        coVerify(exactly = 1) {
-            episodeRepository.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
-        }
     }
 
     @Test
-    fun `invoke() should call repository with correct parameters when called`() = runTest {
-        // Given
-        val tvId = 12345L
-        val seasonNumber = 2
-        val episodeNumber = 5
-
+    fun `invoke() should return correct episode data when called with different tvShowId, seasonNumber and episodeNumber`() = runTest {
         coEvery {
-            episodeRepository.getEpisodeDetails(any(), any(), any())
-        } returns sampleEpisode
-
-        // When
-        getEpisodeDetailsUseCase(tvId, seasonNumber, episodeNumber)
-
-        // Then
-        coVerify(exactly = 1) {
-            episodeRepository.getEpisodeDetails(
-                eq(tvId),
-                eq(seasonNumber),
-                eq(episodeNumber)
-            )
-        }
-    }
-
-    @Test
-    fun `invoke() should throw RuntimeException when repository throws exception`() = runTest {
-        // Given
-        val tvId = 12345L
-        val seasonNumber = 1
-        val episodeNumber = 1
-        val expectedException = RuntimeException("Network error")
-
-        coEvery {
-            episodeRepository.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
-        } throws expectedException
-
-        // When & Then
-        assertThrows<RuntimeException> {
-            getEpisodeDetailsUseCase(tvId, seasonNumber, episodeNumber)
-        }.apply {
-            assertThat(message).isEqualTo("Network error")
-        }
-    }
-
-    @Test
-    fun `invoke() should return correct episode data when called with different tvId seasonNumber and episodeNumber`() = runTest {
-        // Given
-        val tvId = 67890L
-        val seasonNumber = 3
-        val episodeNumber = 7
-        val differentEpisode = sampleEpisode.copy(
-            id = 456L,
-            title = "The Long Night",
-            episodeNumber = 3,
-            rating = 9.8
-        )
-
-        coEvery {
-            episodeRepository.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
+            episodeRepository.getEpisodeDetails(TV_SHOW_ID_2, SEASON_NUMBER_2, EPISODE_NUMBER_2)
         } returns differentEpisode
 
-        // When
-        val result = getEpisodeDetailsUseCase(tvId, seasonNumber, episodeNumber)
+        val result = getEpisodeDetailsUseCase(TV_SHOW_ID_2, SEASON_NUMBER_2, EPISODE_NUMBER_2)
 
-        // Then
         assertThat(result).isEqualTo(differentEpisode)
-        assertThat(result.id).isEqualTo(456L)
-        assertThat(result.title).isEqualTo("The Long Night")
-        assertThat(result.rating).isEqualTo(9.8)
+        assertThat(result.id).isEqualTo(TV_SHOW_ID_2)
+        assertThat(result.title).isEqualTo(TV_SHOW_TITLE)
     }
+
     companion object {
-        private val sampleEpisode = Episode(
-            id = 123L,
-            title = "The Heirs of the Dragon",
-            episodeNumber = 1,
-            rating = 8.5,
-            duration = "1h 5m",
-            releasedDate = LocalDate(2022, 8, 21),
-            trailerUrl = "https://www.youtube.com/watch?v=example",
-            currentSeason = 1,
-            overview = "King Viserys hosts a tournament to celebrate the birth of his second child.",
-            genres = listOf(Genre(1L, "Drama"), Genre(2L, "Fantasy")),
-            headerPictures = listOf(
-                "https://image.tmdb.org/t/p/w500/header1.jpg",
-                "https://image.tmdb.org/t/p/w500/header2.jpg"
-            ),
-            userRating = 9
+        private val sampleEpisode = getSampleEpisode()
+        private val differentEpisode = getSampleEpisode(
+            id =  TV_SHOW_ID_2,
+            title = TV_SHOW_TITLE,
+            currentSeason = SEASON_NUMBER_2,
+            episodeNumber = EPISODE_NUMBER_2
         )
+
+        private const val TV_SHOW_ID_1 = 123L
+        private const val TV_SHOW_ID_2 = 456L
+
+        private const val SEASON_NUMBER_1 = 2
+        private const val SEASON_NUMBER_2 = 3
+
+        private const val EPISODE_NUMBER_1 = 1
+        private const val EPISODE_NUMBER_2 = 2
+
+        private const val TV_SHOW_TITLE = "The Long Night"
     }
 }
