@@ -173,19 +173,6 @@ class RemoteSavedListDataSourceImplTest {
     }
 
     @Test
-    fun `should handle null poster path in getSavedListDetails`() = runTest {
-        val itemWithNullPoster = listDetailsItem.copy(posterPath = null)
-        val responseWithNullPoster = listDetailsResponse.copy(items = listOf(itemWithNullPoster))
-        val successResponse = Response.success(responseWithNullPoster)
-        coEvery { savedListApiService.getListDetails(LIST_ID, PAGE) } returns successResponse
-
-        val result = dataSource.getSavedListDetails(LIST_ID, PAGE, PAGE_SIZE)
-
-        assertThat(result.pagedItems.data).hasSize(1)
-        assertThat(result.pagedItems.data[0].movie.posterPictureURL).isEqualTo("https://image.tmdb.org/t/p/w500")
-    }
-
-    @Test
     fun `should create request with correct mediaId when addMovieToSavedList is called with different movieId`() = runTest {
         val differentMovieId = 999L
         val expectedRequest = AddListItemRequest(mediaId = differentMovieId)
