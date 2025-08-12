@@ -1,7 +1,7 @@
 package com.baghdad.novix.di
 
 import android.content.Context
-import com.baghdad.local_datasource.language.AppLanguageProvider
+import com.baghdad.localDatasource.language.AppLanguageProvider
 import com.baghdad.novix.BuildConfig
 import com.baghdad.remoteDataSource.interceptor.CacheInterceptor
 import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor

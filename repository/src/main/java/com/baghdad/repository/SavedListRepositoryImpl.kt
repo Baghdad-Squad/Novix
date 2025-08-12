@@ -5,8 +5,8 @@ import com.baghdad.domain.model.savedList.SavedListDetails
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
-import com.baghdad.repository.datasource.local.LocalUserDataStore
+import com.baghdad.repository.datasource.local.LocalSessionDataSource
+import com.baghdad.repository.datasource.local.LocalUserDataSource
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
@@ -23,12 +23,12 @@ class SavedListRepositoryImpl
     @Inject
     constructor(
         private val remoteSavedListSource: RemoteSavedListDataSource,
-        private val localSessionDataStore: LocalSessionDataStore,
-        private val localUserDataStore: LocalUserDataStore,
+        private val localSessionDataSource: LocalSessionDataSource,
+        private val localUserDataSource: LocalUserDataSource,
         private val savableMovieDataSource: LocalSavableMovieDataSource,
     ) : SavedListRepository {
         override suspend fun createSavedList(title: String) {
-            val sessionId = localSessionDataStore.getSessionId()
+            val sessionId = localSessionDataSource.getSessionId()
             return executeAuthorizedSafely(sessionId) { sessionId ->
                 remoteSavedListSource.createSavedList(title, sessionId)
             }
@@ -38,8 +38,8 @@ class SavedListRepositoryImpl
             page: Int,
             pageSize: Int,
         ): PagedResult<SavedList> {
-            val sessionId = localSessionDataStore.getSessionId()
-            val accountId = localUserDataStore.getUser()?.id ?: 0
+            val sessionId = localSessionDataSource.getSessionId()
+            val accountId = localUserDataSource.getUser()?.id ?: 0
             return executeAuthorizedSafely(sessionId) { sessionId ->
                 remoteSavedListSource
                     .getSavedLists(
@@ -55,7 +55,7 @@ class SavedListRepositoryImpl
             listId: Long,
             movieId: Long,
         ) {
-            val sessionId = localSessionDataStore.getSessionId()
+            val sessionId = localSessionDataSource.getSessionId()
             executeAuthorizedSafely(sessionId) { sessionId ->
                 remoteSavedListSource.addMovieToSavedList(listId, movieId, sessionId)
                 savableMovieDataSource.addSavedMovie(listId, movieId)
@@ -66,7 +66,7 @@ class SavedListRepositoryImpl
             listId: Long,
             movieId: Long,
         ) {
-            val sessionId = localSessionDataStore.getSessionId()
+            val sessionId = localSessionDataSource.getSessionId()
             executeAuthorizedSafely(sessionId) { sessionId ->
                 remoteSavedListSource.removeMovieFromSavedList(listId, movieId, sessionId)
                 savableMovieDataSource.deleteSavedMovie(movieId)
@@ -83,7 +83,7 @@ class SavedListRepositoryImpl
             }
 
         override suspend fun deleteSavedListById(listId: Long) {
-            val sessionId = localSessionDataStore.getSessionId()
+            val sessionId = localSessionDataSource.getSessionId()
             executeAuthorizedSafely(sessionId) { sessionId ->
                 remoteSavedListSource.deleteSavedListById(listId, sessionId)
                 savableMovieDataSource.deleteListMovies(listId)
@@ -91,7 +91,7 @@ class SavedListRepositoryImpl
         }
 
         override suspend fun syncSavedMoviesCache() {
-            executeAuthorizedSafely(localSessionDataStore.getSessionId()) { sessionId ->
+            executeAuthorizedSafely(localSessionDataSource.getSessionId()) { sessionId ->
                 if (shouldPreformSync().not()) return@executeAuthorizedSafely
                 val accountId = getUserAccountId()
                 val savedLists = fetchAllSavedLists(sessionId, accountId)
@@ -111,7 +111,7 @@ class SavedListRepositoryImpl
 
         private suspend fun shouldPreformSync(): Boolean = savableMovieDataSource.getSavedMovies().isEmpty()
 
-        private suspend fun getUserAccountId(): Long = localUserDataStore.getUser()?.id ?: 0
+    private suspend fun getUserAccountId(): Long = localUserDataSource.getUser()?.id ?: 0
 
         private suspend fun fetchAllSavedLists(
             sessionId: String,

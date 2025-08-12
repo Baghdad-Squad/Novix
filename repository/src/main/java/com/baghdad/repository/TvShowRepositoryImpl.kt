@@ -9,7 +9,7 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
+import com.baghdad.repository.datasource.local.LocalSessionDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @Singleton
 class TvShowRepositoryImpl @Inject constructor(
     val remoteGenreDataSource: RemoteGenreDataSource,
-    val localSessionDataStore: LocalSessionDataStore,
+    val localSessionDataSource: LocalSessionDataSource,
     val tvShowRemoteDataSource: RemoteTvShowDataSource,
     val authenticationRepository: AuthenticationRepository
 ) : TvShowRepository {
@@ -124,7 +124,7 @@ class TvShowRepositoryImpl @Inject constructor(
         rating: Int
     ) {
         executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+            sessionId = localSessionDataSource.getSessionId(),
             block = {
                 tvShowRemoteDataSource.addTvShowRate(
                     tvShowId = tvShowId,
@@ -137,7 +137,7 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun deleteTvShowRate(tvShowId: Long) {
         executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+            sessionId = localSessionDataSource.getSessionId(),
             block = {
                 tvShowRemoteDataSource.deleteTvShowRate(
                     tvShowId = tvShowId,
@@ -149,7 +149,7 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTvShowAccountStates(tvShowId: Long): Boolean {
         return executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+            sessionId = localSessionDataSource.getSessionId(),
             block = {
                 tvShowRemoteDataSource.getTvShowAccountStates(
                     tvShowId = tvShowId,
@@ -161,7 +161,7 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getUserRatedTvShows(page: Int, pageSize: Int): PagedResult<RatedMedia> {
         return executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+            sessionId = localSessionDataSource.getSessionId(),
             { sessionId ->
                 getRemotePagedSafely(
                     page = page, pageSize = pageSize,

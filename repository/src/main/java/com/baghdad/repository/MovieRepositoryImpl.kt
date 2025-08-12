@@ -9,7 +9,7 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
+import com.baghdad.repository.datasource.local.LocalSessionDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @Singleton
 class MovieRepositoryImpl @Inject constructor(
     private val remoteGenreDataSource: RemoteGenreDataSource,
-    private val localSessionDataStore: LocalSessionDataStore,
+    private val localSessionDataSource: LocalSessionDataSource,
     private val remoteMovieDataSource: RemoteMovieDataSource,
     private val savableMovieDataSource: LocalSavableMovieDataSource,
     private val authenticationRepository: AuthenticationRepository
@@ -153,7 +153,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun addMovieRate(movieId: Long, rating: Int) {
         executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+            sessionId = localSessionDataSource.getSessionId(),
             block = {
                 remoteMovieDataSource.addMovieRate(
                     movieId = movieId,
@@ -166,7 +166,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun deleteMovieRate(movieId: Long) {
         executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+            sessionId = localSessionDataSource.getSessionId(),
             block = {
                 remoteMovieDataSource.deleteMovieRate(
                     movieId = movieId,
@@ -178,7 +178,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getMovieStates(movieId: Long): Boolean {
         return executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+            sessionId = localSessionDataSource.getSessionId(),
             block = {
                 remoteMovieDataSource.getMovieAccountStates(
                     movieId = movieId,
@@ -190,7 +190,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getUserRatedMovies(page: Int, pageSize: Int): PagedResult<RatedMedia> {
         return executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+            sessionId = localSessionDataSource.getSessionId(),
             block = { sessionId ->
                 getRemotePagedSafely(
                     page = page, pageSize = pageSize,
