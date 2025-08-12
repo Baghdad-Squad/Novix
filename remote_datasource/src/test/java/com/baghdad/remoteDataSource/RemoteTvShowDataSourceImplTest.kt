@@ -570,6 +570,9 @@ class RemoteTvShowDataSourceImplTest {
 
     companion object {
         const val TV_SHOW_ID = 1L
+
+        const val TV_SHOW_STRING_ID = ""
+
         const val SEASON_NUMBER = 1
         const val ACCOUNT_ID = 123L
         const val SESSION_ID = "test_session_id"
@@ -785,7 +788,7 @@ class RemoteTvShowDataSourceImplTest {
         )
 
         val reviewsResponse = ReviewsResponse(
-            id = TV_SHOW_ID,
+            id = TV_SHOW_STRING_ID,
             page = PAGE,
             results = listOf(reviewResponse),
             totalPages = TOTAL_PAGES,
@@ -793,7 +796,7 @@ class RemoteTvShowDataSourceImplTest {
         )
 
         val reviewsResponseWithNulls = ReviewsResponse(
-            id = TV_SHOW_ID,
+            id = TV_SHOW_STRING_ID,
             page = PAGE,
             results = listOf(reviewResponse, reviewResponseWithNulls),
             totalPages = TOTAL_PAGES,
