@@ -1,4 +1,4 @@
-package com.baghdad.local_datasource.util
+package com.baghdad.localDatasource.util
 
 fun calculatePageOffset(
     pageSize: Int,
