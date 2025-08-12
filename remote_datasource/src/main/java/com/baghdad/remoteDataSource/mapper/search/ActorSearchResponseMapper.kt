@@ -1,6 +1,7 @@
 package com.baghdad.remoteDataSource.mapper.search
 
 import com.baghdad.remoteDataSource.response.search.ActorSearchResponse
+import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.remoteDataSource.util.getNextKey
 import com.baghdad.remoteDataSource.util.getPreviousKey
 import com.baghdad.repository.model.ActorDto
@@ -14,9 +15,9 @@ fun ActorSearchResponse.toPagedActorDtos() = PagedResultDto(
 
 private fun ActorSearchResponse.Result.toActorDto(): ActorDto {
     return ActorDto(
-        id = id ?: 0L,
+        id = id ?: -1L,
         name = name.orEmpty(),
-        imageUrl = profilePath?.let { "https://image.tmdb.org/t/p/w500$it" }.orEmpty(),
+        imageUrl = getImageUrlFromPath(profilePath),
         biography = "",
         birthdayDate = null,
         deathDate = null,

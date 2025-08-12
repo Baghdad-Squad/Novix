@@ -1,25 +1,24 @@
 package com.baghdad.remoteDataSource.mapper.actor
 
 import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
+import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
 
-fun CastMembersResponse.CastMemberResponse.toDto(): CastMemberDto {
-    return CastMemberDto(
+fun CastMembersResponse.toCastMembers(): List<CastMemberDto> = cast?.filter { it?.id != null }?.map { it.toDto() }.orEmpty()
+
+private fun CastMembersResponse.CastMemberResponse.toDto(): CastMemberDto =
+    CastMemberDto(
         actor = ActorDto(
-            id = id ?: 0L,
-            name = name ?: "Unknown Actor",
-            imageUrl = profilePath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
+            id = id ?: -1L,
+            name = name.orEmpty(),
+            imageUrl = getImageUrlFromPath(profilePath),
             biography = "",
             birthdayDate = null,
             deathDate = null,
             placeOfBirth = "",
             headerPictures = emptyList(),
-            department = knownForDepartment ?: "Unknown",
+            department = knownForDepartment.orEmpty(),
         ),
-        characterName = character ?: "Unknown"
+        characterName = character.orEmpty(),
     )
-}
-fun CastMembersResponse.toCastMembers(): List<CastMemberDto> {
-    return cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
-}

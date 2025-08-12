@@ -1,39 +1,44 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
 import com.baghdad.remoteDataSource.response.movie.MyRatingMoviesResponse
+import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.remoteDataSource.util.getNextKey
 import com.baghdad.remoteDataSource.util.getPreviousKey
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 
-fun MyRatingMoviesResponse.toPagedMovieDtos() =
+fun MyRatingMoviesResponse.toPagedMovieDtos(): PagedResultDto<MovieDto> =
     PagedResultDto(
-        data =
-            results?.mapNotNull {
-                it.takeIf { it.id != null }?.toDto()
-            } ?: emptyList(),
-        nextKey = getNextKey(page, this.totalPages),
+        data = toMovieDtos(),
+        nextKey = getNextKey(page, totalPages),
         prevKey = getPreviousKey(page),
     )
 
-fun MyRatingMoviesResponse.MovieItem.toDto(): MovieDto =
+private fun MyRatingMoviesResponse.toMovieDtos(): List<MovieDto> = results.orEmpty().mapNotNull { it.toMovieDtoIfValid() }
+
+private fun MyRatingMoviesResponse.MovieItem?.toMovieDtoIfValid(): MovieDto? = this?.takeIf { id != null }?.toMovieDto()
+
+private fun MyRatingMoviesResponse.MovieItem.toMovieDto(): MovieDto =
     MovieDto(
-        id = this.id?.toLong() ?: 0L,
-        title = this.title ?: "Unknown Title",
-        genres = this.genreIds?.map { fakeNameForMovieGenreMapper(it) } ?: emptyList(),
-        imdbRating = this.voteAverage ?: 0.0,
-        userRating = this.rating?.toDouble(),
-        releaseDate = this.releaseDate ?: "Unknown Date",
-        overview = this.overview ?: "",
-        posterPictureURL = this.posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
+        id = id ?: -1L,
+        title = title.orEmpty(),
+        genres = genreIds.toMovieGenreDtos(),
+        imdbRating = voteAverage ?: 0.0,
+        userRating = rating?.toDouble(),
+        releaseDate = releaseDate ?: "0001-01-01",
+        overview = overview.orEmpty(),
+        posterPictureURL = getImageUrlFromPath(posterPath),
         trailerURL = "",
-        runtimeMinutes = 0,
+        runtimeMinutes = 0
     )
 
-private fun fakeNameForMovieGenreMapper(genreId: Long): GenreDto =
-    GenreDto(
-        id = genreId,
-        name = "",
-        type = GenreDto.GenreType.MOVIE,
-    )
+private fun List<Long>?.toMovieGenreDtos(): List<GenreDto> =
+    this
+        ?.map { genreId ->
+            GenreDto(
+                id = genreId,
+                name = "",
+                type = GenreDto.GenreType.MOVIE,
+            )
+    }.orEmpty()

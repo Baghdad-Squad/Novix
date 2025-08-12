@@ -1,40 +1,34 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
 import com.baghdad.remoteDataSource.response.movie.SimilarMovieResponse
-import com.baghdad.remoteDataSource.util.getNextKey
-import com.baghdad.remoteDataSource.util.getPreviousKey
+import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
-import com.baghdad.repository.model.PagedResultDto
 
-fun SimilarMovieResponse.toPagedMovieDtos() =
-    PagedResultDto(
-        data =
-            results?.mapNotNull {
-                it.takeIf { it.id != null }?.toDto(
-                    genreIds = it.genreIds,
-                )
-            } ?: emptyList(),
-        nextKey = getNextKey(page, this.totalPages),
-        prevKey = getPreviousKey(page),
-    )
+fun SimilarMovieResponse.toMovieDtos(): List<MovieDto> = results.orEmpty().mapNotNull { it.toMovieDtoIfValid() }
 
-fun SimilarMovieResponse.MovieResult.toDto(genreIds: List<Long>? = null): MovieDto =
+private fun SimilarMovieResponse.MovieResult?.toMovieDtoIfValid(): MovieDto? = this?.takeIf { id != null }?.toMovieDto()
+
+private fun SimilarMovieResponse.MovieResult.toMovieDto(): MovieDto =
     MovieDto(
-        id = (id ?: 0),
-        title = title ?: "Untitled",
-        genres =
-            genreIds?.map { GenreDto(it, "", GenreDto.GenreType.MOVIE) }
-                ?: emptyList(),
+        id = id ?: -1L,
+        title = title.orEmpty(),
+        genres = genreIds.toMovieGenreDtos(),
         imdbRating = voteAverage ?: 0.0,
         userRating = 0.0,
-        releaseDate = releaseDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
-        overview = overview ?: "No overview available.",
-        posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
+        releaseDate = releaseDate.takeUnless { it.isNullOrEmpty() } ?: "0001-01-01",
+        overview = overview.orEmpty(),
+        posterPictureURL = getImageUrlFromPath(posterPath),
         runtimeMinutes = 0,
-        trailerURL = "",
+        trailerURL = ""
     )
 
-fun SimilarMovieResponse.toMovieDto(): List<MovieDto> {
-    return results?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
-}
+private fun List<Long>?.toMovieGenreDtos(): List<GenreDto> =
+    this
+        ?.map { genreId ->
+            GenreDto(
+                id = genreId,
+                name = "",
+                type = GenreDto.GenreType.MOVIE,
+            )
+    }.orEmpty()

@@ -8,22 +8,22 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
 
+fun TopRatedTvShowSearchResponse.toPagedTvShowDtos(): PagedResultDto<TvShowDto> =
+    PagedResultDto(
+        data = toTvShowDtos(),
+        nextKey = getNextKey(page, totalPages),
+        prevKey = getPreviousKey(page),
+    )
 
-fun TopRatedTvShowSearchResponse.toPagedTvShowDtos() = PagedResultDto(
-    data = results?.mapNotNull { it?.takeIf { it.id != null }?.toTvShowDto() } ?: emptyList(),
-    nextKey = getNextKey(page, totalPages),
-    prevKey = getPreviousKey(page)
-)
+private fun TopRatedTvShowSearchResponse.toTvShowDtos(): List<TvShowDto> = results.orEmpty().mapNotNull { it.toTvShowDtoIfValid() }
 
+private fun TopRatedTvShowSearchResponse.Result?.toTvShowDtoIfValid(): TvShowDto? = this?.takeIf { id != null }?.toTvShowDto()
 
-private fun TopRatedTvShowSearchResponse.Result.toTvShowDto(
-    numberOfSeasons: Int = 1
-): TvShowDto {
-    val tvShowGenres = genreIds?.map { GenreDto(it?.toLong() ?: 0L, "", GenreDto.GenreType.TV_SHOW) } ?: emptyList()
-    return TvShowDto(
+private fun TopRatedTvShowSearchResponse.Result.toTvShowDto(numberOfSeasons: Int = 1): TvShowDto =
+    TvShowDto(
         id = id ?: 0L,
         title = title.orEmpty(),
-        genres = tvShowGenres,
+        genres = genreIds.toTvShowGenreDtos(),
         imdbRating = voteAverage ?: 0.0,
         userRating = 0,
         releaseDate = releaseDate.orEmpty(),
@@ -33,4 +33,15 @@ private fun TopRatedTvShowSearchResponse.Result.toTvShowDto(
         trailerURL = "",
         headerImagesURLs = emptyList()
     )
-}
+
+private fun List<Long?>?.toTvShowGenreDtos(): List<GenreDto> =
+    this
+        ?.mapNotNull { genreId ->
+            genreId?.let {
+                GenreDto(
+                    id = it,
+                    name = "",
+                    type = GenreDto.GenreType.TV_SHOW,
+                )
+        }
+    }.orEmpty()

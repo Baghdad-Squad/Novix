@@ -2,15 +2,13 @@ package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.MovieApiService
 import com.baghdad.remoteDataSource.mapper.actor.toCastMembers
-import com.baghdad.remoteDataSource.mapper.actor.toDto
+import com.baghdad.remoteDataSource.mapper.mediaAccountStates.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
 import com.baghdad.remoteDataSource.mapper.movie.toImageUrl
-import com.baghdad.remoteDataSource.mapper.movie.toMovieDto
 import com.baghdad.remoteDataSource.mapper.movie.toMovieDtos
 import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
-import com.baghdad.remoteDataSource.mapper.toDto
-import com.baghdad.remoteDataSource.mapper.toReviewDto
+import com.baghdad.remoteDataSource.mapper.review.toReviewDto
 import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
 import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
@@ -51,7 +49,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         return handleRequest<SimilarMovieResponse>(
             apiCall = { movieApiService.getSimilarMovies(movieId) },
             logger = logger,
-        ).toMovieDto()
+        ).toMovieDtos()
     }
 
     override suspend fun getMovieDetails(movieId: Long): MovieDto {
@@ -124,8 +122,8 @@ class RemoteMovieDataSourceImpl @Inject constructor(
     override suspend fun getTrendingMovies(page: Int): PagedResultDto<MovieDto> {
         return handleRequest<TrendingMovieResponse>(
             apiCall = { movieApiService.getTrendingMovies(page) },
-            logger = logger
-        ).toMovieDtos()
+            logger = logger,
+        ).toPagedMovieDtos()
     }
 
     @OptIn(ExperimentalTime::class)

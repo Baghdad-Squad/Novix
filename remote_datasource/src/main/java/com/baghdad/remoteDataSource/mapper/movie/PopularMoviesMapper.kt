@@ -1,28 +1,36 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
 import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
+import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 
-fun PopularMoviesResponse.toMovieDtos(): List<MovieDto> = results?.mapNotNull { it?.takeIf { it.id != null }?.toDto() } ?: emptyList()
+fun PopularMoviesResponse.toMovieDtos(): List<MovieDto> = results.orEmpty().mapNotNull { it.toMovieDtoIfValid() }
 
-fun PopularMoviesResponse.Result.toDto(): MovieDto =
+private fun PopularMoviesResponse.Result?.toMovieDtoIfValid(): MovieDto? = this?.takeIf { id != null }?.toMovieDto()
+
+private fun PopularMoviesResponse.Result.toMovieDto(): MovieDto =
     MovieDto(
-        id = id ?: 0,
-        title = title ?: "",
-        genres =
-            genreIds?.map {
+        id = id ?: -1L,
+        title = title.orEmpty(),
+        genres = genreIds.toMovieGenreDtos(),
+        imdbRating = voteAverage ?: 0.0,
+        userRating = 0.0,
+        releaseDate = releaseDate.takeUnless { it.isNullOrEmpty() } ?: "0001-01-01",
+        overview = overview.orEmpty(),
+        posterPictureURL = getImageUrlFromPath(posterPath),
+        trailerURL = "",
+        runtimeMinutes = 0
+    )
+
+private fun List<Long?>?.toMovieGenreDtos(): List<GenreDto> =
+    this
+        ?.mapNotNull { genreId ->
+            genreId?.let {
                 GenreDto(
-                    id = it ?: 0L,
+                    id = it,
                     name = "",
                     type = GenreDto.GenreType.MOVIE,
                 )
-            } ?: emptyList(),
-        imdbRating = voteAverage ?: 0.0,
-        userRating = 0.0,
-        releaseDate = releaseDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
-        overview = overview ?: "",
-        posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
-        trailerURL = "",
-        runtimeMinutes = 0,
-    )
+            }
+    }.orEmpty()

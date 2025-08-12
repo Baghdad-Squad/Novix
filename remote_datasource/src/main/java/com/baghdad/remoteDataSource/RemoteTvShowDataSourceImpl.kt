@@ -3,8 +3,8 @@ package com.baghdad.remoteDataSource
 import com.baghdad.remoteDataSource.apiService.TvShowApiService
 import com.baghdad.remoteDataSource.mapper.actor.toCastMembers
 import com.baghdad.remoteDataSource.mapper.episode.toEpisodeDto
-import com.baghdad.remoteDataSource.mapper.toDto
-import com.baghdad.remoteDataSource.mapper.toReviewDto
+import com.baghdad.remoteDataSource.mapper.mediaAccountStates.toDto
+import com.baghdad.remoteDataSource.mapper.review.toReviewDto
 import com.baghdad.remoteDataSource.mapper.tvShow.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.tvShow.toDto
 import com.baghdad.remoteDataSource.mapper.tvShow.toImageUrls
