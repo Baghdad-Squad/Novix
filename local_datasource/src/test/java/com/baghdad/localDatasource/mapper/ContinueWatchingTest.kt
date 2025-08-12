@@ -1,8 +1,8 @@
-package com.baghdad.local_datasource.entity
+package com.baghdad.localDatasource.mapper
 
-import com.baghdad.local_datasource.roomDB.entity.ContinueWatching
-import com.baghdad.local_datasource.roomDB.entity.toDto
-import com.baghdad.local_datasource.roomDB.entity.toDtos
+import com.baghdad.localDatasource.roomDB.entity.ContinueWatching
+import com.baghdad.localDatasource.roomDB.entity.toDto
+import com.baghdad.localDatasource.roomDB.entity.toDtos
 import com.baghdad.repository.model.ContinueWatchingDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
