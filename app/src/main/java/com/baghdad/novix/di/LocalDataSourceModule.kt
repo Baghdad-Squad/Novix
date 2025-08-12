@@ -1,21 +1,18 @@
 package com.baghdad.novix.di
 
-
-import com.baghdad.local_datasource.LocalContinueWatchingDataSourceImpl
-import com.baghdad.local_datasource.LocalRecentSearchDataSourceImpl
-import com.baghdad.local_datasource.LocalRecentlyViewedDataSourceImpl
-import com.baghdad.local_datasource.LocalSavableMovieDataSourceImpl
-import com.baghdad.local_datasource.dataStore.session.LocalOnboardingDatastoreImp
-import com.baghdad.local_datasource.dataStore.session.LocalSessionDataStoreImpl
-import com.baghdad.local_datasource.dataStore.user.LocalUserDataStoreImpl
+import com.baghdad.localDatasource.LocalContinueWatchingDataSourceImpl
+import com.baghdad.localDatasource.LocalRecentSearchDataSourceImpl
+import com.baghdad.localDatasource.LocalRecentlyViewedDataSourceImpl
+import com.baghdad.localDatasource.LocalSavableMovieDataSourceImpl
+import com.baghdad.localDatasource.LocalSessionDataSourceImpl
+import com.baghdad.localDatasource.LocalUserDataSourceImpl
+import com.baghdad.repository.datasource.local.AppConfigurationDataSource
 import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
-import com.baghdad.repository.datasource.local.LocalOnboardingDatastore
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
 import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
-import com.baghdad.repository.datasource.local.LocalUserDataStore
-import com.baghdad.repository.datasource.local.LocalUserPreferencesDataSource
+import com.baghdad.repository.datasource.local.LocalSessionDataSource
+import com.baghdad.repository.datasource.local.LocalUserDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -26,10 +23,10 @@ import dagger.hilt.components.SingletonComponent
 abstract class LocalDataSourceModule {
 
     @Binds
-    abstract fun provideLocalSessionDataStore(localSessionDataStoreImpl: LocalSessionDataStoreImpl): LocalSessionDataStore
+    abstract fun provideLocalSessionDataStore(localSessionDataStoreImpl: LocalSessionDataSourceImpl): LocalSessionDataSource
 
     @Binds
-    abstract fun provideLocalUserDataStore(localUserDataStoreImpl: LocalUserDataStoreImpl): LocalUserDataStore
+    abstract fun provideLocalUserDataStore(localUserDataStoreImpl: LocalUserDataSourceImpl): LocalUserDataSource
 
     @Binds
     abstract fun provideLocalRecentSearchDataSource(localRecentSearchDataSourceImpl: LocalRecentSearchDataSourceImpl): LocalRecentSearchDataSource
@@ -41,10 +38,7 @@ abstract class LocalDataSourceModule {
     abstract fun provideLocalRecentlyViewedDataSource(localRecentlyViewedDataSourceImpl: LocalRecentlyViewedDataSourceImpl): LocalRecentlyViewedDataSource
 
     @Binds
-    abstract fun provideLocalUserPreferencesDataSource(localUserPreferencesDataSourceImpl: com.baghdad.local_datasource.LocalUserPreferencesDataSourceImpl): LocalUserPreferencesDataSource
-
-    @Binds
-    abstract fun provideLocalOnBoardingDataStore(localOnboardingDatastore: LocalOnboardingDatastoreImp): LocalOnboardingDatastore
+    abstract fun provideLocalUserPreferencesDataSource(localUserPreferencesDataSourceImpl: com.baghdad.localDatasource.AppConfigurationDataSourceImpl): AppConfigurationDataSource
 
     @Binds
     abstract fun provideLocalSavableMovieDataSource(
