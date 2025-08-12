@@ -1,12 +1,11 @@
-package com.baghdad.local_datasource.roomDB.entity
+package com.baghdad.localDatasource.roomDB.entity
 
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.baghdad.repository.model.RecentSearchDto
 
 @Entity(
-    tableName = "RecentSearch",
+    tableName = "recent_search",
     indices = [Index(value = ["query"], unique = true)],
 )
 data class RecentSearch(
@@ -15,10 +14,3 @@ data class RecentSearch(
     val searchedAt: Long = System.currentTimeMillis()
 )
 
-fun RecentSearch.toDto(): RecentSearchDto {
-    return RecentSearchDto(
-        id = this.id,
-        query = this.query,
-        searchedAt = this.searchedAt
-    )
-}
