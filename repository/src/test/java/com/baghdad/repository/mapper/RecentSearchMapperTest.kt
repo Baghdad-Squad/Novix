@@ -1,13 +1,9 @@
 package com.baghdad.repository.mapper
 
 import com.baghdad.repository.dummyData.DummyDataFactory.RECENT_SEARCH_DTO
-import com.baghdad.repository.model.RecentSearchDto
 import com.google.common.truth.Truth.assertThat
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.Test
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
 class RecentSearchMapperTest {

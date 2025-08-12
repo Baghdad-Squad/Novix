@@ -1,33 +1,26 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.dummyData.DummyDataFactory.SAVABLE_MOVIE_DTO
+import com.baghdad.repository.dummyData.DummyDataFactory.PAGED_ITEMS_DTO
+import com.baghdad.repository.dummyData.DummyDataFactory.SAVED_LIST_DETAILS_DTO
+import com.baghdad.repository.dummyData.DummyDataFactory.SAVED_LIST_DTO
+import com.baghdad.repository.model.savedList.SavableMovieDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-
 class SavedListDetailsMapperTest {
     @Test
-    fun `should map SavableMovieDto to SavableMovie entity correctly`() {
-        val result = SAVABLE_MOVIE_DTO.toEntity()
+    fun `should map savedList correctly`() {
+        val result = SAVED_LIST_DETAILS_DTO.toEntity()
 
-        assertThat(result).isEqualTo(SAVABLE_MOVIE_DTO)
+        assertThat(result.savedList).isEqualTo(SAVED_LIST_DTO)
     }
 
     @Test
-    fun `should map movie field to Movie entity correctly`() {
-        val result = SAVABLE_MOVIE_DTO.toEntity()
-        assertThat(result.movie).isEqualTo(SAVABLE_MOVIE_DTO.toEntity())
-    }
+    fun `should map pagedItems correctly when converting SavedListDetailsDto to entity`() {
+        val result = SAVED_LIST_DETAILS_DTO.toEntity()
+        val expectedPagedItems =
+            PAGED_ITEMS_DTO.toPagedResult(dataMapper = SavableMovieDto::toEntity)
 
-    @Test
-    fun `should map isSaved to entity isSaved correctly`() {
-        val result = SAVABLE_MOVIE_DTO.toEntity()
-        assertThat(result.isSaved).isEqualTo(SAVABLE_MOVIE_DTO.isSaved)
-    }
-
-    @Test
-    fun `should map listId to entity listId correctly`() {
-        val result = SAVABLE_MOVIE_DTO.toEntity()
-        assertThat(result.listId).isEqualTo(SAVABLE_MOVIE_DTO.listId)
+        assertThat(result.pagedItems).isEqualTo(expectedPagedItems)
     }
 }
