@@ -1,6 +1,6 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedListDetails
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.entity.savedList.SavedList

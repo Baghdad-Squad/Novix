@@ -1,6 +1,6 @@
 package com.baghdad.repository
 
-import com.baghdad.entity.User
+import com.baghdad.entity.user.User
 import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
