@@ -1,10 +1,12 @@
 package com.baghdad.viewmodel.myRating
 
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.mediaRated.GetUserMediaRatedUseCase
 import com.baghdad.domain.usecase.movie.DeleteMovieRateUseCase
 import com.baghdad.domain.usecase.mediaRated.GetUserRatedMoviesUseCase
 import com.baghdad.domain.usecase.tvShow.DeleteTvShowRateUseCase
 import com.baghdad.domain.usecase.mediaRated.GetUserRatedTvShowsUseCase
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +26,10 @@ class MyRatingViewModel @Inject constructor(
         fetchUserRatedMedia()
     }
 
+
+
     private fun fetchUserRatedMedia() {
+        hideSnackBar()
         when (currentState.selectedMediaTab) {
             MyRatingState.MediaTab.MOVIE -> fetchMovies()
             MyRatingState.MediaTab.TV_SHOW -> fetchTvShows()
@@ -86,7 +91,6 @@ class MyRatingViewModel @Inject constructor(
                     mediaId
                 )
             )
-
             MyRatingState.ContentType.TV_SHOW -> sendEffect(
                 MyRatingEffect.NavigateToTvShowDetails(
                     mediaId
@@ -109,10 +113,17 @@ class MyRatingViewModel @Inject constructor(
         }
     }
 
+    private fun refreshList() {
+        fetchUserRatedMedia()
+    }
+
     private fun onDelete(cally: suspend () -> Unit) {
         tryToExecute(
-            { cally() },
-            { onDeletedSuccess() },
+            callee = { cally() },
+            onSuccess = { onDeletedSuccess()
+                        refreshList()},
+            onStart = { updateState { it.copy(isLoading = true) } },
+            onFinally = { updateState { it.copy(isLoading = false) } }
         )
     }
 
@@ -120,11 +131,7 @@ class MyRatingViewModel @Inject constructor(
         showSnackBar(
             message = BaseSnackBarMessage.RatedRemoveSuccessfully,
             isSuccess = true
-
         )
-        updateState {
-            currentState.copy(isLoading = true)
-        }
         fetchUserRatedMedia()
     }
 
@@ -133,6 +140,23 @@ class MyRatingViewModel @Inject constructor(
             currentState.copy(isLoading = false)
         }
     }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
+        )
+    }
+
+    private fun onError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
+    }
+
 
     private companion object {
         const val PAGE_SIZE = 20
