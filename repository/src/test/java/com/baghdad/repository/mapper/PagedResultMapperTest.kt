@@ -9,7 +9,6 @@ class PagedResultMapperTest {
 
     @Test
     fun `should return PagedResult when PagedResultDto has valid data`() {
-        // Given
         val mockData = listOf("item1", "item2", "item3")
         val pagedResultDto = PagedResultDto(
             data = mockData,
@@ -17,10 +16,8 @@ class PagedResultMapperTest {
             prevKey = null
         )
 
-        // When
         val result = pagedResultDto.toPagedResult { it.uppercase() }
 
-        // Then
         val expectedResult = PagedResult(
             data = listOf("ITEM1", "ITEM2", "ITEM3"),
             nextKey = 2,

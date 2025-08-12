@@ -1,5 +1,6 @@
 package com.baghdad.repository.mapper
 
+import com.baghdad.repository.dummyData.DummyDataFactory.RECENT_SEARCH_DTO
 import com.baghdad.repository.model.RecentSearchDto
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.TimeZone
@@ -13,52 +14,54 @@ class RecentSearchMapperTest {
 
     @Test
     fun `should map to entity correctly when dto contains valid data`() {
-        // Given
-        val recentSearchDto = createMockRecentSearchDto(
-            id = 1L,
-            query = "action movies",
-            searchedAt = 1672574400000L
-        )
+        val result = RECENT_SEARCH_DTO.toEntity()
 
-        // When
-        val result = recentSearchDto.toEntity()
-
-        // Then
-        assertThat(result.id).isEqualTo(1L)
-        assertThat(result.query).isEqualTo("action movies")
-        assertThat(result.searchedAt).isEqualTo(
-            Instant.fromEpochMilliseconds(1672574400000L)
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-        )
+        assertThat(result).isEqualTo(RECENT_SEARCH_DTO)
     }
 
     @Test
-    fun `should map to entity correctly when dto contains different queries`() {
-        // Given
-        val recentSearchDto1 = createMockRecentSearchDto(query = "comedy films")
-        val recentSearchDto2 = createMockRecentSearchDto(query = "drama series")
-        val recentSearchDto3 = createMockRecentSearchDto(query = "sci-fi")
+    fun `should map RecentSearchDto id to entity id correctly`() {
+        val result = RECENT_SEARCH_DTO.toEntity()
 
-        // When
-        val result1 = recentSearchDto1.toEntity()
-        val result2 = recentSearchDto2.toEntity()
-        val result3 = recentSearchDto3.toEntity()
-
-        // Then
-        assertThat(result1.query).isEqualTo("comedy films")
-        assertThat(result2.query).isEqualTo("drama series")
-        assertThat(result3.query).isEqualTo("sci-fi")
+        assertThat(result.id).isEqualTo(RECENT_SEARCH_DTO.id)
     }
 
-    companion object {
-        private fun createMockRecentSearchDto(
-            id: Long = 1L,
-            query: String = "test query",
-            searchedAt: Long = 1672574400000L
-        ) = RecentSearchDto(
-            id = id,
-            query = query,
-            searchedAt = searchedAt
-        )
+    @Test
+    fun `should map RecentSearchDto query to entity query correctly`() {
+        val result = RECENT_SEARCH_DTO.toEntity()
+
+        assertThat(result.query).isEqualTo(RECENT_SEARCH_DTO.query)
+    }
+
+    @Test
+    fun `should map RecentSearchDto searchedAt to entity searchedAt correctly`() {
+        val result = RECENT_SEARCH_DTO.toEntity()
+
+        assertThat(result.searchedAt).isEqualTo(RECENT_SEARCH_DTO.searchedAt)
+    }
+
+
+    @Test
+    fun `should map empty RecentSearchDto id to entity id correctly`() {
+        val dto = RECENT_SEARCH_DTO.copy(id = 0L)
+        val result = dto.toEntity()
+
+        assertThat(result.id).isEqualTo(0L)
+    }
+
+    @Test
+    fun `should map empty RecentSearchDto query to entity query correctly`() {
+        val dto = RECENT_SEARCH_DTO.copy(query = "")
+        val result = dto.toEntity()
+
+        assertThat(result.query).isEqualTo("")
+    }
+
+    @Test
+    fun `should map empty RecentSearchDto searchedAt to entity searchedAt correctly`() {
+        val dto = RECENT_SEARCH_DTO.copy(searchedAt = 0L)
+        val result = dto.toEntity()
+
+        assertThat(result.searchedAt).isEqualTo(0L)
     }
 } 
