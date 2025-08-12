@@ -26,8 +26,6 @@ import com.baghdad.viewmodel.shared.AddToListBottomSheetState
 import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.shared.SavedListUiState
 import com.baghdad.viewmodel.shared.toUiState
-import com.baghdad.viewmodel.util.roundToFirstDecimal
-import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -549,26 +547,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onGetMovieDetailsSuccess(details: SavableMovie) {
-        updateState { state ->
-            state.copy(
-                movieName = details.movie.title,
-                movieTrailerURL = details.movie.trailerURL,
-                overView = details.movie.overview,
-                rating = details.movie.averageRating.roundToFirstDecimal(),
-                duration = details.movie.runtimeMinutes,
-                posterImageURL = details.movie.posterImageURL,
-                date = details.movie.releaseDate.toDDMMYYYYFormat(),
-                isSaved = details.isSaved,
-                savedListId = details.listId ?: -1,
-                categories =
-                    details.movie.genres.map {
-                    MovieDetailsState.CategoryUiState(
-                        id = it.id,
-                        name = it.name
-                    )
-                }
-            )
-        }
+        updateState(details.toMovieDetailsStateUpdate())
     }
 
     private fun getCastMembers() {
@@ -576,14 +555,8 @@ class MovieDetailsViewModel @Inject constructor(
             callee = { getCastsInfoUseCase(movieId) },
             onSuccess = { actors ->
                 onGetMovieCastSuccess(
-                    actors = actors.map { actor ->
-                        MovieDetailsState.ActorCardInfo(
-                            name = actor.actor.name,
-                            imageUrl = actor.actor.profilePictureURL,
-                            characterName = actor.characterName,
-                            id = actor.actor.id.toInt()
-                        )
-                    }
+                    actors = actors.map { it.toActorCardInfo() }
+
                 )
             },
             onStart = ::onGetCastMembersStarted,
@@ -622,17 +595,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onGetMovieMoreLikeThisSuccess(savableMovies: List<SavableMovie>) {
         hideSnackBar()
         updateState { state ->
-            state.copy(
-                moreLikeThisMovie =
-                    savableMovies.map { savableMovie ->
-                        MovieDetailsState.MoreLikeThisMovie(
-                            imageUrl = savableMovie.movie.posterImageURL,
-                            id = savableMovie.movie.id,
-                            isSaved = savableMovie.isSaved,
-                            savedListId = savableMovie.listId ?: -1L
-                    )
-                },
-                    )
+            state.copy(moreLikeThisMovie = savableMovies.map { it.toMoreLikeThisMovie() })
         }
     }
 
