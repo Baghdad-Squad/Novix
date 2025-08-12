@@ -4,7 +4,7 @@ import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
+import com.baghdad.repository.datasource.local.LocalSessionDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntities
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class EpisodeRepositoryImpl @Inject constructor(
     private val remoteEpisodeDataSource: RemoteEpisodeDataSource,
-    private val localSessionDataStore: LocalSessionDataStore,
+    private val localSessionDataSource: LocalSessionDataSource,
     private val remoteTvShowDataSource: RemoteTvShowDataSource
 ) : EpisodeRepository {
     override suspend fun getEpisodeDetails(
@@ -57,7 +57,7 @@ class EpisodeRepositoryImpl @Inject constructor(
         rating: Int
     ) {
         executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+            sessionId = localSessionDataSource.getSessionId(),
             block = {
                 remoteEpisodeDataSource.addEpisodeRate(
                     tvShowId = tvShowId,
@@ -76,7 +76,7 @@ class EpisodeRepositoryImpl @Inject constructor(
         episodeNumber: Int
     ): MediaAccountStates {
         return executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
+            sessionId = localSessionDataSource.getSessionId(),
             block = {
                 remoteEpisodeDataSource.getEpisodeAccountStates(
                     tvShowId = tvShowId,
