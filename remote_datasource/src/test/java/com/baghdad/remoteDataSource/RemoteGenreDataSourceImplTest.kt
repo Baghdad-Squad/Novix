@@ -1,124 +1,200 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.GenreApiService
-import com.baghdad.remoteDataSource.response.genre.GenreItemDto
 import com.baghdad.remoteDataSource.response.genre.GenreListResponse
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.GenreDto
 import com.google.common.truth.Truth.assertThat
-import io.mockk.coEvery
-import io.mockk.mockk
+import io.mockk.*
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import retrofit2.Response
 
 class RemoteGenreDataSourceImplTest {
+    private val genreApiService = mockk<GenreApiService>()
+    private val logger = mockk<Logger>(relaxed = true)
+    private val dataSource = RemoteGenreDataSourceImpl(genreApiService, logger)
 
-    private lateinit var dataSource: RemoteGenreDataSourceImpl
-    private lateinit var genreApiService: GenreApiService
-    private lateinit var logger: Logger
+    @Test
+    fun `should return movie genre dto list when getMovieGenre is called with valid language`() = runTest {
+        val successResponse = Response.success(genreListResponse)
+        coEvery { genreApiService.getMovieGenre() } returns successResponse
 
-    @BeforeEach
-    fun setUp() {
-        genreApiService = mockk(relaxed = true)
-        logger = mockk(relaxed = true)
-        dataSource = RemoteGenreDataSourceImpl(genreApiService, logger)
+        val result = dataSource.getMovieGenre(LANGUAGE)
+
+        assertThat(result).hasSize(2)
+        assertThat(result[0]).isEqualTo(expectedMovieGenreDto1)
+        assertThat(result[1]).isEqualTo(expectedMovieGenreDto2)
+        coVerify(exactly = 1) { genreApiService.getMovieGenre() }
     }
 
     @Test
-    fun `should return movie genres when API call succeeds`() = runTest {
-        // Given
-        val response = GenreListResponse(
-            genres = listOf(
-                GenreItemDto(id = 1, name = "Action"),
-                GenreItemDto(id = 2, name = "Comedy")
-            )
-        )
-        coEvery { genreApiService.getMovieGenre() } returns Response.success(response)
+    fun `should return tv show genre dto list when getTvShowGenre is called with valid language`() = runTest {
+        val successResponse = Response.success(genreListResponse)
+        coEvery { genreApiService.getTvShowGenre() } returns successResponse
 
-        // When
-        val result = dataSource.getMovieGenre("en")
+        val result = dataSource.getTvShowGenre(LANGUAGE)
 
-        // Then
         assertThat(result).hasSize(2)
-        assertThat(result[0].id).isEqualTo(1)
-        assertThat(result[0].name).isEqualTo("Action")
+        assertThat(result[0]).isEqualTo(expectedTvShowGenreDto1)
+        assertThat(result[1]).isEqualTo(expectedTvShowGenreDto2)
+        coVerify(exactly = 1) { genreApiService.getTvShowGenre() }
+    }
+
+    @Test
+    fun `should return empty list when getMovieGenre receives empty genres`() = runTest {
+        val successResponse = Response.success(genreListResponseEmpty)
+        coEvery { genreApiService.getMovieGenre() } returns successResponse
+
+        val result = dataSource.getMovieGenre(LANGUAGE)
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `should return empty list when getTvShowGenre receives empty genres`() = runTest {
+        val successResponse = Response.success(genreListResponseEmpty)
+        coEvery { genreApiService.getTvShowGenre() } returns successResponse
+
+        val result = dataSource.getTvShowGenre(LANGUAGE)
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `should handle null id and name in movie genres`() = runTest {
+        val successResponse = Response.success(genreListResponseWithNulls)
+        coEvery { genreApiService.getMovieGenre() } returns successResponse
+
+        val result = dataSource.getMovieGenre(LANGUAGE)
+
+        assertThat(result).hasSize(2)
+        assertThat(result[0]).isEqualTo(expectedMovieGenreWithNullId)
+        assertThat(result[1]).isEqualTo(expectedMovieGenreWithNullName)
+    }
+
+    @Test
+    fun `should handle null id and name in tv show genres`() = runTest {
+        val successResponse = Response.success(genreListResponseWithNulls)
+        coEvery { genreApiService.getTvShowGenre() } returns successResponse
+
+        val result = dataSource.getTvShowGenre(LANGUAGE)
+
+        assertThat(result).hasSize(2)
+        assertThat(result[0]).isEqualTo(expectedTvShowGenreWithNullId)
+        assertThat(result[1]).isEqualTo(expectedTvShowGenreWithNullName)
+    }
+
+    @Test
+    fun `should set correct genre type for movie genres`() = runTest {
+        val successResponse = Response.success(genreListResponse)
+        coEvery { genreApiService.getMovieGenre() } returns successResponse
+
+        val result = dataSource.getMovieGenre(LANGUAGE)
+
+        assertThat(result).hasSize(2)
         assertThat(result[0].type).isEqualTo(GenreDto.GenreType.MOVIE)
-        assertThat(result[1].id).isEqualTo(2)
-        assertThat(result[1].name).isEqualTo("Comedy")
         assertThat(result[1].type).isEqualTo(GenreDto.GenreType.MOVIE)
     }
 
     @Test
-    fun `should return TV show genres when API call succeeds`() = runTest {
-        // Given
-        val response = GenreListResponse(
-            genres = listOf(
-                GenreItemDto(id = 3, name = "Drama"),
-                GenreItemDto(id = 4, name = "Sci-Fi")
-            )
-        )
-        coEvery { genreApiService.getTvShowGenre() } returns Response.success(response)
+    fun `should set correct genre type for tv show genres`() = runTest {
+        val successResponse = Response.success(genreListResponse)
+        coEvery { genreApiService.getTvShowGenre() } returns successResponse
 
-        // When
-        val result = dataSource.getTvShowGenre("en")
+        val result = dataSource.getTvShowGenre(LANGUAGE)
 
-        // Then
         assertThat(result).hasSize(2)
-        assertThat(result[0].id).isEqualTo(3)
-        assertThat(result[0].name).isEqualTo("Drama")
         assertThat(result[0].type).isEqualTo(GenreDto.GenreType.TV_SHOW)
-        assertThat(result[1].id).isEqualTo(4)
-        assertThat(result[1].name).isEqualTo("Sci-Fi")
         assertThat(result[1].type).isEqualTo(GenreDto.GenreType.TV_SHOW)
     }
 
-    @Test
-    fun `should return empty list when movie genres API returns empty list`() = runTest {
-        // Given
-        val response = GenreListResponse(genres = emptyList())
-        coEvery { genreApiService.getMovieGenre() } returns Response.success(response)
+    companion object {
+        const val LANGUAGE = "en-US"
+        const val GENRE_ID_1 = 28L
+        const val GENRE_ID_2 = 12L
+        const val GENRE_NAME_1 = "Action"
+        const val GENRE_NAME_2 = "Adventure"
 
-        // When
-        val result = dataSource.getMovieGenre("en")
-
-        // Then
-        assertThat(result).isEmpty()
-    }
-
-    @Test
-    fun `should return empty list when TV show genres API returns empty list`() = runTest {
-        // Given
-        val response = GenreListResponse(genres = emptyList())
-        coEvery { genreApiService.getTvShowGenre() } returns Response.success(response)
-
-        // When
-        val result = dataSource.getTvShowGenre("en")
-
-        // Then
-        assertThat(result).isEmpty()
-    }
-
-    @Test
-    fun `should include genres with empty names when fetching movie genres`() = runTest {
-        // Given
-        val response = GenreListResponse(
-            genres = listOf(
-                GenreItemDto(id = 1, name = ""),
-                GenreItemDto(id = 2, name = "Valid Genre")
-            )
+        val genre1 = GenreListResponse.GenreItemDto(
+            id = GENRE_ID_1,
+            name = GENRE_NAME_1
         )
-        coEvery { genreApiService.getMovieGenre() } returns Response.success(response)
 
-        // When
-        val result = dataSource.getMovieGenre("en")
+        val genre2 = GenreListResponse.GenreItemDto(
+            id = GENRE_ID_2,
+            name = GENRE_NAME_2
+        )
 
-        // Then
-        assertThat(result).hasSize(2)
-        assertThat(result[0].id).isEqualTo(1)
-        assertThat(result[0].name).isEmpty()
-        assertThat(result[1].id).isEqualTo(2)
-        assertThat(result[1].name).isEqualTo("Valid Genre")
+        val genreWithNullId = GenreListResponse.GenreItemDto(
+            id = null,
+            name = GENRE_NAME_1
+        )
+
+        val genreWithNullName = GenreListResponse.GenreItemDto(
+            id = GENRE_ID_1,
+            name = ""
+        )
+
+        val genreListResponse = GenreListResponse(
+            genres = listOf(genre1, genre2)
+        )
+
+        val genreListResponseWithNulls = GenreListResponse(
+            genres = listOf(genreWithNullId, genreWithNullName)
+        )
+
+        val genreListResponseEmpty = GenreListResponse(
+            genres = emptyList()
+        )
+
+        val expectedMovieGenreDto1 = GenreDto(
+            id = GENRE_ID_1,
+            name = GENRE_NAME_1,
+            type = GenreDto.GenreType.MOVIE
+        )
+
+        val expectedMovieGenreDto2 = GenreDto(
+            id = GENRE_ID_2,
+            name = GENRE_NAME_2,
+            type = GenreDto.GenreType.MOVIE
+        )
+
+        val expectedTvShowGenreDto1 = GenreDto(
+            id = GENRE_ID_1,
+            name = GENRE_NAME_1,
+            type = GenreDto.GenreType.TV_SHOW
+        )
+
+        val expectedTvShowGenreDto2 = GenreDto(
+            id = GENRE_ID_2,
+            name = GENRE_NAME_2,
+            type = GenreDto.GenreType.TV_SHOW
+        )
+
+        val expectedMovieGenreWithNullId = GenreDto(
+            id = 0L,
+            name = GENRE_NAME_1,
+            type = GenreDto.GenreType.MOVIE
+        )
+
+        val expectedMovieGenreWithNullName = GenreDto(
+            id = GENRE_ID_1,
+            name = "",
+            type = GenreDto.GenreType.MOVIE
+        )
+
+        val expectedTvShowGenreWithNullId = GenreDto(
+            id = 0L,
+            name = GENRE_NAME_1,
+            type = GenreDto.GenreType.TV_SHOW
+        )
+
+        val expectedTvShowGenreWithNullName = GenreDto(
+            id = GENRE_ID_1,
+            name = "",
+            type = GenreDto.GenreType.TV_SHOW
+        )
     }
+
 }
