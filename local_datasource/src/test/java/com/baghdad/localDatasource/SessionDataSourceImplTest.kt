@@ -18,12 +18,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.IOException
 
-class LocalSessionDataSourceImplTest {
+class SessionDataSourceImplTest {
     private val mockDataStore: DataStore<Preferences> = mockk()
     private val mockLogger: Logger = mockk(relaxed = true)
     private val mockPreferences = mockk<Preferences>()
-    private var dataStoreImpl: LocalSessionDataSourceImpl =
-        LocalSessionDataSourceImpl(mockDataStore, mockLogger)
+    private var dataStoreImpl: SessionDataSourceImpl =
+        SessionDataSourceImpl(mockDataStore, mockLogger)
 
     @Test
     fun `saveSessionId should successfully store sessionId into DataStore when invoked`() =
