@@ -11,42 +11,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GetMovieReviewsUseCaseTest {
-
-    companion object {
-        private lateinit var movieRepository: MovieRepository
-        private lateinit var getMovieReviewsUseCase: GetMovieReviewsUseCase
-
-        private val sampleReviews = listOf(
-            Review(
-                id = "rev1",
-                authorName = "MovieFan123",
-                authorAvatarUrl = "https://example.com/avatar1.jpg",
-                contentTitle = "Great Movie!",
-                reviewText = "Amazing plot and character development.",
-                postedDate = kotlinx.datetime.LocalDate(2023, 10, 1),
-                rating = 9.0
-            ),
-            Review(
-                id = "rev2",
-                authorName = "CriticExpert",
-                authorAvatarUrl = "https://example.com/avatar2.jpg",
-                contentTitle = "Solid Performance",
-                reviewText = "Solid performance by the lead actor, but the story was a bit predictable.",
-                postedDate = kotlinx.datetime.LocalDate(2023, 10, 2),
-                rating = 8.0
-            )
-        )
-
-        private val minimalReview = Review(
-            id = "rev3",
-            authorName = "Anon",
-            authorAvatarUrl = "",
-            contentTitle = "",
-            reviewText = "Okay",
-            postedDate = kotlinx.datetime.LocalDate(2023, 10, 3),
-            rating = 5.0
-        )
-    }
+    private lateinit var movieRepository: MovieRepository
+    private lateinit var getMovieReviewsUseCase: GetMovieReviewsUseCase
 
     @BeforeEach
     fun setUp() {
@@ -158,5 +124,39 @@ class GetMovieReviewsUseCaseTest {
         val result = getMovieReviewsUseCase(movieId)
 
         assertThat(result[0].reviewText.length).isGreaterThan(100)
+    }
+
+    companion object {
+
+        private val sampleReviews = listOf(
+            Review(
+                id = "rev1",
+                authorName = "MovieFan123",
+                authorAvatarUrl = "https://example.com/avatar1.jpg",
+                contentTitle = "Great Movie!",
+                reviewText = "Amazing plot and character development.",
+                postedDate = kotlinx.datetime.LocalDate(2023, 10, 1),
+                rating = 9.0
+            ),
+            Review(
+                id = "rev2",
+                authorName = "CriticExpert",
+                authorAvatarUrl = "https://example.com/avatar2.jpg",
+                contentTitle = "Solid Performance",
+                reviewText = "Solid performance by the lead actor, but the story was a bit predictable.",
+                postedDate = kotlinx.datetime.LocalDate(2023, 10, 2),
+                rating = 8.0
+            )
+        )
+
+        private val minimalReview = Review(
+            id = "rev3",
+            authorName = "Anon",
+            authorAvatarUrl = "",
+            contentTitle = "",
+            reviewText = "Okay",
+            postedDate = kotlinx.datetime.LocalDate(2023, 10, 3),
+            rating = 5.0
+        )
     }
 }

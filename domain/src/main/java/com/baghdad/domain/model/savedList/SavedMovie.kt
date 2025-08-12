@@ -2,8 +2,8 @@ package com.baghdad.domain.model.savedList
 
 import com.baghdad.entity.media.Movie
 
-data class SavableMovie(
+data class SavedMovie(
     val movie: Movie,
     val isSaved: Boolean,
-    val listId: Long?,
+    val listId: Long?
 )

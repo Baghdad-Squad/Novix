@@ -1,9 +1,8 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.MediaAccountStates
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.RatedMedia
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.pagination.PagedResult
+import com.baghdad.domain.model.userRating.RatedMedia
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
@@ -14,6 +13,7 @@ import com.baghdad.repository.datasource.local.LocalSessionDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toIsMediaRated
 import com.baghdad.repository.mapper.toMedia
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.mapper.toSavableMovie
@@ -40,7 +40,7 @@ class MovieRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getSimilarMovies(movieId: Long): List<SavableMovie> =
+    override suspend fun getSimilarMovies(movieId: Long): List<SavedMovie> =
         executeSafely {
             val savedMovies = savableMovieDataSource.getSavedMovies()
             remoteMovieDataSource.getSimilarMovies(movieId).map {
@@ -51,7 +51,7 @@ class MovieRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getMovieDetails(movieId: Long): SavableMovie =
+    override suspend fun getMovieDetails(movieId: Long): SavedMovie =
         executeSafely {
             val savedMovies = savableMovieDataSource.getSavedMovies()
             val movieTrailer = remoteMovieDataSource.getMovieTrailer(movieId)
@@ -75,7 +75,7 @@ class MovieRepositoryImpl @Inject constructor(
         genreId: Long,
         page: Int,
         pageSize: Int,
-    ): PagedResult<SavableMovie> {
+    ): PagedResult<SavedMovie> {
         val savedMovies = savableMovieDataSource.getSavedMovies()
         return getRemotePagedSafely(
             page = page,
@@ -107,7 +107,7 @@ class MovieRepositoryImpl @Inject constructor(
             remoteMovieDataSource.getMovieImages(movieId).take(MAX_MOVIES_IMAGES)
         }
 
-    override suspend fun getTopRatedMovies(page: Int): PagedResult<SavableMovie> =
+    override suspend fun getTopRatedMovies(page: Int): PagedResult<SavedMovie> =
         executeSafely {
             val savedMovies = savableMovieDataSource.getSavedMovies()
             remoteMovieDataSource.getTopRatedMovies(page).toPagedResult {
@@ -118,7 +118,7 @@ class MovieRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getPopularMovies(): List<SavableMovie> =
+    override suspend fun getPopularMovies(): List<SavedMovie> =
         executeSafely {
             val savedMovies = savableMovieDataSource.getSavedMovies()
             remoteMovieDataSource.getPopularMovies().map {
@@ -129,7 +129,7 @@ class MovieRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getTrendingMovies(page: Int): PagedResult<SavableMovie> =
+    override suspend fun getTrendingMovies(page: Int): PagedResult<SavedMovie> =
         executeSafely {
             val savedMovies = savableMovieDataSource.getSavedMovies()
             remoteMovieDataSource.getTrendingMovies(page).toPagedResult {
@@ -140,7 +140,7 @@ class MovieRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getUpcomingMovies(genreId: Long?): List<SavableMovie> =
+    override suspend fun getUpcomingMovies(genreId: Long?): List<SavedMovie> =
         executeSafely {
             val savedMovies = savableMovieDataSource.getSavedMovies()
             remoteMovieDataSource.getUpcomingMovies(genreId).map {
@@ -176,14 +176,14 @@ class MovieRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getMovieStates(movieId: Long): MediaAccountStates {
+    override suspend fun getMovieStates(movieId: Long): Boolean {
         return executeAuthorizedSafely(
             sessionId = localSessionDataSource.getSessionId(),
             block = {
                 remoteMovieDataSource.getMovieAccountStates(
                     movieId = movieId,
                     sessionId = it
-                ).toEntity()
+                ).toIsMediaRated()
             }
         )
     }

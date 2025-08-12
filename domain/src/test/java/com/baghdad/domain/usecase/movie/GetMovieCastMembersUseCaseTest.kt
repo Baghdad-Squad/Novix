@@ -1,6 +1,8 @@
 package com.baghdad.domain.usecase.movie
 
 import com.baghdad.domain.repository.MovieRepository
+import com.baghdad.domain.testHelper.getMinimalActor
+import com.baghdad.domain.testHelper.getSampleActor
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
 import com.google.common.truth.Truth.assertThat
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GetMovieCastMembersUseCaseTest {
+    lateinit var getMovieCastMembersUseCase: GetMovieCastMembersUseCase
+    lateinit var movieRepository: MovieRepository
 
     @BeforeEach
     fun setup() {
@@ -20,63 +24,32 @@ class GetMovieCastMembersUseCaseTest {
     }
 
     @Test
-    fun `getMovieCastMembersUseCase() should return cast members when repository returns data`() = runTest {
-        val movieId = 1L
-        coEvery { movieRepository.getMovieCastMembers(movieId) } returns castMembers
+    fun `getMovieCastMembersUseCase() should return cast members when repository returns data`() =
+        runTest {
+            coEvery { movieRepository.getMovieCastMembers(MOVIE_ID_1) } returns CAST_MEMBERS
 
-        val result = getMovieCastMembersUseCase.invoke(movieId)
+            val result = getMovieCastMembersUseCase.invoke(MOVIE_ID_1)
 
-        assertThat(result).isEqualTo(castMembers)
-    }
+            assertThat(result).isEqualTo(CAST_MEMBERS)
+        }
 
     @Test
-    fun `getMovieCastMembersUseCase() should return cast with minimal actor data when repository returns minimal data`() = runTest {
-        val movieId = 2L
-        val minimalCast = listOf(
-            CastMember(
-                actor = Actor(
-                    id = 104L,
-                    name = "Unknown Actor",
-                    profilePictureURL = "",
-                    birthDate = LocalDate(2000, 1, 1),
-                    placeOfBirth = "",
-                    deathDate = null,
-                    biography = "",
-                    headerPictures = emptyList(),
-                    department = "Unknown"
-                ),
-                characterName = "Background Character"
-            )
-        )
+    fun `getMovieCastMembersUseCase() should return cast with minimal actor data when repository returns minimal data`() =
+        runTest {
+            coEvery { movieRepository.getMovieCastMembers(MOVIE_ID_2) } returns MINIMAL_CAST
 
-        coEvery { movieRepository.getMovieCastMembers(movieId) } returns minimalCast
+            val result = getMovieCastMembersUseCase.invoke(MOVIE_ID_2)
 
-        val result = getMovieCastMembersUseCase.invoke(movieId)
-
-        assertThat(result).isEqualTo(minimalCast)
-    }
+            assertThat(result).isEqualTo(MINIMAL_CAST)
+        }
 
     private companion object {
+        private const val MOVIE_ID_1 = 1L
+        private const val MOVIE_ID_2 = 2L
 
-        lateinit var getMovieCastMembersUseCase: GetMovieCastMembersUseCase
-        lateinit var movieRepository: MovieRepository
-
-        val castMembers = listOf(
+        private val CAST_MEMBERS = listOf(
             CastMember(
-                actor = Actor(
-                    id = 101L,
-                    name = "Leonardo DiCaprio",
-                    profilePictureURL = "https://example.com/images/leonardo.jpg",
-                    birthDate = LocalDate(1974, 11, 11),
-                    placeOfBirth = "Los Angeles, California, USA",
-                    deathDate = null,
-                    biography = "An American actor known for roles in Titanic, Inception, and The Revenant.",
-                    headerPictures = listOf(
-                        "https://example.com/images/leonardo-header1.jpg",
-                        "https://example.com/images/leonardo-header2.jpg"
-                    ),
-                    department = "Acting"
-                ),
+                actor = getSampleActor(),
                 characterName = "Cobb"
             ),
             CastMember(
@@ -109,6 +82,10 @@ class GetMovieCastMembersUseCaseTest {
                 ),
                 characterName = "Ariadne"
             )
+        )
+
+        private val MINIMAL_CAST = listOf(
+            CastMember(actor = getMinimalActor(), characterName = "Background Character")
         )
     }
 }

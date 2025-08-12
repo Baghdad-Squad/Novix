@@ -1,7 +1,7 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.pagination.PagedResult
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.repository.ActorRepository
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
@@ -19,7 +19,7 @@ class ActorRepositoryImpl @Inject constructor(
     private val remoteActorDataSource: RemoteActorDataSource,
     private val savableMovieDataSource: LocalSavableMovieDataSource,
 ) : ActorRepository {
-    override suspend fun getActorInfo(actorId: Long): Actor {
+    override suspend fun getActorDetails(actorId: Long): Actor {
         return executeSafely {
             remoteActorDataSource.getActorDetails(actorId).toEntity().copy(
                 headerPictures = remoteActorDataSource.getActorImages(actorId).take(3)
@@ -28,7 +28,7 @@ class ActorRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun getActorMovies(actorId: Long): List<SavableMovie> =
+    override suspend fun getActorMovies(actorId: Long): List<SavedMovie> =
         executeSafely {
             val savedMovies = savableMovieDataSource.getSavedMovies()
             remoteActorDataSource.getActorMovies(actorId).map {

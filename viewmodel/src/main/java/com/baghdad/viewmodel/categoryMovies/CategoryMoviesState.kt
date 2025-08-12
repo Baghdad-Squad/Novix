@@ -1,7 +1,7 @@
 package com.baghdad.viewmodel.categoryMovies
 
 import androidx.paging.PagingData
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.viewmodel.base.BaseUiState
 import com.baghdad.viewmodel.shared.AddListBottomSheetState
 import com.baghdad.viewmodel.shared.AddToListBottomSheetState
@@ -24,7 +24,7 @@ data class CategoryMoviesState(
     )
 }
 
-fun SavableMovie.toUiState(): CategoryMoviesState.MovieUiState =
+fun SavedMovie.toUiState(): CategoryMoviesState.MovieUiState =
     CategoryMoviesState.MovieUiState(
         id = movie.id,
         posterPictureURL = movie.posterImageURL,

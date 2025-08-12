@@ -1,12 +1,12 @@
 package com.baghdad.viewmodel.search
 
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.search.RecentSearch
 
-fun SavableMovie.toMovieUI() =
+fun SavedMovie.toMovieUI() =
     SearchScreenState.MovieUiState(
         id = movie.id,
         posterPictureURL = movie.posterImageURL,

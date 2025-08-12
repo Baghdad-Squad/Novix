@@ -2,7 +2,6 @@ package com.baghdad.viewmodel.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.usecase.episode.AddEpisodeRateUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeAccountStatesUseCase
 import com.baghdad.domain.usecase.episode.GetEpisodeCastMembersUseCase
@@ -246,10 +245,10 @@ class EpisodeDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onGetEpisodeStatesSuccess(accountStates: MediaAccountStates) {
+    private fun onGetEpisodeStatesSuccess(isEpisodeRated: Boolean) {
         updateState {
             it.copy(
-                isRated = accountStates.isMediaRated,
+                isRated = isEpisodeRated,
             )
         }
     }

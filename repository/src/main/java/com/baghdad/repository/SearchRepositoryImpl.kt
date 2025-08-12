@@ -1,7 +1,7 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.pagination.PagedResult
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
@@ -48,7 +48,7 @@ class SearchRepositoryImpl @Inject constructor(
         title: String,
         page: Int,
         pageSize: Int,
-    ): PagedResult<SavableMovie> {
+    ): PagedResult<SavedMovie> {
         val savedMovies = savableMovieDataSource.getSavedMovies()
         return getRemotePagedSafely(
             page = page,

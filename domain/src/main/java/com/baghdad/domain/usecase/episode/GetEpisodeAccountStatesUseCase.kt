@@ -1,10 +1,8 @@
 package com.baghdad.domain.usecase.episode
 
-import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.TvShowRepository
 import javax.inject.Inject
-
 
 class GetEpisodeAccountStatesUseCase @Inject constructor(
     private val episodeRepository: EpisodeRepository
@@ -13,7 +11,7 @@ class GetEpisodeAccountStatesUseCase @Inject constructor(
         tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int
-    ): MediaAccountStates {
+    ): Boolean {
         return episodeRepository.getEpisodeAccountStates(
             tvShowId = tvShowId,
             seasonNumber = seasonNumber,
