@@ -60,6 +60,7 @@ object DummyDataFactory {
         overview = "Test episode overview",
         headerPictures = listOf("/header1.jpg", "/header2.jpg"),
         genres = emptyList(),
+        userRating = 7,
         trailerUrl = " "
     )
 
@@ -74,6 +75,7 @@ object DummyDataFactory {
         overview = "Test episode overview",
         headerPictures = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg"),
         genres = emptyList(),
+        userRating = 7,
         trailerUrl = " "
     )
 
@@ -93,7 +95,7 @@ object DummyDataFactory {
                 id = 123L,
                 title = "Test TV Show",
                 genres = listOf(createMockGenreDto(1, "Drama"), createMockGenreDto(2, "Comedy")),
-                userRating = 7.5,
+                userRating = 7,
                 releaseDate = "2023-01-01",
                 overview = "This is a test TV show overview.",
                 trailerURL = "https://youtube.com/watch?v=test_trailer",
@@ -106,7 +108,7 @@ object DummyDataFactory {
                 id = 456L,
                 title = "Another Test TV Show",
                 genres = listOf(createMockGenreDto(3, "Action"), createMockGenreDto(4, "Sci-Fi")),
-                userRating = 8.0,
+                userRating = 8,
                 releaseDate = "2022-05-15",
                 overview = "This is another test TV show overview.",
                 trailerURL = "https://youtube.com/watch?v=another_test_trailer",
