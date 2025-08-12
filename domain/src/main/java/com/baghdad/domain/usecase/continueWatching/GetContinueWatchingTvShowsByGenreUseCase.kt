@@ -5,18 +5,15 @@ import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import javax.inject.Inject
 
-class GetAllContinueWatchingByGenreUseCase @Inject constructor(
+class GetContinueWatchingTvShowsByGenreUseCase @Inject constructor(
     private val continueWatchingRepository: ContinueWatchingRepository
 ) {
     suspend operator fun invoke(
         genreId: Long,
-        page: Int
+        page: Int,
+        pageSize: Int
     ): PagedResult<ContinueWatching> {
-        val result = continueWatchingRepository.getContinueWatching(page, PAGE_SIZE)
+        val result = continueWatchingRepository.getPagedTvShows(page = page, pageSize = pageSize)
         return result.copy(result.data.filter { it.genreIds.contains(genreId) })
-    }
-
-    private companion object {
-        const val PAGE_SIZE = 20
     }
 }

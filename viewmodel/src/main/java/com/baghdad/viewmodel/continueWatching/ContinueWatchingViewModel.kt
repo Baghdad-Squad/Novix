@@ -4,10 +4,12 @@ import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
-import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
-import com.baghdad.domain.usecase.continueWatching.GetCurrentContinueWatchingMovieGenres
-import com.baghdad.domain.usecase.continueWatching.GetCurrentContinueWatchingTvShowGenres
+import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingMovieGenresUseCase
+import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingMoviesByGenreUseCase
+import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingMoviesUseCase
+import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingTvShowGenresUseCase
+import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingTvShowsByGenreUseCase
+import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingTvShowsUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
@@ -29,10 +31,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContinueWatchingViewModel @Inject constructor(
-    private val getCurrentContinueWatchingTvShowGenres: GetCurrentContinueWatchingTvShowGenres,
-    private val getCurrentContinueWatchingMovieGenres: GetCurrentContinueWatchingMovieGenres,
-    private val getAllContinueWatchingUseCase: GetAllContinueWatchingUseCase,
-    private val getAllContinueWatchingByGenreUseCase: GetAllContinueWatchingByGenreUseCase,
+    private val getCurrentContinueWatchingTvShowGenres: GetContinueWatchingTvShowGenresUseCase,
+    private val getCurrentContinueWatchingMovieGenres: GetContinueWatchingMovieGenresUseCase,
+    private val getContinueWatchingMoviesUseCase: GetContinueWatchingMoviesUseCase,
+    private val getContinueWatchingTvShowsUseCase: GetContinueWatchingTvShowsUseCase,
+    private val getAllContinueWatchingMoviesByGenreUseCase: GetContinueWatchingMoviesByGenreUseCase,
+    private val getAllContinueWatchingTvShowsByGenreUseCase: GetContinueWatchingTvShowsByGenreUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
@@ -132,30 +136,32 @@ class ContinueWatchingViewModel @Inject constructor(
         genreId: Long?,
         page: Int,
     ): PagedResult<ContinueWatching> {
-        val result =
-            if (genreId == null) {
-                getAllContinueWatchingUseCase(page)
-            } else {
-                getAllContinueWatchingByGenreUseCase(genreId, page)
-            }
+        val isMovie = currentState.selectedMediaTabIsMovie
 
-        val filteredData =
-            result.data.filter { item ->
-                (item.contentType == ContinueWatching.ContentType.MOVIE && currentState.selectedMediaTabIsMovie) ||
-                        (item.contentType == ContinueWatching.ContentType.TV_SHOW && !currentState.selectedMediaTabIsMovie)
-            }
+        return when {
+            isMovie && genreId == null -> getContinueWatchingMoviesUseCase(page, DEFAULT_PAGE_SIZE)
+            isMovie && genreId != null -> getAllContinueWatchingMoviesByGenreUseCase(
+                genreId,
+                page,
+                DEFAULT_PAGE_SIZE
+            )
 
-        return result.copy(data = filteredData)
+            !isMovie && genreId == null -> getContinueWatchingTvShowsUseCase(
+                page,
+                DEFAULT_PAGE_SIZE
+            )
+
+            else -> getAllContinueWatchingTvShowsByGenreUseCase(genreId!!, page, DEFAULT_PAGE_SIZE)
+        }
     }
+
 
     private fun onGenresFetched(genres: List<Genre>) {
         hideSnackBar()
         updateState {
             it.copy(
                 genres =
-                    genres
-                        .distinctBy { genre -> genre.id }
-                        .map { genre -> genre.toContinueWatchingUiState() },
+                    genres.map { genre -> genre.toContinueWatchingUiState() },
             )
         }
     }
@@ -183,35 +189,27 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     override fun onGenreClick(genreId: Long?) {
-        if (currentState.selectedMediaTabIsMovie) {
-            handleGenreSelection(
-                currentSelectedId = currentState.selectedMovieGenreId,
-                newGenreId = genreId,
-                update = { id ->
-                    updateState {
-                        it.copy(
-                            selectedMovieGenreId = id,
-                            isLoading = true,
-                            mediaFlow = flowOf(),
-                        )
-                    }
-                },
-            )
+        val isMovie = currentState.selectedMediaTabIsMovie
+        val currentSelectedId = if (isMovie) {
+            currentState.selectedMovieGenreId
         } else {
-            handleGenreSelection(
-                currentSelectedId = currentState.selectedTvShowGenreId,
-                newGenreId = genreId,
-                update = { id ->
-                    updateState {
-                        it.copy(
-                            selectedTvShowGenreId = id,
-                            isLoading = true,
-                            mediaFlow = flowOf(),
-                        )
-                    }
-                },
-            )
+            currentState.selectedTvShowGenreId
         }
+
+        handleGenreSelection(
+            currentSelectedId = currentSelectedId,
+            newGenreId = genreId,
+            update = { id ->
+                updateState {
+                    it.copy(
+                        selectedMovieGenreId = if (isMovie) id else it.selectedMovieGenreId,
+                        selectedTvShowGenreId = if (isMovie) it.selectedTvShowGenreId else id,
+                        isLoading = true,
+                        mediaFlow = flowOf(),
+                    )
+                }
+            },
+        )
     }
 
     private fun handleGenreSelection(
