@@ -31,12 +31,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContinueWatchingViewModel @Inject constructor(
-    private val getCurrentContinueWatchingTvShowGenres: GetContinueWatchingTvShowGenresUseCase,
-    private val getCurrentContinueWatchingMovieGenres: GetContinueWatchingMovieGenresUseCase,
+    private val getContinueWatchingTvShowGenres: GetContinueWatchingTvShowGenresUseCase,
+    private val getContinueWatchingMovieGenres: GetContinueWatchingMovieGenresUseCase,
     private val getContinueWatchingMoviesUseCase: GetContinueWatchingMoviesUseCase,
     private val getContinueWatchingTvShowsUseCase: GetContinueWatchingTvShowsUseCase,
-    private val getAllContinueWatchingMoviesByGenreUseCase: GetContinueWatchingMoviesByGenreUseCase,
-    private val getAllContinueWatchingTvShowsByGenreUseCase: GetContinueWatchingTvShowsByGenreUseCase,
+    private val getContinueWatchingMoviesByGenreUseCase: GetContinueWatchingMoviesByGenreUseCase,
+    private val getContinueWatchingTvShowsByGenreUseCase: GetContinueWatchingTvShowsByGenreUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
@@ -96,7 +96,7 @@ class ContinueWatchingViewModel @Inject constructor(
 
     private fun getGenres() {
         tryToCollect(
-            { if (currentState.selectedMediaTabIsMovie) getCurrentContinueWatchingMovieGenres.invoke() else getCurrentContinueWatchingTvShowGenres.invoke() },
+            { if (currentState.selectedMediaTabIsMovie) getContinueWatchingMovieGenres.invoke() else getContinueWatchingTvShowGenres.invoke() },
             ::onGenresFetched,
             onError = ::onGetGenresError,
         )
@@ -140,7 +140,7 @@ class ContinueWatchingViewModel @Inject constructor(
 
         return when {
             isMovie && genreId == null -> getContinueWatchingMoviesUseCase(page, DEFAULT_PAGE_SIZE)
-            isMovie && genreId != null -> getAllContinueWatchingMoviesByGenreUseCase(
+            isMovie && genreId != null -> getContinueWatchingMoviesByGenreUseCase(
                 genreId,
                 page,
                 DEFAULT_PAGE_SIZE
@@ -151,7 +151,7 @@ class ContinueWatchingViewModel @Inject constructor(
                 DEFAULT_PAGE_SIZE
             )
 
-            else -> getAllContinueWatchingTvShowsByGenreUseCase(genreId!!, page, DEFAULT_PAGE_SIZE)
+            else -> getContinueWatchingTvShowsByGenreUseCase(genreId!!, page, DEFAULT_PAGE_SIZE)
         }
     }
 
