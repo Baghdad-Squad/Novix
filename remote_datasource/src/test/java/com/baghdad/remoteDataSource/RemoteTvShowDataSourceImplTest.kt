@@ -116,6 +116,18 @@ class RemoteTvShowDataSourceImplTest {
         assertThat(result).isEmpty()
     }
 
+    @Test
+    fun `should handle null file paths when getTvShowImages is called`() = runTest {
+        val successResponse = Response.success(tvShowImagesResponseWithNulls)
+        coEvery { tvShowApiService.getTvShowImages(TV_SHOW_ID) } returns successResponse
+
+        val result = dataSource.getTvShowImages(TV_SHOW_ID)
+
+
+        assertThat(result).hasSize(2)
+        assertThat(result[0]).isEqualTo("https://image.tmdb.org/t/p/w500$BACKDROP_PATH")
+        assertThat(result[1]).isEqualTo("")
+    }
 
     @Test
     fun `should return paged tv shows when getTvShowsByGenre is called`() = runTest {
