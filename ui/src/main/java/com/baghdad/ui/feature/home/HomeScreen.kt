@@ -183,10 +183,9 @@ private fun HomeContent(
 }
 
 @Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int =
-    when (type) {
-        else -> type.toStringResource()
-    }
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
+}
 
 private fun handleEffect(
     effect: HomeScreenEffect,
@@ -201,27 +200,27 @@ private fun handleEffect(
             handleNavigation(NavigateToTvShowDetails(effect.tvShowId))
         }
 
-        HomeScreenEffect.NavigateToActors -> {
+        is HomeScreenEffect.NavigateToActors -> {
             handleNavigation(NavigateToActors)
         }
 
-        HomeScreenEffect.NavigateToContinueWatching -> {
+        is HomeScreenEffect.NavigateToContinueWatching -> {
             handleNavigation(NavigateToContinueWatching)
         }
 
-        HomeScreenEffect.NavigateToLogin -> {
+        is HomeScreenEffect.NavigateToLogin -> {
             handleNavigation(NavigateToLogin)
         }
 
-        HomeScreenEffect.NavigateToMovies -> {
+        is HomeScreenEffect.NavigateToMovies -> {
             handleNavigation(NavigateToMovies)
         }
 
-        HomeScreenEffect.NavigateToTopRating -> {
+        is HomeScreenEffect.NavigateToTopRating -> {
             handleNavigation(NavigateToTopRatingMovies)
         }
 
-        HomeScreenEffect.NavigateToTvShows -> {
+        is HomeScreenEffect.NavigateToTvShows -> {
             handleNavigation(NavigateToTvShows)
         }
     }
