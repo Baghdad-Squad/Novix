@@ -1,10 +1,10 @@
-package com.baghdad.local_datasource
+package com.baghdad.localDatasource
 
-import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
-import com.baghdad.local_datasource.roomDB.entity.RecentSearch
-import com.baghdad.local_datasource.roomDB.entity.toDto
-import com.baghdad.local_datasource.roomDB.errorHandler.executeFlowWithErrorHandling
-import com.baghdad.local_datasource.roomDB.errorHandler.executeWithErrorHandling
+import com.baghdad.localDatasource.errorHandler.executeFlowWithErrorHandling
+import com.baghdad.localDatasource.errorHandler.executeWithErrorHandling
+import com.baghdad.localDatasource.mapper.toDto
+import com.baghdad.localDatasource.roomDB.dao.RecentSearchDao
+import com.baghdad.localDatasource.roomDB.entity.RecentSearch
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.RecentSearchDto
@@ -18,7 +18,7 @@ class LocalRecentSearchDataSourceImpl @Inject constructor(
     private val recentSearchDao: RecentSearchDao,
     private val logger: Logger,
 ) : LocalRecentSearchDataSource {
-    override suspend fun addRecentSearchQuery(query: String) =
+    override suspend fun addRecentSearchQuery(query: String) {
         executeWithErrorHandling(logger = logger) {
             val existingSearch = recentSearchDao.getRecentSearchByQuery(query)
 
@@ -28,21 +28,26 @@ class LocalRecentSearchDataSourceImpl @Inject constructor(
 
             recentSearchDao.upsertRecentSearch(recentSearch)
         }
+    }
 
-    override fun getAllRecentSearches(): Flow<List<RecentSearchDto>> =
-        executeFlowWithErrorHandling(logger = logger) {
+    override fun getAllRecentSearches(): Flow<List<RecentSearchDto>> {
+        return executeFlowWithErrorHandling(logger = logger) {
             recentSearchDao.getAllRecentSearch().map { it ->
                 it.sortedByDescending { it.searchedAt }.map { it.toDto() }
             }
         }
+    }
 
-    override suspend fun deleteRecentSearchById(id: Long) =
+    override suspend fun deleteRecentSearchById(id: Long) {
         executeWithErrorHandling(logger = logger) {
             recentSearchDao.deleteRecentSearchById(id)
         }
+    }
 
-    override suspend fun deleteAllRecentSearches() =
+    override suspend fun deleteAllRecentSearches() {
         executeWithErrorHandling(logger = logger) {
             recentSearchDao.clearAllRecentSearch()
         }
+    }
+
 }
