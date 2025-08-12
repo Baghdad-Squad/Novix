@@ -36,5 +36,6 @@ interface TvShowRepository {
     suspend fun getTvShowAccountStates(tvShowId: Long): MediaAccountStates
 
     suspend fun getUserRatedTvShows(page: Int , pageSize: Int):  PagedResult<RatedMedia>
+
     suspend fun deleteTvShowRate(tvShowId: Long)
 }

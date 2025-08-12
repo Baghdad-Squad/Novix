@@ -160,23 +160,21 @@ class TvShowRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUserRatedTvShows(page: Int, pageSize: Int): PagedResult<RatedMedia> {
-        return executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
-            { sessionId ->
-                getRemotePagedSafely(
-                    page = page, pageSize = pageSize,
-                    getRemoteData = { page, _ ->
-                        authenticationRepository.getLoggedInUser()?.let {
-                            tvShowRemoteDataSource.getUserRatedTvShows(it.id, sessionId, page)
-                        } ?: PagedResultDto(
-                            data = emptyList(),
-                            nextKey = null,
-                            prevKey = null
-                        )
-                    },
-                ) {
-                    it.toMedia()
-                }
+        val sessionId = localSessionDataStore.getSessionId()
+        return getRemotePagedSafely(
+            page = page, pageSize = pageSize,
+            mapToEntity = { it.toMedia() },
+            getRemoteData = { page, _ ->
+                authenticationRepository.getLoggedInUser()?.let {
+                    tvShowRemoteDataSource.getUserRatedTvShows(
+                        it.id,
+                        sessionId.toString(), page
+                    )
+                } ?: PagedResultDto(
+                    data = emptyList(),
+                    nextKey = null,
+                    prevKey = null
+                )
             }
         )
     }

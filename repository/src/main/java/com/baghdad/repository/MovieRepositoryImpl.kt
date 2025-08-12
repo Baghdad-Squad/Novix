@@ -189,25 +189,22 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUserRatedMovies(page: Int, pageSize: Int): PagedResult<RatedMedia> {
-        return executeAuthorizedSafely(
-            sessionId = localSessionDataStore.getSessionId(),
-            block = { sessionId ->
-                getRemotePagedSafely(
-                    page = page, pageSize = pageSize,
-                    getRemoteData = { page, _ ->
-                        authenticationRepository.getLoggedInUser()?.let {
-                            remoteMovieDataSource.getUserRatedMovies(it.id, sessionId ,page)
-                        } ?: PagedResultDto(
-                            data = emptyList(),
-                            nextKey = null,
-                            prevKey = null
-                        )
-                    },
-                ) {
-                    it.toMedia()
-                }
-            }
-        )
+        val sessionId = localSessionDataStore.getSessionId()
+        return getRemotePagedSafely(
+            page = page, pageSize = pageSize,
+            mapToEntity = { it.toMedia() },
+            getRemoteData = { page, _ ->
+                authenticationRepository.getLoggedInUser()?.let {
+                    remoteMovieDataSource.getUserRatedMovies(
+                        it.id,
+                        sessionId.toString(), page
+                    )
+                } ?: PagedResultDto(
+                    data = emptyList(),
+                    nextKey = null,
+                    prevKey = null
+                )
+            },)
 
     }
 
