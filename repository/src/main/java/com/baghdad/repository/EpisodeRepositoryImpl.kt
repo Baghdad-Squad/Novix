@@ -17,34 +17,21 @@ class EpisodeRepositoryImpl @Inject constructor(
     private val remoteEpisodeDataSource: RemoteEpisodeDataSource,
     private val remoteTvShowDataSource: RemoteTvShowDataSource
 ) : EpisodeRepository {
-    override suspend fun getEpisodeDetails(
-        tvId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int
-    ): Episode {
-        return executeSafely {
-            val trailerUrl =
-                remoteEpisodeDataSource.getEpisodeTrailer(tvId, seasonNumber, episodeNumber)
-            val tvShowImages = remoteTvShowDataSource.getTvShowImages(tvId)
-            val tvShowGenres = remoteTvShowDataSource.getTvShowDetails(tvId).genres
-            remoteEpisodeDataSource.getEpisodeDetails(tvId, seasonNumber, episodeNumber).toEntity()
-                .copy(
-                    trailerUrl = trailerUrl,
-                    headerPictures = tvShowImages,
-                    genres = tvShowGenres.toEntities()
-                )
-        }
-    }
-
     override suspend fun getEpisodeCastMembers(
-        tvId: Long,
+        tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int
     ): List<CastMember> {
-        return executeSafely {
-            remoteEpisodeDataSource.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
-                .map { it.toEntity() }
-        }
+        return executeSafely(
+            block = {
+                remoteEpisodeDataSource.getEpisodeCastMembers(
+                    tvShowId = tvShowId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber
+                )
+                    .map { it.toEntity() }
+            }
+        )
     }
 
     override suspend fun addTvEpisodeRate(
@@ -77,6 +64,36 @@ class EpisodeRepositoryImpl @Inject constructor(
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
                 ).toEntity()
+            }
+        )
+    }
+
+    override suspend fun getEpisodeDetails(
+        tvShowId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): Episode {
+        return executeSafely(
+            block = {
+                val trailerUrl =
+                    remoteEpisodeDataSource.getEpisodeTrailer(
+                        tvShowId = tvShowId,
+                        seasonNumber = seasonNumber,
+                        episodeNumber = episodeNumber
+                    )
+                val tvShowImages = remoteTvShowDataSource.getTvShowImages(tvShowId = tvShowId)
+                val tvShowGenres =
+                    remoteTvShowDataSource.getTvShowDetails(tvShowId = tvShowId).genres
+                remoteEpisodeDataSource.getEpisodeDetails(
+                    tvShowId = tvShowId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber
+                ).toEntity()
+                 .copy(
+                        trailerUrl = trailerUrl,
+                        headerPictures = tvShowImages,
+                        genres = tvShowGenres.toEntities()
+                 )
             }
         )
     }
