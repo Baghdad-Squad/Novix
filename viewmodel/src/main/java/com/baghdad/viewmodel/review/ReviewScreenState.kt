@@ -8,7 +8,7 @@ data class ReviewScreenState(
 ) : BaseUiState {
 
     data class ReviewUiState(
-        val id: Long = 0L,
+        val id: String = "",
         val authorName: String = "",
         val authorAvatarUrl: String = "",
         val contentTitle: String = "",

@@ -9,7 +9,7 @@ data class ReviewsResponse(
     @SerializedName("total_results") val totalResults: Int? = 0,
 ) {
     data class ReviewResponse(
-        @SerializedName("id") val id: Long? = null,
+        @SerializedName("id") val id: String? = null,
         @SerializedName("author") val author: String? = null,
         @SerializedName("author_details") val authorDetails: MovieAuthorDetails? = null,
         @SerializedName("content") val content: String? = null,
