@@ -10,6 +10,8 @@ import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,6 +20,7 @@ class SavedListDetailsViewModel @Inject constructor(
     private val getSavedListDetailsUseCase: GetSavedListDetailsUseCase,
     private val deleteSavedListUseCase: DeleteSavedListUseCase,
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<SavedListDetailsScreenState, SavedListDetailsEffect>(SavedListDetailsScreenState()),
     SavedListDetailsInteractionListener {
     private val currentListId: Long = checkNotNull(savedStateHandle["listId"])
@@ -37,7 +40,11 @@ class SavedListDetailsViewModel @Inject constructor(
         hideSnackBar()
         collectPagingFlow(
             loadData = { page ->
-                getSavedListDetailsUseCase.invoke(currentListId, page, 20).pagedItems
+                getSavedListDetailsUseCase.invoke(
+                    listId = currentListId,
+                    page = page,
+                    pageSize = PAGE_SIZE
+                ).pagedItems
             },
             onInitialLoadFinished = ::onFinally,
             onInitialLoadError = ::onError,
@@ -53,6 +60,7 @@ class SavedListDetailsViewModel @Inject constructor(
 
     private fun getSavedListInfo() {
         tryToExecute(
+            dispatcher = defaultDispatcher,
             callee = { getSavedListDetailsUseCase.invoke(currentListId, 1, 1) },
             onSuccess = { result ->
                 updateState {
@@ -81,6 +89,7 @@ class SavedListDetailsViewModel @Inject constructor(
 
     override fun onRemoveSavedMovieClick(movieId: Long) {
         tryToExecute(
+            dispatcher = defaultDispatcher,
             callee = { removeMovieFromSavedListUseCase(currentListId, movieId) },
             onSuccess = {
                 showSnackBar(
@@ -110,6 +119,7 @@ class SavedListDetailsViewModel @Inject constructor(
 
     override fun onDeleteListBottomSheetDeleteClick() {
         tryToExecute(
+            dispatcher = defaultDispatcher,
             callee = { deleteSavedListUseCase(currentListId) },
             onSuccess = {
                 showSnackBar(
@@ -146,5 +156,9 @@ class SavedListDetailsViewModel @Inject constructor(
 
     private fun onFinally() {
         updateState { it.copy(isLoading = false) }
+    }
+
+    private companion object {
+        const val PAGE_SIZE = 20
     }
 }
