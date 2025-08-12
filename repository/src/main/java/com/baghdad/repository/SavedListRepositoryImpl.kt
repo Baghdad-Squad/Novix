@@ -5,7 +5,6 @@ import com.baghdad.domain.model.savedList.SavedListDetails
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
 import com.baghdad.repository.datasource.local.LocalUserDataStore
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.mapper.toEntity
@@ -110,7 +109,7 @@ class SavedListRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun shouldPreformSync(): Boolean {
+    private suspend fun shouldPreformSync(): Boolean {
         return savableMovieDataSource.getSavedMovies().isEmpty()
     }
 
