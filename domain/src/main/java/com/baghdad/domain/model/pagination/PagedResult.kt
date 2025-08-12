@@ -1,4 +1,4 @@
-package com.baghdad.domain.model
+package com.baghdad.domain.model.pagination
 
 data class PagedResult<T>(
     val data: List<T>,

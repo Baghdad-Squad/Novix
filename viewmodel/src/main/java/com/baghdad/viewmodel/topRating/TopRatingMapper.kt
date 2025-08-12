@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.topRating
 
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 
@@ -11,7 +11,7 @@ fun Genre.toTopRatingGenreUiState() =
         name = this.name
     )
 
-fun SavableMovie.toTopRatingMovieUiState() =
+fun SavedMovie.toTopRatingMovieUiState() =
     TopRatingState.MovieUiState(
         id = movie.id,
         posterPictureURL = movie.posterImageURL,

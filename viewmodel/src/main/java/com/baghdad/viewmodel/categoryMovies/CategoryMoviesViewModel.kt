@@ -376,7 +376,7 @@ class CategoryMoviesViewModel @Inject constructor(
     private fun getGenreMovies() {
         collectPagingFlow(
             loadData = { page ->
-                getGenreMoviesUseCase(categoryId, page)
+                getGenreMoviesUseCase(categoryId, page, DEFAULT_PAGE_SIZE)
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toUiState() },

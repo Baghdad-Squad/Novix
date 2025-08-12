@@ -1,4 +1,4 @@
-package com.baghdad.entity
+package com.baghdad.entity.user
 
 data class User(
     val id: Long,

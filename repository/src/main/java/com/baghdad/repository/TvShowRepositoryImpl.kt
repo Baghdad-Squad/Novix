@@ -1,8 +1,7 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.MediaAccountStates
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.RatedMedia
+import com.baghdad.domain.model.pagination.PagedResult
+import com.baghdad.domain.model.userRating.RatedMedia
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Episode
@@ -14,6 +13,7 @@ import com.baghdad.repository.datasource.local.LocalSessionDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toIsMediaRated
 import com.baghdad.repository.mapper.toMedia
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.PagedResultDto
@@ -40,26 +40,26 @@ class TvShowRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTvShowDetails(tvId: Long): TvShow {
+    override suspend fun getTvShowDetails(tvShowId: Long): TvShow {
         return executeSafely {
-            val tvShowImages = tvShowRemoteDataSource.getTvShowImages(tvId).take(MAX_IMAGE_COUNT)
-            val tvShowTrailer = tvShowRemoteDataSource.getTvShowTrailer(tvId)
-            tvShowRemoteDataSource.getTvShowDetails(tvId).toEntity()
+            val tvShowImages = tvShowRemoteDataSource.getTvShowImages(tvShowId).take(MAX_IMAGE_COUNT)
+            val tvShowTrailer = tvShowRemoteDataSource.getTvShowTrailer(tvShowId)
+            tvShowRemoteDataSource.getTvShowDetails(tvShowId).toEntity()
                 .copy(headerImagesURLs = tvShowImages, trailerURL = tvShowTrailer)
         }
     }
 
-    override suspend fun getTvShowCastMembers(tvId: Long): List<CastMember> {
+    override suspend fun getTvShowCastMembers(tvShowId: Long): List<CastMember> {
         return executeSafely {
-            tvShowRemoteDataSource.getTvShowCastMembers(tvId).map {
+            tvShowRemoteDataSource.getTvShowCastMembers(tvShowId).map {
                 it.toEntity()
             }
         }
     }
 
-    override suspend fun getTvShowImages(tvId: Long): List<String> {
+    override suspend fun getTvShowImages(tvShowId: Long): List<String> {
         return executeSafely {
-            tvShowRemoteDataSource.getTvShowImages(tvId)
+            tvShowRemoteDataSource.getTvShowImages(tvShowId)
         }
     }
 
@@ -81,17 +81,17 @@ class TvShowRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTvShowSeasonEpisodes(tvId: Long, seasonNumber: Int): List<Episode> {
+    override suspend fun getTvShowSeasonEpisodes(tvShowId: Long, seasonNumber: Int): List<Episode> {
         return executeSafely {
-            tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber).map {
+            tvShowRemoteDataSource.getTvShowEpisodes(tvShowId, seasonNumber).map {
                 it.toEntity()
             }
         }
     }
 
-    override suspend fun getTvShowReviews(tvId: Long): List<Review> {
+    override suspend fun getTvShowReviews(tvShowId: Long): List<Review> {
         return executeSafely {
-            tvShowRemoteDataSource.getTvShowReviews(tvId).map {
+            tvShowRemoteDataSource.getTvShowReviews(tvShowId).map {
                 it.toEntity()
             }
         }
@@ -147,14 +147,14 @@ class TvShowRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getTvShowAccountStates(tvShowId: Long): MediaAccountStates {
+    override suspend fun getTvShowAccountStates(tvShowId: Long): Boolean {
         return executeAuthorizedSafely(
             sessionId = localSessionDataSource.getSessionId(),
             block = {
                 tvShowRemoteDataSource.getTvShowAccountStates(
                     tvShowId = tvShowId,
                     sessionId = it
-                ).toEntity()
+                ).toIsMediaRated()
             }
         )
     }

@@ -2,8 +2,8 @@ package com.baghdad.viewmodel.continueWatching
 
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingMovieGenresUseCase
 import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingMoviesByGenreUseCase
 import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingMoviesUseCase
@@ -135,7 +135,7 @@ class ContinueWatchingViewModel @Inject constructor(
     private suspend fun onGetMedia(
         genreId: Long?,
         page: Int
-    ): PagedResult<ContinueWatching> {
+    ): PagedResult<UserWatchedMedia> {
         val isMovie = currentState.selectedMediaTabIsMovie
 
         return when {

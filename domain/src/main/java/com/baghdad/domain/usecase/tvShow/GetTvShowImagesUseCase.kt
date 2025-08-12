@@ -6,7 +6,7 @@ import javax.inject.Inject
 class GetTvShowImagesUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository
 ) {
-    suspend operator fun invoke(tvId: Long): List<String> {
-        return tvShowRepository.getTvShowImages(tvId)
+    suspend operator fun invoke(tvShowId: Long): List<String> {
+        return tvShowRepository.getTvShowImages(tvShowId = tvShowId)
     }
 }
