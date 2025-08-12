@@ -1,12 +1,12 @@
-package com.baghdad.local_datasource
+package com.baghdad.localDatasource
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.baghdad.local_datasource.roomDB.dao.ContinueWatchingDao
-import com.baghdad.local_datasource.roomDB.database.NovixDatabase
-import com.baghdad.local_datasource.roomDB.entity.ContinueWatching
+import com.baghdad.localDatasource.roomDB.dao.ContinueWatchingDao
+import com.baghdad.localDatasource.roomDB.database.NovixDatabase
+import com.baghdad.localDatasource.roomDB.entity.ContinueWatching
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -73,7 +73,7 @@ class ContinueWatchingDaoTest {
             // Then
             assertThat(page.size).isEqualTo(5)
             assertThat(page.map { it.contentId }).isEqualTo(listOf(9L, 8L, 7L, 6L, 5L))
-    }
+        }
 
     @Test
     fun shouldObserveContinueWatching_whenNewItemIsInserted() = runBlocking {
