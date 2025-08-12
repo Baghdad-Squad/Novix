@@ -1,7 +1,6 @@
-package com.baghdad.domain.model
+package com.baghdad.domain.model.continueWatching
 
-
-data class ContinueWatching(
+data class UserWatchedMedia(
     val contentId: Long,
     val genreIds: List<Long>,
     val contentImageUrl: String,

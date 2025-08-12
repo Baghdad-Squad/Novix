@@ -1,4 +1,4 @@
-package com.baghdad.domain.model
+package com.baghdad.domain.model.userRating
 
 data class RatedMedia(
     val id: Long,

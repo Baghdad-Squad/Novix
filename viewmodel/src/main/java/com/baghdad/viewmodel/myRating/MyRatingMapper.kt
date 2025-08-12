@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.myRating
 
-import com.baghdad.domain.model.RatedMedia
+import com.baghdad.domain.model.userRating.RatedMedia
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
 
