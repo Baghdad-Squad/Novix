@@ -1,98 +1,186 @@
 package com.baghdad.remoteDataSource.mapper.actor
 
-import com.baghdad.remoteDataSource.response.actor.TrendingActorDetails
 import com.baghdad.remoteDataSource.response.actor.TrendingActorResponse
 import com.baghdad.repository.model.ActorDto
+import com.baghdad.repository.model.PagedResultDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class TrendingActorMapperTest {
 
-    @Test
-    fun `should map actor details correctly when toDto is called`() {
-        // When
-        val dto: ActorDto = TRENDING_ACTOR_DETAILS.toDto()
-
-        // Then
-        assertThat(dto.id).isEqualTo(TRENDING_ACTOR_DETAILS.id)
-        assertThat(dto.name).isEqualTo(TRENDING_ACTOR_DETAILS.name)
-        assertThat(dto.imageUrl).isEqualTo(URL + TRENDING_ACTOR_DETAILS.profilePath)
-        assertThat(dto.biography).isEmpty()
-        assertThat(dto.birthdayDate).isNull()
-        assertThat(dto.deathDate).isNull()
-        assertThat(dto.placeOfBirth).isEmpty()
-        assertThat(dto.headerPictures).isEmpty()
-        assertThat(dto.department).isEmpty()
-    }
-
-    @Test
-    fun `should handle nulls safely when toDto is called`() {
-        // Given
-        val details = TRENDING_ACTOR_DETAILS.copy(
-            id = null,
-            name = null,
-            profilePath = null
-        )
-
-        // When
-        val dto = details.toDto()
-
-        // Then
-        assertThat(dto.id).isEqualTo(0L)
-        assertThat(dto.name).isEqualTo("")
-        assertThat(dto.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500null")
-    }
-
-    @Test
-    fun `should map multiple results correctly when toPagedActorDtos is called`() {
-        // Given
-        val response = TrendingActorResponse(
+    companion object {
+        private val COMPLETE_ACTOR_RESPONSE = TrendingActorResponse(
             page = 1,
             totalPages = 3,
             results = listOf(
-                TrendingActorDetails(id = 1, name = "Actor 1", profilePath = "/a1.jpg"),
-                TrendingActorDetails(id = 2, name = "Actor 2", profilePath = "/a2.jpg")
+                TrendingActorResponse.TrendingActorDetails(
+                    id = 101L,
+                    name = "Bryan Cranston",
+                    profilePath = "/bryan.jpg"
+                ),
+                TrendingActorResponse.TrendingActorDetails(
+                    id = 202L,
+                    name = "Millie Bobby Brown",
+                    profilePath = "/millie.jpg"
+                )
             )
         )
 
-        // When
-        val result = response.toPagedActorDtos()
-
-        // Then
-        assertThat(result.data).hasSize(2)
-        assertThat(result.data[0].name).isEqualTo("Actor 1")
-        assertThat(result.data[1].imageUrl).contains("/a2.jpg")
-        assertThat(result.nextKey).isEqualTo(2)
-        assertThat(result.prevKey).isNull()
-    }
-
-    @Test
-    fun `should return empty list when results is null in toPagedActorDtos`() {
-        // Given
-        val response = TrendingActorResponse(
+        private val NULL_RESULTS_RESPONSE = TrendingActorResponse(
             page = 1,
-            totalPages = 1,
+            totalPages = 3,
             results = null
         )
 
-        // When
-        val result = response.toPagedActorDtos()
+        private val EMPTY_RESULTS_RESPONSE = TrendingActorResponse(
+            page = 1,
+            totalPages = 3,
+            results = emptyList()
+        )
 
-        // Then
-        assertThat(result.data).isEmpty()
-        assertThat(result.nextKey).isNull()
-        assertThat(result.prevKey).isNull()
+        private val NULL_VALUES_RESPONSE = TrendingActorResponse(
+            page = 2,
+            totalPages = 4,
+            results = listOf(
+                TrendingActorResponse.TrendingActorDetails(
+                    id = 303L,
+                    name = null,
+                    profilePath = null
+                )
+            )
+        )
+
+        private val NULL_ID_RESPONSE = TrendingActorResponse(
+            page = 1,
+            totalPages = 2,
+            results = listOf(
+                TrendingActorResponse.TrendingActorDetails(
+                    id = null,
+                    name = "Invalid Actor",
+                    profilePath = "/invalid.jpg"
+                ),
+                TrendingActorResponse.TrendingActorDetails(
+                    id = 404L,
+                    name = "Valid Actor",
+                    profilePath = "/valid.jpg"
+                )
+            )
+        )
+
+        private val EXPECTED_COMPLETE_ACTORS = PagedResultDto(
+            data = listOf(
+                ActorDto(
+                    id = 101,
+                    name = "Bryan Cranston",
+                    imageUrl = "https://image.tmdb.org/t/p/w500/bryan.jpg",
+                    biography = "",
+                    birthdayDate = null,
+                    deathDate = null,
+                    placeOfBirth = "",
+                    headerPictures = emptyList(),
+                    department = ""
+                ),
+                ActorDto(
+                    id = 202,
+                    name = "Millie Bobby Brown",
+                    imageUrl = "https://image.tmdb.org/t/p/w500/millie.jpg",
+                    biography = "",
+                    birthdayDate = null,
+                    deathDate = null,
+                    placeOfBirth = "",
+                    headerPictures = emptyList(),
+                    department = ""
+                )
+            ),
+            nextKey = 2,
+            prevKey = null
+        )
+
+        private val EXPECTED_EMPTY_LIST = PagedResultDto<ActorDto>(
+            data = emptyList(),
+            nextKey = 2,
+            prevKey = null
+        )
+
+        private val EXPECTED_NULL_VALUES = PagedResultDto(
+            data = listOf(
+                ActorDto(
+                    id = 303,
+                    name = "",
+                    imageUrl = "",
+                    biography = "",
+                    birthdayDate = null,
+                    deathDate = null,
+                    placeOfBirth = "",
+                    headerPictures = emptyList(),
+                    department = ""
+                )
+            ),
+            nextKey = 3,
+            prevKey = 1
+        )
+
+        private val EXPECTED_FILTERED_NULL_ID = PagedResultDto(
+            data = listOf(
+                ActorDto(
+                    id = 404,
+                    name = "Valid Actor",
+                    imageUrl = "https://image.tmdb.org/t/p/w500/valid.jpg",
+                    biography = "",
+                    birthdayDate = null,
+                    deathDate = null,
+                    placeOfBirth = "",
+                    headerPictures = emptyList(),
+                    department = ""
+                )
+            ),
+            nextKey = 2,
+            prevKey = null
+        )
     }
 
-    companion object {
+    @Test
+    fun `should convert all valid actors to ActorDto list`() {
+        val actorResponse = COMPLETE_ACTOR_RESPONSE
 
-        const val URL = "https://image.tmdb.org/t/p/w500"
+        val result = actorResponse.toPagedActorDtos()
 
-        val TRENDING_ACTOR_DETAILS = TrendingActorDetails(
-            id = 1,
-            name = "test",
-            profilePath = "/profile.jpg",
-            knownForDepartment = "acting"
-        )
+        assertThat(result).isEqualTo(EXPECTED_COMPLETE_ACTORS)
+    }
+
+    @Test
+    fun `should return empty list when results is null`() {
+        val actorResponse = NULL_RESULTS_RESPONSE
+
+        val result = actorResponse.toPagedActorDtos()
+
+        assertThat(result).isEqualTo(EXPECTED_EMPTY_LIST)
+    }
+
+    @Test
+    fun `should return empty list when results is empty`() {
+        val actorResponse = EMPTY_RESULTS_RESPONSE
+
+        val result = actorResponse.toPagedActorDtos()
+
+        assertThat(result).isEqualTo(EXPECTED_EMPTY_LIST)
+    }
+
+    @Test
+    fun `should handle null values by using default values`() {
+        val actorResponse = NULL_VALUES_RESPONSE
+
+        val result = actorResponse.toPagedActorDtos()
+
+        assertThat(result).isEqualTo(EXPECTED_NULL_VALUES)
+    }
+
+    @Test
+    fun `should filter out actors with null IDs`() {
+        val actorResponse = NULL_ID_RESPONSE
+
+        val result = actorResponse.toPagedActorDtos()
+
+        assertThat(result).isEqualTo(EXPECTED_FILTERED_NULL_ID)
     }
 }

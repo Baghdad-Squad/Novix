@@ -1,7 +1,10 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.ActorApiService
+import com.baghdad.remoteDataSource.mapper.actor.toActorDtoList
+import com.baghdad.remoteDataSource.mapper.actor.toActorTvShowList
 import com.baghdad.remoteDataSource.mapper.actor.toDto
+import com.baghdad.remoteDataSource.mapper.actor.toMovieDtoList
 import com.baghdad.remoteDataSource.mapper.actor.toPagedActorDtos
 import com.baghdad.remoteDataSource.response.actor.ActorDetailsResponse
 import com.baghdad.remoteDataSource.response.actor.ActorImagesResponse
@@ -17,7 +20,6 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
 import javax.inject.Inject
 import javax.inject.Singleton
-
 @Singleton
 class RemoteActorDataSourceImpl @Inject constructor(
     private val actorApiService: ActorApiService,
@@ -35,28 +37,27 @@ class RemoteActorDataSourceImpl @Inject constructor(
             apiCall = { actorApiService.getActorImages(personId = personId) },
             logger = logger,
 
-        ).profiles.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
+        ).toActorDtoList()
     }
 
     override suspend fun getActorMovies(personId: Long): List<MovieDto> {
         return handleRequest<ActorMoviesResponse>(
             apiCall = { actorApiService.getActorMovies(personId) },
             logger = logger,
-        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+        ).toMovieDtoList()
     }
 
     override suspend fun getActorTvShows(personId: Long): List<TvShowDto> {
         return handleRequest<ActorTvShowsResponse>(
             apiCall = {actorApiService.getActorTvShows(personId)},
             logger = logger,
-        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+        ).toActorTvShowList()
     }
 
     override suspend fun getTrendingActors(page: Int): PagedResultDto<ActorDto> {
-        val result  = handleRequest<TrendingActorResponse>(
+        return handleRequest<TrendingActorResponse>(
            apiCall = { actorApiService.getTrendingActors(page) },
             logger = logger
-        )
-        return result.toPagedActorDtos()
+        ).toPagedActorDtos()
     }
 }

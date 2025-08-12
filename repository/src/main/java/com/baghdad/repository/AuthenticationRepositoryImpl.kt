@@ -1,5 +1,6 @@
 package com.baghdad.repository
 
+import android.util.Log
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.entity.user.User
 import com.baghdad.repository.datasource.local.LocalSessionDataSource
@@ -20,14 +21,16 @@ class AuthenticationRepositoryImpl @Inject constructor(
     override suspend fun login(userName: String, password: String) {
         return executeLoginSafely {
             val requestToken = remoteAuthenticationDataSource.getRequestToken()
+            Log.d("AuthenticationRepository", "Request Token: $requestToken")
             val validatedRequestToken = remoteAuthenticationDataSource.validateCredentialWithToken(
                 userName = userName,
                 password = password,
                 requestToken = requestToken
             )
+            Log.d("AuthenticationRepository", "Validated Request Token: $validatedRequestToken")
             val sessionId = remoteAuthenticationDataSource.createSession(validatedRequestToken)
-            val user = remoteAuthenticationDataSource.getUserDetails(sessionId)
             localSessionDataSource.saveSessionId(sessionId)
+            val user = remoteAuthenticationDataSource.getUserDetails(sessionId)
             localUserDataSource.saveUser(
                 id = user.id,
                 userName = user.userName,

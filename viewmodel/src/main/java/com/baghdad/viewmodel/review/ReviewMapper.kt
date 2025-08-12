@@ -5,7 +5,7 @@ import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
 fun Review.toReviewUi() = ReviewScreenState.ReviewUiState(
-    id = id,
+    id = id ,
     authorName = authorName,
     authorAvatarUrl = authorAvatarUrl,
     contentTitle = contentTitle,

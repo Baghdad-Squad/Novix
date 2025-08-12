@@ -1,9 +1,15 @@
 package com.baghdad.remoteDataSource.mapper.tvShow
 
 import com.baghdad.remoteDataSource.response.tvShow.TVShowVideosResponse
+import com.baghdad.remoteDataSource.util.getTrailerUrlFromKey
 
 fun TVShowVideosResponse.mapToYoutubeURL(): String {
-    return results?.firstOrNull { it?.site == "YouTube" && it.type == "Trailer" }?.key?.let {
-        "https://www.youtube.com/watch?v=$it"
-    } ?: ""
+    return results
+        ?.find { it?.site == "YouTube" && it.type == "Trailer" }
+        ?.key
+        ?.let {
+            getTrailerUrlFromKey(
+                it,
+            )
+        }.orEmpty()
 }
