@@ -6,7 +6,7 @@ data class EpisodeVideosResponse(
     @SerializedName("results") val results: List<Result?>? = null,
 ) {
     data class Result(
-        @SerializedName("id") val id: Long? = null,
+        @SerializedName("id") val id: String? = null,
         @SerializedName("key") val key: String? = null,
         @SerializedName("name") val name: String? = null,
         @SerializedName("official") val official: Boolean? = null,
