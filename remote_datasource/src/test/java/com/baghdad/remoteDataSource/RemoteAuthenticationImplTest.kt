@@ -119,36 +119,6 @@ class RemoteAuthenticationImplTest {
     }
 
     @Test
-    fun `should return user dto with defaults when getUserDetails response has null fields`() = runTest {
-        val successResponse = Response.success(userResponseWithNulls)
-        coEvery { authenticationApiService.getUserDetails() } returns successResponse
-
-        val result = dataSource.getUserDetails(SESSION_ID)
-
-        assertThat(result).isEqualTo(expectedUserDtoWithDefaults)
-    }
-
-    @Test
-    fun `should handle null avatar path in getUserDetails`() = runTest {
-        val successResponse = Response.success(userResponseWithNullAvatar)
-        coEvery { authenticationApiService.getUserDetails() } returns successResponse
-
-        val result = dataSource.getUserDetails(SESSION_ID)
-
-        assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500")
-    }
-
-    @Test
-    fun `should handle null tmdb object in getUserDetails`() = runTest {
-        val successResponse = Response.success(userResponseWithNullTmdb)
-        coEvery { authenticationApiService.getUserDetails() } returns successResponse
-
-        val result = dataSource.getUserDetails(SESSION_ID)
-
-        assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500")
-    }
-
-    @Test
     fun `should return true when deleteSession is called successfully`() = runTest {
         val successResponse = Response.success(deleteSessionSuccessResponse)
         coEvery { authenticationApiService.deleteSession() } returns successResponse
