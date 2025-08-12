@@ -107,7 +107,10 @@ object DummyDataFactory {
             TvShowDto(
                 id = 456L,
                 title = "Another Test TV Show",
-                genres = listOf(createMockGenreDto(3, "Action"), createMockGenreDto(4, "Sci-Fi")),
+                genres = listOf(
+                    createMockGenreDto(id = 3, name = "Action"),
+                    createMockGenreDto(id = 4, name = "Sci-Fi")
+                ),
                 userRating = 8,
                 releaseDate = "2022-05-15",
                 overview = "This is another test TV show overview.",
@@ -118,12 +121,16 @@ object DummyDataFactory {
                 numberOfSeasons = 2
             )
         )
+
     fun createMockMovieDto() =
         listOf(
             MovieDto(
                 id = 1L,
                 title = "Test Movie",
-                genres = listOf(createMockGenreDto(1, "Action"), createMockGenreDto(2, "Adventure")),
+                genres = listOf(
+                    createMockGenreDto(id = 1, name = "Action"),
+                    createMockGenreDto(id = 2, name = "Adventure")
+                ),
                 userRating = 7.5,
                 releaseDate = "2023-01-01",
                 overview = "This is a test movie overview.",
@@ -135,7 +142,10 @@ object DummyDataFactory {
             MovieDto(
                 id = 2L,
                 title = "Another Test Movie",
-                genres = listOf(createMockGenreDto(3, "Comedy"), createMockGenreDto(4, "Drama")),
+                genres = listOf(
+                    createMockGenreDto(id = 3, name = "Comedy"),
+                    createMockGenreDto(id = 4, name = "Drama")
+                ),
                 userRating = 8.0,
                 releaseDate = "2022-05-15",
                 overview = "This is another test movie overview.",
