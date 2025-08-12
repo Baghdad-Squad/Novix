@@ -3,7 +3,7 @@ package com.baghdad.localDatasource
 import com.baghdad.localDatasource.errorHandler.executeWithErrorHandling
 import com.baghdad.localDatasource.roomDB.dao.SavedListMovieDao
 import com.baghdad.localDatasource.roomDB.entity.SavedListMovie
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.savedList.SavableMovieDto
 import javax.inject.Inject
@@ -13,12 +13,12 @@ private typealias ListId = Long
 private typealias MovieId = Long
 
 @Singleton
-class LocalSavableMovieDataSourceImpl
+class SavableMovieDataSourceImpl
 @Inject
 constructor(
     private val savedListMovieDao: SavedListMovieDao,
     private val logger: Logger,
-) : LocalSavableMovieDataSource {
+) : SavableMovieDataSource {
     private val savedMovies = mutableMapOf<MovieId, ListId>()
 
     override suspend fun saveMovies(

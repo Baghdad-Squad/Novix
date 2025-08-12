@@ -27,14 +27,14 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
 ) : RemoteEpisodeDataSource {
 
     override suspend fun getEpisodeDetails(
-        tvId: Long,
+        tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int
     ): EpisodeDto {
         return handleRequest<EpisodeDetailsResponse>(
             apiCall = {
                 episodeApiService.getEpisodeDetails(
-                    tvId = tvId,
+                    tvId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber
                 )
@@ -44,14 +44,14 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getEpisodeCastMembers(
-        tvId: Long,
+        tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int
     ): List<CastMemberDto> {
         return handleRequest<CastMembersResponse>(
             apiCall = {
                 episodeApiService.getEpisodeCastMembers(
-                    tvId = tvId,
+                    tvId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber
                 )
@@ -60,14 +60,14 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
         ).toCastMembers()
     }
     override suspend fun getEpisodeTrailer(
-        tvId: Long,
+        tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int
     ): String {
         return handleRequest<EpisodeVideosResponse>(
             apiCall = {
                 episodeApiService.getEpisodeTrailer(
-                    tvId = tvId,
+                    tvId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber
                 )
