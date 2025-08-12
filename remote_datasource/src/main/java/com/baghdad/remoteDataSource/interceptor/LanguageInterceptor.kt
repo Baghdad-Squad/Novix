@@ -1,12 +1,14 @@
 package com.baghdad.remoteDataSource.interceptor
 
-import com.baghdad.repository.language.LanguageProvider
+import com.baghdad.repository.datasource.local.AppConfigurationDataSource
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.Invocation
 
 class LanguageInterceptor(
-    private val languageProvider: LanguageProvider,
+    private val appConfigurationDataSource: AppConfigurationDataSource,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
@@ -20,7 +22,7 @@ class LanguageInterceptor(
         val language = if (shouldForceEnglishLocale) {
             "en"
         } else {
-            languageProvider.getCurrentLanguage()
+            runBlocking { appConfigurationDataSource.getAppLanguage().first() }
         }
 
         val modifiedRequest = originalRequest.newBuilder().apply {

@@ -1,6 +1,6 @@
 package com.baghdad.remoteDataSource.interceptor
 
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
+import com.baghdad.repository.datasource.local.LocalSessionDataSource
 import com.baghdad.repository.exception.UnauthorizedNetworkException
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -12,7 +12,7 @@ class AuthenticationInterceptor
     @Inject
     constructor(
         private val authorizationToken: String,
-        private val sessionDataSource: LocalSessionDataStore,
+        private val sessionDataSource: LocalSessionDataSource,
     ) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val originalRequest = chain.request()
