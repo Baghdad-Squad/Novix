@@ -1,4 +1,4 @@
-package com.baghdad.local_datasource.dataStore.user
+package com.baghdad.localDatasource.serializer
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
@@ -30,7 +30,6 @@ object UserSerializer : Serializer<User> {
     }
 
     private fun InputStream.readUser(): User = User.parseFrom(this)
-
     private fun OutputStream.writeUser(user: User) = user.writeTo(this)
 
     private const val ERROR_READ_FAILED = "Failed to read user data"
