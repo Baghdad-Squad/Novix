@@ -7,6 +7,6 @@ class SetAppThemeUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(isDarkTheme: Boolean) {
-        userPreferencesRepository.setDarkTheme(isDarkTheme)
+        userPreferencesRepository.setDarkTheme(enabled = isDarkTheme)
     }
 }

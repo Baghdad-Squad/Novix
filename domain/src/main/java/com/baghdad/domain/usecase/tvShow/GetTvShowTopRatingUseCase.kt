@@ -5,16 +5,16 @@ import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.TvShow
 import javax.inject.Inject
 
-class GetTrendingTvShowUseCase @Inject constructor(
+class GetTvShowTopRatingUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository
 ) {
     suspend operator fun invoke(
         page: Int,
         genreId: Long?,
     ): PagedResult<TvShow> {
-        val result = tvShowRepository.getTrendingTvShows(page = page)
+        val result = tvShowRepository.getTopRatedTvShows(page = page)
         return result.copy(
-            data = result.data.filterByGenre(genreId)
+            data =  result.data.filterByGenre(genreId = genreId)
         )
     }
 

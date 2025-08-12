@@ -7,6 +7,6 @@ class SetAppLanguageUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(language: String) {
-        userPreferencesRepository.setAppLanguage(language)
+        userPreferencesRepository.setAppLanguage(language = language)
     }
 }
