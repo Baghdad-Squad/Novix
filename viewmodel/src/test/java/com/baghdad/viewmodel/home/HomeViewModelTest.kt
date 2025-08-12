@@ -1,6 +1,5 @@
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
@@ -8,9 +7,8 @@ import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
-import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
+import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
-import com.baghdad.domain.usecase.userPreferences.GetAppLanguageUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -73,14 +71,14 @@ class HomeViewModelTest {
         observeContinueWatchingUseCase = mockk(relaxed = true)
 
         coEvery { getGenresUseCase.getMovieGenres() } returns FakeHomeScreenData.genres
-        coEvery { getPopularMoviesUseCase.invoke() } returns FakeHomeScreenData.savableMovies
+        coEvery { getPopularMoviesUseCase.invoke() } returns FakeHomeScreenData.savedMovies
         coEvery { getPopularTvShowsUseCase.invoke() } returns FakeHomeScreenData.tvShows
         coEvery {
             getMovieTopRatingUseCase.invoke(any(), any()).data
-        } returns FakeHomeScreenData.savableMovies
+        } returns FakeHomeScreenData.savedMovies
         coEvery {
             observeContinueWatchingUseCase.invoke()
-        } returns flowOf(FakeHomeScreenData.continueWatchingItems)
+        } returns flowOf(FakeHomeScreenData.userWatchedMedia)
 
         viewModel = createViewModel()
     }
@@ -142,7 +140,7 @@ class HomeViewModelTest {
     fun `should have empty top rating items when fetching with empty top rating movies`() =
         runTest {
             // Given
-            coEvery { getMovieTopRatingUseCase.invoke(any(), any()).data } returns emptyList<SavableMovie>()
+            coEvery { getMovieTopRatingUseCase.invoke(any(), any()).data } returns emptyList<SavedMovie>()
 
             // When
             viewModel = createViewModel()
@@ -187,8 +185,8 @@ class HomeViewModelTest {
     @Test
     fun `should update upcoming movies when genre is selected`() = runTest {
         // Given
-        val savableMovies = listOf(
-            SavableMovie(
+        val savedMovies = listOf(
+            SavedMovie(
                 movie = Movie(
                     id = 10,
                     title = "Test",
@@ -205,7 +203,7 @@ class HomeViewModelTest {
                 listId = null
             )
         )
-        coEvery { getUpcomingMoviesUseCase.invoke(any()) } returns savableMovies
+        coEvery { getUpcomingMoviesUseCase.invoke(any()) } returns savedMovies
 
         // When
         viewModel = createViewModel()
@@ -426,7 +424,7 @@ class HomeViewModelTest {
     fun `should set top rating loading false when top rating movies finished loading`() =
         runTest {
             // Given
-            coEvery { getMovieTopRatingUseCase.invoke(any(), any()).data } returns emptyList<SavableMovie>()
+            coEvery { getMovieTopRatingUseCase.invoke(any(), any()).data } returns emptyList<SavedMovie>()
 
             // When
             viewModel = createViewModel()

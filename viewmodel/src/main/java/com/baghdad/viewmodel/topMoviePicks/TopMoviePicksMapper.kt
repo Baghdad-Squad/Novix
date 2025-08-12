@@ -1,8 +1,8 @@
 package com.baghdad.viewmodel.topMoviePicks
 
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 
-fun SavableMovie.toUIState() =
+fun SavedMovie.toUIState() =
     TopMoviePicksState.MovieUiState(
         id = movie.id,
         posterPictureURL = movie.posterImageURL,

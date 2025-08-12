@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "com.baghdad.local_datasource"
+    namespace = "com.baghdad.localDatasource"
     compileSdk = 35
 
     defaultConfig {

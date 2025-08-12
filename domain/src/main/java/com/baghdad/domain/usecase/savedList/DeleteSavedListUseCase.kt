@@ -7,6 +7,6 @@ class DeleteSavedListUseCase @Inject constructor(
     private val savedListRepository: SavedListRepository
 ) {
     suspend operator fun invoke(listId: Long) {
-        savedListRepository.deleteSavedListById(listId)
+        savedListRepository.deleteSavedListById(listId = listId)
     }
 }

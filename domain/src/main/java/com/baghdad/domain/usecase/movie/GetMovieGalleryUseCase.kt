@@ -7,7 +7,6 @@ class GetMovieGalleryUseCase @Inject constructor(
     private val movieRepository: MovieRepository,
 ) {
     suspend operator fun invoke(movieId: Long): List<String> {
-        return movieRepository.getMovieImages(movieId)
+        return movieRepository.getMovieImages(movieId = movieId)
     }
-
 }

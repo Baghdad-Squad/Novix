@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.profile
 
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.usecase.appConfigurations.GetAppThemeUseCase
 import com.baghdad.domain.usecase.login.GetCurrentLoggedInUserUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.login.LogOutUseCase
@@ -8,7 +9,7 @@ import com.baghdad.domain.usecase.userPreferences.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.userPreferences.GetAppThemeUseCase
 import com.baghdad.domain.usecase.userPreferences.SetAppLanguageUseCase
 import com.baghdad.domain.usecase.userPreferences.SetAppThemeUseCase
-import com.baghdad.entity.User
+import com.baghdad.entity.user.User
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery

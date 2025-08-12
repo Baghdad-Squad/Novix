@@ -12,6 +12,11 @@ class AddEpisodeRateUseCase @Inject constructor(
         episodeNumber: Int,
         rating: Int
     ) {
-        episodeRepository.addTvEpisodeRate(tvShowId, seasonNumber, episodeNumber, rating)
+        episodeRepository.addTvEpisodeRate(
+            tvShowId = tvShowId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            rating = rating
+        )
     }
 }

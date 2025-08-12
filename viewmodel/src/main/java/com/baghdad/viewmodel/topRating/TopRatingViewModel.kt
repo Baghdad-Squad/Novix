@@ -2,14 +2,15 @@ package com.baghdad.viewmodel.topRating
 
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
+import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
-import com.baghdad.domain.usecase.topRated.GetMovieTopRatingUseCase
-import com.baghdad.domain.usecase.topRated.GetTvShowTopRatingUseCase
+import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowTopRatingUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowGenresUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
@@ -26,7 +27,8 @@ import javax.inject.Inject
 class TopRatingViewModel @Inject constructor(
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
     private val getTvShowTopRatingUseCase: GetTvShowTopRatingUseCase,
-    private val getGenresUseCase: GetGenresUseCase,
+    private val getMovieGenresUseCase: GetMovieGenresUseCase,
+    private val getTvShowGenresUseCase: GetTvShowGenresUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
@@ -46,7 +48,7 @@ class TopRatingViewModel @Inject constructor(
 
     private fun getMovieGenres() {
         tryToExecute(
-            callee = { getGenresUseCase.getMovieGenres() },
+            callee = { getMovieGenresUseCase.getMovieGenres() },
             onSuccess = ::onGenresFetched,
             onError = ::onError,
             onStart = ::onStart,
@@ -56,7 +58,7 @@ class TopRatingViewModel @Inject constructor(
 
     private fun getTvShowGenres() {
         tryToExecute(
-            callee = { getGenresUseCase.getTvShowGenres() },
+            callee = { getTvShowGenresUseCase.getTvShowGenres() },
             onSuccess = ::onGenresFetched,
             onError = ::onError,
             onStart = ::onStart,

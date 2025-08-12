@@ -58,9 +58,7 @@ class RemoteAuthenticationImpl @Inject constructor(
     override suspend fun getUserDetails(sessionId: String): UserDto {
         return handleRequest(
             apiCall = {
-                authenticationApiService.getUserDetails(
-                    sessionId = sessionId
-                )
+                authenticationApiService.getUserDetails()
             },
             logger = logger
         ).toDto()
@@ -69,9 +67,7 @@ class RemoteAuthenticationImpl @Inject constructor(
     override suspend fun deleteSession(sessionId: String): Boolean {
         return handleRequest(
             apiCall = {
-                authenticationApiService.deleteSession(
-                    sessionId = sessionId
-                )
+                authenticationApiService.deleteSession()
             },
             logger = logger
         ).success

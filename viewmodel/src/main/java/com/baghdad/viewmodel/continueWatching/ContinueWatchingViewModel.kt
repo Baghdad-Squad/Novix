@@ -2,8 +2,8 @@ package com.baghdad.viewmodel.continueWatching
 
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
 import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
 import com.baghdad.domain.usecase.continueWatching.GetCurrentContinueWatchingMovieGenres
@@ -131,18 +131,18 @@ class ContinueWatchingViewModel @Inject constructor(
     private suspend fun onGetMedia(
         genreId: Long?,
         page: Int,
-    ): PagedResult<ContinueWatching> {
+    ): PagedResult<UserWatchedMedia> {
         val result =
             if (genreId == null) {
-                getAllContinueWatchingUseCase(page)
+                getAllContinueWatchingUseCase(page, DEFAULT_PAGE_SIZE)
             } else {
                 getAllContinueWatchingByGenreUseCase(genreId, page)
             }
 
         val filteredData =
             result.data.filter { item ->
-                (item.contentType == ContinueWatching.ContentType.MOVIE && currentState.selectedMediaTabIsMovie) ||
-                        (item.contentType == ContinueWatching.ContentType.TV_SHOW && !currentState.selectedMediaTabIsMovie)
+                (item.contentType == UserWatchedMedia.ContentType.MOVIE && currentState.selectedMediaTabIsMovie) ||
+                        (item.contentType == UserWatchedMedia.ContentType.TV_SHOW && !currentState.selectedMediaTabIsMovie)
             }
 
         return result.copy(data = filteredData)

@@ -1,12 +1,11 @@
 package com.baghdad.remoteDataSource.response.movie
 
 import com.google.gson.annotations.SerializedName
-
 data class TrendingMovieResponse(
     @SerializedName("page") val page: Int? = null,
     @SerializedName("results") val results: List<Result>? = null,
     @SerializedName("total_pages") val totalPages: Int? = null,
-    @SerializedName("total_results") val totalResults: Int? = null
+    @SerializedName("total_results") val totalResults: Int? = null,
 ) {
     data class Result(
         @SerializedName("id") val id: Long? = null,
@@ -18,6 +17,6 @@ data class TrendingMovieResponse(
         @SerializedName("vote_average") val voteAverage: Double? = null,
         @SerializedName("vote_count") val voteCount: Int? = null,
         @SerializedName("popularity") val popularity: Double? = null,
-        @SerializedName("genre_ids") val genreIds: List<Int>? = null
+        @SerializedName("genre_ids") val genreIds: List<Long>? = null,
     )
 }

@@ -1,7 +1,6 @@
 package com.baghdad.viewmodel.trendingTvShow
 
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
