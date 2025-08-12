@@ -3,9 +3,9 @@ package com.baghdad.viewmodel.savedListDetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import app.cash.turbine.test
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedListDetails
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.savedList.DeleteSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListDetailsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
@@ -201,7 +201,7 @@ class SavedListDetailsViewModelTest {
             )
         )
         val savedMediaItemsSample = moviesSample.map {
-            SavableMovie(
+            SavedMovie(
                 movie = it, isSaved = true, listId = 1
             )
         }

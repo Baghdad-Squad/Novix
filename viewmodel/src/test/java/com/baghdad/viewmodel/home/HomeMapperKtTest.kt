@@ -87,7 +87,7 @@ class HomeScreenMapperTest {
             numberOfSeasons = 3
         )
 
-        private val continueWatchingMovieSample = ContinueWatching(
+        private val continueWatchingMovieSample = UserWatchedMedia(
             contentId = 10L,
             genreIds = listOf(101, 102),
             contentImageUrl = "https://continue.watching/image.jpg",
@@ -103,7 +103,7 @@ class HomeScreenMapperTest {
             savedListId = -1L,
             contentType = MOVIE
         )
-        val savableMovieSample = SavableMovie(
+        val savableMovieSample = SavedMovie(
             movie = movieSample, isSaved = true, listId = 200L
         )
         val popularMovieUiStateSample = PopularItemUiState(

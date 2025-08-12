@@ -2,13 +2,12 @@ package com.baghdad.viewmodel.myList
 
 import androidx.paging.PagingData
 import app.cash.turbine.test
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.myLists.MyListsScreenEffect
-import com.baghdad.viewmodel.myLists.MyListsScreenState
 import com.baghdad.viewmodel.myLists.MyListsScreenState.SavedListUiState
 import com.baghdad.viewmodel.myLists.MyListsViewModel
 import com.baghdad.viewmodel.myLists.toUiState
