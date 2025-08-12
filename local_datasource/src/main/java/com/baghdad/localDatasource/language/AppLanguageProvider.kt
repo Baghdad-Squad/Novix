@@ -1,4 +1,4 @@
-package com.baghdad.local_datasource.language
+package com.baghdad.localDatasource.language
 
 import com.baghdad.repository.language.LanguageProvider
 import java.util.Locale
