@@ -3,6 +3,7 @@ package com.baghdad.viewmodel.movieDetils
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.MediaAccountStates
+import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
@@ -306,21 +307,26 @@ class MovieDetailsViewModelTest {
         }
 
     companion object {
-        private fun createMockMovie() = Movie(
-            id = 123L,
-            title = "Test Movie",
-            genres = listOf(
-                Genre(28L, "Action"),
-                Genre(35L, "Comedy")
-            ),
-            averageRating = 8.0,
-            userRating = 7.5,
-            releaseDate = LocalDate.parse("2023-01-01"),
-            overview = "Test movie overview",
-            posterImageURL = "/movie_poster.jpg",
-            runtimeMinutes = 120,
-            trailerURL = "https://youtube.com/watch?v=test"
-        )
+        private fun createMockMovie() =
+            SavableMovie(
+                Movie(
+                    id = 123L,
+                    title = "Test Movie",
+                    genres = listOf(
+                        Genre(28L, "Action"),
+                        Genre(35L, "Comedy")
+                    ),
+                    averageRating = 8.0,
+                    userRating = 7.5,
+                    releaseDate = LocalDate.parse("2023-01-01"),
+                    overview = "Test movie overview",
+                    posterImageURL = "/movie_poster.jpg",
+                    runtimeMinutes = 120,
+                    trailerURL = "https://youtube.com/watch?v=test"
+                ),
+                isSaved = false,
+                listId = null
+            )
 
         private fun createMockCastMembers() = listOf(
             CastMember(
@@ -359,30 +365,38 @@ class MovieDetailsViewModelTest {
             "/image3.jpg"
         )
 
-        private fun createMockSimilarMovies(): List<Movie> = listOf(
-            Movie(
-                id = 456L,
-                title = "Similar Movie 1",
-                genres = listOf(Genre(28L, "Action")),
-                averageRating = 7.5,
-                userRating = 7.0,
-                releaseDate = LocalDate.parse("2023-02-01"),
-                overview = "Similar movie overview 1",
-                posterImageURL = "/similar_movie1.jpg",
-                runtimeMinutes = 110,
-                trailerURL = "https://youtube.com/watch?v=similar1"
+        private fun createMockSimilarMovies(): List<SavableMovie> = listOf(
+            SavableMovie(
+                Movie(
+                    id = 456L,
+                    title = "Similar Movie 1",
+                    genres = listOf(Genre(28L, "Action")),
+                    averageRating = 7.5,
+                    userRating = 7.0,
+                    releaseDate = LocalDate.parse("2023-02-01"),
+                    overview = "Similar movie overview 1",
+                    posterImageURL = "/similar_movie1.jpg",
+                    runtimeMinutes = 110,
+                    trailerURL = "https://youtube.com/watch?v=similar1"
+                ),
+                isSaved = false,
+                listId = null
             ),
-            Movie(
-                id = 789L,
-                title = "Similar Movie 2",
-                genres = listOf(Genre(35L, "Comedy")),
-                averageRating = 6.8,
-                userRating = 6.5,
-                releaseDate = LocalDate.parse("2023-03-01"),
-                overview = "Similar movie overview 2",
-                posterImageURL = "/similar_movie2.jpg",
-                runtimeMinutes = 95,
-                trailerURL = "https://youtube.com/watch?v=similar2"
+            SavableMovie(
+                Movie(
+                    id = 789L,
+                    title = "Similar Movie 2",
+                    genres = listOf(Genre(35L, "Comedy")),
+                    averageRating = 6.8,
+                    userRating = 6.5,
+                    releaseDate = LocalDate.parse("2023-03-01"),
+                    overview = "Similar movie overview 2",
+                    posterImageURL = "/similar_movie2.jpg",
+                    runtimeMinutes = 95,
+                    trailerURL = "https://youtube.com/watch?v=similar2"
+                ),
+                isSaved = false,
+                listId = null
             )
         )
 
