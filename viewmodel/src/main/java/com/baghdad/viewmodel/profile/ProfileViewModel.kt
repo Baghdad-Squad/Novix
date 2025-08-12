@@ -8,7 +8,7 @@ import com.baghdad.domain.usecase.userPreferences.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.userPreferences.GetAppThemeUseCase
 import com.baghdad.domain.usecase.userPreferences.SetAppLanguageUseCase
 import com.baghdad.domain.usecase.userPreferences.SetAppThemeUseCase
-import com.baghdad.entity.User
+import com.baghdad.entity.user.User
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
