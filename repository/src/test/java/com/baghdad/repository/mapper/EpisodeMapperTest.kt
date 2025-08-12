@@ -1,6 +1,8 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.model.EpisodeDto
+import com.baghdad.entity.person.Actor
+import com.baghdad.repository.dummyData.DummyDataFactory.createMockActorDto
+import com.baghdad.repository.dummyData.DummyDataFactory.createMockEpisodeDto
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
@@ -8,43 +10,31 @@ import org.junit.jupiter.api.Test
 class EpisodeMapperTest {
 
     @Test
-    fun `should map correctly to entity when EpisodeDto has valid data`() {
+    fun `toEntity should map ActorDto to Actor correctly`() {
         // Given
-        val episodeDto = createMockEpisodeDto()
+        val actorDto = createMockActorDto().copy(deathDate = "2020-12-25")
 
         // When
-        val result = episodeDto.toEntity()
+        val result = actorDto.toEntity()
 
         // Then
-        assertThat(result.id).isEqualTo(456L)
-        assertThat(result.title).isEqualTo("Test Episode")
-        assertThat(result.episodeNumber).isEqualTo(5)
-        assertThat(result.rating).isEqualTo(8.5)
-        assertThat(result.duration).isEqualTo("45 min")
-        assertThat(result.releasedDate).isEqualTo(LocalDate.parse("2023-05-15"))
-        assertThat(result.currentSeason).isEqualTo(2)
-        assertThat(result.overview).isEqualTo("Test episode overview")
-        assertThat(result.headerPictures.size).isEqualTo(2)
-        assertThat(result.headerPictures[0]).isEqualTo("/header1.jpg")
-        assertThat(result.headerPictures[1]).isEqualTo("/header2.jpg")
-        assertThat(result.trailerUrl).isEqualTo(" ")
-        assertThat(result.genres).isEmpty()
+        val expectedResult = Actor(
+            id = 789L,
+            name = "Test Actor",
+            profilePictureURL = "/actor_profile.jpg",
+            biography = "Test actor biography",
+            birthDate = LocalDate.parse("1985-03-10"),
+            deathDate = LocalDate.parse("2020-12-25"),
+            placeOfBirth = "Los Angeles, USA",
+            headerPictures = listOf("/actor_header1.jpg", "/actor_header2.jpg"),
+            department = "Acting"
+        )
+
+        assertThat(result).isEqualTo(expectedResult)
     }
 
     @Test
-    fun `should return null releasedDate when EpisodeDto has null releasedDate`() {
-        // Given
-        val episodeDto = createMockEpisodeDto().copy(releasedDate = null)
-
-        // When
-        val result = episodeDto.toEntity()
-
-        // Then
-        assertThat(result.releasedDate).isNull()
-    }
-
-    @Test
-    fun `should map episodeNumber correctly when EpisodeDto has different episode numbers`() {
+    fun `should map episodeNumber  when EpisodeDto has different episode numbers`() {
         // Given
         val episodeDto1 = createMockEpisodeDto().copy(episodeNumber = 1)
         val episodeDto2 = createMockEpisodeDto().copy(episodeNumber = 10)
@@ -62,7 +52,7 @@ class EpisodeMapperTest {
     }
 
     @Test
-    fun `should map rating correctly when EpisodeDto has different ratings`() {
+    fun `should map rating  when EpisodeDto has different ratings`() {
         // Given
         val episodeDto1 = createMockEpisodeDto().copy(rating = 5.0)
         val episodeDto2 = createMockEpisodeDto().copy(rating = 10.0)
@@ -80,7 +70,7 @@ class EpisodeMapperTest {
     }
 
     @Test
-    fun `should map duration correctly when EpisodeDto has different durations`() {
+    fun `should map duration when EpisodeDto has different durations`() {
         // Given
         val episodeDto1 = createMockEpisodeDto().copy(duration = "30 min")
         val episodeDto2 = createMockEpisodeDto().copy(duration = "60 min")
@@ -98,7 +88,7 @@ class EpisodeMapperTest {
     }
 
     @Test
-    fun `should map currentSeason correctly when EpisodeDto has different seasons`() {
+    fun `should map currentSeason when EpisodeDto has different seasons`() {
         // Given
         val episodeDto1 = createMockEpisodeDto().copy(currentSeason = 1)
         val episodeDto2 = createMockEpisodeDto().copy(currentSeason = 5)
@@ -113,27 +103,5 @@ class EpisodeMapperTest {
         assertThat(result1.currentSeason).isEqualTo(1)
         assertThat(result2.currentSeason).isEqualTo(5)
         assertThat(result3.currentSeason).isEqualTo(10)
-    }
-
-    companion object {
-        private fun createMockEpisodeDto() = EpisodeDto(
-            id = 456L,
-            title = "Test Episode",
-            episodeNumber = 5,
-            rating = 8.5,
-            duration = "45 min",
-            releasedDate = "2023-05-15",
-            currentSeason = 2,
-            overview = "Test episode overview",
-            headerPictures = listOf("/header1.jpg", "/header2.jpg"),
-            trailerUrl = " ",
-            genres = emptyList()
-        )
-
-        private fun createMockGenreDto(id: Long, name: String) = com.baghdad.repository.model.GenreDto(
-            id = id,
-            name = name,
-            type = com.baghdad.repository.model.GenreDto.GenreType.TV_SHOW
-        )
     }
 } 
