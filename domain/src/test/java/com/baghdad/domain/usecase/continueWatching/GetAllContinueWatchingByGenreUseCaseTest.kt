@@ -2,7 +2,7 @@ package com.baghdad.domain.usecase.continueWatching
 
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.pagination.PagedResult
-import com.baghdad.domain.repository.ContinueWatchingRepository
+import com.baghdad.domain.repository.UserWatchedMediaRepository
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 class GetAllContinueWatchingByGenreUseCaseTest {
 
-    private lateinit var repository: ContinueWatchingRepository
+    private lateinit var repository: UserWatchedMediaRepository
     private lateinit var useCase: GetAllContinueWatchingByGenreUseCase
 
     @BeforeEach
