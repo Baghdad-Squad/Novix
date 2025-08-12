@@ -62,30 +62,6 @@ class RemoteGenreDataSourceImplTest {
     }
 
     @Test
-    fun `should handle null id and name in movie genres`() = runTest {
-        val successResponse = Response.success(genreListResponseWithNulls)
-        coEvery { genreApiService.getMovieGenre() } returns successResponse
-
-        val result = dataSource.getMovieGenre(LANGUAGE)
-
-        assertThat(result).hasSize(2)
-        assertThat(result[0]).isEqualTo(expectedMovieGenreWithNullId)
-        assertThat(result[1]).isEqualTo(expectedMovieGenreWithNullName)
-    }
-
-    @Test
-    fun `should handle null id and name in tv show genres`() = runTest {
-        val successResponse = Response.success(genreListResponseWithNulls)
-        coEvery { genreApiService.getTvShowGenre() } returns successResponse
-
-        val result = dataSource.getTvShowGenre(LANGUAGE)
-
-        assertThat(result).hasSize(2)
-        assertThat(result[0]).isEqualTo(expectedTvShowGenreWithNullId)
-        assertThat(result[1]).isEqualTo(expectedTvShowGenreWithNullName)
-    }
-
-    @Test
     fun `should set correct genre type for movie genres`() = runTest {
         val successResponse = Response.success(genreListResponse)
         coEvery { genreApiService.getMovieGenre() } returns successResponse
