@@ -1,10 +1,10 @@
 package com.baghdad.domain.usecase.continueWatching
 
-import com.baghdad.domain.repository.ContinueWatchingRepository
+import com.baghdad.domain.repository.UserWatchedMediaRepository
 import javax.inject.Inject
 
-class ObserveContinueWatchingUseCase @Inject constructor(
-    private val continueWatchingRepository: ContinueWatchingRepository,
+class ObserveUserWatchedMediaUseCase @Inject constructor(
+    private val userWatchedMediaRepository: UserWatchedMediaRepository,
 ) {
-    suspend operator fun invoke() = continueWatchingRepository.observeContinueWatching()
+    suspend operator fun invoke() = userWatchedMediaRepository.observeUserWatchedMedia()
 }

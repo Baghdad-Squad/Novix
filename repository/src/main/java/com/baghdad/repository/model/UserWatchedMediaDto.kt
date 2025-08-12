@@ -1,6 +1,6 @@
 package com.baghdad.repository.model
 
-data class ContinueWatchingDto(
+data class UserWatchedMediaDto(
     val contentId: Long,
     val genreIds: List<Long>,
     val contentImageUrl: String,

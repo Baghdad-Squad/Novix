@@ -1,9 +1,9 @@
 package com.baghdad.repository.mapper
 
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
-import com.baghdad.repository.model.ContinueWatchingDto
+import com.baghdad.repository.model.UserWatchedMediaDto
 
-fun ContinueWatchingDto.toEntity(
+fun UserWatchedMediaDto.toEntity(
     isSaved: Boolean,
     listId: Long?,
 ): UserWatchedMedia =
@@ -17,11 +17,11 @@ fun ContinueWatchingDto.toEntity(
         listId = listId,
     )
 
-fun UserWatchedMedia.toDto(): ContinueWatchingDto =
-    ContinueWatchingDto(
+fun UserWatchedMedia.toDto(): UserWatchedMediaDto =
+    UserWatchedMediaDto(
         contentId = this.contentId,
         genreIds = this.genreIds,
         contentImageUrl = this.contentImageUrl,
-        contentType = ContinueWatchingDto.ContentType.valueOf(contentType.name),
+        contentType = UserWatchedMediaDto.ContentType.valueOf(contentType.name),
         userId = this.userId,
     )

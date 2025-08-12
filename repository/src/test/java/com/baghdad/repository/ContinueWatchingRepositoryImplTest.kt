@@ -3,8 +3,8 @@ package com.baghdad.repository
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.entity.user.User
-import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
-import com.baghdad.repository.model.ContinueWatchingDto
+import com.baghdad.repository.datasource.local.LocalUserWatchedMediaDataSource
+import com.baghdad.repository.model.UserWatchedMediaDto
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -15,16 +15,16 @@ import org.junit.jupiter.api.Test
 
 class ContinueWatchingRepositoryImplTest {
 
-    private lateinit var localContinueWatchingDataSource: LocalContinueWatchingDataSource
-    private lateinit var continueWatchingRepositoryImpl: ContinueWatchingRepositoryImpl
+    private lateinit var localUserWatchedMediaDataSource: LocalUserWatchedMediaDataSource
+    private lateinit var continueWatchingRepositoryImpl: UserWatchedMediaRepositoryImpl
     private lateinit var authenticationRepositoryImpl: AuthenticationRepositoryImpl
 
     @BeforeEach
     fun setUp() {
-        localContinueWatchingDataSource = mockk()
+        localUserWatchedMediaDataSource = mockk()
         authenticationRepositoryImpl = mockk()
-        continueWatchingRepositoryImpl = ContinueWatchingRepositoryImpl(
-            localContinueWatchingDataSource = localContinueWatchingDataSource,
+        continueWatchingRepositoryImpl = UserWatchedMediaRepositoryImpl(
+            localUserWatchedMediaDataSource = localUserWatchedMediaDataSource,
             authenticationRepository = authenticationRepositoryImpl
         )
     }
@@ -35,9 +35,9 @@ class ContinueWatchingRepositoryImplTest {
         val page = 1
         val pageSize = 10
         val mockContinueWatchingList = listOf(
-            createMockContinueWatchingDto(1L, ContinueWatchingDto.ContentType.MOVIE),
-            createMockContinueWatchingDto(2L, ContinueWatchingDto.ContentType.TV_SHOW),
-            createMockContinueWatchingDto(3L, ContinueWatchingDto.ContentType.MOVIE)
+            createMockContinueWatchingDto(1L, UserWatchedMediaDto.ContentType.MOVIE),
+            createMockContinueWatchingDto(2L, UserWatchedMediaDto.ContentType.TV_SHOW),
+            createMockContinueWatchingDto(3L, UserWatchedMediaDto.ContentType.MOVIE)
         )
         val expectedResult = PagedResult(
             data = listOf(
@@ -49,7 +49,7 @@ class ContinueWatchingRepositoryImplTest {
             prevKey = null
         )
         coEvery {
-            localContinueWatchingDataSource.getContinueWatching(1, pageSize, page)
+            localUserWatchedMediaDataSource.getContinueWatching(1, pageSize, page)
         } returns mockContinueWatchingList
         coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns User(
             id = 1L,
@@ -60,7 +60,7 @@ class ContinueWatchingRepositoryImplTest {
         val result = continueWatchingRepositoryImpl.getContinueWatching(page, pageSize)
         // Then
         assertThat(expectedResult == result).isTrue()
-        coVerify { localContinueWatchingDataSource.getContinueWatching(1, pageSize, page) }
+        coVerify { localUserWatchedMediaDataSource.getContinueWatching(1, pageSize, page) }
     }
 
     @Test
@@ -75,14 +75,14 @@ class ContinueWatchingRepositoryImplTest {
                 prevKey = null
             )
             coEvery {
-                localContinueWatchingDataSource.getContinueWatching(1, pageSize, page)
+                localUserWatchedMediaDataSource.getContinueWatching(1, pageSize, page)
             } returns emptyList()
             coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns createMockUser()
             // When
             val result = continueWatchingRepositoryImpl.getContinueWatching(page, pageSize)
             // Then
             assertThat(expectedResult == result).isTrue()
-            coVerify { localContinueWatchingDataSource.getContinueWatching(1, pageSize, page) }
+            coVerify { localUserWatchedMediaDataSource.getContinueWatching(1, pageSize, page) }
         }
 
     @Test
@@ -92,8 +92,8 @@ class ContinueWatchingRepositoryImplTest {
             val page = 1
             val pageSize = 2
             val mockContinueWatchingList = listOf(
-                createMockContinueWatchingDto(1L, ContinueWatchingDto.ContentType.MOVIE),
-                createMockContinueWatchingDto(2L, ContinueWatchingDto.ContentType.TV_SHOW)
+                createMockContinueWatchingDto(1L, UserWatchedMediaDto.ContentType.MOVIE),
+                createMockContinueWatchingDto(2L, UserWatchedMediaDto.ContentType.TV_SHOW)
             )
 
             val expectedResult = PagedResult(
@@ -106,7 +106,7 @@ class ContinueWatchingRepositoryImplTest {
             )
 
             coEvery {
-                localContinueWatchingDataSource.getContinueWatching(1, pageSize, page)
+                localUserWatchedMediaDataSource.getContinueWatching(1, pageSize, page)
             } returns mockContinueWatchingList
             coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns createMockUser()
 
@@ -115,7 +115,7 @@ class ContinueWatchingRepositoryImplTest {
 
             // Then
             assertThat(expectedResult == result).isTrue()
-            coVerify { localContinueWatchingDataSource.getContinueWatching(1, pageSize, page) }
+            coVerify { localUserWatchedMediaDataSource.getContinueWatching(1, pageSize, page) }
         }
 
     @Test
@@ -126,18 +126,18 @@ class ContinueWatchingRepositoryImplTest {
             val genreIds = listOf(1L, 2L, 3L)
             val contentImageUrl = "https://example.com/image.jpg"
             val contentType = UserWatchedMedia.ContentType.MOVIE
-            val expectedDto = ContinueWatchingDto(
+            val expectedDto = UserWatchedMediaDto(
                 contentId = contentId,
                 genreIds = genreIds,
                 contentImageUrl = contentImageUrl,
-                contentType = ContinueWatchingDto.ContentType.MOVIE,
+                contentType = UserWatchedMediaDto.ContentType.MOVIE,
                 userId = 1L
             )
 
-            coEvery { localContinueWatchingDataSource.addContinueWatching(expectedDto) } returns Unit
+            coEvery { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) } returns Unit
             coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns createMockUser()
             // When
-            continueWatchingRepositoryImpl.addContinueWatching(
+            continueWatchingRepositoryImpl.addUserWatchedMedia(
                 contentId = contentId,
                 genreIds = genreIds,
                 contentImageUrl = contentImageUrl,
@@ -145,7 +145,7 @@ class ContinueWatchingRepositoryImplTest {
             )
 
             // Then
-            coVerify { localContinueWatchingDataSource.addContinueWatching(expectedDto) }
+            coVerify { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) }
         }
 
     @Test
@@ -156,18 +156,18 @@ class ContinueWatchingRepositoryImplTest {
             val genreIds = listOf(4L, 5L)
             val contentImageUrl = "https://example.com/tvshow.jpg"
             val contentType = UserWatchedMedia.ContentType.TV_SHOW
-            val expectedDto = ContinueWatchingDto(
+            val expectedDto = UserWatchedMediaDto(
                 contentId = contentId,
                 genreIds = genreIds,
                 contentImageUrl = contentImageUrl,
-                contentType = ContinueWatchingDto.ContentType.TV_SHOW,
+                contentType = UserWatchedMediaDto.ContentType.TV_SHOW,
                 userId = 1L
             )
 
-            coEvery { localContinueWatchingDataSource.addContinueWatching(expectedDto) } returns Unit
+            coEvery { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) } returns Unit
             coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns createMockUser()
             // When
-            continueWatchingRepositoryImpl.addContinueWatching(
+            continueWatchingRepositoryImpl.addUserWatchedMedia(
                 contentId = contentId,
                 genreIds = genreIds,
                 contentImageUrl = contentImageUrl,
@@ -175,7 +175,7 @@ class ContinueWatchingRepositoryImplTest {
             )
 
             // Then
-            coVerify { localContinueWatchingDataSource.addContinueWatching(expectedDto) }
+            coVerify { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) }
         }
 
 
@@ -187,18 +187,18 @@ class ContinueWatchingRepositoryImplTest {
             val genreIds = (1L..20L).toList()
             val contentImageUrl = "https://example.com/large.jpg"
             val contentType = UserWatchedMedia.ContentType.TV_SHOW
-            val expectedDto = ContinueWatchingDto(
+            val expectedDto = UserWatchedMediaDto(
                 contentId = contentId,
                 genreIds = genreIds,
                 contentImageUrl = contentImageUrl,
-                contentType = ContinueWatchingDto.ContentType.TV_SHOW,
+                contentType = UserWatchedMediaDto.ContentType.TV_SHOW,
                 userId = 1L
             )
 
-            coEvery { localContinueWatchingDataSource.addContinueWatching(expectedDto) } returns Unit
+            coEvery { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) } returns Unit
             coEvery { authenticationRepositoryImpl.getLoggedInUser() } returns createMockUser()
             // When
-            continueWatchingRepositoryImpl.addContinueWatching(
+            continueWatchingRepositoryImpl.addUserWatchedMedia(
                 contentId = contentId,
                 genreIds = genreIds,
                 contentImageUrl = contentImageUrl,
@@ -206,15 +206,15 @@ class ContinueWatchingRepositoryImplTest {
             )
 
             // Then
-            coVerify { localContinueWatchingDataSource.addContinueWatching(expectedDto) }
+            coVerify { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) }
 
         }
 
     companion object {
         private fun createMockContinueWatchingDto(
             contentId: Long,
-            contentType: ContinueWatchingDto.ContentType
-        ) = ContinueWatchingDto(
+            contentType: UserWatchedMediaDto.ContentType
+        ) = UserWatchedMediaDto(
             contentId = contentId,
             genreIds = listOf(1L, 2L),
             contentImageUrl = "https://example.com/image$contentId.jpg",

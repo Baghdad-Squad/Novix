@@ -4,12 +4,12 @@ import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.pagination.PagedResult
-import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingMovieGenresUseCase
-import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingMoviesByGenreUseCase
-import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingMoviesUseCase
-import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingTvShowGenresUseCase
-import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingTvShowsByGenreUseCase
-import com.baghdad.domain.usecase.continueWatching.GetContinueWatchingTvShowsUseCase
+import com.baghdad.domain.usecase.continueWatching.GetUserWatchedMediaMovieGenresUseCase
+import com.baghdad.domain.usecase.continueWatching.GetUserWatchedMediaMoviesByGenreUseCase
+import com.baghdad.domain.usecase.continueWatching.GetUserWatchedMediaMoviesUseCase
+import com.baghdad.domain.usecase.continueWatching.GetUserWatchedMediaTvShowGenresUseCase
+import com.baghdad.domain.usecase.continueWatching.GetUserWatchedMediaTvShowsByGenreUseCase
+import com.baghdad.domain.usecase.continueWatching.GetUserWatchedMediaTvShowsUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
@@ -31,12 +31,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContinueWatchingViewModel @Inject constructor(
-    private val getContinueWatchingTvShowGenres: GetContinueWatchingTvShowGenresUseCase,
-    private val getContinueWatchingMovieGenres: GetContinueWatchingMovieGenresUseCase,
-    private val getContinueWatchingMoviesUseCase: GetContinueWatchingMoviesUseCase,
-    private val getContinueWatchingTvShowsUseCase: GetContinueWatchingTvShowsUseCase,
-    private val getContinueWatchingMoviesByGenreUseCase: GetContinueWatchingMoviesByGenreUseCase,
-    private val getContinueWatchingTvShowsByGenreUseCase: GetContinueWatchingTvShowsByGenreUseCase,
+    private val getContinueWatchingTvShowGenres: GetUserWatchedMediaTvShowGenresUseCase,
+    private val getContinueWatchingMovieGenres: GetUserWatchedMediaMovieGenresUseCase,
+    private val getUserWatchedMediaMoviesUseCase: GetUserWatchedMediaMoviesUseCase,
+    private val getUserWatchedMediaTvShowsUseCase: GetUserWatchedMediaTvShowsUseCase,
+    private val getUserWatchedMediaMoviesByGenreUseCase: GetUserWatchedMediaMoviesByGenreUseCase,
+    private val getUserWatchedMediaTvShowsByGenreUseCase: GetUserWatchedMediaTvShowsByGenreUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
@@ -139,19 +139,19 @@ class ContinueWatchingViewModel @Inject constructor(
         val isMovie = currentState.selectedMediaTabIsMovie
 
         return when {
-            isMovie && genreId == null -> getContinueWatchingMoviesUseCase(page, DEFAULT_PAGE_SIZE)
-            isMovie && genreId != null -> getContinueWatchingMoviesByGenreUseCase(
+            isMovie && genreId == null -> getUserWatchedMediaMoviesUseCase(page, DEFAULT_PAGE_SIZE)
+            isMovie && genreId != null -> getUserWatchedMediaMoviesByGenreUseCase(
                 genreId,
                 page,
                 DEFAULT_PAGE_SIZE
             )
 
-            !isMovie && genreId == null -> getContinueWatchingTvShowsUseCase(
+            !isMovie && genreId == null -> getUserWatchedMediaTvShowsUseCase(
                 page,
                 DEFAULT_PAGE_SIZE
             )
 
-            else -> getContinueWatchingTvShowsByGenreUseCase(genreId!!, page, DEFAULT_PAGE_SIZE)
+            else -> getUserWatchedMediaTvShowsByGenreUseCase(genreId!!, page, DEFAULT_PAGE_SIZE)
         }
     }
 

@@ -1,23 +1,23 @@
 package com.baghdad.domain.usecase.continueWatching
 
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
-import com.baghdad.domain.repository.ContinueWatchingRepository
+import com.baghdad.domain.repository.UserWatchedMediaRepository
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.coEvery
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class AddContinueWatchingUseCaseTest {
 
-    private lateinit var repository: ContinueWatchingRepository
-    private lateinit var useCase: AddContinueWatchingUseCase
+    private lateinit var repository: UserWatchedMediaRepository
+    private lateinit var useCase: AddUserWatchedMediaUseCase
 
     @BeforeEach
     fun setUp() {
         repository = mockk(relaxed = true)
-        useCase = AddContinueWatchingUseCase(repository)
+        useCase = AddUserWatchedMediaUseCase(repository)
     }
 
     @Test
@@ -38,7 +38,7 @@ class AddContinueWatchingUseCaseTest {
 
         // Then
         coVerify(exactly = 1) {
-            repository.addContinueWatching(
+            repository.addUserWatchedMedia(
                 contentId = contentId,
                 genreIds = genreIds,
                 contentImageUrl = contentImageUrl,
@@ -56,7 +56,7 @@ class AddContinueWatchingUseCaseTest {
         val contentType = UserWatchedMedia.ContentType.TV_SHOW
 
         coEvery {
-            repository.addContinueWatching(any(), any(), any(), any())
+            repository.addUserWatchedMedia(any(), any(), any(), any())
         } returns Unit
 
         // When & Then (no exception)

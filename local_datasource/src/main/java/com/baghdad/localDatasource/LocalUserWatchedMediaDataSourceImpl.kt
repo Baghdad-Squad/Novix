@@ -2,40 +2,40 @@ package com.baghdad.localDatasource
 
 import com.baghdad.localDatasource.errorHandler.executeFlowWithErrorHandling
 import com.baghdad.localDatasource.errorHandler.executeWithErrorHandling
-import com.baghdad.localDatasource.roomDB.dao.ContinueWatchingDao
-import com.baghdad.localDatasource.roomDB.entity.ContinueWatching
+import com.baghdad.localDatasource.roomDB.dao.UserWatchedMediaDao
+import com.baghdad.localDatasource.roomDB.entity.UserWatchedMedia
 import com.baghdad.localDatasource.roomDB.entity.toDto
 import com.baghdad.localDatasource.roomDB.entity.toDtos
 import com.baghdad.localDatasource.roomDB.entity.toLocalDto
 import com.baghdad.localDatasource.util.calculatePageOffset
-import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
+import com.baghdad.repository.datasource.local.LocalUserWatchedMediaDataSource
 import com.baghdad.repository.logger.Logger
-import com.baghdad.repository.model.ContinueWatchingDto
+import com.baghdad.repository.model.UserWatchedMediaDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalContinueWatchingDataSourceImpl @Inject constructor(
-    private val continueWatchingDao: ContinueWatchingDao,
+class LocalUserWatchedMediaDataSourceImpl @Inject constructor(
+    private val userWatchedMediaDao: UserWatchedMediaDao,
     private val logger: Logger
-) : LocalContinueWatchingDataSource {
-    override suspend fun addContinueWatching(continueWatching: ContinueWatchingDto) {
+) : LocalUserWatchedMediaDataSource {
+    override suspend fun addUserWatchedMedia(continueWatching: UserWatchedMediaDto) {
         executeWithErrorHandling(logger = logger) {
-            continueWatchingDao.upsertContinueWatching(continueWatching.toLocalDto())
+            userWatchedMediaDao.upsertUserWatchedMedia(continueWatching.toLocalDto())
         }
     }
 
-    override suspend fun getPagedContinueWatchingMovies(
+    override suspend fun getPagedUserWatchedMediaMovies(
         userId: Long,
         pageSize: Int,
         page: Int
-    ): List<ContinueWatchingDto> {
+    ): List<UserWatchedMediaDto> {
         val pageOffset = calculatePageOffset(pageSize, page)
         return executeWithErrorHandling(logger = logger) {
-            continueWatchingDao
-                .getPagedContinueWatchingMovies(
+            userWatchedMediaDao
+                .getPagedUserWatchedMediaMovies(
                     userId,
                     pageSize = pageSize,
                     offset = pageOffset,
@@ -43,15 +43,15 @@ class LocalContinueWatchingDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPagedContinueWatchingTvShows(
+    override suspend fun getPagedUserWatchedMediaTvShows(
         userId: Long,
         pageSize: Int,
         page: Int
-    ): List<ContinueWatchingDto> {
+    ): List<UserWatchedMediaDto> {
         val pageOffset = calculatePageOffset(pageSize, page)
         return executeWithErrorHandling(logger = logger) {
-            continueWatchingDao
-                .getPagedContinueWatchingTvShows(
+            userWatchedMediaDao
+                .getPagedUserWatchedMediaTvShows(
                     userId,
                     pageSize = pageSize,
                     offset = pageOffset,
@@ -59,24 +59,24 @@ class LocalContinueWatchingDataSourceImpl @Inject constructor(
         }
     }
 
-    override fun observeContinueWatching(userId: Long): Flow<List<ContinueWatchingDto>> {
+    override fun observeUserWatchedMedia(userId: Long): Flow<List<UserWatchedMediaDto>> {
         return executeFlowWithErrorHandling(logger = logger) {
-            continueWatchingDao.observeContinueWatching(userId).map(List<ContinueWatching>::toDtos)
+            userWatchedMediaDao.observeUserWatchedMedia(userId).map(List<UserWatchedMedia>::toDtos)
         }
     }
 
 
-    override fun getAllContinueWatchingMovies(userId: Long): Flow<List<ContinueWatchingDto>> {
+    override fun getUserWatchedMediaMovies(userId: Long): Flow<List<UserWatchedMediaDto>> {
         return executeFlowWithErrorHandling(logger = logger) {
-            continueWatchingDao.getAllContinueWatchingMovies(userId)
-                .map(List<ContinueWatching>::toDtos)
+            userWatchedMediaDao.getUserWatchedMediaMovies(userId)
+                .map(List<UserWatchedMedia>::toDtos)
         }
     }
 
-    override fun getAllContinueWatchingTvShows(userId: Long): Flow<List<ContinueWatchingDto>> {
+    override fun getUserWatchedMediaTvShows(userId: Long): Flow<List<UserWatchedMediaDto>> {
         return executeFlowWithErrorHandling(logger = logger) {
-            continueWatchingDao.getAllContinueWatchingTvShows(userId)
-                .map(List<ContinueWatching>::toDtos)
+            userWatchedMediaDao.getUserWatchedMediaTvShows(userId)
+                .map(List<UserWatchedMedia>::toDtos)
         }
     }
 }

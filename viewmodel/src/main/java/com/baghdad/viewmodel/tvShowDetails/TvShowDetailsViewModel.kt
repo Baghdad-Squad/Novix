@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.tvShowDetails
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
-import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
+import com.baghdad.domain.usecase.continueWatching.AddUserWatchedMediaUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.tvShow.AddTvShowRateUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowAccountStatesUseCase
@@ -27,7 +27,7 @@ class TvShowDetailsViewModel @Inject constructor(
     private val getTvShowDetailsUseCase: GetTvShowDetailsUseCase,
     private val getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase,
     private val getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase,
-    private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
+    private val addUserWatchedMediaUseCase: AddUserWatchedMediaUseCase,
     private val addTvShowRateUseCase: AddTvShowRateUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getTvShowAccountStatesUseCase: GetTvShowAccountStatesUseCase,
@@ -278,7 +278,7 @@ class TvShowDetailsViewModel @Inject constructor(
     private fun addToContinueWatching() {
         tryToExecute(
             callee = {
-                addContinueWatchingUseCase(
+                addUserWatchedMediaUseCase(
                     tvShowId, currentState.tvShowInfo.genres.map { it.id ?: 0 },
                     contentImageUrl = currentState.tvShowInfo.posterPictureURL,
                     contentType = UserWatchedMedia.ContentType.TV_SHOW,

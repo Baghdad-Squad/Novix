@@ -2,10 +2,10 @@ package com.baghdad.localDatasource.roomDB.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.baghdad.repository.model.ContinueWatchingDto
+import com.baghdad.repository.model.UserWatchedMediaDto
 
-@Entity(tableName = "ContinueWatching")
-data class ContinueWatching(
+@Entity(tableName = "UserWatchedMedia")
+data class UserWatchedMedia(
     @PrimaryKey val contentId: Long,
     val genreIds: List<Long>,
     val contentImageUrl: String,
@@ -14,23 +14,23 @@ data class ContinueWatching(
     val viewedAt: Long = System.currentTimeMillis(),
 )
 
-fun ContinueWatching.toDto(): ContinueWatchingDto {
-    return ContinueWatchingDto(
+fun UserWatchedMedia.toDto(): UserWatchedMediaDto {
+    return UserWatchedMediaDto(
         contentId = contentId,
         genreIds = genreIds,
         contentImageUrl = contentImageUrl,
-        contentType = ContinueWatchingDto.ContentType.valueOf(contentType),
+        contentType = UserWatchedMediaDto.ContentType.valueOf(contentType),
         userId = userId,
     )
 }
 
 
-fun List<ContinueWatching>.toDtos(): List<ContinueWatchingDto> {
-    return map(ContinueWatching::toDto)
+fun List<UserWatchedMedia>.toDtos(): List<UserWatchedMediaDto> {
+    return map(UserWatchedMedia::toDto)
 }
 
-fun ContinueWatchingDto.toLocalDto(): ContinueWatching {
-    return ContinueWatching(
+fun UserWatchedMediaDto.toLocalDto(): UserWatchedMedia {
+    return UserWatchedMedia(
         contentId = contentId,
         genreIds = genreIds,
         contentImageUrl = contentImageUrl,

@@ -1,26 +1,26 @@
 package com.baghdad.repository.datasource.local
 
-import com.baghdad.repository.model.ContinueWatchingDto
+import com.baghdad.repository.model.UserWatchedMediaDto
 import kotlinx.coroutines.flow.Flow
 
-interface LocalContinueWatchingDataSource {
-    suspend fun addContinueWatching(continueWatching: ContinueWatchingDto)
+interface LocalUserWatchedMediaDataSource {
+    suspend fun addUserWatchedMedia(continueWatching: UserWatchedMediaDto)
 
-    suspend fun getPagedContinueWatchingMovies(
+    suspend fun getPagedUserWatchedMediaMovies(
         userId: Long,
         pageSize: Int,
         page: Int,
-    ): List<ContinueWatchingDto>
+    ): List<UserWatchedMediaDto>
 
-    suspend fun getPagedContinueWatchingTvShows(
+    suspend fun getPagedUserWatchedMediaTvShows(
         userId: Long,
         pageSize: Int,
         page: Int,
-    ): List<ContinueWatchingDto>
+    ): List<UserWatchedMediaDto>
 
-    fun observeContinueWatching(userId: Long): Flow<List<ContinueWatchingDto>>
+    fun observeUserWatchedMedia(userId: Long): Flow<List<UserWatchedMediaDto>>
 
-    fun getAllContinueWatchingMovies(userId: Long): Flow<List<ContinueWatchingDto>>
+    fun getUserWatchedMediaMovies(userId: Long): Flow<List<UserWatchedMediaDto>>
 
-    fun getAllContinueWatchingTvShows(userId: Long): Flow<List<ContinueWatchingDto>>
+    fun getUserWatchedMediaTvShows(userId: Long): Flow<List<UserWatchedMediaDto>>
 }

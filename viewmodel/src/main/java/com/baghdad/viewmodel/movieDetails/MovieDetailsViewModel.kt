@@ -5,7 +5,7 @@ import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.savedList.SavedMovie
-import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
+import com.baghdad.domain.usecase.continueWatching.AddUserWatchedMediaUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
 import com.baghdad.domain.usecase.movie.GetMovieAccountStatesUseCase
@@ -38,7 +38,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val getCastsInfoUseCase: GetMovieCastMembersUseCase,
     private val getMovieImagesUseCase: GetMovieGalleryUseCase,
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
-    private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
+    private val addUserWatchedMediaUseCase: AddUserWatchedMediaUseCase,
     private val ioDispatcher: CoroutineDispatcher,
     private val addMovieRateUseCase: AddMovieRateUseCase,
     private val getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase,
@@ -652,7 +652,7 @@ class MovieDetailsViewModel @Inject constructor(
         tryToExecute(
             dispatcher = ioDispatcher,
             callee = {
-                addContinueWatchingUseCase(
+                addUserWatchedMediaUseCase(
                     movieId, currentState.categories.map { it.id },
                     contentImageUrl = currentState.posterImageURL,
                     contentType = UserWatchedMedia.ContentType.MOVIE,

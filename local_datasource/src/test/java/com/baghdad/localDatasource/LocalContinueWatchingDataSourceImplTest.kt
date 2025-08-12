@@ -1,9 +1,9 @@
 package com.baghdad.localDatasource
 
-import com.baghdad.localDatasource.roomDB.dao.ContinueWatchingDao
+import com.baghdad.localDatasource.roomDB.dao.UserWatchedMediaDao
 import com.baghdad.localDatasource.roomDB.entity.toLocalDto
 import com.baghdad.repository.logger.Logger
-import com.baghdad.repository.model.ContinueWatchingDto
+import com.baghdad.repository.model.UserWatchedMediaDto
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
@@ -16,29 +16,29 @@ import org.junit.jupiter.api.Test
 
 class LocalContinueWatchingDataSourceImplTest {
 
-    private lateinit var continueWatchingDao: ContinueWatchingDao
+    private lateinit var userWatchedMediaDao: UserWatchedMediaDao
     private lateinit var logger: Logger
-    private lateinit var dataSource: LocalContinueWatchingDataSourceImpl
+    private lateinit var dataSource: LocalUserWatchedMediaDataSourceImpl
 
     @BeforeEach
     fun setUp() {
-        continueWatchingDao = mockk()
+        userWatchedMediaDao = mockk()
         logger = mockk(relaxed = true)
-        dataSource = LocalContinueWatchingDataSourceImpl(continueWatchingDao, logger)
+        dataSource = LocalUserWatchedMediaDataSourceImpl(userWatchedMediaDao, logger)
     }
 
     @Test
     fun `should add to continue watching when addContinueWatching is called`() = runTest {
-        coEvery { continueWatchingDao.upsertContinueWatching(any()) } returns Unit
+        coEvery { userWatchedMediaDao.upsertUserWatchedMedia(any()) } returns Unit
 
-        val result = dataSource.addContinueWatching(continueWatching)
+        val result = dataSource.addUserWatchedMedia(continueWatching)
 
         assertThat(result).isEqualTo(Unit)
     }
 
     @Test
     fun `should return continue watching list when getContinueWatching is called`() = runTest {
-        coEvery { continueWatchingDao.getContinueWatching(1, any(), any()) } returns listOf(
+        coEvery { userWatchedMediaDao.getContinueWatching(1, any(), any()) } returns listOf(
             continueWatching.toLocalDto()
         )
 
@@ -49,22 +49,22 @@ class LocalContinueWatchingDataSourceImplTest {
 
     @Test
     fun `should observe continue watching when observeContinueWatching is called`() = runTest {
-        every { continueWatchingDao.observeContinueWatching(1) } returns flowOf(
+        every { userWatchedMediaDao.observeUserWatchedMedia(1) } returns flowOf(
             listOf(continueWatching.toLocalDto())
         )
 
-        val flow = dataSource.observeContinueWatching(1)
+        val flow = dataSource.observeUserWatchedMedia(1)
         val result = flow.first()
 
         assertThat(result).isEqualTo(listOf(continueWatching))
     }
 
     companion object {
-        val continueWatching = ContinueWatchingDto(
+        val continueWatching = UserWatchedMediaDto(
             contentId = 1,
             genreIds = listOf(1L, 2L),
             contentImageUrl = "test",
-            contentType = ContinueWatchingDto.ContentType.MOVIE,
+            contentType = UserWatchedMediaDto.ContentType.MOVIE,
             userId = 1,
         )
     }

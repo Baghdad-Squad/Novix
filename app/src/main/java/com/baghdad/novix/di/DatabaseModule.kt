@@ -2,10 +2,10 @@ package com.baghdad.novix.di
 
 import android.content.Context
 import androidx.room.Room
-import com.baghdad.localDatasource.roomDB.dao.ContinueWatchingDao
 import com.baghdad.localDatasource.roomDB.dao.RecentSearchDao
 import com.baghdad.localDatasource.roomDB.dao.RecentlyViewedDao
 import com.baghdad.localDatasource.roomDB.dao.SavedListMovieDao
+import com.baghdad.localDatasource.roomDB.dao.UserWatchedMediaDao
 import com.baghdad.localDatasource.roomDB.database.NovixDatabase
 import dagger.Module
 import dagger.Provides
@@ -38,5 +38,6 @@ object DatabaseModule {
     fun provideRecentSearchDao(database: NovixDatabase): RecentSearchDao = database.recentSearchDao()
 
     @Provides
-    fun provideContinueWatchingDao(database: NovixDatabase): ContinueWatchingDao = database.continueWatchingDao()
+    fun provideContinueWatchingDao(database: NovixDatabase): UserWatchedMediaDao =
+        database.continueWatchingDao()
 }

@@ -1,9 +1,9 @@
 package com.baghdad.localDatasource.mapper
 
-import com.baghdad.localDatasource.roomDB.entity.ContinueWatching
+import com.baghdad.localDatasource.roomDB.entity.UserWatchedMedia
 import com.baghdad.localDatasource.roomDB.entity.toDto
 import com.baghdad.localDatasource.roomDB.entity.toDtos
-import com.baghdad.repository.model.ContinueWatchingDto
+import com.baghdad.repository.model.UserWatchedMediaDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -20,7 +20,7 @@ class ContinueWatchingTest {
         assertThat(result.contentId).isEqualTo(1L)
         assertThat(result.genreIds).containsExactly(1L, 2L, 3L)
         assertThat(result.contentImageUrl).isEqualTo("https://example.com/poster.jpg")
-        assertThat(result.contentType).isEqualTo(ContinueWatchingDto.ContentType.MOVIE)
+        assertThat(result.contentType).isEqualTo(UserWatchedMediaDto.ContentType.MOVIE)
         assertThat(result.userId).isEqualTo(1L)
     }
 
@@ -38,7 +38,7 @@ class ContinueWatchingTest {
     fun `should handle all enum values correctly when toDto is called`() {
         // When & Then
         assertThat(CONTINUE_WATCHING.toDto().contentType)
-            .isEqualTo(ContinueWatchingDto.ContentType.MOVIE)
+            .isEqualTo(UserWatchedMediaDto.ContentType.MOVIE)
     }
 
     @Test
@@ -80,15 +80,15 @@ class ContinueWatchingTest {
         assertThat(result).hasSize(2)
 
         assertThat(result[0].contentId).isEqualTo(1L)
-        assertThat(result[0].contentType).isEqualTo(ContinueWatchingDto.ContentType.MOVIE)
+        assertThat(result[0].contentType).isEqualTo(UserWatchedMediaDto.ContentType.MOVIE)
 
         assertThat(result[1].contentId).isEqualTo(2L)
-        assertThat(result[1].contentType).isEqualTo(ContinueWatchingDto.ContentType.TV_SHOW)
+        assertThat(result[1].contentType).isEqualTo(UserWatchedMediaDto.ContentType.TV_SHOW)
     }
 
 
     companion object {
-        val CONTINUE_WATCHING = ContinueWatching(
+        val CONTINUE_WATCHING = UserWatchedMedia(
             contentId = 1L,
             genreIds = listOf(1L, 2L, 3L),
             contentImageUrl = "https://example.com/poster.jpg",

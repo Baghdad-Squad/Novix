@@ -1,7 +1,7 @@
 package com.baghdad.repository.mapper
 
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
-import com.baghdad.repository.model.ContinueWatchingDto
+import com.baghdad.repository.model.UserWatchedMediaDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -28,12 +28,12 @@ class ContinueWatchingMapperTest {
     @Test
     fun `should map to TV_SHOW content type when dto is TVSHOW`() {
         // Given
-        val continueWatchingDto = createMockContinueWatchingDto().copy(
-            contentType = ContinueWatchingDto.ContentType.TV_SHOW
+        val userWatchedMediaDto = createMockContinueWatchingDto().copy(
+            contentType = UserWatchedMediaDto.ContentType.TV_SHOW
         )
 
         // When
-        val result = continueWatchingDto.toEntity()
+        val result = userWatchedMediaDto.toEntity()
 
         // Then
         assertThat(result.contentType).isEqualTo(UserWatchedMedia.ContentType.TV_SHOW)
@@ -104,10 +104,10 @@ class ContinueWatchingMapperTest {
     @Test
     fun `Empty list of ContinueWatchingDto toEntities should return empty list`() {
         // Given
-        val continueWatchingDtos = emptyList<ContinueWatchingDto>()
+        val userWatchedMediaDtos = emptyList<UserWatchedMediaDto>()
 
         // When
-        val result = continueWatchingDtos.toEntities()
+        val result = userWatchedMediaDtos.toEntities()
 
         // Then
         assertThat(result).isEmpty()
@@ -127,7 +127,7 @@ class ContinueWatchingMapperTest {
         assertThat(result.genreIds[0]).isEqualTo(28L)
         assertThat(result.genreIds[1]).isEqualTo(12L)
         assertThat(result.contentImageUrl).isEqualTo("/content_image.jpg")
-        assertThat(result.contentType).isEqualTo(ContinueWatchingDto.ContentType.MOVIE)
+        assertThat(result.contentType).isEqualTo(UserWatchedMediaDto.ContentType.MOVIE)
         assertThat(result.userId).isEqualTo(123)
     }
 
@@ -138,9 +138,9 @@ class ContinueWatchingMapperTest {
             contentId: Long = 123L,
             genreIds: List<Long> = listOf(28L, 12L),
             contentImageUrl: String = "/content_image.jpg",
-            contentType: ContinueWatchingDto.ContentType = ContinueWatchingDto.ContentType.MOVIE,
+            contentType: UserWatchedMediaDto.ContentType = UserWatchedMediaDto.ContentType.MOVIE,
             userId: Long = 123L
-        ) = ContinueWatchingDto(
+        ) = UserWatchedMediaDto(
             contentId = contentId,
             genreIds = genreIds,
             contentImageUrl = contentImageUrl,

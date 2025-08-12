@@ -1,18 +1,18 @@
 package com.baghdad.novix.di
 
-import com.baghdad.localDatasource.LocalContinueWatchingDataSourceImpl
 import com.baghdad.localDatasource.LocalRecentSearchDataSourceImpl
 import com.baghdad.localDatasource.LocalRecentlyViewedDataSourceImpl
 import com.baghdad.localDatasource.LocalSavableMovieDataSourceImpl
 import com.baghdad.localDatasource.LocalSessionDataSourceImpl
 import com.baghdad.localDatasource.LocalUserDataSourceImpl
+import com.baghdad.localDatasource.LocalUserWatchedMediaDataSourceImpl
 import com.baghdad.repository.datasource.local.AppConfigurationDataSource
-import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
 import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
 import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
 import com.baghdad.repository.datasource.local.LocalSessionDataSource
 import com.baghdad.repository.datasource.local.LocalUserDataSource
+import com.baghdad.repository.datasource.local.LocalUserWatchedMediaDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -32,7 +32,7 @@ abstract class LocalDataSourceModule {
     abstract fun provideLocalRecentSearchDataSource(localRecentSearchDataSourceImpl: LocalRecentSearchDataSourceImpl): LocalRecentSearchDataSource
 
     @Binds
-    abstract fun provideLocalContinueWatchingDataSource(localContinueWatchingDataSourceImpl: LocalContinueWatchingDataSourceImpl): LocalContinueWatchingDataSource
+    abstract fun provideLocalContinueWatchingDataSource(localContinueWatchingDataSourceImpl: LocalUserWatchedMediaDataSourceImpl): LocalUserWatchedMediaDataSource
 
     @Binds
     abstract fun provideLocalRecentlyViewedDataSource(localRecentlyViewedDataSourceImpl: LocalRecentlyViewedDataSourceImpl): LocalRecentlyViewedDataSource

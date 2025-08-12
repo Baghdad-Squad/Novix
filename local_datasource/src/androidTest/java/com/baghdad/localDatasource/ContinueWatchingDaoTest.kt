@@ -4,9 +4,9 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.baghdad.localDatasource.roomDB.dao.ContinueWatchingDao
+import com.baghdad.localDatasource.roomDB.dao.UserWatchedMediaDao
 import com.baghdad.localDatasource.roomDB.database.NovixDatabase
-import com.baghdad.localDatasource.roomDB.entity.ContinueWatching
+import com.baghdad.localDatasource.roomDB.entity.UserWatchedMedia
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
 class ContinueWatchingDaoTest {
 
     private lateinit var database: NovixDatabase
-    private lateinit var continueWatchingDao: ContinueWatchingDao
+    private lateinit var userWatchedMediaDao: UserWatchedMediaDao
 
     @Before
     fun setup() {
@@ -28,7 +28,7 @@ class ContinueWatchingDaoTest {
             ApplicationProvider.getApplicationContext(),
             NovixDatabase::class.java
         ).allowMainThreadQueries().build()
-        continueWatchingDao = database.continueWatchingDao()
+        userWatchedMediaDao = database.continueWatchingDao()
     }
 
     @After
@@ -39,8 +39,8 @@ class ContinueWatchingDaoTest {
     @Test
     fun shouldInsertItemCorrectly_whenUpsertContinueWatchingIsCalled() = runBlocking {
         // When
-        continueWatchingDao.upsertContinueWatching(FAKE_CONTINUE_WATCHING_1)
-        val result = continueWatchingDao.getContinueWatching(TEST_USER_ID, 1, 0)
+        userWatchedMediaDao.upsertUserWatchedMedia(FAKE_CONTINUE_WATCHING_1)
+        val result = userWatchedMediaDao.getContinueWatching(TEST_USER_ID, 1, 0)
 
         // Then
         assertThat(result.first()).isEqualTo(FAKE_CONTINUE_WATCHING_1)
@@ -49,12 +49,12 @@ class ContinueWatchingDaoTest {
     @Test
     fun shouldUpdateItem_whenUpsertContinueWatchingCalledWithSameContentId() = runBlocking {
         // Given
-        continueWatchingDao.upsertContinueWatching(FAKE_CONTINUE_WATCHING_1)
+        userWatchedMediaDao.upsertUserWatchedMedia(FAKE_CONTINUE_WATCHING_1)
 
         // When
         val updated = FAKE_CONTINUE_WATCHING_1.copy(contentImageUrl = "new_url")
-        continueWatchingDao.upsertContinueWatching(updated)
-        val result = continueWatchingDao.getContinueWatching(TEST_USER_ID, 1, 0)
+        userWatchedMediaDao.upsertUserWatchedMedia(updated)
+        val result = userWatchedMediaDao.getContinueWatching(TEST_USER_ID, 1, 0)
 
         // Then
         assertThat(result.first().contentImageUrl).isEqualTo("new_url")
@@ -64,11 +64,11 @@ class ContinueWatchingDaoTest {
     fun shouldReturnPaginatedResultsInDescendingOrder_whenGetContinueWatchingIsCalled() =
         runBlocking {
             // Given
-            FAKE_ITEMS.forEach { continueWatchingDao.upsertContinueWatching(it) }
+            FAKE_ITEMS.forEach { userWatchedMediaDao.upsertUserWatchedMedia(it) }
 
             // When
             val page =
-                continueWatchingDao.getContinueWatching(TEST_USER_ID, pageSize = 5, offset = 5)
+                userWatchedMediaDao.getContinueWatching(TEST_USER_ID, pageSize = 5, offset = 5)
 
             // Then
             assertThat(page.size).isEqualTo(5)
@@ -76,10 +76,10 @@ class ContinueWatchingDaoTest {
         }
 
     @Test
-    fun shouldObserveContinueWatching_whenNewItemIsInserted() = runBlocking {
+    fun shouldObserveUserWatchedMedia_whenNewItemIsInserted() = runBlocking {
         // When
-        continueWatchingDao.upsertContinueWatching(FAKE_CONTINUE_WATCHING_2)
-        val result = continueWatchingDao.observeContinueWatching(TEST_USER_ID).first()
+        userWatchedMediaDao.upsertUserWatchedMedia(FAKE_CONTINUE_WATCHING_2)
+        val result = userWatchedMediaDao.observeUserWatchedMedia(TEST_USER_ID).first()
 
         // Then
         assertThat(result).contains(FAKE_CONTINUE_WATCHING_2)
@@ -89,7 +89,7 @@ class ContinueWatchingDaoTest {
     fun shouldReturnEmptyList_whenUserHasNoContinueWatchingRecords() = runBlocking {
         // When
         val result =
-            continueWatchingDao.getContinueWatching(userId = 999L, pageSize = 10, offset = 0)
+            userWatchedMediaDao.getContinueWatching(userId = 999L, pageSize = 10, offset = 0)
 
         // Then
         assertThat(result).isEmpty()
@@ -98,7 +98,7 @@ class ContinueWatchingDaoTest {
     companion object {
         const val TEST_USER_ID = 100L
 
-        val FAKE_CONTINUE_WATCHING_1 = ContinueWatching(
+        val FAKE_CONTINUE_WATCHING_1 = UserWatchedMedia(
             contentId = 1L,
             userId = TEST_USER_ID,
             genreIds = listOf(1L),
@@ -106,7 +106,7 @@ class ContinueWatchingDaoTest {
             contentType = "movie"
         )
 
-        val FAKE_CONTINUE_WATCHING_2 = ContinueWatching(
+        val FAKE_CONTINUE_WATCHING_2 = UserWatchedMedia(
             contentId = 2L,
             userId = TEST_USER_ID,
             genreIds = listOf(2L),
@@ -115,7 +115,7 @@ class ContinueWatchingDaoTest {
         )
 
         val FAKE_ITEMS = List(15) { index ->
-            ContinueWatching(
+            UserWatchedMedia(
                 contentId = index.toLong(),
                 userId = TEST_USER_ID,
                 genreIds = listOf(1L, 2L),

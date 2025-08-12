@@ -1,13 +1,13 @@
 import com.baghdad.domain.model.savedList.SavedMovie
-import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
+import com.baghdad.domain.usecase.continueWatching.ObserveUserWatchedMediaUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
+import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
-import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test
 class HomeViewModelTest {
 
     private lateinit var getGenresUseCase: GetGenresUseCase
-    private lateinit var observeContinueWatchingUseCase: ObserveContinueWatchingUseCase
+    private lateinit var observeUserWatchedMediaUseCase: ObserveUserWatchedMediaUseCase
     private lateinit var getPopularMoviesUseCase: GetPopularMoviesUseCase
     private lateinit var getPopularTvShowsUseCase: GetPopularTvShowsUseCase
     private lateinit var getMovieTopRatingUseCase: GetMovieTopRatingUseCase
@@ -68,7 +68,7 @@ class HomeViewModelTest {
         createSavedListUseCase = mockk(relaxed = true)
         removeMovieFromSavedListUseCase = mockk(relaxed = true)
         getAppLanguageUseCase = mockk(relaxed = true)
-        observeContinueWatchingUseCase = mockk(relaxed = true)
+        observeUserWatchedMediaUseCase = mockk(relaxed = true)
 
         coEvery { getGenresUseCase.getMovieGenres() } returns FakeHomeScreenData.genres
         coEvery { getPopularMoviesUseCase.invoke() } returns FakeHomeScreenData.savedMovies
@@ -77,7 +77,7 @@ class HomeViewModelTest {
             getMovieTopRatingUseCase.invoke(any(), any()).data
         } returns FakeHomeScreenData.savedMovies
         coEvery {
-            observeContinueWatchingUseCase.invoke()
+            observeUserWatchedMediaUseCase.invoke()
         } returns flowOf(FakeHomeScreenData.userWatchedMedia)
 
         viewModel = createViewModel()
@@ -91,7 +91,7 @@ class HomeViewModelTest {
     private fun createViewModel(): HomeViewModel {
         return HomeViewModel(
             getGenresUseCase,
-            observeContinueWatchingUseCase,
+            observeUserWatchedMediaUseCase,
             getPopularMoviesUseCase,
             getPopularTvShowsUseCase,
             getMovieTopRatingUseCase,
@@ -154,7 +154,7 @@ class HomeViewModelTest {
     fun `should have empty continue watching when no items observed`() =
         runTest {
             // Given
-            coEvery { observeContinueWatchingUseCase.invoke() } returns flowOf(emptyList())
+            coEvery { observeUserWatchedMediaUseCase.invoke() } returns flowOf(emptyList())
 
             // When
             viewModel = createViewModel()

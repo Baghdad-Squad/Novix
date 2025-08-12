@@ -5,7 +5,7 @@ import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.entity.media.Genre
 import kotlinx.coroutines.flow.Flow
 
-interface ContinueWatchingRepository {
+interface UserWatchedMediaRepository {
     suspend fun getPagedMovies(
         page: Int,
         pageSize: Int,
@@ -16,9 +16,9 @@ interface ContinueWatchingRepository {
         pageSize: Int,
     ): PagedResult<UserWatchedMedia>
 
-    suspend fun observeContinueWatching(): Flow<List<UserWatchedMedia>>
+    suspend fun observeUserWatchedMedia(): Flow<List<UserWatchedMedia>>
 
-    suspend fun addContinueWatching(
+    suspend fun addUserWatchedMedia(
         contentId: Long,
         genreIds: List<Long>,
         contentImageUrl: String,

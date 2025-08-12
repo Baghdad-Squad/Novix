@@ -3,15 +3,15 @@ package com.baghdad.repository
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.AuthenticationRepository
-import com.baghdad.domain.repository.ContinueWatchingRepository
+import com.baghdad.domain.repository.UserWatchedMediaRepository
 import com.baghdad.entity.media.Genre
-import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
+import com.baghdad.repository.datasource.local.LocalUserWatchedMediaDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.mapper.toDto
 import com.baghdad.repository.mapper.toEntity
-import com.baghdad.repository.model.ContinueWatchingDto
 import com.baghdad.repository.model.GenreDto
+import com.baghdad.repository.model.UserWatchedMediaDto
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getLocalPagedSafely
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,18 +24,18 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ContinueWatchingRepositoryImpl @Inject constructor(
-    private val localContinueWatchingDataSource: LocalContinueWatchingDataSource,
+class UserWatchedMediaRepositoryImpl @Inject constructor(
+    private val localUserWatchedMediaDataSource: LocalUserWatchedMediaDataSource,
     private val authenticationRepository: AuthenticationRepository,
     private val savableMovieDataSource: LocalSavableMovieDataSource,
     private val remoteGenreDataSource: RemoteGenreDataSource
-) : ContinueWatchingRepository {
+) : UserWatchedMediaRepository {
 
     override suspend fun getPagedMovies(page: Int, pageSize: Int): PagedResult<UserWatchedMedia> {
         return getPagedItems(
             page = page,
             pageSize = pageSize,
-            fetchData = localContinueWatchingDataSource::getPagedContinueWatchingMovies
+            fetchData = localUserWatchedMediaDataSource::getPagedUserWatchedMediaMovies
         )
     }
 
@@ -43,20 +43,20 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
         return getPagedItems(
             page = page,
             pageSize = pageSize,
-            fetchData = localContinueWatchingDataSource::getPagedContinueWatchingTvShows
+            fetchData = localUserWatchedMediaDataSource::getPagedUserWatchedMediaTvShows
         )
     }
 
-    override suspend fun observeContinueWatching(): Flow<List<UserWatchedMedia>> {
+    override suspend fun observeUserWatchedMedia(): Flow<List<UserWatchedMedia>> {
         val user = authenticationRepository.getLoggedInUser() ?: return flowOf(emptyList())
         val savedMovies = savableMovieDataSource.getSavedMovies()
 
-        return localContinueWatchingDataSource
-            .observeContinueWatching(user.id)
+        return localUserWatchedMediaDataSource
+            .observeUserWatchedMedia(user.id)
             .map { items -> items.map(mapDtoToEntityWithSavedMovies(savedMovies)) }
     }
 
-    override suspend fun addContinueWatching(
+    override suspend fun addUserWatchedMedia(
         contentId: Long,
         genreIds: List<Long>,
         contentImageUrl: String,
@@ -72,13 +72,13 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
             isSaved = false,
             listId = null,
         )
-        localContinueWatchingDataSource.addContinueWatching(item.toDto())
+        localUserWatchedMediaDataSource.addUserWatchedMedia(item.toDto())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getUsedMovieGenres(): Flow<List<Genre>> {
         return getUsedGenres(
-            localDataCall = localContinueWatchingDataSource::getAllContinueWatchingMovies,
+            localDataCall = localUserWatchedMediaDataSource::getUserWatchedMediaMovies,
             remoteGenreCall = { remoteGenreDataSource.getMovieGenre(Locale.getDefault().language) }
         )
     }
@@ -86,7 +86,7 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getUsedTvShowGenres(): Flow<List<Genre>> {
         return getUsedGenres(
-            localDataCall = localContinueWatchingDataSource::getAllContinueWatchingTvShows,
+            localDataCall = localUserWatchedMediaDataSource::getUserWatchedMediaTvShows,
             remoteGenreCall = { remoteGenreDataSource.getTvShowGenre(Locale.getDefault().language) }
         )
     }
@@ -95,7 +95,7 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
     private suspend fun getPagedItems(
         page: Int,
         pageSize: Int,
-        fetchData: suspend (userId: Long, pageSize: Int, page: Int) -> List<ContinueWatchingDto>
+        fetchData: suspend (userId: Long, pageSize: Int, page: Int) -> List<UserWatchedMediaDto>
     ): PagedResult<UserWatchedMedia> {
         val user =
             authenticationRepository.getLoggedInUser() ?: return PagedResult(emptyList(), 0, 0)
@@ -111,7 +111,7 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun getUsedGenres(
-        localDataCall: suspend (userId: Long) -> Flow<List<ContinueWatchingDto>>,
+        localDataCall: suspend (userId: Long) -> Flow<List<UserWatchedMediaDto>>,
         remoteGenreCall: suspend () -> List<GenreDto>
     ): Flow<List<Genre>> {
         val user = authenticationRepository.getLoggedInUser() ?: return flowOf(emptyList())
@@ -135,7 +135,7 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
 
     private fun mapDtoToEntityWithSavedMovies(
         savedMovies: Map<Long, Long>
-    ): (ContinueWatchingDto) -> UserWatchedMedia = { dto ->
+    ): (UserWatchedMediaDto) -> UserWatchedMedia = { dto ->
         dto.toEntity(
             isSaved = savedMovies.containsKey(dto.contentId),
             listId = savedMovies[dto.contentId],

@@ -4,22 +4,19 @@ import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.savedList.SavedMovie
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
-import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
+import com.baghdad.domain.usecase.continueWatching.ObserveUserWatchedMediaUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
+import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
-import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowGenresUseCase
-import com.baghdad.domain.usecase.userPreferences.GetAppLanguageUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.savedList.SavedList
@@ -40,7 +37,7 @@ class HomeViewModel
     constructor(
         private val getMovieGenresUseCase: GetMovieGenresUseCase,
         private val getTvShowGenresUseCase: GetTvShowGenresUseCase,
-        private val observeContinueWatchingUseCase: ObserveContinueWatchingUseCase,
+        private val observeUserWatchedMediaUseCase: ObserveUserWatchedMediaUseCase,
         private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
         private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
         private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
@@ -208,7 +205,7 @@ class HomeViewModel
 
         private fun observeContinueWatchingItems() {
             tryToCollect(
-                flowProvider = observeContinueWatchingUseCase::invoke,
+                flowProvider = observeUserWatchedMediaUseCase::invoke,
                 dispatcher = defaultDispatcher,
                 onNewValue = ::onNewContinueWatchingItems,
                 onError = ::onLoadDataError,
