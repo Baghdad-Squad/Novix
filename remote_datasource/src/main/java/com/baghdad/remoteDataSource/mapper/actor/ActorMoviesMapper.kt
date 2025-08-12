@@ -1,23 +1,21 @@
 package com.baghdad.remoteDataSource.mapper.actor
 
 import com.baghdad.remoteDataSource.response.actor.ActorMoviesResponse
+import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.repository.model.MovieDto
 
-fun ActorMoviesResponse.ActorMovieDto.toDto(): MovieDto {
-    return MovieDto(
-        id = id ?: 0L,
+fun ActorMoviesResponse.toMovieDtoList(): List<MovieDto> = cast?.filter { it?.id != null }?.map { it.toDto() }.orEmpty()
+
+private fun ActorMoviesResponse.ActorMovieDto.toDto(): MovieDto =
+    MovieDto(
+        id = id ?: -1L,
         title = title.orEmpty(),
-        genres =emptyList(),
+        genres = emptyList(),
         imdbRating = voteAverage ?: 0.0,
         userRating = null,
-        releaseDate = releaseDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
+        releaseDate = releaseDate.takeUnless { it.isNullOrEmpty() } ?: "0001-01-01",
         overview = overview.orEmpty(),
-        posterPictureURL = "https://image.tmdb.org/t/p/w500"+posterPath.orEmpty(),
+        posterPictureURL = getImageUrlFromPath(posterPath),
         runtimeMinutes = 0,
         trailerURL = ""
     )
-}
-
-fun ActorMoviesResponse.toMovieDtoList(): List<MovieDto> {
-    return cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
-}
