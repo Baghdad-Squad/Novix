@@ -8,6 +8,7 @@ import javax.inject.Inject
 
 class HeadersSetupInterceptor @Inject constructor(
     private val languageProvider: LanguageProvider,
+
     private val authorizationToken: String
 ) : Interceptor {
 
