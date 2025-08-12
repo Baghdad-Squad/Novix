@@ -3,10 +3,12 @@ package com.baghdad.remoteDataSource.mapper.episode
 import com.baghdad.remoteDataSource.response.tvShow.SeasonDetailResponse
 import com.baghdad.repository.model.EpisodeDto
 
-fun SeasonDetailResponse.toEpisodeDto(): List<EpisodeDto> = episodes.orEmpty().filter { it?.id != null }.map { it.toDto() }
+fun SeasonDetailResponse.toEpisodeDto(): List<EpisodeDto> {
+    return episodes.orEmpty().filter { it?.id != null }.map { it.toDto() }
+}
 
-private fun SeasonDetailResponse.EpisodeResponse.toDto(): EpisodeDto =
-    EpisodeDto(
+private fun SeasonDetailResponse.EpisodeResponse.toDto(): EpisodeDto {
+    return EpisodeDto(
         id = id ?: -1L,
         title = name.orEmpty(),
         episodeNumber = episodeNumber ?: 0,
@@ -20,3 +22,4 @@ private fun SeasonDetailResponse.EpisodeResponse.toDto(): EpisodeDto =
         userRating = 0,
         genres = emptyList()
     )
+}

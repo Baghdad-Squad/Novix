@@ -15,6 +15,10 @@ fun TvShowResponse.toPagedTvShowDtos(): PagedResultDto<TvShowDto> {
     )
 }
 
-private fun TvShowResponse.toTvShowDtos(): List<TvShowDto> = results.orEmpty().mapNotNull { it.toTvShowDtoIfValid() }
+private fun TvShowResponse.toTvShowDtos(): List<TvShowDto> {
+    return results.orEmpty().mapNotNull { it.toTvShowDtoIfValid() }
+}
 
-private fun TVShowDetailsResponse?.toTvShowDtoIfValid(): TvShowDto? = this?.takeIf { id != null }?.toDto()
+private fun TVShowDetailsResponse?.toTvShowDtoIfValid(): TvShowDto? {
+    return this?.takeIf { id != null }?.toDto()
+}

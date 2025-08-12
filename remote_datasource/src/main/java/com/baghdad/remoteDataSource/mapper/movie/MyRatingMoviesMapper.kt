@@ -8,19 +8,24 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 
-fun MyRatingMoviesResponse.toPagedMovieDtos(): PagedResultDto<MovieDto> =
-    PagedResultDto(
+fun MyRatingMoviesResponse.toPagedMovieDtos(): PagedResultDto<MovieDto> {
+    return PagedResultDto(
         data = toMovieDtos(),
         nextKey = getNextKey(page, totalPages),
         prevKey = getPreviousKey(page),
     )
+}
 
-private fun MyRatingMoviesResponse.toMovieDtos(): List<MovieDto> = results.orEmpty().mapNotNull { it.toMovieDtoIfValid() }
+private fun MyRatingMoviesResponse.toMovieDtos(): List<MovieDto> {
+    return results.orEmpty().mapNotNull { it.toMovieDtoIfValid() }
+}
 
-private fun MyRatingMoviesResponse.MovieItem?.toMovieDtoIfValid(): MovieDto? = this?.takeIf { id != null }?.toMovieDto()
+private fun MyRatingMoviesResponse.MovieItem?.toMovieDtoIfValid(): MovieDto? {
+    return this?.takeIf { id != null }?.toMovieDto()
+}
 
-private fun MyRatingMoviesResponse.MovieItem.toMovieDto(): MovieDto =
-    MovieDto(
+private fun MyRatingMoviesResponse.MovieItem.toMovieDto(): MovieDto {
+    return MovieDto(
         id = id ?: -1L,
         title = title.orEmpty(),
         genres = genreIds.toMovieGenreDtos(),
@@ -32,13 +37,15 @@ private fun MyRatingMoviesResponse.MovieItem.toMovieDto(): MovieDto =
         trailerURL = "",
         runtimeMinutes = 0
     )
+}
 
-private fun List<Long>?.toMovieGenreDtos(): List<GenreDto> =
-    this
+private fun List<Long>?.toMovieGenreDtos(): List<GenreDto> {
+    return this
         ?.map { genreId ->
             GenreDto(
                 id = genreId,
                 name = "",
                 type = GenreDto.GenreType.MOVIE,
             )
-    }.orEmpty()
+        }.orEmpty()
+}

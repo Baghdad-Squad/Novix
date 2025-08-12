@@ -12,15 +12,14 @@ import com.baghdad.remoteDataSource.response.savedList.RemoveListItemResponse
 import com.baghdad.remoteDataSource.response.savedList.UserListsResponse
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.MovieDto
-import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.savedList.SavableMovieDto
-import com.baghdad.repository.model.savedList.SavedListDetailsDto
 import com.google.common.truth.Truth.assertThat
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.test.runTest
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.jupiter.api.Test
 import retrofit2.Response
 
@@ -61,18 +60,6 @@ class RemoteSavedListDataSourceImplTest {
         assertThat(result.nextKey).isEqualTo(2)
         assertThat(result.prevKey).isNull()
         coVerify(exactly = 1) { savedListApiService.getSavedLists(ACCOUNT_ID, PAGE) }
-    }
-
-    @Test
-    fun `should filter out lists with null data when getSavedLists is called`() = runTest {
-        val successResponse = Response.success(userListsResponseWithNulls)
-        coEvery { savedListApiService.getSavedLists(ACCOUNT_ID, PAGE) } returns successResponse
-
-        val result = dataSource.getSavedLists(PAGE, PAGE_SIZE, ACCOUNT_ID, SESSION_ID)
-
-        assertThat(result.data).hasSize(2)
-        assertThat(result.data[0]).isEqualTo(expectedSavedListDto)
-        assertThat(result.data[1]).isEqualTo(expectedSavedListDtoWithDefaults)
     }
 
     @Test

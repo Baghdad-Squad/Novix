@@ -16,12 +16,16 @@ fun MyRatingTvShowResponse.toPagedTvShowDtos(): PagedResultDto<TvShowDto> {
     )
 }
 
-private fun MyRatingTvShowResponse.toTvShowDtos(): List<TvShowDto> = results.orEmpty().mapNotNull { it.toTvShowDtoIfValid() }
+private fun MyRatingTvShowResponse.toTvShowDtos(): List<TvShowDto> {
+    return results.orEmpty().mapNotNull { it.toTvShowDtoIfValid() }
+}
 
-private fun MyRatingTvShowResponse.TvShowItem?.toTvShowDtoIfValid(): TvShowDto? = this?.takeIf { id != null }?.toTvShowDto()
+private fun MyRatingTvShowResponse.TvShowItem?.toTvShowDtoIfValid(): TvShowDto? {
+    return this?.takeIf { id != null }?.toTvShowDto()
+}
 
-private fun MyRatingTvShowResponse.TvShowItem.toTvShowDto(): TvShowDto =
-    TvShowDto(
+private fun MyRatingTvShowResponse.TvShowItem.toTvShowDto(): TvShowDto {
+    return TvShowDto(
         id = id ?: -1L,
         title = name ?: originalName.orEmpty(),
         genres = genreIds.toTvShowGenreDtos(),
@@ -34,6 +38,7 @@ private fun MyRatingTvShowResponse.TvShowItem.toTvShowDto(): TvShowDto =
         headerImagesURLs = listOf(getImageUrlFromPath(backdropPath)),
         numberOfSeasons = 0,
     )
+}
 
 private fun List<Long?>?.toTvShowGenreDtos(): List<GenreDto> =
     this

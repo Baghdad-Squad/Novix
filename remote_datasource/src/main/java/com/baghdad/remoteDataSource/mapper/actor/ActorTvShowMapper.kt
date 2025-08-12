@@ -4,10 +4,12 @@ import com.baghdad.remoteDataSource.response.actor.ActorTvShowsResponse
 import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.repository.model.TvShowDto
 
-fun ActorTvShowsResponse.toActorTvShowList(): List<TvShowDto> = cast?.filter { it?.id != null }?.map { it.toDto() }.orEmpty()
+fun ActorTvShowsResponse.toActorTvShowList(): List<TvShowDto> {
+    return cast?.filter { it?.id != null }?.map { it.toDto() }.orEmpty()
+}
 
-private fun ActorTvShowsResponse.ActorTvShowDto.toDto(): TvShowDto =
-    TvShowDto(
+private fun ActorTvShowsResponse.ActorTvShowDto.toDto(): TvShowDto {
+    return TvShowDto(
         id = id ?: -1,
         title = name ?: originalName.orEmpty(),
         genres = emptyList(),
@@ -20,3 +22,4 @@ private fun ActorTvShowsResponse.ActorTvShowDto.toDto(): TvShowDto =
         trailerURL = "",
         headerImagesURLs = emptyList()
     )
+}

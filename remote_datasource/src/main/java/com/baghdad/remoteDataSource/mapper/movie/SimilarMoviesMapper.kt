@@ -5,12 +5,16 @@ import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 
-fun SimilarMovieResponse.toMovieDtos(): List<MovieDto> = results.orEmpty().mapNotNull { it.toMovieDtoIfValid() }
+fun SimilarMovieResponse.toMovieDtos(): List<MovieDto> {
+    return results.orEmpty().mapNotNull { it.toMovieDtoIfValid() }
+}
 
-private fun SimilarMovieResponse.MovieResult?.toMovieDtoIfValid(): MovieDto? = this?.takeIf { id != null }?.toMovieDto()
+private fun SimilarMovieResponse.MovieResult?.toMovieDtoIfValid(): MovieDto? {
+    return this?.takeIf { id != null }?.toMovieDto()
+}
 
-private fun SimilarMovieResponse.MovieResult.toMovieDto(): MovieDto =
-    MovieDto(
+private fun SimilarMovieResponse.MovieResult.toMovieDto(): MovieDto {
+    return MovieDto(
         id = id ?: -1L,
         title = title.orEmpty(),
         genres = genreIds.toMovieGenreDtos(),
@@ -22,13 +26,15 @@ private fun SimilarMovieResponse.MovieResult.toMovieDto(): MovieDto =
         runtimeMinutes = 0,
         trailerURL = ""
     )
+}
 
-private fun List<Long>?.toMovieGenreDtos(): List<GenreDto> =
-    this
+private fun List<Long>?.toMovieGenreDtos(): List<GenreDto> {
+    return this
         ?.map { genreId ->
             GenreDto(
                 id = genreId,
                 name = "",
                 type = GenreDto.GenreType.MOVIE,
             )
-    }.orEmpty()
+        }.orEmpty()
+}

@@ -10,31 +10,34 @@ import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.savedList.SavableMovieDto
 import com.baghdad.repository.model.savedList.SavedListDetailsDto
 
-fun ListDetailsResponse.toSavedListDetailsDto(): SavedListDetailsDto =
-    SavedListDetailsDto(
+fun ListDetailsResponse.toSavedListDetailsDto(): SavedListDetailsDto {
+    return SavedListDetailsDto(
         savedList = toSavedListDto(),
         pagedItems = toPagedSavableMovies(),
     )
+}
 
-private fun ListDetailsResponse.toSavedListDto(): SavedListDto =
-    SavedListDto(
+private fun ListDetailsResponse.toSavedListDto(): SavedListDto {
+    return SavedListDto(
         id = id ?: -1L,
         name = name.orEmpty(),
         itemCount = itemCount ?: 0,
     )
+}
 
-private fun ListDetailsResponse.toPagedSavableMovies(): PagedResultDto<SavableMovieDto> =
-    PagedResultDto(
+private fun ListDetailsResponse.toPagedSavableMovies(): PagedResultDto<SavableMovieDto> {
+    return PagedResultDto(
         data = toSavableMovieDtos(),
         nextKey = getNextKey(page, totalPages),
         prevKey = getPreviousKey(page),
     )
+}
 
-private fun ListDetailsResponse.toSavableMovieDtos(): List<SavableMovieDto> =
-    items.orEmpty().filterNotNull().mapNotNull {
+private fun ListDetailsResponse.toSavableMovieDtos(): List<SavableMovieDto> {
+    return items.orEmpty().filterNotNull().mapNotNull {
         it.toSavableMovieDto()
     }
-
+}
 private fun ListDetailsResponse.Item.toSavableMovieDto(): SavableMovieDto? {
     val movieTitle = title ?: originalTitle ?: return null
 
@@ -45,8 +48,8 @@ private fun ListDetailsResponse.Item.toSavableMovieDto(): SavableMovieDto? {
     )
 }
 
-private fun ListDetailsResponse.Item.toMovieDto(movieTitle: String): MovieDto =
-    MovieDto(
+private fun ListDetailsResponse.Item.toMovieDto(movieTitle: String): MovieDto {
+    return MovieDto(
         id = id ?: 0L,
         title = movieTitle,
         genres = emptyList(),
@@ -58,3 +61,4 @@ private fun ListDetailsResponse.Item.toMovieDto(movieTitle: String): MovieDto =
         trailerURL = "",
         runtimeMinutes = 0,
     )
+}

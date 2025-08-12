@@ -9,7 +9,3 @@ data class ActorImagesResponse(
         @SerializedName("file_path") val filePath: String? = null,
     )
 }
-
-fun ActorImagesResponse.toActorDtoList(): List<String> {
-    return profiles.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
-}

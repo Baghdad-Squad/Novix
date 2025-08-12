@@ -21,12 +21,13 @@ fun TVShowDetailsResponse.toDto(): TvShowDto {
     )
 }
 
-private fun List<TVShowDetailsResponse.Genre>?.toTvShowGenreDtos(): List<GenreDto> =
-    this
+private fun List<TVShowDetailsResponse.Genre>?.toTvShowGenreDtos(): List<GenreDto> {
+    return this
         ?.map { genre ->
             GenreDto(
                 id = genre.id ?: 0L,
                 name = genre.name.orEmpty(),
                 type = GenreDto.GenreType.TV_SHOW,
             )
-    }.orEmpty()
+        }.orEmpty()
+}

@@ -1,6 +1,7 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.ActorApiService
+import com.baghdad.remoteDataSource.mapper.actor.toActorDtoList
 import com.baghdad.remoteDataSource.mapper.actor.toActorTvShowList
 import com.baghdad.remoteDataSource.mapper.actor.toDto
 import com.baghdad.remoteDataSource.mapper.actor.toMovieDtoList
@@ -10,7 +11,6 @@ import com.baghdad.remoteDataSource.response.actor.ActorImagesResponse
 import com.baghdad.remoteDataSource.response.actor.ActorMoviesResponse
 import com.baghdad.remoteDataSource.response.actor.ActorTvShowsResponse
 import com.baghdad.remoteDataSource.response.actor.TrendingActorResponse
-import com.baghdad.remoteDataSource.response.actor.toActorDtoList
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.logger.Logger

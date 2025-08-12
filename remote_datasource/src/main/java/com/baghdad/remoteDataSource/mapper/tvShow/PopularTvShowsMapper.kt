@@ -9,10 +9,12 @@ fun PopularTvShowsResponse.toTvShowDtos(): List<TvShowDto> {
     return results.orEmpty().mapNotNull { it.toTvShowDtoIfValid() }
 }
 
-private fun PopularTvShowsResponse.Result?.toTvShowDtoIfValid(): TvShowDto? = this?.takeIf { id != null }?.toTvShowDto()
+private fun PopularTvShowsResponse.Result?.toTvShowDtoIfValid(): TvShowDto? {
+    return this?.takeIf { id != null }?.toTvShowDto()
+}
 
-private fun PopularTvShowsResponse.Result.toTvShowDto(): TvShowDto =
-    TvShowDto(
+private fun PopularTvShowsResponse.Result.toTvShowDto(): TvShowDto {
+    return TvShowDto(
         id = id ?: -1L,
         title = name.orEmpty(),
         genres = genreIds.toTvShowGenreDtos(),
@@ -25,6 +27,7 @@ private fun PopularTvShowsResponse.Result.toTvShowDto(): TvShowDto =
         headerImagesURLs = emptyList(),
         numberOfSeasons = 0
     )
+}
 
 private fun List<Long?>?.toTvShowGenreDtos(): List<GenreDto> =
     this

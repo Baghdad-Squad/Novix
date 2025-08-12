@@ -789,7 +789,7 @@ class RemoteTvShowDataSourceImplTest {
         )
 
         val reviewsResponse = ReviewsResponse(
-            id = TV_SHOW_STRING_ID,
+            id = REVIEW_ID,
             page = PAGE,
             results = listOf(reviewResponse),
             totalPages = TOTAL_PAGES,
@@ -797,7 +797,7 @@ class RemoteTvShowDataSourceImplTest {
         )
 
         val reviewsResponseWithNulls = ReviewsResponse(
-            id = TV_SHOW_STRING_ID,
+            id = REVIEW_ID,
             page = PAGE,
             results = listOf(reviewResponse, reviewResponseWithNulls),
             totalPages = TOTAL_PAGES,

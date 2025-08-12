@@ -5,8 +5,8 @@ import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 
-fun MovieDetailsResponse.toDto(userRating: Double? = null): MovieDto =
-    MovieDto(
+fun MovieDetailsResponse.toDto(userRating: Double? = null): MovieDto {
+    return MovieDto(
         id = (id ?: -1L),
         title = title.orEmpty(),
         genres = genres?.mapNotNull { it.toGenreDto() }.orEmpty(),
@@ -18,9 +18,10 @@ fun MovieDetailsResponse.toDto(userRating: Double? = null): MovieDto =
         runtimeMinutes = runtime ?: 0,
         trailerURL = "",
     )
+}
 
-private fun MovieDetailsResponse.Genre.toGenreDto(): GenreDto? =
-    if (id != null && !name.isNullOrBlank()) {
+private fun MovieDetailsResponse.Genre.toGenreDto(): GenreDto? {
+    return if (id != null && !name.isNullOrBlank()) {
         GenreDto(
             id = id,
             name = name,
@@ -29,3 +30,4 @@ private fun MovieDetailsResponse.Genre.toGenreDto(): GenreDto? =
     } else {
         null
     }
+}

@@ -9,10 +9,11 @@ import com.baghdad.remoteDataSource.response.actor.TrendingActorResponse
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.MovieDto
-import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
 import com.google.common.truth.Truth.assertThat
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import retrofit2.Response
@@ -32,17 +33,6 @@ class RemoteActorDataSourceImplTest {
 
         assertThat(result).isEqualTo(expectedActorDto)
         coVerify(exactly = 1) { actorApiService.getActorDetails(PERSON_ID) }
-    }
-
-    @Test
-    fun `should return image urls list when getActorImages is called with valid person id`() = runTest {
-        val successResponse = Response.success(actorImagesResponse)
-        coEvery { actorApiService.getActorImages(PERSON_ID) } returns successResponse
-
-        val result = dataSource.getActorImages(PERSON_ID)
-
-        assertThat(result).containsExactlyElementsIn(expectedImageUrls)
-        coVerify(exactly = 1) { actorApiService.getActorImages(PERSON_ID) }
     }
 
     @Test

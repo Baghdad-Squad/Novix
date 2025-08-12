@@ -8,24 +8,26 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
 
-fun TvShowSearchResponse.toPagedTvShowDtos(genres: List<GenreDto>): PagedResultDto<TvShowDto> =
-    PagedResultDto(
+fun TvShowSearchResponse.toPagedTvShowDtos(genres: List<GenreDto>): PagedResultDto<TvShowDto> {
+    return PagedResultDto(
         data = toTvShowDtos(genres),
         nextKey = getNextKey(page, totalPages),
         prevKey = getPreviousKey(page),
     )
+}
 
-private fun TvShowSearchResponse.toTvShowDtos(genres: List<GenreDto>): List<TvShowDto> =
-    results.orEmpty().mapNotNull {
+private fun TvShowSearchResponse.toTvShowDtos(genres: List<GenreDto>): List<TvShowDto> {
+    return results.orEmpty().mapNotNull {
         it.toTvShowDtoIfValid(genres)
     }
+}
 
-private fun TvShowSearchResponse.Result?.toTvShowDtoIfValid(genres: List<GenreDto>): TvShowDto? =
-    this
+private fun TvShowSearchResponse.Result?.toTvShowDtoIfValid(genres: List<GenreDto>): TvShowDto? {
+    return this
         ?.takeIf {
             id != null
         }?.toTvShowDto(genres)
-
+}
 private fun TvShowSearchResponse.Result.toTvShowDto(
     genres: List<GenreDto>,
     numberOfSeasons: Int = 1

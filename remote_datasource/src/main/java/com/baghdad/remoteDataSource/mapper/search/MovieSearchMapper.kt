@@ -8,24 +8,26 @@ import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 
-fun MovieSearchResponse.toPagedMovieDtos(genres: List<GenreDto>): PagedResultDto<MovieDto> =
-    PagedResultDto(
+fun MovieSearchResponse.toPagedMovieDtos(genres: List<GenreDto>): PagedResultDto<MovieDto> {
+    return PagedResultDto(
         data = toMovieDtos(genres),
         nextKey = getNextKey(page, totalPages),
         prevKey = getPreviousKey(page),
     )
+}
 
-private fun MovieSearchResponse.toMovieDtos(genres: List<GenreDto>): List<MovieDto> =
-    results.orEmpty().mapNotNull {
+private fun MovieSearchResponse.toMovieDtos(genres: List<GenreDto>): List<MovieDto> {
+    return results.orEmpty().mapNotNull {
         it.toMovieDtoIfValid(genres)
     }
+}
 
-private fun MovieSearchResponse.Result?.toMovieDtoIfValid(genres: List<GenreDto>): MovieDto? =
-    this
+private fun MovieSearchResponse.Result?.toMovieDtoIfValid(genres: List<GenreDto>): MovieDto? {
+    return this
         ?.takeIf {
             id != null
         }?.toMovieDto(genres)
-
+}
 private fun MovieSearchResponse.Result.toMovieDto(
     genres: List<GenreDto>,
     userRating: Double? = null,

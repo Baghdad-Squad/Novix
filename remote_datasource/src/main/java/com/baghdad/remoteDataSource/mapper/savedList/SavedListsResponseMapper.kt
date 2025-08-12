@@ -14,11 +14,14 @@ fun UserListsResponse.toPagedSavedListsDtos(): PagedResultDto<SavedListDto> {
     )
 }
 
-private fun UserListsResponse.toSavedListDtos(): List<SavedListDto> = results.orEmpty().map { it.toSavedListDto() }
+private fun UserListsResponse.toSavedListDtos(): List<SavedListDto> {
+    return results.orEmpty().map { it.toSavedListDto() }
+}
 
-private fun UserListsResponse.UserListDto.toSavedListDto(): SavedListDto =
-    SavedListDto(
-        id = id ?: 0L,
+private fun UserListsResponse.UserListDto.toSavedListDto(): SavedListDto {
+    return SavedListDto(
+        id = id ?: -1L,
         name = name.orEmpty(),
         itemCount = itemCount ?: 0,
     )
+}

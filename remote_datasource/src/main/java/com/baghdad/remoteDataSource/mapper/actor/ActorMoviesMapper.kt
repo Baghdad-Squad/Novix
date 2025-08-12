@@ -4,10 +4,12 @@ import com.baghdad.remoteDataSource.response.actor.ActorMoviesResponse
 import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.repository.model.MovieDto
 
-fun ActorMoviesResponse.toMovieDtoList(): List<MovieDto> = cast?.filter { it?.id != null }?.map { it.toDto() }.orEmpty()
+fun ActorMoviesResponse.toMovieDtoList(): List<MovieDto> {
+    return cast?.filter { it?.id != null }?.map { it.toDto() }.orEmpty()
+}
 
-private fun ActorMoviesResponse.ActorMovieDto.toDto(): MovieDto =
-    MovieDto(
+private fun ActorMoviesResponse.ActorMovieDto.toDto(): MovieDto {
+    return MovieDto(
         id = id ?: -1L,
         title = title.orEmpty(),
         genres = emptyList(),
@@ -19,3 +21,4 @@ private fun ActorMoviesResponse.ActorMovieDto.toDto(): MovieDto =
         runtimeMinutes = 0,
         trailerURL = ""
     )
+}

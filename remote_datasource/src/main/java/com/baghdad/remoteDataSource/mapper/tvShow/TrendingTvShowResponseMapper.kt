@@ -17,12 +17,16 @@ fun TrendingTvShowsResponse.toPagedTvShowDtos(): PagedResultDto<TvShowDto> {
     )
 }
 
-private fun TrendingTvShowsResponse.toTvShowDtos(): List<TvShowDto> = results.orEmpty().mapNotNull { it.toTvShowDtoIfValid() }
+private fun TrendingTvShowsResponse.toTvShowDtos(): List<TvShowDto> {
+    return results.orEmpty().mapNotNull { it.toTvShowDtoIfValid() }
+}
 
-private fun TrendingTvShow?.toTvShowDtoIfValid(): TvShowDto? = this?.takeIf { id != null }?.toTvShowDto()
+private fun TrendingTvShow?.toTvShowDtoIfValid(): TvShowDto? {
+    return this?.takeIf { id != null }?.toTvShowDto()
+}
 
-private fun TrendingTvShow.toTvShowDto(): TvShowDto =
-    TvShowDto(
+private fun TrendingTvShow.toTvShowDto(): TvShowDto {
+    return TvShowDto(
         id = id ?: 0L,
         title = name.orEmpty(),
         genres = genreIds.toTvShowGenreDtos(),
@@ -35,6 +39,7 @@ private fun TrendingTvShow.toTvShowDto(): TvShowDto =
         headerImagesURLs = emptyList(),
         numberOfSeasons = 0
     )
+}
 
 private fun List<Long?>?.toTvShowGenreDtos(): List<GenreDto> =
     this
