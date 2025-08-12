@@ -15,9 +15,7 @@ fun MovieDto.toEntity(): Movie =
         genres = genres.map { it.toEntity() },
         averageRating = imdbRating,
         userRating = userRating,
-        releaseDate =
-            releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
-                ?: LocalDate(1990, 1, 1),
+        releaseDate = releaseDate.toLocalDateOrDefault(),
         overview = overview,
         posterImageURL = posterPictureURL,
         trailerURL = trailerURL,
@@ -29,23 +27,9 @@ fun MovieDto.toSavableMovie(
     listId: Long? = null,
 ): SavableMovie =
     SavableMovie(
-        movie =
-            Movie(
-                id = id,
-                title = title,
-                genres = genres.map { it.toEntity() },
-                averageRating = imdbRating,
-                userRating = userRating,
-                releaseDate =
-                    releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
-                        ?: LocalDate(1990, 1, 1),
-                overview = overview,
-                posterImageURL = posterPictureURL,
-                trailerURL = trailerURL,
-                runtimeMinutes = runtimeMinutes,
-            ),
+        movie = toEntity(),
         isSaved = isSaved,
-        listId = listId,
+        listId = listId
     )
 
 fun Movie.toDto(): MovieDto =
@@ -78,3 +62,13 @@ fun MovieDto.toMedia(): RatedMedia{
         contentType = RatedMedia.ContentType.MOVIE
     )
 }
+
+/**
+ * note: here we use typealias cuz the type string is not always format like a date
+ */
+typealias DateString = String
+
+private fun DateString?.toLocalDateOrDefault(): LocalDate =
+    this?.takeIf { it.isNotBlank() }
+        ?.let { LocalDate.parse(it) }
+        ?: LocalDate(1990, 1, 1)
