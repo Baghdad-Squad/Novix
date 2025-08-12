@@ -1,11 +1,14 @@
 package com.baghdad.repository.dummyData
 
+import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
+import com.baghdad.entity.media.Movie
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
+import com.baghdad.repository.model.ContinueWatchingDto
 import com.baghdad.repository.model.EpisodeDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
@@ -13,7 +16,6 @@ import com.baghdad.repository.model.TvShowDto
 import kotlinx.datetime.LocalDate
 
 object DummyDataFactory {
-
     fun createMockActorDto() = ActorDto(
         id = 789L,
         name = "Test Actor",
@@ -122,6 +124,19 @@ object DummyDataFactory {
             )
         )
 
+    fun createMockMovie() = Movie(
+        id = 456L,
+        title = "Test Movie",
+        genres = listOf(createMockGenre(28L, "Action")),
+        averageRating = 8.0,
+        userRating = 7.5,
+        releaseDate = LocalDate.parse("2023-01-01"),
+        overview = "Test movie overview",
+        posterImageURL = "/movie_poster.jpg",
+        runtimeMinutes = 120,
+        trailerURL = " "
+    )
+
     fun createMockMovieDto() =
         listOf(
             MovieDto(
@@ -155,4 +170,36 @@ object DummyDataFactory {
                 runtimeMinutes = 150
             )
         )
+    fun createMockContinueWatchingDto(
+            contentId: Long = 123L,
+            genreIds: List<Long> = listOf(28L, 12L),
+            contentImageUrl: String = "/content_image.jpg",
+            contentType: ContinueWatchingDto.ContentType = ContinueWatchingDto.ContentType.MOVIE,
+            userId: Long = 123L,
+        ) = ContinueWatchingDto(
+            contentId = contentId,
+            genreIds = genreIds,
+            contentImageUrl = contentImageUrl,
+            contentType = contentType,
+            userId = userId,
+        )
+
+         fun createMockContinueWatching(
+            contentId: Long = 123L,
+            genreIds: List<Long> = listOf(28L, 12L),
+            contentImageUrl: String = "/content_image.jpg",
+            contentType: ContinueWatching.ContentType = ContinueWatching.ContentType.MOVIE,
+            userId: Long = 123L,
+            isSaved: Boolean = true,
+            listId: Long? = 7
+        ) = ContinueWatching(
+            contentId = contentId,
+            genreIds = genreIds,
+            contentImageUrl = contentImageUrl,
+            contentType = contentType,
+            userId = userId,
+            isSaved = isSaved,
+            listId = listId,
+        )
+
 }
