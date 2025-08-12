@@ -26,15 +26,31 @@ class LocalContinueWatchingDataSourceImpl @Inject constructor(
             continueWatchingDao.upsertContinueWatching(continueWatching.toLocalDto())
         }
 
-    override suspend fun getContinueWatching(
+    override suspend fun getPagedContinueWatchingMovies(
         userId: Long,
         pageSize: Int,
-        page: Int,
+        page: Int
     ): List<ContinueWatchingDto> {
         val pageOffset = calculatePageOffset(pageSize, page)
         return executeWithErrorHandling(logger = logger) {
             continueWatchingDao
-                .getContinueWatching(
+                .getPagedContinueWatchingMovies(
+                    userId,
+                    pageSize = pageSize,
+                    offset = pageOffset,
+                ).map { it.toDto() }
+        }
+    }
+
+    override suspend fun getPagedContinueWatchingTvShows(
+        userId: Long,
+        pageSize: Int,
+        page: Int
+    ): List<ContinueWatchingDto> {
+        val pageOffset = calculatePageOffset(pageSize, page)
+        return executeWithErrorHandling(logger = logger) {
+            continueWatchingDao
+                .getPagedContinueWatchingTvShows(
                     userId,
                     pageSize = pageSize,
                     offset = pageOffset,

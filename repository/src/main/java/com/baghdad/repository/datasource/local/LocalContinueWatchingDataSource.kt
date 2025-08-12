@@ -6,7 +6,13 @@ import kotlinx.coroutines.flow.Flow
 interface LocalContinueWatchingDataSource {
     suspend fun addContinueWatching(continueWatching: ContinueWatchingDto)
 
-    suspend fun getContinueWatching(
+    suspend fun getPagedContinueWatchingMovies(
+        userId: Long,
+        pageSize: Int,
+        page: Int,
+    ): List<ContinueWatchingDto>
+
+    suspend fun getPagedContinueWatchingTvShows(
         userId: Long,
         pageSize: Int,
         page: Int,
@@ -15,5 +21,6 @@ interface LocalContinueWatchingDataSource {
     fun observeContinueWatching(userId: Long): Flow<List<ContinueWatchingDto>>
 
     fun getAllContinueWatchingMovies(userId: Long): Flow<List<ContinueWatchingDto>>
+
     fun getAllContinueWatchingTvShows(userId: Long): Flow<List<ContinueWatchingDto>>
 }

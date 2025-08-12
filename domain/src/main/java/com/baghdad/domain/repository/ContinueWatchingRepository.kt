@@ -2,10 +2,16 @@ package com.baghdad.domain.repository
 
 import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.domain.model.PagedResult
+import com.baghdad.entity.media.Genre
 import kotlinx.coroutines.flow.Flow
 
 interface ContinueWatchingRepository {
-    suspend fun getContinueWatching(
+    suspend fun getPagedMovies(
+        page: Int,
+        pageSize: Int,
+    ): PagedResult<ContinueWatching>
+
+    suspend fun getPagedTvShows(
         page: Int,
         pageSize: Int,
     ): PagedResult<ContinueWatching>
@@ -19,6 +25,6 @@ interface ContinueWatchingRepository {
         contentType: ContinueWatching.ContentType,
     )
 
-    suspend fun getAllContinueWatchingMovies(): Flow<List<ContinueWatching>>
-    suspend fun getAllContinueWatchingTvShows(): Flow<List<ContinueWatching>>
+    suspend fun getUsedMovieGenres(): Flow<List<Genre>>
+    suspend fun getUsedTvShowGenres(): Flow<List<Genre>>
 }
