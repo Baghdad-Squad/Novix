@@ -113,14 +113,18 @@ object FakeHomeScreenData {
             genreIds = listOf(1, 2, 3, 4),
             contentImageUrl = "urlTest",
             contentType = ContinueWatching.ContentType.MOVIE,
-            userId = 5
+            userId = 5,
+            isSaved = false,
+            listId = null
         ),
         ContinueWatching(
             contentId = 6,
             genreIds = listOf(1, 2, 3, 4, 5),
             contentImageUrl = "urlTest2",
             contentType = ContinueWatching.ContentType.MOVIE,
-            userId = 6
+            userId = 6,
+            isSaved = false,
+            listId = null
         )
     )
 

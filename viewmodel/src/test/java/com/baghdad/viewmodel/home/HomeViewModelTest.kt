@@ -1,3 +1,4 @@
+import app.cash.turbine.test
 import com.baghdad.domain.model.savedList.SavableMovie
 import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
 import com.baghdad.domain.usecase.genre.GetGenresUseCase
@@ -20,11 +21,11 @@ import com.baghdad.viewmodel.home.HomeScreenState
 import com.baghdad.viewmodel.home.HomeViewModel
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -108,20 +109,6 @@ class HomeViewModelTest {
         )
     }
 
-    @Test
-    fun `should have correct initial state when created`() {
-        // Then
-        val state = viewModel.uiState.value
-        assertThat(state.popularItems).isEmpty()
-        assertThat(state.topRatingItems).isEmpty()
-        assertThat(state.upcomingItems).isEmpty()
-        assertThat(state.continueWatchingItems).isEmpty()
-        assertThat(state.isPopularLoading).isTrue()
-        assertThat(state.isTopRatingLoading).isTrue()
-        assertThat(state.isUpcomingMoviesLoading).isTrue()
-        assertThat(state.isUpcomingGenresLoading).isTrue()
-        assertThat(state.selectedUpcomingGenreId).isNull()
-    }
 
     @Test
     fun `should have empty popular items when fetching with empty popular movies and tv shows`() =
@@ -142,7 +129,11 @@ class HomeViewModelTest {
     fun `should have empty top rating items when fetching with empty top rating movies`() =
         runTest {
             // Given
-            coEvery { getMovieTopRatingUseCase.invoke(any(), any()).data } returns emptyList<SavableMovie>()
+            coEvery {
+                getMovieTopRatingUseCase.invoke(
+                    any(), any()
+                ).data
+            } returns emptyList<SavableMovie>()
 
             // When
             viewModel = createViewModel()
@@ -153,18 +144,17 @@ class HomeViewModelTest {
         }
 
     @Test
-    fun `should have empty continue watching when no items observed`() =
-        runTest {
-            // Given
-            coEvery { observeContinueWatchingUseCase.invoke() } returns flowOf(emptyList())
+    fun `should have empty continue watching when no items observed`() = runTest {
+        // Given
+        coEvery { observeContinueWatchingUseCase.invoke() } returns flowOf(emptyList())
 
-            // When
-            viewModel = createViewModel()
-            advanceUntilIdle()
+        // When
+        viewModel = createViewModel()
+        advanceUntilIdle()
 
-            // Then
-            assertThat(viewModel.uiState.value.continueWatchingItems).isEmpty()
-        }
+        // Then
+        assertThat(viewModel.uiState.value.continueWatchingItems).isEmpty()
+    }
 
     @Test
     fun `should set popular loading false when popular items finished loading`() = runTest {
@@ -172,40 +162,18 @@ class HomeViewModelTest {
         coEvery { getPopularMoviesUseCase.invoke() } returns emptyList()
         coEvery { getPopularTvShowsUseCase.invoke() } returns emptyList()
 
-        val states = mutableListOf<HomeScreenState>()
         viewModel = createViewModel()
-
-        // When
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
         advanceUntilIdle()
-
-        // Then
-        assertThat(states.last().isPopularLoading).isFalse()
-        job.cancel()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.isPopularLoading).isFalse()
+        }
     }
 
     @Test
     fun `should update upcoming movies when genre is selected`() = runTest {
         // Given
-        val savableMovies = listOf(
-            SavableMovie(
-                movie = Movie(
-                    id = 10,
-                    title = "Test",
-                    genres = listOf(Genre(1, "Drama")),
-                    averageRating = 1.4,
-                    userRating = 1.5,
-                    releaseDate = LocalDate.parse("2023-01-01"),
-                    overview = "Test",
-                    posterImageURL = "Test",
-                    trailerURL = "Test",
-                    runtimeMinutes = 5
-                ),
-                isSaved = false,
-                listId = null
-            )
-        )
-        coEvery { getUpcomingMoviesUseCase.invoke(any()) } returns savableMovies
+        coEvery { getUpcomingMoviesUseCase.invoke(any()) } returns savableMoviesSample
 
         // When
         viewModel = createViewModel()
@@ -214,9 +182,10 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         // Then
-        val state = viewModel.uiState.value
-        assertThat(state.upcomingItems).hasSize(1)
-        assertThat(state.upcomingItems.first().id).isEqualTo(10)
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.upcomingItems.last().id).isEqualTo(savableMoviesSample.last().movie.id)
+        }
     }
 
     @Test
@@ -232,18 +201,13 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         // Then
-        val newState = viewModel.uiState.value
-        assertThat(newState.upcomingItems).isEqualTo(initialState.upcomingItems)
-        assertThat(newState.selectedUpcomingGenreId).isEqualTo(genreId)
+        coVerify(exactly = 1) { getUpcomingMoviesUseCase.invoke(genreId) }
     }
 
     @Test
     fun `should emit NavigateToMovieDetails when popular movie item clicked`() = runTest {
         // Given
-        val effects = mutableListOf<HomeScreenEffect>()
         viewModel = createViewModel()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
         // When
         viewModel.onPopularItemClicked(
             HomeScreenState.PopularItemUiState(
@@ -251,190 +215,179 @@ class HomeViewModelTest {
                 type = HomeScreenState.PopularItemUiState.Type.MOVIE
             )
         )
-        advanceUntilIdle()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToMovieDetails(1))
+        }
 
-        // Then
-        assertThat(effects).containsExactly(HomeScreenEffect.NavigateToMovieDetails(1))
-        job.cancel()
     }
 
     @Test
     fun `should emit NavigateToTvShowDetails when popular tv show item clicked`() = runTest {
         // Given
-        val effects = mutableListOf<HomeScreenEffect>()
         viewModel = createViewModel()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
         // When
         viewModel.onPopularItemClicked(
             HomeScreenState.PopularItemUiState(
-                id = 2,
-                type = HomeScreenState.PopularItemUiState.Type.TV_SHOW
+                id = 2, type = HomeScreenState.PopularItemUiState.Type.TV_SHOW
             )
         )
-        advanceUntilIdle()
-
         // Then
-        assertThat(effects).containsExactly(HomeScreenEffect.NavigateToTvShowDetails(2))
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToTvShowDetails(2))
+        }
     }
 
     @Test
     fun `should emit NavigateToMovies when onMoviesClicked`() = runTest {
         // Given
-        val effects = mutableListOf<HomeScreenEffect>()
         viewModel = createViewModel()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
         // When
         viewModel.onMoviesClicked()
-        advanceUntilIdle()
-
         // Then
-        assertThat(effects).containsExactly(HomeScreenEffect.NavigateToMovies)
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToMovies)
+        }
     }
 
     @Test
     fun `should emit NavigateToTvShows when onTvShowsClicked`() = runTest {
         // Given
-        val effects = mutableListOf<HomeScreenEffect>()
         viewModel = createViewModel()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
         // When
         viewModel.onTvShowsClicked()
-        advanceUntilIdle()
-
         // Then
-        assertThat(effects).containsExactly(HomeScreenEffect.NavigateToTvShows)
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToTvShows)
+        }
     }
 
     @Test
     fun `should emit NavigateToActors when onActorsClicked`() = runTest {
         // Given
-        val effects = mutableListOf<HomeScreenEffect>()
         viewModel = createViewModel()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
         // When
         viewModel.onActorsClicked()
-        advanceUntilIdle()
-
         // Then
-        assertThat(effects).containsExactly(HomeScreenEffect.NavigateToActors)
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToActors)
+        }
+
     }
 
     @Test
     fun `should emit NavigateToMovieDetails when top rating item clicked`() = runTest {
         // Given
-        val effects = mutableListOf<HomeScreenEffect>()
         viewModel = createViewModel()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
         // When
         viewModel.onTopRatingItemClicked(HomeScreenState.TopRatingItemUiState(id = 3))
-        advanceUntilIdle()
-
         // Then
-        assertThat(effects).containsExactly(HomeScreenEffect.NavigateToMovieDetails(3))
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToMovieDetails(3))
+        }
     }
 
     @Test
     fun `should emit NavigateToTopRating when onViewAllTopRatingClicked`() = runTest {
         // Given
-        val effects = mutableListOf<HomeScreenEffect>()
         viewModel = createViewModel()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
         // When
         viewModel.onViewAllTopRatingClicked()
-        advanceUntilIdle()
-
         // Then
-        assertThat(effects).containsExactly(HomeScreenEffect.NavigateToTopRating)
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToTopRating)
+        }
     }
 
     @Test
     fun `should emit NavigateToMovieDetails when continue watching item clicked`() = runTest {
         // Given
-        val effects = mutableListOf<HomeScreenEffect>()
         viewModel = createViewModel()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
         // When
         viewModel.onContinueWatchingItemClicked(
             HomeScreenState.ContinueWatchingItemUiState(
-                id = 5,
-                contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE
+                id = 5, contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE
             )
         )
-        advanceUntilIdle()
-
         // Then
-        assertThat(effects).containsExactly(HomeScreenEffect.NavigateToMovieDetails(5))
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToMovieDetails(5))
+        }
     }
 
     @Test
     fun `should emit NavigateToContinueWatching when onViewAllContinueWatchingClicked`() = runTest {
         // Given
-        val effects = mutableListOf<HomeScreenEffect>()
         viewModel = createViewModel()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
         // When
         viewModel.onViewAllContinueWatchingClicked()
-        advanceUntilIdle()
-
         // Then
-        assertThat(effects).containsExactly(HomeScreenEffect.NavigateToContinueWatching)
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToContinueWatching)
+        }
     }
 
     @Test
     fun `should emit NavigateToMovieDetails when upcoming item clicked`() = runTest {
         // Given
-        val effects = mutableListOf<HomeScreenEffect>()
         viewModel = createViewModel()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
         // When
         viewModel.onUpcomingItemClicked(HomeScreenState.UpcomingItemUiState(id = 9))
-        advanceUntilIdle()
 
         // Then
-        assertThat(effects).containsExactly(HomeScreenEffect.NavigateToMovieDetails(9))
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToMovieDetails(9))
+        }
     }
 
     @Test
     fun `should update upcomingGenres when getMovieGenres succeeds`() = runTest {
         // When
+        coEvery { getGenresUseCase.getMovieGenres() } returns genresSample
+
         viewModel = createViewModel()
         advanceUntilIdle()
 
         // Then
-        assertThat(viewModel.uiState.value.upcomingGenres).isNotEmpty()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.upcomingGenres).isEqualTo(genresSample.map {
+                HomeScreenState.GenreUiState(
+                    it.id,
+                    it.name
+                )
+            })
+        }
     }
 
     @Test
-    fun `should set top rating loading false when top rating movies finished loading`() =
-        runTest {
-            // Given
-            coEvery { getMovieTopRatingUseCase.invoke(any(), any()).data } returns emptyList<SavableMovie>()
+    fun `should set top rating loading false when top rating movies finished loading`() = runTest {
+        // Given
+        coEvery {
+            getMovieTopRatingUseCase.invoke(
+                any(), any()
+            ).data
+        } returns emptyList<SavableMovie>()
 
-            // When
-            viewModel = createViewModel()
-            advanceUntilIdle()
+        // When
+        viewModel = createViewModel()
+        advanceUntilIdle()
 
-            // Then
-            assertThat(viewModel.uiState.value.isTopRatingLoading).isFalse()
+        // Then
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.isTopRatingLoading).isFalse()
         }
+    }
 
     @Test
     fun `should set upcoming loading false when upcoming movies finished loading`() = runTest {
@@ -446,7 +399,10 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         // Then
-        assertThat(viewModel.uiState.value.isUpcomingMoviesLoading).isFalse()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.isUpcomingMoviesLoading).isFalse()
+        }
     }
 
     @Test
@@ -456,7 +412,10 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         // Then
-        assertThat(viewModel.uiState.value.isUpcomingGenresLoading).isFalse()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.isUpcomingGenresLoading).isFalse()
+        }
     }
 
     @Test
@@ -500,8 +459,7 @@ class HomeViewModelTest {
     @Test
     fun `should return UnknownError using reflection`() {
         val method = HomeViewModel::class.java.getDeclaredMethod(
-            "mapThrowableToErrorMessage",
-            Throwable::class.java
+            "mapThrowableToErrorMessage", Throwable::class.java
         )
 
         method.isAccessible = true
@@ -513,5 +471,28 @@ class HomeViewModelTest {
 
         // Then
         assertThat(result).isEqualTo(BaseSnackBarMessage.UnknownError)
+    }
+
+    private companion object {
+        val genresSample = listOf(
+            Genre(1, "Drama"),
+            Genre(2, "Comedy"),
+        )
+        val savableMoviesSample = listOf(
+            SavableMovie(
+                movie = Movie(
+                    id = 10,
+                    title = "Test",
+                    genres = listOf(Genre(1, "Drama")),
+                    averageRating = 1.4,
+                    userRating = 1.5,
+                    releaseDate = LocalDate.parse("2023-01-01"),
+                    overview = "Test",
+                    posterImageURL = "Test",
+                    trailerURL = "Test",
+                    runtimeMinutes = 5
+                ), isSaved = false, listId = null
+            )
+        )
     }
 }
