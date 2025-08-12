@@ -21,15 +21,16 @@ class ActorRepositoryImpl @Inject constructor(
 ) : ActorRepository {
     override suspend fun getActorInfo(actorId: Long): Actor {
         return executeSafely {
-            remoteActorDataSource.getActorDetails(actorId).toEntity().copy(
-                headerPictures = remoteActorDataSource.getActorImages(actorId).take(3)
+
+            remoteActorDataSource.getActorDetails(personId = actorId).toEntity().copy(
+                headerPictures = remoteActorDataSource.getActorImages(personId = actorId)
             )
         }
 
     }
 
-    override suspend fun getActorMovies(actorId: Long): List<SavableMovie> =
-        executeSafely {
+    override suspend fun getActorMovies(actorId: Long): List<SavableMovie> {
+        return executeSafely {
             val savedMovies = savableMovieDataSource.getSavedMovies()
             remoteActorDataSource.getActorMovies(actorId).map {
                 it.toSavableMovie(
@@ -38,22 +39,23 @@ class ActorRepositoryImpl @Inject constructor(
                 )
             }
         }
+    }
 
     override suspend fun getActorTvShows(actorId: Long): List<TvShow> {
         return executeSafely {
-            remoteActorDataSource.getActorTvShows(actorId).map { it.toEntity() }
+            remoteActorDataSource.getActorTvShows(personId = actorId).map { it.toEntity() }
         }
     }
 
     override suspend fun getActorGallery(actorId: Long): List<String> {
         return executeSafely {
-            remoteActorDataSource.getActorImages(actorId)
+            remoteActorDataSource.getActorImages(personId = actorId)
         }
     }
 
     override suspend fun getTrendingActors(page: Int): PagedResult<Actor> {
         return executeSafely {
-            remoteActorDataSource.getTrendingActors(page).toPagedResult {
+            remoteActorDataSource.getTrendingActors(page = page).toPagedResult {
                 it.toEntity()
             }
         }
