@@ -1,6 +1,6 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.repository.model.PagedResultDto
 
 fun <DTO, ENTITY> PagedResultDto<DTO>.toPagedResult(

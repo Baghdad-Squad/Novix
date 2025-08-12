@@ -1,7 +1,7 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
@@ -27,7 +27,7 @@ class ContinueWatchingRepositoryImpl
         override suspend fun getContinueWatching(
             page: Int,
             pageSize: Int,
-        ): PagedResult<ContinueWatching> {
+        ): PagedResult<UserWatchedMedia> {
             authenticationRepository.getLoggedInUser()?.let {
                 val savedMovies = savableMovieDataSource.getSavedMovies()
                 return getLocalPagedSafely(
@@ -51,7 +51,7 @@ class ContinueWatchingRepositoryImpl
             return PagedResult(emptyList(), 0, 0)
         }
 
-        override suspend fun observeContinueWatching(): Flow<List<ContinueWatching>> {
+        override suspend fun observeContinueWatching(): Flow<List<UserWatchedMedia>> {
             authenticationRepository.getLoggedInUser()?.let {
                 val savedMovies = savableMovieDataSource.getSavedMovies()
                 return localContinueWatchingDataSource
@@ -72,12 +72,12 @@ class ContinueWatchingRepositoryImpl
             contentId: Long,
             genreIds: List<Long>,
             contentImageUrl: String,
-            contentType: ContinueWatching.ContentType,
+            contentType: UserWatchedMedia.ContentType,
         ) {
             executeSafely {
                 val userId = authenticationRepository.getLoggedInUser()?.id ?: return@executeSafely
-                val continueWatching =
-                    ContinueWatching(
+                val userWatchedMedia =
+                    UserWatchedMedia(
                         contentId = contentId,
                         genreIds = genreIds,
                         contentImageUrl = contentImageUrl,
@@ -86,11 +86,11 @@ class ContinueWatchingRepositoryImpl
                         isSaved = false,
                         listId = null,
                     )
-                localContinueWatchingDataSource.addContinueWatching(continueWatching.toDto())
+                localContinueWatchingDataSource.addContinueWatching(userWatchedMedia.toDto())
             }
         }
 
-        override suspend fun getAllContinueWatchingMovies(): Flow<List<ContinueWatching>> {
+        override suspend fun getAllContinueWatchingMovies(): Flow<List<UserWatchedMedia>> {
             authenticationRepository.getLoggedInUser()?.let {
                 val savedMovies = savableMovieDataSource.getSavedMovies()
                 return localContinueWatchingDataSource
@@ -107,7 +107,7 @@ class ContinueWatchingRepositoryImpl
             return flowOf(emptyList())
         }
 
-        override suspend fun getAllContinueWatchingTvShows(): Flow<List<ContinueWatching>> {
+        override suspend fun getAllContinueWatchingTvShows(): Flow<List<UserWatchedMedia>> {
             authenticationRepository.getLoggedInUser()?.let {
                 val savedMovies = savableMovieDataSource.getSavedMovies()
                 return localContinueWatchingDataSource

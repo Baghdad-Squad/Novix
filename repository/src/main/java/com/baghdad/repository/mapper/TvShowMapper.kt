@@ -1,6 +1,6 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.domain.model.RatedMedia
+import com.baghdad.domain.model.userRating.RatedMedia
 import com.baghdad.entity.media.TvShow
 import com.baghdad.repository.model.SearchQueryDto
 import com.baghdad.repository.model.TvShowDto

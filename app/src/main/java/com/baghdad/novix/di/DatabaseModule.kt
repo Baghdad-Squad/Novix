@@ -2,11 +2,11 @@ package com.baghdad.novix.di
 
 import android.content.Context
 import androidx.room.Room
-import com.baghdad.local_datasource.roomDB.dao.ContinueWatchingDao
-import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
-import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
-import com.baghdad.local_datasource.roomDB.dao.SavedListMovieDao
-import com.baghdad.local_datasource.roomDB.database.NovixDatabase
+import com.baghdad.localDatasource.roomDB.dao.ContinueWatchingDao
+import com.baghdad.localDatasource.roomDB.dao.RecentSearchDao
+import com.baghdad.localDatasource.roomDB.dao.RecentlyViewedDao
+import com.baghdad.localDatasource.roomDB.dao.SavedListMovieDao
+import com.baghdad.localDatasource.roomDB.database.NovixDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

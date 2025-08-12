@@ -1,7 +1,7 @@
 package com.baghdad.viewmodel.home
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.util.roundToFirstDecimal
@@ -12,7 +12,7 @@ fun Genre.toUiState(): HomeScreenState.GenreUiState =
         name = name,
     )
 
-fun ContinueWatching.toUiState(): HomeScreenState.ContinueWatchingItemUiState =
+fun UserWatchedMedia.toUiState(): HomeScreenState.ContinueWatchingItemUiState =
     HomeScreenState.ContinueWatchingItemUiState(
         id = contentId,
         imageUrl = contentImageUrl,
@@ -21,7 +21,7 @@ fun ContinueWatching.toUiState(): HomeScreenState.ContinueWatchingItemUiState =
         contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.valueOf(contentType.name),
     )
 
-fun SavableMovie.toPopularItemUiState(): HomeScreenState.PopularItemUiState =
+fun SavedMovie.toPopularItemUiState(): HomeScreenState.PopularItemUiState =
     HomeScreenState.PopularItemUiState(
         id = movie.id,
         name = movie.title,
@@ -42,7 +42,7 @@ fun TvShow.toPopularItemUiState(): HomeScreenState.PopularItemUiState =
         type = HomeScreenState.PopularItemUiState.Type.TV_SHOW,
     )
 
-fun SavableMovie.toTopRatingItemUiState(): HomeScreenState.TopRatingItemUiState =
+fun SavedMovie.toTopRatingItemUiState(): HomeScreenState.TopRatingItemUiState =
     HomeScreenState.TopRatingItemUiState(
         id = movie.id,
         imageUrl = movie.posterImageURL,
@@ -50,7 +50,7 @@ fun SavableMovie.toTopRatingItemUiState(): HomeScreenState.TopRatingItemUiState 
         savedListId = listId ?: -1L,
     )
 
-fun SavableMovie.toUpcomingItemUiState(): HomeScreenState.UpcomingItemUiState =
+fun SavedMovie.toUpcomingItemUiState(): HomeScreenState.UpcomingItemUiState =
     HomeScreenState.UpcomingItemUiState(
         id = this.movie.id,
         imageUrl = this.movie.posterImageURL,

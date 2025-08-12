@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.baghdad.local_datasource.dataStore.user.UserSerializer
+import com.baghdad.localDatasource.serializer.UserSerializer
 import com.example.application.proto.User
 import dagger.Module
 import dagger.Provides

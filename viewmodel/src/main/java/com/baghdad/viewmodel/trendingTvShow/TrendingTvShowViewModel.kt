@@ -1,8 +1,8 @@
 package com.baghdad.viewmodel.trendingTvShow
 
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowGenresUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TrendingTvShowViewModel @Inject constructor(
     private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase,
-    private val getGenresUseCase: GetGenresUseCase,
+    private val getTvShowGenresUseCase: GetTvShowGenresUseCase,
     private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<TrendingTvShowScreenState, TrendingTvShowScreenEffect>(TrendingTvShowScreenState()),
     TrendingTvShowInteractionListener {
@@ -26,7 +26,7 @@ class TrendingTvShowViewModel @Inject constructor(
 
     private fun getTvShowGenres() {
         tryToExecute(
-            callee = { getGenresUseCase.getTvShowGenres() },
+            callee = { getTvShowGenresUseCase.getTvShowGenres() },
             onSuccess = ::handleGenreSuccess,
             onError = ::onLoadDataError,
             dispatcher = ioDispatcher,

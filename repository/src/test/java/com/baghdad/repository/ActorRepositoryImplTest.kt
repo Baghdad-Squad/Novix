@@ -44,7 +44,7 @@ class ActorRepositoryImplTest {
         coEvery { remoteActorDataSource.getActorImages(actorId) } returns mockImages
 
         // When
-        val result = actorRepositoryImpl.getActorInfo(actorId)
+        val result = actorRepositoryImpl.getActorDetails(actorId)
 
         // Then
         assertThat(expectedActor == result).isTrue()

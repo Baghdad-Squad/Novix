@@ -1,27 +1,25 @@
 package com.baghdad.novix.di
 
 import com.baghdad.domain.repository.ActorRepository
+import com.baghdad.domain.repository.AppConfigurationsRepository
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.MovieRepository
-import com.baghdad.domain.repository.OnBoardingRepository
 import com.baghdad.domain.repository.RecentlyViewedRepository
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.repository.TvShowRepository
-import com.baghdad.domain.repository.UserPreferencesRepository
 import com.baghdad.repository.ActorRepositoryImpl
+import com.baghdad.repository.AppConfigurationsRepositoryImpl
 import com.baghdad.repository.AuthenticationRepositoryImpl
 import com.baghdad.repository.ContinueWatchingRepositoryImpl
 import com.baghdad.repository.EpisodeRepositoryImpl
 import com.baghdad.repository.MovieRepositoryImpl
-import com.baghdad.repository.OnBoardingRepositoryImpl
 import com.baghdad.repository.RecentlyViewedRepositoryImpl
 import com.baghdad.repository.SavedListRepositoryImpl
 import com.baghdad.repository.SearchRepositoryImpl
 import com.baghdad.repository.TvShowRepositoryImpl
-import com.baghdad.repository.UserPreferencesRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -78,12 +76,6 @@ abstract class RepositoryModule {
     ): SavedListRepository
 
     @Binds
-    abstract fun provideOnBoardingRepository(
-        onBoardingRepository: OnBoardingRepositoryImpl
-    ): OnBoardingRepository
+    abstract fun provideUserPreferencesRepository(userPreferencesRepositoryImpl: AppConfigurationsRepositoryImpl): AppConfigurationsRepository
 
-    @Binds
-    abstract fun provideUserPreferencesRepository(
-        userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
-    ): UserPreferencesRepository
 }

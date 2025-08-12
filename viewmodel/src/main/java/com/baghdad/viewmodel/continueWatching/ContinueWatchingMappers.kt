@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.continueWatching
 
-import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.entity.media.Genre
 
 fun Genre.toContinueWatchingUiState() = ContinueWatchingState.GenreUiState(
@@ -8,7 +8,7 @@ fun Genre.toContinueWatchingUiState() = ContinueWatchingState.GenreUiState(
     name = name,
 )
 
-fun ContinueWatching.toContinueWatchingUiState() = ContinueWatchingState.ContinueWatchingMovieUiState(
+fun UserWatchedMedia.toContinueWatchingUiState() = ContinueWatchingState.ContinueWatchingMovieUiState(
     id = contentId,
     posterPictureURL = contentImageUrl,
     isSaved = isSaved,

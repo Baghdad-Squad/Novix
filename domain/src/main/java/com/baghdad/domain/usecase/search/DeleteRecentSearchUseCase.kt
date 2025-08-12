@@ -7,6 +7,6 @@ class DeleteRecentSearchUseCase @Inject constructor(
     private val searchRepository: SearchRepository
 ) {
     suspend operator fun invoke(id: Long) {
-        searchRepository.deleteRecentSearchById(id)
+        searchRepository.deleteRecentSearchById(id = id)
     }
 }
