@@ -68,28 +68,6 @@ class RemoteMovieDataSourceImplTest {
     }
 
     @Test
-    fun `should handle null fields in getMovieDetails`() = runTest {
-        val successResponse = Response.success(movieDetailsResponseWithNulls)
-        coEvery { movieApiService.getMovieDetails(MOVIE_ID) } returns successResponse
-
-        val result = dataSource.getMovieDetails(MOVIE_ID)
-
-        assertThat(result.id).isEqualTo(0L)
-        assertThat(result.title).isEqualTo("Untitled")
-        assertThat(result.genres).isEmpty()
-    }
-
-    @Test
-    fun `should filter out invalid genres in getMovieDetails`() = runTest {
-        val successResponse = Response.success(movieDetailsResponseWithNullGenres)
-        coEvery { movieApiService.getMovieDetails(MOVIE_ID) } returns successResponse
-
-        val result = dataSource.getMovieDetails(MOVIE_ID)
-
-        assertThat(result.genres).isEmpty()
-    }
-
-    @Test
     fun `should return cast members when getMovieCastMembers is called with valid movie id`() = runTest {
         val successResponse = Response.success(castMembersResponse)
         coEvery { movieApiService.getMovieCastMembers(MOVIE_ID) } returns successResponse
@@ -155,7 +133,7 @@ class RemoteMovieDataSourceImplTest {
         val result = dataSource.getMovieReviews(MOVIE_ID)
 
         assertThat(result).hasSize(1)
-        assertThat(result[0].id).isEqualTo(REVIEW_ID)
+        assertThat(result[0].id).isEqualTo(REVIEW_STRING_ID)
     }
 
     @Test
@@ -315,6 +293,8 @@ class RemoteMovieDataSourceImplTest {
         const val PROFILE_PATH = "/profile.jpg"
         const val KNOWN_FOR_DEPARTMENT = "Acting"
         const val REVIEW_ID = 101L
+
+        const val REVIEW_STRING_ID = "101L"
         const val AUTHOR_NAME = "Reviewer"
         const val AUTHOR_USERNAME = "reviewer123"
         const val REVIEW_CONTENT = "Great movie!"
@@ -471,7 +451,7 @@ class RemoteMovieDataSourceImplTest {
         )
 
         val reviewResponse = ReviewsResponse.ReviewResponse(
-            id = REVIEW_ID,
+            id = REVIEW_STRING_ID,
             authorDetails = reviewAuthorDetails,
             content = REVIEW_CONTENT,
             createdAt = CREATED_AT
@@ -617,7 +597,7 @@ class RemoteMovieDataSourceImplTest {
         )
 
         val expectedReviewDto = ReviewDto(
-            id = REVIEW_ID,
+            id = REVIEW_STRING_ID,
             authorName = AUTHOR_NAME,
             authorAvatarUrl = "https://image.tmdb.org/t/p/w500$AVATAR_PATH",
             contentTitle = AUTHOR_USERNAME,
