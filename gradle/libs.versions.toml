@@ -29,6 +29,7 @@ mockk = "1.14.2"
 mockwebserver = "4.12.0"
 okhttp = "4.10.0"
 pagingCompose = "3.4.0-alpha01"
+pagingRuntime = "3.3.6"
 protobufJavalite = "3.21.7"
 protobufKotlinLite = "3.21.11"
 readMoreVersion = "1.6.3"
@@ -68,6 +69,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
+androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "pagingRuntime" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
 mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
