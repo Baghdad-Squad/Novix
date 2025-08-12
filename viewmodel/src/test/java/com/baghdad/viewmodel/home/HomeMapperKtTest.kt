@@ -1,8 +1,8 @@
 package com.baghdad.viewmodel.home
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.ContinueWatching.ContentType
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia.ContentType
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow

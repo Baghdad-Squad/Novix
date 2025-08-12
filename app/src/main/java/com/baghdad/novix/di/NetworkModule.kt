@@ -1,10 +1,13 @@
 package com.baghdad.novix.di
 
 import android.content.Context
-import com.baghdad.local_datasource.language.AppLanguageProvider
+import com.baghdad.localDatasource.language.AppLanguageProvider
 import com.baghdad.novix.BuildConfig
+import com.baghdad.remoteDataSource.interceptor.AuthenticationInterceptor
 import com.baghdad.remoteDataSource.interceptor.CacheInterceptor
-import com.baghdad.remoteDataSource.interceptor.HeadersSetupInterceptor
+import com.baghdad.remoteDataSource.interceptor.LanguageInterceptor
+import com.baghdad.repository.datasource.local.AppConfigurationDataSource
+import com.baghdad.repository.datasource.local.LocalSessionDataSource
 import com.baghdad.repository.language.LanguageProvider
 import dagger.Binds
 import dagger.Module
@@ -46,11 +49,16 @@ abstract class NetworkModule {
         }
 
         @Provides
-        fun provideHeadersSetupInterceptor(
-            languageProvider: LanguageProvider,
-            @Named("AUTHORIZATION_TOKEN") authorizationToken: String
-        ): HeadersSetupInterceptor {
-            return HeadersSetupInterceptor(languageProvider, authorizationToken)
+        fun provideAuthenticationInterceptor(
+            localSessionDataSource: LocalSessionDataSource,
+            @Named("AUTHORIZATION_TOKEN") authorizationToken: String,
+        ): AuthenticationInterceptor = AuthenticationInterceptor(authorizationToken, localSessionDataSource)
+
+        @Provides
+        fun provideLanguageInterceptor(
+            appConfigurationDataSource: AppConfigurationDataSource
+        ): LanguageInterceptor {
+            return LanguageInterceptor(appConfigurationDataSource)
         }
 
         @Provides
@@ -68,7 +76,8 @@ abstract class NetworkModule {
         @Provides
         fun provideOkHttpClient(
             loggingInterceptor: HttpLoggingInterceptor,
-            headersSetupInterceptor: HeadersSetupInterceptor,
+            authenticationInterceptor: AuthenticationInterceptor,
+            languageInterceptor: LanguageInterceptor,
             cacheInterceptor: CacheInterceptor,
             cache: Cache
         ): OkHttpClient {
@@ -79,7 +88,8 @@ abstract class NetworkModule {
                 .writeTimeout(timeOut, TimeUnit.SECONDS)
                 .cache(cache)
                 .addInterceptor(loggingInterceptor)
-                .addInterceptor(headersSetupInterceptor)
+                .addInterceptor(authenticationInterceptor)
+                .addInterceptor(languageInterceptor)
                 .addNetworkInterceptor(cacheInterceptor)
                 .build()
         }

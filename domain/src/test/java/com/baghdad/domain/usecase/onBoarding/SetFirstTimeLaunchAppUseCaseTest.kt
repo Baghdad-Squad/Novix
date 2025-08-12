@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.onBoarding
 
-import com.baghdad.domain.repository.OnBoardingRepository
+import com.baghdad.domain.usecase.appConfigurations.SetFirstTimeLaunchAppUseCase
 import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
 import io.mockk.coEvery

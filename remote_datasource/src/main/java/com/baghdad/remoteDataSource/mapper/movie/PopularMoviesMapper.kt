@@ -1,31 +1,42 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
 import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
+import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 
 fun PopularMoviesResponse.toMovieDtos(): List<MovieDto> {
-    return results?.mapNotNull { it?.takeIf { it.id != null }?.toDto() } ?: emptyList()
+    return results.orEmpty().mapNotNull { it.toMovieDtoIfValid() }
 }
 
-fun PopularMoviesResponse.Result.toDto(): MovieDto {
+private fun PopularMoviesResponse.Result?.toMovieDtoIfValid(): MovieDto? {
+    return this?.takeIf { id != null }?.toMovieDto()
+}
+
+private fun PopularMoviesResponse.Result.toMovieDto(): MovieDto {
     return MovieDto(
-        id = id ?: 0,
-        title = title ?: "",
-        genres = genreIds?.map {
-            GenreDto(
-                id = it ?: 0L,
-                name = "",
-                type = GenreDto.GenreType.MOVIE
-            )
-        } ?: emptyList(),
+        id = id ?: -1L,
+        title = title.orEmpty(),
+        genres = genreIds.toMovieGenreDtos(),
         imdbRating = voteAverage ?: 0.0,
         userRating = 0.0,
-        releaseDate = releaseDate.takeIf { !it.isNullOrEmpty() } ?: "0001-01-01",
-        overview = overview ?: "",
-        posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
+        releaseDate = releaseDate.takeUnless { it.isNullOrEmpty() } ?: "0001-01-01",
+        overview = overview.orEmpty(),
+        posterPictureURL = getImageUrlFromPath(posterPath),
         trailerURL = "",
         runtimeMinutes = 0
     )
 }
 
+private fun List<Long?>?.toMovieGenreDtos(): List<GenreDto> {
+    return this
+        ?.mapNotNull { genreId ->
+            genreId?.let {
+                GenreDto(
+                    id = it,
+                    name = "",
+                    type = GenreDto.GenreType.MOVIE,
+                )
+            }
+        }.orEmpty()
+}

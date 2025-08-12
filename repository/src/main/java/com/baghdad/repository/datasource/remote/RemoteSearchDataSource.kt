@@ -13,7 +13,6 @@ interface RemoteSearchDataSource {
         genres: List<GenreDto>
     ): PagedResultDto<MovieDto>
 
-    suspend fun getMoviesResultCount(title: String): Int
 
     suspend fun searchTvShows(
         query: String,
@@ -21,10 +20,8 @@ interface RemoteSearchDataSource {
         genres: List<GenreDto>
     ): PagedResultDto<TvShowDto>
 
-    suspend fun getTvShowsResultCount(title: String): Int
     suspend fun searchActors(
         query: String,
         page: Int
     ): PagedResultDto<ActorDto>
-    suspend fun getActorsResultCount(name: String): Int
 }

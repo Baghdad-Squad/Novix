@@ -2,7 +2,7 @@ package com.baghdad.viewmodel.savedListDetails
 
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.savedList.DeleteSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListDetailsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
@@ -48,7 +48,7 @@ class SavedListDetailsViewModel @Inject constructor(
             },
             onInitialLoadFinished = ::onFinally,
             onInitialLoadError = ::onError,
-            mapEntityToUiState = SavableMovie::toUIState,
+            mapEntityToUiState = SavedMovie::toUIState,
             onFlowCreated = { mediaFlow ->
                 updateState { it.copy(mediaFlow = mediaFlow) }
             },

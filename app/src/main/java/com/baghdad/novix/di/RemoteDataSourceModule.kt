@@ -32,15 +32,13 @@ abstract class RemoteDataSourceModule {
     abstract fun provideSearchRemoteDataSource(remoteSearchDataSourceImpl: RemoteSearchDataSourceImpl): RemoteSearchDataSource
 
     @Binds
+    abstract fun provideRemoteMovieDataSource(remoteMovieDataSourceImpl: RemoteMovieDataSourceImpl): RemoteMovieDataSource
+
+    @Binds
     abstract fun provideRemoteGenreDataSource(remoteGenreDataSourceImpl: RemoteGenreDataSourceImpl): RemoteGenreDataSource
 
     @Binds
     abstract fun provideRemoteActorDataSource(remoteActorDataSourceImpl: RemoteActorDataSourceImpl): RemoteActorDataSource
-
-
-    @Binds
-    abstract fun provideRemoteMovieDataSource(remoteMovieDataSourceImpl: RemoteMovieDataSourceImpl): RemoteMovieDataSource
-
 
     @Binds
     abstract fun provideRemoteEpisodeDataSource(remoteEpisodeDataSourceImpl: RemoteEpisodeDataSourceImpl): RemoteEpisodeDataSource

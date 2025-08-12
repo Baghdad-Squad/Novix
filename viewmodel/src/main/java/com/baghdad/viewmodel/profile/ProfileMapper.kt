@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.profile
 
-import com.baghdad.entity.User
+import com.baghdad.entity.user.User
 
 fun User.toUIState(): ProfileScreenState.User {
     return ProfileScreenState.User(

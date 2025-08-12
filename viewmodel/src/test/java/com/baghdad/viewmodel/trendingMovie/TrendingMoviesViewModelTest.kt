@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.trendingMovie
 
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
