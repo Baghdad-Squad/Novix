@@ -63,19 +63,17 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
         contentImageUrl: String,
         contentType: ContinueWatching.ContentType,
     ) {
-        return executeSafely(
-            block = {
-                val userId = getUserId() ?: return@executeSafely
-                val continueWatching = continueWatching(
-                    contentId = contentId,
-                    genreIds = genreIds,
-                    contentImageUrl = contentImageUrl,
-                    contentType = contentType,
-                    userId = userId
-                )
-                localContinueWatchingDataSource.addContinueWatching(continueWatching.toDto())
-            }
-        )
+        return executeSafely {
+            val userId = getUserId() ?: return@executeSafely
+            val continueWatching = continueWatching(
+                contentId = contentId,
+                genreIds = genreIds,
+                contentImageUrl = contentImageUrl,
+                contentType = contentType,
+                userId = userId
+            )
+            localContinueWatchingDataSource.addContinueWatching(continueWatching.toDto())
+        }
     }
 
     override suspend fun getAllContinueWatchingTvShows(): Flow<List<ContinueWatching>> {

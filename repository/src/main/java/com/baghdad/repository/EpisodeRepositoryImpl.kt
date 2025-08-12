@@ -22,16 +22,14 @@ class EpisodeRepositoryImpl @Inject constructor(
         seasonNumber: Int,
         episodeNumber: Int
     ): List<CastMember> {
-        return executeSafely(
-            block = {
-                remoteEpisodeDataSource.getEpisodeCastMembers(
-                    tvShowId = tvShowId,
-                    seasonNumber = seasonNumber,
-                    episodeNumber = episodeNumber
-                )
-                    .map { it.toEntity() }
-            }
-        )
+        return executeSafely {
+            remoteEpisodeDataSource.getEpisodeCastMembers(
+                tvShowId = tvShowId,
+                seasonNumber = seasonNumber,
+                episodeNumber = episodeNumber
+            )
+                .map { it.toEntity() }
+        }
     }
 
     override suspend fun addTvEpisodeRate(
@@ -40,16 +38,14 @@ class EpisodeRepositoryImpl @Inject constructor(
         episodeNumber: Int,
         rating: Int
     ) {
-        executeSafely(
-            block = {
-                remoteEpisodeDataSource.addEpisodeRate(
-                    tvShowId = tvShowId,
-                    seasonNumber = seasonNumber,
-                    episodeNumber = episodeNumber,
-                    rating = rating
-                )
-            }
-        )
+        executeSafely {
+            remoteEpisodeDataSource.addEpisodeRate(
+                tvShowId = tvShowId,
+                seasonNumber = seasonNumber,
+                episodeNumber = episodeNumber,
+                rating = rating
+            )
+        }
     }
 
     override suspend fun getEpisodeAccountStates(
@@ -57,15 +53,13 @@ class EpisodeRepositoryImpl @Inject constructor(
         seasonNumber: Int,
         episodeNumber: Int
     ): MediaAccountStates {
-        return executeSafely(
-            block = {
-                remoteEpisodeDataSource.getEpisodeAccountStates(
-                    tvShowId = tvShowId,
-                    seasonNumber = seasonNumber,
-                    episodeNumber = episodeNumber,
-                ).toEntity()
-            }
-        )
+        return executeSafely {
+            remoteEpisodeDataSource.getEpisodeAccountStates(
+                tvShowId = tvShowId,
+                seasonNumber = seasonNumber,
+                episodeNumber = episodeNumber,
+            ).toEntity()
+        }
     }
 
     override suspend fun getEpisodeDetails(
@@ -73,28 +67,26 @@ class EpisodeRepositoryImpl @Inject constructor(
         seasonNumber: Int,
         episodeNumber: Int
     ): Episode {
-        return executeSafely(
-            block = {
-                val trailerUrl =
-                    remoteEpisodeDataSource.getEpisodeTrailer(
-                        tvShowId = tvShowId,
-                        seasonNumber = seasonNumber,
-                        episodeNumber = episodeNumber
-                    )
-                val tvShowImages = remoteTvShowDataSource.getTvShowImages(tvShowId = tvShowId)
-                val tvShowGenres =
-                    remoteTvShowDataSource.getTvShowDetails(tvShowId = tvShowId).genres
-                remoteEpisodeDataSource.getEpisodeDetails(
+        return executeSafely {
+            val trailerUrl =
+                remoteEpisodeDataSource.getEpisodeTrailer(
                     tvShowId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber
-                ).toEntity()
-                 .copy(
-                        trailerUrl = trailerUrl,
-                        headerPictures = tvShowImages,
-                        genres = tvShowGenres.toEntities()
-                 )
-            }
-        )
+                )
+            val tvShowImages = remoteTvShowDataSource.getTvShowImages(tvShowId = tvShowId)
+            val tvShowGenres =
+                remoteTvShowDataSource.getTvShowDetails(tvShowId = tvShowId).genres
+            remoteEpisodeDataSource.getEpisodeDetails(
+                tvShowId = tvShowId,
+                seasonNumber = seasonNumber,
+                episodeNumber = episodeNumber
+            ).toEntity()
+                .copy(
+                    trailerUrl = trailerUrl,
+                    headerPictures = tvShowImages,
+                    genres = tvShowGenres.toEntities()
+                )
+        }
     }
 }

@@ -20,52 +20,42 @@ class ActorRepositoryImpl @Inject constructor(
     private val savableMovieDataSource: LocalSavableMovieDataSource,
 ) : ActorRepository {
     override suspend fun getActorInfo(actorId: Long): Actor {
-        return executeSafely(
-            block = {
-                remoteActorDataSource.getActorDetails(personId = actorId).toEntity().copy(
-                    headerPictures = remoteActorDataSource.getActorImages(personId = actorId)
-                )
-            }
-        )
+        return executeSafely {
+            remoteActorDataSource.getActorDetails(personId = actorId).toEntity().copy(
+                headerPictures = remoteActorDataSource.getActorImages(personId = actorId)
+            )
+        }
     }
 
     override suspend fun getActorMovies(actorId: Long): List<SavableMovie> {
-        return executeSafely(
-            block = {
-                val savedMovies = savableMovieDataSource.getSavedMovies()
-                remoteActorDataSource.getActorMovies(actorId).map {
-                    it.toSavableMovie(
-                        isSaved = savedMovies.containsKey(it.id),
-                        listId = savedMovies[it.id],
-                    )
-                }
+        return executeSafely {
+            val savedMovies = savableMovieDataSource.getSavedMovies()
+            remoteActorDataSource.getActorMovies(actorId).map {
+                it.toSavableMovie(
+                    isSaved = savedMovies.containsKey(it.id),
+                    listId = savedMovies[it.id],
+                )
             }
-        )
+        }
     }
 
     override suspend fun getActorTvShows(actorId: Long): List<TvShow> {
-        return executeSafely(
-            block = {
-                remoteActorDataSource.getActorTvShows(personId = actorId).map { it.toEntity() }
-            }
-        )
+        return executeSafely {
+            remoteActorDataSource.getActorTvShows(personId = actorId).map { it.toEntity() }
+        }
     }
 
     override suspend fun getActorGallery(actorId: Long): List<String> {
-        return executeSafely(
-            block = {
-                remoteActorDataSource.getActorImages(personId = actorId)
-            }
-        )
+        return executeSafely {
+            remoteActorDataSource.getActorImages(personId = actorId)
+        }
     }
 
     override suspend fun getTrendingActors(page: Int): PagedResult<Actor> {
-        return executeSafely(
-            block = {
-                remoteActorDataSource.getTrendingActors(page = page).toPagedResult {
-                    it.toEntity()
-                }
+        return executeSafely {
+            remoteActorDataSource.getTrendingActors(page = page).toPagedResult {
+                it.toEntity()
             }
-        )
+        }
     }
 }
