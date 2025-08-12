@@ -5,7 +5,6 @@ import com.baghdad.domain.model.PagedResult
 import com.baghdad.domain.model.RatedMedia
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.TvShowRepository
-import com.baghdad.entity.User
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
@@ -153,30 +152,8 @@ class TvShowRepositoryImpl @Inject constructor(
                         prevKey = null
                     )
                 },
-            ) {
-                it.toMedia()
-            }
-        }
-    }
-
-    //    authenticationRepository.getLoggedInUser()?.let {
-    //                        tvShowRemoteDataSource.getUserRatedTvShows(accountId = it.id, page)
-//                    } ?: PagedResultDto(
-//                        data = emptyList(),
-//                        nextKey = null,
-//                        prevKey = null
-//                    )
-
-    private suspend fun fetchUserRatedTvShowsPage(page: Int): PagedResultDto<RatedMedia> {
-        val user = authenticationRepository.getLoggedInUser()
-        return (if (user != null) {
-            tvShowRemoteDataSource.getUserRatedTvShows(accountId = user.id, page)
-        } else {
-            PagedResultDto(
-                data = emptyList(),
-                nextKey = null,
-                prevKey = null
+                mapToEntity = { it.toMedia() }
             )
-        }) as PagedResultDto<RatedMedia>
+        }
     }
 }
