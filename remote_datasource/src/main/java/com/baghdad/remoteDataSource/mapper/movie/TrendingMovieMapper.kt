@@ -1,36 +1,44 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
+import com.baghdad.remoteDataSource.util.getImageUrlFromPath
 import com.baghdad.remoteDataSource.util.getNextKey
 import com.baghdad.remoteDataSource.util.getPreviousKey
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 
-fun TrendingMovieResponse.toMovieDtos() =
+fun TrendingMovieResponse.toPagedMovieDtos(): PagedResultDto<MovieDto> =
     PagedResultDto(
-        data = results?.mapNotNull { it?.takeIf { it.id != null }?.toDto() } ?: emptyList(),
-        nextKey = getNextKey(page, this.totalPages),
+        data = this.toMovieDtos(),
+        nextKey = getNextKey(page, totalPages),
         prevKey = getPreviousKey(page),
     )
 
-fun TrendingMovieResponse.Result.toDto(): MovieDto =
+private fun TrendingMovieResponse.toMovieDtos(): List<MovieDto> = results.orEmpty().mapNotNull { it.toMovieDtoIfValid() }
+
+private fun TrendingMovieResponse.Result?.toMovieDtoIfValid(): MovieDto? = this?.takeIf { id != null }?.toMovieDto()
+
+private fun TrendingMovieResponse.Result.toMovieDto(): MovieDto =
     MovieDto(
-        id = id ?: 0L,
+        id = id ?: -1L,
         title = title.orEmpty(),
-        posterPictureURL = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
-        trailerURL = backdropPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
+        posterPictureURL = getImageUrlFromPath(posterPath),
+        trailerURL = getImageUrlFromPath(backdropPath),
         overview = overview.orEmpty(),
         releaseDate = releaseDate.orEmpty(),
         imdbRating = voteAverage ?: 0.0,
         runtimeMinutes = 0,
         userRating = popularity ?: 0.0,
-        genres =
-            genreIds?.map {
-                GenreDto(
-                    id = it.toLong(),
-                    name = "",
-                    type = GenreDto.GenreType.MOVIE,
-                )
-            } ?: emptyList(),
+        genres = genreIds.toMovieGenreDtos(),
     )
+
+private fun List<Long>?.toMovieGenreDtos(): List<GenreDto> =
+    this
+        ?.map { genreId ->
+            GenreDto(
+                id = genreId,
+                name = "",
+                type = GenreDto.GenreType.MOVIE,
+            )
+    }.orEmpty()
