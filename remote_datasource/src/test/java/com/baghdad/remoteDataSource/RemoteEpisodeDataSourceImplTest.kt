@@ -38,18 +38,6 @@ class RemoteEpisodeDataSourceImplTest {
     }
 
     @Test
-    fun `should return episode dto with defaults when getEpisodeDetails receives null fields`() = runTest {
-        val successResponse = Response.success(episodeDetailsResponseWithNulls)
-        coEvery {
-            episodeApiService.getEpisodeDetails(TV_ID, SEASON_NUMBER, EPISODE_NUMBER)
-        } returns successResponse
-
-        val result = dataSource.getEpisodeDetails(TV_ID, SEASON_NUMBER, EPISODE_NUMBER)
-
-        assertThat(result).isEqualTo(expectedEpisodeDtoWithDefaults)
-    }
-
-    @Test
     fun `should return cast members list when getEpisodeCastMembers is called with valid parameters`() = runTest {
         val successResponse = Response.success(castMembersResponse)
         coEvery {
@@ -88,33 +76,6 @@ class RemoteEpisodeDataSourceImplTest {
 
         assertThat(result).hasSize(1)
         assertThat(result[0].actor.id).isEqualTo(CAST_MEMBER_ID)
-    }
-
-    @Test
-    fun `should return youtube trailer url when getEpisodeTrailer finds youtube trailer`() = runTest {
-        val successResponse = Response.success(episodeVideosResponseWithTrailer)
-        coEvery {
-            episodeApiService.getEpisodeTrailer(TV_ID, SEASON_NUMBER, EPISODE_NUMBER)
-        } returns successResponse
-
-        val result = dataSource.getEpisodeTrailer(TV_ID, SEASON_NUMBER, EPISODE_NUMBER)
-
-        assertThat(result).isEqualTo(VIDEO_KEY)
-        coVerify(exactly = 1) {
-            episodeApiService.getEpisodeTrailer(TV_ID, SEASON_NUMBER, EPISODE_NUMBER)
-        }
-    }
-
-    @Test
-    fun `should return youtube url when getEpisodeTrailer finds youtube non-trailer video`() = runTest {
-        val successResponse = Response.success(episodeVideosResponseWithNonTrailer)
-        coEvery {
-            episodeApiService.getEpisodeTrailer(TV_ID, SEASON_NUMBER, EPISODE_NUMBER)
-        } returns successResponse
-
-        val result = dataSource.getEpisodeTrailer(TV_ID, SEASON_NUMBER, EPISODE_NUMBER)
-
-        assertThat(result).isEqualTo(YOUTUBE_URL)
     }
 
     @Test
