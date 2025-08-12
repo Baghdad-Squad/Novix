@@ -1,8 +1,7 @@
 package com.baghdad.viewmodel.categoryTvShows
 
 import androidx.lifecycle.SavedStateHandle
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.usecase.genre.GetGenresUseCase
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
 import com.baghdad.entity.media.Genre

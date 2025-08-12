@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.continueWatching
 
-import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -26,7 +26,7 @@ class AddContinueWatchingUseCaseTest {
         val contentId = 101L
         val genreIds = listOf(1L, 2L, 3L)
         val contentImageUrl = "https://image.tmdb.org/t/p/w500/sample.jpg"
-        val contentType = ContinueWatching.ContentType.MOVIE
+        val contentType = UserWatchedMedia.ContentType.MOVIE
 
         // When
         useCase(
@@ -53,7 +53,7 @@ class AddContinueWatchingUseCaseTest {
         val contentId = 200L
         val genreIds = listOf(5L, 8L)
         val imageUrl = "https://image.tmdb.org/t/p/w500/test.jpg"
-        val contentType = ContinueWatching.ContentType.TV_SHOW
+        val contentType = UserWatchedMedia.ContentType.TV_SHOW
 
         coEvery {
             repository.addContinueWatching(any(), any(), any(), any())

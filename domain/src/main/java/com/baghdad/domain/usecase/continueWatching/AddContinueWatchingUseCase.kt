@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.continueWatching
 
-import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import javax.inject.Inject
 
@@ -11,7 +11,7 @@ class AddContinueWatchingUseCase @Inject constructor(
         contentId: Long,
         genreIds: List<Long>,
         contentImageUrl: String,
-        contentType: ContinueWatching.ContentType
+        contentType: UserWatchedMedia.ContentType
     ) {
         continueWatchingRepository.addContinueWatching(
             contentId = contentId,

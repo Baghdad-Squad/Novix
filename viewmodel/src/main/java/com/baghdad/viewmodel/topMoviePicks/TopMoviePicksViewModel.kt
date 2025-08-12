@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.topMoviePicks
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
@@ -72,7 +72,7 @@ class TopMoviePicksViewModel @Inject constructor(
         )
     }
 
-    private fun onGetActorMoviesSuccess(movies: List<SavableMovie>) {
+    private fun onGetActorMoviesSuccess(movies: List<SavedMovie>) {
         hideSnackBar()
         updateState { topMoviePicksState ->
             topMoviePicksState.copy(movies = movies.map { it.toUIState() })

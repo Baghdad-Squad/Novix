@@ -11,5 +11,5 @@ data class Actor(
     val deathDate: LocalDate?,
     val biography: String,
     val headerPictures: List<String>,
-    val department: String,
+    val department: String
 )

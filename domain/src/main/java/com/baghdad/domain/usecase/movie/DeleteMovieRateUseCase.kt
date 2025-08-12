@@ -7,6 +7,6 @@ class DeleteMovieRateUseCase @Inject constructor(
     private val movieRepository: MovieRepository,
 ) {
     suspend operator fun invoke(movieId: Long) {
-        movieRepository.deleteMovieRate(movieId)
+        movieRepository.deleteMovieRate(movieId = movieId)
     }
 }

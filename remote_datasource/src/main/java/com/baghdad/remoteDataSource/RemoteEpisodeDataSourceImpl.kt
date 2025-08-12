@@ -1,17 +1,16 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
-import com.baghdad.remoteDataSource.mapper.actor.toDto
+import com.baghdad.remoteDataSource.mapper.castMembers.toCastMembers
 import com.baghdad.remoteDataSource.mapper.episode.mapToYoutubeTrailerUrl
 import com.baghdad.remoteDataSource.mapper.episode.toDto
-import com.baghdad.remoteDataSource.mapper.toDto
+import com.baghdad.remoteDataSource.mapper.mediaAccountStates.toDto
 import com.baghdad.remoteDataSource.request.RatingRequest
-import com.baghdad.remoteDataSource.response.CastMembersResponse
-import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
-import com.baghdad.remoteDataSource.response.RatingResponse
+import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
-import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
+import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.rate.RatingResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.logger.Logger
@@ -58,26 +57,8 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+        ).toCastMembers()
     }
-
-    override suspend fun getEpisodeImages(
-        tvId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int
-    ): List<String> {
-        return handleRequest<EpisodeImageResponse>(
-            apiCall = {
-                episodeApiService.getEpisodeImages(
-                    tvId = tvId,
-                    seasonNumber = seasonNumber,
-                    episodeNumber = episodeNumber
-                )
-            },
-            logger = logger,
-        ).stills.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
-    }
-
     override suspend fun getEpisodeTrailer(
         tvId: Long,
         seasonNumber: Int,
@@ -108,7 +89,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                     seriesId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    sessionId = sessionId,
                     rating = RatingRequest(rating)
                 )
             },
@@ -128,7 +108,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                     seriesId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    sessionId = sessionId
                 )
             },
             logger = logger

@@ -5,14 +5,14 @@ import com.baghdad.repository.model.EpisodeDto
 
 fun EpisodeDetailsResponse.toDto(): EpisodeDto {
     return EpisodeDto(
-        id = this.id.toLong(),
-        title = this.name.orEmpty(),
-        episodeNumber = this.episodeNumber,
-        rating = this.voteAverage,
-        duration = "${this.runtime}",
-        releasedDate = this.airDate,
-        currentSeason = this.seasonNumber,
-        overview = this.overview.orEmpty(),
+        id = id ?: -1L,
+        title = name.orEmpty(),
+        episodeNumber = episodeNumber,
+        rating = voteAverage,
+        duration = runtime.toString(),
+        releasedDate = airDate,
+        currentSeason = seasonNumber,
+        overview = overview.orEmpty(),
         headerPictures = emptyList(),
         trailerUrl = "",
         userRating = 0,

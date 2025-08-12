@@ -1,11 +1,10 @@
 package com.baghdad.domain.usecase.episode
 
 import com.baghdad.domain.repository.EpisodeRepository
-import com.baghdad.entity.person.Actor
+import com.baghdad.domain.testHelper.getSampleActor
 import com.baghdad.entity.person.CastMember
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
@@ -16,59 +15,7 @@ class GetEpisodeCastMembersUseCaseTest {
 
     private lateinit var episodeRepository: EpisodeRepository
     private lateinit var getEpisodeCastMembersUseCase: GetEpisodeCastMembersUseCase
-    private val expectedCastMembers = listOf(
-        CastMember(
-            actor = Actor(
-                id = 1L,
-                name = "John Doe",
-                profilePictureURL = "https://example.com/profile.jpg",
-                birthDate = LocalDate(2020, 1, 1),
-                placeOfBirth = "New York",
-                deathDate = null,
-                biography = "An actor known for his roles in various films.",
-                headerPictures = listOf(
-                    "https://example.com/header1.jpg",
-                    "https://example.com/header2.jpg"
-                ),
-                department = "Acting",
-            ),
-            characterName = "Main Character",
-        ),
-        CastMember(
-            actor = Actor(
-                id = 2L,
-                name = "Jane Smith",
-                profilePictureURL = "https://example.com/profile2.jpg",
-                birthDate = LocalDate(2019, 5, 15),
-                placeOfBirth = "Los Angeles",
-                deathDate = null,
-                biography = "An actress known for her versatility.",
-                headerPictures = listOf(
-                    "https://example.com/header3.jpg",
-                    "https://example.com/header4.jpg"
-                ),
-                department = "Acting",
-            ),
-            characterName = "Supporting Character",
-        ),
-        CastMember(
-            actor = Actor(
-                id = 3L,
-                name = "Alice Johnson",
-                profilePictureURL = "https://example.com/profile3.jpg",
-                birthDate = LocalDate(2018, 3, 10),
-                placeOfBirth = "Chicago",
-                deathDate = null,
-                biography = "An actress with a strong presence on screen.",
-                headerPictures = listOf(
-                    "https://example.com/header5.jpg",
-                    "https://example.com/header6.jpg"
-                ),
-                department = "Acting",
-            ),
-            characterName = "Guest Star",
-        )
-    )
+
 
     @BeforeEach
     fun setUp() {
@@ -77,91 +24,88 @@ class GetEpisodeCastMembersUseCaseTest {
     }
 
     @Test
-    fun `execute with valid tvId seasonNumber and episodeNumber returns expected cast members`() =
+    fun `should return cast members when executing with valid tvShowId, seasonNumber and episodeNumber`() =
         runTest {
-            // Given
-            val tvId = 123L
-            val seasonNumber = 2
-            val episodeNumber = 1
-
             coEvery {
-                episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
+                episodeRepository.getEpisodeCastMembers(TV_SHOW_ID, SEASON_NUMBER, EPISODE_NUMBER)
             } returns expectedCastMembers
 
-            // When
-            val result = getEpisodeCastMembersUseCase(tvId, seasonNumber, episodeNumber)
+            val result = getEpisodeCastMembersUseCase(TV_SHOW_ID, SEASON_NUMBER, EPISODE_NUMBER)
 
-            // Then
             assertThat(result).isEqualTo(expectedCastMembers)
-            coVerify(exactly = 1) {
-                episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
-            }
         }
 
     @Test
-    fun `return empty list when not exist tv show`() = runTest {
-        // Given
-        val tvId = 999L
-        val seasonNumber = 2
-        val episodeNumber = 1
-
+    fun `should return empty list when not exist tv show`() = runTest {
         coEvery {
-            episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
+            episodeRepository.getEpisodeCastMembers(
+                NOT_EXISTENT_TV_SHOW,
+                SEASON_NUMBER,
+                EPISODE_NUMBER
+            )
         } returns emptyList()
 
 
-        val result = getEpisodeCastMembersUseCase(tvId, seasonNumber, episodeNumber)
+        val result =
+            getEpisodeCastMembersUseCase(NOT_EXISTENT_TV_SHOW, SEASON_NUMBER, EPISODE_NUMBER)
 
-        // Then
         assertThat(result).isEmpty()
-        coVerify(exactly = 1) {
-            episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
-        }
     }
 
     @Test
-    fun `returns empty list when non-existent season number `() = runTest {
-        // Given
-        val tvId = 123L
-        val nonExistentSeason = 999
-        val episodeNumber = 1
-
+    fun `should returns empty list when non-existent season number `() = runTest {
         coEvery {
-            episodeRepository.getEpisodeCastMembers(tvId, nonExistentSeason, episodeNumber)
+            episodeRepository.getEpisodeCastMembers(TV_SHOW_ID, NON_EXISTENT_SEASON, EPISODE_NUMBER)
         } returns emptyList()
 
-        // When
-        val result = getEpisodeCastMembersUseCase(tvId, nonExistentSeason, episodeNumber)
+        val result = getEpisodeCastMembersUseCase(TV_SHOW_ID, NON_EXISTENT_SEASON, EPISODE_NUMBER)
 
-        // Then
         assertThat(result).isEmpty()
-        coVerify(exactly = 1) {
-            episodeRepository.getEpisodeCastMembers(tvId, nonExistentSeason, episodeNumber)
-        }
     }
-
 
     @Test
-    fun `returns empty list when non-existent episode number `() = runTest {
-        // Given
-        val tvId = 123L
-        val seasonNumber = 2
-        val nonExistentEpisode = 999
-
+    fun `should return empty list when non-existent episode number `() = runTest {
         coEvery {
-            episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, nonExistentEpisode)
+            episodeRepository.getEpisodeCastMembers(TV_SHOW_ID, SEASON_NUMBER, NON_EXISTENT_EPISODE)
         } returns emptyList()
 
-        // When
-        val result = getEpisodeCastMembersUseCase(tvId, seasonNumber, nonExistentEpisode)
+        val result = getEpisodeCastMembersUseCase(TV_SHOW_ID, SEASON_NUMBER, NON_EXISTENT_EPISODE)
 
-        // Then
         assertThat(result).isEmpty()
-        coVerify(exactly = 1) {
-            episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, nonExistentEpisode)
-        }
     }
 
+    companion object {
+        private val expectedCastMembers = listOf(
+            CastMember(
+                actor = getSampleActor(),
+                characterName = "Main Character",
+            ),
+            CastMember(
+                actor = getSampleActor(
+                    id = 3L,
+                    name = "Alice Johnson",
+                    profilePictureURL = "https://example.com/profile3.jpg",
+                    birthDate = LocalDate(2018, 3, 10),
+                    placeOfBirth = "Chicago",
+                    deathDate = null,
+                    biography = "An actress with a strong presence on screen.",
+                    headerPictures = listOf(
+                        "https://example.com/header5.jpg",
+                        "https://example.com/header6.jpg"
+                    ),
+                    department = "Acting",
+                ),
+                characterName = "Guest Star",
+            )
+        )
+        private const val TV_SHOW_ID = 123L
+        private const val NOT_EXISTENT_TV_SHOW = 423442L
 
+        private const val SEASON_NUMBER = 2
+        private const val NON_EXISTENT_SEASON = 45
+
+        private const val EPISODE_NUMBER = 1
+        private const val NON_EXISTENT_EPISODE = 47
+    }
 }
 

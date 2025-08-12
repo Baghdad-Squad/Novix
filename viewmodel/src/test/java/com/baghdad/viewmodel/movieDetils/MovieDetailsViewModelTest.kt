@@ -2,7 +2,6 @@ package com.baghdad.viewmodel.movieDetils
 
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
