@@ -54,11 +54,10 @@ class RemoteTvShowDataSourceImplTest {
     fun `should handle null values when getTvShowDetails is called`() = runTest {
         val successResponse = Response.success(tvShowDetailsResponseValidId)
         coEvery { tvShowApiService.getTvShowDetails(TV_SHOW_ID) } returns successResponse
-
         val result = dataSource.getTvShowDetails(TV_SHOW_ID)
-
         assertThat(result).isEqualTo(expectedTvShowDtoWithDefaults)
     }
+
 
     @Test
     fun `should return cast members when getTvShowCastMembers is called`() = runTest {
@@ -115,18 +114,6 @@ class RemoteTvShowDataSourceImplTest {
         val result = dataSource.getTvShowImages(TV_SHOW_ID)
 
         assertThat(result).isEmpty()
-    }
-
-    @Test
-    fun `should handle null file paths when getTvShowImages is called`() = runTest {
-        val successResponse = Response.success(tvShowImagesResponseWithNulls)
-        coEvery { tvShowApiService.getTvShowImages(TV_SHOW_ID) } returns successResponse
-
-        val result = dataSource.getTvShowImages(TV_SHOW_ID)
-
-        assertThat(result).hasSize(2)
-        assertThat(result[0]).isEqualTo("https://image.tmdb.org/t/p/w500$BACKDROP_PATH")
-        assertThat(result[1]).isEqualTo("https://image.tmdb.org/t/p/w500null")
     }
 
 
@@ -585,6 +572,8 @@ class RemoteTvShowDataSourceImplTest {
         const val ACTOR_ID = 789L
         const val REVIEW_ID = 101L
 
+        const val REVIEW_STRING_ID = "101L"
+
         const val TV_SHOW_NAME = "Breaking Bad"
         const val OVERVIEW =
             "A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine."
@@ -772,7 +761,7 @@ class RemoteTvShowDataSourceImplTest {
         )
 
         val reviewResponse = ReviewsResponse.ReviewResponse(
-            id = REVIEW_ID,
+            id = REVIEW_STRING_ID,
             author = REVIEW_AUTHOR,
             authorDetails = authorDetails,
             content = REVIEW_CONTENT,
@@ -804,7 +793,7 @@ class RemoteTvShowDataSourceImplTest {
         )
 
         val videoResult = TVShowVideosResponse.Result(
-            id = 1L,
+            id = "1L",
             key = YOUTUBE_KEY,
             name = "Official Trailer",
             official = true,
@@ -815,7 +804,7 @@ class RemoteTvShowDataSourceImplTest {
         )
 
         val videoResultNotTrailer = TVShowVideosResponse.Result(
-            id = 2L,
+            id = "2L",
             key = "xyz789",
             name = "Behind the Scenes",
             official = true,
@@ -992,7 +981,7 @@ class RemoteTvShowDataSourceImplTest {
             userRating = null,
             releaseDate = "0001-01-01",
             overview = "",
-            posterPictureURL = "https://image.tmdb.org/t/p/w500",
+            posterPictureURL = "",
             numberOfSeasons = 0,
             trailerURL = "",
             headerImagesURLs = emptyList()
@@ -1031,7 +1020,7 @@ class RemoteTvShowDataSourceImplTest {
         )
 
         val expectedReviewDto = ReviewDto(
-            id = REVIEW_ID,
+            id = REVIEW_STRING_ID,
             authorName = REVIEW_AUTHOR,
             authorAvatarUrl = "https://image.tmdb.org/t/p/w500$AVATAR_PATH",
             contentTitle = REVIEW_USERNAME,
