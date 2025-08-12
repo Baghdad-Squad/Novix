@@ -17,25 +17,6 @@ class AuthenticationRepositoryImpl @Inject constructor(
     private val localSessionDataStore: LocalSessionDataStore,
     private val localUserDataStore: LocalUserDataStore
 ) : AuthenticationRepository {
-    override suspend fun login(userName: String, password: String) {
-        return executeLoginSafely {
-            val requestToken = remoteAuthenticationDataSource.getRequestToken()
-            val validatedRequestToken = remoteAuthenticationDataSource.validateCredentialWithToken(
-                userName = userName,
-                password = password,
-                requestToken = requestToken
-            )
-            val sessionId = remoteAuthenticationDataSource.createSession(validatedRequestToken)
-            val user = remoteAuthenticationDataSource.getUserDetails(sessionId)
-            localSessionDataStore.saveSessionId(sessionId)
-            localUserDataStore.saveUser(
-                id = user.id,
-                userName = user.userName,
-                imageUrl = user.imageUrl.orEmpty()
-            )
-        }
-    }
-
 
     override suspend fun isUserLoggedIn(): Boolean {
         return localSessionDataStore.getSessionId() != null
@@ -45,18 +26,49 @@ class AuthenticationRepositoryImpl @Inject constructor(
         return localUserDataStore.getUser()?.toEntity()
     }
 
+    override suspend fun logOut(): Boolean = executeSafely {
+        localSessionDataStore.getSessionId()?.let { sessionId ->
+            remoteAuthenticationDataSource.deleteSession(sessionId = sessionId)
+            localSessionDataStore.deleteSessionId()
+            true
+        } ?: false
+    }
 
-    override suspend fun logOut(): Boolean {
-        return executeSafely {
-            val sessionId = localSessionDataStore.getSessionId()
-            if (sessionId != null) {
-                remoteAuthenticationDataSource.deleteSession(sessionId)
-                localSessionDataStore.deleteSessionId()
-                true
-            } else {
-                false
-            }
+    override suspend fun login(userName: String, password: String) {
+        executeLoginSafely {
+            val requestToken = getRequestToken()
+            val validatedToken = validateCredentials(userName, password, requestToken)
+            val sessionId = createSession(validatedToken)
+            saveSession(sessionId = sessionId)
+            saveUserDetails(sessionId = sessionId)
         }
+    }
 
+    private suspend fun getRequestToken(): String =
+        remoteAuthenticationDataSource.getRequestToken()
+
+    private suspend fun validateCredentials(
+        userName: String,
+        password: String,
+        requestToken: String
+    ): String = remoteAuthenticationDataSource.validateCredentialWithToken(
+        userName = userName,
+        password = password,
+        requestToken = requestToken
+    )
+
+    private suspend fun createSession(validatedToken: String): String =
+        remoteAuthenticationDataSource.createSession(validatedToken)
+
+    private suspend fun saveSession(sessionId: String) =
+        localSessionDataStore.saveSessionId(sessionId)
+
+    private suspend fun saveUserDetails(sessionId: String) {
+        val user = remoteAuthenticationDataSource.getUserDetails(sessionId)
+        localUserDataStore.saveUser(
+            id = user.id,
+            userName = user.userName,
+            imageUrl = user.imageUrl.orEmpty()
+        )
     }
 }
