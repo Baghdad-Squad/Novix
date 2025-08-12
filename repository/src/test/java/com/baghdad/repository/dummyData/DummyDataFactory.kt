@@ -4,6 +4,7 @@ import com.baghdad.domain.model.ContinueWatching
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
+import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.model.ActorDto
@@ -12,6 +13,7 @@ import com.baghdad.repository.model.ContinueWatchingDto
 import com.baghdad.repository.model.EpisodeDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.TvShowDto
 import kotlinx.datetime.LocalDate
 
@@ -170,36 +172,72 @@ object DummyDataFactory {
                 runtimeMinutes = 150
             )
         )
+
     fun createMockContinueWatchingDto(
-            contentId: Long = 123L,
-            genreIds: List<Long> = listOf(28L, 12L),
-            contentImageUrl: String = "/content_image.jpg",
-            contentType: ContinueWatchingDto.ContentType = ContinueWatchingDto.ContentType.MOVIE,
-            userId: Long = 123L,
-        ) = ContinueWatchingDto(
-            contentId = contentId,
-            genreIds = genreIds,
-            contentImageUrl = contentImageUrl,
-            contentType = contentType,
-            userId = userId,
-        )
+        contentId: Long = 123L,
+        genreIds: List<Long> = listOf(28L, 12L),
+        contentImageUrl: String = "/content_image.jpg",
+        contentType: ContinueWatchingDto.ContentType = ContinueWatchingDto.ContentType.MOVIE,
+        userId: Long = 123L,
+    ) = ContinueWatchingDto(
+        contentId = contentId,
+        genreIds = genreIds,
+        contentImageUrl = contentImageUrl,
+        contentType = contentType,
+        userId = userId,
+    )
 
-         fun createMockContinueWatching(
-            contentId: Long = 123L,
-            genreIds: List<Long> = listOf(28L, 12L),
-            contentImageUrl: String = "/content_image.jpg",
-            contentType: ContinueWatching.ContentType = ContinueWatching.ContentType.MOVIE,
-            userId: Long = 123L,
-            isSaved: Boolean = true,
-            listId: Long? = 7
-        ) = ContinueWatching(
-            contentId = contentId,
-            genreIds = genreIds,
-            contentImageUrl = contentImageUrl,
-            contentType = contentType,
-            userId = userId,
-            isSaved = isSaved,
-            listId = listId,
-        )
+    fun createMockContinueWatching(
+        contentId: Long = 123L,
+        genreIds: List<Long> = listOf(28L, 12L),
+        contentImageUrl: String = "/content_image.jpg",
+        contentType: ContinueWatching.ContentType = ContinueWatching.ContentType.MOVIE,
+        userId: Long = 123L,
+        isSaved: Boolean = true,
+        listId: Long? = 7
+    ) = ContinueWatching(
+        contentId = contentId,
+        genreIds = genreIds,
+        contentImageUrl = contentImageUrl,
+        contentType = contentType,
+        userId = userId,
+        isSaved = isSaved,
+        listId = listId,
+    )
 
+    fun createMockReviewDto() = ReviewDto(
+        id = "review123",
+        contentTitle = "Great movie! Highly recommended.",
+        authorName = "John Reviewer",
+        rating = 9.0,
+        authorAvatarUrl = "https://example.com/avatar.jpg",
+        reviewText = "This movie was fantastic! The plot was engaging and the acting was top-notch.",
+        postedDate = LocalDate.parse("2023-01-01").toString()
+    )
+
+    fun createMockReview() = Review(
+        id = "review123",
+        contentTitle = "Great movie! Highly recommended.",
+        authorName = "John Reviewer",
+        rating = 9.0,
+        authorAvatarUrl = "https://example.com/avatar.jpg",
+        reviewText = "This movie was fantastic! The plot was engaging and the acting was top-notch.",
+        postedDate = LocalDate.parse("2023-01-01")
+    )
+    fun createMockTvShowDetailsDto() = TvShowDto(
+        id = 123L,
+        title = "Test TV Show",
+        genres = listOf(
+            createMockGenreDto(18, "Drama"),
+            createMockGenreDto(35, "Comedy")
+        ),
+        imdbRating = 7.9,
+        userRating = 8,
+        releaseDate = "2023-01-01",
+        overview = "Test overview for TV Show",
+        posterPictureURL = "/tv_poster.jpg",
+        numberOfSeasons = 3,
+        trailerURL = " ",
+        headerImagesURLs = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg")
+    )
 }
