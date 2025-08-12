@@ -1,331 +1,630 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.MovieApiService
-import com.baghdad.remoteDataSource.response.CastMemberResponse
+import com.baghdad.remoteDataSource.request.RatingRequest
 import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
-import com.baghdad.remoteDataSource.response.MovieAuthorDetails
-import com.baghdad.remoteDataSource.response.MovieResult
-import com.baghdad.remoteDataSource.response.ReviewResponse
-import com.baghdad.remoteDataSource.response.reviews.ReviewsResponse
-import com.baghdad.remoteDataSource.response.SimilarMovieResponse
-import com.baghdad.remoteDataSource.response.actor.ImageResponse
 import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
-import com.baghdad.remoteDataSource.response.movie.Genre
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
+import com.baghdad.remoteDataSource.response.movie.MyRatingMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
+import com.baghdad.remoteDataSource.response.movie.SimilarMovieResponse
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
+import com.baghdad.remoteDataSource.response.rate.RatingResponse
+import com.baghdad.remoteDataSource.response.reviews.ReviewsResponse
 import com.baghdad.repository.logger.Logger
+import com.baghdad.repository.model.ActorDto
+import com.baghdad.repository.model.CastMemberDto
+import com.baghdad.repository.model.GenreDto
+import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.ReviewDto
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import retrofit2.Response
 
 class RemoteMovieDataSourceImplTest {
-
-    private lateinit var dataSource: RemoteMovieDataSourceImpl
-    private lateinit var movieApiService: MovieApiService
-    private lateinit var logger: Logger
-
-    @BeforeEach
-    fun setUp() {
-        movieApiService = mockk(relaxed = true)
-        logger = mockk(relaxed = true)
-        dataSource = RemoteMovieDataSourceImpl(movieApiService, logger)
-    }
+    private val movieApiService = mockk<MovieApiService>()
+    private val logger = mockk<Logger>(relaxed = true)
+    private val dataSource = RemoteMovieDataSourceImpl(movieApiService, logger)
 
     @Test
-    fun `should map response to MovieDto when getting movie details`() = runTest {
-        // Given
-        val movieId = 1L
-        val response = MovieDetailsResponse(
-            id = movieId,
-            title = "Test Movie",
-            genres = listOf(Genre(id = 1, name = "Action")),
-            voteAverage = 8.5,
-            releaseDate = "2023-01-01",
-            overview = "Test overview",
-            posterPath = "/poster.jpg",
-            runtime = 120
-        )
-        coEvery { movieApiService.getMovieDetails(movieId) } returns Response.success(response)
+    fun `should return similar movies when getSimilarMovies is called with valid movie id`() = runTest {
+        val successResponse = Response.success(similarMovieResponse)
+        coEvery { movieApiService.getSimilarMovies(MOVIE_ID) } returns successResponse
 
-        // When
-        val result = dataSource.getMovieDetails(movieId)
+        val result = dataSource.getSimilarMovies(MOVIE_ID)
 
-        // Then
-        assertThat(result.id).isEqualTo(movieId)
-        assertThat(result.title).isEqualTo("Test Movie")
-        assertThat(result.genres).hasSize(1)
-        assertThat(result.imdbRating).isEqualTo(8.5)
-        assertThat(result.releaseDate).isEqualTo("2023-01-01")
-        assertThat(result.runtimeMinutes).isEqualTo(120)
-    }
-
-    @Test
-    fun `should map response to MovieDto list when getting similar movies`() = runTest {
-        // Given
-        val movieId = 1L
-        val response = SimilarMovieResponse(
-            results = listOf(
-                MovieResult(
-                    id = 1,
-                    title = "Similar 1",
-                    posterPath = "/similar1.jpg"
-                )
-            )
-        )
-        coEvery { movieApiService.getSimilarMovies(movieId) } returns Response.success(response)
-
-        // When
-        val result = dataSource.getSimilarMovies(movieId)
-
-        // Then
         assertThat(result).hasSize(1)
-        assertThat(result[0].id).isEqualTo(1L)
-        assertThat(result[0].title).isEqualTo("Similar 1")
+        assertThat(result[0].id).isEqualTo(MOVIE_ID)
+        assertThat(result[0].title).isEqualTo(MOVIE_TITLE)
+        coVerify(exactly = 1) { movieApiService.getSimilarMovies(MOVIE_ID) }
     }
 
     @Test
-    fun `should return backdrop paths when getting movie images`() = runTest {
-        // Given
-        val movieId = 1L
-        val response = MovieImageResponse(
-            backdrops = listOf(
-                ImageResponse(filePath = "/backdrop1.jpg")
-            )
-        )
-        coEvery { movieApiService.getMovieImages(movieId) } returns Response.success(response)
+    fun `should filter out movies with null id when getSimilarMovies is called`() = runTest {
+        val successResponse = Response.success(similarMovieResponseWithNullId)
+        coEvery { movieApiService.getSimilarMovies(MOVIE_ID) } returns successResponse
 
-        // When
-        val result = dataSource.getMovieImages(movieId)
+        val result = dataSource.getSimilarMovies(MOVIE_ID)
 
-        // Then
-        assertThat(result).containsExactly("https://image.tmdb.org/t/p/w500/backdrop1.jpg")
+        assertThat(result).hasSize(1)
+        assertThat(result[0].id).isEqualTo(MOVIE_ID)
     }
 
     @Test
-    fun `should return paged results when getting top rated movies`() = runTest {
-        // Given
-        val page = 1
-        val response = SimilarMovieResponse(
-            page = page,
-            results = listOf(
-                MovieResult(id = 1, title = "Top Movie")
-            ),
-            totalPages = 10
-        )
-        coEvery { movieApiService.getTopRatedMovies(page) } returns Response.success(response)
+    fun `should return movie details when getMovieDetails is called with valid movie id`() = runTest {
+        val successResponse = Response.success(movieDetailsResponse)
+        coEvery { movieApiService.getMovieDetails(MOVIE_ID) } returns successResponse
 
-        // When
-        val result = dataSource.getTopRatedMovies(page)
+        val result = dataSource.getMovieDetails(MOVIE_ID)
 
-        // Then
+        assertThat(result).isEqualTo(expectedMovieDto)
+        coVerify(exactly = 1) { movieApiService.getMovieDetails(MOVIE_ID) }
+    }
+
+    @Test
+    fun `should handle null fields in getMovieDetails`() = runTest {
+        val successResponse = Response.success(movieDetailsResponseWithNulls)
+        coEvery { movieApiService.getMovieDetails(MOVIE_ID) } returns successResponse
+
+        val result = dataSource.getMovieDetails(MOVIE_ID)
+
+        assertThat(result.id).isEqualTo(0L)
+        assertThat(result.title).isEqualTo("Untitled")
+        assertThat(result.genres).isEmpty()
+    }
+
+    @Test
+    fun `should filter out invalid genres in getMovieDetails`() = runTest {
+        val successResponse = Response.success(movieDetailsResponseWithNullGenres)
+        coEvery { movieApiService.getMovieDetails(MOVIE_ID) } returns successResponse
+
+        val result = dataSource.getMovieDetails(MOVIE_ID)
+
+        assertThat(result.genres).isEmpty()
+    }
+
+    @Test
+    fun `should return cast members when getMovieCastMembers is called with valid movie id`() = runTest {
+        val successResponse = Response.success(castMembersResponse)
+        coEvery { movieApiService.getMovieCastMembers(MOVIE_ID) } returns successResponse
+
+        val result = dataSource.getMovieCastMembers(MOVIE_ID)
+
+        assertThat(result).hasSize(1)
+        assertThat(result[0]).isEqualTo(expectedCastMemberDto)
+        coVerify(exactly = 1) { movieApiService.getMovieCastMembers(MOVIE_ID) }
+    }
+
+    @Test
+    fun `should filter out cast members with null id when getMovieCastMembers is called`() = runTest {
+        val successResponse = Response.success(castMembersResponseWithNullId)
+        coEvery { movieApiService.getMovieCastMembers(MOVIE_ID) } returns successResponse
+
+        val result = dataSource.getMovieCastMembers(MOVIE_ID)
+
+        assertThat(result).hasSize(1)
+        assertThat(result[0].actor.id).isEqualTo(ACTOR_ID)
+    }
+
+    @Test
+    fun `should return paged movies when getMoviesByGenre is called`() = runTest {
+        val successResponse = Response.success(discoverMovieResponse)
+        coEvery { movieApiService.getMoviesByGenre(GENRE_ID, PAGE) } returns successResponse
+
+        val result = dataSource.getMoviesByGenre(GENRE_ID, PAGE)
+
         assertThat(result.data).hasSize(1)
+        assertThat(result.data[0].id).isEqualTo(MOVIE_ID)
+        coVerify(exactly = 1) { movieApiService.getMoviesByGenre(GENRE_ID, PAGE) }
     }
 
     @Test
-    fun `should return paged results when getting movies by genre`() = runTest {
-        // Given
-        val genreId = 1L
-        val page = 1
-        val response = SimilarMovieResponse(
-            page = page,
-            results = listOf(
-                MovieResult(id = 1, title = "Action Movie")
-            ),
-            totalPages = 5
-        )
-        coEvery { movieApiService.getMoviesByGenre(genreId, page) } returns Response.success(
-            response
-        )
+    fun `should filter out movies with null id when getMoviesByGenre is called`() = runTest {
+        val successResponse = Response.success(discoverMovieResponseWithNullId)
+        coEvery { movieApiService.getMoviesByGenre(GENRE_ID, PAGE) } returns successResponse
 
-        // When
-        val result = dataSource.getMoviesByGenre(genreId, page)
+        val result = dataSource.getMoviesByGenre(GENRE_ID, PAGE)
 
-        // Then
         assertThat(result.data).hasSize(1)
+        assertThat(result.data[0].id).isEqualTo(MOVIE_ID)
     }
 
     @Test
-    fun `should return cast list when getting movie cast members`() = runTest {
-        // Given
-        val movieId = 1L
-        val response = CastMembersResponse(
-            cast = listOf(
-                CastMemberResponse(
-                    id = 1,
-                    name = "Actor",
-                    character = "Hero"
-                )
-            )
-        )
-        coEvery { movieApiService.getMovieCastMembers(movieId) } returns Response.success(response)
+    fun `should return reviews when getMovieReviews is called with valid movie id`() = runTest {
+        val successResponse = Response.success(reviewsResponse)
+        coEvery { movieApiService.getMovieReviews(MOVIE_ID) } returns successResponse
 
-        // When
-        val result = dataSource.getMovieCastMembers(movieId)
+        val result = dataSource.getMovieReviews(MOVIE_ID)
 
-        // Then
         assertThat(result).hasSize(1)
-        assertThat(result[0].actor.name).isEqualTo("Actor")
-        assertThat(result[0].characterName).isEqualTo("Hero")
+        assertThat(result[0]).isEqualTo(expectedReviewDto)
+        coVerify(exactly = 1) { movieApiService.getMovieReviews(MOVIE_ID) }
     }
 
     @Test
-    fun `should return mapped list of MovieDto when getting popular movies`() = runTest {
-        // Given
-        val response = PopularMoviesResponse(
-            results = listOf(
-                PopularMoviesResponse.Result(
-                    id = 1L,
-                    title = "Popular Movie",
-                    genreIds = listOf(28L),
-                    voteAverage = 7.2,
-                    posterPath = "/popular.jpg",
-                    releaseDate = "2024-01-01",
-                    overview = "A popular movie"
-                )
-            )
-        )
+    fun `should filter out reviews with null id when getMovieReviews is called`() = runTest {
+        val successResponse = Response.success(reviewsResponseWithNullId)
+        coEvery { movieApiService.getMovieReviews(MOVIE_ID) } returns successResponse
 
-        coEvery { movieApiService.getPopularMovies() } returns Response.success(response)
+        val result = dataSource.getMovieReviews(MOVIE_ID)
 
-        // When
-        val result = dataSource.getPopularMovies()
-
-        // Then
         assertThat(result).hasSize(1)
-        val movie = result[0]
-        assertThat(movie.id).isEqualTo(1L)
-        assertThat(movie.title).isEqualTo("Popular Movie")
-        assertThat(movie.genres).hasSize(1)
-        assertThat(movie.imdbRating).isEqualTo(7.2)
-        assertThat(movie.releaseDate).isEqualTo("2024-01-01")
-        assertThat(movie.posterPictureURL).contains("/popular.jpg")
+        assertThat(result[0].id).isEqualTo(REVIEW_ID)
     }
 
     @Test
-    fun `should return mapped list of ReviewDto when getting movie reviews`() = runTest {
-        // Given
-        val response = ReviewsResponse(
-            id = 1,
-            page = 1,
-            results = listOf(
-                ReviewResponse(
-                    id = "review_1",
-                    author = "Critic",
-                    authorDetails = MovieAuthorDetails(
-                        name = "Critic",
-                        username = "critic123",
-                        avatarPath = "/avatar.png",
-                        rating = 4.0
-                    ),
-                    content = "Great movie!",
-                    createdAt = "2024-01-01T10:00:00Z"
-                )
-            ),
-            totalPages = 1,
-            totalResults = 1
-        )
+    fun `should return image urls when getMovieImages is called with valid movie id`() = runTest {
+        val successResponse = Response.success(movieImageResponse)
+        coEvery { movieApiService.getMovieImages(MOVIE_ID) } returns successResponse
 
-        coEvery { movieApiService.getMovieReviews(movieId = 1L) } returns Response.success(response)
+        val result = dataSource.getMovieImages(MOVIE_ID)
 
-        // When
-        val result = dataSource.getMovieReviews(1L)
-
-        // Then
-        assertThat(result).hasSize(1)
-        val review = result[0]
-        assertThat(review.id).isEqualTo("review_1")
-        assertThat(review.authorName).isEqualTo("Critic")
-        assertThat(review.authorAvatarUrl).contains("/avatar.png")
-        assertThat(review.rating).isEqualTo(4.0)
-        assertThat(review.reviewText).isEqualTo("Great movie!")
-        assertThat(review.postedDate).isEqualTo("2024-01-01T10:00:00Z")
+        assertThat(result).containsExactly("https://image.tmdb.org/t/p/w500$IMAGE_FILE_PATH")
+        coVerify(exactly = 1) { movieApiService.getMovieImages(MOVIE_ID) }
     }
 
     @Test
-    fun `should return YouTube url when getting movie trailer`() = runTest {
-        // Given
-        val movieId = 1L
-        val videoKey = "abc123"
-        val response = MovieVideosResponse(
-            results = listOf(
-                MovieVideosResponse.Result(
-                    key = videoKey,
-                    site = "YouTube",
-                    type = "Trailer"
-                )
-            )
-        )
-        coEvery { movieApiService.getMovieTrailer(movieId) } returns Response.success(response)
+    fun `should return empty list when getMovieImages receives null backdrops`() = runTest {
+        val successResponse = Response.success(movieImageResponseWithNullBackdrops)
+        coEvery { movieApiService.getMovieImages(MOVIE_ID) } returns successResponse
 
-        // When
-        val result = dataSource.getMovieTrailer(movieId)
+        val result = dataSource.getMovieImages(MOVIE_ID)
 
-        // Then
-        assertThat(result).contains(videoKey)
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun `should return paged result when getting trending movies`() = runTest {
-        // Given
-        val page = 1
-        val response = TrendingMovieResponse(
-            results = listOf(
-                TrendingMovieResponse.Result(
-                    id = 1,
-                    title = "Trending",
-                    posterPath = "/trend.jpg"
-                )
-            )
-        )
-        coEvery { movieApiService.getTrendingMovies(page) } returns Response.success(response)
+    fun `should return trailer url when getMovieTrailer is called with valid movie id`() = runTest {
+        val successResponse = Response.success(movieVideosResponse)
+        coEvery { movieApiService.getMovieTrailer(MOVIE_ID) } returns successResponse
 
-        // When
-        val result = dataSource.getTrendingMovies(page)
+        val result = dataSource.getMovieTrailer(MOVIE_ID)
 
-        // Then
+        assertThat(result).isNotEmpty()
+        coVerify(exactly = 1) { movieApiService.getMovieTrailer(MOVIE_ID) }
+    }
+
+    @Test
+    fun `should return paged movies when getTopRatedMovies is called`() = runTest {
+        val successResponse = Response.success(discoverMovieResponse)
+        coEvery {
+            movieApiService.getTopRatedMovies(PAGE, SORT_BY, MIN_VOTE_COUNT)
+        } returns successResponse
+
+        val result = dataSource.getTopRatedMovies(PAGE)
+
         assertThat(result.data).hasSize(1)
-        assertThat(result.data[0].title).isEqualTo("Trending")
+        assertThat(result.data[0].id).isEqualTo(MOVIE_ID)
+        coVerify(exactly = 1) { movieApiService.getTopRatedMovies(PAGE, SORT_BY, MIN_VOTE_COUNT) }
     }
 
     @Test
-    fun `should return paged result when getting upcoming movies`() = runTest {
-        // Given
-        val genreId: Long = 28
-        val response = DiscoverMovieResponse(
-            results = listOf(
-                DiscoverMovieResponse.Result(
-                    id = 1,
-                    title = "Upcoming Movie",
-                    releaseDate = "2025-08-10",
-                    genreIds = listOf(28)
-                )
-            )
-        )
+    fun `should return paged movies when getTrendingMovies is called`() = runTest {
+        val successResponse = Response.success(trendingMovieResponse)
+        coEvery { movieApiService.getTrendingMovies(PAGE) } returns successResponse
+
+        val result = dataSource.getTrendingMovies(PAGE)
+
+        assertThat(result.data).hasSize(1)
+        assertThat(result.data[0].id).isEqualTo(MOVIE_ID)
+        coVerify(exactly = 1) { movieApiService.getTrendingMovies(PAGE) }
+    }
+
+    @Test
+    fun `should return upcoming movies when getUpcomingMovies is called with genre id`() = runTest {
+        val successResponse = Response.success(discoverMovieResponse)
+
         coEvery {
             movieApiService.getUpcomingMovies(
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
+                genres = GENRE_ID.toString(),
+                includeAdult = false,
+                includeVideo = false,
+                sortBy = "popularity.desc",
+                releaseType = "2|3",
+                releaseDateGte = any(),
+                releaseDateLte = any()
             )
-        } returns Response.success(response)
+        } returns successResponse
 
-        // When
-        val result = dataSource.getUpcomingMovies(genreId)
+        val result = dataSource.getUpcomingMovies(GENRE_ID)
 
-        // Then
         assertThat(result).hasSize(1)
-        assertThat(result[0].id).isEqualTo(1L)
+        assertThat(result[0].id).isEqualTo(MOVIE_ID)
+        coVerify(exactly = 1) {
+            movieApiService.getUpcomingMovies(
+                genres = GENRE_ID.toString(),
+                includeAdult = false,
+                includeVideo = false,
+                sortBy = "popularity.desc",
+                releaseType = "2|3",
+                releaseDateGte = any(),
+                releaseDateLte = any()
+            )
+        }
+    }
+
+    @Test
+    fun `should return popular movies when getPopularMovies is called`() = runTest {
+        val successResponse = Response.success(popularMoviesResponse)
+        coEvery { movieApiService.getPopularMovies() } returns successResponse
+
+        val result = dataSource.getPopularMovies()
+
+        assertThat(result).hasSize(1)
+        assertThat(result[0].id).isEqualTo(MOVIE_ID)
+        coVerify(exactly = 1) { movieApiService.getPopularMovies() }
+    }
+
+    @Test
+    fun `should call api service when addMovieRate is called`() = runTest {
+        val successResponse = Response.success(ratingResponse)
+        coEvery { movieApiService.addMovieRate(MOVIE_ID, ratingRequest) } returns successResponse
+
+        dataSource.addMovieRate(MOVIE_ID, RATING, SESSION_ID)
+
+        coVerify(exactly = 1) { movieApiService.addMovieRate(MOVIE_ID, ratingRequest) }
+    }
+
+
+    @Test
+    fun `should call api service when deleteMovieRate is called`() = runTest {
+        val successResponse = Response.success(ratingResponse)
+        coEvery { movieApiService.deleteMovieRate(MOVIE_ID) } returns successResponse
+
+        dataSource.deleteMovieRate(MOVIE_ID, SESSION_ID)
+
+        coVerify(exactly = 1) { movieApiService.deleteMovieRate(MOVIE_ID) }
+    }
+
+    @Test
+    fun `should return user rated movies when getUserRatedMovies is called`() = runTest {
+        val successResponse = Response.success(myRatingMoviesResponse)
+        coEvery { movieApiService.getUserRatedMovies(ACCOUNT_ID, PAGE) } returns successResponse
+
+        val result = dataSource.getUserRatedMovies(ACCOUNT_ID, SESSION_ID, PAGE)
+
+        assertThat(result.data).hasSize(1)
+        assertThat(result.data[0].id).isEqualTo(MOVIE_ID)
+        coVerify(exactly = 1) { movieApiService.getUserRatedMovies(ACCOUNT_ID, PAGE) }
+    }
+
+    companion object {
+        const val MOVIE_ID = 123L
+        const val GENRE_ID = 28L
+        const val PAGE = 1
+        const val RATING = 8
+        const val SESSION_ID = "session123"
+        const val ACCOUNT_ID = 456L
+        const val MOVIE_TITLE = "Test Movie"
+        const val OVERVIEW = "Movie overview"
+        const val RELEASE_DATE = "2023-01-01"
+        const val POSTER_PATH = "/poster.jpg"
+        const val BACKDROP_PATH = "/backdrop.jpg"
+        const val VOTE_AVERAGE = 7.5
+        const val RUNTIME = 120
+        const val POPULARITY = 8.9
+        const val ACTOR_ID = 789L
+        const val ACTOR_NAME = "Actor Name"
+        const val CHARACTER_NAME = "Character Name"
+        const val PROFILE_PATH = "/profile.jpg"
+        const val KNOWN_FOR_DEPARTMENT = "Acting"
+        const val REVIEW_ID = 101L
+        const val AUTHOR_NAME = "Reviewer"
+        const val AUTHOR_USERNAME = "reviewer123"
+        const val REVIEW_CONTENT = "Great movie!"
+        const val CREATED_AT = "2023-01-15"
+        const val AUTHOR_RATING = 9.0
+        const val AVATAR_PATH = "/avatar.jpg"
+        const val IMAGE_FILE_PATH = "/image.jpg"
+        const val VIDEO_KEY = "abc123"
+        const val TOTAL_PAGES = 5
+        const val MIN_VOTE_COUNT = 200
+        const val SORT_BY = "vote_average.desc"
+
+        val movieGenre = MovieDetailsResponse.Genre(
+            id = GENRE_ID,
+            name = "Action"
+        )
+
+        val movieGenreWithNulls = MovieDetailsResponse.Genre(
+            id = null,
+            name = null
+        )
+
+        val movieGenreWithBlankName = MovieDetailsResponse.Genre(
+            id = GENRE_ID,
+            name = ""
+        )
+
+        val similarMovieResult = SimilarMovieResponse.MovieResult(
+            id = MOVIE_ID,
+            title = MOVIE_TITLE,
+            genreIds = listOf(GENRE_ID),
+            voteAverage = VOTE_AVERAGE,
+            releaseDate = RELEASE_DATE,
+            overview = OVERVIEW,
+            posterPath = POSTER_PATH
+        )
+
+        val similarMovieResultWithNulls = SimilarMovieResponse.MovieResult(
+            id = null,
+            title = null,
+            genreIds = null,
+            voteAverage = null,
+            releaseDate = null,
+            overview = null,
+            posterPath = null
+        )
+
+        val similarMovieResponse = SimilarMovieResponse(
+            page = PAGE,
+            results = listOf(similarMovieResult),
+            totalPages = TOTAL_PAGES
+        )
+
+        val similarMovieResponseWithNullId = SimilarMovieResponse(
+            page = PAGE,
+            results = listOf(similarMovieResult, similarMovieResultWithNulls),
+            totalPages = TOTAL_PAGES
+        )
+
+        val movieDetailsResponse = MovieDetailsResponse(
+            id = MOVIE_ID,
+            title = MOVIE_TITLE,
+            genres = listOf(movieGenre),
+            voteAverage = VOTE_AVERAGE,
+            releaseDate = RELEASE_DATE,
+            overview = OVERVIEW,
+            posterPath = POSTER_PATH,
+            runtime = RUNTIME
+        )
+
+        val movieDetailsResponseWithNulls = MovieDetailsResponse(
+            id = null,
+            title = null,
+            genres = null,
+            voteAverage = null,
+            releaseDate = null,
+            overview = null,
+            posterPath = null,
+            runtime = null
+        )
+
+        val movieDetailsResponseWithNullGenres = MovieDetailsResponse(
+            id = MOVIE_ID,
+            title = MOVIE_TITLE,
+            genres = listOf(movieGenreWithNulls, movieGenreWithBlankName),
+            voteAverage = VOTE_AVERAGE,
+            releaseDate = RELEASE_DATE,
+            overview = OVERVIEW,
+            posterPath = POSTER_PATH,
+            runtime = RUNTIME
+        )
+
+        val castMemberResponse = CastMembersResponse.CastMemberResponse(
+            id = ACTOR_ID,
+            name = ACTOR_NAME,
+            profilePath = PROFILE_PATH,
+            character = CHARACTER_NAME,
+            knownForDepartment = KNOWN_FOR_DEPARTMENT
+        )
+
+        val castMemberResponseWithNulls = CastMembersResponse.CastMemberResponse(
+            id = null,
+            name = null,
+            profilePath = null,
+            character = null,
+            knownForDepartment = null
+        )
+
+        val castMembersResponse = CastMembersResponse(
+            cast = listOf(castMemberResponse)
+        )
+
+        val castMembersResponseWithNullId = CastMembersResponse(
+            cast = listOf(castMemberResponse, castMemberResponseWithNulls)
+        )
+
+        val discoverMovieResult = DiscoverMovieResponse.Result(
+            id = MOVIE_ID,
+            title = MOVIE_TITLE,
+            genreIds = listOf(GENRE_ID),
+            voteAverage = VOTE_AVERAGE,
+            releaseDate = RELEASE_DATE,
+            overview = OVERVIEW,
+            posterPath = POSTER_PATH
+        )
+
+        val discoverMovieResultWithNulls = DiscoverMovieResponse.Result(
+            id = null,
+            title = null,
+            genreIds = listOf(null),
+            voteAverage = null,
+            releaseDate = "",
+            overview = null,
+            posterPath = null
+        )
+
+        val discoverMovieResponse = DiscoverMovieResponse(
+            page = PAGE,
+            results = listOf(discoverMovieResult),
+            totalPages = TOTAL_PAGES
+        )
+
+        val discoverMovieResponseWithNullId = DiscoverMovieResponse(
+            page = PAGE,
+            results = listOf(discoverMovieResult, discoverMovieResultWithNulls),
+            totalPages = TOTAL_PAGES
+        )
+
+        val reviewAuthorDetails = ReviewsResponse.MovieAuthorDetails(
+            name = AUTHOR_NAME,
+            username = AUTHOR_USERNAME,
+            avatarPath = AVATAR_PATH,
+            rating = AUTHOR_RATING
+        )
+
+        val reviewResponse = ReviewsResponse.ReviewResponse(
+            id = REVIEW_ID,
+            authorDetails = reviewAuthorDetails,
+            content = REVIEW_CONTENT,
+            createdAt = CREATED_AT
+        )
+
+        val reviewResponseWithNulls = ReviewsResponse.ReviewResponse(
+            id = null,
+            authorDetails = null,
+            content = null,
+            createdAt = null
+        )
+
+        val reviewsResponse = ReviewsResponse(
+            results = listOf(reviewResponse)
+        )
+
+        val reviewsResponseWithNullId = ReviewsResponse(
+            results = listOf(reviewResponse, reviewResponseWithNulls)
+        )
+
+        val movieImageBackdrop = MovieImageResponse.ImageResponse(
+            filePath = IMAGE_FILE_PATH
+        )
+
+        val movieImageResponse = MovieImageResponse(
+            backdrops = listOf(movieImageBackdrop)
+        )
+
+        val movieImageResponseWithNullBackdrops = MovieImageResponse(
+            backdrops = null
+        )
+
+        val movieVideoResult = MovieVideosResponse.Result(
+            key = VIDEO_KEY,
+            site = "YouTube",
+            type = "Trailer"
+        )
+
+        val movieVideosResponse = MovieVideosResponse(
+            results = listOf(movieVideoResult)
+        )
+
+        val trendingMovieResult = TrendingMovieResponse.Result(
+            id = MOVIE_ID,
+            title = MOVIE_TITLE,
+            posterPath = POSTER_PATH,
+            backdropPath = BACKDROP_PATH,
+            overview = OVERVIEW,
+            releaseDate = RELEASE_DATE,
+            voteAverage = VOTE_AVERAGE,
+            popularity = POPULARITY,
+            genreIds = listOf(GENRE_ID.toLong())
+        )
+
+        val trendingMovieResponse = TrendingMovieResponse(
+            page = PAGE,
+            results = listOf(trendingMovieResult),
+            totalPages = TOTAL_PAGES
+        )
+        val popularMovieResult = PopularMoviesResponse.Result(
+            id = MOVIE_ID,
+            title = MOVIE_TITLE,
+            genreIds = listOf(GENRE_ID),
+            voteAverage = VOTE_AVERAGE,
+            releaseDate = RELEASE_DATE,
+            overview = OVERVIEW,
+            posterPath = POSTER_PATH,
+            backdropPath = BACKDROP_PATH,
+            popularity = POPULARITY,
+            adult = false,
+            originalLanguage = "en",
+            originalTitle = MOVIE_TITLE,
+            video = false,
+            voteCount = 1000
+        )
+
+        val popularMoviesResponse = PopularMoviesResponse(
+            page = PAGE,
+            results = listOf(popularMovieResult),
+            totalPages = TOTAL_PAGES,
+            totalResults = 1000
+        )
+
+        val ratingRequest = RatingRequest(RATING)
+
+        val ratingResponse = RatingResponse(
+            isSuccess = true,
+            statusCode = 200,
+            statusMessage = "Success"
+        )
+
+        val myRatingMovieItem = MyRatingMoviesResponse.MovieItem(
+            id = MOVIE_ID,
+            title = MOVIE_TITLE,
+            genreIds = listOf(GENRE_ID),
+            voteAverage = VOTE_AVERAGE,
+            releaseDate = RELEASE_DATE,
+            overview = OVERVIEW,
+            posterPath = POSTER_PATH,
+            backdropPath = BACKDROP_PATH,
+            popularity = POPULARITY,
+            adult = false,
+            originalLanguage = "en",
+            originalTitle = MOVIE_TITLE,
+            video = false,
+            voteCount = 1000,
+            rating = RATING
+        )
+
+        val myRatingMoviesResponse = MyRatingMoviesResponse(
+            page = PAGE,
+            results = listOf(myRatingMovieItem),
+            totalPages = TOTAL_PAGES,
+            totalResults = 1000
+        )
+
+        val expectedMovieDto = MovieDto(
+            id = MOVIE_ID,
+            title = MOVIE_TITLE,
+            genres = listOf(GenreDto(GENRE_ID, "Action", GenreDto.GenreType.MOVIE)),
+            imdbRating = VOTE_AVERAGE,
+            userRating = null,
+            releaseDate = RELEASE_DATE,
+            overview = OVERVIEW,
+            posterPictureURL = "https://image.tmdb.org/t/p/w500$POSTER_PATH",
+            runtimeMinutes = RUNTIME,
+            trailerURL = ""
+        )
+
+        val expectedCastMemberDto = CastMemberDto(
+            actor = ActorDto(
+                id = ACTOR_ID,
+                name = ACTOR_NAME,
+                imageUrl = "https://image.tmdb.org/t/p/w500$PROFILE_PATH",
+                biography = "",
+                birthdayDate = null,
+                deathDate = null,
+                placeOfBirth = "",
+                headerPictures = emptyList(),
+                department = KNOWN_FOR_DEPARTMENT
+            ),
+            characterName = CHARACTER_NAME
+        )
+
+        val expectedReviewDto = ReviewDto(
+            id = REVIEW_ID,
+            authorName = AUTHOR_NAME,
+            authorAvatarUrl = "https://image.tmdb.org/t/p/w500$AVATAR_PATH",
+            contentTitle = AUTHOR_USERNAME,
+            rating = AUTHOR_RATING,
+            reviewText = REVIEW_CONTENT,
+            postedDate = CREATED_AT
+        )
+
     }
 }
