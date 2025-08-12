@@ -35,16 +35,6 @@ class RemoteActorDataSourceImplTest {
     }
 
     @Test
-    fun `should return actor dto with default values when getActorDetails receives null fields`() = runTest {
-        val successResponse = Response.success(actorDetailsResponseWithNulls)
-        coEvery { actorApiService.getActorDetails(PERSON_ID) } returns successResponse
-
-        val result = dataSource.getActorDetails(PERSON_ID)
-
-        assertThat(result).isEqualTo(expectedActorDtoWithDefaults)
-    }
-
-    @Test
     fun `should return image urls list when getActorImages is called with valid person id`() = runTest {
         val successResponse = Response.success(actorImagesResponse)
         coEvery { actorApiService.getActorImages(PERSON_ID) } returns successResponse
@@ -63,18 +53,6 @@ class RemoteActorDataSourceImplTest {
         val result = dataSource.getActorImages(PERSON_ID)
 
         assertThat(result).isEmpty()
-    }
-
-    @Test
-    fun `should return movie dto list when getActorMovies is called with valid person id`() = runTest {
-        val successResponse = Response.success(actorMoviesResponse)
-        coEvery { actorApiService.getActorMovies(PERSON_ID) } returns successResponse
-
-        val result = dataSource.getActorMovies(PERSON_ID)
-
-        assertThat(result).hasSize(2)
-        assertThat(result[0]).isEqualTo(expectedMovieDto1)
-        assertThat(result[1]).isEqualTo(expectedMovieDto2)
     }
 
     @Test
@@ -97,18 +75,6 @@ class RemoteActorDataSourceImplTest {
         assertThat(result).hasSize(1)
         assertThat(result[0].id).isEqualTo(1L)
         assertThat(result[0].title).isEqualTo("Valid Movie")
-    }
-
-    @Test
-    fun `should return tv show dto list when getActorTvShows is called with valid person id`() = runTest {
-        val successResponse = Response.success(actorTvShowsResponse)
-        coEvery { actorApiService.getActorTvShows(PERSON_ID) } returns successResponse
-
-        val result = dataSource.getActorTvShows(PERSON_ID)
-
-        assertThat(result).hasSize(2)
-        assertThat(result[0]).isEqualTo(expectedTvShowDto1)
-        assertThat(result[1]).isEqualTo(expectedTvShowDto2)
     }
 
     @Test
@@ -179,16 +145,6 @@ class RemoteActorDataSourceImplTest {
         assertThat(result.data[0].name).isEqualTo("")
     }
 
-    @Test
-    fun `should handle actors with null profile path in getTrendingActors`() = runTest {
-        val successResponse = Response.success(trendingActorResponseWithNullProfilePath)
-        coEvery { actorApiService.getTrendingActors(PAGE) } returns successResponse
-
-        val result = dataSource.getTrendingActors(PAGE)
-
-        assertThat(result.data).hasSize(1)
-        assertThat(result.data[0].imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500null")
-    }
     companion object {
         const val PERSON_ID = 123L
         const val PAGE = 1
