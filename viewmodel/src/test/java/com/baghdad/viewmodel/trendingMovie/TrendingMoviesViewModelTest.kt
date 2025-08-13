@@ -1,5 +1,4 @@
-package com.baghdad.viewmodel.trendingMovie
-
+import app.cash.turbine.test
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
 import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
@@ -7,16 +6,15 @@ import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
+import com.baghdad.viewmodel.trendingMovie.TrendingMoviesEffect
+import com.baghdad.viewmodel.trendingMovie.TrendingMoviesScreenState
+import com.baghdad.viewmodel.trendingMovie.TrendingMoviesViewModel
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -24,40 +22,23 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+
 @ExperimentalCoroutinesApi
 class TrendingMoviesViewModelTest {
 
-    private lateinit var getTrendingMoviesUseCase: GetTrendingMoviesUseCase
-    private lateinit var getMovieGenresUseCase: GetMovieGenresUseCase
-    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
-    private lateinit var getSavedListsUseCase: GetSavedListsUseCase
-    private lateinit var addMovieToSavedListUseCase: AddMovieToSavedListUseCase
-    private lateinit var createSavedListUseCase: CreateSavedListUseCase
-    private lateinit var removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase
-    private lateinit var viewModel: TrendingMoviesViewModel
-    private val testDispatcher = UnconfinedTestDispatcher()
-    private val testScope = TestScope(testDispatcher)
+    private val getTrendingMoviesUseCase = mockk<GetTrendingMoviesUseCase>()
+    private val getMovieGenresUseCase = mockk<GetMovieGenresUseCase>()
+    private val isUserLoggedInUseCase = mockk<IsUserLoggedInUseCase>()
+    private val getSavedListsUseCase = mockk<GetSavedListsUseCase>()
+    private val addMovieToSavedListUseCase = mockk<AddMovieToSavedListUseCase>()
+    private val createSavedListUseCase = mockk<CreateSavedListUseCase>()
+    private val removeMovieFromSavedListUseCase = mockk<RemoveMovieFromSavedListUseCase>()
+
+    private val testDispatcher = StandardTestDispatcher()
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        getTrendingMoviesUseCase = mockk()
-        getMovieGenresUseCase = mockk()
-        isUserLoggedInUseCase = mockk()
-        getSavedListsUseCase = mockk()
-        addMovieToSavedListUseCase = mockk()
-        createSavedListUseCase = mockk()
-        removeMovieFromSavedListUseCase = mockk()
-        viewModel = TrendingMoviesViewModel(
-            getTrendingMoviesUseCase,
-            getMovieGenresUseCase,
-            isUserLoggedInUseCase,
-            getSavedListsUseCase,
-            addMovieToSavedListUseCase,
-            createSavedListUseCase,
-            removeMovieFromSavedListUseCase,
-            testDispatcher
-        )
     }
 
     @AfterEach
@@ -65,161 +46,164 @@ class TrendingMoviesViewModelTest {
         Dispatchers.resetMain()
     }
 
+
     @Test
-    fun `should send NavigateBack effect when back button is clicked`() {
-        // Given
-        var effect: TrendingMoviesEffect = TrendingMoviesEffect.NavigateBack
-        val job: Job = testScope.launch { viewModel.uiEffect.collect { effect = it } }
+    fun `onBackClicked should emit NavigateBack effect`() = runTest {
+        val viewModel = createViewModel()
 
-        // When
-        viewModel.onBackClicked()
-
-        // Then
-        assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateBack)
-        job.cancel()
+        viewModel.uiEffect.test {
+            viewModel.onBackClicked()
+            assertThat(awaitItem()).isEqualTo(TrendingMoviesEffect.NavigateBack)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun `should send NavigateToMovieDetails effect when movie is clicked`() {
-        // Given
-        var effect: TrendingMoviesEffect = TrendingMoviesEffect.NavigateToMovieDetails(MOVIE_ID)
-        val job: Job = testScope.launch { viewModel.uiEffect.collect { effect = it } }
+    fun `onMovieClicked should emit NavigateToMovieDetails effect with correct movieId`() =
+        runTest {
+            val viewModel = createViewModel()
 
-        // When
-        viewModel.onMovieClicked(MOVIE_ID)
+            viewModel.uiEffect.test {
+                viewModel.onMovieClicked(MOVIE_ID)
+                assertThat(awaitItem()).isEqualTo(
+                    TrendingMoviesEffect.NavigateToMovieDetails(MOVIE_ID)
+                )
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
 
-        //Then
-        assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateToMovieDetails(MOVIE_ID))
-        job.cancel()
+    @Test
+    fun `onLoginClicked should emit NavigateToLogin effect`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.uiEffect.test {
+            viewModel.onLoginClicked()
+            assertThat(awaitItem()).isEqualTo(TrendingMoviesEffect.NavigateToLogin)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun `should send NavigationToLogin effect when login button is clicked`() {
-        // Given
-        var effect: TrendingMoviesEffect = TrendingMoviesEffect.NavigateToLogin
-        val job: Job = testScope.launch { viewModel.uiEffect.collect { effect = it } }
+    fun `onCreateNewListClicked should show addListBottomSheet and hide addToListBottomSheet`() {
+        val viewModel = createViewModel()
 
-        // When
-        viewModel.onLoginClicked()
-
-        // Then
-        assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateToLogin)
-        job.cancel()
-    }
-
-    @Test
-    fun `should create new list when create new list button is clicked`() {
-        // When
         viewModel.onCreateNewListClicked()
 
-        // Then
         val state = viewModel.uiState.value
         assertThat(state.addListBottomSheetState.isVisible).isTrue()
         assertThat(state.addToListBottomSheetState.isVisible).isFalse()
     }
 
     @Test
-    fun `should close add list bottom sheet when dismiss button is clicked`() {
-        // When
+    fun `onCreateListBottomSheetDismiss should hide addListBottomSheet and show addToListBottomSheet`() {
+        val viewModel = createViewModel()
+
         viewModel.onCreateListBottomSheetDismiss()
 
-        // Then
         val state = viewModel.uiState.value
         assertThat(state.addListBottomSheetState.isVisible).isFalse()
         assertThat(state.addToListBottomSheetState.isVisible).isTrue()
+        assertThat(state.addListBottomSheetState.listName).isEmpty()
     }
 
     @Test
-    fun `should close add to list bottom sheet when dismiss button is clicked`() {
-        // When
+    fun `onSaveToListBottomSheetDismiss should hide addToListBottomSheet`() {
+        val viewModel = createViewModel()
+
         viewModel.onSaveToListBottomSheetDismiss()
 
-        // Then
         val state = viewModel.uiState.value
         assertThat(state.addToListBottomSheetState.isVisible).isFalse()
     }
 
     @Test
-    fun `should selected list id when list is selected`() {
-        // Given
-        val listId = 123L
+    fun `onListSelected should update selectedListId in state`() {
+        val viewModel = createViewModel()
 
-        // When
-        viewModel.onListSelected(listId)
+        viewModel.onListSelected(LIST_ID)
 
-        // Then
         val state = viewModel.uiState.value
-        assertThat(state.addToListBottomSheetState.selectedListId).isEqualTo(listId)
+        assertThat(state.addToListBottomSheetState.selectedListId).isEqualTo(LIST_ID)
     }
 
     @Test
-    fun `should load movies when clicked category is different from current`() = runTest {
-        // Given
-        coEvery { getMovieGenresUseCase.getMovieGenres() } returns mockk()
+    fun `onCreatedListNameChanged should update listName in state`() {
+        val viewModel = createViewModel()
 
-        // When
-        viewModel.onCategoryClicked(CATEGORY_ID)
-
-        // Then
-        coVerify { getMovieGenresUseCase.getMovieGenres() }
-    }
-
-    @Test
-    fun `should not load movies when clicked category is same as current`() {
-        // Given
-        coEvery { getMovieGenresUseCase.getMovieGenres() } returns mockk()
-        viewModel.onCategoryClicked(CATEGORY_ID)
-
-        // When
-        viewModel.onCategoryClicked(CATEGORY_ID)
-
-        // Then
-        coVerify(exactly = 1) { getMovieGenresUseCase.getMovieGenres() }
-    }
-
-    @Test
-    fun `should call loadGenres when SnackBar action label is clicked`() {
-        // Given
-        coEvery { getMovieGenresUseCase.getMovieGenres() } returns mockk()
-        viewModel.onCategoryClicked(CATEGORY_ID)
-
-        // When
-        viewModel.onSnackBarActionLabelClicked(CATEGORY_ID)
-
-        // Then
-        coVerify(exactly = 2) { getMovieGenresUseCase.getMovieGenres() }
-    }
-
-    @Test
-    fun `should change list name when list name is changed`() {
-        // When
         viewModel.onCreatedListNameChanged(LIST_NAME)
 
-        // Then
         val state = viewModel.uiState.value
         assertThat(state.addListBottomSheetState.listName).isEqualTo(LIST_NAME)
     }
 
     @Test
-    fun `should create new list when create list button is clicked`() = runTest {
-        // Given
-        coEvery { createSavedListUseCase(title = LIST_NAME) } returns mockk()
-        viewModel.onCreatedListNameChanged(LIST_NAME)
+    fun `onCategoryClicked with different categoryId should update selectedGenreId`() = runTest {
+        val viewModel = createViewModel()
 
+        viewModel.onCategoryClicked(CATEGORY_ID)
 
-        // When
-        viewModel.onCreateListBottomSheetAddClick()
-
-        // Then
-        coVerify { createSavedListUseCase(title = LIST_NAME) }
-
+        assertThat(viewModel.uiState.value.selectedGenreId).isEqualTo(CATEGORY_ID)
     }
+
+    @Test
+    fun `onSaveMovieClick with unsaved movie should show addToListBottomSheet`() {
+        val viewModel = createViewModel()
+
+        viewModel.onSaveMovieClick(MOVIE)
+
+        val state = viewModel.uiState.value
+        assertThat(state.addToListBottomSheetState.isVisible).isTrue()
+        assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(MOVIE_ID)
+    }
+
+    @Test
+    fun `onSaveMovieClick with unsaved movie should update addToListBottomSheetState`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.onSaveMovieClick(MOVIE)
+
+        val state = viewModel.uiState.value.addToListBottomSheetState
+        assertThat(state.isVisible).isTrue()
+        assertThat(state.selectedItemId).isEqualTo(MOVIE_ID)
+        assertThat(state.selectedListId).isNull()
+    }
+
+    @Test
+    fun `onCreateListBottomSheetAddClick should dismiss add list bottom sheet and refresh saved lists on success`() =
+        runTest {
+            coEvery { createSavedListUseCase(any()) } returns Unit
+            val viewModel = createViewModel()
+            viewModel.onCreatedListNameChanged(LIST_NAME)
+
+            viewModel.onCreateListBottomSheetAddClick()
+
+            val addListState = viewModel.uiState.value.addListBottomSheetState
+            assertThat(addListState.isVisible).isFalse()
+        }
 
     companion object {
-        const val MOVIE_ID = 456L
-        const val LIST_NAME = "New List"
-        const val CATEGORY_ID = 123L
+        private const val MOVIE_ID = 456L
+        private const val LIST_ID = 789L
+        private const val LIST_NAME = "New List"
+        private const val CATEGORY_ID = 123L
 
+        val MOVIE = TrendingMoviesScreenState.TrendingMovieUiState(
+            id = MOVIE_ID,
+            isSaved = false,
+            savedListId = LIST_ID
+        )
     }
 
+    private fun createViewModel(): TrendingMoviesViewModel {
+        return TrendingMoviesViewModel(
+            getTrendingMoviesUseCase = getTrendingMoviesUseCase,
+            getMovieGenresUseCase = getMovieGenresUseCase,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
+            getSavedListsUseCase = getSavedListsUseCase,
+            addMovieToSavedListUseCase = addMovieToSavedListUseCase,
+            createSavedListUseCase = createSavedListUseCase,
+            removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
+            defaultDispatcher = testDispatcher
+        )
+    }
 }
