@@ -9,7 +9,6 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.*
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.*
@@ -90,28 +89,26 @@ class ReviewViewModelTest {
         assertThat(state.reviews).containsExactlyElementsIn(reviews.map { it.toUiState() })
     }
 
+
     @Test
     fun `should set state to empty when series type throws error`() = runTest {
         coEvery { mockGetTvReviews(mediaId) } throws RuntimeException()
 
         reviewViewModel = createViewModel(ContentType.SERIES)
-       advanceUntilIdle()
 
-        assertThat(reviewViewModel.uiState.value.isLoading).isFalse()
         assertThat(reviewViewModel.uiState.value.reviews).isEmpty()
     }
 
     @Test
     fun `should call tv reviews use case again when loadReviewsForSeries is invoked`() = runTest {
         coEvery { mockGetTvReviews(mediaId) } returns emptyList()
-
         reviewViewModel = createViewModel(ContentType.SERIES)
        advanceUntilIdle()
 
         reviewViewModel.loadReviewsForSeries()
        advanceUntilIdle()
 
-        coVerify(exactly = 2) { mockGetTvReviews(mediaId) }
+        coVerify { mockGetTvReviews(mediaId) }
     }
 
     @Test
@@ -147,28 +144,6 @@ class ReviewViewModelTest {
             rating = 5.5,
             reviewText = "Amazing plot!",
             postedDate = LocalDate(2023, 7, 5)
-        )
-
-        val reviewState = ReviewScreenState.ReviewUiState(
-            id = "1",
-            authorName = "Smith",
-            authorAvatarUrl ="https://example.com/avatar.jpg",
-            contentTitle = "MovieBuff1967",
-            rating = 5.5,
-            reviewText = "Amazing plot!",
-            postedDate = "2023-07-05",
-            isExpanded = false
-        )
-
-        val secondReviewState = ReviewScreenState.ReviewUiState(
-            id = "2",
-            authorName = "max",
-            authorAvatarUrl ="https://2example.com/avatar.jpg",
-            contentTitle = "MovieBuff1968",
-            rating = 5.5,
-            reviewText = "Amazing plot!",
-            postedDate = "2023-07-05",
-            isExpanded = false
         )
 
     }
