@@ -1,5 +1,6 @@
 package com.baghdad.novix.di
 
+import com.baghdad.localDatasource.AppConfigurationDataSourceImpl
 import com.baghdad.localDatasource.ContinueWatchingDataSourceImpl
 import com.baghdad.localDatasource.RecentSearchDataSourceImpl
 import com.baghdad.localDatasource.RecentlyViewedDataSourceImpl
@@ -23,26 +24,26 @@ import dagger.hilt.components.SingletonComponent
 abstract class LocalDataSourceModule {
 
     @Binds
-    abstract fun provideLocalSessionDataStore(localSessionDataStoreImpl: SessionDataSourceImpl): SessionDataSource
+    abstract fun provideSessionDataSource(sessionDataSourceImpl: SessionDataSourceImpl): SessionDataSource
 
     @Binds
-    abstract fun provideLocalUserDataStore(localUserDataStoreImpl: UserDataSourceImpl): UserDataSource
+    abstract fun provideUserDataSource(userDataSourceImpl: UserDataSourceImpl): UserDataSource
 
     @Binds
-    abstract fun provideLocalRecentSearchDataSource(localRecentSearchDataSourceImpl: RecentSearchDataSourceImpl): RecentSearchDataSource
+    abstract fun provideRecentSearchDataSource(recentSearchDataSourceImpl: RecentSearchDataSourceImpl): RecentSearchDataSource
 
     @Binds
-    abstract fun provideLocalContinueWatchingDataSource(localContinueWatchingDataSourceImpl: ContinueWatchingDataSourceImpl): ContinueWatchingDataSource
+    abstract fun provideContinueWatchingDataSource(continueWatchingDataSourceImpl: ContinueWatchingDataSourceImpl): ContinueWatchingDataSource
 
     @Binds
-    abstract fun provideLocalRecentlyViewedDataSource(localRecentlyViewedDataSourceImpl: RecentlyViewedDataSourceImpl): RecentlyViewedDataSource
+    abstract fun provideRecentlyViewedDataSource(recentlyViewedDataSourceImpl: RecentlyViewedDataSourceImpl): RecentlyViewedDataSource
 
     @Binds
-    abstract fun provideLocalUserPreferencesDataSource(localUserPreferencesDataSourceImpl: com.baghdad.localDatasource.AppConfigurationDataSourceImpl): AppConfigurationDataSource
+    abstract fun provideUserPreferencesDataSource(userPreferencesDataSourceImpl: AppConfigurationDataSourceImpl): AppConfigurationDataSource
 
     @Binds
-    abstract fun provideLocalSavableMovieDataSource(
-        localSavableMovieDataSourceImpl: SavableMovieDataSourceImpl,
+    abstract fun provideSavableMovieDataSource(
+        savableMovieDataSourceImpl: SavableMovieDataSourceImpl,
     ): SavableMovieDataSource
 }
 
