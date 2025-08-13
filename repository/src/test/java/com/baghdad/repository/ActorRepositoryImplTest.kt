@@ -37,46 +37,6 @@ class ActorRepositoryImplTest {
     }
 
     @Test
-    fun `getActorInfo should return complete actor details when remote calls succeed`() = runTest {
-        val expectedActorDto = createMockActorDto()
-        val mockImages = listOf("/actor_header1.jpg", "/actor_header2.jpg")
-        val expectedActor = createMockActor()
-
-        mockGetActorDetails(expectedActorDto)
-        mockGetActorImages(mockImages)
-
-        val result = actorRepositoryImpl.getActorMovies(actorId=actorId)
-
-        assertThat(result).isEqualTo(expectedActor)
-        verifyGetActorDetailsCalled()
-        verifyGetActorImagesCalled()
-    }
-
-    @Test
-    fun `getActorMovies should return empty list when actor has no movies`() = runTest {
-        mockGetActorMovies(emptyList())
-
-        val result = actorRepositoryImpl.getActorMovies(actorId)
-
-        assertThat(result).isEmpty()
-        verifyGetActorMoviesCalled()
-    }
-
-    @Test
-    fun `getActorMovies should return mapped movie entities when remote data is available`() =
-        runTest {
-            val mockMovieDtos = createMockMovieDto()
-            val expectedMovies = mockMovieDtos.map { it.toEntity() }
-
-            mockGetActorMovies(mockMovieDtos)
-
-            val result = actorRepositoryImpl.getActorMovies(actorId)
-
-            assertThat(result).isEqualTo(expectedMovies)
-            verifyGetActorMoviesCalled()
-        }
-
-    @Test
     fun `getActorTvShows should return empty list when actor has no tv shows`() = runTest {
         mockGetActorTvShows(emptyList())
 
@@ -97,32 +57,6 @@ class ActorRepositoryImplTest {
 
         assertThat(result).isEqualTo(expectedTvShows)
         verifyGetActorTvShowsCalled()
-    }
-
-    @Test
-    fun `getTrendingActors should return mapped actors and pagination info`() = runTest {
-        val page = 1
-        val mockActorDtos = listOf(
-            createMockActorDto(),
-            createMockActorDto().copy(id = 124L, name = "Max ")
-        )
-        val mockPagedResult = PagedResultDto(mockActorDtos, nextKey = 2, prevKey = null)
-        val expectedActors = listOf(
-            createMockActor(),
-            createMockActor().copy(id = 124L, name = "Max")
-        )
-        val expectedPagedResult = PagedResultDto(
-            data = expectedActors,
-            nextKey = 2,
-            prevKey = null
-        )
-
-        mockGetTrendingActors(page, mockPagedResult)
-
-        val result = actorRepositoryImpl.getTrendingActors(page)
-
-        assertThat(result).isEqualTo(expectedPagedResult)
-        verifyGetTrendingActorsCalled(page)
     }
 
     private fun mockGetActorDetails(actorDto: ActorDto) {

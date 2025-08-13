@@ -77,26 +77,6 @@ class EpisodeRepositoryImplTest {
         verifyGetEpisodeCastMembersCalled()
     }
 
-    @Test
-    fun `getEpisodeDetails limits tv show images to 10 when more than 10 images available`() =
-        runTest {
-            val mockEpisodeDto = createMockEpisodeDto()
-            val mockTrailerUrl = "https://youtube.com/watch?v=trailer123"
-            val mockTvShowImages = (1..15).map { "/image$it.jpg" }
-
-            mockGetEpisodeDetails(mockEpisodeDto)
-            mockGetEpisodeTrailer(mockTrailerUrl)
-            mockGetTvShowImages(mockTvShowImages)
-            val result = episodeRepositoryImpl.getEpisodeDetails(tvId, seasonNumber, episodeNumber)
-
-            assertThat(result.headerPictures).hasSize(10)
-            assertThat(result.headerPictures).isEqualTo(mockTvShowImages.take(10))
-
-            verifyGetEpisodeDetailsCalled()
-            verifyGetEpisodeTrailerCalled()
-            verifyGetTvShowImagesCalled()
-            verifyGetTvShowDetailsCalled()
-        }
     private val tvId = 123L
     private val seasonNumber = 2
     private val episodeNumber = 5

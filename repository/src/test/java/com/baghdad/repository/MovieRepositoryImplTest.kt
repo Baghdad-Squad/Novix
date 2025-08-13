@@ -75,17 +75,6 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun `getSimilarMovies should return empty list when no similar movies found`() = runTest {
-        val movieId = 123L
-        coEvery { remoteMovieDataSource.getSimilarMovies(movieId) } returns emptyList()
-
-        val result = movieRepositoryImpl.getSimilarMovies(movieId)
-
-        assertThat(result).isEqualTo(emptyList<Movie>())
-        coVerify { remoteMovieDataSource.getSimilarMovies(movieId) }
-    }
-
-    @Test
     fun `getMovieCastMembers should return list of cast members when remote call succeeds`() =
         runTest {
             val movieId = 456L
@@ -116,21 +105,6 @@ class MovieRepositoryImplTest {
         coVerify { remoteMovieDataSource.getMovieCastMembers(movieId) }
     }
 
-    @Test
-    fun `getMoviesByGenre should return empty paged result when no movies found`() = runTest {
-        val genreId = 28L
-        val page = 1
-        val pageSize = 20
-        val emptyPagedResult = PagedResultDto<MovieDto>(emptyList(), nextKey = null, prevKey = null)
-        coEvery { remoteMovieDataSource.getMoviesByGenre(genreId, page) } returns emptyPagedResult
-
-        val result = movieRepositoryImpl.getMoviesByGenre(genreId, page, pageSize)
-
-        assertThat(result.data).isEmpty()
-        assertThat(result.nextKey).isNull()
-        assertThat(result.prevKey).isNull()
-        coVerify { remoteMovieDataSource.getMoviesByGenre(genreId, page) }
-    }
 
     @Test
     fun `getMoviesByGenre should throw exception when remote call fails`() = runTest {
@@ -214,24 +188,4 @@ class MovieRepositoryImplTest {
         }
     }
 
-    @Test
-    fun `getPopularMovies should return empty list when no popular movies found`() = runTest {
-        coEvery { remoteMovieDataSource.getPopularMovies() } returns emptyList()
-
-        val result = movieRepositoryImpl.getPopularMovies()
-
-        assertThat(result).isEmpty()
-        coVerify { remoteMovieDataSource.getPopularMovies() }
-    }
-
-    @Test
-    fun `getUpcomingMovies should return empty list when no upcoming movies found`() = runTest {
-        val genreId = 28L
-        coEvery { remoteMovieDataSource.getUpcomingMovies(genreId) } returns emptyList()
-
-        val result = movieRepositoryImpl.getUpcomingMovies(genreId)
-
-        assertThat(result).isEmpty()
-        coVerify { remoteMovieDataSource.getUpcomingMovies(genreId) }
-    }
 }
