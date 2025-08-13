@@ -68,13 +68,13 @@ class SavedListDetailsViewModelTest {
                 listId = 1, page = 1, pageSize = 20
             )
         } returns savedListDetailsSample
+
         viewModel = createViewModel()
         advanceUntilIdle()
+
         coVerify(exactly = 1) {
             getSavedListDetailsUseCase(
-                listId = any(),
-                page = any(),
-                pageSize = any()
+                listId = any(), page = any(), pageSize = any()
             )
         }
     }
@@ -87,18 +87,21 @@ class SavedListDetailsViewModelTest {
                     listId = 1, page = 1, pageSize = 20
                 )
             } returns savedListDetailsSample
+
             viewModel = createViewModel()
             advanceUntilIdle()
+
             val state = viewModel.uiState.value.mediaFlow
             assertThat(state).isNotEqualTo(flowOf<PagingData<SavedListDetailsMovieUiState>>())
         }
 
 
-
     @Test
     fun `should emit navigate back when onBackClicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onBackClick()
+
         val effect = viewModel.uiEffect.first()
         assertThat(effect).isEqualTo(SavedListDetailsEffect.NavigateBack)
     }
@@ -106,15 +109,19 @@ class SavedListDetailsViewModelTest {
     @Test
     fun `should call deleteSavedListUseCase when onDeleteClicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onRemoveSavedMovieClick(1L)
         advanceUntilIdle()
+
         coVerify { removeMovieFromSavedListUseCase(listId = any(), movieId = 1) }
     }
 
     @Test
     fun `should show delete list bottom sheet when onDelete clicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onDeleteClick()
+
         val currentState = viewModel.uiState.value
         assertThat(currentState.isConfirmDeleteDialogVisible).isTrue()
     }
@@ -122,24 +129,30 @@ class SavedListDetailsViewModelTest {
     @Test
     fun `should navigate to movie detail screen when onMovieClicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onMovieClick(1)
         val effect = viewModel.uiEffect.first()
+
         assertThat(effect).isEqualTo(SavedListDetailsEffect.NavigateToMovieDetails(1))
     }
 
     @Test
     fun `should call removeMovieFromSavedListUseCase when onRemoveSavedMovieClick`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onRemoveSavedMovieClick(1L)
         advanceUntilIdle()
+
         coVerify { removeMovieFromSavedListUseCase(listId = any(), movieId = 1) }
     }
 
     @Test
     fun `should call deleteSavedListUseCase when onDeleteListBottomSheetDeleteClick`() = runTest {
         val viewModel = createViewModel()
+
         viewModel.onDeleteListBottomSheetDeleteClick()
         advanceUntilIdle()
+
         coVerify { deleteSavedListUseCase(any()) }
     }
 
@@ -152,23 +165,23 @@ class SavedListDetailsViewModelTest {
             } just runs
 
             viewModel.onDeleteListBottomSheetDeleteClick()
+
             viewModel.uiEffect.test {
                 val effect = awaitItem()
                 assertThat(effect).isEqualTo(SavedListDetailsEffect.NavigateBack)
-
             }
         }
 
     @Test
     fun `should reload data of list when onSnackBarActionLabelClick`() = runTest {
         val viewModel = createViewModel()
+
         viewModel.onSnackBarActionLabelClick()
         advanceUntilIdle()
+
         coVerify(exactly = 2) {
             getSavedListDetailsUseCase.invoke(
-                listId = any(),
-                page = any(),
-                pageSize = any()
+                listId = any(), page = any(), pageSize = any()
             )
         }
     }

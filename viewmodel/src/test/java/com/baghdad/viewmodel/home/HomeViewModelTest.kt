@@ -1,7 +1,6 @@
 import app.cash.turbine.test
 import com.baghdad.domain.exception.NetworkException
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
@@ -17,7 +16,6 @@ import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
-import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.home.HomeScreenEffect
 import com.baghdad.viewmodel.home.HomeScreenState
@@ -114,6 +112,7 @@ class HomeViewModelTest {
 
             viewModel = createViewModel()
             advanceUntilIdle()
+
             viewModel.uiState.test {
                 val state = awaitItem()
                 assertThat(state.topRatingItems).isEmpty()
@@ -122,14 +121,11 @@ class HomeViewModelTest {
 
     @Test
     fun `should have empty continue watching when no items observed`() = runTest {
-        // Given
         coEvery { observeContinueWatchingUseCase.invoke() } returns flowOf(emptyList())
 
-        // When
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        // Then
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.continueWatchingItems).isEmpty()
@@ -138,12 +134,12 @@ class HomeViewModelTest {
 
     @Test
     fun `should set popular loading false when popular items finished loading`() = runTest {
-        // Given
         coEvery { getPopularMoviesUseCase.invoke() } returns emptyList()
         coEvery { getPopularTvShowsUseCase.invoke() } returns emptyList()
 
         viewModel = createViewModel()
         advanceUntilIdle()
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.isPopularLoading).isFalse()
@@ -169,23 +165,26 @@ class HomeViewModelTest {
     fun `should not reload upcoming items when same genre is selected`() = runTest {
         viewModel = createViewModel()
         advanceUntilIdle()
-        val initialState = viewModel.uiState.value
-        val genreId = initialState.selectedUpcomingGenreId ?: 1L
 
-        viewModel.onUpcomingGenreSelected(HomeScreenState.GenreUiState(genreId, "Drama"))
+//        val initialState = viewModel.uiState.value
+//        val genreId = initialState.selectedUpcomingGenreId ?: 1L
+        viewModel.onUpcomingGenreSelected(HomeScreenState.GenreUiState(1L, "Drama"))
+        viewModel.onUpcomingGenreSelected(HomeScreenState.GenreUiState(1L, "Drama"))
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { getUpcomingMoviesUseCase.invoke(genreId) }
+        coVerify(exactly = 1) { getUpcomingMoviesUseCase.invoke(1L) }
     }
 
     @Test
     fun `should emit NavigateToMovieDetails when popular movie item clicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onPopularItemClicked(
             HomeScreenState.PopularItemUiState(
                 id = 1, type = HomeScreenState.PopularItemUiState.Type.MOVIE
             )
         )
+
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToMovieDetails(1))
@@ -196,11 +195,13 @@ class HomeViewModelTest {
     @Test
     fun `should emit NavigateToTvShowDetails when popular tv show item clicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onPopularItemClicked(
             HomeScreenState.PopularItemUiState(
                 id = 2, type = HomeScreenState.PopularItemUiState.Type.TV_SHOW
             )
         )
+
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToTvShowDetails(2))
@@ -210,7 +211,9 @@ class HomeViewModelTest {
     @Test
     fun `should emit NavigateToMovies when onMoviesClicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onMoviesClicked()
+
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToMovies)
@@ -220,7 +223,9 @@ class HomeViewModelTest {
     @Test
     fun `should emit NavigateToTvShows when onTvShowsClicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onTvShowsClicked()
+
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToTvShows)
@@ -230,7 +235,9 @@ class HomeViewModelTest {
     @Test
     fun `should emit NavigateToActors when onActorsClicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onActorsClicked()
+
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToActors)
@@ -241,7 +248,9 @@ class HomeViewModelTest {
     @Test
     fun `should emit NavigateToMovieDetails when top rating item clicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onTopRatingItemClicked(HomeScreenState.TopRatingItemUiState(id = 3))
+
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToMovieDetails(3))
@@ -251,7 +260,9 @@ class HomeViewModelTest {
     @Test
     fun `should emit NavigateToTopRating when onViewAllTopRatingClicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onViewAllTopRatingClicked()
+
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToTopRating)
@@ -261,11 +272,13 @@ class HomeViewModelTest {
     @Test
     fun `should emit NavigateToMovieDetails when continue watching item clicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onContinueWatchingItemClicked(
             HomeScreenState.ContinueWatchingItemUiState(
                 id = 5, contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE
             )
         )
+
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToMovieDetails(5))
@@ -275,7 +288,9 @@ class HomeViewModelTest {
     @Test
     fun `should emit NavigateToContinueWatching when onViewAllContinueWatchingClicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onViewAllContinueWatchingClicked()
+
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToContinueWatching)
@@ -285,6 +300,7 @@ class HomeViewModelTest {
     @Test
     fun `should emit NavigateToMovieDetails when upcoming item clicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onUpcomingItemClicked(HomeScreenState.UpcomingItemUiState(id = 9))
 
         viewModel.uiEffect.test {
@@ -354,12 +370,14 @@ class HomeViewModelTest {
     @Test
     fun `should update selected item id when onPopularItemSaveClicked called`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onPopularItemSaveClicked(
             HomeScreenState.PopularItemUiState(
                 id = 1, type = HomeScreenState.PopularItemUiState.Type.MOVIE
             )
         )
         advanceUntilIdle()
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(1)
@@ -369,8 +387,10 @@ class HomeViewModelTest {
     @Test
     fun `should update selected item id when onTopRatingItemSaveClicked called`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onTopRatingItemSaveClicked(HomeScreenState.TopRatingItemUiState(id = 2))
         advanceUntilIdle()
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(2)
@@ -380,12 +400,14 @@ class HomeViewModelTest {
     @Test
     fun `should update selected item id when onContinueWatchingItemSaveClicked called`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onContinueWatchingItemSaveClicked(
             HomeScreenState.ContinueWatchingItemUiState(
                 id = 3, contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE
             )
         )
         advanceUntilIdle()
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(3)
@@ -393,15 +415,16 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `should update selected item id when onUpcomingItemSaveClicked called`() =
-        runTest(testDispatcher) {
+    fun `should update selected item id when onUpcomingItemSaveClicked called`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onUpcomingItemSaveClicked(HomeScreenState.UpcomingItemUiState(id = 4))
         advanceUntilIdle()
-            viewModel.uiState.test {
-                val state = awaitItem()
-                assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(4)
-            }
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(4)
+        }
     }
 
     @Test
@@ -409,7 +432,6 @@ class HomeViewModelTest {
         val method = HomeViewModel::class.java.getDeclaredMethod(
             "mapThrowableToErrorMessage", Throwable::class.java
         )
-
         method.isAccessible = true
 
         val viewModel = createViewModel()
@@ -421,7 +443,9 @@ class HomeViewModelTest {
     @Test
     fun `should navigate to login screen when onLoginClicked`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onLoginClicked()
+
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToLogin)
@@ -432,8 +456,10 @@ class HomeViewModelTest {
     fun `should show error snackbar when getPopularMoviesUseCase throw NetworkException`() =
         runTest {
             coEvery { getPopularMoviesUseCase.invoke() } throws NetworkException()
+
             viewModel = createViewModel()
             advanceUntilIdle()
+
             viewModel.snackBarState.test {
                 val state = awaitItem()
                 assertThat(state.isSuccess).isFalse()
@@ -444,8 +470,10 @@ class HomeViewModelTest {
     fun `should show no internet snackbar when getPopularMoviesUseCase throw NoInternetException`() =
         runTest {
             coEvery { getPopularMoviesUseCase.invoke() } throws NoInternetException()
+
             viewModel = createViewModel()
             advanceUntilIdle()
+
             viewModel.snackBarState.test {
                 val state = awaitItem()
                 assertThat(state.message).isEqualTo(BaseSnackBarMessage.NetworkError)
@@ -456,8 +484,10 @@ class HomeViewModelTest {
     @Test
     fun `should reload data when onSnackBarActionLabelClicked`() = runTest {
         val viewModel = createViewModel()
+
         viewModel.onSnackBarActionLabelClicked()
         advanceUntilIdle()
+
         coVerify(exactly = 2) { getPopularMoviesUseCase.invoke() }
     }
 
@@ -465,6 +495,7 @@ class HomeViewModelTest {
     fun `should update selectedItemId when onTopRatingItemSaveClicked`() = runTest {
         viewModel = createViewModel()
         viewModel.onListSelected(1L)
+
         viewModel.onTopRatingItemSaveClicked(
             HomeScreenState.TopRatingItemUiState(
                 id = 5L, savedListId = 1L
@@ -480,7 +511,9 @@ class HomeViewModelTest {
     @Test
     fun `should update selected list id when onListSelected`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onListSelected(1L)
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.addToListBottomSheetState.selectedListId).isEqualTo(1L)
@@ -491,6 +524,7 @@ class HomeViewModelTest {
     fun `should show add to list bottom sheet when onTopRatingItemSaveClicked`() = runTest {
         viewModel = createViewModel()
         viewModel.onListSelected(1L)
+
         viewModel.onTopRatingItemSaveClicked(
             HomeScreenState.TopRatingItemUiState(
                 id = 5L, savedListId = 1L
@@ -512,15 +546,16 @@ class HomeViewModelTest {
             )
         )
         viewModel.onListSelected(1L)
+
         viewModel.onSaveItemToListClicked()
         advanceUntilIdle()
+
         viewModel.uiState.test {
             val state = awaitItem()
             println(state.addToListBottomSheetState)
             coVerify {
                 addMovieToSavedListUseCase(
-                    listId = 1L,
-                    movieId = 5L
+                    listId = 1L, movieId = 5L
                 )
             }
         }
@@ -531,8 +566,10 @@ class HomeViewModelTest {
         runTest {
             viewModel = createViewModel()
             coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
+
             viewModel.onSaveItemToListClicked()
             advanceUntilIdle()
+
             viewModel.uiState.test {
                 val state = awaitItem()
                 assertThat(state.addToListBottomSheetState.isVisible).isFalse()
@@ -543,7 +580,9 @@ class HomeViewModelTest {
     fun `should hide add to list bottom sheet when onSaveToListBottomSheetDismiss is called`() =
         runTest {
             viewModel = createViewModel()
+
             viewModel.onSaveToListBottomSheetDismiss()
+
             viewModel.uiState.test {
                 val state = awaitItem()
                 assertThat(state.addToListBottomSheetState.isVisible).isFalse()
@@ -553,7 +592,9 @@ class HomeViewModelTest {
     @Test
     fun `should hide add to list bottom sheet when onCreateNewListClicked`() = runTest {
         val viewModel = createViewModel()
+
         viewModel.onCreateNewListClicked()
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.addToListBottomSheetState.isVisible).isFalse()
@@ -563,7 +604,9 @@ class HomeViewModelTest {
     @Test
     fun `should show add list bottom sheet when onCreateNewListClicked`() = runTest {
         val viewModel = createViewModel()
+
         viewModel.onCreateNewListClicked()
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.addListBottomSheetState.isVisible).isTrue()
@@ -573,7 +616,9 @@ class HomeViewModelTest {
     @Test
     fun `should update list name successfully when onCreatedListNameChanged called`() = runTest {
         val viewModel = createViewModel()
+
         viewModel.onCreatedListNameChanged("Test")
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.addListBottomSheetState.listName).isEqualTo("Test")
@@ -590,6 +635,7 @@ class HomeViewModelTest {
                 )
             )
             viewModel.onSaveToListBottomSheetDismiss()
+
             viewModel.uiState.test {
                 val state = awaitItem()
                 assertThat(state.addListBottomSheetState.isVisible).isFalse()
@@ -605,6 +651,7 @@ class HomeViewModelTest {
             )
         )
         advanceUntilIdle()
+
         coVerify {
             removeMovieFromSavedListUseCase(listId = 1L, movieId = 5L)
         }
@@ -615,7 +662,9 @@ class HomeViewModelTest {
         runTest {
             val viewModel = createViewModel()
             viewModel.onCreateNewListClicked()
+
             viewModel.onCreateListBottomSheetDismiss()
+
             viewModel.uiState.test {
                 val state = awaitItem()
                 assertThat(state.addListBottomSheetState.isVisible).isFalse()
@@ -626,8 +675,10 @@ class HomeViewModelTest {
     fun `should add list when onCreateListBottomSheetAddClick`() = runTest {
         val viewModel = createViewModel()
         viewModel.onCreatedListNameChanged("omer")
+
         viewModel.onCreateListBottomSheetAddClick()
         advanceUntilIdle()
+
         coVerify {
             createSavedListUseCase("omer")
         }
@@ -640,37 +691,17 @@ class HomeViewModelTest {
             coEvery { createSavedListUseCase("omer") } returns Unit
             viewModel.onCreateNewListClicked()
             viewModel.onCreatedListNameChanged("omer")
+
             viewModel.onCreateListBottomSheetAddClick()
             advanceUntilIdle()
+
             viewModel.uiState.test {
                 val state = awaitItem()
                 assertThat(state.addListBottomSheetState.isVisible).isFalse()
             }
         }
 
-    //    @Test
-//    fun `should refresh current lists when new list is created `()= runTest{
-//        val viewModel = createViewModel()
-//        coEvery { getSavedListsUseCase(1, 20) } returns listSample
-//        viewModel.onCreatedListNameChanged("omer")
-//        viewModel.onCreateListBottomSheetAddClick()
-//        advanceUntilIdle()
-//        coVerify (exactly = 1) {
-//            getSavedListsUseCase(1, 20)
-//        }
-//    }
     private companion object {
-        val listSample = PagedResult<SavedList>(
-            data = listOf(
-                SavedList(
-                    id = 1,
-                    name = "omer",
-                    itemCount = 5
-                )
-            ),
-            nextKey = null,
-            prevKey = null
-        )
         val genresSample = listOf(
             Genre(1, "Drama"),
             Genre(2, "Comedy"),
