@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.onBoarding
 
-import com.baghdad.domain.usecase.onBoarding.SetFirstTimeLaunchAppUseCase
+import com.baghdad.domain.usecase.appConfigurations.SetFirstTimeLaunchAppUseCase
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -41,7 +41,7 @@ class OnBoardingViewModelTest {
     }
 
     @Test
-    fun `initial state should be page 0`() = runTest {
+    fun `should initial state be page 0 when viewModel initialized`() = runTest {
         // When
         val initialState = viewModel.uiState.value
 
@@ -65,6 +65,21 @@ class OnBoardingViewModelTest {
     }
 
     @Test
+    fun `onBackButtonClick should back to page 0 when the page is second`() = runTest {
+        // Given
+        val initialPage = viewModel.uiState.value.currentPage
+
+        // When
+        viewModel.onNextButtonClick(3)
+        advanceUntilIdle()
+        viewModel.onBackButtonClick()
+        advanceUntilIdle()
+
+        // Then
+        assertThat(viewModel.uiState.value.currentPage).isEqualTo(initialPage)
+    }
+
+    @Test
     fun `onBackButtonClick should stay on page 0 when on first page`() = runTest {
         // Given
         val initialPage = viewModel.uiState.value.currentPage
@@ -75,6 +90,28 @@ class OnBoardingViewModelTest {
 
         // Then
         assertThat(viewModel.uiState.value.currentPage).isEqualTo(initialPage)
+    }
+
+    @Test
+    fun `onNextButtonClick should navigate to welcome screen when on last page`() = runTest {
+        // Given
+        val pageSize = 3
+        var receivedEffect: OnBoardingEffect? = null
+        val job = launch {
+            viewModel.uiEffect.collect { effect ->
+                receivedEffect = effect
+            }
+        }
+
+        // When
+        for (i in 1..pageSize) {
+            viewModel.onNextButtonClick(pageSize)
+            advanceUntilIdle()
+        }
+
+        // Then
+        assertThat(receivedEffect is OnBoardingEffect.NavigateToWelcomeToNovix).isTrue()
+        job.cancel()
     }
 
     @Test
