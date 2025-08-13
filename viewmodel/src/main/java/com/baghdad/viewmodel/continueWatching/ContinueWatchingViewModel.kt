@@ -53,7 +53,7 @@ class ContinueWatchingViewModel @Inject constructor(
 
     private fun checkIfUserIsLoggedIn() {
         tryToExecute(
-            callee = { isUserLoggedInUseCase() },
+            callee = isUserLoggedInUseCase::invoke,
             onSuccess = ::onCheckIfUserIsLoggedInSuccess,
             dispatcher = defaultDispatcher
         )
@@ -96,10 +96,14 @@ class ContinueWatchingViewModel @Inject constructor(
 
     private fun getGenres() {
         tryToCollect(
-            { if (currentState.selectedMediaTabIsMovie) getContinueWatchingMovieGenres.invoke() else getContinueWatchingTvShowGenres.invoke() },
-            ::onGenresFetched,
+            flowProvider = ::onFetchGenres,
+            onNewValue = ::onGenresFetched,
             onError = ::onGetGenresError
         )
+    }
+
+    private suspend fun onFetchGenres(): Flow<List<Genre>> {
+        return if (currentState.selectedMediaTabIsMovie) getContinueWatchingMovieGenres.invoke() else getContinueWatchingTvShowGenres.invoke()
     }
 
     private fun onGetGenresError(throwable: Throwable) {
