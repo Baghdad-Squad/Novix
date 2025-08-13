@@ -2,11 +2,11 @@ package com.baghdad.repository
 
 import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
-import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockActor
 import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockActorDto
 import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockMovieDto
 import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockTvShowDto
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toSavableMovie
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
@@ -59,6 +59,55 @@ class ActorRepositoryImplTest {
         verifyGetActorTvShowsCalled()
     }
 
+    @Test
+    fun `getActorDetails should return actor with header pictures`() = runTest {
+        val mockActorDto = createMockActorDto()
+        val mockImages = listOf("img1.jpg", "img2.jpg")
+
+        mockGetActorDetails(mockActorDto)
+        mockGetActorImages(mockImages)
+
+        val expected = mockActorDto.toEntity().copy(headerPictures = mockImages)
+
+        val result = actorRepositoryImpl.getActorDetails(actorId)
+
+        assertThat(result).isEqualTo(expected)
+        verifyGetActorDetailsCalled()
+        verifyGetActorImagesCalled()
+    }
+
+    @Test
+    fun `getActorMovies should map movies with saved state`() = runTest {
+        val movieDtos = createMockMovieDto()
+        val savedMoviesMap = mapOf(movieDtos.first().id to 1L)
+
+        coEvery { savableMovieDataSource.getSavedMovies() } returns savedMoviesMap
+        mockGetActorMovies(movieDtos)
+
+        val expected = movieDtos.map {
+            it.toSavableMovie(
+                isSaved = savedMoviesMap.containsKey(it.id),
+                listId = savedMoviesMap[it.id],
+            )
+        }
+
+        val result = actorRepositoryImpl.getActorMovies(actorId)
+
+        assertThat(result).isEqualTo(expected)
+        verifyGetActorMoviesCalled()
+    }
+
+    @Test
+    fun `getActorGallery should return images from remote`() = runTest {
+        val mockImages = listOf("img1", "img2")
+        mockGetActorImages(mockImages)
+
+        val result = actorRepositoryImpl.getActorGallery(actorId)
+
+        assertThat(result).isEqualTo(mockImages)
+        verifyGetActorImagesCalled()
+    }
+
     private fun mockGetActorDetails(actorDto: ActorDto) {
         coEvery { remoteActorDataSource.getActorDetails(actorId) } returns actorDto
     }
@@ -73,10 +122,6 @@ class ActorRepositoryImplTest {
 
     private fun mockGetActorTvShows(tvShowDtos: List<TvShowDto>) {
         coEvery { remoteActorDataSource.getActorTvShows(actorId) } returns tvShowDtos
-    }
-
-    private fun mockGetTrendingActors(page: Int, pagedResultDto: PagedResultDto<ActorDto>) {
-        coEvery { remoteActorDataSource.getTrendingActors(page) } returns pagedResultDto
     }
 
     private fun verifyGetActorDetailsCalled() {
