@@ -1,5 +1,6 @@
 package com.baghdad.novix.di
 
+import com.baghdad.localDatasource.AppConfigurationDataSourceImpl
 import com.baghdad.localDatasource.LocalContinueWatchingDataSourceImpl
 import com.baghdad.localDatasource.LocalRecentSearchDataSourceImpl
 import com.baghdad.localDatasource.LocalRecentlyViewedDataSourceImpl
@@ -38,7 +39,9 @@ abstract class LocalDataSourceModule {
     abstract fun provideLocalRecentlyViewedDataSource(localRecentlyViewedDataSourceImpl: LocalRecentlyViewedDataSourceImpl): LocalRecentlyViewedDataSource
 
     @Binds
-    abstract fun provideLocalUserPreferencesDataSource(localUserPreferencesDataSourceImpl: com.baghdad.localDatasource.AppConfigurationDataSourceImpl): AppConfigurationDataSource
+    abstract fun provideAppConfigurationDataSource(
+        appConfigurationDataSourceImpl: AppConfigurationDataSourceImpl,
+    ): AppConfigurationDataSource
 
     @Binds
     abstract fun provideLocalSavableMovieDataSource(

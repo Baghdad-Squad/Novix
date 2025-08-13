@@ -37,8 +37,7 @@ fun LoggedOutUserScreen(
         ) {
             Image(
                 painter =
-                    painterResource(com.baghdad.design_system.R.drawable.user_person_profile),
-
+                    painterResource(Theme.drawable.personAvatar),
                 contentDescription = stringResource(R.string.loggedout_profile_icon),
                 modifier = Modifier
                     .size(128.dp)
