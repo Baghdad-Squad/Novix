@@ -9,7 +9,7 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.LocalSessionDataSource
+import com.baghdad.repository.datasource.local.SessionDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
@@ -18,7 +18,6 @@ import com.baghdad.repository.mapper.toMedia
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
-import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import com.baghdad.repository.util.getRemotePagedSafely
 import java.util.Locale
@@ -28,7 +27,7 @@ import javax.inject.Singleton
 @Singleton
 class TvShowRepositoryImpl @Inject constructor(
     val remoteGenreDataSource: RemoteGenreDataSource,
-    val localSessionDataSource: LocalSessionDataSource,
+    val sessionDataSource: SessionDataSource,
     val tvShowRemoteDataSource: RemoteTvShowDataSource,
     val authenticationRepository: AuthenticationRepository
 ) : TvShowRepository {
@@ -42,7 +41,8 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTvShowDetails(tvShowId: Long): TvShow {
         return executeSafely {
-            val tvShowImages = tvShowRemoteDataSource.getTvShowImages(tvShowId).take(MAX_IMAGE_COUNT)
+            val tvShowImages =
+                tvShowRemoteDataSource.getTvShowImages(tvShowId).take(MAX_IMAGE_COUNT)
             val tvShowTrailer = tvShowRemoteDataSource.getTvShowTrailer(tvShowId)
             tvShowRemoteDataSource.getTvShowDetails(tvShowId).toEntity()
                 .copy(headerImagesURLs = tvShowImages, trailerURL = tvShowTrailer)
@@ -123,62 +123,47 @@ class TvShowRepositoryImpl @Inject constructor(
         tvShowId: Long,
         rating: Int
     ) {
-        executeAuthorizedSafely(
-            sessionId = localSessionDataSource.getSessionId(),
-            block = {
-                tvShowRemoteDataSource.addTvShowRate(
-                    tvShowId = tvShowId,
-                    rating = rating,
-                    sessionId = it
-                )
-            }
-        )
+        executeSafely {
+            tvShowRemoteDataSource.addTvShowRate(
+                tvShowId = tvShowId,
+                rating = rating,
+            )
+        }
     }
 
     override suspend fun deleteTvShowRate(tvShowId: Long) {
-        executeAuthorizedSafely(
-            sessionId = localSessionDataSource.getSessionId(),
-            block = {
-                tvShowRemoteDataSource.deleteTvShowRate(
-                    tvShowId = tvShowId,
-                    sessionId = it
-                )
-            }
-        )
+        executeSafely {
+            tvShowRemoteDataSource.deleteTvShowRate(
+                tvShowId = tvShowId,
+            )
+        }
     }
 
     override suspend fun getTvShowAccountStates(tvShowId: Long): Boolean {
-        return executeAuthorizedSafely(
-            sessionId = localSessionDataSource.getSessionId(),
-            block = {
-                tvShowRemoteDataSource.getTvShowAccountStates(
-                    tvShowId = tvShowId,
-                    sessionId = it
-                ).toIsMediaRated()
-            }
-        )
+        return executeSafely {
+            tvShowRemoteDataSource.getTvShowAccountStates(
+                tvShowId = tvShowId,
+            ).toIsMediaRated()
+        }
     }
 
     override suspend fun getUserRatedTvShows(page: Int, pageSize: Int): PagedResult<RatedMedia> {
-        return executeAuthorizedSafely(
-            sessionId = localSessionDataSource.getSessionId(),
-            { sessionId ->
-                getRemotePagedSafely(
-                    page = page, pageSize = pageSize,
-                    getRemoteData = { page, _ ->
-                        authenticationRepository.getUserInfo()?.let {
-                            tvShowRemoteDataSource.getUserRatedTvShows(it.id, sessionId, page)
-                        } ?: PagedResultDto(
-                            data = emptyList(),
-                            nextKey = null,
-                            prevKey = null
-                        )
-                    },
-                ) {
-                    it.toMedia()
-                }
+        return executeSafely {
+            getRemotePagedSafely(
+                page = page, pageSize = pageSize,
+                getRemoteData = { page, _ ->
+                    authenticationRepository.getLoggedInUser()?.let {
+                        tvShowRemoteDataSource.getUserRatedTvShows(it.id, page)
+                    } ?: PagedResultDto(
+                        data = emptyList(),
+                        nextKey = null,
+                        prevKey = null
+                    )
+                },
+            ) {
+                it.toMedia()
             }
-        )
+        }
     }
 
     companion object {
