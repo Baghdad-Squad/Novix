@@ -32,6 +32,7 @@ import com.baghdad.ui.feature.home.component.PopularSection
 import com.baghdad.ui.feature.home.component.TopRatingSection
 import com.baghdad.ui.feature.home.component.WhatToWatchSection
 import com.baghdad.ui.feature.home.component.upcomingSection
+import com.baghdad.ui.feature.home.component.upcomingSectionLoading
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToActors
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToContinueWatching
@@ -73,7 +74,6 @@ private fun HomeContent(
     interactionListener: HomeInteractionListener,
     snackBarState: SnackBarState,
 ) {
-    val lazyGridState = rememberLazyGridState()
     val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
     Scaffold(
         modifier = Modifier
@@ -99,11 +99,11 @@ private fun HomeContent(
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             contentPadding = PaddingValues(bottom = 16.dp, top = 8.dp),
-            state = lazyGridState,
+            state = rememberLazyGridState(),
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
+            item(key = "popular_section", span = { GridItemSpan(maxLineSpan) }) {
                 PopularSection(
                     isLoading = state.isPopularLoading,
                     popularItems = state.popularItems,
@@ -112,7 +112,7 @@ private fun HomeContent(
                 )
             }
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
+            item(key = "what_to_watch_section", span = { GridItemSpan(maxLineSpan) }) {
                 WhatToWatchSection(
                     modifier = Modifier.padding(top = 8.dp),
                     onMoviesClick = interactionListener::onMoviesClicked,
@@ -121,7 +121,7 @@ private fun HomeContent(
                 )
             }
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
+            item(key = "top_rating_section", span = { GridItemSpan(maxLineSpan) }) {
                 TopRatingSection(
                     modifier = Modifier.padding(top = 24.dp),
                     isLoading = state.isTopRatingLoading,
@@ -132,7 +132,7 @@ private fun HomeContent(
                 )
             }
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
+            item(key = "continue_watching_section", span = { GridItemSpan(maxLineSpan) }) {
                 ContinueWatchingSection(
                     modifier = Modifier.padding(top = 24.dp),
                     isLoading = state.isContinueWatchingLoading,
@@ -143,17 +143,22 @@ private fun HomeContent(
                 )
             }
 
-            upcomingSection(
-                modifier = Modifier.padding(top = 24.dp),
-                selectedGenreId = state.selectedUpcomingGenreId,
-                genres = state.upcomingGenres,
-                isGenresLoading = state.isUpcomingGenresLoading,
-                onGenreSelected = interactionListener::onUpcomingGenreSelected,
-                upcomingItems = state.upcomingItems,
-                isUpcomingItemsLoading = state.isUpcomingMoviesLoading,
-                onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
-                onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
-            )
+            if (state.isUpcomingMoviesLoading) {
+                upcomingSectionLoading(upcomingItems = state.upcomingItems)
+            } else {
+                upcomingSection(
+                    modifier = Modifier.padding(top = 24.dp),
+                    selectedGenreId = state.selectedUpcomingGenreId,
+                    genres = state.upcomingGenres,
+                    isGenresLoading = state.isUpcomingGenresLoading,
+                    onGenreSelected = interactionListener::onUpcomingGenreSelected,
+                    upcomingItems = state.upcomingItems,
+                    isUpcomingItemsLoading = state.isUpcomingMoviesLoading,
+                    onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
+                    onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
+                )
+            }
+
         }
         SavedListBottomSheet(
             isVisible = state.addToListBottomSheetState.isVisible,
