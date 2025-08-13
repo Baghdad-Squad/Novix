@@ -31,7 +31,7 @@ class TrendingMoviesViewModel @Inject constructor(
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val createSavedListUseCase: CreateSavedListUseCase,
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
-    private val defaultDispatcher: CoroutineDispatcher,
+    private val defaultDispatcher: CoroutineDispatcher
 ) : BaseViewModel<TrendingMoviesScreenState, TrendingMoviesEffect>(TrendingMoviesScreenState()),
     TrendingMoviesInteractionListener {
 
@@ -45,7 +45,7 @@ class TrendingMoviesViewModel @Inject constructor(
         tryToExecute(
             callee = { isUserLoggedInUseCase() },
             onSuccess = ::onCheckIfUserIsLoggedInSuccess,
-            dispatcher = defaultDispatcher,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -60,28 +60,21 @@ class TrendingMoviesViewModel @Inject constructor(
 
     private fun getUserSavedLists() {
         collectPagingFlow(
-            loadData = { page ->
-                getSavedListsUseCase(
-                    page = page,
-                    pageSize = DEFAULT_PAGE_SIZE,
-                )
-            },
+            loadData = { page -> getSavedListsUseCase(page = page, pageSize = DEFAULT_PAGE_SIZE) },
             onInitialLoadError = ::onLoadDataError,
             pageSize = DEFAULT_PAGE_SIZE,
             mapEntityToUiState = SavedList::toUiState,
-            onFlowCreated = ::onGetSavedListFlowCreated,
+            onFlowCreated = ::onGetSavedListFlowCreated
         )
     }
 
     private fun onGetSavedListFlowCreated(flow: Flow<PagingData<SavedListUiState>>) {
         updateState {
             it.copy(
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(savedLists = flow)
+                addToListBottomSheetState = it.addToListBottomSheetState.copy(savedLists = flow)
             )
         }
     }
-
 
     private fun loadGenres() {
         tryToExecute(
@@ -98,17 +91,13 @@ class TrendingMoviesViewModel @Inject constructor(
             loadData = { page ->
                 getTrendingMoviesUseCase.invoke(
                     genreId = currentState.selectedGenreId,
-                    page = page,
+                    page = page
                 )
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toMovieUiState() },
             onFlowCreated = { flow ->
-                updateState {
-                    it.copy(
-                        movies = flow,
-                    )
-                }
+                updateState { it.copy(movies = flow) }
                 hideSnackBar()
             },
             onInitialLoadError = ::onLoadDataError
@@ -127,13 +116,12 @@ class TrendingMoviesViewModel @Inject constructor(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
             isSuccess = false,
-            durationMillis = Int.MAX_VALUE.toLong(),
+            durationMillis = Int.MAX_VALUE.toLong()
         )
     }
 
     private fun handleGenreSuccess(genres: List<Genre>) {
-        val categoryList =
-            genres.map(Genre::toGenreUiState)
+        val categoryList = genres.map(Genre::toGenreUiState)
 
         updateState { it.copy(categories = categoryList) }
     }
@@ -157,7 +145,7 @@ class TrendingMoviesViewModel @Inject constructor(
     private fun onSaveButtonClicked(
         listId: Long,
         itemId: Long,
-        isSaved: Boolean,
+        isSaved: Boolean
     ) {
         if (isSaved) {
             removeSavedItem(listId = listId, itemId = itemId)
@@ -168,7 +156,7 @@ class TrendingMoviesViewModel @Inject constructor(
                         it.addToListBottomSheetState.copy(
                             isVisible = true,
                             selectedItemId = itemId,
-                            selectedListId = null,
+                            selectedListId = null
                         )
                 )
             }
@@ -226,16 +214,15 @@ class TrendingMoviesViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 addMovieToSavedListUseCase(
-                    listId =
-                        currentState.addToListBottomSheetState.selectedListId
-                            ?: return@tryToExecute,
+                    listId = currentState.addToListBottomSheetState.selectedListId
+                        ?: return@tryToExecute,
                     movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
             },
             onSuccess = { onAddItemToListSuccess() },
             dispatcher = defaultDispatcher,
             onStart = ::onAddItemToListStart,
-            onFinally = ::onAddItemToListFinished,
+            onFinally = ::onAddItemToListFinished
         )
     }
 
@@ -276,10 +263,8 @@ class TrendingMoviesViewModel @Inject constructor(
     override fun onCreateNewListClicked() {
         updateState {
             it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(isVisible = true),
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(isVisible = false)
+                addListBottomSheetState = it.addListBottomSheetState.copy(isVisible = true),
+                addToListBottomSheetState = it.addToListBottomSheetState.copy(isVisible = false)
             )
         }
     }
@@ -324,8 +309,7 @@ class TrendingMoviesViewModel @Inject constructor(
                         listName = "",
                         isLoading = false,
                     ),
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(isVisible = true)
+                addToListBottomSheetState = it.addToListBottomSheetState.copy(isVisible = true)
             )
         }
     }
@@ -338,7 +322,7 @@ class TrendingMoviesViewModel @Inject constructor(
             onSuccess = { onCreateListSuccess() },
             dispatcher = defaultDispatcher,
             onStart = ::onCreateListStart,
-            onFinally = ::onCreateListFinished,
+            onFinally = ::onCreateListFinished
         )
     }
 
@@ -349,23 +333,13 @@ class TrendingMoviesViewModel @Inject constructor(
 
     private fun onCreateListStart() {
         updateState {
-            it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isLoading = true,
-                    ),
-            )
+            it.copy(addListBottomSheetState = it.addListBottomSheetState.copy(isLoading = true))
         }
     }
 
     private fun onCreateListFinished() {
         updateState {
-            it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isLoading = false,
-                    ),
-            )
+            it.copy(addListBottomSheetState = it.addListBottomSheetState.copy(isLoading = false))
         }
     }
 
