@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.tvShow
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
@@ -46,7 +46,7 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        val result = getTvShowsByGenreUseCase(genreId, page)
+        val result = getTvShowsByGenreUseCase(genreId, page, PAGE_SIZE)
 
         // Then
         assertThat(result.data).hasSize(2)
@@ -72,7 +72,7 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        val result = getTvShowsByGenreUseCase(genreId, page)
+        val result = getTvShowsByGenreUseCase(genreId, page, PAGE_SIZE)
 
         // Then
         assertThat(result.data).isEmpty()
@@ -100,7 +100,7 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        getTvShowsByGenreUseCase(genreId, page)
+        getTvShowsByGenreUseCase(genreId, page, PAGE_SIZE)
 
         // Then
         coVerify(exactly = 1) { tvShowRepository.getTvShowsByGenre(genreId, page, pageSize = 20) }
@@ -130,8 +130,8 @@ class GetTvShowsByGenreUseCaseTest {
         coEvery { tvShowRepository.getTvShowsByGenre(genreId, 2, pageSize = 20) } returns page2Shows
 
         // When
-        val resultPage1 = getTvShowsByGenreUseCase(genreId, 1)
-        val resultPage2 = getTvShowsByGenreUseCase(genreId, 2)
+        val resultPage1 = getTvShowsByGenreUseCase(genreId, 1, PAGE_SIZE)
+        val resultPage2 = getTvShowsByGenreUseCase(genreId, 2, PAGE_SIZE)
 
         // Then
         assertThat(resultPage1.data.map { it.id }).containsExactly(1L, 2L)
@@ -161,8 +161,8 @@ class GetTvShowsByGenreUseCaseTest {
         coEvery { tvShowRepository.getTvShowsByGenre(35L, 1, pageSize = 20) } returns comedyShows // Comedy
 
         // When
-        val dramaResult = getTvShowsByGenreUseCase(18L, 1)
-        val comedyResult = getTvShowsByGenreUseCase(35L, 1)
+        val dramaResult = getTvShowsByGenreUseCase(18L, 1, PAGE_SIZE)
+        val comedyResult = getTvShowsByGenreUseCase(35L, 1, PAGE_SIZE)
 
         // Then
         assertThat(dramaResult.data[0].title).isEqualTo("The Crown")
@@ -191,7 +191,7 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        val result = getTvShowsByGenreUseCase(genreId, page)
+        val result = getTvShowsByGenreUseCase(genreId, page, PAGE_SIZE)
 
         // Then
         assertThat(result.data).hasSize(50)
@@ -206,11 +206,12 @@ class GetTvShowsByGenreUseCaseTest {
             overview = "Sample overview",
             genres = listOf(Genre(id = 18L, name = "Drama")),
             averageRating = 9.5,
-            userRating = 8.5,
+            userRating = 8,
             releaseDate = LocalDate(2020, 1, 1),
             trailerURL = "sample_trailer.mp4",
             headerImagesURLs = listOf("/header1.jpg", "/header2.jpg"),
             numberOfSeasons = 5,
         )
+        private const val PAGE_SIZE = 20
     }
 }

@@ -1,5 +1,6 @@
 package com.baghdad.domain.usecase.genre
 
+import com.baghdad.domain.usecase.tvShow.GetTvShowGenresUseCase
 import com.baghdad.entity.media.Genre
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 class GetTvShowGenreNameByIdUseCaseTest {
 
-    private lateinit var getGenresUseCase: GetGenresUseCase
+    private lateinit var getGenresUseCase: GetTvShowGenresUseCase
     private lateinit var getTvShowGenreNameByIdUseCase: GetTvShowGenreNameByIdUseCase
 
     @BeforeEach

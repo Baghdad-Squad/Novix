@@ -15,86 +15,77 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class LoginUseCaseTest {
-
     private lateinit var authenticationRepository: AuthenticationRepository
     private lateinit var loginUseCase: LoginUseCase
+    private lateinit var validateCredentialsUseCase: ValidateCredentialsUseCase
 
     @BeforeEach
     fun setUp() {
         authenticationRepository = mockk()
-        loginUseCase = LoginUseCase(authenticationRepository)
+        validateCredentialsUseCase = ValidateCredentialsUseCase()
+        loginUseCase = LoginUseCase(
+            authenticationRepository = authenticationRepository,
+            validateCredentialsUseCase = validateCredentialsUseCase
+        )
     }
 
-    @Test
-    fun `loginUseCase() should complete successfully when login is successful`() = runTest {
-        // Given
-        val username = "user"
-        val password = "password"
-
-        // When
-        coEvery { authenticationRepository.login(username, password) } just runs
-
-        // Then
-        loginUseCase.invoke(username, password)
-
-        coVerify(exactly = 1) { authenticationRepository.login(username, password) }
-    }
 
     @Test
-    fun `logiUseCase should throw InValidPasswordException when password less than 4 chars`() =
+    fun `loginUseCase should throw InValidPasswordException when password less than 4 chars`() =
         runTest {
-            // Given
-            val username = "user"
-            val password = "pas"
-
-            coEvery { authenticationRepository.login(username, password) } just runs
+            coEvery { authenticationRepository.login(VALID_USERNAME, SHORT_PASSWORD) } just runs
 
             assertThrows<InValidPasswordException> {
-                loginUseCase.invoke(username, password)
+                loginUseCase.invoke(VALID_USERNAME, SHORT_PASSWORD)
             }
         }
 
     @Test
     fun `loginUseCase should throw EmptyFieldException when username is empty`() = runTest {
-        // Given
-        val username = ""
-        val password = "password"
-
-        coEvery { authenticationRepository.login(username, password) } just runs
+        coEvery { authenticationRepository.login(EMPTY_STRING, VALID_PASSWORD) } just runs
 
         assertThrows<EmptyFieldException> {
-            loginUseCase.invoke(username, password)
+            loginUseCase.invoke(EMPTY_STRING, VALID_PASSWORD)
         }
     }
 
     @Test
     fun `loginUseCase should throw EmptyFieldException when password is empty`() = runTest {
-        // Given
-        val username = "user_name"
-        val password = ""
-
-        coEvery { authenticationRepository.login(username, password) } just runs
+        coEvery { authenticationRepository.login(VALID_USERNAME, EMPTY_STRING) } just runs
 
         assertThrows<EmptyFieldException> {
-            loginUseCase.invoke(username, password)
+            loginUseCase.invoke(VALID_USERNAME, EMPTY_STRING)
         }
     }
 
     @Test
     fun `loginUseCase should throw InValidUserCredentialException when the info is wrong`() =
         runTest {
-            // Given
-            val username = "wrong"
-            val password = "wrong pass"
-
             coEvery {
-                authenticationRepository.login(
-                    username, password
-                )
+                authenticationRepository.login(WRONG_USERNAME, WRONG_PASSWORD)
             } throws InValidUserCredentialException()
 
             assertThrows<InValidUserCredentialException> {
-                loginUseCase.invoke(username, password)
+                loginUseCase.invoke(WRONG_USERNAME, WRONG_PASSWORD)
             }
         }
+
+    @Test
+    fun `loginUseCase should succeed when username and password are valid`() = runTest {
+        coEvery { authenticationRepository.login(VALID_USERNAME, VALID_PASSWORD) } just runs
+
+        loginUseCase(VALID_USERNAME, VALID_PASSWORD)
+
+        coVerify(exactly = 1) { authenticationRepository.login(VALID_USERNAME, VALID_PASSWORD) }
+    }
+
+
+    companion object {
+        private const val VALID_USERNAME = "user"
+        private const val VALID_PASSWORD = "password"
+        private const val SHORT_PASSWORD = "pas"
+        private const val EMPTY_STRING = ""
+        private const val WRONG_USERNAME = "wrong"
+        private const val WRONG_PASSWORD = "wrong pass"
+    }
 }

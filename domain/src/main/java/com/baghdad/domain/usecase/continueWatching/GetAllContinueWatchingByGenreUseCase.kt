@@ -1,7 +1,7 @@
 package com.baghdad.domain.usecase.continueWatching
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import javax.inject.Inject
 
@@ -11,7 +11,7 @@ class GetAllContinueWatchingByGenreUseCase @Inject constructor(
     suspend operator fun invoke(
         genreId: Long,
         page: Int
-    ): PagedResult<ContinueWatching> {
+    ): PagedResult<UserWatchedMedia> {
         val result = continueWatchingRepository.getContinueWatching(page, PAGE_SIZE)
         return result.copy(result.data.filter { it.genreIds.contains(genreId) })
     }

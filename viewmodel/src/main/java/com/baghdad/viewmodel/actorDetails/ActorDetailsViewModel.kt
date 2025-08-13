@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.actorDetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
@@ -169,7 +169,7 @@ class ActorDetailsViewModel @Inject constructor(
         )
     }
 
-        private fun onGetActorMoviesSuccess(movies: List<SavableMovie>) {
+        private fun onGetActorMoviesSuccess(movies: List<SavedMovie>) {
             updateState { actorDetailsScreenState ->
             actorDetailsScreenState.copy(
                 topMoviesPicks = movies.take(MAX_TOP_MOVIE_PICKS).map { it.toMovieUI() },

@@ -35,6 +35,7 @@ readMoreVersion = "1.6.3"
 retrofit = "2.9.0"
 room = "2.7.2"
 runtimeAndroid = "1.8.3"
+turbine = "1.2.1"
 uiGraphicsAndroid = "1.8.3"
 uiTextAndroid = "1.8.3"
 serialization = "1.7.3"
@@ -165,6 +166,7 @@ hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-co
 # dagger
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+turbine = { module = "app.cash.turbine:turbine", name = "turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -240,6 +242,7 @@ test-core = [
     "mockk-android",
     "truth",
     "kotlinx-coroutines-test",
+    "turbine"
 ]
 
 test-ui = [
