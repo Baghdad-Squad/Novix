@@ -63,11 +63,13 @@ class MyListsViewModel
             )
         }
 
-        private suspend fun fetchSavedLists(page: Int): PagedResult<SavedList> =
-            getSavedListsUseCase(
+    private suspend fun fetchSavedLists(page: Int): PagedResult<SavedList> {
+        return getSavedListsUseCase(
                 page = page,
                 pageSize = PAGES_SIZE,
             )
+    }
+
 
         private fun onLoadDataError(throwable: Throwable) {
             when (throwable) {
