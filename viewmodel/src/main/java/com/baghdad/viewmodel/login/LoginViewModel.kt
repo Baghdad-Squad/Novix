@@ -16,33 +16,31 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val ioDispatcher: CoroutineDispatcher
-) : BaseViewModel<LoginUiState, LoginUiEffect>(
-    LoginUiState()
-), LoginInteractionListener {
+) : BaseViewModel<LoginUiState, LoginUiEffect>(LoginUiState()), LoginInteractionListener {
+
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
     }
 
-    override fun onLoginClicked() {
-            tryToExecute(
-                onStart = { startLoading() },
-                callee = {
-                    loginUseCase.invoke(
-                        userName = uiState.value.userName,
-                        password = uiState.value.password
-                    )
-                },
-                dispatcher = ioDispatcher,
-                onSuccess = { onLoginSuccess() },
-                onError = { onLoginError(it) },
-                onFinally = { endLoading() })
+    override fun onLoginClick() {
+        tryToExecute(
+            onStart = ::onStart,
+            callee = {
+                loginUseCase.invoke(
+                    userName = uiState.value.userName,
+                    password = uiState.value.password
+                )
+            },
+            dispatcher = ioDispatcher,
+            onSuccess = { onLoginSuccess() },
+            onError = ::onLoginError,
+            onFinally = ::onFinally
+        )
     }
 
 
     fun onLoginSuccess() {
-        showSnackBar(
-            message = BaseSnackBarMessage.LoginSuccessfully, isSuccess = true
-        )
+        showSnackBar(message = BaseSnackBarMessage.LoginSuccessfully, isSuccess = true)
         sendEffect(LoginUiEffect.RecreateActivity)
     }
 
@@ -74,17 +72,15 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    override fun onRegisterClicked() {
-        sendEffect(
-            LoginUiEffect.NavigateToRegister
-        )
+    override fun onRegisterClick() {
+        sendEffect(LoginUiEffect.NavigateToRegister)
     }
 
-    override fun onForgotPasswordClicked() {
+    override fun onForgotPasswordClick() {
         sendEffect(LoginUiEffect.NavigateToForgotPassword)
     }
 
-    override fun onNavigateBackClicked() {
+    override fun onBackClick() {
         sendEffect(LoginUiEffect.NavigateBack)
     }
 
@@ -93,7 +89,6 @@ class LoginViewModel @Inject constructor(
             it.copy(password = value)
         }
         isAnyFieldEmpty()
-
     }
 
     override fun onUserNameValueChange(value: String) {
@@ -105,31 +100,24 @@ class LoginViewModel @Inject constructor(
 
     override fun togglePasswordVisibility() {
         updateState {
-            it.copy(
-                isPasswordVisible = !it.isPasswordVisible
-            )
+            it.copy(isPasswordVisible = !it.isPasswordVisible)
         }
     }
 
     private fun isAnyFieldEmpty() {
         updateState {
-            it.copy(isAnyFieldEmpty = it.userName.isEmpty() || it.password.isEmpty())
-        }
-    }
-
-    private fun startLoading() {
-        updateState {
             it.copy(
-                isLoading = true
+                isAnyFieldEmpty = it.userName.isEmpty() ||
+                        it.password.isEmpty()
             )
         }
     }
 
-    private fun endLoading() {
-        updateState {
-            it.copy(
-                isLoading = false
-            )
-        }
+    private fun onStart() {
+        updateState { it.copy(isLoading = true) }
+    }
+
+    private fun onFinally() {
+        updateState { it.copy(isLoading = false) }
     }
 }
