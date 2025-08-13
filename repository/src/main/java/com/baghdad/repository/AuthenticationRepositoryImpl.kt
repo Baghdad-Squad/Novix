@@ -44,7 +44,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
         return localSessionDataSource.getSessionId() != null
     }
 
-    override suspend fun getLoggedInUser(): User? {
+    override suspend fun getUserInfo(): User? {
         return localUserDataSource.getUser()?.toEntity()
     }
 

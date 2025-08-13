@@ -116,7 +116,7 @@ class AuthenticationRepositoryImplTest {
         val expectedUser = createMockUser()
         coEvery { localUserDataSource.getUser() } returns userDto
         // When
-        val result = authenticationRepositoryImpl.getLoggedInUser()
+        val result = authenticationRepositoryImpl.getUserInfo()
         // Then
         assertThat(expectedUser == result).isTrue()
         coVerify { localUserDataSource.getUser() }
@@ -127,7 +127,7 @@ class AuthenticationRepositoryImplTest {
         // Given
         coEvery { localUserDataSource.getUser() } returns null
         // When
-        val result = authenticationRepositoryImpl.getLoggedInUser()
+        val result = authenticationRepositoryImpl.getUserInfo()
         // Then
         assertThat(result).isNull()
         coVerify { localUserDataSource.getUser() }

@@ -1,8 +1,8 @@
 package com.baghdad.repository
 
 import com.baghdad.domain.model.pagination.PagedResult
-import com.baghdad.domain.model.userRating.RatedMedia
 import com.baghdad.domain.model.savedList.SavedMovie
+import com.baghdad.domain.model.userRating.RatedMedia
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
@@ -195,7 +195,7 @@ class MovieRepositoryImpl @Inject constructor(
                 getRemotePagedSafely(
                     page = page, pageSize = pageSize,
                     getRemoteData = { page, _ ->
-                        authenticationRepository.getLoggedInUser()?.let {
+                        authenticationRepository.getUserInfo()?.let {
                             remoteMovieDataSource.getUserRatedMovies(it.id, sessionId ,page)
                         } ?: PagedResultDto(
                             data = emptyList(),
