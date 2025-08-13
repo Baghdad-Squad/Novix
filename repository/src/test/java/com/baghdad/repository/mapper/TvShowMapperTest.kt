@@ -39,7 +39,7 @@ class TvShowMapperTest {
             title = "Test TV Show",
             genres = listOf(createMockGenreDto(35L, "Comedy")),
             imdbRating = 8.5,
-            userRating = 8.0,
+            userRating = 8,
             releaseDate = "2023-01-01",
             overview = "Test TV show overview",
             posterPictureURL = "/tv_show_poster.jpg",

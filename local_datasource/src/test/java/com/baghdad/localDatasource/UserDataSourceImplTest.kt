@@ -13,10 +13,10 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
-class LocalUserDataSourceImplTest {
+class UserDataSourceImplTest {
     private var dataStore: DataStore<User> = mockk()
     private var logger: Logger = mockk(relaxed = true)
-    private var userDataStore: LocalUserDataSourceImpl = LocalUserDataSourceImpl(dataStore, logger)
+    private var userDataStore: UserDataSourceImpl = UserDataSourceImpl(dataStore, logger)
 
     @Test
     fun `saveUser should update dataStore with provided values when saveUser is called`() =
