@@ -48,7 +48,7 @@ fun LazyGridScope.upcomingSection(
 
     itemsIndexed(
         items = upcomingItems,
-        key = { index, id -> index },
+        key = { index, _ -> index },
     ) { index, item ->
         val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 150))
         val isInFirstRow = index < itemsPerRow
@@ -143,7 +143,8 @@ fun LazyGridScope.upcomingSectionLoading(
                         top = 12.dp,
                         start = if (isFirstInRow) 16.dp else 0.dp,
                         end = if (isLastInRow) 16.dp else 0.dp,
-                    ).size(width = 158.dp, height = 210.dp)
+                    )
+                    .size(width = 158.dp, height = 210.dp)
                     .background(Theme.color.surface, RoundedCornerShape(12.dp))
                     .clip(RoundedCornerShape(12.dp))
                     .shimmerEffect(),
