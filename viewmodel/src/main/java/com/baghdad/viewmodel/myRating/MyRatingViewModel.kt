@@ -12,6 +12,7 @@ import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.myRating.MyRatingState.MediaItemUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -21,7 +22,8 @@ class MyRatingViewModel @Inject constructor(
     private val getUserRatedTvShowsUseCase: GetUserRatedTvShowsUseCase,
     private val deleteMovieRateUseCase: DeleteMovieRateUseCase,
     private val deleteTvShowRateUseCase: DeleteTvShowRateUseCase,
-    private val getUserMediaRatedUseCase: GetUserMediaRatedUseCase
+    private val getUserMediaRatedUseCase: GetUserMediaRatedUseCase,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<MyRatingState, MyRatingEffect>(MyRatingState()),
     MyRatingInteractionListener {
 
@@ -41,7 +43,7 @@ class MyRatingViewModel @Inject constructor(
                     onInitialLoadError = ::onError,
                     mapEntityToUiState = { it.toUiState() },
                     onFlowCreated = ::onFlowCreated,
-                    onLoadingChanged = ::onGetMediaLoadingChanged
+                    onLoadingChanged = ::onGetMediaLoadingChanged,
                 )
             }
         }
@@ -132,7 +134,8 @@ class MyRatingViewModel @Inject constructor(
             onSuccess = { onDeletedSuccess() },
             onStart = ::onStart,
             onFinally = ::onFinally,
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 

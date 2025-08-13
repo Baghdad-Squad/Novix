@@ -26,11 +26,11 @@ import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MyRatingViewModelTest {
-    private lateinit var getUserRatedMoviesUseCase: GetUserRatedMoviesUseCase
-    private lateinit var getUserRatedTvShowsUseCase: GetUserRatedTvShowsUseCase
-    private lateinit var deleteMovieRateUseCase: DeleteMovieRateUseCase
-    private lateinit var deleteTvShowRateUseCase: DeleteTvShowRateUseCase
-    private lateinit var getUserMediaRatedUseCase: GetUserMediaRatedUseCase
+    private var getUserRatedMoviesUseCase: GetUserRatedMoviesUseCase = mockk()
+    private var getUserRatedTvShowsUseCase: GetUserRatedTvShowsUseCase = mockk()
+    private var deleteMovieRateUseCase: DeleteMovieRateUseCase = mockk()
+    private var deleteTvShowRateUseCase: DeleteTvShowRateUseCase = mockk()
+    private var getUserMediaRatedUseCase: GetUserMediaRatedUseCase = mockk()
 
     private lateinit var myRatingViewModel: MyRatingViewModel
 
@@ -40,14 +40,6 @@ class MyRatingViewModelTest {
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        getUserRatedMoviesUseCase = mockk(relaxed = true)
-        getUserRatedTvShowsUseCase = mockk(relaxed = true)
-        deleteMovieRateUseCase = mockk(relaxed = true)
-        deleteTvShowRateUseCase = mockk(relaxed = true)
-        getUserMediaRatedUseCase = mockk(relaxed = true)
-        coEvery { getUserMediaRatedUseCase(any(), any()) } returns mockPagedResult()
-        coEvery { getUserRatedMoviesUseCase(any(), any()) } returns mockPagedResult()
-        coEvery { getUserRatedTvShowsUseCase(any(), any()) } returns mockPagedResult()
     }
 
     @AfterEach
@@ -60,7 +52,8 @@ class MyRatingViewModelTest {
         getUserRatedTvShowsUseCase,
         deleteMovieRateUseCase,
         deleteTvShowRateUseCase,
-        getUserMediaRatedUseCase
+        getUserMediaRatedUseCase,
+        testDispatcher
     )
 
 
@@ -126,7 +119,6 @@ class MyRatingViewModelTest {
     fun `should delete movie rating when onDeleteClick is called`() = runTest {
         myRatingViewModel = createViewModel()
         coEvery { getUserMediaRatedUseCase(1, 20) } returns mockPagedResult()
-        coEvery { deleteMovieRateUseCase(any()) } returns Unit
 
 
         myRatingViewModel.onDeleteClick(6L, MyRatingState.ContentType.MOVIE)
@@ -139,7 +131,6 @@ class MyRatingViewModelTest {
     fun `should delete tv show rating when onDeleteClick is called`() = runTest {
         myRatingViewModel = createViewModel()
         coEvery { getUserMediaRatedUseCase(1, 20) } returns mockPagedResult()
-        coEvery { deleteTvShowRateUseCase(any()) } returns Unit
 
 
         myRatingViewModel.onDeleteClick(6L, MyRatingState.ContentType.TV_SHOW)
