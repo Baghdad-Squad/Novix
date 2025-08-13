@@ -1,4 +1,7 @@
 import app.cash.turbine.test
+import com.baghdad.domain.exception.NetworkException
+import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
@@ -12,9 +15,9 @@ import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
-import com.baghdad.domain.usecase.tvShow.GetTvShowGenresUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
+import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.home.HomeScreenEffect
 import com.baghdad.viewmodel.home.HomeScreenState
@@ -45,13 +48,12 @@ class HomeViewModelTest {
     val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase = mockk(relaxed = true)
     val isUserLoggedInUseCase: IsUserLoggedInUseCase = mockk(relaxed = true)
     val getSavedListsUseCase: GetSavedListsUseCase = mockk(relaxed = true)
-    val addMovieToSavedListUseCase: AddMovieToSavedListUseCase = mockk(relaxed = true)
+    val addMovieToSavedListUseCase: AddMovieToSavedListUseCase = mockk()
     val createSavedListUseCase: CreateSavedListUseCase = mockk(relaxed = true)
     val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase = mockk(relaxed = true)
     val getAppLanguageUseCase: GetAppLanguageUseCase = mockk(relaxed = true)
     val observeContinueWatchingUseCase: ObserveContinueWatchingUseCase = mockk(relaxed = true)
     val getMovieGenresUseCase: GetMovieGenresUseCase = mockk(relaxed = true)
-    val getTvShowGenresUseCase: GetTvShowGenresUseCase = mockk(relaxed = true)
     private lateinit var viewModel: HomeViewModel
 
     private val testDispatcher = StandardTestDispatcher()
@@ -95,7 +97,10 @@ class HomeViewModelTest {
             viewModel = createViewModel()
             advanceUntilIdle()
 
-            assertThat(viewModel.uiState.value.popularItems).isEmpty()
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.popularItems).isEmpty()
+            }
         }
 
     @Test
@@ -109,7 +114,10 @@ class HomeViewModelTest {
 
             viewModel = createViewModel()
             advanceUntilIdle()
-            assertThat(viewModel.uiState.value.topRatingItems).isEmpty()
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.topRatingItems).isEmpty()
+            }
         }
 
     @Test
@@ -122,7 +130,10 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         // Then
-        assertThat(viewModel.uiState.value.continueWatchingItems).isEmpty()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.continueWatchingItems).isEmpty()
+        }
     }
 
     @Test
@@ -341,7 +352,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `should not crash when onPopularItemSaveClicked called`() = runTest {
+    fun `should update selected item id when onPopularItemSaveClicked called`() = runTest {
         viewModel = createViewModel()
         viewModel.onPopularItemSaveClicked(
             HomeScreenState.PopularItemUiState(
@@ -349,17 +360,25 @@ class HomeViewModelTest {
             )
         )
         advanceUntilIdle()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(1)
+        }
     }
 
     @Test
-    fun `should not crash when onTopRatingItemSaveClicked called`() = runTest {
+    fun `should update selected item id when onTopRatingItemSaveClicked called`() = runTest {
         viewModel = createViewModel()
         viewModel.onTopRatingItemSaveClicked(HomeScreenState.TopRatingItemUiState(id = 2))
         advanceUntilIdle()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(2)
+        }
     }
 
     @Test
-    fun `should not crash when onContinueWatchingItemSaveClicked called`() = runTest {
+    fun `should update selected item id when onContinueWatchingItemSaveClicked called`() = runTest {
         viewModel = createViewModel()
         viewModel.onContinueWatchingItemSaveClicked(
             HomeScreenState.ContinueWatchingItemUiState(
@@ -367,13 +386,22 @@ class HomeViewModelTest {
             )
         )
         advanceUntilIdle()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(3)
+        }
     }
 
     @Test
-    fun `should not crash when onUpcomingItemSaveClicked called`() = runTest(testDispatcher) {
+    fun `should update selected item id when onUpcomingItemSaveClicked called`() =
+        runTest(testDispatcher) {
         viewModel = createViewModel()
         viewModel.onUpcomingItemSaveClicked(HomeScreenState.UpcomingItemUiState(id = 4))
         advanceUntilIdle()
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(4)
+            }
     }
 
     @Test
@@ -390,7 +418,259 @@ class HomeViewModelTest {
         assertThat(result).isEqualTo(BaseSnackBarMessage.UnknownError)
     }
 
+    @Test
+    fun `should navigate to login screen when onLoginClicked`() = runTest {
+        viewModel = createViewModel()
+        viewModel.onLoginClicked()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(HomeScreenEffect.NavigateToLogin)
+        }
+    }
+
+    @Test
+    fun `should show error snackbar when getPopularMoviesUseCase throw NetworkException`() =
+        runTest {
+            coEvery { getPopularMoviesUseCase.invoke() } throws NetworkException()
+            viewModel = createViewModel()
+            advanceUntilIdle()
+            viewModel.snackBarState.test {
+                val state = awaitItem()
+                assertThat(state.isSuccess).isFalse()
+            }
+        }
+
+    @Test
+    fun `should show no internet snackbar when getPopularMoviesUseCase throw NoInternetException`() =
+        runTest {
+            coEvery { getPopularMoviesUseCase.invoke() } throws NoInternetException()
+            viewModel = createViewModel()
+            advanceUntilIdle()
+            viewModel.snackBarState.test {
+                val state = awaitItem()
+                assertThat(state.message).isEqualTo(BaseSnackBarMessage.NetworkError)
+                assertThat(state.isSuccess).isFalse()
+            }
+        }
+
+    @Test
+    fun `should reload data when onSnackBarActionLabelClicked`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.onSnackBarActionLabelClicked()
+        advanceUntilIdle()
+        coVerify(exactly = 2) { getPopularMoviesUseCase.invoke() }
+    }
+
+    @Test
+    fun `should update selectedItemId when onTopRatingItemSaveClicked`() = runTest {
+        viewModel = createViewModel()
+        viewModel.onListSelected(1L)
+        viewModel.onTopRatingItemSaveClicked(
+            HomeScreenState.TopRatingItemUiState(
+                id = 5L, savedListId = 1L
+            )
+        )
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(5L)
+        }
+    }
+
+    @Test
+    fun `should update selected list id when onListSelected`() = runTest {
+        viewModel = createViewModel()
+        viewModel.onListSelected(1L)
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.selectedListId).isEqualTo(1L)
+        }
+    }
+
+    @Test
+    fun `should show add to list bottom sheet when onTopRatingItemSaveClicked`() = runTest {
+        viewModel = createViewModel()
+        viewModel.onListSelected(1L)
+        viewModel.onTopRatingItemSaveClicked(
+            HomeScreenState.TopRatingItemUiState(
+                id = 5L, savedListId = 1L
+            )
+        )
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.isVisible).isTrue()
+        }
+    }
+
+    @Test
+    fun `should add item to list when onSaveItemToListClicked`() = runTest {
+        viewModel = createViewModel()
+        viewModel.onTopRatingItemSaveClicked(
+            HomeScreenState.TopRatingItemUiState(
+                id = 5L, savedListId = 1L
+            )
+        )
+        viewModel.onListSelected(1L)
+        viewModel.onSaveItemToListClicked()
+        advanceUntilIdle()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            println(state.addToListBottomSheetState)
+            coVerify {
+                addMovieToSavedListUseCase(
+                    listId = 1L,
+                    movieId = 5L
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `should hide add to list bottom sheet when onSaveItemToListClicked complete successfully`() =
+        runTest {
+            viewModel = createViewModel()
+            coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
+            viewModel.onSaveItemToListClicked()
+            advanceUntilIdle()
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.addToListBottomSheetState.isVisible).isFalse()
+            }
+        }
+
+    @Test
+    fun `should hide add to list bottom sheet when onSaveToListBottomSheetDismiss is called`() =
+        runTest {
+            viewModel = createViewModel()
+            viewModel.onSaveToListBottomSheetDismiss()
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.addToListBottomSheetState.isVisible).isFalse()
+            }
+        }
+
+    @Test
+    fun `should hide add to list bottom sheet when onCreateNewListClicked`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.onCreateNewListClicked()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.isVisible).isFalse()
+        }
+    }
+
+    @Test
+    fun `should show add list bottom sheet when onCreateNewListClicked`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.onCreateNewListClicked()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addListBottomSheetState.isVisible).isTrue()
+        }
+    }
+
+    @Test
+    fun `should update list name successfully when onCreatedListNameChanged called`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.onCreatedListNameChanged("Test")
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addListBottomSheetState.listName).isEqualTo("Test")
+        }
+    }
+
+    @Test
+    fun `should hide add list bottom sheet when onSaveToListBottomSheetDismiss is called`() =
+        runTest {
+            val viewModel = createViewModel()
+            viewModel.onTopRatingItemSaveClicked(
+                HomeScreenState.TopRatingItemUiState(
+                    id = 5L, savedListId = 1L
+                )
+            )
+            viewModel.onSaveToListBottomSheetDismiss()
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.addListBottomSheetState.isVisible).isFalse()
+            }
+        }
+
+    @Test
+    fun `should remove item when click on item save icon and the item is saved`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.onTopRatingItemSaveClicked(
+            HomeScreenState.TopRatingItemUiState(
+                id = 5L, savedListId = 1L, isSaved = true
+            )
+        )
+        advanceUntilIdle()
+        coVerify {
+            removeMovieFromSavedListUseCase(listId = 1L, movieId = 5L)
+        }
+    }
+
+    @Test
+    fun `should close the create list bottom sheet when onCreateListBottomSheetDismiss is called`() =
+        runTest {
+            val viewModel = createViewModel()
+            viewModel.onCreateNewListClicked()
+            viewModel.onCreateListBottomSheetDismiss()
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.addListBottomSheetState.isVisible).isFalse()
+            }
+        }
+
+    @Test
+    fun `should add list when onCreateListBottomSheetAddClick`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.onCreatedListNameChanged("omer")
+        viewModel.onCreateListBottomSheetAddClick()
+        advanceUntilIdle()
+        coVerify {
+            createSavedListUseCase("omer")
+        }
+    }
+
+    @Test
+    fun `should hide the create list bottom sheet when onCreateListBottomSheetDismiss is called`() =
+        runTest {
+            val viewModel = createViewModel()
+            coEvery { createSavedListUseCase("omer") } returns Unit
+            viewModel.onCreateNewListClicked()
+            viewModel.onCreatedListNameChanged("omer")
+            viewModel.onCreateListBottomSheetAddClick()
+            advanceUntilIdle()
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.addListBottomSheetState.isVisible).isFalse()
+            }
+        }
+
+    //    @Test
+//    fun `should refresh current lists when new list is created `()= runTest{
+//        val viewModel = createViewModel()
+//        coEvery { getSavedListsUseCase(1, 20) } returns listSample
+//        viewModel.onCreatedListNameChanged("omer")
+//        viewModel.onCreateListBottomSheetAddClick()
+//        advanceUntilIdle()
+//        coVerify (exactly = 1) {
+//            getSavedListsUseCase(1, 20)
+//        }
+//    }
     private companion object {
+        val listSample = PagedResult<SavedList>(
+            data = listOf(
+                SavedList(
+                    id = 1,
+                    name = "omer",
+                    itemCount = 5
+                )
+            ),
+            nextKey = null,
+            prevKey = null
+        )
         val genresSample = listOf(
             Genre(1, "Drama"),
             Genre(2, "Comedy"),
