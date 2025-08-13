@@ -1,26 +1,27 @@
 package com.baghdad.remoteDataSource
 
-import android.util.Log
 import com.baghdad.remoteDataSource.apiService.MovieApiService
-import com.baghdad.remoteDataSource.mapper.actor.toDto
+import com.baghdad.remoteDataSource.mapper.castMembers.toCastMembers
+import com.baghdad.remoteDataSource.mapper.mediaAccountStates.toDto
 import com.baghdad.remoteDataSource.mapper.movie.mapToYoutubeURL
 import com.baghdad.remoteDataSource.mapper.movie.toDto
+import com.baghdad.remoteDataSource.mapper.movie.toImageUrl
 import com.baghdad.remoteDataSource.mapper.movie.toMovieDtos
 import com.baghdad.remoteDataSource.mapper.movie.toPagedMovieDtos
-import com.baghdad.remoteDataSource.mapper.toDto
+import com.baghdad.remoteDataSource.mapper.review.toReviewDto
 import com.baghdad.remoteDataSource.request.RatingRequest
-import com.baghdad.remoteDataSource.response.CastMembersResponse
-import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
-import com.baghdad.remoteDataSource.response.RatingResponse
-import com.baghdad.remoteDataSource.response.ReviewsResponse
-import com.baghdad.remoteDataSource.response.SimilarMovieResponse
+import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
+import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
 import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
 import com.baghdad.remoteDataSource.response.movie.MovieDetailsResponse
 import com.baghdad.remoteDataSource.response.movie.MovieImageResponse
 import com.baghdad.remoteDataSource.response.movie.MovieVideosResponse
 import com.baghdad.remoteDataSource.response.movie.MyRatingMoviesResponse
 import com.baghdad.remoteDataSource.response.movie.PopularMoviesResponse
+import com.baghdad.remoteDataSource.response.movie.SimilarMovieResponse
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
+import com.baghdad.remoteDataSource.response.rate.RatingResponse
+import com.baghdad.remoteDataSource.response.reviews.ReviewsResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.logger.Logger
@@ -48,7 +49,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         return handleRequest<SimilarMovieResponse>(
             apiCall = { movieApiService.getSimilarMovies(movieId) },
             logger = logger,
-        ).results?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+        ).toMovieDtos()
     }
 
     override suspend fun getMovieDetails(movieId: Long): MovieDto {
@@ -62,11 +63,11 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         return handleRequest<CastMembersResponse>(
             apiCall = { movieApiService.getMovieCastMembers(movieId) },
             logger = logger,
-        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+        ).toCastMembers()
     }
 
     override suspend fun getMoviesByGenre(genreId: Long, page: Int): PagedResultDto<MovieDto> {
-        return handleRequest<SimilarMovieResponse>(
+        return handleRequest<DiscoverMovieResponse>(
             apiCall = {
                 movieApiService.getMoviesByGenre(
                     genreId = genreId,
@@ -85,14 +86,14 @@ class RemoteMovieDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        ).results.orEmpty().mapNotNull { it.takeIf { it.id != null }?.toDto() }
+        ).toReviewDto()
     }
 
     override suspend fun getMovieImages(movieId: Long): List<String> {
         return handleRequest<MovieImageResponse>(
             apiCall = { movieApiService.getMovieImages(movieId) },
             logger = logger,
-        ).backdrops?.map { "https://image.tmdb.org/t/p/w500" + it.filePath.orEmpty() }.orEmpty()
+        ).toImageUrl()
     }
 
     override suspend fun getMovieTrailer(movieId: Long): String {
@@ -105,8 +106,8 @@ class RemoteMovieDataSourceImpl @Inject constructor(
     override suspend fun getTopRatedMovies(
         page: Int,
     ): PagedResultDto<MovieDto> {
-        val response = handleRequest<SimilarMovieResponse>(
-            apiCall = {
+        return handleRequest<DiscoverMovieResponse>(
+                apiCall = {
                 movieApiService.getTopRatedMovies(
                     page = page,
                     sortBy = "vote_average.desc",
@@ -114,16 +115,15 @@ class RemoteMovieDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        )
-        return response.toPagedMovieDtos()
+        ).toPagedMovieDtos()
     }
 
 
     override suspend fun getTrendingMovies(page: Int): PagedResultDto<MovieDto> {
         return handleRequest<TrendingMovieResponse>(
             apiCall = { movieApiService.getTrendingMovies(page) },
-            logger = logger
-        ).toMovieDtos()
+            logger = logger,
+        ).toPagedMovieDtos()
     }
 
     @OptIn(ExperimentalTime::class)
@@ -136,7 +136,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
 
         val minimumReleaseDate = today.toString()
         val maximumReleaseDate = thirtyDaysLater.toString()
-        val response = handleRequest<DiscoverMovieResponse>(
+        return handleRequest<DiscoverMovieResponse>(
             apiCall = {
                 movieApiService.getUpcomingMovies(
                     genres = genreId?.toString() ?: "",
@@ -145,18 +145,16 @@ class RemoteMovieDataSourceImpl @Inject constructor(
                 )
             },
             logger = logger,
-        )
-        return response.toMovieDtos()
+        ).toMovieDtos()
     }
 
     override suspend fun getPopularMovies(): List<MovieDto> {
-        val response = handleRequest<PopularMoviesResponse>(
+        return handleRequest<PopularMoviesResponse>(
             apiCall = {
                 movieApiService.getPopularMovies()
             },
             logger = logger,
-        )
-        return response.toMovieDtos()
+        ).toMovieDtos()
     }
 
     override suspend fun addMovieRate(movieId: Long, rating: Int, sessionId: String) {
@@ -165,7 +163,6 @@ class RemoteMovieDataSourceImpl @Inject constructor(
                 movieApiService.addMovieRate(
                     movieId = movieId,
                     rating = RatingRequest(rating),
-                    sessionId = sessionId
                 )
             },
             logger = logger,
@@ -177,7 +174,6 @@ class RemoteMovieDataSourceImpl @Inject constructor(
             apiCall = {
                 movieApiService.deleteMovieRate(
                     movieId = movieId,
-                    sessionId = sessionId
                 )
             },
             logger = logger,
@@ -189,7 +185,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         sessionId: String
     ): MediaAccountStateDto {
         return handleRequest<MediaAccountStatesResponse>(
-            apiCall = { movieApiService.getMovieAccountStates(movieId, sessionId) },
+            apiCall = { movieApiService.getMovieAccountStates(movieId) },
             logger = logger
         ).toDto()
     }
@@ -200,7 +196,7 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         page: Int
     ): PagedResultDto<MovieDto> {
         return handleRequest<MyRatingMoviesResponse>(
-            apiCall = { movieApiService.getUserRatedMovies(accountId, sessionId, page) },
+            apiCall = { movieApiService.getUserRatedMovies(accountId, page) },
             logger = logger
         ).toPagedMovieDtos()
     }

@@ -13,7 +13,9 @@ fun getRecentlyViewedItem(
     contentId = contentId,
     contentImageUrl = contentImageUrl,
     contentType = contentType,
-    viewedAt = viewedAt
+    viewedAt = viewedAt,
+    isSaved = false,
+    listId = null
 )
 
 fun getRecentlyViewedList(

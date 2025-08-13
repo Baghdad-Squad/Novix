@@ -1,7 +1,7 @@
 package com.baghdad.domain.usecase.continueWatching
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -28,19 +28,23 @@ class GetAllContinueWatchingByGenreUseCaseTest {
         val genreId = 1L
         val page = 1
         val allItems = listOf(
-            ContinueWatching(
+            UserWatchedMedia(
                 contentId = 1,
                 genreIds = listOf(1, 2),
                 contentImageUrl = "url1",
-                contentType = ContinueWatching.ContentType.MOVIE,
-                userId = 101
+                contentType = UserWatchedMedia.ContentType.MOVIE,
+                userId = 101,
+                isSaved = true,
+                listId = null
             ),
-            ContinueWatching(
+            UserWatchedMedia(
                 contentId = 2,
                 genreIds = listOf(3),
                 contentImageUrl = "url2",
-                contentType = ContinueWatching.ContentType.TV_SHOW,
-                userId = 102
+                contentType = UserWatchedMedia.ContentType.TV_SHOW,
+                userId = 102,
+                isSaved = true,
+                listId = null
             )
         )
 
@@ -70,19 +74,23 @@ class GetAllContinueWatchingByGenreUseCaseTest {
         val genreId = 99L
         val page = 1
         val allItems = listOf(
-            ContinueWatching(
+            UserWatchedMedia(
                 contentId = 1,
                 genreIds = listOf(1, 2),
                 contentImageUrl = "url1",
-                contentType = ContinueWatching.ContentType.MOVIE,
-                userId = 101
+                contentType = UserWatchedMedia.ContentType.MOVIE,
+                userId = 101,
+                isSaved = true,
+                listId = null
             ),
-            ContinueWatching(
+            UserWatchedMedia(
                 contentId = 2,
                 genreIds = listOf(2, 3),
                 contentImageUrl = "url2",
-                contentType = ContinueWatching.ContentType.TV_SHOW,
-                userId = 102
+                contentType = UserWatchedMedia.ContentType.TV_SHOW,
+                userId = 102,
+                isSaved = true,
+                listId = null
             )
         )
 

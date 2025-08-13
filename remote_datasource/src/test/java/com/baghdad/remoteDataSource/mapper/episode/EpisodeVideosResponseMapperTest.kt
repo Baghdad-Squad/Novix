@@ -1,81 +1,114 @@
 package com.baghdad.remoteDataSource.mapper.episode
 
 import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
-import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse.Result
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class EpisodeVideosResponseMapperTest {
 
-    @Test
-    fun `should return trailer url when YouTube trailer exists`() {
-        // Given
-        val response = EpisodeVideosResponse(
-            results = listOf(
-                Result(site = "YouTube", type = "Trailer", key = "TRAILER_KEY")
-            )
+
+    companion object {
+        private const val YOUTUBE_KEY = "abcd1234"
+        private const val EXPECTED_URL = "https://www.youtube.com/watch?v=$YOUTUBE_KEY"
+
+        private val YOUTUBE_TRAILER = EpisodeVideosResponse.Result(
+            id = "1",
+            key = YOUTUBE_KEY,
+            name = "Official Trailer",
+            official = true,
+            publishedAt = "2023-09-15",
+            site = "YouTube",
+            size = 1080,
+            type = "Trailer"
         )
 
-        // When
-        val url = response.mapToYoutubeTrailerUrl()
-
-        // Then
-        assertThat(url).isEqualTo("TRAILER_KEY")
+        private val YOUTUBE_NON_TRAILER = YOUTUBE_TRAILER.copy(type = "Teaser")
+        private val NON_YOUTUBE_TRAILER = YOUTUBE_TRAILER.copy(site = "Vimeo")
+        private val NULL_KEY_TRAILER = YOUTUBE_TRAILER.copy(key = null)
     }
 
     @Test
-    fun `should return youtube url when no trailer but other YouTube video exists`() {
-        // Given
+    fun `should return youtube trailer url when valid trailer exists`() {
         val response = EpisodeVideosResponse(
-            results = listOf(
-                Result(site = "YouTube", type = "Clip", key = "CLIP_KEY")
-            )
+            id = 10L,
+            results = listOf(YOUTUBE_TRAILER)
         )
 
-        // When
-        val url = response.mapToYoutubeTrailerUrl()
+        val result = response.mapToYoutubeTrailerUrl()
 
-        // Then
-        assertThat(url).isEqualTo("https://www.youtube.com/watch?v=CLIP_KEY")
+        assertThat(result).isEqualTo(EXPECTED_URL)
     }
 
     @Test
-    fun `should return empty string when no YouTube videos exist`() {
-        // Given
+    fun `should return empty string when no results`() {
         val response = EpisodeVideosResponse(
-            results = listOf(
-                Result(site = "Vimeo", type = "Trailer", key = "VIMEO_KEY")
-            )
+            id = 10L,
+            results = emptyList()
         )
 
-        // When
-        val url = response.mapToYoutubeTrailerUrl()
+        val result = response.mapToYoutubeTrailerUrl()
 
-        // Then
-        assertThat(url).isEmpty()
+        assertThat(result).isEmpty()
     }
 
     @Test
     fun `should return empty string when results is null`() {
-        // Given
-        val response = EpisodeVideosResponse(results = null)
+        val response = EpisodeVideosResponse(
+            id = 10L,
+            results = null
+        )
 
-        // When
-        val url = response.mapToYoutubeTrailerUrl()
+        val result = response.mapToYoutubeTrailerUrl()
 
-        // Then
-        assertThat(url).isEmpty()
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun `should return empty string when results is empty`() {
-        // Given
-        val response = EpisodeVideosResponse(results = emptyList())
+    fun `should return empty string when youtube video is not a trailer`() {
+        val response = EpisodeVideosResponse(
+            id = 10L,
+            results = listOf(YOUTUBE_NON_TRAILER)
+        )
 
-        // When
-        val url = response.mapToYoutubeTrailerUrl()
+        val result = response.mapToYoutubeTrailerUrl()
 
-        // Then
-        assertThat(url).isEmpty()
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `should return empty string when trailer is not from youtube`() {
+        val response = EpisodeVideosResponse(
+            id = 10L,
+            results = listOf(NON_YOUTUBE_TRAILER)
+        )
+
+        val result = response.mapToYoutubeTrailerUrl()
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `should return empty string when youtube trailer has null key`() {
+        val response = EpisodeVideosResponse(
+            id = 10L,
+            results = listOf(NULL_KEY_TRAILER)
+        )
+
+        val result = response.mapToYoutubeTrailerUrl()
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `should return first matching youtube trailer when multiple are present`() {
+        val extraTrailer = YOUTUBE_TRAILER.copy(key = "xyz987")
+        val response = EpisodeVideosResponse(
+            id = 10L,
+            results = listOf(YOUTUBE_NON_TRAILER, extraTrailer, YOUTUBE_TRAILER)
+        )
+
+        val result = response.mapToYoutubeTrailerUrl()
+
+        assertThat(result).isEqualTo("https://www.youtube.com/watch?v=xyz987")
     }
 }

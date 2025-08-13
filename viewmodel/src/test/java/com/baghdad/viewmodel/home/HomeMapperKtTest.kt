@@ -1,8 +1,8 @@
 package com.baghdad.viewmodel.home
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.ContinueWatching.ContentType
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia.ContentType
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
@@ -41,7 +41,7 @@ class HomeScreenMapperTest {
         numberOfSeasons = 3
     )
 
-    private val sampleContinueWatching = ContinueWatching(
+    private val sampleContinueWatching = UserWatchedMedia(
         contentId = 10L,
         genreIds = listOf(101, 102),
         contentImageUrl = "https://continue.watching/image.jpg",
@@ -69,13 +69,13 @@ class HomeScreenMapperTest {
 
     @Test
     fun `should map SavableMovie when toPopularItemUiState is called`() {
-        val savableMovie = SavableMovie(
+        val savedMovie = SavedMovie(
             movie = sampleMovie,
             isSaved = true,
             listId = 200L
         )
 
-        val uiState = savableMovie.toPopularItemUiState()
+        val uiState = savedMovie.toPopularItemUiState()
 
         assertThat(uiState.id).isEqualTo(sampleMovie.id)
         assertThat(uiState.name).isEqualTo(sampleMovie.title)
@@ -88,13 +88,13 @@ class HomeScreenMapperTest {
 
     @Test
     fun `should map Movie to PopularItemUiState when toPopularItemUiState is called`() {
-        val savableMovie = SavableMovie(
+        val savedMovie = SavedMovie(
             movie = sampleMovie,
             isSaved = false,
             listId = null
         )
 
-        val uiState = savableMovie.toPopularItemUiState()
+        val uiState = savedMovie.toPopularItemUiState()
 
         assertThat(uiState.savedListId).isEqualTo(-1L)
     }
@@ -113,13 +113,13 @@ class HomeScreenMapperTest {
 
     @Test
     fun `should map Movie to TopRatingItemUiState when toTopRatingItemUiState is called`() {
-        val savableMovie = SavableMovie(
+        val savedMovie = SavedMovie(
             movie = sampleMovie,
             isSaved = true,
             listId = 300L
         )
 
-        val uiState = savableMovie.toTopRatingItemUiState()
+        val uiState = savedMovie.toTopRatingItemUiState()
 
         assertThat(uiState.id).isEqualTo(sampleMovie.id)
         assertThat(uiState.imageUrl).isEqualTo(sampleMovie.posterImageURL)
@@ -129,13 +129,13 @@ class HomeScreenMapperTest {
 
     @Test
     fun `should map Movie to UpcomingItemUiState when toUpcomingItemUiState is called`() {
-        val savableMovie = SavableMovie(
+        val savedMovie = SavedMovie(
             movie = sampleMovie,
             isSaved = false,
             listId = null
         )
 
-        val uiState = savableMovie.toUpcomingItemUiState()
+        val uiState = savedMovie.toUpcomingItemUiState()
 
         assertThat(uiState.id).isEqualTo(sampleMovie.id)
         assertThat(uiState.imageUrl).isEqualTo(sampleMovie.posterImageURL)

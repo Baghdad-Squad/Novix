@@ -8,6 +8,6 @@ class AddMovieRateUseCase @Inject constructor(
     private val movieRepository: MovieRepository,
 ) {
     suspend operator fun invoke(movieId: Long, rating: Int) {
-         movieRepository.addMovieRate(movieId, rating)
+         movieRepository.addMovieRate(movieId = movieId, rating =  rating)
     }
 }

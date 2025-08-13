@@ -2,7 +2,7 @@ package com.baghdad.viewmodel.categoryMovies
 
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.usecase.genre.GetMovieGenreNameByIdUseCase
 import com.baghdad.domain.usecase.movie.GetMoviesByGenreUseCase
 import com.baghdad.entity.media.Genre

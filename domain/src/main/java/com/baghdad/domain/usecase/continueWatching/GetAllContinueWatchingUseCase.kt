@@ -1,7 +1,7 @@
 package com.baghdad.domain.usecase.continueWatching
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import javax.inject.Inject
 
@@ -10,11 +10,8 @@ class GetAllContinueWatchingUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         page: Int,
-    ): PagedResult<ContinueWatching> {
-        return continueWatchingRepository.getContinueWatching(page, PAGE_SIZE)
-    }
-
-    private companion object {
-        const val PAGE_SIZE = 20
+        pageSize: Int
+    ): PagedResult<UserWatchedMedia> {
+        return continueWatchingRepository.getContinueWatching(page = page, pageSize = pageSize)
     }
 }
