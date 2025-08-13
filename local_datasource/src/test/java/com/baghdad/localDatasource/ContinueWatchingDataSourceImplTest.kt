@@ -14,17 +14,17 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class LocalContinueWatchingDataSourceImplTest {
+class ContinueWatchingDataSourceImplTest {
 
     private lateinit var continueWatchingDao: ContinueWatchingDao
     private lateinit var logger: Logger
-    private lateinit var dataSource: LocalContinueWatchingDataSourceImpl
+    private lateinit var dataSource: ContinueWatchingDataSourceImpl
 
     @BeforeEach
     fun setUp() {
         continueWatchingDao = mockk()
         logger = mockk(relaxed = true)
-        dataSource = LocalContinueWatchingDataSourceImpl(continueWatchingDao, logger)
+        dataSource = ContinueWatchingDataSourceImpl(continueWatchingDao, logger)
     }
 
     @Test
