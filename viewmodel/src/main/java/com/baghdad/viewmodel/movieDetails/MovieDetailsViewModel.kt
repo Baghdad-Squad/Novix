@@ -3,9 +3,8 @@ package com.baghdad.viewmodel.movieDetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.MediaAccountStates
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
@@ -26,8 +25,6 @@ import com.baghdad.viewmodel.shared.AddToListBottomSheetState
 import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.shared.SavedListUiState
 import com.baghdad.viewmodel.shared.toUiState
-import com.baghdad.viewmodel.util.roundToFirstDecimal
-import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -445,10 +442,10 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onGetMovieAccountStatesSuccess(accountStates: MediaAccountStates) {
+    private fun onGetMovieAccountStatesSuccess(isMediaRated: Boolean) {
         updateState {
             it.copy(
-                isRated = accountStates.isMediaRated,
+                isRated = isMediaRated,
             )
         }
     }
@@ -548,9 +545,10 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { state -> state.copy(isMovieDetailsLoading = true) }
     }
 
-    private fun onGetMovieDetailsSuccess(details: SavableMovie) {
+    private fun onGetMovieDetailsSuccess(details: SavedMovie) {
         updateState(details.toMovieDetailsStateUpdate())
     }
+
 
     private fun getCastMembers() {
         tryToExecute(
@@ -558,7 +556,6 @@ class MovieDetailsViewModel @Inject constructor(
             onSuccess = { actors ->
                 onGetMovieCastSuccess(
                     actors = actors.map { it.toActorCardInfo() }
-
                 )
             },
             onStart = ::onGetCastMembersStarted,
@@ -594,7 +591,7 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { state -> state.copy(isMoreLikeThisMovieLoading = false) }
     }
 
-    private fun onGetMovieMoreLikeThisSuccess(savableMovies: List<SavableMovie>) {
+    private fun onGetMovieMoreLikeThisSuccess(savableMovies: List<SavedMovie>) {
         hideSnackBar()
         updateState { state ->
             state.copy(moreLikeThisMovie = savableMovies.map { it.toMoreLikeThisMovie() })
@@ -621,7 +618,7 @@ class MovieDetailsViewModel @Inject constructor(
                 addContinueWatchingUseCase(
                     movieId, currentState.categories.map { it.id },
                     contentImageUrl = currentState.posterImageURL,
-                    contentType = ContinueWatching.ContentType.MOVIE,
+                    contentType = UserWatchedMedia.ContentType.MOVIE,
                 )
             },
         )
