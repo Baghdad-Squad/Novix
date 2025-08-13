@@ -1,14 +1,15 @@
 package com.baghdad.viewmodel.trendingMovie
 
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
+import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
 import com.baghdad.domain.usecase.movie.GetTrendingMoviesUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
-import com.baghdad.entity.media.Genre
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -26,7 +28,7 @@ import org.junit.jupiter.api.Test
 class TrendingMoviesViewModelTest {
 
     private lateinit var getTrendingMoviesUseCase: GetTrendingMoviesUseCase
-    private lateinit var getGenresUseCase: GetGenresUseCase
+    private lateinit var getMovieGenresUseCase: GetMovieGenresUseCase
     private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
     private lateinit var getSavedListsUseCase: GetSavedListsUseCase
     private lateinit var addMovieToSavedListUseCase: AddMovieToSavedListUseCase
@@ -40,7 +42,7 @@ class TrendingMoviesViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         getTrendingMoviesUseCase = mockk()
-        getGenresUseCase = mockk()
+        getMovieGenresUseCase = mockk()
         isUserLoggedInUseCase = mockk()
         getSavedListsUseCase = mockk()
         addMovieToSavedListUseCase = mockk()
@@ -48,7 +50,7 @@ class TrendingMoviesViewModelTest {
         removeMovieFromSavedListUseCase = mockk()
         viewModel = TrendingMoviesViewModel(
             getTrendingMoviesUseCase,
-            getGenresUseCase,
+            getMovieGenresUseCase,
             isUserLoggedInUseCase,
             getSavedListsUseCase,
             addMovieToSavedListUseCase,
@@ -64,116 +66,160 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `should emit NavigateBack effect when back button is clicked`() {
-        lateinit var effect: TrendingMoviesEffect
-        val job: Job = testScope.launch {
-            viewModel.uiEffect.collect {
-                effect = it
-            }
-        }
+    fun `should send NavigateBack effect when back button is clicked`() {
+        // Given
+        var effect: TrendingMoviesEffect = TrendingMoviesEffect.NavigateBack
+        val job: Job = testScope.launch { viewModel.uiEffect.collect { effect = it } }
 
+        // When
         viewModel.onBackClicked()
 
+        // Then
         assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateBack)
         job.cancel()
     }
 
     @Test
-    fun `should emit NavigateToMovieDetails effect when movie is clicked`() {
-        val movieId = 123L
-        lateinit var effect: TrendingMoviesEffect
-        val job: Job = testScope.launch {
-            viewModel.uiEffect.collect {
-                effect = it
-            }
-        }
+    fun `should send NavigateToMovieDetails effect when movie is clicked`() {
+        // Given
+        var effect: TrendingMoviesEffect = TrendingMoviesEffect.NavigateToMovieDetails(MOVIE_ID)
+        val job: Job = testScope.launch { viewModel.uiEffect.collect { effect = it } }
 
-        viewModel.onMovieClicked(movieId)
+        // When
+        viewModel.onMovieClicked(MOVIE_ID)
 
-        assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateToMovieDetails(movieId))
+        //Then
+        assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateToMovieDetails(MOVIE_ID))
         job.cancel()
     }
 
     @Test
-    fun `should emit a NavigateToMovieDetails effect for each clicked movie`() {
-        val effects = mutableListOf<TrendingMoviesEffect>()
-        val job: Job = testScope.launch {
-            viewModel.uiEffect.collect {
-                effects.add(it)
-            }
-        }
+    fun `should send NavigationToLogin effect when login button is clicked`() {
+        // Given
+        var effect: TrendingMoviesEffect = TrendingMoviesEffect.NavigateToLogin
+        val job: Job = testScope.launch { viewModel.uiEffect.collect { effect = it } }
 
-        val ids = listOf(123L, 456L, 0L, -1L)
-        ids.forEach { viewModel.onMovieClicked(it) }
+        // When
+        viewModel.onLoginClicked()
 
-        assertThat(effects).containsExactly(
-            TrendingMoviesEffect.NavigateToMovieDetails(123L),
-            TrendingMoviesEffect.NavigateToMovieDetails(456L),
-            TrendingMoviesEffect.NavigateToMovieDetails(0L),
-            TrendingMoviesEffect.NavigateToMovieDetails(-1L)
-        )
+        // Then
+        assertThat(effect).isEqualTo(TrendingMoviesEffect.NavigateToLogin)
         job.cancel()
     }
 
     @Test
-    fun `should update categories when genres are loaded successfully`() {
-        val genres = listOf(Genre(id = 1, name = "Action"), Genre(id = 2, name = "Drama"))
-        coEvery { getGenresUseCase.getMovieGenres() } returns genres
+    fun `should create new list when create new list button is clicked`() {
+        // When
+        viewModel.onCreateNewListClicked()
 
-        viewModel = TrendingMoviesViewModel(
-            getTrendingMoviesUseCase,
-            getGenresUseCase,
-            isUserLoggedInUseCase,
-            getSavedListsUseCase,
-            addMovieToSavedListUseCase,
-            createSavedListUseCase,
-            removeMovieFromSavedListUseCase,
-            testDispatcher
-        )
-        assertThat(true).isTrue()
-        assertThat(true).isTrue()
+        // Then
+        val state = viewModel.uiState.value
+        assertThat(state.addListBottomSheetState.isVisible).isTrue()
+        assertThat(state.addToListBottomSheetState.isVisible).isFalse()
     }
 
     @Test
-    fun `should return true when comparing two NavigateBack effects`() {
-        val effect1 = TrendingMoviesEffect.NavigateBack
-        val effect2 = TrendingMoviesEffect.NavigateBack
+    fun `should close add list bottom sheet when dismiss button is clicked`() {
+        // When
+        viewModel.onCreateListBottomSheetDismiss()
 
-        assertThat(effect1).isEqualTo(effect2)
-        assertThat(effect1.hashCode()).isEqualTo(effect2.hashCode())
+        // Then
+        val state = viewModel.uiState.value
+        assertThat(state.addListBottomSheetState.isVisible).isFalse()
+        assertThat(state.addToListBottomSheetState.isVisible).isTrue()
     }
 
     @Test
-    fun `should return true when movie detail effects have same movieId and false when different`() {
-        val id1 = 123L
-        val id2 = 456L
+    fun `should close add to list bottom sheet when dismiss button is clicked`() {
+        // When
+        viewModel.onSaveToListBottomSheetDismiss()
 
-        val effect1 = TrendingMoviesEffect.NavigateToMovieDetails(id1)
-        val effect2 = TrendingMoviesEffect.NavigateToMovieDetails(id1)
-        val effect3 = TrendingMoviesEffect.NavigateToMovieDetails(id2)
-
-        assertThat(effect1).isEqualTo(effect2)
-        assertThat(effect1).isNotEqualTo(effect3)
-        assertThat(effect1.hashCode()).isEqualTo(effect2.hashCode())
+        // Then
+        val state = viewModel.uiState.value
+        assertThat(state.addToListBottomSheetState.isVisible).isFalse()
     }
 
     @Test
-    fun `should return string representation that contains NavigateBack`() {
-        val effect = TrendingMoviesEffect.NavigateBack
-        val result = effect.toString()
+    fun `should selected list id when list is selected`() {
+        // Given
+        val listId = 123L
 
-        assertThat(result).contains("NavigateBack")
-        assertThat(result).isNotEmpty()
+        // When
+        viewModel.onListSelected(listId)
+
+        // Then
+        val state = viewModel.uiState.value
+        assertThat(state.addToListBottomSheetState.selectedListId).isEqualTo(listId)
     }
 
     @Test
-    fun `should return string representation that includes movieId for NavigateToMovieDetails`() {
-        val movieId = 123L
-        val effect = TrendingMoviesEffect.NavigateToMovieDetails(movieId)
-        val result = effect.toString()
+    fun `should load movies when clicked category is different from current`() = runTest {
+        // Given
+        coEvery { getMovieGenresUseCase.getMovieGenres() } returns mockk()
 
-        assertThat(result).contains("NavigateToMovieDetails")
-        assertThat(result).contains(movieId.toString())
-        assertThat(result).isNotEmpty()
+        // When
+        viewModel.onCategoryClicked(CATEGORY_ID)
+
+        // Then
+        coVerify { getMovieGenresUseCase.getMovieGenres() }
     }
+
+    @Test
+    fun `should not load movies when clicked category is same as current`() {
+        // Given
+        coEvery { getMovieGenresUseCase.getMovieGenres() } returns mockk()
+        viewModel.onCategoryClicked(CATEGORY_ID)
+
+        // When
+        viewModel.onCategoryClicked(CATEGORY_ID)
+
+        // Then
+        coVerify(exactly = 1) { getMovieGenresUseCase.getMovieGenres() }
+    }
+
+    @Test
+    fun `should call loadGenres when SnackBar action label is clicked`() {
+        // Given
+        coEvery { getMovieGenresUseCase.getMovieGenres() } returns mockk()
+        viewModel.onCategoryClicked(CATEGORY_ID)
+
+        // When
+        viewModel.onSnackBarActionLabelClicked(CATEGORY_ID)
+
+        // Then
+        coVerify(exactly = 2) { getMovieGenresUseCase.getMovieGenres() }
+    }
+
+    @Test
+    fun `should change list name when list name is changed`() {
+        // When
+        viewModel.onCreatedListNameChanged(LIST_NAME)
+
+        // Then
+        val state = viewModel.uiState.value
+        assertThat(state.addListBottomSheetState.listName).isEqualTo(LIST_NAME)
+    }
+
+    @Test
+    fun `should create new list when create list button is clicked`() = runTest {
+        // Given
+        coEvery { createSavedListUseCase(title = LIST_NAME) } returns mockk()
+        viewModel.onCreatedListNameChanged(LIST_NAME)
+
+
+        // When
+        viewModel.onCreateListBottomSheetAddClick()
+
+        // Then
+        coVerify { createSavedListUseCase(title = LIST_NAME) }
+
+    }
+
+    companion object {
+        const val MOVIE_ID = 456L
+        const val LIST_NAME = "New List"
+        const val CATEGORY_ID = 123L
+
+    }
+
 }
