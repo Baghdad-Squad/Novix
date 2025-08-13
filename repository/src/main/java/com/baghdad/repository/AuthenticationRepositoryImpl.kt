@@ -22,7 +22,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
         return sessionDataSource.getSessionId() != null
     }
 
-    override suspend fun getLoggedInUser(): User? {
+    override suspend fun getUserInfo(): User? {
         return userDataSource.getUser()?.toEntity()
     }
 
@@ -77,4 +77,5 @@ class AuthenticationRepositoryImpl @Inject constructor(
             imageUrl = user.imageUrl.orEmpty()
         )
     }
+
 }

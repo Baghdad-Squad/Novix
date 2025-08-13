@@ -28,7 +28,7 @@ class ContinueWatchingRepositoryImpl
             page: Int,
             pageSize: Int,
         ): PagedResult<UserWatchedMedia> {
-            authenticationRepository.getLoggedInUser()?.let {
+            authenticationRepository.getUserInfo()?.let {
                 val savedMovies = savableMovieDataSource.getSavedMovies()
                 return getLocalPagedSafely(
                     page = page,
@@ -52,7 +52,7 @@ class ContinueWatchingRepositoryImpl
         }
 
         override suspend fun observeContinueWatching(): Flow<List<UserWatchedMedia>> {
-            authenticationRepository.getLoggedInUser()?.let {
+            authenticationRepository.getUserInfo()?.let {
                 val savedMovies = savableMovieDataSource.getSavedMovies()
                 return continueWatchingDataSource
                     .observeContinueWatching(it.id)
@@ -75,7 +75,7 @@ class ContinueWatchingRepositoryImpl
             contentType: UserWatchedMedia.ContentType,
         ) {
             executeSafely {
-                val userId = authenticationRepository.getLoggedInUser()?.id ?: return@executeSafely
+                val userId = authenticationRepository.getUserInfo()?.id ?: return@executeSafely
                 val userWatchedMedia =
                     UserWatchedMedia(
                         contentId = contentId,
@@ -91,7 +91,7 @@ class ContinueWatchingRepositoryImpl
         }
 
         override suspend fun getAllContinueWatchingMovies(): Flow<List<UserWatchedMedia>> {
-            authenticationRepository.getLoggedInUser()?.let {
+            authenticationRepository.getUserInfo()?.let {
                 val savedMovies = savableMovieDataSource.getSavedMovies()
                 return continueWatchingDataSource
                     .getAllContinueWatchingMovies(it.id)
@@ -108,7 +108,7 @@ class ContinueWatchingRepositoryImpl
         }
 
         override suspend fun getAllContinueWatchingTvShows(): Flow<List<UserWatchedMedia>> {
-            authenticationRepository.getLoggedInUser()?.let {
+            authenticationRepository.getUserInfo()?.let {
                 val savedMovies = savableMovieDataSource.getSavedMovies()
                 return continueWatchingDataSource
                     .getAllContinueWatchingTvShows(it.id)

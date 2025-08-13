@@ -1,5 +1,7 @@
 package com.baghdad.viewmodel.profile
 
+import androidx.annotation.StringRes
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseUiState
 
 data class ProfileScreenState(
@@ -35,4 +37,23 @@ data class ProfileScreenState(
     data class LogoutBottomSheetState(
         val isVisible: Boolean = false,
     )
+
+    enum class LanguagePreferences(
+        @StringRes val title: Int,
+        val languageCode: String = "",
+    ) {
+        ENGLISH(R.string.english, "en"),
+        ARABIC(R.string.arabic, "ar");
+
+        companion object {
+            fun fromLanguageCode(code: String): LanguagePreferences {
+                return entries.firstOrNull { it.languageCode == code } ?: ARABIC
+            }
+        }
+    }
+
+    enum class ThemePreferences(@StringRes val title: Int, val isDark: Boolean = false) {
+        DARK(R.string.dark, true),
+        LIGHT(R.string.light, false)
+    }
 }
