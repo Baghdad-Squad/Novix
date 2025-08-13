@@ -81,7 +81,6 @@ class HomeViewModelTest {
             observeContinueWatchingUseCase = observeContinueWatchingUseCase,
             getAppLanguageUseCase = getAppLanguageUseCase,
             getMovieGenresUseCase = getMovieGenresUseCase,
-            getTvShowGenresUseCase = getTvShowGenresUseCase,
             defaultDispatcher = testDispatcher
         )
     }

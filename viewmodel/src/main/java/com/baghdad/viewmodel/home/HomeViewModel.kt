@@ -16,7 +16,6 @@ import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
-import com.baghdad.domain.usecase.tvShow.GetTvShowGenresUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.savedList.SavedList
@@ -36,7 +35,6 @@ class HomeViewModel
     @Inject
     constructor(
         private val getMovieGenresUseCase: GetMovieGenresUseCase,
-        private val getTvShowGenresUseCase: GetTvShowGenresUseCase,
         private val observeContinueWatchingUseCase: ObserveContinueWatchingUseCase,
         private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
         private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
@@ -65,23 +63,23 @@ class HomeViewModel
             observeAppLanguage()
         }
 
-        fun reloadData() {
-            loadData()
-        }
 
         private fun observeAppLanguage() {
             tryToCollect(
                 flowProvider = { getAppLanguageUseCase.invoke() },
-                onNewValue = { newLanguage ->
-                    updateState {
-                        it.copy(
-                            language = newLanguage,
-                        )
-                    }
-                },
+                onNewValue = ::onGetLanguageChangeSuccess,
                 onError = ::onLoadDataError,
             )
         }
+
+    private fun onGetLanguageChangeSuccess(newLanguage: String) {
+        updateState {
+            it.copy(
+                language = newLanguage,
+            )
+        }
+        loadData()
+    }
 
         private fun checkIfUserIsLoggedIn() {
             tryToExecute(
@@ -135,7 +133,6 @@ class HomeViewModel
                     movies = popularMovies,
                     tvShows = popularTvShows,
                 )
-
             },
             dispatcher = defaultDispatcher,
             onSuccess = ::onGetPopularItemsSuccess,
@@ -145,18 +142,6 @@ class HomeViewModel
         )
     }
 
-        private fun onGetPopularItemsSuccess(popularItems: Pair<List<SavedMovie>, List<TvShow>>) {
-            val (movies, tvShows) = popularItems
-            val popularMovies =
-                movies.take(POPULAR_MOVIES_LIMIT).map(SavedMovie::toPopularItemUiState)
-            val popularTvShows =
-                tvShows.take(POPULAR_TV_SHOWS_LIMIT).map(TvShow::toPopularItemUiState)
-            updateState {
-                it.copy(
-                    popularItems = (popularMovies + popularTvShows).shuffled(),
-                )
-            }
-        }
     private fun onGetPopularItemsSuccess(popularItems: PopularItems) {
         val popularMovies =
             popularItems.movies.take(POPULAR_MOVIES_LIMIT).map(SavedMovie::toPopularItemUiState)
@@ -191,11 +176,11 @@ class HomeViewModel
     private fun getTopRatingMovies() {
         tryToExecute(
             callee = { getMovieTopRatingUseCase(DEFAULT_PAGE, null).data },
-                dispatcher = defaultDispatcher,
-                onSuccess = ::onGetTopRatingMoviesSuccess,
-                onStart = ::onGetTopRatingMoviesStart,
+            dispatcher = defaultDispatcher,
+            onSuccess = ::onGetTopRatingMoviesSuccess,
+            onStart = ::onGetTopRatingMoviesStart,
             onFinally = ::onGetTopRatingMoviesFinished,
-                onError = ::onLoadDataError,
+            onError = ::onLoadDataError,
             )
         }
 
