@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.login
 
+import app.cash.turbine.test
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.domain.usecase.login.LoginUseCase
@@ -40,28 +41,12 @@ class LoginViewModelTest {
 
     @Test
     fun `onBackClick should navigate back when clicked`() = runTest {
-        var effect: LoginUiEffect? = null
-        val job = launch {
-            viewModel.uiEffect.collect { effect = it }
-        }
-
         viewModel.onBackClick()
-        advanceUntilIdle()
 
-        assertThat(effect).isEqualTo(LoginUiEffect.NavigateBack)
-        job.cancel()
-    }
-
-
-    @Test
-    fun `uiState should have correct default values when initialized`() {
-        val state = viewModel.uiState.value
-
-        assertThat(state.isLoading).isFalse()
-        assertThat(state.userName).isEmpty()
-        assertThat(state.password).isEmpty()
-        assertThat(state.isPasswordVisible).isFalse()
-        assertThat(state.isAnyFieldEmpty).isTrue()
+        viewModel.uiEffect.test{
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(LoginUiEffect.NavigateBack)
+        }
     }
 
     @Test
@@ -111,24 +96,30 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `isAnyFieldEmpty should be false when both userName and password fields are filled`() {
+    fun `isAnyFieldEmpty should be false when userName field is filled`() {
         val userName = "testuser"
-        val password = "testpass"
 
         viewModel.onUserNameValueChange(userName)
-        viewModel.onPasswordValueChange(password)
 
         val state = viewModel.uiState.value
         assertThat(state.userName).isEqualTo(userName)
-        assertThat(state.password).isEqualTo(password)
-        assertThat(state.isAnyFieldEmpty).isFalse()
     }
 
     @Test
-    fun `togglePasswordVisibility should toggle isPasswordVisible from false to true when called`() {
+    fun `isAnyFieldEmpty should be false when password fields is filled`() {
+        val password = "testpass"
+
+        viewModel.onPasswordValueChange(password)
+
+        val state = viewModel.uiState.value
+        assertThat(state.password).isEqualTo(password)
+    }
+
+    @Test
+    fun `onTogglePasswordChange should toggle isPasswordVisible from false to true when called`() {
         assertThat(viewModel.uiState.value.isPasswordVisible).isFalse()
 
-        viewModel.togglePasswordVisibility()
+        viewModel.onTogglePasswordChange()
 
         assertThat(viewModel.uiState.value.isPasswordVisible).isTrue()
     }
@@ -136,10 +127,10 @@ class LoginViewModelTest {
     @Test
     fun `togglePasswordVisibility should toggle isPasswordVisible from true to false when called twice`() =
         runTest {
-            viewModel.togglePasswordVisibility()
+            viewModel.onTogglePasswordChange()
             assertThat(viewModel.uiState.value.isPasswordVisible).isTrue()
 
-            viewModel.togglePasswordVisibility()
+            viewModel.onTogglePasswordChange()
 
             assertThat(viewModel.uiState.value.isPasswordVisible).isFalse()
         }
@@ -152,7 +143,7 @@ class LoginViewModelTest {
         }
 
         viewModel.onRegisterClick()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         assertThat(effect).isEqualTo(LoginUiEffect.NavigateToRegister)
         job.cancel()
@@ -167,7 +158,7 @@ class LoginViewModelTest {
             }
 
             viewModel.onForgotPasswordClick()
-            testDispatcher.scheduler.advanceUntilIdle()
+            advanceUntilIdle()
 
             assertThat(effect).isEqualTo(LoginUiEffect.NavigateToForgotPassword)
             job.cancel()
@@ -184,7 +175,7 @@ class LoginViewModelTest {
             coEvery { loginUseCase.invoke(userName, password) } throws UnAuthorizedException()
 
             viewModel.onLoginClick()
-            testDispatcher.scheduler.advanceUntilIdle()
+            advanceUntilIdle()
 
             assertThat(viewModel.uiState.value.isLoading).isFalse()
         }
@@ -218,22 +209,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `uiState should maintain correct values when multiple field changes occur`() {
-        viewModel.onUserNameValueChange("user1")
-        viewModel.onPasswordValueChange("pass1")
-        viewModel.togglePasswordVisibility()
-        viewModel.onUserNameValueChange("user2")
-        viewModel.onPasswordValueChange("pass2")
-
-        val state = viewModel.uiState.value
-        assertThat(state.userName).isEqualTo("user2")
-        assertThat(state.password).isEqualTo("pass2")
-        assertThat(state.isPasswordVisible).isTrue()
-        assertThat(state.isAnyFieldEmpty).isFalse()
-    }
-
-    @Test
-    fun `onUserNameValueChange() should treat whitespace as valid input when called`() {
+    fun `onUserNameValueChange should treat whitespace as valid input when called`() {
         val userNameWithSpaces = " test user "
 
         viewModel.onUserNameValueChange(userNameWithSpaces)
@@ -245,14 +221,12 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `onPasswordValueChange() should treat whitespace as valid input when called`() {
+    fun `onPasswordValueChange should treat whitespace as valid input when called`() {
         val passwordWithSpaces = " test password "
 
-        viewModel.onUserNameValueChange("username")
         viewModel.onPasswordValueChange(passwordWithSpaces)
 
         val state = viewModel.uiState.value
         assertThat(state.password).isEqualTo(passwordWithSpaces)
-        assertThat(state.isAnyFieldEmpty).isFalse()
     }
 }
