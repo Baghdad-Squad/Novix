@@ -26,28 +26,42 @@ import dagger.hilt.components.SingletonComponent
 abstract class RemoteDataSourceModule {
 
     @Binds
-    abstract fun provideRemoteAuthenticationImpl(remoteAuthenticationImpl: RemoteAuthenticationImpl): RemoteAuthenticationDataSource
+    abstract fun provideRemoteAuthenticationImpl(
+        remoteAuthenticationImpl: RemoteAuthenticationImpl
+    ): RemoteAuthenticationDataSource
 
     @Binds
-    abstract fun provideSearchRemoteDataSource(remoteSearchDataSourceImpl: RemoteSearchDataSourceImpl): RemoteSearchDataSource
+    abstract fun provideSearchRemoteDataSource(
+        remoteSearchDataSourceImpl: RemoteSearchDataSourceImpl
+    ): RemoteSearchDataSource
 
     @Binds
-    abstract fun provideRemoteGenreDataSource(remoteGenreDataSourceImpl: RemoteGenreDataSourceImpl): RemoteGenreDataSource
+    abstract fun provideRemoteGenreDataSource(
+        remoteGenreDataSourceImpl: RemoteGenreDataSourceImpl
+    ): RemoteGenreDataSource
 
     @Binds
-    abstract fun provideRemoteActorDataSource(remoteActorDataSourceImpl: RemoteActorDataSourceImpl): RemoteActorDataSource
-
-
-    @Binds
-    abstract fun provideRemoteMovieDataSource(remoteMovieDataSourceImpl: RemoteMovieDataSourceImpl): RemoteMovieDataSource
-
+    abstract fun provideRemoteActorDataSource(
+        remoteActorDataSourceImpl: RemoteActorDataSourceImpl
+    ): RemoteActorDataSource
 
     @Binds
-    abstract fun provideRemoteEpisodeDataSource(remoteEpisodeDataSourceImpl: RemoteEpisodeDataSourceImpl): RemoteEpisodeDataSource
+    abstract fun provideRemoteMovieDataSource(
+        remoteMovieDataSourceImpl: RemoteMovieDataSourceImpl
+    ): RemoteMovieDataSource
 
     @Binds
-    abstract fun provideTvShowRemoteDataSource(remoteTvShowDataSourceImpl: RemoteTvShowDataSourceImpl): RemoteTvShowDataSource
+    abstract fun provideRemoteEpisodeDataSource(
+        remoteEpisodeDataSourceImpl: RemoteEpisodeDataSourceImpl
+    ): RemoteEpisodeDataSource
 
     @Binds
-    abstract fun provideRemoteSavedListDataSource(remoteSavedListDataSourceImpl: RemoteSavedListDataSourceImpl): RemoteSavedListDataSource
+    abstract fun provideTvShowRemoteDataSource(
+        remoteTvShowDataSourceImpl: RemoteTvShowDataSourceImpl
+    ): RemoteTvShowDataSource
+
+    @Binds
+    abstract fun provideRemoteSavedListDataSource(
+        remoteSavedListDataSourceImpl: RemoteSavedListDataSourceImpl
+    ): RemoteSavedListDataSource
 }

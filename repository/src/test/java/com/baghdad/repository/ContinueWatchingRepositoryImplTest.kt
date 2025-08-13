@@ -1,8 +1,8 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.entity.User
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.pagination.PagedResult
+import com.baghdad.entity.user.User
 import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
 import com.baghdad.repository.model.ContinueWatchingDto
 import com.google.common.truth.Truth.assertThat
@@ -41,9 +41,9 @@ class ContinueWatchingRepositoryImplTest {
         )
         val expectedResult = PagedResult(
             data = listOf(
-                createMockContinueWatching(1L, ContinueWatching.ContentType.MOVIE),
-                createMockContinueWatching(2L, ContinueWatching.ContentType.TV_SHOW),
-                createMockContinueWatching(3L, ContinueWatching.ContentType.MOVIE)
+                createMockContinueWatching(1L, UserWatchedMedia.ContentType.MOVIE),
+                createMockContinueWatching(2L, UserWatchedMedia.ContentType.TV_SHOW),
+                createMockContinueWatching(3L, UserWatchedMedia.ContentType.MOVIE)
             ),
             nextKey = null,
             prevKey = null
@@ -69,7 +69,7 @@ class ContinueWatchingRepositoryImplTest {
             // Given
             val page = 1
             val pageSize = 10
-            val expectedResult = PagedResult<ContinueWatching>(
+            val expectedResult = PagedResult<UserWatchedMedia>(
                 data = emptyList(),
                 nextKey = null,
                 prevKey = null
@@ -98,8 +98,8 @@ class ContinueWatchingRepositoryImplTest {
 
             val expectedResult = PagedResult(
                 data = listOf(
-                    createMockContinueWatching(1L, ContinueWatching.ContentType.MOVIE),
-                    createMockContinueWatching(2L, ContinueWatching.ContentType.TV_SHOW)
+                    createMockContinueWatching(1L, UserWatchedMedia.ContentType.MOVIE),
+                    createMockContinueWatching(2L, UserWatchedMedia.ContentType.TV_SHOW)
                 ),
                 nextKey = 2,
                 prevKey = null
@@ -125,7 +125,7 @@ class ContinueWatchingRepositoryImplTest {
             val contentId = 123L
             val genreIds = listOf(1L, 2L, 3L)
             val contentImageUrl = "https://example.com/image.jpg"
-            val contentType = ContinueWatching.ContentType.MOVIE
+            val contentType = UserWatchedMedia.ContentType.MOVIE
             val expectedDto = ContinueWatchingDto(
                 contentId = contentId,
                 genreIds = genreIds,
@@ -155,7 +155,7 @@ class ContinueWatchingRepositoryImplTest {
             val contentId = 456L
             val genreIds = listOf(4L, 5L)
             val contentImageUrl = "https://example.com/tvshow.jpg"
-            val contentType = ContinueWatching.ContentType.TV_SHOW
+            val contentType = UserWatchedMedia.ContentType.TV_SHOW
             val expectedDto = ContinueWatchingDto(
                 contentId = contentId,
                 genreIds = genreIds,
@@ -186,7 +186,7 @@ class ContinueWatchingRepositoryImplTest {
             val contentId = 999L
             val genreIds = (1L..20L).toList()
             val contentImageUrl = "https://example.com/large.jpg"
-            val contentType = ContinueWatching.ContentType.TV_SHOW
+            val contentType = UserWatchedMedia.ContentType.TV_SHOW
             val expectedDto = ContinueWatchingDto(
                 contentId = contentId,
                 genreIds = genreIds,
@@ -230,8 +230,8 @@ class ContinueWatchingRepositoryImplTest {
 
         private fun createMockContinueWatching(
             contentId: Long,
-            contentType: ContinueWatching.ContentType
-        ) = ContinueWatching(
+            contentType: UserWatchedMedia.ContentType
+        ) = UserWatchedMedia(
             contentId = contentId,
             genreIds = listOf(1L, 2L),
             contentImageUrl = "https://example.com/image$contentId.jpg",

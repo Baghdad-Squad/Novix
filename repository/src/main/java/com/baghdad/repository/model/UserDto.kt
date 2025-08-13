@@ -1,6 +1,6 @@
 package com.baghdad.repository.model
 
-import com.baghdad.entity.User
+import com.baghdad.entity.user.User
 
 data class UserDto(
     val id: Long,

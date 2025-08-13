@@ -2,11 +2,11 @@ package com.baghdad.novix.di
 
 import android.content.Context
 import androidx.room.Room
-import com.baghdad.local_datasource.roomDB.dao.ContinueWatchingDao
-import com.baghdad.local_datasource.roomDB.dao.RecentSearchDao
-import com.baghdad.local_datasource.roomDB.dao.RecentlyViewedDao
-import com.baghdad.local_datasource.roomDB.dao.SavedListMovieDao
-import com.baghdad.local_datasource.roomDB.database.NovixDatabase
+import com.baghdad.localDatasource.roomDB.dao.ContinueWatchingDao
+import com.baghdad.localDatasource.roomDB.dao.RecentSearchDao
+import com.baghdad.localDatasource.roomDB.dao.RecentlyViewedDao
+import com.baghdad.localDatasource.roomDB.dao.SavedListMovieDao
+import com.baghdad.localDatasource.roomDB.database.NovixDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +17,8 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    const val APP_DATABASE_NAME = "Novix"
+
     @Provides
     fun provideDatabase(
         @ApplicationContext context: Context
@@ -24,19 +26,27 @@ object DatabaseModule {
         return Room.databaseBuilder(
             context,
             NovixDatabase::class.java,
-            "Novix"
+            APP_DATABASE_NAME
         ).build()
     }
 
     @Provides
-    fun provideRecentlyViewedDao(database: NovixDatabase): RecentlyViewedDao = database.recentViewedDao()
+    fun provideRecentlyViewedDao(database: NovixDatabase): RecentlyViewedDao {
+        return database.recentViewedDao()
+    }
 
     @Provides
-    fun provideSavedListMovieDao(database: NovixDatabase): SavedListMovieDao = database.savedListMovieDao()
+    fun provideSavedListMovieDao(database: NovixDatabase): SavedListMovieDao {
+        return database.savedListMovieDao()
+    }
 
     @Provides
-    fun provideRecentSearchDao(database: NovixDatabase): RecentSearchDao = database.recentSearchDao()
+    fun provideRecentSearchDao(database: NovixDatabase): RecentSearchDao {
+        return database.recentSearchDao()
+    }
 
     @Provides
-    fun provideContinueWatchingDao(database: NovixDatabase): ContinueWatchingDao = database.continueWatchingDao()
+    fun provideContinueWatchingDao(database: NovixDatabase): ContinueWatchingDao {
+        return database.continueWatchingDao()
+    }
 }

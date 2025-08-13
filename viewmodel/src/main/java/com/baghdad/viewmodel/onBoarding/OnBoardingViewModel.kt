@@ -1,7 +1,6 @@
 package com.baghdad.viewmodel.onBoarding
 
-import com.baghdad.domain.exception.LocalDataBaseException
-import com.baghdad.domain.usecase.onBoarding.SetFirstTimeLaunchAppUseCase
+import com.baghdad.domain.usecase.appConfigurations.SetFirstTimeLaunchAppUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +13,6 @@ class OnBoardingViewModel @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<OnBoardingState, OnBoardingEffect>(OnBoardingState()),
     OnBoardingInteractionListener {
-
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError

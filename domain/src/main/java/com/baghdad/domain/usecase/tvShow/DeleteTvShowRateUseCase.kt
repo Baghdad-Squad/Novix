@@ -7,6 +7,6 @@ class DeleteTvShowRateUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository,
 ) {
     suspend operator fun invoke(tvShowId: Long) {
-        tvShowRepository.deleteTvShowRate(tvShowId)
+        tvShowRepository.deleteTvShowRate(tvShowId = tvShowId)
     }
 }

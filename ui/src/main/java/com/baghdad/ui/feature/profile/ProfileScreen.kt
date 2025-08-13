@@ -23,19 +23,17 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.bottomSheet.AppLanguageBottomSheet
 import com.baghdad.ui.feature.component.bottomSheet.AppThemeBottomSheet
+import com.baghdad.ui.feature.profile.component.GuestScreen
 import com.baghdad.ui.feature.profile.component.LogOutBottomSheet
-import com.baghdad.ui.feature.profile.component.LoggedOutUserScreen
 import com.baghdad.ui.feature.profile.component.ProfileHeaderWithOption
 import com.baghdad.ui.feature.profile.component.ProfileScreenItemsList
 import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.profile.LanguagePreferences
 import com.baghdad.viewmodel.profile.ProfileEffect
 import com.baghdad.viewmodel.profile.ProfileInteractionListener
 import com.baghdad.viewmodel.profile.ProfileScreenState
 import com.baghdad.viewmodel.profile.ProfileViewModel
-import com.baghdad.viewmodel.profile.ThemePreferences
 
 @Composable
 fun ProfileScreen(
@@ -79,6 +77,7 @@ private fun handleEffect(
             handleNavigation(
                 MyAccountNavEvent.NavigateToLogin,
             )
+
         is ProfileEffect.NavigateToChangePassword ->
             handleNavigation(
                 MyAccountNavEvent.NavigateToChangePassword,
@@ -120,7 +119,7 @@ private fun ProfileScreenContent(
         },
         backgroundBlur = { BackgroundBlur() },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        ) {
+    ) {
         if (state.isUserLoggedIn) {
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -143,7 +142,7 @@ private fun ProfileScreenContent(
             }
 
         } else {
-            LoggedOutUserScreen(listener::onLoginClick)
+            GuestScreen(listener::onLoginClick)
         }
 
         AppThemeBottomSheet(
@@ -151,12 +150,12 @@ private fun ProfileScreenContent(
             isVisible = state.themeBottomSheetState.isVisible,
             themeOptions = listOf(
                 Selectable(
-                    value = ThemePreferences.LIGHT,
-                    isSelected = state.themeBottomSheetState.currentTheme == ThemePreferences.LIGHT
+                    value = ProfileScreenState.ThemePreferences.LIGHT,
+                    isSelected = state.themeBottomSheetState.currentTheme == ProfileScreenState.ThemePreferences.LIGHT
                 ),
                 Selectable(
-                    value = ThemePreferences.DARK,
-                    isSelected = state.themeBottomSheetState.currentTheme == ThemePreferences.DARK
+                    value = ProfileScreenState.ThemePreferences.DARK,
+                    isSelected = state.themeBottomSheetState.currentTheme == ProfileScreenState.ThemePreferences.DARK
                 ),
             ),
             onThemeSelected = { listener.onAppearanceChanged(it) },
@@ -168,12 +167,12 @@ private fun ProfileScreenContent(
             isVisible = state.languageBottomSheetState.isVisible,
             languageOptions = listOf(
                 Selectable(
-                    value = LanguagePreferences.ENGLISH,
-                    isSelected = state.languageBottomSheetState.currentLanguage == LanguagePreferences.ENGLISH
+                    value = ProfileScreenState.LanguagePreferences.ENGLISH,
+                    isSelected = state.languageBottomSheetState.currentLanguage == ProfileScreenState.LanguagePreferences.ENGLISH
                 ),
                 Selectable(
-                    value = LanguagePreferences.ARABIC,
-                    isSelected = state.languageBottomSheetState.currentLanguage == LanguagePreferences.ARABIC
+                    value = ProfileScreenState.LanguagePreferences.ARABIC,
+                    isSelected = state.languageBottomSheetState.currentLanguage == ProfileScreenState.LanguagePreferences.ARABIC
                 ),
             ),
             onLanguageSelected = { listener.onLanguageChanged(it) },

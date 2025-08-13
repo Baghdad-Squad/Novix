@@ -1,17 +1,16 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.EpisodeApiService
-import com.baghdad.remoteDataSource.mapper.actor.toDto
+import com.baghdad.remoteDataSource.mapper.castMembers.toCastMembers
 import com.baghdad.remoteDataSource.mapper.episode.mapToYoutubeTrailerUrl
 import com.baghdad.remoteDataSource.mapper.episode.toDto
-import com.baghdad.remoteDataSource.mapper.toDto
+import com.baghdad.remoteDataSource.mapper.mediaAccountStates.toDto
 import com.baghdad.remoteDataSource.request.RatingRequest
-import com.baghdad.remoteDataSource.response.CastMembersResponse
-import com.baghdad.remoteDataSource.response.MediaAccountStatesResponse
-import com.baghdad.remoteDataSource.response.RatingResponse
+import com.baghdad.remoteDataSource.response.castMembers.CastMembersResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeDetailsResponse
-import com.baghdad.remoteDataSource.response.episode.EpisodeImageResponse
 import com.baghdad.remoteDataSource.response.episode.EpisodeVideosResponse
+import com.baghdad.remoteDataSource.response.mediaAccount.MediaAccountStatesResponse
+import com.baghdad.remoteDataSource.response.rate.RatingResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.logger.Logger
@@ -28,14 +27,14 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
 ) : RemoteEpisodeDataSource {
 
     override suspend fun getEpisodeDetails(
-        tvId: Long,
+        tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int
     ): EpisodeDto {
         return handleRequest<EpisodeDetailsResponse>(
             apiCall = {
                 episodeApiService.getEpisodeDetails(
-                    tvId = tvId,
+                    tvId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber
                 )
@@ -45,48 +44,30 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getEpisodeCastMembers(
-        tvId: Long,
+        tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int
     ): List<CastMemberDto> {
         return handleRequest<CastMembersResponse>(
             apiCall = {
                 episodeApiService.getEpisodeCastMembers(
-                    tvId = tvId,
+                    tvId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber
                 )
             },
             logger = logger,
-        ).cast?.mapNotNull { it.takeIf { it.id != null }?.toDto() } ?: emptyList()
+        ).toCastMembers()
     }
-
-    override suspend fun getEpisodeImages(
-        tvId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int
-    ): List<String> {
-        return handleRequest<EpisodeImageResponse>(
-            apiCall = {
-                episodeApiService.getEpisodeImages(
-                    tvId = tvId,
-                    seasonNumber = seasonNumber,
-                    episodeNumber = episodeNumber
-                )
-            },
-            logger = logger,
-        ).stills.orEmpty().map { "https://image.tmdb.org/t/p/w500" + it.filePath }
-    }
-
     override suspend fun getEpisodeTrailer(
-        tvId: Long,
+        tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int
     ): String {
         return handleRequest<EpisodeVideosResponse>(
             apiCall = {
                 episodeApiService.getEpisodeTrailer(
-                    tvId = tvId,
+                    tvId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber
                 )
@@ -99,7 +80,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
         tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
-        sessionId: String,
         rating: Int
     ) {
         handleRequest<RatingResponse>(
@@ -108,7 +88,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                     seriesId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    sessionId = sessionId,
                     rating = RatingRequest(rating)
                 )
             },
@@ -120,7 +99,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
         tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
-        sessionId: String,
     ): MediaAccountStateDto {
         return handleRequest<MediaAccountStatesResponse>(
             apiCall = {
@@ -128,7 +106,6 @@ class RemoteEpisodeDataSourceImpl @Inject constructor(
                     seriesId = tvShowId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    sessionId = sessionId
                 )
             },
             logger = logger
