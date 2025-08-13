@@ -3,7 +3,7 @@ package com.baghdad.repository
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.entity.user.User
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.datasource.local.UserWatchedMediaDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.model.GenreDto
@@ -23,7 +23,7 @@ class UserWatchedMediaRepositoryImplTest {
     private lateinit var continueWatchingRepositoryImpl: UserWatchedMediaRepositoryImpl
     private lateinit var authenticationRepositoryImpl: AuthenticationRepositoryImpl
     private lateinit var remoteGenreDataSource: RemoteGenreDataSource
-    private lateinit var localSavableMovieDataSource: LocalSavableMovieDataSource
+    private lateinit var localSavableMovieDataSource: SavableMovieDataSource
 
     @BeforeEach
     fun setUp() {
