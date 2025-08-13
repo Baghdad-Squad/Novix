@@ -33,44 +33,35 @@ class MainViewModel @Inject constructor(
 
     private fun getAppTheme() {
         tryToCollect(
-            flowProvider = { getAppThemeUseCase() },
-            onNewValue = { isDarkTheme ->
-                updateState { it.copy(isAppInDarkTheme = isDarkTheme) }
-            }
+            flowProvider = getAppThemeUseCase::invoke,
+            onNewValue = ::onSuccessGetAppTheme
         )
     }
 
     private fun getAppLanguage() {
         tryToCollect(
-            flowProvider = { getAppLanguageUseCase() },
-            onNewValue = { appLanguage ->
-                updateState { it.copy(appLanguage = appLanguage) }
-            }
+            flowProvider = getAppLanguageUseCase::invoke,
+            onNewValue = ::onSuccessGetAppLanguage
         )
     }
 
     override fun checkIsLoggedIn() {
-        tryToExecute(callee = {
-            isUserLoggedInUseCase.invoke()
-        }, onSuccess = {
-            onSuccessLoggedIn(result = it)
-        }, onError = {
-            onError(it)
-        }, onFinally = {
-            updateState { it.copy(isLoading = false) }
-        })
+        tryToExecute(
+            callee = isUserLoggedInUseCase::invoke,
+            onSuccess = ::onSuccessLoggedIn,
+            onError = ::onError,
+            onFinally = ::onFinally
+        )
     }
 
     override fun checkIsFirstTimeUser() {
         tryToExecute(
-            callee = {
-                isFirstTimeLaunchAppUseCase()
-            },
+            callee = isFirstTimeLaunchAppUseCase::invoke,
             onSuccess = ::onSuccessFirstTimeLaunch,
             onError = ::onError
         )
-
     }
+
     private fun onSuccessFirstTimeLaunch(isFirstTime: Boolean) {
         updateState {
             it.copy(
@@ -84,13 +75,12 @@ class MainViewModel @Inject constructor(
         updateState {
             it.copy(
                 isLoggedIn = result,
-                isLoading = false,
+                isLoading = false
             )
         }
         if (result) {
             tryToExecute(
-                callee = { syncSavedMoviesUseCase() },
-                onSuccess = {},
+                callee = syncSavedMoviesUseCase::invoke
             )
         }
     }
@@ -103,4 +93,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private fun onSuccessGetAppLanguage(appLanguage: String) {
+        updateState { it.copy(appLanguage = appLanguage) }
+    }
+
+    private fun onSuccessGetAppTheme(appTheme: Boolean) {
+        updateState { it.copy(isAppInDarkTheme = appTheme) }
+    }
+
+    private fun onFinally() {
+        updateState { it.copy(isLoading = false) }
+    }
 }
