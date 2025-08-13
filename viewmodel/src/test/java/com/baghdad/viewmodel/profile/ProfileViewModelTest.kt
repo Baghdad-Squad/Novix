@@ -1,14 +1,14 @@
 package com.baghdad.viewmodel.profile
 
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.appConfigurations.GetAppThemeUseCase
-import com.baghdad.domain.usecase.login.GetCurrentLoggedInUserUseCase
+import com.baghdad.domain.usecase.appConfigurations.SetAppLanguageUseCase
+import com.baghdad.domain.usecase.appConfigurations.SetAppThemeUseCase
+import com.baghdad.domain.usecase.login.GetUserInfo
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.login.LogOutUseCase
-import com.baghdad.domain.usecase.userPreferences.GetAppLanguageUseCase
-import com.baghdad.domain.usecase.userPreferences.GetAppThemeUseCase
-import com.baghdad.domain.usecase.userPreferences.SetAppLanguageUseCase
-import com.baghdad.domain.usecase.userPreferences.SetAppThemeUseCase
+
 import com.baghdad.entity.user.User
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test
 
 class ProfileViewModelTest {
     private lateinit var logOutUseCase: LogOutUseCase
-    private lateinit var getCurrentLoggedInUserUseCase: GetCurrentLoggedInUserUseCase
+    private lateinit var getUserInfo: GetUserInfo
     private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
     private lateinit var setAppThemeUseCase: SetAppThemeUseCase
     private lateinit var setAppLanguageUseCase: SetAppLanguageUseCase
@@ -49,7 +49,7 @@ class ProfileViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         logOutUseCase = mockk(relaxed = true)
-        getCurrentLoggedInUserUseCase = mockk(relaxed = true)
+        getUserInfo = mockk(relaxed = true)
         isUserLoggedInUseCase = mockk(relaxed = true)
         setAppThemeUseCase = mockk(relaxed = true)
         setAppLanguageUseCase = mockk(relaxed = true)
@@ -57,13 +57,13 @@ class ProfileViewModelTest {
         getAppLanguageUseCase = mockk(relaxed = true)
 
         coEvery { isUserLoggedInUseCase() } returns true
-        coEvery { getCurrentLoggedInUserUseCase() } returns mockUser
+        coEvery { getUserInfo() } returns mockUser
         coEvery { getAppThemeUseCase() } returns flowOf(false)
         coEvery { getAppLanguageUseCase() } returns flowOf("en")
 
         profileViewModel = ProfileViewModel(
             logOutUseCase = logOutUseCase,
-            getCurrentLoggedInUserUseCase = getCurrentLoggedInUserUseCase,
+            getUserInfo = getUserInfo,
             isUserLoggedInUseCase = isUserLoggedInUseCase,
             setAppThemeUseCase = setAppThemeUseCase,
             setAppLanguageUseCase = setAppLanguageUseCase,
@@ -182,7 +182,7 @@ class ProfileViewModelTest {
     @Test
     fun `onAppearanceChanged should update current theme when theme changed`() = runTest {
         // Given
-        val newTheme = ThemePreferences.DARK
+        val newTheme = ProfileScreenState.ThemePreferences.DARK
 
         // When
         profileViewModel.onAppearanceChanged(newTheme)
@@ -195,7 +195,7 @@ class ProfileViewModelTest {
     @Test
     fun `onLanguageChanged should update current language when language changed`() = runTest {
         // Given
-        val newLanguage = LanguagePreferences.ARABIC
+        val newLanguage = ProfileScreenState.LanguagePreferences.ARABIC
 
         // When
         profileViewModel.onLanguageChanged(newLanguage)
@@ -317,7 +317,7 @@ class ProfileViewModelTest {
         // When
         profileViewModel = ProfileViewModel(
             logOutUseCase = logOutUseCase,
-            getCurrentLoggedInUserUseCase = getCurrentLoggedInUserUseCase,
+            getUserInfo = getUserInfo,
             isUserLoggedInUseCase = isUserLoggedInUseCase,
             setAppThemeUseCase = setAppThemeUseCase,
             setAppLanguageUseCase = setAppLanguageUseCase,
@@ -329,8 +329,8 @@ class ProfileViewModelTest {
 
         // Then
         val currentState = profileViewModel.uiState.value
-        assertThat(currentState.userSettings.appearance).isEqualTo(ThemePreferences.DARK)
-        assertThat(currentState.themeBottomSheetState.currentTheme).isEqualTo(ThemePreferences.DARK)
+        assertThat(currentState.userSettings.appearance).isEqualTo(ProfileScreenState.ThemePreferences.DARK)
+        assertThat(currentState.themeBottomSheetState.currentTheme).isEqualTo(ProfileScreenState.ThemePreferences.DARK)
     }
 
     @Test
@@ -341,7 +341,7 @@ class ProfileViewModelTest {
         // When
         profileViewModel = ProfileViewModel(
             logOutUseCase = logOutUseCase,
-            getCurrentLoggedInUserUseCase = getCurrentLoggedInUserUseCase,
+            getUserInfo = getUserInfo,
             isUserLoggedInUseCase = isUserLoggedInUseCase,
             setAppThemeUseCase = setAppThemeUseCase,
             setAppLanguageUseCase = setAppLanguageUseCase,
@@ -353,8 +353,14 @@ class ProfileViewModelTest {
 
         // Then
         val currentState = profileViewModel.uiState.value
-        assertThat(currentState.userSettings.language).isEqualTo(LanguagePreferences.fromLanguageCode("ar"))
-        assertThat(currentState.languageBottomSheetState.currentLanguage).isEqualTo(LanguagePreferences.fromLanguageCode("ar"))
+        assertThat(currentState.userSettings.language).isEqualTo(
+            ProfileScreenState.LanguagePreferences.fromLanguageCode(
+                "ar"
+            )
+        )
+        assertThat(currentState.languageBottomSheetState.currentLanguage).isEqualTo(
+            ProfileScreenState.LanguagePreferences.fromLanguageCode("ar")
+        )
     }
 
     @Test
@@ -365,7 +371,7 @@ class ProfileViewModelTest {
         // When
         profileViewModel = ProfileViewModel(
             logOutUseCase = logOutUseCase,
-            getCurrentLoggedInUserUseCase = getCurrentLoggedInUserUseCase,
+            getUserInfo = getUserInfo,
             isUserLoggedInUseCase = isUserLoggedInUseCase,
             setAppThemeUseCase = setAppThemeUseCase,
             setAppLanguageUseCase = setAppLanguageUseCase,
@@ -384,7 +390,7 @@ class ProfileViewModelTest {
     fun `onAppearanceConfirmed should call setAppThemeUseCase when appearance confirmed`() = runTest {
         // Given
         profileViewModel.onAppearanceClick()
-        profileViewModel.onAppearanceChanged(ThemePreferences.DARK)
+        profileViewModel.onAppearanceChanged(ProfileScreenState.ThemePreferences.DARK)
 
         // When
         profileViewModel.onAppearanceConfirmed()
@@ -398,7 +404,7 @@ class ProfileViewModelTest {
     fun `onLanguageConfirmed should call setAppLanguageUseCase when language confirmed`() = runTest {
         // Given
         profileViewModel.onLanguageClick()
-        profileViewModel.onLanguageChanged(LanguagePreferences.ARABIC)
+        profileViewModel.onLanguageChanged(ProfileScreenState.LanguagePreferences.ARABIC)
 
         // When
         profileViewModel.onLanguageConfirmed()
