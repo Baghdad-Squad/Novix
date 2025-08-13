@@ -7,10 +7,10 @@ import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
 fun SavableMovie.toMoreLikeThisMovie() = MovieDetailsState.MoreLikeThisMovie(
-imageUrl = movie.posterImageURL,
-id = movie.id,
-isSaved = isSaved,
-savedListId = listId ?: -1L
+    imageUrl = movie.posterImageURL,
+    id = movie.id,
+    isSaved = isSaved,
+    savedListId = listId ?: -1L
 )
 
 fun CastMember.toActorCardInfo(): MovieDetailsState.ActorCardInfo = MovieDetailsState.ActorCardInfo(
