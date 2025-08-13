@@ -8,7 +8,7 @@ fun RatedMedia.toUiState(): MyRatingState.MediaItemUiState {
         id = id,
         posterPictureURL = posterImageURL,
         contentType = ContentType.valueOf(contentType.name),
-        rating = userRating?.toInt().toString()
+        rating = userRating ?: 0
     )
 
 }

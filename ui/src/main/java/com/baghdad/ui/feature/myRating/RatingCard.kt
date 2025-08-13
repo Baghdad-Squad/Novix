@@ -22,7 +22,7 @@ import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 @Composable
 fun RatingCard(
     url: String,
-    rating: String,
+    rating: Int,
     contentDescription: String?,
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -46,7 +46,7 @@ fun RatingCard(
                 .align(alignment = Alignment.Center)
         )
         RatingChip(
-            rating,
+            rating.toString(),
             modifier = Modifier
                 .padding(8.dp)
                 .align(Alignment.TopStart)
@@ -65,7 +65,7 @@ fun RatingCard(
 private fun RatingCardPrev() {
     RatingCard(
         url = "",
-        rating = "10",
+        rating = 10,
         contentDescription = "hi",
         onClick = {},
         onDeleteClick = {},
