@@ -3,8 +3,6 @@ package com.baghdad.viewmodel.topTvShowPicks
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.actor.GetActorTvShowUseCase
-import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -19,7 +17,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,22 +29,18 @@ class TopTvShowPicksViewModelTest {
     private val tvShowId = 1L
     private val testDispatcher = StandardTestDispatcher()
 
-    val savedStateHandle = SavedStateHandle(
-        mapOf(
-            "actorId" to actorId,
-        )
-    )
+    val savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId))
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         getActorTvShowUseCase = mockk(relaxed = true)
-        coEvery { getActorTvShowUseCase(actorId) } returns mockedTvShow()
+        coEvery { getActorTvShowUseCase(actorId) } returns MockTvShow.TV_SHOWS
         topTvShowPicksViewModel =
             TopTvShowViewModel(
                 savedStateHandle = savedStateHandle,
-                getActorTvShowUseCase,
-                testDispatcher
+                getActorTvShowUseCase = getActorTvShowUseCase,
+                ioDispatcher = testDispatcher
             )
     }
 
@@ -60,116 +53,60 @@ class TopTvShowPicksViewModelTest {
 
 
     @Test
-    fun `onTvShowDetailsClick should Navigate To MovieDetails when clicked`() = runTest {
-        // Given
-        var receivedEffect: TopTvShowPicksEffect? = null
-        val job = launch {
-            topTvShowPicksViewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
-        }
-        // When
-        topTvShowPicksViewModel.onTvShowDetailsClick(tvShowId)
-        advanceUntilIdle()
-        // Then
-        assertThat(receivedEffect is TopTvShowPicksEffect.NavigateToTvShowDetails).isTrue()
-        assertThat(tvShowId == (receivedEffect as TopTvShowPicksEffect.NavigateToTvShowDetails).tvShowId).isTrue()
-        job.cancel()
-    }
-
-
-    @Test
-    fun `onBackClick should Navigate Back when clicked`() = runTest {
-        // Given
-        var receivedEffect: TopTvShowPicksEffect? = null
-        val job = launch {
-            topTvShowPicksViewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
-        }
-        // When
-        topTvShowPicksViewModel.onBackClick()
-        advanceUntilIdle()
-        // Then
-        assertThat(receivedEffect is TopTvShowPicksEffect.NavigateBack).isTrue()
-        job.cancel()
-    }
-
-    @Test
-    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() =
+    fun `should send NavigateToTvShowDetails effect with correct tvShowId when clicked`() =
         runTest {
             // Given
-            coEvery { getActorTvShowUseCase(actorId) } throws NoInternetException()
-            val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
-
-            val job = launch {
-                topTvShowPicksViewModel.snackBarState.collect {
-                    emittedSnackBarMessages.add(it.message)
-                }
-            }
+            var receivedEffect: TopTvShowPicksEffect? = null
+            val job = launch { topTvShowPicksViewModel.uiEffect.collect { receivedEffect = it } }
 
             // When
-            topTvShowPicksViewModel.onSnackBarActionLabelClick()
+            topTvShowPicksViewModel.onTvShowDetailsClick(tvShowId)
             advanceUntilIdle()
 
             // Then
-            assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+            assertThat(receivedEffect)
+                .isInstanceOf(TopTvShowPicksEffect.NavigateToTvShowDetails::class.java)
+
+            val effect = receivedEffect as TopTvShowPicksEffect.NavigateToTvShowDetails
+            assertThat(effect.tvShowId).isEqualTo(tvShowId)
+
             job.cancel()
         }
 
 
-    companion object {
+    @Test
+    fun `should Navigate Back when onBackClick `() = runTest {
+        // Given
+        var receivedEffect: TopTvShowPicksEffect? = null
+        val job = launch { topTvShowPicksViewModel.uiEffect.collect { receivedEffect = it } }
 
+        // When
+        topTvShowPicksViewModel.onBackClick()
+        advanceUntilIdle()
 
-        private fun mockedTvShow(): List<TvShow> = listOf(
-            TvShow(
-                id = 1L,
-                title = "Test TvShow 1",
-                genres = listOf(Genre(16L, "Animation")),
-                averageRating = 8.0,
-                userRating = 7,
-                releaseDate = LocalDate.parse("2023-01-01"),
-                overview = "Test movie overview 1",
-                posterImageURL = "/movie_poster_1.jpg",
-                trailerURL = "https://youtube.com/watch?v=test1",
-                headerImagesURLs = listOf(
-                    "/header_image_1.jpg",
-                    "/header_image_2.jpg"
-                ),
-                numberOfSeasons = 3,
-            ),
-            TvShow(
-                id = 2L,
-                title = "Test TvShow 2",
-                genres = listOf(Genre(35L, "Comedy")),
-                averageRating = 7.5,
-                userRating = 8,
-                releaseDate = LocalDate.parse("2023-02-01"),
-                overview = "Test movie overview 2",
-                posterImageURL = "/movie_poster_2.jpg",
-                trailerURL = "https://youtube.com/watch?v=test2",
-                headerImagesURLs = listOf(
-                    "/header_image_1.jpg",
-                    "/header_image_2.jpg"
-                ),
-                numberOfSeasons = 1,
-            ),
-            TvShow(
-                id = 3L,
-                title = "Test TvShow 3",
-                genres = listOf(Genre(18L, "Drama")),
-                averageRating = 9.0,
-                userRating = 8,
-                releaseDate = LocalDate.parse("2023-03-01"),
-                overview = "Test movie overview 3",
-                posterImageURL = "/movie_poster_3.jpg",
-                trailerURL = "https://youtube.com/watch?v=test3",
-                headerImagesURLs = listOf(
-                    "/header_image_1.jpg",
-                    "/header_image_2.jpg"
-                ),
-                numberOfSeasons = 12,
-            )
-        )
+        // Then
+        assertThat(receivedEffect).isInstanceOf(TopTvShowPicksEffect.NavigateBack::class.java)
+        job.cancel()
+    }
+
+    @Test
+    fun `should show no internet snackBar when NoInternetException is thrown`() = runTest {
+        // Given
+        coEvery { getActorTvShowUseCase(actorId) } throws NoInternetException()
+        val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
+
+        val job = launch {
+            topTvShowPicksViewModel.snackBarState.collect {
+                emittedSnackBarMessages.add(it.message)
+            }
+        }
+
+        // When
+        topTvShowPicksViewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+
+        // Then
+        assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+        job.cancel()
     }
 }
