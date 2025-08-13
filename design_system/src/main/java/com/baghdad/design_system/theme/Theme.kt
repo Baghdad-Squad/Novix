@@ -7,7 +7,9 @@ import com.baghdad.design_system.color.localNovixColor
 import com.baghdad.design_system.textStyle.NovixTextStyle
 import com.baghdad.design_system.textStyle.localNovixTextStyle
 
-object Theme {
+object
+
+Theme {
     val color: NovixColor
         @Composable @ReadOnlyComposable get() = localNovixColor.current
     val typography: NovixTextStyle

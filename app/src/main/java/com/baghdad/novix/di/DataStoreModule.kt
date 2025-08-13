@@ -14,8 +14,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 
-
-
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
@@ -35,6 +33,7 @@ object DataStoreModule {
     val Context.datastore: DataStore<Preferences> by preferencesDataStore(
         name = "app-preferences"
     )
+
     val Context.userDataStore: DataStore<User> by dataStore(
         fileName = "user.pb",
         serializer = UserSerializer
