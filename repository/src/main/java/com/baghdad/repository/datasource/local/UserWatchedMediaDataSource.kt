@@ -3,7 +3,7 @@ package com.baghdad.repository.datasource.local
 import com.baghdad.repository.model.UserWatchedMediaDto
 import kotlinx.coroutines.flow.Flow
 
-interface LocalUserWatchedMediaDataSource {
+interface UserWatchedMediaDataSource {
     suspend fun addUserWatchedMedia(continueWatching: UserWatchedMediaDto)
 
     suspend fun getPagedUserWatchedMediaMovies(

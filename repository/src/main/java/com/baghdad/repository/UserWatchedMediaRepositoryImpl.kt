@@ -5,8 +5,8 @@ import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.UserWatchedMediaRepository
 import com.baghdad.entity.media.Genre
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
-import com.baghdad.repository.datasource.local.LocalUserWatchedMediaDataSource
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
+import com.baghdad.repository.datasource.local.UserWatchedMediaDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.mapper.toDto
 import com.baghdad.repository.mapper.toEntity
@@ -25,9 +25,9 @@ import javax.inject.Singleton
 
 @Singleton
 class UserWatchedMediaRepositoryImpl @Inject constructor(
-    private val localUserWatchedMediaDataSource: LocalUserWatchedMediaDataSource,
+    private val userWatchedMediaDataSource: UserWatchedMediaDataSource,
     private val authenticationRepository: AuthenticationRepository,
-    private val savableMovieDataSource: LocalSavableMovieDataSource,
+    private val savableMovieDataSource: SavableMovieDataSource,
     private val remoteGenreDataSource: RemoteGenreDataSource
 ) : UserWatchedMediaRepository {
 
@@ -35,7 +35,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
         return getPagedItems(
             page = page,
             pageSize = pageSize,
-            fetchData = localUserWatchedMediaDataSource::getPagedUserWatchedMediaMovies
+            fetchData = userWatchedMediaDataSource::getPagedUserWatchedMediaMovies
         )
     }
 
@@ -43,7 +43,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
         return getPagedItems(
             page = page,
             pageSize = pageSize,
-            fetchData = localUserWatchedMediaDataSource::getPagedUserWatchedMediaTvShows
+            fetchData = userWatchedMediaDataSource::getPagedUserWatchedMediaTvShows
         )
     }
 
@@ -51,7 +51,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
         val user = authenticationRepository.getLoggedInUser() ?: return flowOf(emptyList())
         val savedMovies = savableMovieDataSource.getSavedMovies()
 
-        return localUserWatchedMediaDataSource
+        return userWatchedMediaDataSource
             .observeUserWatchedMedia(user.id)
             .map { items -> items.map(mapDtoToEntityWithSavedMovies(savedMovies)) }
     }
@@ -72,13 +72,13 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
             isSaved = false,
             listId = null,
         )
-        localUserWatchedMediaDataSource.addUserWatchedMedia(item.toDto())
+        userWatchedMediaDataSource.addUserWatchedMedia(item.toDto())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getUsedMovieGenres(): Flow<List<Genre>> {
         return getUsedGenres(
-            localDataCall = localUserWatchedMediaDataSource::getUserWatchedMediaMovies,
+            localDataCall = userWatchedMediaDataSource::getUserWatchedMediaMovies,
             remoteGenreCall = { remoteGenreDataSource.getMovieGenre(Locale.getDefault().language) }
         )
     }
@@ -86,7 +86,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getUsedTvShowGenres(): Flow<List<Genre>> {
         return getUsedGenres(
-            localDataCall = localUserWatchedMediaDataSource::getUserWatchedMediaTvShows,
+            localDataCall = userWatchedMediaDataSource::getUserWatchedMediaTvShows,
             remoteGenreCall = { remoteGenreDataSource.getTvShowGenre(Locale.getDefault().language) }
         )
     }

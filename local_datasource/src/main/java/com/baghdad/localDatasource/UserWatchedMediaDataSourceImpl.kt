@@ -8,7 +8,7 @@ import com.baghdad.localDatasource.roomDB.entity.toDto
 import com.baghdad.localDatasource.roomDB.entity.toDtos
 import com.baghdad.localDatasource.roomDB.entity.toLocalDto
 import com.baghdad.localDatasource.util.calculatePageOffset
-import com.baghdad.repository.datasource.local.LocalUserWatchedMediaDataSource
+import com.baghdad.repository.datasource.local.UserWatchedMediaDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.UserWatchedMediaDto
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 class UserWatchedMediaDataSourceImpl @Inject constructor(
     private val userWatchedMediaDao: UserWatchedMediaDao,
     private val logger: Logger
-) : LocalUserWatchedMediaDataSource {
+) : UserWatchedMediaDataSource {
     override suspend fun addUserWatchedMedia(continueWatching: UserWatchedMediaDto) {
         executeWithErrorHandling(logger = logger) {
             userWatchedMediaDao.upsertUserWatchedMedia(continueWatching.toLocalDto())

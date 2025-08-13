@@ -18,13 +18,13 @@ class LocalUserWatchedMediaDataSourceImplTest {
 
     private lateinit var userWatchedMediaDao: UserWatchedMediaDao
     private lateinit var logger: Logger
-    private lateinit var dataSource: LocalUserWatchedMediaDataSourceImpl
+    private lateinit var dataSource: UserWatchedMediaDataSourceImpl
 
     @BeforeEach
     fun setUp() {
         userWatchedMediaDao = mockk()
         logger = mockk(relaxed = true)
-        dataSource = LocalUserWatchedMediaDataSourceImpl(userWatchedMediaDao, logger)
+        dataSource = UserWatchedMediaDataSourceImpl(userWatchedMediaDao, logger)
     }
 
     @Test

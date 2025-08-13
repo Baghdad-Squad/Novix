@@ -4,7 +4,7 @@ import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.entity.user.User
 import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
-import com.baghdad.repository.datasource.local.LocalUserWatchedMediaDataSource
+import com.baghdad.repository.datasource.local.UserWatchedMediaDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.UserWatchedMediaDto
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test
 
 class UserWatchedMediaRepositoryImplTest {
 
-    private lateinit var localUserWatchedMediaDataSource: LocalUserWatchedMediaDataSource
+    private lateinit var userWatchedMediaDataSource: UserWatchedMediaDataSource
     private lateinit var continueWatchingRepositoryImpl: UserWatchedMediaRepositoryImpl
     private lateinit var authenticationRepositoryImpl: AuthenticationRepositoryImpl
     private lateinit var remoteGenreDataSource: RemoteGenreDataSource
@@ -27,12 +27,12 @@ class UserWatchedMediaRepositoryImplTest {
 
     @BeforeEach
     fun setUp() {
-        localUserWatchedMediaDataSource = mockk()
+        userWatchedMediaDataSource = mockk()
         authenticationRepositoryImpl = mockk()
         remoteGenreDataSource = mockk()
         localSavableMovieDataSource = mockk()
         continueWatchingRepositoryImpl = UserWatchedMediaRepositoryImpl(
-            localUserWatchedMediaDataSource = localUserWatchedMediaDataSource,
+            userWatchedMediaDataSource = userWatchedMediaDataSource,
             authenticationRepository = authenticationRepositoryImpl,
             savableMovieDataSource = localSavableMovieDataSource,
             remoteGenreDataSource = remoteGenreDataSource
@@ -63,7 +63,7 @@ class UserWatchedMediaRepositoryImplTest {
             )
 
             coEvery {
-                localUserWatchedMediaDataSource.getPagedUserWatchedMediaMovies(
+                userWatchedMediaDataSource.getPagedUserWatchedMediaMovies(
                     1,
                     pageSize,
                     page
@@ -76,7 +76,7 @@ class UserWatchedMediaRepositoryImplTest {
             // Then
             assertThat(result).isEqualTo(expectedResult)
             coVerify {
-                localUserWatchedMediaDataSource.getPagedUserWatchedMediaMovies(1, pageSize, page)
+                userWatchedMediaDataSource.getPagedUserWatchedMediaMovies(1, pageSize, page)
             }
         }
 
@@ -100,7 +100,7 @@ class UserWatchedMediaRepositoryImplTest {
             )
 
             coEvery {
-                localUserWatchedMediaDataSource.getPagedUserWatchedMediaTvShows(
+                userWatchedMediaDataSource.getPagedUserWatchedMediaTvShows(
                     1,
                     pageSize,
                     page
@@ -113,7 +113,7 @@ class UserWatchedMediaRepositoryImplTest {
             // Then
             assertThat(result).isEqualTo(expectedResult)
             coVerify {
-                localUserWatchedMediaDataSource.getPagedUserWatchedMediaTvShows(1, pageSize, page)
+                userWatchedMediaDataSource.getPagedUserWatchedMediaTvShows(1, pageSize, page)
             }
         }
 
@@ -129,7 +129,7 @@ class UserWatchedMediaRepositoryImplTest {
         )
 
         coEvery {
-            localUserWatchedMediaDataSource.getPagedUserWatchedMediaMovies(
+            userWatchedMediaDataSource.getPagedUserWatchedMediaMovies(
                 1,
                 pageSize,
                 page
@@ -142,7 +142,7 @@ class UserWatchedMediaRepositoryImplTest {
         // Then
         assertThat(result).isEqualTo(expectedResult)
         coVerify {
-            localUserWatchedMediaDataSource.getPagedUserWatchedMediaMovies(1, pageSize, page)
+            userWatchedMediaDataSource.getPagedUserWatchedMediaMovies(1, pageSize, page)
         }
     }
 
@@ -167,7 +167,7 @@ class UserWatchedMediaRepositoryImplTest {
             )
 
             coEvery {
-                localUserWatchedMediaDataSource.getPagedUserWatchedMediaMovies(1, pageSize, page)
+                userWatchedMediaDataSource.getPagedUserWatchedMediaMovies(1, pageSize, page)
             } returns mockUserWatchedMediaList
 
 
@@ -177,7 +177,7 @@ class UserWatchedMediaRepositoryImplTest {
             // Then
             assertThat(expectedResult == result).isTrue()
             coVerify {
-                localUserWatchedMediaDataSource.getPagedUserWatchedMediaMovies(
+                userWatchedMediaDataSource.getPagedUserWatchedMediaMovies(
                     1,
                     pageSize,
                     page
@@ -194,7 +194,7 @@ class UserWatchedMediaRepositoryImplTest {
             val expectedData =
                 createMockUserWatchedMedia(999L, UserWatchedMedia.ContentType.TV_SHOW)
 
-            coEvery { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) } returns Unit
+            coEvery { userWatchedMediaDataSource.addUserWatchedMedia(expectedDto) } returns Unit
             // When
             continueWatchingRepositoryImpl.addUserWatchedMedia(
                 contentId = expectedData.contentId,
@@ -204,7 +204,7 @@ class UserWatchedMediaRepositoryImplTest {
             )
 
             // Then
-            coVerify { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) }
+            coVerify { userWatchedMediaDataSource.addUserWatchedMedia(expectedDto) }
         }
 
     @Test
@@ -216,7 +216,7 @@ class UserWatchedMediaRepositoryImplTest {
             val expectedData =
                 createMockUserWatchedMedia(999L, UserWatchedMedia.ContentType.TV_SHOW)
 
-            coEvery { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) } returns Unit
+            coEvery { userWatchedMediaDataSource.addUserWatchedMedia(expectedDto) } returns Unit
             // When
             continueWatchingRepositoryImpl.addUserWatchedMedia(
                 contentId = expectedData.contentId,
@@ -226,7 +226,7 @@ class UserWatchedMediaRepositoryImplTest {
             )
 
             // Then
-            coVerify { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) }
+            coVerify { userWatchedMediaDataSource.addUserWatchedMedia(expectedDto) }
         }
 
 
@@ -239,7 +239,7 @@ class UserWatchedMediaRepositoryImplTest {
             val expectedData =
                 createMockUserWatchedMedia(999L, UserWatchedMedia.ContentType.TV_SHOW)
 
-            coEvery { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) } returns Unit
+            coEvery { userWatchedMediaDataSource.addUserWatchedMedia(expectedDto) } returns Unit
 
             // When
             continueWatchingRepositoryImpl.addUserWatchedMedia(
@@ -250,7 +250,7 @@ class UserWatchedMediaRepositoryImplTest {
             )
 
             // Then
-            coVerify { localUserWatchedMediaDataSource.addUserWatchedMedia(expectedDto) }
+            coVerify { userWatchedMediaDataSource.addUserWatchedMedia(expectedDto) }
         }
 
     @Test
@@ -262,7 +262,7 @@ class UserWatchedMediaRepositoryImplTest {
                 createMockUserWatchedMediaDto(3L, UserWatchedMediaDto.ContentType.MOVIE)
             )
 
-            coEvery { localUserWatchedMediaDataSource.getUserWatchedMediaMovies(1) } returns flowOf(
+            coEvery { userWatchedMediaDataSource.getUserWatchedMediaMovies(1) } returns flowOf(
                 mockDtoList
             )
             coEvery { remoteGenreDataSource.getMovieGenre(any()) } returns createMockListOfGenreDto(
@@ -284,7 +284,7 @@ class UserWatchedMediaRepositoryImplTest {
                 createMockUserWatchedMediaDto(3L, UserWatchedMediaDto.ContentType.TV_SHOW)
             )
 
-            coEvery { localUserWatchedMediaDataSource.getUserWatchedMediaTvShows(1) } returns flowOf(
+            coEvery { userWatchedMediaDataSource.getUserWatchedMediaTvShows(1) } returns flowOf(
                 mockDtoList
             )
             coEvery { remoteGenreDataSource.getTvShowGenre(any()) } returns createMockListOfGenreDto(
