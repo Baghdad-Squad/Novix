@@ -595,7 +595,7 @@ class HomeViewModel
         private const val DEFAULT_PAGE_SIZE = 20
     }
 
-    data class PopularItems(
+    private data class PopularItems(
         val movies: List<SavedMovie>,
         val tvShows: List<TvShow>,
     )
