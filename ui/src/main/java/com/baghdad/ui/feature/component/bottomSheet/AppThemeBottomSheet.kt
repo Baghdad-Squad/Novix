@@ -16,15 +16,15 @@ import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.shared.Selectable
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
-import com.baghdad.viewmodel.profile.ThemePreferences
+import com.baghdad.viewmodel.profile.ProfileScreenState
 
 
 @Composable
 fun AppThemeBottomSheet(
     onBottomSheetCloseClick: () -> Unit,
     isVisible: Boolean,
-    themeOptions: List<Selectable<ThemePreferences>>,
-    onThemeSelected: (ThemePreferences) -> Unit,
+    themeOptions: List<Selectable<ProfileScreenState.ThemePreferences>>,
+    onThemeSelected: (ProfileScreenState.ThemePreferences) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
