@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 
-class ContinueWatchingTest {
+class UserWatchedMediaTest {
 
     @Test
     fun `should convert all fields correctly when toDto is called`() {
         // When
-        val result = CONTINUE_WATCHING.toDto()
+        val result = userWatchedMedia.toDto()
 
         // Then
         assertThat(result.contentId).isEqualTo(1L)
@@ -27,7 +27,7 @@ class ContinueWatchingTest {
     @Test
     fun `should throw exception when toDto is called with invalid contentType`() {
         // Given
-        val invalidEntity = CONTINUE_WATCHING.copy(contentType = "INVALID")
+        val invalidEntity = userWatchedMedia.copy(contentType = "INVALID")
         // Then
         assertThrows(IllegalArgumentException::class.java) {
             invalidEntity.toDto()
@@ -37,14 +37,14 @@ class ContinueWatchingTest {
     @Test
     fun `should handle all enum values correctly when toDto is called`() {
         // When & Then
-        assertThat(CONTINUE_WATCHING.toDto().contentType)
+        assertThat(userWatchedMedia.toDto().contentType)
             .isEqualTo(UserWatchedMediaDto.ContentType.MOVIE)
     }
 
     @Test
     fun `should return empty genreIds when toLocalDto is called with empty genreIds`() {
         // Given
-        val result = CONTINUE_WATCHING.copy(genreIds = emptyList())
+        val result = userWatchedMedia.copy(genreIds = emptyList())
 
         // Then
         assertThat(result.genreIds).isEmpty()
@@ -53,7 +53,7 @@ class ContinueWatchingTest {
     @Test
     fun `should return empty contentImageUrl when toDto is called with empty contentImageUrl`() {
         // Given
-        val emptyImage = CONTINUE_WATCHING.copy(contentImageUrl = "")
+        val emptyImage = userWatchedMedia.copy(contentImageUrl = "")
 
         // When
         val result = emptyImage.toDto()
@@ -63,11 +63,11 @@ class ContinueWatchingTest {
     }
 
     @Test
-    fun `should convert list of ContinueWatching to list of ContinueWatchingDto when toDtos is called`() {
+    fun `should convert list of UserWatchedMedia to list of UserWatchedMediaDto when toDtos is called`() {
         // Given
         val entities = listOf(
-            CONTINUE_WATCHING,
-            CONTINUE_WATCHING.copy(
+            userWatchedMedia,
+            userWatchedMedia.copy(
                 contentId = 2L,
                 contentType = "TV_SHOW"
             )
@@ -88,7 +88,7 @@ class ContinueWatchingTest {
 
 
     companion object {
-        val CONTINUE_WATCHING = UserWatchedMedia(
+        val userWatchedMedia = UserWatchedMedia(
             contentId = 1L,
             genreIds = listOf(1L, 2L, 3L),
             contentImageUrl = "https://example.com/poster.jpg",
