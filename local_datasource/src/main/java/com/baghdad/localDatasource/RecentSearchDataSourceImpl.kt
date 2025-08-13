@@ -5,7 +5,7 @@ import com.baghdad.localDatasource.errorHandler.executeWithErrorHandling
 import com.baghdad.localDatasource.mapper.toDto
 import com.baghdad.localDatasource.roomDB.dao.RecentSearchDao
 import com.baghdad.localDatasource.roomDB.entity.RecentSearch
-import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
+import com.baghdad.repository.datasource.local.RecentSearchDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.RecentSearchDto
 import kotlinx.coroutines.flow.Flow
@@ -14,10 +14,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalRecentSearchDataSourceImpl @Inject constructor(
+class RecentSearchDataSourceImpl @Inject constructor(
     private val recentSearchDao: RecentSearchDao,
     private val logger: Logger,
-) : LocalRecentSearchDataSource {
+) : RecentSearchDataSource {
     override suspend fun addRecentSearchQuery(query: String) {
         executeWithErrorHandling(logger = logger) {
             val existingSearch = recentSearchDao.getRecentSearchByQuery(query)
