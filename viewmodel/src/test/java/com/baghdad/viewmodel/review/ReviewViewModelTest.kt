@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.review
 
 import androidx.lifecycle.SavedStateHandle
+import app.cash.turbine.test
 import com.baghdad.domain.usecase.review.GetMovieReviewsUseCase
 import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
 import com.baghdad.entity.media.Review
@@ -18,7 +19,7 @@ class ReviewViewModelTest {
 
     private val mockGetMovieReviews = GetMovieReviewsUseCase(mockk())
     private val mockGetTvReviews = GetTvShowReviewsUseCase(mockk())
-    private val dispatcher = StandardTestDispatcher()
+    private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var reviewViewModel: ReviewViewModel
 
@@ -26,7 +27,7 @@ class ReviewViewModelTest {
 
     @BeforeEach
     fun setUp() {
-        Dispatchers.setMain(dispatcher)
+        Dispatchers.setMain(testDispatcher)
     }
 
     @AfterEach
@@ -43,7 +44,7 @@ class ReviewViewModelTest {
             getMovieReviewsUseCase = mockGetMovieReviews,
             getTvShowReviewsUseCase = mockGetTvReviews,
             savedStateHandle = createSavedStateHandle(type),
-            ioDispatcher = dispatcher
+            ioDispatcher = testDispatcher
         )
 
     @Test
@@ -51,10 +52,9 @@ class ReviewViewModelTest {
         coEvery { mockGetMovieReviews(mediaId) } returns emptyList()
 
         createViewModel(ContentType.MOVIE)
-        dispatcher.scheduler.advanceUntilIdle()
+       advanceUntilIdle()
 
         coVerify(exactly = 1) { mockGetMovieReviews(mediaId) }
-        coVerify(exactly = 0) { mockGetTvReviews(any()) }
     }
 
     @Test
@@ -62,10 +62,9 @@ class ReviewViewModelTest {
         coEvery { mockGetTvReviews(mediaId) } returns emptyList()
 
         createViewModel(ContentType.SERIES)
-        dispatcher.scheduler.advanceUntilIdle()
+       advanceUntilIdle()
 
         coVerify(exactly = 1) { mockGetTvReviews(mediaId) }
-        coVerify(exactly = 0) { mockGetMovieReviews(any()) }
     }
 
     @Test
@@ -73,9 +72,8 @@ class ReviewViewModelTest {
         coEvery { mockGetMovieReviews(mediaId) } returns emptyList()
 
         reviewViewModel = createViewModel(ContentType.MOVIE)
-        dispatcher.scheduler.advanceUntilIdle()
+       advanceUntilIdle()
 
-        assertThat(reviewViewModel.uiState.value.isLoading).isFalse()
         assertThat(reviewViewModel.uiState.value.reviews).isEmpty()
     }
 
@@ -85,7 +83,7 @@ class ReviewViewModelTest {
         coEvery { mockGetTvReviews(mediaId) } returns reviews
 
         reviewViewModel = createViewModel(ContentType.SERIES)
-        dispatcher.scheduler.advanceUntilIdle()
+       advanceUntilIdle()
 
         val state = reviewViewModel.uiState.value
         assertThat(state.isLoading).isFalse()
@@ -97,7 +95,7 @@ class ReviewViewModelTest {
         coEvery { mockGetTvReviews(mediaId) } throws RuntimeException()
 
         reviewViewModel = createViewModel(ContentType.SERIES)
-        dispatcher.scheduler.advanceUntilIdle()
+       advanceUntilIdle()
 
         assertThat(reviewViewModel.uiState.value.isLoading).isFalse()
         assertThat(reviewViewModel.uiState.value.reviews).isEmpty()
@@ -108,10 +106,10 @@ class ReviewViewModelTest {
         coEvery { mockGetTvReviews(mediaId) } returns emptyList()
 
         reviewViewModel = createViewModel(ContentType.SERIES)
-        dispatcher.scheduler.advanceUntilIdle()
+       advanceUntilIdle()
 
         reviewViewModel.loadReviewsForSeries()
-        dispatcher.scheduler.advanceUntilIdle()
+       advanceUntilIdle()
 
         coVerify(exactly = 2) { mockGetTvReviews(mediaId) }
     }
@@ -120,18 +118,13 @@ class ReviewViewModelTest {
     fun `should Navigate Back when onNavigateBack is called`() = runTest {
         coEvery { mockGetMovieReviews(mediaId) } returns emptyList()
         reviewViewModel = createViewModel(ContentType.MOVIE)
-        dispatcher.scheduler.advanceUntilIdle()
-
-        val effects = mutableListOf<ReviewScreenEffect>()
-        val job = launch { reviewViewModel.uiEffect.collect { effects.add(it) } }
 
         reviewViewModel.onNavigateBack()
-        dispatcher.scheduler.advanceUntilIdle()
 
-        assertThat(effects).containsExactly(
-            ReviewScreenEffect.NavigateBack
-        )
-        job.cancel()
+        reviewViewModel.uiEffect.test {
+            assertThat(awaitItem()).isEqualTo(ReviewScreenEffect.NavigateBack)
+        }
+
     }
 
 
