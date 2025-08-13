@@ -27,7 +27,7 @@ class MyRatingMapperTest {
 
 
 
-    companion object {
+    private companion object {
         val movieRatedMedia = RatedMedia(
             id = 123L,
             userRating = 8,
@@ -38,7 +38,7 @@ class MyRatingMapperTest {
             id = 123L,
             posterPictureURL = "/test_poster.jpg",
             contentType = MyRatingState.ContentType.MOVIE,
-            rating = "8"
+            rating = 8
         )
 
         val tvShowRatedMedia = RatedMedia(
@@ -47,11 +47,12 @@ class MyRatingMapperTest {
             posterImageURL = "/test_poster.jpg",
             contentType =  ContentType.TV_SHOW,
         )
+
         val expectedTvShowRatedMedia = MyRatingState.MediaItemUiState(
             id = 123L,
             posterPictureURL = "/test_poster.jpg",
             contentType = MyRatingState.ContentType.TV_SHOW,
-            rating = "8"
+            rating = 8
         )
     }
 }
