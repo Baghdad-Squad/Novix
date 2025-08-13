@@ -26,7 +26,7 @@ fun RatingCard(
     contentDescription: String?,
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier
@@ -35,8 +35,7 @@ fun RatingCard(
             .background(Theme.color.surface, shape = RoundedCornerShape(12.dp))
             .border(1.dp, Theme.color.stroke, shape = RoundedCornerShape(12.dp))
             .noRippleClickable { onClick() },
-        contentAlignment = Alignment.Center,
-
+        contentAlignment = Alignment.Center
         ) {
         IslamicImage(
             imageUrl = url,
@@ -44,7 +43,7 @@ fun RatingCard(
             loadingContent = null,
             modifier = Modifier
                 .fillMaxSize()
-                .align(alignment = Alignment.Center),
+                .align(alignment = Alignment.Center)
         )
         RatingChip(
             rating,

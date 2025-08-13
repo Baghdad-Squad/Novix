@@ -75,7 +75,7 @@ fun MyRatingScreen(
 }
 
 @Composable
-fun MyRatingContent(
+private fun MyRatingContent(
     uiState: MyRatingState,
     listener: MyRatingInteractionListener,
     snackBarState: SnackBarState,
@@ -86,8 +86,11 @@ fun MyRatingContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
+
         isLoading = uiState.isLoading,
+
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -95,7 +98,7 @@ fun MyRatingContent(
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
+                position = position
             )
         },
         topBar = {
@@ -118,6 +121,7 @@ fun MyRatingContent(
                 )
             }
         },
+
         backgroundBlur = { BackgroundBlur() }
     ) {
         LazyPagingVerticalGrid<MyRatingState.MediaItemUiState>(
