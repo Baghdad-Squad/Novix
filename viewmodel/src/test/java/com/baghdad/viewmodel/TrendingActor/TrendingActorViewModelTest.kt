@@ -1,9 +1,9 @@
-package com.baghdad.viewmodel
+package com.baghdad.viewmodel.TrendingActor
 
 import com.baghdad.domain.usecase.actor.GetTrendingActorsUseCase
 import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
 import com.baghdad.viewmodel.trendingActors.TrendingActorsUiEffect
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,7 +47,8 @@ class TrendingActorViewModelTest {
         advanceUntilIdle()
 
         // Then
-        assertThat(effects.first()).isInstanceOf(TrendingActorsUiEffect.OnBackClick::class.java)
+        Truth.assertThat(effects.first())
+            .isInstanceOf(TrendingActorsUiEffect.OnBackClick::class.java)
 
         job.cancel()
     }
@@ -63,7 +64,7 @@ class TrendingActorViewModelTest {
         advanceUntilIdle()
 
         // Then
-        assertThat(effects.first())
+        Truth.assertThat(effects.first())
             .isInstanceOf(TrendingActorsUiEffect.NavigateToActorsDetails::class.java)
 
         job.cancel()

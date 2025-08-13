@@ -1,9 +1,9 @@
-package com.baghdad.viewmodel
+package com.baghdad.viewmodel.TrendingActor
 
 import com.baghdad.entity.person.Actor
 import com.baghdad.viewmodel.trendingActors.toTrendingActorsUi
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class TrendingActorsMapperKtTest {
@@ -14,9 +14,9 @@ class TrendingActorsMapperKtTest {
             id = 22,
             name = "Mahmoud Tarek",
             profilePictureURL = "Test",
-            birthDate = LocalDate.parse("2002-02-22"),
+            birthDate = LocalDate.Companion.parse("2002-02-22"),
             placeOfBirth = "Egypt",
-            deathDate = LocalDate.parse("2052-02-02"),
+            deathDate = LocalDate.Companion.parse("2052-02-02"),
             biography = "Test",
             headerPictures = emptyList(),
             department = "Test"
@@ -26,8 +26,8 @@ class TrendingActorsMapperKtTest {
         val result = trendingActor.toTrendingActorsUi()
 
         // Then
-        assertEquals(trendingActor.id, result.id)
-        assertEquals(trendingActor.name, result.name)
-        assertEquals(trendingActor.profilePictureURL, result.profilePictureURL)
+        Assertions.assertEquals(trendingActor.id, result.id)
+        Assertions.assertEquals(trendingActor.name, result.name)
+        Assertions.assertEquals(trendingActor.profilePictureURL, result.profilePictureURL)
     }
 }
