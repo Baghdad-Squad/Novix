@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.actor
 
 import com.baghdad.domain.repository.ActorRepository
+import com.baghdad.domain.usecase.actor.GetActorGalleryUseCaseTest.Companion.EMPTY_GALLERY
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -22,115 +23,86 @@ class GetActorGalleryUseCaseTest {
 
     @Test
     fun `getActorGalleryUseCase() should return actor gallery when called with valid actorId`() = runTest {
-        // Given
-        val actorId = 1L
-        val expectedGallery = listOf("image1.jpg", "image2.jpg")
+        coEvery { actorRepository.getActorGallery(ACTOR_ID_1) } returns GALLERY_2_IMAGES
 
-        coEvery { actorRepository.getActorGallery(actorId) } returns expectedGallery
-        // When
-        val result = getActorGalleryUseCase(actorId)
+        val result = getActorGalleryUseCase(ACTOR_ID_1)
 
-        // Then
-        assertThat(result).isEqualTo(expectedGallery)
+        assertThat(result).isEqualTo(GALLERY_2_IMAGES)
     }
 
     @Test
     fun `getActorGalleryUseCase() should return empty list when no gallery found for actor`() = runTest {
-        // Given
-        val actorId = 2L
-        val expectedGallery = emptyList<String>()
+        coEvery { actorRepository.getActorGallery(ACTOR_ID_2) } returns EMPTY_GALLERY
 
-        coEvery { actorRepository.getActorGallery(actorId) } returns expectedGallery
-        // When
-        val result = getActorGalleryUseCase(actorId)
+        val result = getActorGalleryUseCase(ACTOR_ID_2)
 
-        // Then
         assertThat(result).isEmpty()
     }
 
 
     @Test
     fun `getActorGalleryUseCase() should return empty list when actorId is non-existing`() = runTest {
-        // Given
-        val notExistingActorId = 1223312L
+        coEvery { actorRepository.getActorGallery(NON_EXISTING_ACTOR_ID) } returns EMPTY_GALLERY
 
-        coEvery { actorRepository.getActorGallery(notExistingActorId) } returns emptyList()
+        val result = getActorGalleryUseCase(NON_EXISTING_ACTOR_ID)
 
-        // When
-        val result = getActorGalleryUseCase(notExistingActorId)
-
-        // Then
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getActorGalleryUseCase() should return single image gallery correctly`() = runTest {
-        // Given
-        val actorId = 3L
-        val singleImageGallery = listOf("single_image.jpg")
-        coEvery { actorRepository.getActorGallery(actorId) } returns singleImageGallery
+    fun `getActorGalleryUseCase() should returns one image if actor has single-image gallery`() = runTest {
+        coEvery { actorRepository.getActorGallery(ACTOR_ID_3) } returns GALLERY_SINGLE_IMAGE
 
-        // When
-        val result = getActorGalleryUseCase(actorId)
+        val result = getActorGalleryUseCase(ACTOR_ID_3)
 
-        // Then
-        assertThat(result).hasSize(1)
-        assertThat(result[0]).isEqualTo("single_image.jpg")
+        assertThat(result).isEqualTo(GALLERY_SINGLE_IMAGE)
     }
 
     @Test
     fun `getActorGalleryUseCase() should return gallery with different image formats`() = runTest {
-        // Given
-        val actorId = 6L
-        val mixedFormatGallery = listOf(
-            "image1.jpg",
-            "image2.png",
-            "image3.webp",
-            "image4.gif"
-        )
-        coEvery { actorRepository.getActorGallery(actorId) } returns mixedFormatGallery
+        coEvery { actorRepository.getActorGallery(ACTOR_ID_6) } returns GALLERY_MIXED_FORMATS
 
-        // When
-        val result = getActorGalleryUseCase(actorId)
+        val result = getActorGalleryUseCase(ACTOR_ID_6)
 
-        // Then
-        assertThat(result).hasSize(4)
-        assertThat(result).containsExactlyElementsIn(mixedFormatGallery)
+        assertThat(result).containsExactlyElementsIn(GALLERY_MIXED_FORMATS)
     }
 
     @Test
     fun `getActorGalleryUseCase() should call repository exactly once when invoked`() = runTest {
-        // Given
-        val actorId = 7L
-        val sampleGallery = listOf("simple.jpg")
+        coEvery { actorRepository.getActorGallery(ACTOR_ID_7) } returns GALLERY_SAMPLE
 
-        coEvery { actorRepository.getActorGallery(actorId) } returns sampleGallery
+        getActorGalleryUseCase(ACTOR_ID_7)
 
-        // When
-        getActorGalleryUseCase(actorId)
-
-        // Then
-        coVerify(exactly = 1) { actorRepository.getActorGallery(actorId) }
+        coVerify(exactly = 1) { actorRepository.getActorGallery(ACTOR_ID_7) }
     }
 
     @Test
     fun `getActorGalleryUseCase() should return different galleries when called with different actor IDs`() = runTest {
-        // Given
-        val actorId1 = 8L
-        val gallery1 = listOf("actor8_1.jpg", "actor8_2.jpg")
-        val actorId2 = 9L
-        val gallery2 = listOf("actor9_1.jpg")
+        coEvery { actorRepository.getActorGallery(ACTOR_ID_8) } returns GALLERY_ACTOR_8
+        coEvery { actorRepository.getActorGallery(ACTOR_ID_9) } returns GALLERY_ACTOR_9
 
-        coEvery { actorRepository.getActorGallery(actorId1) } returns gallery1
-        coEvery { actorRepository.getActorGallery(actorId2) } returns gallery2
+        val result1 = getActorGalleryUseCase(ACTOR_ID_8)
+        val result2 = getActorGalleryUseCase(ACTOR_ID_9)
 
-        // When
-        val result1 = getActorGalleryUseCase(actorId1)
-        val result2 = getActorGalleryUseCase(actorId2)
-
-        // Then
         assertThat(result1).isNotEqualTo(result2)
-        assertThat(result1).hasSize(2)
-        assertThat(result2).hasSize(1)
+    }
+
+    companion object {
+        const val ACTOR_ID_1 = 1L
+        const val ACTOR_ID_2 = 2L
+        const val ACTOR_ID_3 = 3L
+        const val ACTOR_ID_6 = 6L
+        const val ACTOR_ID_7 = 7L
+        const val ACTOR_ID_8 = 8L
+        const val ACTOR_ID_9 = 9L
+        const val NON_EXISTING_ACTOR_ID = 1223312L
+
+        val EMPTY_GALLERY = emptyList<String>()
+        val GALLERY_2_IMAGES = listOf("image1.jpg", "image2.jpg")
+        val GALLERY_SINGLE_IMAGE = listOf("single_image.jpg")
+        val GALLERY_MIXED_FORMATS = listOf("image1.jpg", "image2.png", "image3.webp", "image4.gif")
+        val GALLERY_SAMPLE = listOf("simple.jpg")
+        val GALLERY_ACTOR_8 = listOf("actor8_1.jpg", "actor8_2.jpg")
+        val GALLERY_ACTOR_9 = listOf("actor9_1.jpg")
     }
 }

@@ -1,19 +1,18 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedListDetails
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.entity.savedList.SavedList
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
-import com.baghdad.repository.datasource.local.LocalUserDataStore
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
+import com.baghdad.repository.datasource.local.SessionDataSource
+import com.baghdad.repository.datasource.local.UserDataSource
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.savedList.SavableMovieDto
-import com.baghdad.repository.util.executeAuthorizedSafely
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,14 +22,14 @@ class SavedListRepositoryImpl
     @Inject
     constructor(
         private val remoteSavedListSource: RemoteSavedListDataSource,
-        private val localSessionDataStore: LocalSessionDataStore,
-        private val localUserDataStore: LocalUserDataStore,
-        private val savableMovieDataSource: LocalSavableMovieDataSource,
+        private val sessionDataSource: SessionDataSource,
+        private val userDataSource: UserDataSource,
+        private val savableMovieDataSource: SavableMovieDataSource,
     ) : SavedListRepository {
         override suspend fun createSavedList(title: String) {
-            val sessionId = localSessionDataStore.getSessionId()
-            return executeAuthorizedSafely(sessionId) { sessionId ->
-                remoteSavedListSource.createSavedList(title, sessionId)
+            val sessionId = sessionDataSource.getSessionId()
+            return executeSafely {
+                remoteSavedListSource.createSavedList(title)
             }
         }
 
@@ -38,15 +37,13 @@ class SavedListRepositoryImpl
             page: Int,
             pageSize: Int,
         ): PagedResult<SavedList> {
-            val sessionId = localSessionDataStore.getSessionId()
-            val accountId = localUserDataStore.getUser()?.id ?: 0
-            return executeAuthorizedSafely(sessionId) { sessionId ->
+            val accountId = userDataSource.getUser()?.id ?: 0
+            return executeSafely{
                 remoteSavedListSource
                     .getSavedLists(
                         page = page,
                         pageSize = pageSize,
                         accountId = accountId,
-                        sessionId = sessionId,
                     ).toPagedResult(SavedListDto::toEntity)
             }
         }
@@ -55,9 +52,9 @@ class SavedListRepositoryImpl
             listId: Long,
             movieId: Long,
         ) {
-            val sessionId = localSessionDataStore.getSessionId()
-            executeAuthorizedSafely(sessionId) { sessionId ->
-                remoteSavedListSource.addMovieToSavedList(listId, movieId, sessionId)
+            val sessionId = sessionDataSource.getSessionId()
+            executeSafely{
+                remoteSavedListSource.addMovieToSavedList(listId, movieId)
                 savableMovieDataSource.addSavedMovie(listId, movieId)
             }
         }
@@ -66,9 +63,9 @@ class SavedListRepositoryImpl
             listId: Long,
             movieId: Long,
         ) {
-            val sessionId = localSessionDataStore.getSessionId()
-            executeAuthorizedSafely(sessionId) { sessionId ->
-                remoteSavedListSource.removeMovieFromSavedList(listId, movieId, sessionId)
+            val sessionId = sessionDataSource.getSessionId()
+            executeSafely{
+                remoteSavedListSource.removeMovieFromSavedList(listId, movieId)
                 savableMovieDataSource.deleteSavedMovie(movieId)
             }
         }
@@ -83,18 +80,17 @@ class SavedListRepositoryImpl
             }
 
         override suspend fun deleteSavedListById(listId: Long) {
-            val sessionId = localSessionDataStore.getSessionId()
-            executeAuthorizedSafely(sessionId) { sessionId ->
-                remoteSavedListSource.deleteSavedListById(listId, sessionId)
+            executeSafely {
+                remoteSavedListSource.deleteSavedListById(listId)
                 savableMovieDataSource.deleteListMovies(listId)
             }
         }
 
         override suspend fun syncSavedMoviesCache() {
-            executeAuthorizedSafely(localSessionDataStore.getSessionId()) { sessionId ->
-                if (shouldPreformSync().not()) return@executeAuthorizedSafely
+            executeSafely {
+                if (shouldPreformSync().not()) return@executeSafely
                 val accountId = getUserAccountId()
-                val savedLists = fetchAllSavedLists(sessionId, accountId)
+                val savedLists = fetchAllSavedLists(accountId =  accountId)
 
                 savedLists.forEach { list ->
                     val movies = fetchAllMoviesForList(list.id)
@@ -111,17 +107,15 @@ class SavedListRepositoryImpl
 
         private suspend fun shouldPreformSync(): Boolean = savableMovieDataSource.getSavedMovies().isEmpty()
 
-        private suspend fun getUserAccountId(): Long = localUserDataStore.getUser()?.id ?: 0
+    private suspend fun getUserAccountId(): Long = userDataSource.getUser()?.id ?: 0
 
         private suspend fun fetchAllSavedLists(
-            sessionId: String,
             accountId: Long,
         ): List<SavedListDto> =
             fetchAllPages { page ->
                 remoteSavedListSource.getSavedLists(
                     page = page,
                     pageSize = 20,
-                    sessionId = sessionId,
                     accountId = accountId,
                 )
             }

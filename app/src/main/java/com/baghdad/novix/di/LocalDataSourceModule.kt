@@ -1,21 +1,19 @@
 package com.baghdad.novix.di
 
-
-import com.baghdad.local_datasource.LocalContinueWatchingDataSourceImpl
-import com.baghdad.local_datasource.LocalRecentSearchDataSourceImpl
-import com.baghdad.local_datasource.LocalRecentlyViewedDataSourceImpl
-import com.baghdad.local_datasource.LocalSavableMovieDataSourceImpl
-import com.baghdad.local_datasource.dataStore.session.LocalOnboardingDatastoreImp
-import com.baghdad.local_datasource.dataStore.session.LocalSessionDataStoreImpl
-import com.baghdad.local_datasource.dataStore.user.LocalUserDataStoreImpl
-import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
-import com.baghdad.repository.datasource.local.LocalOnboardingDatastore
-import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
-import com.baghdad.repository.datasource.local.LocalRecentlyViewedDataSource
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
-import com.baghdad.repository.datasource.local.LocalUserDataStore
-import com.baghdad.repository.datasource.local.LocalUserPreferencesDataSource
+import com.baghdad.localDatasource.AppConfigurationDataSourceImpl
+import com.baghdad.localDatasource.ContinueWatchingDataSourceImpl
+import com.baghdad.localDatasource.RecentSearchDataSourceImpl
+import com.baghdad.localDatasource.RecentlyViewedDataSourceImpl
+import com.baghdad.localDatasource.SavableMovieDataSourceImpl
+import com.baghdad.localDatasource.SessionDataSourceImpl
+import com.baghdad.localDatasource.UserDataSourceImpl
+import com.baghdad.repository.datasource.local.AppConfigurationDataSource
+import com.baghdad.repository.datasource.local.ContinueWatchingDataSource
+import com.baghdad.repository.datasource.local.RecentSearchDataSource
+import com.baghdad.repository.datasource.local.RecentlyViewedDataSource
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
+import com.baghdad.repository.datasource.local.SessionDataSource
+import com.baghdad.repository.datasource.local.UserDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -26,30 +24,27 @@ import dagger.hilt.components.SingletonComponent
 abstract class LocalDataSourceModule {
 
     @Binds
-    abstract fun provideLocalSessionDataStore(localSessionDataStoreImpl: LocalSessionDataStoreImpl): LocalSessionDataStore
+    abstract fun provideSessionDataSource(sessionDataSourceImpl: SessionDataSourceImpl): SessionDataSource
 
     @Binds
-    abstract fun provideLocalUserDataStore(localUserDataStoreImpl: LocalUserDataStoreImpl): LocalUserDataStore
+    abstract fun provideUserDataSource(userDataSourceImpl: UserDataSourceImpl): UserDataSource
 
     @Binds
-    abstract fun provideLocalRecentSearchDataSource(localRecentSearchDataSourceImpl: LocalRecentSearchDataSourceImpl): LocalRecentSearchDataSource
+    abstract fun provideRecentSearchDataSource(recentSearchDataSourceImpl: RecentSearchDataSourceImpl): RecentSearchDataSource
 
     @Binds
-    abstract fun provideLocalContinueWatchingDataSource(localContinueWatchingDataSourceImpl: LocalContinueWatchingDataSourceImpl): LocalContinueWatchingDataSource
+    abstract fun provideContinueWatchingDataSource(continueWatchingDataSourceImpl: ContinueWatchingDataSourceImpl): ContinueWatchingDataSource
 
     @Binds
-    abstract fun provideLocalRecentlyViewedDataSource(localRecentlyViewedDataSourceImpl: LocalRecentlyViewedDataSourceImpl): LocalRecentlyViewedDataSource
+    abstract fun provideRecentlyViewedDataSource(recentlyViewedDataSourceImpl: RecentlyViewedDataSourceImpl): RecentlyViewedDataSource
 
     @Binds
-    abstract fun provideLocalUserPreferencesDataSource(localUserPreferencesDataSourceImpl: com.baghdad.local_datasource.LocalUserPreferencesDataSourceImpl): LocalUserPreferencesDataSource
+    abstract fun provideUserPreferencesDataSource(userPreferencesDataSourceImpl: AppConfigurationDataSourceImpl): AppConfigurationDataSource
 
     @Binds
-    abstract fun provideLocalOnBoardingDataStore(localOnboardingDatastore: LocalOnboardingDatastoreImp): LocalOnboardingDatastore
-
-    @Binds
-    abstract fun provideLocalSavableMovieDataSource(
-        localSavableMovieDataSourceImpl: LocalSavableMovieDataSourceImpl,
-    ): LocalSavableMovieDataSource
+    abstract fun provideSavableMovieDataSource(
+        savableMovieDataSourceImpl: SavableMovieDataSourceImpl,
+    ): SavableMovieDataSource
 }
 
 

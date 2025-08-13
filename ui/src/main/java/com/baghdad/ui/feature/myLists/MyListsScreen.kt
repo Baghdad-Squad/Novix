@@ -119,7 +119,7 @@ private fun handleEffect(
     handleNavigation: (MyListsNavEvent) -> Unit,
 ) {
     when (effect) {
-        MyListsScreenEffect.NavigateToLogin ->
+        is MyListsScreenEffect.NavigateToLogin ->
             handleNavigation(
                 MyListsNavEvent.NavigateToLogin,
             )
@@ -132,9 +132,11 @@ private fun handleEffect(
 }
 
 @Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int =
-    when (type) {
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return when (type) {
         MyListsSnackBarMessage.SavedListCreatedSuccessfully -> R.string.added_list_successfully
         MyListsSnackBarMessage.SavedListDeletedSuccessfully -> R.string.deleted_list_successfully
         else -> type.toStringResource()
     }
+}
+

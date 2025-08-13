@@ -13,5 +13,5 @@ data class TvShow(
     val posterImageURL: String,
     val trailerURL: String,
     val headerImagesURLs: List<String>,
-    val numberOfSeasons: Int,
+    val numberOfSeasons: Int
 )

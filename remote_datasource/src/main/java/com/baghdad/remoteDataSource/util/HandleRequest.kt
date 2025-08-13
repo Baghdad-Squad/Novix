@@ -1,5 +1,6 @@
 package com.baghdad.remoteDataSource.util
 
+import android.util.Log
 import com.baghdad.repository.exception.NetworkException
 import com.baghdad.repository.exception.NoInternetNetworkException
 import com.baghdad.repository.exception.RequestTimeoutNetworkException
@@ -23,6 +24,7 @@ suspend inline fun <reified T> handleRequest(
         apiCall()
     } catch (e: Exception) {
         logger.logException(e)
+        Log.e("NetworkError", "Error during API call: ${e.message}", e)
         throw mapToNetworkException(e)
     }
 
@@ -32,27 +34,33 @@ suspend inline fun <reified T> handleRequest(
                 response.body() ?: throw NullPointerException("Response body is null")
 
             } catch (e: Exception) {
+                Log.e("NetworkError", "Error parsing response: ${e.message}", e)
                 logger.logException(e)
                 throw SerializationNetworkException()
             }
         }
 
         response.code() == HttpURLConnection.HTTP_CLIENT_TIMEOUT -> {
+            Log.e("NetworkError", "Request timed out")
             throw RequestTimeoutNetworkException()
         }
 
         response.code() == 429 -> {
+            Log.e("NetworkError", "Too many requests")
             throw TooManyRequestsNetworkException()
         }
 
         response.code() == HttpURLConnection.HTTP_UNAUTHORIZED -> {
+            Log.e("NetworkError", "Unauthorized access")
             throw UnauthorizedNetworkException()
         }
 
         response.code() in 500..599 -> {
+            Log.e("NetworkError", "Server error: ${response.code()}")
             throw ServerNetworkException()
         }
         else -> {
+            Log.e("NetworkError", "Unknown error: ${response.code()}")
             throw UnknownNetworkException()
         }
     }
