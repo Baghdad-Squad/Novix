@@ -48,52 +48,32 @@ fun LazyGridScope.upcomingSection(
         onSelectGenre = onGenreSelected,
         selectedGenreId = selectedGenreId,
     )
-    if (isUpcomingItemsLoading) {
-        items(20) { index ->
-            val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 158))
-            val isFirstInRow = index % itemsPerRow == 0
-            val isLastInRow = (index + 1) % itemsPerRow == 0 || index == upcomingItems.size - 1
 
-            Box(
-                modifier =
-                    Modifier
-                        .size(width = 158.dp, height = 210.dp)
-                        .padding(
-                            top = 12.dp,
-                            start = if (isFirstInRow) 16.dp else 0.dp,
-                            end = if (isLastInRow) 16.dp else 0.dp,
-                        )
-                        .background(Theme.color.surface, RoundedCornerShape(12.dp))
-                        .clip(RoundedCornerShape(12.dp))
-                        .shimmerEffect(),
-            )
-        }
-    } else {
-        itemsIndexed(items = upcomingItems) { index, item ->
-            val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 150))
-            val isInFirstRow = index < itemsPerRow
-            val isFirstInRow = index % itemsPerRow == 0
-            val isLastInRow = (index + 1) % itemsPerRow == 0 || index == upcomingItems.size - 1
-            HomeCard(
-                url = item.imageUrl,
-                contentDescription = null,
-                isSaved = item.isSaved,
-                isLoadingEnabled = false,
-                onSavedClick = { onUpcomingItemSaveClicked(item) },
-                onClick = {
-                    onUpcomingItemClicked(item)
-                },
-                modifier =
-                    Modifier
-                        .aspectRatio(0.8f)
-                        .padding(
-                            top = if (isInFirstRow) 4.dp else 12.dp,
-                            start = if (isFirstInRow) 16.dp else 0.dp,
-                            end = if (isLastInRow) 16.dp else 0.dp,
-                        ),
-            )
-        }
+    itemsIndexed(items = upcomingItems) { index, item ->
+        val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 150))
+        val isInFirstRow = index < itemsPerRow
+        val isFirstInRow = index % itemsPerRow == 0
+        val isLastInRow = (index + 1) % itemsPerRow == 0 || index == upcomingItems.size - 1
+        HomeCard(
+            url = item.imageUrl,
+            contentDescription = null,
+            isSaved = item.isSaved,
+            isLoadingEnabled = false,
+            onSavedClick = { onUpcomingItemSaveClicked(item) },
+            onClick = {
+                onUpcomingItemClicked(item)
+            },
+            modifier =
+                Modifier
+                    .aspectRatio(0.8f)
+                    .padding(
+                        top = if (isInFirstRow) 4.dp else 12.dp,
+                        start = if (isFirstInRow) 16.dp else 0.dp,
+                        end = if (isLastInRow) 16.dp else 0.dp,
+                    ),
+        )
     }
+
 }
 
 private fun LazyGridScope.upcomingSectionHeader(
@@ -148,6 +128,28 @@ private fun LazyGridScope.upcomingSectionHeader(
     }
 }
 
+fun LazyGridScope.upcomingSectionLoading(upcomingItems: List<UpcomingItemUiState>) {
+    items(20) { index ->
+        val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 158))
+        val isFirstInRow = index % itemsPerRow == 0
+        val isLastInRow = (index + 1) % itemsPerRow == 0 || index == upcomingItems.size - 1
+
+        Box(
+            modifier =
+                Modifier
+                    .size(width = 158.dp, height = 210.dp)
+                    .padding(
+                        top = 12.dp,
+                        start = if (isFirstInRow) 16.dp else 0.dp,
+                        end = if (isLastInRow) 16.dp else 0.dp,
+                    )
+                    .background(Theme.color.surface, RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp))
+                    .shimmerEffect(),
+        )
+    }
+}
+
 @Composable
 private fun UpcomingSectionHeaderLoadingPlaceHolder(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
@@ -165,7 +167,7 @@ private fun UpcomingSectionHeaderLoadingPlaceHolder(modifier: Modifier = Modifie
                 Modifier
                     .wrapContentSize()
                     .padding(top = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
             items(20) {
