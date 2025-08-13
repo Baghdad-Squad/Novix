@@ -14,11 +14,11 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
-class LocalRecentlyViewedDataSourceImplTest {
+class RecentlyViewedDataSourceImplTest {
     private var recentlyViewedDao: RecentlyViewedDao = mockk()
     private var logger: Logger = mockk(relaxed = true)
-    private var localRecentlyViewedDataSourceImpl: LocalRecentlyViewedDataSourceImpl =
-        LocalRecentlyViewedDataSourceImpl(recentlyViewedDao = recentlyViewedDao, logger = logger)
+    private var localRecentlyViewedDataSourceImpl: RecentlyViewedDataSourceImpl =
+        RecentlyViewedDataSourceImpl(recentlyViewedDao = recentlyViewedDao, logger = logger)
 
     @Test
     fun `getAllRecentlyViewed should return flow of recently viewed items when dao returns data`() =

@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalUserWatchedMediaDataSourceImpl @Inject constructor(
+class UserWatchedMediaDataSourceImpl @Inject constructor(
     private val userWatchedMediaDao: UserWatchedMediaDao,
     private val logger: Logger
 ) : LocalUserWatchedMediaDataSource {

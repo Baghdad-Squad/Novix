@@ -3,7 +3,7 @@ package com.baghdad.localDatasource
 import androidx.datastore.core.DataStore
 import com.baghdad.localDatasource.errorHandler.safeDataStoreCall
 import com.baghdad.localDatasource.mapper.toDto
-import com.baghdad.repository.datasource.local.LocalUserDataSource
+import com.baghdad.repository.datasource.local.UserDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.UserDto
 import com.example.application.proto.User
@@ -13,9 +13,9 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-class LocalUserDataSourceImpl @Inject constructor(
+class UserDataSourceImpl @Inject constructor(
     @Named("user") private val dataStore: DataStore<User>, private val logger: Logger
-) : LocalUserDataSource {
+) : UserDataSource {
     override suspend fun saveUser(
         id: Long, userName: String, imageUrl: String
     ) {
