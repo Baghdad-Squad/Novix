@@ -14,10 +14,15 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.theme.Theme
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,21 +31,32 @@ fun BaseBottomSheet(
     onDismiss: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val sheetState = rememberModalBottomSheetState(
+    val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
 
+    var showBottomSheet by remember { mutableStateOf(false) }
+
     LaunchedEffect(isVisible) {
         if (isVisible) {
-            sheetState.show()
+            showBottomSheet = true
+            delay(50)
+            bottomSheetState.show()
         } else {
-            sheetState.hide()
+            bottomSheetState.hide()
         }
     }
-    if (sheetState.isVisible || isVisible) {
+
+    LaunchedEffect(bottomSheetState.isVisible) {
+        if (!bottomSheetState.isVisible && !isVisible) {
+            showBottomSheet = false
+        }
+    }
+
+    if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = onDismiss,
-            sheetState = sheetState,
+            sheetState = bottomSheetState,
             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
             containerColor = Theme.color.surface,
             dragHandle = {
@@ -55,6 +71,7 @@ fun BaseBottomSheet(
         }
     }
 }
+
 
 @Composable
 private fun DragHandle(){
