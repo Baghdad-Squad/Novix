@@ -56,17 +56,12 @@ class HomeViewModel
         private fun observeAppLanguage() {
             tryToCollect(
                 flowProvider = { getAppLanguageUseCase.invoke() },
-                onNewValue = ::onGetLanguageChangeSuccess,
+                onNewValue = ::onLanguageChanged,
                 onError = ::onLoadDataError,
             )
         }
 
-        private fun onGetLanguageChangeSuccess(newLanguage: String) {
-            updateState {
-                it.copy(
-                    language = newLanguage,
-                )
-            }
+        private fun onLanguageChanged(language: String) {
             loadData()
         }
 
