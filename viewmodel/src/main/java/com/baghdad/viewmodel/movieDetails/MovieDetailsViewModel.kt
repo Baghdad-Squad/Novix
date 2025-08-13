@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.movieDetails
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
@@ -56,13 +57,18 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun loadInitData() {
-        checkIfUserIsLoggedIn()
-        getMovieGallery()
-        getMovieDetails()
-        getCastMembers()
-        getMoreLikeThisShow()
-        getMovieAccountStates()
-        isUserLoggedIn()
+        try {
+            checkIfUserIsLoggedIn()
+            getMovieGallery()
+            getMovieDetails()
+            getCastMembers()
+            getMoreLikeThisShow()
+            isUserLoggedIn()
+        } catch (e: Throwable) {
+            Log.e("CRASHHHHH", "CRASHHHHHHHHHHHHHHH HIIIIIII ${e.message}")
+        }
+
+
     }
 
     override fun onSaveCurrentMovieClick() {
@@ -187,6 +193,9 @@ class MovieDetailsViewModel @Inject constructor(
             BottomSheetType.ShowRating
         } else {
             BottomSheetType.RequireLogin
+        }
+        if (isLoggedIn) {
+            getMovieAccountStates()
         }
 
         updateState {
@@ -442,10 +451,10 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onGetMovieAccountStatesSuccess(isMediaRated: Boolean) {
+    private fun onGetMovieAccountStatesSuccess(isMovieRated: Boolean) {
         updateState {
             it.copy(
-                isRated = isMediaRated,
+                isRated = isMovieRated,
             )
         }
     }
@@ -548,7 +557,6 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onGetMovieDetailsSuccess(details: SavedMovie) {
         updateState(details.toMovieDetailsStateUpdate())
     }
-
 
     private fun getCastMembers() {
         tryToExecute(

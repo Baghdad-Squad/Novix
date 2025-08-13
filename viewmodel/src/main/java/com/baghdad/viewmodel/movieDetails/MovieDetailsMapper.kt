@@ -1,12 +1,12 @@
 package com.baghdad.viewmodel.movieDetails
 
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.person.CastMember
 import com.baghdad.viewmodel.util.roundToFirstDecimal
 import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
-fun SavableMovie.toMoreLikeThisMovie() = MovieDetailsState.MoreLikeThisMovie(
+fun SavedMovie.toMoreLikeThisMovie() = MovieDetailsState.MoreLikeThisMovie(
     imageUrl = movie.posterImageURL,
     id = movie.id,
     isSaved = isSaved,
@@ -20,7 +20,7 @@ fun CastMember.toActorCardInfo(): MovieDetailsState.ActorCardInfo = MovieDetails
     id = actor.id.toInt()
 )
 
-fun SavableMovie.toMovieDetailsStateUpdate(): MovieDetailsState.() -> MovieDetailsState = {
+fun SavedMovie.toMovieDetailsStateUpdate(): MovieDetailsState.() -> MovieDetailsState = {
     copy(
         movieName = movie.title,
         movieTrailerURL = movie.trailerURL,
