@@ -76,8 +76,8 @@ class HomeViewModel
             getTopRatingMovies()
             observeContinueWatchingItems()
             getMovieGenres()
-        getUpcomingItems()
-    }
+            getUpcomingItems()
+        }
 
         private fun checkIfUserIsLoggedIn() {
             tryToExecute(
