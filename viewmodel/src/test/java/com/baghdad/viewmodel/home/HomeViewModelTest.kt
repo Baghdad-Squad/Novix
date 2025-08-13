@@ -2,11 +2,8 @@ import app.cash.turbine.test
 import com.baghdad.domain.exception.NetworkException
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.savedList.SavedMovie
-import com.baghdad.domain.usecase.continueWatching.ObserveUserWatchedMediaUseCase
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
-import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
-import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
@@ -81,7 +78,7 @@ class HomeViewModelTest {
             addMovieToSavedListUseCase = addMovieToSavedListUseCase,
             createSavedListUseCase = createSavedListUseCase,
             removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
-            observeContinueWatchingUseCase = observeContinueWatchingUseCase,
+            observeUserWatchedMediaUseCase = observeContinueWatchingUseCase,
             getAppLanguageUseCase = getAppLanguageUseCase,
             getMovieGenresUseCase = getMovieGenresUseCase,
             defaultDispatcher = testDispatcher
