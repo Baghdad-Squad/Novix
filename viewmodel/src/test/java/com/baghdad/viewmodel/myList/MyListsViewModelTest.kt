@@ -27,13 +27,15 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+
+@OptIn(ExperimentalCoroutinesApi::class)
 class MyListsViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
 
-    private lateinit var getSavedListsUseCase: GetSavedListsUseCase
-    private lateinit var createSavedListUseCase: CreateSavedListUseCase
-    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
+    private var getSavedListsUseCase: GetSavedListsUseCase = mockk(relaxed = true)
+    private var createSavedListUseCase: CreateSavedListUseCase = mockk()
+    private var isUserLoggedInUseCase: IsUserLoggedInUseCase = mockk()
 
     private lateinit var viewModel: MyListsViewModel
 
@@ -41,9 +43,6 @@ class MyListsViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
 
-        getSavedListsUseCase = mockk(relaxed = true)
-        createSavedListUseCase = mockk()
-        isUserLoggedInUseCase = mockk()
     }
 
     @AfterEach
@@ -74,7 +73,17 @@ class MyListsViewModelTest {
             }
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `should update logged in state when initialize viewmodel and user is not logged in`() =
+        runTest {
+            coEvery { isUserLoggedInUseCase() } returns false
+            viewModel = createViewModel()
+            advanceUntilIdle()
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.isUsedLoggedIn).isFalse()
+            }
+        }
     @Test
     fun `should update saved lists when initialize viewmodel and user is logged in`() =
         runTest {
@@ -133,7 +142,6 @@ class MyListsViewModelTest {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `should add call  when onAddListBottomSheetAddClick`() = runTest {
         val viewModel = createViewModel()

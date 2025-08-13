@@ -1,7 +1,9 @@
 package com.baghdad.viewmodel.savedListDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.model.savedList.SavedListDetails
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.savedList.DeleteSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListDetailsUseCase
@@ -9,9 +11,11 @@ import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.savedListDetails.SavedListDetailsScreenState.SavedListDetailsMovieUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,28 +53,30 @@ class SavedListDetailsViewModel @Inject constructor(
             onInitialLoadFinished = ::onFinally,
             onInitialLoadError = ::onError,
             mapEntityToUiState = SavedMovie::toUIState,
-            onFlowCreated = { mediaFlow ->
-                updateState { it.copy(mediaFlow = mediaFlow) }
-            },
+            onFlowCreated = ::onFlowCreatedSuccessfully,
             onLoadingChanged = ::onLoadingChanged
         )
 
         getSavedListInfo()
     }
 
+    private fun onFlowCreatedSuccessfully(mediaFlow: Flow<PagingData<SavedListDetailsMovieUiState>>) {
+        updateState { it.copy(mediaFlow = mediaFlow) }
+    }
+
     private fun getSavedListInfo() {
         tryToExecute(
             dispatcher = defaultDispatcher,
             callee = { getSavedListDetailsUseCase.invoke(currentListId, 1, 1) },
-            onSuccess = { result ->
-                updateState {
-                    it.copy(savedList = result.savedList.toUIState())
-                }
-            },
+            onSuccess = ::onSuccessGetSavedListInfo,
             onError = ::onError
         )
     }
 
+    private fun onSuccessGetSavedListInfo(savedListDetails: SavedListDetails) {
+        updateState { it.copy(savedList = savedListDetails.savedList.toUIState()) }
+
+    }
     private fun onLoadingChanged(isLoading: Boolean) {
         updateState { it.copy(isLoading = isLoading) }
     }
@@ -91,17 +97,19 @@ class SavedListDetailsViewModel @Inject constructor(
         tryToExecute(
             dispatcher = defaultDispatcher,
             callee = { removeMovieFromSavedListUseCase(currentListId, movieId) },
-            onSuccess = {
-                showSnackBar(
-                    message = BaseSnackBarMessage.RemovedItemSuccessfully,
-                    isSuccess = true
-                )
-                refreshList()
-            },
+            onSuccess = { onSuccessRemoveSavedMovieClick() },
             onError = ::onError,
-            onStart = { updateState { it.copy(isLoading = true) } },
-            onFinally = { updateState { it.copy(isLoading = false) } }
+            onStart = ::startLoading,
+            onFinally = ::stopLoading
         )
+    }
+
+    private fun onSuccessRemoveSavedMovieClick() {
+        showSnackBar(
+            message = BaseSnackBarMessage.RemovedItemSuccessfully,
+            isSuccess = true
+        )
+        refreshList()
     }
 
     override fun onSnackBarActionLabelClick() {
@@ -121,17 +129,27 @@ class SavedListDetailsViewModel @Inject constructor(
         tryToExecute(
             dispatcher = defaultDispatcher,
             callee = { deleteSavedListUseCase(currentListId) },
-            onSuccess = {
-                showSnackBar(
-                    message = BaseSnackBarMessage.DeleteListSuccessfully,
-                    isSuccess = true
-                )
-                sendEffect(SavedListDetailsEffect.NavigateBack)
-            },
+            onSuccess = { onSuccessDeleteListClick() },
             onError = ::onError,
-            onStart = { updateState { it.copy(isLoading = true) } },
-            onFinally = { updateState { it.copy(isLoading = false) } }
+            onStart = ::startLoading,
+            onFinally = ::stopLoading
         )
+    }
+
+    private fun onSuccessDeleteListClick() {
+        showSnackBar(
+            message = BaseSnackBarMessage.DeleteListSuccessfully,
+            isSuccess = true
+        )
+        sendEffect(SavedListDetailsEffect.NavigateBack)
+    }
+
+    private fun startLoading() {
+        updateState { it.copy(isLoading = true) }
+    }
+
+    private fun stopLoading() {
+        updateState { it.copy(isLoading = false) }
     }
 
     private fun refreshList() {

@@ -33,6 +33,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SavedListDetailsViewModelTest {
     private val getSavedListDetailsUseCase = mockk<GetSavedListDetailsUseCase>(relaxed = true)
     private val deleteSavedListUseCase = mockk<DeleteSavedListUseCase>(relaxed = true)
@@ -40,8 +41,8 @@ class SavedListDetailsViewModelTest {
         mockk<RemoveMovieFromSavedListUseCase>(relaxed = true)
 
     val testDispatcher = StandardTestDispatcher()
-
     lateinit var viewModel: SavedListDetailsViewModel
+
     fun createViewModel() = SavedListDetailsViewModel(
         getSavedListDetailsUseCase = getSavedListDetailsUseCase,
         deleteSavedListUseCase = deleteSavedListUseCase,
@@ -50,19 +51,34 @@ class SavedListDetailsViewModelTest {
         defaultDispatcher = testDispatcher
     )
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `should get saved list details when the view model is created`() = runTest {
+        coEvery {
+            getSavedListDetailsUseCase.invoke(
+                listId = 1, page = 1, pageSize = 20
+            )
+        } returns savedListDetailsSample
+        viewModel = createViewModel()
+        advanceUntilIdle()
+        coVerify(exactly = 1) {
+            getSavedListDetailsUseCase(
+                listId = any(),
+                page = any(),
+                pageSize = any()
+            )
+        }
+    }
+
     @Test
     fun `should return updated saved list details when getSavedListDetailsUseCase returns success`() =
         runTest {
@@ -74,11 +90,9 @@ class SavedListDetailsViewModelTest {
             viewModel = createViewModel()
             advanceUntilIdle()
             val state = viewModel.uiState.value.mediaFlow
-            // then
             assertThat(state).isNotEqualTo(flowOf<PagingData<SavedListDetailsMovieUiState>>())
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
 
 
     @Test
@@ -89,7 +103,6 @@ class SavedListDetailsViewModelTest {
         assertThat(effect).isEqualTo(SavedListDetailsEffect.NavigateBack)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `should call deleteSavedListUseCase when onDeleteClicked`() = runTest {
         viewModel = createViewModel()
@@ -98,7 +111,6 @@ class SavedListDetailsViewModelTest {
         coVerify { removeMovieFromSavedListUseCase(listId = any(), movieId = 1) }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `should show delete list bottom sheet when onDelete clicked`() = runTest {
         viewModel = createViewModel()
@@ -115,7 +127,6 @@ class SavedListDetailsViewModelTest {
         assertThat(effect).isEqualTo(SavedListDetailsEffect.NavigateToMovieDetails(1))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `should call removeMovieFromSavedListUseCase when onRemoveSavedMovieClick`() = runTest {
         viewModel = createViewModel()
@@ -124,7 +135,6 @@ class SavedListDetailsViewModelTest {
         coVerify { removeMovieFromSavedListUseCase(listId = any(), movieId = 1) }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `should call deleteSavedListUseCase when onDeleteListBottomSheetDeleteClick`() = runTest {
         val viewModel = createViewModel()
@@ -148,6 +158,21 @@ class SavedListDetailsViewModelTest {
 
             }
         }
+
+    @Test
+    fun `should reload data of list when onSnackBarActionLabelClick`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.onSnackBarActionLabelClick()
+        advanceUntilIdle()
+        coVerify(exactly = 2) {
+            getSavedListDetailsUseCase.invoke(
+                listId = any(),
+                page = any(),
+                pageSize = any()
+            )
+        }
+    }
+
 
     private companion object {
         val savedListSample = SavedList(
