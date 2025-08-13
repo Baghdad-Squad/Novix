@@ -192,7 +192,7 @@ private fun LoginForm(
         trailingVisibility = true,
         trailingIcon = if (!state.isPasswordVisible) painterResource(R.drawable.ic_closed_eye)
         else painterResource(R.drawable.ic_opened_eye),
-        onClickTrailingIcon = listener::togglePasswordVisibility
+        onClickTrailingIcon = listener::onTogglePasswordChange
     )
 
     PrimaryButton(

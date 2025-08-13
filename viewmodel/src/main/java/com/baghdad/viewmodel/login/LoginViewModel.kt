@@ -98,7 +98,7 @@ class LoginViewModel @Inject constructor(
         isAnyFieldEmpty()
     }
 
-    override fun togglePasswordVisibility() {
+    override fun onTogglePasswordChange() {
         updateState {
             it.copy(isPasswordVisible = !it.isPasswordVisible)
         }

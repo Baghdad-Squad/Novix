@@ -7,5 +7,5 @@ interface LoginInteractionListener {
     fun onBackClick()
     fun onPasswordValueChange(value: String)
     fun onUserNameValueChange(value: String)
-    fun togglePasswordVisibility()
+    fun onTogglePasswordChange()
 }
