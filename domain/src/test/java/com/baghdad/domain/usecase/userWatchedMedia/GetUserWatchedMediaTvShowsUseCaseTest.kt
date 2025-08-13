@@ -1,8 +1,9 @@
-package com.baghdad.domain.usecase.continueWatching
+package com.baghdad.domain.usecase.userWatchedMedia
 
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.UserWatchedMediaRepository
+import com.baghdad.domain.testHelper.getUserWatchedMedia
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -11,40 +12,23 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class GetAllContinueWatchingUseCaseTest {
-
+class GetUserWatchedMediaTvShowsUseCaseTest {
     private lateinit var repository: UserWatchedMediaRepository
-    private lateinit var useCase: GetAllContinueWatchingUseCase
+    private lateinit var useCase: GetUserWatchedMediaTvShowsUseCase
 
     @BeforeEach
     fun setUp() {
         repository = mockk()
-        useCase = GetAllContinueWatchingUseCase(repository)
+        useCase = GetUserWatchedMediaTvShowsUseCase(repository)
     }
 
     @Test
-    fun `invoke() should return paged result from repository`() = runTest {
+    fun `invoke() should return paged TvShows result from repository`() = runTest {
         // Given
         val page = 1
         val expectedData = listOf(
-            UserWatchedMedia(
-                contentId = 1L,
-                genreIds = listOf(1, 2),
-                contentImageUrl = "image_url_1",
-                contentType = UserWatchedMedia.ContentType.MOVIE,
-                userId = 100,
-                isSaved = true,
-                listId = null
-            ),
-            UserWatchedMedia(
-                contentId = 2L,
-                genreIds = listOf(3),
-                contentImageUrl = "image_url_2",
-                contentType = UserWatchedMedia.ContentType.TV_SHOW,
-                userId = 101,
-                isSaved = true,
-                listId = null
-            )
+            getUserWatchedMedia().copy(genreIds = listOf(1, 2)),
+            getUserWatchedMedia().copy(genreIds = listOf(3))
         )
         val expectedResult = PagedResult(
             data = expectedData,
@@ -52,14 +36,14 @@ class GetAllContinueWatchingUseCaseTest {
             prevKey = null
         )
 
-        coEvery { repository.getContinueWatching(page, 20) } returns expectedResult
+        coEvery { repository.getPagedTvShows(page, 20) } returns expectedResult
 
         // When
         val result = useCase(page, 20)
 
         // Then
         assertThat(result).isEqualTo(expectedResult)
-        coVerify(exactly = 1) { repository.getContinueWatching(page, 20) }
+        coVerify(exactly = 1) { repository.getPagedTvShows(page, 20) }
     }
 
     @Test
@@ -72,13 +56,13 @@ class GetAllContinueWatchingUseCaseTest {
             prevKey = 4
         )
 
-        coEvery { repository.getContinueWatching(page, 20) } returns expectedResult
+        coEvery { repository.getPagedTvShows(page, 20) } returns expectedResult
 
         // When
         val result = useCase(page, 20)
 
         // Then
         assertThat(result).isEqualTo(expectedResult)
-        coVerify(exactly = 1) { repository.getContinueWatching(page, 20) }
+        coVerify(exactly = 1) { repository.getPagedTvShows(page, 20) }
     }
 }

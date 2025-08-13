@@ -1,4 +1,4 @@
-package com.baghdad.domain.usecase.continueWatching
+package com.baghdad.domain.usecase.userWatchedMedia
 
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.repository.UserWatchedMediaRepository
