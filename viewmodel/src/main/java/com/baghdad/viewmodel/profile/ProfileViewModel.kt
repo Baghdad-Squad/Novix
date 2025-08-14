@@ -5,7 +5,7 @@ import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.appConfigurations.GetAppThemeUseCase
 import com.baghdad.domain.usecase.appConfigurations.SetAppLanguageUseCase
 import com.baghdad.domain.usecase.appConfigurations.SetAppThemeUseCase
-import com.baghdad.domain.usecase.login.GetCurrentLoggedInUserUseCase
+import com.baghdad.domain.usecase.login.GetUserInfo
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.login.LogOutUseCase
 import com.baghdad.entity.user.User
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val logOutUseCase: LogOutUseCase,
-    private val getCurrentLoggedInUserUseCase: GetCurrentLoggedInUserUseCase,
+    private val getUserInfo: GetUserInfo,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val setAppThemeUseCase: SetAppThemeUseCase,
     private val setAppLanguageUseCase: SetAppLanguageUseCase,
@@ -51,10 +51,12 @@ class ProfileViewModel @Inject constructor(
         updateState { profileScreenState ->
             profileScreenState.copy(
                 userSettings = profileScreenState.userSettings.copy(
-                    language = LanguagePreferences.fromLanguageCode(language)
+                    language = ProfileScreenState.LanguagePreferences.fromLanguageCode(language)
                 ),
                 languageBottomSheetState = profileScreenState.languageBottomSheetState.copy(
-                    currentLanguage = LanguagePreferences.fromLanguageCode(language)
+                    currentLanguage = ProfileScreenState.LanguagePreferences.fromLanguageCode(
+                        language
+                    )
                 )
             )
         }
@@ -74,9 +76,9 @@ class ProfileViewModel @Inject constructor(
         updateState { profileScreenState ->
             profileScreenState.copy(
                 userSettings = profileScreenState.userSettings.copy(
-                    appearance = if (isDarkTheme) ThemePreferences.DARK else ThemePreferences.LIGHT
+                    appearance = if (isDarkTheme) ProfileScreenState.ThemePreferences.DARK else ProfileScreenState.ThemePreferences.LIGHT
                 ), themeBottomSheetState = profileScreenState.themeBottomSheetState.copy(
-                    currentTheme = if (isDarkTheme) ThemePreferences.DARK else ThemePreferences.LIGHT
+                    currentTheme = if (isDarkTheme) ProfileScreenState.ThemePreferences.DARK else ProfileScreenState.ThemePreferences.LIGHT
                 )
             )
         }
@@ -84,7 +86,7 @@ class ProfileViewModel @Inject constructor(
 
     private fun checkIsUserLoggedIn() {
         tryToExecute(
-            callee = { isUserLoggedInUseCase.invoke() },
+            callee = isUserLoggedInUseCase::invoke,
             onSuccess = ::onCheckIsUserLoggedInSuccess,
             onError = ::onError,
             dispatcher = ioDispatcher
@@ -92,7 +94,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun onCheckIsUserLoggedInSuccess(isUserLoggedIn: Boolean) {
-        getUserInfo()
+        getUserInformation()
         updateState { profileScreenUIState ->
             profileScreenUIState.copy(
                 isUserLoggedIn = isUserLoggedIn
@@ -100,9 +102,9 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun getUserInfo() {
+    private fun getUserInformation() {
         tryToExecute(
-            callee = { getCurrentLoggedInUserUseCase.invoke() },
+            callee = getUserInfo::invoke,
             onSuccess = ::onSuccessLoadData,
             onError = ::onError,
             dispatcher = ioDispatcher
@@ -117,8 +119,9 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
-        BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
+        return BaseSnackBarMessage.UnknownError
+    }
 
 
     override fun onWatchingHistoryClick() {
@@ -140,7 +143,7 @@ class ProfileViewModel @Inject constructor(
     override fun onAppearanceClick() {
         updateState {
             it.copy(
-                themeBottomSheetState = it.themeBottomSheetState.copy(isVisible = true),
+                themeBottomSheetState = it.themeBottomSheetState.copy(isVisible = true)
             )
         }
     }
@@ -148,7 +151,7 @@ class ProfileViewModel @Inject constructor(
     override fun onLanguageClick() {
         updateState {
             it.copy(
-                languageBottomSheetState = it.languageBottomSheetState.copy(isVisible = true),
+                languageBottomSheetState = it.languageBottomSheetState.copy(isVisible = true)
             )
         }
     }
@@ -157,12 +160,12 @@ class ProfileViewModel @Inject constructor(
         sendEffect(ProfileEffect.NavigateToLogin)
     }
 
-    override fun onAppearanceChanged(theme: ThemePreferences) {
+    override fun onAppearanceChanged(theme: ProfileScreenState.ThemePreferences) {
         updateState {
             it.copy(
                 themeBottomSheetState = it.themeBottomSheetState.copy(
-                    currentTheme = theme,
-                ),
+                    currentTheme = theme
+                )
             )
         }
     }
@@ -183,12 +186,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-
     override fun onLanguageConfirmed() {
         tryToExecute(
             callee = { setAppLanguageUseCase(currentState.languageBottomSheetState.currentLanguage.languageCode) },
             onSuccess = { onLanguageConfirmedSuccess() },
-            dispatcher = ioDispatcher,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -201,12 +203,12 @@ class ProfileViewModel @Inject constructor(
     }
 
 
-    override fun onLanguageChanged(language: LanguagePreferences) {
+    override fun onLanguageChanged(language: ProfileScreenState.LanguagePreferences) {
         updateState {
             it.copy(
                 languageBottomSheetState = it.languageBottomSheetState.copy(
-                    currentLanguage = language,
-                ),
+                    currentLanguage = language
+                )
             )
         }
     }
@@ -242,7 +244,7 @@ class ProfileViewModel @Inject constructor(
     override fun onLogOutConfirmed() {
         tryToExecute(
             dispatcher = ioDispatcher,
-            callee = { logOutUseCase.invoke() },
+            callee = logOutUseCase::invoke,
             onSuccess = ::onSuccessLogOut,
             onError = {
                 onError(it)
@@ -285,7 +287,7 @@ class ProfileViewModel @Inject constructor(
             message = BaseSnackBarMessage.NoInternetException,
             actionLabelRes = R.string.retry,
             isSuccess = false,
-            durationMillis = Int.MAX_VALUE.toLong(),
+            durationMillis = Int.MAX_VALUE.toLong()
         )
     }
 }

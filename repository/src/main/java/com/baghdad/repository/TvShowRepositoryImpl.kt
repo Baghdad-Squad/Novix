@@ -152,7 +152,7 @@ class TvShowRepositoryImpl @Inject constructor(
             getRemotePagedSafely(
                 page = page, pageSize = pageSize,
                 getRemoteData = { page, _ ->
-                    authenticationRepository.getLoggedInUser()?.let {
+                    authenticationRepository.getUserInfo()?.let {
                         tvShowRemoteDataSource.getUserRatedTvShows(it.id, page)
                     } ?: PagedResultDto(
                         data = emptyList(),

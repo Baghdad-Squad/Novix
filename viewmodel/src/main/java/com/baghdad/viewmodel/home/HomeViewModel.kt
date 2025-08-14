@@ -50,6 +50,18 @@ constructor(
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
     HomeInteractionListener {
     init {
+        observeAppLanguage()
+    }
+
+    private fun observeAppLanguage() {
+        tryToCollect(
+            flowProvider = { getAppLanguageUseCase.invoke() },
+            onNewValue = ::onLanguageChanged,
+            onError = ::onLoadDataError,
+        )
+    }
+
+    private fun onLanguageChanged(language: String) {
         loadData()
     }
 
@@ -60,25 +72,6 @@ constructor(
         observeContinueWatchingItems()
         getMovieGenres()
         getUpcomingItems()
-        observeAppLanguage()
-    }
-
-
-    private fun observeAppLanguage() {
-        tryToCollect(
-            flowProvider = { getAppLanguageUseCase.invoke() },
-            onNewValue = ::onGetLanguageChangeSuccess,
-            onError = ::onLoadDataError,
-        )
-    }
-
-    private fun onGetLanguageChangeSuccess(newLanguage: String) {
-        updateState {
-            it.copy(
-                language = newLanguage,
-            )
-        }
-        loadData()
     }
 
     private fun checkIfUserIsLoggedIn() {
@@ -269,7 +262,6 @@ constructor(
     }
 
     private fun onGetUpcomingSuccess(movies: List<SavedMovie>) {
-        hideSnackBar()
         updateState {
             it.copy(upcomingItems = movies.map(SavedMovie::toUpcomingItemUiState))
         }
@@ -600,5 +592,4 @@ constructor(
         val movies: List<SavedMovie>,
         val tvShows: List<TvShow>,
     )
-
 }
