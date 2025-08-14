@@ -35,6 +35,7 @@ class TrendingMoviesViewModelTest {
     private val removeMovieFromSavedListUseCase = mockk<RemoveMovieFromSavedListUseCase>()
 
     private val testDispatcher = StandardTestDispatcher()
+    lateinit var viewModel: TrendingMoviesViewModel
 
     @BeforeEach
     fun setUp() {
@@ -49,7 +50,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onBackClicked should emit NavigateBack effect`() = runTest {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onBackClicked()
 
@@ -62,7 +63,7 @@ class TrendingMoviesViewModelTest {
     @Test
     fun `onMovieClicked should emit NavigateToMovieDetails effect with correct movieId`() =
         runTest {
-            val viewModel = createViewModel()
+            viewModel = createViewModel()
 
             viewModel.onMovieClicked(MOVIE_ID)
 
@@ -75,7 +76,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onLoginClicked should emit NavigateToLogin effect`() = runTest {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onLoginClicked()
 
@@ -87,7 +88,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onCreateNewListClicked should show addListBottomSheet and hide addToListBottomSheet`() {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onCreateNewListClicked()
 
@@ -98,7 +99,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onCreateListBottomSheetDismiss should hide addListBottomSheet and show addToListBottomSheet`() {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onCreateListBottomSheetDismiss()
 
@@ -110,7 +111,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onSaveToListBottomSheetDismiss should hide addToListBottomSheet`() {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onSaveToListBottomSheetDismiss()
 
@@ -120,7 +121,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onListSelected should update selectedListId in uiState when a list is selected`() {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onListSelected(LIST_ID)
 
@@ -130,7 +131,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onCreatedListNameChanged should update listName in state`() {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onCreatedListNameChanged(LIST_NAME)
 
@@ -140,7 +141,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onCategoryClicked with different categoryId should update selectedGenreId`() = runTest {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onCategoryClicked(CATEGORY_ID)
 
@@ -149,7 +150,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onSaveMovieClick should show addToListBottomSheet when movie is not saved`() {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onSaveMovieClick(MOVIE)
 
@@ -159,7 +160,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onSaveMovieClick should save exactly movie when movie is not saved`() {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onSaveMovieClick(MOVIE)
 
@@ -169,7 +170,7 @@ class TrendingMoviesViewModelTest {
 
     @Test
     fun `onSaveMovieClick with unsaved movie should update addToListBottomSheetState`() = runTest {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onSaveMovieClick(MOVIE)
 
@@ -182,7 +183,7 @@ class TrendingMoviesViewModelTest {
     fun `onCreateListBottomSheetAddClick should dismiss add list bottom sheet and refresh saved lists on success`() =
         runTest {
             coEvery { createSavedListUseCase(any()) } returns Unit
-            val viewModel = createViewModel()
+            viewModel = createViewModel()
             viewModel.onCreatedListNameChanged(LIST_NAME)
 
             viewModel.onCreateListBottomSheetAddClick()
