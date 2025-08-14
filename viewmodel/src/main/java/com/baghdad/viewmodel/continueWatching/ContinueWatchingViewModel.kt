@@ -247,7 +247,7 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     override fun onMovieSaveClick(movie: ContinueWatchingState.ContinueWatchingMovieUiState) {
-        onSaveMovieClick(movie.isSaved, movie.savedListId, movie.id)
+        onSaveMovieClick(isSaved = movie.isSaved, listId = movie.savedListId, movieId = movie.id)
     }
 
     private fun onSaveMovieClick(
