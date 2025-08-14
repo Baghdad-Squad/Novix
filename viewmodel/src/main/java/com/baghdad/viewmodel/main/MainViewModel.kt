@@ -8,6 +8,8 @@ import com.baghdad.domain.usecase.savedList.SyncSavedMoviesUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,6 +19,7 @@ class MainViewModel @Inject constructor(
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
     private val isFirstTimeLaunchAppUseCase: IsFirstTimeLaunchAppUseCase,
     private val syncSavedMoviesUseCase: SyncSavedMoviesUseCase,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<MainState, MainEffect>(
     MainState()
 ), MainInteractionListener {
@@ -33,44 +36,39 @@ class MainViewModel @Inject constructor(
 
     private fun getAppTheme() {
         tryToCollect(
-            flowProvider = { getAppThemeUseCase() },
-            onNewValue = { isDarkTheme ->
-                updateState { it.copy(isAppInDarkTheme = isDarkTheme) }
-            }
+            flowProvider = getAppThemeUseCase::invoke,
+            onNewValue = ::onSuccessGetAppTheme,
+            dispatcher = defaultDispatcher
         )
     }
 
     private fun getAppLanguage() {
         tryToCollect(
-            flowProvider = { getAppLanguageUseCase() },
-            onNewValue = { appLanguage ->
-                updateState { it.copy(appLanguage = appLanguage) }
-            }
+            flowProvider = getAppLanguageUseCase::invoke,
+            onNewValue = ::onSuccessGetAppLanguage,
+            dispatcher = defaultDispatcher
         )
     }
 
     override fun checkIsLoggedIn() {
-        tryToExecute(callee = {
-            isUserLoggedInUseCase.invoke()
-        }, onSuccess = {
-            onSuccessLoggedIn(result = it)
-        }, onError = {
-            onError(it)
-        }, onFinally = {
-            updateState { it.copy(isLoading = false) }
-        })
+        tryToExecute(
+            callee = isUserLoggedInUseCase::invoke,
+            onSuccess = ::onSuccessLoggedIn,
+            onError = ::onError,
+            onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
+        )
     }
 
     override fun checkIsFirstTimeUser() {
         tryToExecute(
-            callee = {
-                isFirstTimeLaunchAppUseCase()
-            },
+            callee = isFirstTimeLaunchAppUseCase::invoke,
             onSuccess = ::onSuccessFirstTimeLaunch,
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = defaultDispatcher
         )
-
     }
+
     private fun onSuccessFirstTimeLaunch(isFirstTime: Boolean) {
         updateState {
             it.copy(
@@ -84,13 +82,12 @@ class MainViewModel @Inject constructor(
         updateState {
             it.copy(
                 isLoggedIn = result,
-                isLoading = false,
+                isLoading = false
             )
         }
         if (result) {
             tryToExecute(
-                callee = { syncSavedMoviesUseCase() },
-                onSuccess = {},
+                callee = syncSavedMoviesUseCase::invoke
             )
         }
     }
@@ -103,4 +100,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private fun onSuccessGetAppLanguage(appLanguage: String) {
+        updateState { it.copy(appLanguage = appLanguage) }
+    }
+
+    private fun onSuccessGetAppTheme(appTheme: Boolean) {
+        updateState { it.copy(isAppInDarkTheme = appTheme) }
+    }
+
+    private fun onFinally() {
+        updateState { it.copy(isLoading = false) }
+    }
 }

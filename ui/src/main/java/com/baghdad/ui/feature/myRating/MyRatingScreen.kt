@@ -33,6 +33,8 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.myRating.component.EmptyRatingScreen
 import com.baghdad.ui.feature.myRating.component.MyRatingVerticalGrid
+import com.baghdad.ui.feature.component.EmptyListScreen
+import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -134,7 +136,7 @@ private fun MyRatingContent(
             targetState = mediaItems.itemCount == 0 && uiState.isLoading.not(),
         ) { emptyRating ->
             if (emptyRating) {
-                EmptyRatingScreen()
+                EmptyListScreen()
             } else {
                 MyRatingVerticalGrid(
                     mediaItems = mediaItems,
