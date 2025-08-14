@@ -26,6 +26,6 @@ import com.baghdad.localDatasource.roomDB.entity.UserWatchedMedia
 abstract class NovixDatabase : RoomDatabase() {
     abstract fun recentViewedDao(): RecentlyViewedDao
     abstract fun recentSearchDao(): RecentSearchDao
-    abstract fun continueWatchingDao(): UserWatchedMediaDao
+    abstract fun userWatchedMediaDao(): UserWatchedMediaDao
     abstract fun savedListMovieDao(): SavedListMovieDao
 }

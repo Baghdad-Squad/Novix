@@ -48,7 +48,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
     }
 
     override suspend fun observeUserWatchedMedia(): Flow<List<UserWatchedMedia>> {
-        val user = authenticationRepository.getLoggedInUser() ?: return flowOf(emptyList())
+        val user = authenticationRepository.getUserInfo() ?: return flowOf(emptyList())
         val savedMovies = savableMovieDataSource.getSavedMovies()
 
         return userWatchedMediaDataSource
@@ -62,7 +62,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
         contentImageUrl: String,
         contentType: UserWatchedMedia.ContentType,
     ) = executeSafely {
-        val userId = authenticationRepository.getLoggedInUser()?.id ?: return@executeSafely
+        val userId = authenticationRepository.getUserInfo()?.id ?: return@executeSafely
         val item = UserWatchedMedia(
             contentId = contentId,
             genreIds = genreIds,
@@ -98,7 +98,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
         fetchData: suspend (userId: Long, pageSize: Int, page: Int) -> List<UserWatchedMediaDto>
     ): PagedResult<UserWatchedMedia> {
         val user =
-            authenticationRepository.getLoggedInUser() ?: return PagedResult(emptyList(), 0, 0)
+            authenticationRepository.getUserInfo() ?: return PagedResult(emptyList(), 0, 0)
         val savedMovies = savableMovieDataSource.getSavedMovies()
 
         return getLocalPagedSafely(
@@ -114,7 +114,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
         localDataCall: suspend (userId: Long) -> Flow<List<UserWatchedMediaDto>>,
         remoteGenreCall: suspend () -> List<GenreDto>
     ): Flow<List<Genre>> {
-        val user = authenticationRepository.getLoggedInUser() ?: return flowOf(emptyList())
+        val user = authenticationRepository.getUserInfo() ?: return flowOf(emptyList())
         val savedMovies = savableMovieDataSource.getSavedMovies()
         val remoteGenres = remoteGenreCall()
 
