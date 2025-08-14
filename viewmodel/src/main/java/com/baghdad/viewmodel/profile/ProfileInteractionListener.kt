@@ -14,8 +14,8 @@ interface ProfileInteractionListener {
     fun onLogOutClick()
     fun onLogOutConfirmed()
     fun onLoginClick()
-    fun onAppearanceChanged(theme: ThemePreferences)
+    fun onAppearanceChanged(theme: ProfileScreenState.ThemePreferences)
     fun onAppearanceConfirmed()
     fun onLanguageConfirmed()
-    fun onLanguageChanged(language: LanguagePreferences)
+    fun onLanguageChanged(language: ProfileScreenState.LanguagePreferences)
 }

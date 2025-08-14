@@ -16,14 +16,14 @@ import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.shared.Selectable
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
-import com.baghdad.viewmodel.profile.LanguagePreferences
+import com.baghdad.viewmodel.profile.ProfileScreenState
 
 @Composable
 fun AppLanguageBottomSheet(
     onBottomSheetCloseClick: () -> Unit,
     isVisible: Boolean,
-    languageOptions: List<Selectable<LanguagePreferences>>,
-    onLanguageSelected: (LanguagePreferences) -> Unit,
+    languageOptions: List<Selectable<ProfileScreenState.LanguagePreferences>>,
+    onLanguageSelected: (ProfileScreenState.LanguagePreferences) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
