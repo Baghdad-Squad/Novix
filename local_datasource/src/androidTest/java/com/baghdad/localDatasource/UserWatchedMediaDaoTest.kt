@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
-class ContinueWatchingDaoTest {
+class UserWatchedMediaDaoTest {
 
     private lateinit var database: NovixDatabase
     private lateinit var userWatchedMediaDao: UserWatchedMediaDao
@@ -28,7 +28,7 @@ class ContinueWatchingDaoTest {
             ApplicationProvider.getApplicationContext(),
             NovixDatabase::class.java
         ).allowMainThreadQueries().build()
-        userWatchedMediaDao = database.continueWatchingDao()
+        userWatchedMediaDao = database.userWatchedMediaDao()
     }
 
     @After
@@ -37,90 +37,95 @@ class ContinueWatchingDaoTest {
     }
 
     @Test
-    fun shouldInsertItemCorrectly_whenUpsertContinueWatchingIsCalled() = runBlocking {
-        // When
-        userWatchedMediaDao.upsertUserWatchedMedia(FAKE_CONTINUE_WATCHING_1)
-        val result = userWatchedMediaDao.getContinueWatching(TEST_USER_ID, 1, 0)
+    fun shouldInsertItemCorrectly_whenUpsertUserWatchedMediaIsCalled() = runBlocking {
+        val pageSize = 1
+        val offset = 0
+        userWatchedMediaDao.upsertUserWatchedMedia(FAKE_USER_WATCHED_MEDIA_1)
 
-        // Then
-        assertThat(result.first()).isEqualTo(FAKE_CONTINUE_WATCHING_1)
+        val result =
+            userWatchedMediaDao.getPagedUserWatchedMediaMovies(TEST_USER_ID, pageSize, offset)
+
+        assertThat(result.first()).isEqualTo(FAKE_USER_WATCHED_MEDIA_1)
     }
 
     @Test
-    fun shouldUpdateItem_whenUpsertContinueWatchingCalledWithSameContentId() = runBlocking {
-        // Given
-        userWatchedMediaDao.upsertUserWatchedMedia(FAKE_CONTINUE_WATCHING_1)
+    fun shouldUpdateItem_whenUpsertUserWatchedMediaCalledWithSameContentId() = runBlocking {
+        val pageSize = 1
+        val offset = 0
+        userWatchedMediaDao.upsertUserWatchedMedia(FAKE_USER_WATCHED_MEDIA_1)
 
-        // When
-        val updated = FAKE_CONTINUE_WATCHING_1.copy(contentImageUrl = "new_url")
+        val updated = FAKE_USER_WATCHED_MEDIA_1.copy(contentImageUrl = "new_url")
         userWatchedMediaDao.upsertUserWatchedMedia(updated)
-        val result = userWatchedMediaDao.getContinueWatching(TEST_USER_ID, 1, 0)
+        val result =
+            userWatchedMediaDao.getPagedUserWatchedMediaMovies(TEST_USER_ID, pageSize, offset)
 
-        // Then
         assertThat(result.first().contentImageUrl).isEqualTo("new_url")
     }
 
     @Test
-    fun shouldReturnPaginatedResultsInDescendingOrder_whenGetContinueWatchingIsCalled() =
+    fun shouldReturnPaginatedResultsInDescendingOrder_whenGetUserWatchedMediaIsCalled() =
         runBlocking {
-            // Given
-            FAKE_ITEMS.forEach { userWatchedMediaDao.upsertUserWatchedMedia(it) }
+            val pageSize = 5
+            val offset = 5
+            FAKE_ITEMS_MOVIES.forEach { userWatchedMediaDao.upsertUserWatchedMedia(it) }
 
-            // When
             val page =
-                userWatchedMediaDao.getContinueWatching(TEST_USER_ID, pageSize = 5, offset = 5)
+                userWatchedMediaDao.getPagedUserWatchedMediaMovies(
+                    TEST_USER_ID,
+                    pageSize = pageSize,
+                    offset = offset
+                )
 
-            // Then
-            assertThat(page.size).isEqualTo(5)
+            assertThat(page.size).isEqualTo(pageSize)
             assertThat(page.map { it.contentId }).isEqualTo(listOf(9L, 8L, 7L, 6L, 5L))
         }
 
     @Test
     fun shouldObserveUserWatchedMedia_whenNewItemIsInserted() = runBlocking {
-        // When
-        userWatchedMediaDao.upsertUserWatchedMedia(FAKE_CONTINUE_WATCHING_2)
+        userWatchedMediaDao.upsertUserWatchedMedia(FAKE_USER_WATCHED_MEDIA_2)
         val result = userWatchedMediaDao.observeUserWatchedMedia(TEST_USER_ID).first()
 
-        // Then
-        assertThat(result).contains(FAKE_CONTINUE_WATCHING_2)
+        assertThat(result).contains(FAKE_USER_WATCHED_MEDIA_2)
     }
 
     @Test
-    fun shouldReturnEmptyList_whenUserHasNoContinueWatchingRecords() = runBlocking {
-        // When
+    fun shouldReturnEmptyList_whenUserHasNoUserWatchedMediaRecords() = runBlocking {
         val result =
-            userWatchedMediaDao.getContinueWatching(userId = 999L, pageSize = 10, offset = 0)
+            userWatchedMediaDao.getPagedUserWatchedMediaMovies(
+                userId = 999L,
+                pageSize = 10,
+                offset = 0
+            )
 
-        // Then
         assertThat(result).isEmpty()
     }
 
     companion object {
         const val TEST_USER_ID = 100L
 
-        val FAKE_CONTINUE_WATCHING_1 = UserWatchedMedia(
+        val FAKE_USER_WATCHED_MEDIA_1 = UserWatchedMedia(
             contentId = 1L,
             userId = TEST_USER_ID,
             genreIds = listOf(1L),
             contentImageUrl = "url_1",
-            contentType = "movie"
+            contentType = "MOVIE"
         )
 
-        val FAKE_CONTINUE_WATCHING_2 = UserWatchedMedia(
+        val FAKE_USER_WATCHED_MEDIA_2 = UserWatchedMedia(
             contentId = 2L,
             userId = TEST_USER_ID,
             genreIds = listOf(2L),
             contentImageUrl = "url_2",
-            contentType = "series"
+            contentType = "TV_SHOW"
         )
 
-        val FAKE_ITEMS = List(15) { index ->
+        val FAKE_ITEMS_MOVIES = List(15) { index ->
             UserWatchedMedia(
                 contentId = index.toLong(),
                 userId = TEST_USER_ID,
                 genreIds = listOf(1L, 2L),
                 contentImageUrl = "image_url_$index",
-                contentType = if (index % 2 == 0) "movie" else "series",
+                contentType = "MOVIE",
                 viewedAt = index.toLong()
             )
         }

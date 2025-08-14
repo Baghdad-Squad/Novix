@@ -12,7 +12,6 @@ import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.mapper.toSavableMovie
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
-import com.baghdad.repository.model.ContinueWatchingDto
 import com.baghdad.repository.model.EpisodeDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
@@ -23,6 +22,7 @@ import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.TvShowDto
 import com.baghdad.repository.model.UserDto
+import com.baghdad.repository.model.UserWatchedMediaDto
 import com.baghdad.repository.model.savedList.SavableMovieDto
 import com.baghdad.repository.model.savedList.SavedListDetailsDto
 import kotlinx.datetime.LocalDate
@@ -306,13 +306,13 @@ object DummyDataFactory {
                 )
             )
 
-        fun createMockContinueWatchingDto(
+        fun createMockUserWatchedMediaDto(
             contentId: Long = 123L,
             genreIds: List<Long> = listOf(28L, 12L),
             contentImageUrl: String = "/content_image.jpg",
-            contentType: ContinueWatchingDto.ContentType = ContinueWatchingDto.ContentType.MOVIE,
+            contentType: UserWatchedMediaDto.ContentType = UserWatchedMediaDto.ContentType.MOVIE,
             userId: Long = 123L,
-        ) = ContinueWatchingDto(
+        ) = UserWatchedMediaDto(
             contentId = contentId,
             genreIds = genreIds,
             contentImageUrl = contentImageUrl,

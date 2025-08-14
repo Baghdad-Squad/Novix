@@ -13,10 +13,8 @@ class UserWatchedMediaTest {
 
     @Test
     fun `should convert all fields correctly when toDto is called`() {
-        // When
         val result = userWatchedMedia.toDto()
 
-        // Then
         assertThat(result.contentId).isEqualTo(1L)
         assertThat(result.genreIds).containsExactly(1L, 2L, 3L)
         assertThat(result.contentImageUrl).isEqualTo("https://example.com/poster.jpg")
@@ -26,9 +24,7 @@ class UserWatchedMediaTest {
 
     @Test
     fun `should throw exception when toDto is called with invalid contentType`() {
-        // Given
         val invalidEntity = userWatchedMedia.copy(contentType = "INVALID")
-        // Then
         assertThrows(IllegalArgumentException::class.java) {
             invalidEntity.toDto()
         }
@@ -36,35 +32,28 @@ class UserWatchedMediaTest {
 
     @Test
     fun `should handle all enum values correctly when toDto is called`() {
-        // When & Then
         assertThat(userWatchedMedia.toDto().contentType)
             .isEqualTo(UserWatchedMediaDto.ContentType.MOVIE)
     }
 
     @Test
     fun `should return empty genreIds when toLocalDto is called with empty genreIds`() {
-        // Given
         val result = userWatchedMedia.copy(genreIds = emptyList())
 
-        // Then
         assertThat(result.genreIds).isEmpty()
     }
 
     @Test
     fun `should return empty contentImageUrl when toDto is called with empty contentImageUrl`() {
-        // Given
         val emptyImage = userWatchedMedia.copy(contentImageUrl = "")
 
-        // When
         val result = emptyImage.toDto()
 
-        // Then
         assertThat(result.contentImageUrl).isEmpty()
     }
 
     @Test
     fun `should convert list of UserWatchedMedia to list of UserWatchedMediaDto when toDtos is called`() {
-        // Given
         val entities = listOf(
             userWatchedMedia,
             userWatchedMedia.copy(
@@ -73,10 +62,8 @@ class UserWatchedMediaTest {
             )
         )
 
-        // When
         val result = entities.toDtos()
 
-        // Then
         assertThat(result).hasSize(2)
 
         assertThat(result[0].contentId).isEqualTo(1L)

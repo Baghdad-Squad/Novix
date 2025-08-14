@@ -9,16 +9,13 @@ class UserWatchedMediaMapperTest {
 
     @Test
     fun `should map to entity correctly when dto has valid data`() {
-        // Given
         val userWatchedMediaDto = createMockUserWatchedMediaDto()
 
-        // When
         val result = userWatchedMediaDto.toEntity(
             isSaved = false,
             listId = 1
         )
 
-        // Then
         assertThat(result.contentId).isEqualTo(123L)
         assertThat(result.genreIds.size).isEqualTo(2)
         assertThat(result.genreIds[0]).isEqualTo(28L)
@@ -30,66 +27,54 @@ class UserWatchedMediaMapperTest {
 
     @Test
     fun `should map to TV_SHOW content type when dto is TVSHOW`() {
-        // Given
         val userWatchedMediaDto = createMockUserWatchedMediaDto().copy(
             contentType = UserWatchedMediaDto.ContentType.TV_SHOW
         )
 
-        // When
         val result = userWatchedMediaDto.toEntity(
             isSaved = false,
             listId = 1
         )
 
-        // Then
         assertThat(result.contentType).isEqualTo(UserWatchedMedia.ContentType.TV_SHOW)
     }
 
     @Test
     fun `should map to entity with empty genreIds when dto has no genres`() {
-        // Given
         val userWatchedMediaDto = createMockUserWatchedMediaDto().copy(genreIds = emptyList())
 
-        // When
         val result = userWatchedMediaDto.toEntity(
             isSaved = false,
             listId = 1
         )
 
-        // Then
         assertThat(result.genreIds).isEmpty()
     }
 
     @Test
     fun `should map to entity with one genreId when dto has a single genre`() {
-        // Given
         val userWatchedMediaDto = createMockUserWatchedMediaDto().copy(genreIds = listOf(28L))
 
-        // When
         val result = userWatchedMediaDto.toEntity(
             isSaved = false,
             listId = 1,
         )
 
-        // Then
         assertThat(result.genreIds.size).isEqualTo(1)
         assertThat(result.genreIds[0]).isEqualTo(28L)
     }
 
     @Test
     fun `should map to entity with all genreIds when dto has multiple genres`() {
-        // Given
         val userWatchedMediaDto = createMockUserWatchedMediaDto().copy(
             genreIds = listOf(28L, 12L, 16L, 35L, 80L)
         )
 
-        // When
         val result = userWatchedMediaDto.toEntity(
             isSaved = false,
             listId = 1,
         )
 
-        // Then
         assertThat(result.genreIds.size).isEqualTo(5)
         assertThat(result.genreIds[0]).isEqualTo(28L)
         assertThat(result.genreIds[1]).isEqualTo(12L)
@@ -100,12 +85,10 @@ class UserWatchedMediaMapperTest {
 
     @Test
     fun `should map imageUrl correctly when dto has different imageUrls`() {
-        // Given
         val userWatchedMediaDto1 = createMockUserWatchedMediaDto(contentImageUrl = "/movie1.jpg")
         val userWatchedMediaDto2 = createMockUserWatchedMediaDto(contentImageUrl = "/tv_show2.png")
         val userWatchedMediaDto3 = createMockUserWatchedMediaDto(contentImageUrl = "")
 
-        // When
         val result1 = userWatchedMediaDto1.toEntity(
             isSaved = false,
             listId = 1,
@@ -119,7 +102,6 @@ class UserWatchedMediaMapperTest {
             listId = 1
         )
 
-        // Then
         assertThat(result1.contentImageUrl).isEqualTo("/movie1.jpg")
         assertThat(result2.contentImageUrl).isEqualTo("/tv_show2.png")
         assertThat(result3.contentImageUrl).isEmpty()
@@ -127,13 +109,10 @@ class UserWatchedMediaMapperTest {
 
     @Test
     fun `jUserWatchedMedia toDto should map correctly with valid data`() {
-        // Given
         val userWatchedMedia = createMockUserWatchedMedia()
 
-        // When
         val result = userWatchedMedia.toDto()
 
-        // Then
         assertThat(result.contentId).isEqualTo(123L)
         assertThat(result.genreIds.size).isEqualTo(2)
         assertThat(result.genreIds[0]).isEqualTo(28L)
