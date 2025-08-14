@@ -8,7 +8,7 @@ import com.baghdad.localDatasource.roomDB.entity.toDto
 import com.baghdad.localDatasource.roomDB.entity.toDtos
 import com.baghdad.localDatasource.roomDB.entity.toLocalDto
 import com.baghdad.localDatasource.util.calculatePageOffset
-import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
+import com.baghdad.repository.datasource.local.ContinueWatchingDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ContinueWatchingDto
 import kotlinx.coroutines.flow.Flow
@@ -17,10 +17,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalContinueWatchingDataSourceImpl @Inject constructor(
+class ContinueWatchingDataSourceImpl @Inject constructor(
     private val continueWatchingDao: ContinueWatchingDao,
     private val logger: Logger
-) : LocalContinueWatchingDataSource {
+) : ContinueWatchingDataSource {
     override suspend fun addContinueWatching(continueWatching: ContinueWatchingDto) {
         executeWithErrorHandling(logger = logger) {
             continueWatchingDao.upsertContinueWatching(continueWatching.toLocalDto())
