@@ -6,26 +6,18 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class AddUserWatchedMediaUseCaseTest {
 
-    private lateinit var repository: UserWatchedMediaRepository
-    private lateinit var useCase: AddUserWatchedMediaUseCase
-
-    @BeforeEach
-    fun setUp() {
-        repository = mockk(relaxed = true)
-        useCase = AddUserWatchedMediaUseCase(repository)
-    }
+    private val repository: UserWatchedMediaRepository = mockk(relaxed = true)
+    private val useCase: AddUserWatchedMediaUseCase =
+        AddUserWatchedMediaUseCase(repository)
 
     @Test
     fun `invoke() should call repository with correct parameters`() = runTest {
-        // Given
         val userWatchedMedia = getUserWatchedMedia()
 
-        // When
         useCase(
             contentId = userWatchedMedia.contentId,
             genreIds = userWatchedMedia.genreIds,
@@ -33,7 +25,6 @@ class AddUserWatchedMediaUseCaseTest {
             contentType = userWatchedMedia.contentType
         )
 
-        // Then
         coVerify(exactly = 1) {
             repository.addUserWatchedMedia(
                 contentId = userWatchedMedia.contentId,
@@ -46,15 +37,12 @@ class AddUserWatchedMediaUseCaseTest {
 
     @Test
     fun `invoke() should complete successfully when repository does not throw`() = runTest {
-        // Given
         val userWatchedMedia = getUserWatchedMedia()
-
 
         coEvery {
             repository.addUserWatchedMedia(any(), any(), any(), any())
         } returns Unit
 
-        // When & Then (no exception)
         useCase(
             contentId = userWatchedMedia.contentId,
             genreIds = userWatchedMedia.genreIds,

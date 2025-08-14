@@ -9,61 +9,51 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GetUserWatchedMediaMoviesUseCaseTest {
 
-    private lateinit var repository: UserWatchedMediaRepository
-    private lateinit var useCase: GetUserWatchedMediaMoviesUseCase
-
-    @BeforeEach
-    fun setUp() {
-        repository = mockk()
-        useCase = GetUserWatchedMediaMoviesUseCase(repository)
-    }
+    private val repository: UserWatchedMediaRepository = mockk()
+    private val useCase: GetUserWatchedMediaMoviesUseCase =
+        GetUserWatchedMediaMoviesUseCase(repository)
 
     @Test
     fun `invoke() should return paged result from repository`() = runTest {
-        // Given
         val page = 1
         val expectedData = listOf(
             getUserWatchedMedia().copy(genreIds = listOf(1, 2)),
             getUserWatchedMedia().copy(genreIds = listOf(3))
         )
+        val pageSize = 20
         val expectedResult = PagedResult(
             data = expectedData,
             nextKey = 2,
             prevKey = null
         )
 
-        coEvery { repository.getPagedMovies(page, 20) } returns expectedResult
+        coEvery { repository.getPagedMovies(page, pageSize) } returns expectedResult
 
-        // When
-        val result = useCase(page, 20)
+        val result = useCase(page, pageSize)
 
-        // Then
         assertThat(result).isEqualTo(expectedResult)
-        coVerify(exactly = 1) { repository.getPagedMovies(page, 20) }
+        coVerify(exactly = 1) { repository.getPagedMovies(page, pageSize) }
     }
 
     @Test
     fun `invoke() should return empty list when no data exists`() = runTest {
-        // Given
         val page = 5
+        val pageSize = 20
         val expectedResult = PagedResult<UserWatchedMedia>(
             data = emptyList(),
             nextKey = null,
             prevKey = 4
         )
 
-        coEvery { repository.getPagedMovies(page, 20) } returns expectedResult
+        coEvery { repository.getPagedMovies(page, pageSize) } returns expectedResult
 
-        // When
-        val result = useCase(page, 20)
+        val result = useCase(page, pageSize)
 
-        // Then
         assertThat(result).isEqualTo(expectedResult)
-        coVerify(exactly = 1) { repository.getPagedMovies(page, 20) }
+        coVerify(exactly = 1) { repository.getPagedMovies(page, pageSize) }
     }
 }
