@@ -1,172 +1,107 @@
 package com.baghdad.remoteDataSource.mapper.movie
 
 import com.baghdad.remoteDataSource.response.movie.DiscoverMovieResponse
+import com.baghdad.remoteDataSource.util.getImageUrlFromPath
+import com.baghdad.remoteDataSource.util.getNextKey
+import com.baghdad.remoteDataSource.util.getPreviousKey
+import com.baghdad.repository.model.GenreDto
+import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.PagedResultDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class DiscoverMovieMapperTest {
 
-    @Test
-    fun `should map movies correctly when results contain valid data`() {
-        // Given
-        val response = DISCOVER_MOVIE_RESPONSE_VALID
+    companion object {
+        private const val VALID_ID = 1L
+        private const val GENRE_ID_1 = 101L
+        private const val GENRE_ID_2 = 102L
+        private const val TITLE = "Movie Title"
+        private const val OVERVIEW = "Some overview"
+        private const val RELEASE_DATE = "2023-05-01"
+        private const val VOTE_AVERAGE = 8.5
+        private const val POSTER_PATH = "/poster.jpg"
 
-        // When
-        val result = response.toMovieDtos()
+        private val VALID_RESULT = DiscoverMovieResponse.Result(
+            id = VALID_ID,
+            title = TITLE,
+            genreIds = listOf(GENRE_ID_1, GENRE_ID_2),
+            voteAverage = VOTE_AVERAGE,
+            releaseDate = RELEASE_DATE,
+            overview = OVERVIEW,
+            posterPath = POSTER_PATH
+        )
 
-        // Then
-        assertThat(result).hasSize(1)
-        assertThat(result.first().id).isEqualTo(DISCOVER_MOVIE_RESULT_VALID.id)
-        assertThat(result.first().title).isEqualTo(DISCOVER_MOVIE_RESULT_VALID.title)
-        assertThat(result.first().genres.size)
-            .isEqualTo(DISCOVER_MOVIE_RESULT_VALID.genreIds?.size)
-        assertThat(result.first().posterPictureURL)
-            .isEqualTo("https://image.tmdb.org/t/p/w500${DISCOVER_MOVIE_RESULT_VALID.posterPath}")
+        private val EXPECTED_MOVIE_DTO = MovieDto(
+            id = VALID_ID,
+            title = TITLE,
+            genres = listOf(
+                GenreDto(GENRE_ID_1, "", GenreDto.GenreType.MOVIE),
+                GenreDto(GENRE_ID_2, "", GenreDto.GenreType.MOVIE)
+            ),
+            imdbRating = VOTE_AVERAGE,
+            userRating = 0.0,
+            releaseDate = RELEASE_DATE,
+            overview = OVERVIEW,
+            posterPictureURL = getImageUrlFromPath(POSTER_PATH),
+            runtimeMinutes = 0,
+            trailerURL = ""
+        )
     }
 
     @Test
-    fun `should return empty list when results is null`() {
-        // Given
-        val response = DiscoverMovieResponse(results = null)
+    fun `toMovieDtos should map valid results`() {
+        val response = DiscoverMovieResponse(
+            results = listOf(VALID_RESULT)
+        )
 
-        // When
         val result = response.toMovieDtos()
 
-        // Then
-        assertThat(result).isEmpty()
+        assertThat(result).containsExactly(EXPECTED_MOVIE_DTO)
     }
 
     @Test
-    fun `should use defaults when fields are null`() {
-        // Given
-        val response = DISCOVER_MOVIE_RESPONSE_NULL_FIELDS
-
-        // When
-        val result = response.toMovieDtos()
-
-        // Then
-        assertThat(result).hasSize(1)
-        val movie = result.first()
-        assertThat(movie.id).isEqualTo(0L)
-        assertThat(movie.title).isEqualTo("Untitled")
-        assertThat(movie.releaseDate).isEqualTo("0001-01-01")
-        assertThat(movie.posterPictureURL).isEmpty()
-        assertThat(movie.genres).isEmpty()
-    }
-
-    @Test
-    fun `should skip movies when id is null`() {
-        // Given
+    fun `toMovieDtos should skip null or invalid ids`() {
         val response = DiscoverMovieResponse(
             results = listOf(
-                DiscoverMovieResponse.Result(
-                    id = null,
-                    title = "Invalid Movie",
-                    genreIds = listOf(28L),
-                    voteAverage = 7.5,
-                    releaseDate = "2020-01-01",
-                    overview = "Should be skipped",
-                    posterPath = "/invalid.jpg"
-                )
+                VALID_RESULT,
+                null,
+                VALID_RESULT.copy(id = null) // should be filtered out
             )
         )
 
-        // When
         val result = response.toMovieDtos()
 
-        // Then
-        assertThat(result).isEmpty()
+        assertThat(result).containsExactly(EXPECTED_MOVIE_DTO)
     }
 
     @Test
-    fun `should use empty list when genreIds parameter is not provided`() {
-        // Given
-        val result = DiscoverMovieResponse.Result(
-            id = 10L,
-            title = "No Genres Param",
-            genreIds = null,
-            voteAverage = 6.5,
-            releaseDate = "2021-12-12",
-            overview = "Testing default param",
-            posterPath = "/poster.jpg"
+    fun `toPagedMovieDtos should return PagedResultDto with correct keys`() {
+        val response = DiscoverMovieResponse(
+            page = 1,
+            totalPages = 3,
+            results = listOf(VALID_RESULT)
         )
 
-        // When
-        val movieDto = result.toDto(emptyList())
+        val result = response.toPagedMovieDtos()
 
-        // Then
-        assertThat(movieDto.genres).isEmpty()
+        assertThat(result).isEqualTo(
+            PagedResultDto(
+                data = listOf(EXPECTED_MOVIE_DTO),
+                nextKey = getNextKey(1, 3),
+                prevKey = getPreviousKey(1)
+            )
+        )
     }
 
     @Test
-    fun `should map genreIds when elements are null safely`() {
-        // Given
-        val result = DiscoverMovieResponse.Result(
-            id = 20L,
-            title = "Null Genre Ids",
-            genreIds = listOf(null, 15L),
-            voteAverage = 7.0,
-            releaseDate = "2022-05-05",
-            overview = "Some overview",
-            posterPath = "/poster2.jpg"
+    fun `toMovieDtos should fallback releaseDate when null or empty`() {
+        val response = DiscoverMovieResponse(
+            results = listOf(VALID_RESULT.copy(releaseDate = null))
         )
 
-        // When
-        val movieDto = result.toDto(genreIds = result.genreIds)
+        val result = response.toMovieDtos()
 
-        // Then
-        assertThat(movieDto.genres.size).isEqualTo(2)
-        assertThat(movieDto.genres.first().id).isEqualTo(0L)
-        assertThat(movieDto.genres.last().id).isEqualTo(15L)
-    }
-
-    @Test
-    fun `should use empty genres when genreIds is not passed`() {
-        // Given
-        val result = DiscoverMovieResponse.Result(
-            id = 30L,
-            title = "Default Param Test",
-            genreIds = listOf(99L, 100L),
-            voteAverage = 5.5,
-            releaseDate = "2023-03-03",
-            overview = "Testing default param handling",
-            posterPath = "/poster3.jpg"
-        )
-
-        // When
-        val movieDto = result.toDto()
-
-        // Then
-        assertThat(movieDto.genres).isEmpty()
-    }
-
-    companion object {
-        private val DISCOVER_MOVIE_RESULT_VALID = DiscoverMovieResponse.Result(
-            id = 1L,
-            title = "Inception",
-            genreIds = listOf(12L, 18L),
-            voteAverage = 8.8,
-            releaseDate = "2010-07-16",
-            overview = "A mind-bending thriller",
-            posterPath = "/inception.jpg"
-        )
-
-        private val DISCOVER_MOVIE_RESULT_NULL_FIELDS = DiscoverMovieResponse.Result(
-            id = 0L,
-            title = null,
-            genreIds = null,
-            voteAverage = null,
-            releaseDate = null,
-            overview = null,
-            posterPath = null
-        )
-
-        val DISCOVER_MOVIE_RESPONSE_VALID = DiscoverMovieResponse(
-            results = listOf(DISCOVER_MOVIE_RESULT_VALID)
-        )
-
-        val DISCOVER_MOVIE_RESPONSE_NULL_FIELDS = DiscoverMovieResponse(
-            results = listOf(DISCOVER_MOVIE_RESULT_NULL_FIELDS)
-        )
+        assertThat(result.first().releaseDate).isEqualTo("0001-01-01")
     }
 }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -29,7 +28,7 @@ fun EmptyListScreen() {
                 .padding(bottom = 52.dp, top = 16.dp)
         ) {
             Icon(
-                painter = showIconDependsOnTheme(),
+                painter = painterResource(Theme.drawable.emptyList),
                 contentDescription = stringResource(R.string.empty_list),
                 modifier = Modifier
                     .size(128.dp)
@@ -47,11 +46,4 @@ fun EmptyListScreen() {
             )
         }
     }
-}
-
-@Composable
-private fun showIconDependsOnTheme(): Painter = if (Theme.isDarkTheme) {
-    painterResource(R.drawable.img_empty_list_night)
-} else {
-    painterResource(R.drawable.img_empty_list)
 }

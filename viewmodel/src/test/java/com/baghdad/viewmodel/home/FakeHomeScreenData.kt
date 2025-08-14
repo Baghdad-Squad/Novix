@@ -1,7 +1,7 @@
 package com.baghdad.viewmodel.home
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.TvShow
@@ -65,8 +65,8 @@ object FakeHomeScreenData {
         movie.copy(id = 8, title = "test8")
     )
 
-    val savableMovies = movies.map {
-        SavableMovie(
+    val savedMovies = movies.map {
+        SavedMovie(
             movie = it,
             isSaved = false,
             listId = null
@@ -107,20 +107,24 @@ object FakeHomeScreenData {
         TopRatingItemUiState(id = 4, imageUrl = "url4", isSaved = false)
     )
 
-    val continueWatchingItems = listOf(
-        ContinueWatching(
+    val userWatchedMedia = listOf(
+        UserWatchedMedia(
             contentId = 5,
             genreIds = listOf(1, 2, 3, 4),
             contentImageUrl = "urlTest",
-            contentType = ContinueWatching.ContentType.MOVIE,
-            userId = 5
+            contentType = UserWatchedMedia.ContentType.MOVIE,
+            userId = 5,
+            isSaved = false,
+            listId = null
         ),
-        ContinueWatching(
+        UserWatchedMedia(
             contentId = 6,
             genreIds = listOf(1, 2, 3, 4, 5),
             contentImageUrl = "urlTest2",
-            contentType = ContinueWatching.ContentType.MOVIE,
-            userId = 6
+            contentType = UserWatchedMedia.ContentType.MOVIE,
+            userId = 6,
+            isSaved = false,
+            listId = null
         )
     )
 

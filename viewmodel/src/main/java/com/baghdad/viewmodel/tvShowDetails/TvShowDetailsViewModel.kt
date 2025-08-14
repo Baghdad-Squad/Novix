@@ -2,8 +2,7 @@ package com.baghdad.viewmodel.tvShowDetails
 
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.MediaAccountStates
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.tvShow.AddTvShowRateUseCase
@@ -217,10 +216,10 @@ class TvShowDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onGetTvShowAccountStatesSuccess(accountStates: MediaAccountStates) {
+    private fun onGetTvShowAccountStatesSuccess(isTvShowRated: Boolean) {
         updateState {
             it.copy(
-                isRated = accountStates.isMediaRated,
+                isRated = isTvShowRated,
             )
         }
     }
@@ -282,7 +281,7 @@ class TvShowDetailsViewModel @Inject constructor(
                 addContinueWatchingUseCase(
                     tvShowId, currentState.tvShowInfo.genres.map { it.id ?: 0 },
                     contentImageUrl = currentState.tvShowInfo.posterPictureURL,
-                    contentType = ContinueWatching.ContentType.TV_SHOW,
+                    contentType = UserWatchedMedia.ContentType.TV_SHOW,
                 )
             },
             dispatcher = ioDispatcher,

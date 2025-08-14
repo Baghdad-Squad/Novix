@@ -1,11 +1,11 @@
 package com.baghdad.viewmodel.actorDetails
 
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.viewmodel.util.toYYYYMMDDFormat
 
-fun SavableMovie.toMovieUI() =
+fun SavedMovie.toMovieUI() =
     ActorDetailsScreenState.MovieUiState(
         id = movie.id,
         posterPictureURL = movie.posterImageURL,

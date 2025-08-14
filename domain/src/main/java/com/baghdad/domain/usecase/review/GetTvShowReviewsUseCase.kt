@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetTvShowReviewsUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository
 ) {
-    suspend operator fun invoke(tvId: Long): List<Review> {
-        return tvShowRepository.getTvShowReviews(tvId)
+    suspend operator fun invoke(tvShowId: Long): List<Review> {
+        return tvShowRepository.getTvShowReviews(tvShowId = tvShowId)
     }
 }

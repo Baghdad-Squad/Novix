@@ -3,9 +3,8 @@ package com.baghdad.viewmodel.movieDetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.MediaAccountStates
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
@@ -445,10 +444,10 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onGetMovieAccountStatesSuccess(accountStates: MediaAccountStates) {
+    private fun onGetMovieAccountStatesSuccess(isMovieRated: Boolean) {
         updateState {
             it.copy(
-                isRated = accountStates.isMediaRated,
+                isRated = isMovieRated,
             )
         }
     }
@@ -548,7 +547,7 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { state -> state.copy(isMovieDetailsLoading = true) }
     }
 
-    private fun onGetMovieDetailsSuccess(details: SavableMovie) {
+    private fun onGetMovieDetailsSuccess(details: SavedMovie) {
         updateState { state ->
             state.copy(
                 movieName = details.movie.title,
@@ -619,12 +618,12 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { state -> state.copy(isMoreLikeThisMovieLoading = false) }
     }
 
-    private fun onGetMovieMoreLikeThisSuccess(savableMovies: List<SavableMovie>) {
+    private fun onGetMovieMoreLikeThisSuccess(savedMovies: List<SavedMovie>) {
         hideSnackBar()
         updateState { state ->
             state.copy(
                 moreLikeThisMovie =
-                    savableMovies.map { savableMovie ->
+                    savedMovies.map { savableMovie ->
                         MovieDetailsState.MoreLikeThisMovie(
                             imageUrl = savableMovie.movie.posterImageURL,
                             id = savableMovie.movie.id,
@@ -656,7 +655,7 @@ class MovieDetailsViewModel @Inject constructor(
                 addContinueWatchingUseCase(
                     movieId, currentState.categories.map { it.id },
                     contentImageUrl = currentState.posterImageURL,
-                    contentType = ContinueWatching.ContentType.MOVIE,
+                    contentType = UserWatchedMedia.ContentType.MOVIE,
                 )
             },
         )

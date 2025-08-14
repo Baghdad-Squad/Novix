@@ -1,10 +1,10 @@
 package com.baghdad.viewmodel.main
 
+import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
+import com.baghdad.domain.usecase.appConfigurations.GetAppThemeUseCase
+import com.baghdad.domain.usecase.appConfigurations.IsFirstTimeLaunchAppUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
-import com.baghdad.domain.usecase.onBoarding.IsFirstTimeLaunchAppUseCase
 import com.baghdad.domain.usecase.savedList.SyncSavedMoviesUseCase
-import com.baghdad.domain.usecase.userPreferences.GetAppLanguageUseCase
-import com.baghdad.domain.usecase.userPreferences.GetAppThemeUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel

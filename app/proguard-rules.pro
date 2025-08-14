@@ -98,13 +98,13 @@
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 
 # keep wraper of prefrences data store
--keep class com.baghdad.local_datasource.dataStore.session.LocalSessionDataStoreImpl { *; }
+-keep class com.baghdad.localDatasource.LocalSessionDataSourceImpl { *; }
 
 # keep generated proto class
 -keep class com.example.application.proto.** { *; }
 
 # keep the serializer (which handle reading inserting)
--keep class com.baghdad.local_datasource.dataStore.user.UserSerializer { *; }
+-keep class com.baghdad.localDatasource.serializer.UserSerializer { *; }
 
 # Keep Protocol Buffers core
 -keep class com.google.protobuf.** { *; }

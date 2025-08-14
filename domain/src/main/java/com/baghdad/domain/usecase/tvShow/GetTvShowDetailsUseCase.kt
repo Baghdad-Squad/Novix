@@ -8,6 +8,6 @@ class GetTvShowDetailsUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository
 ) {
     suspend operator fun invoke(tvShowId: Long): TvShow {
-        return tvShowRepository.getTvShowDetails(tvShowId)
+        return tvShowRepository.getTvShowDetails(tvShowId = tvShowId)
     }
 }

@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.savedList
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.entity.savedList.SavedList
 import javax.inject.Inject
@@ -12,6 +12,6 @@ class GetSavedListsUseCase @Inject constructor(
         page: Int,
         pageSize: Int,
     ): PagedResult<SavedList> {
-        return savedListRepository.getSavedLists(page,pageSize)
+        return savedListRepository.getSavedLists(page = page, pageSize = pageSize)
     }
 }

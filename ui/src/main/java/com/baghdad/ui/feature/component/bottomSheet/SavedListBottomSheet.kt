@@ -21,6 +21,7 @@ import com.baghdad.design_system.component.Selection
 import com.baghdad.design_system.component.button.OutlinedButton
 import com.baghdad.design_system.shared.Selectable
 import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingColumn
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
@@ -122,7 +123,7 @@ private fun NoLoginContent(
         verticalArrangement = Arrangement.Center,
     ) {
         EmptyMediaState(
-            imagePath = com.baghdad.design_system.R.drawable.user_person_profile,
+            imagePath = Theme.drawable.personAvatar,
             contentDescription = stringResource(R.string.bottom_sheet_content_description),
             message = stringResource(R.string.please_login_to_save_to_list),
             modifier =

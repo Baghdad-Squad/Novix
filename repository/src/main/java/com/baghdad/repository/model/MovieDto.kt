@@ -11,5 +11,5 @@ data class MovieDto(
     val overview: String,
     val posterPictureURL: String,
     val trailerURL: String,
-    val runtimeMinutes: Int,
+    val runtimeMinutes: Int
 )

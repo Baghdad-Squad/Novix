@@ -1,6 +1,6 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.domain.model.ContinueWatching
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.repository.model.ContinueWatchingDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -21,7 +21,7 @@ class ContinueWatchingMapperTest {
         assertThat(result.genreIds[0]).isEqualTo(28L)
         assertThat(result.genreIds[1]).isEqualTo(12L)
         assertThat(result.contentImageUrl).isEqualTo("/content_image.jpg")
-        assertThat(result.contentType).isEqualTo(ContinueWatching.ContentType.MOVIE)
+        assertThat(result.contentType).isEqualTo(UserWatchedMedia.ContentType.MOVIE)
         assertThat(result.userId).isEqualTo(123)
     }
 
@@ -36,7 +36,7 @@ class ContinueWatchingMapperTest {
         val result = continueWatchingDto.toEntity()
 
         // Then
-        assertThat(result.contentType).isEqualTo(ContinueWatching.ContentType.TV_SHOW)
+        assertThat(result.contentType).isEqualTo(UserWatchedMedia.ContentType.TV_SHOW)
     }
 
     @Test
@@ -152,9 +152,9 @@ class ContinueWatchingMapperTest {
             contentId: Long = 123L,
             genreIds: List<Long> = listOf(28L, 12L),
             contentImageUrl: String = "/content_image.jpg",
-            contentType: ContinueWatching.ContentType = ContinueWatching.ContentType.MOVIE,
+            contentType: UserWatchedMedia.ContentType = UserWatchedMedia.ContentType.MOVIE,
             userId: Long = 123L
-        ) = ContinueWatching(
+        ) = UserWatchedMedia(
             contentId = contentId,
             genreIds = genreIds,
             contentImageUrl = contentImageUrl,

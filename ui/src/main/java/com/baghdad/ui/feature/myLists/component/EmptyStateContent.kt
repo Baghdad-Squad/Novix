@@ -51,7 +51,7 @@ private fun NoLoginPrompt(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Image(
-                painter = painterResource(R.drawable.img_no_login_lists_placeholder),
+                painter = painterResource(Theme.drawable.savedListsNoLogin),
                 contentDescription = stringResource(R.string.my_lists_no_login_caption),
                 modifier = Modifier.size(128.dp),
             )
@@ -82,7 +82,7 @@ private fun EmptyListContent(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Image(
-                painter = painterResource(R.drawable.img_empty_lists_placeholder),
+                painter = painterResource(Theme.drawable.emptySavedLists),
                 contentDescription = stringResource(R.string.my_lists_empty_list_caption),
                 modifier = Modifier.size(128.dp),
             )
