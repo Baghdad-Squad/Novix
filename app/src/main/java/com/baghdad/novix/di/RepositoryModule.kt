@@ -61,7 +61,7 @@ abstract class RepositoryModule {
 
 
     @Binds
-    abstract fun provideContinueWatchingRepository(
+    abstract fun provideUserWatchedMediaRepository(
         userWatchedMediaRepositoryImpl: UserWatchedMediaRepositoryImpl
     ): UserWatchedMediaRepository
 

@@ -33,7 +33,7 @@ abstract class LocalDataSourceModule {
     abstract fun provideRecentSearchDataSource(recentSearchDataSourceImpl: RecentSearchDataSourceImpl): RecentSearchDataSource
 
     @Binds
-    abstract fun provideLocalContinueWatchingDataSource(userWatchedMediaDataSourceImpl: UserWatchedMediaDataSourceImpl): UserWatchedMediaDataSource
+    abstract fun provideUserWatchedMediaDataSource(userWatchedMediaDataSourceImpl: UserWatchedMediaDataSourceImpl): UserWatchedMediaDataSource
 
     @Binds
     abstract fun provideRecentlyViewedDataSource(recentlyViewedDataSourceImpl: RecentlyViewedDataSourceImpl): RecentlyViewedDataSource
