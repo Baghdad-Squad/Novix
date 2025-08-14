@@ -30,12 +30,12 @@ import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TopMoviePicksViewModelTest {
-    private var getActorMoviesUseCase = mockk<GetActorMoviesUseCase>()
-    private var createSavedListUseCase = mockk<CreateSavedListUseCase>()
-    private var isUserLoggedInUseCase = mockk<IsUserLoggedInUseCase>()
-    private var addMovieToSavedListUseCase = mockk<AddMovieToSavedListUseCase>()
-    private var removeMovieFromListUseCase = mockk<RemoveMovieFromSavedListUseCase>()
-    private var getSavedListsUseCase = mockk<GetSavedListsUseCase>()
+    private val getActorMoviesUseCase = mockk<GetActorMoviesUseCase>()
+    private val createSavedListUseCase = mockk<CreateSavedListUseCase>()
+    private val isUserLoggedInUseCase = mockk<IsUserLoggedInUseCase>()
+    private val addMovieToSavedListUseCase = mockk<AddMovieToSavedListUseCase>()
+    private val removeMovieFromListUseCase = mockk<RemoveMovieFromSavedListUseCase>()
+    private val getSavedListsUseCase = mockk<GetSavedListsUseCase>()
     private lateinit var viewModel: TopMoviePicksViewModel
     private val testDispatcher = StandardTestDispatcher()
 
