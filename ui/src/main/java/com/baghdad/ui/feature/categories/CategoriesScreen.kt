@@ -45,7 +45,6 @@ import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.categories.CategoriesEffect
 import com.baghdad.viewmodel.categories.CategoriesInteractionListener
 import com.baghdad.viewmodel.categories.CategoriesState
-import com.baghdad.viewmodel.categories.CategoriesViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 @Composable

@@ -39,7 +39,7 @@ object TvShowCategoryDrawableMap {
         TvShowCategory.MYSTERY to R.drawable.mystery,
         TvShowCategory.FAMILY to R.drawable.family,
         TvShowCategory.DRAMA to R.drawable.drama,
-        TvShowCategory.ACTION_ADVENTURE to R.drawable.action_adventure,
+        TvShowCategory.ACTION_ADVENTURE to R.drawable.action_and_adventure,
         TvShowCategory.KIDS to R.drawable.kids,
         TvShowCategory.NEWS to R.drawable.news,
         TvShowCategory.REALITY to R.drawable.reality,
