@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
@@ -30,8 +31,10 @@ fun CarousalDot(
     highlightedSize: Dp = 7.dp,
     defaultSize: Dp= 5.dp
 ) {
+    val carouselMinHeight = maxOf(highlightedSize, defaultSize)
+
     LazyRow(
-        modifier = modifier,
+        modifier = modifier.heightIn(min = carouselMinHeight),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

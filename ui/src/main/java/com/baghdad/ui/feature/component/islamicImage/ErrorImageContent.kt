@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.baghdad.ui.R
+import com.baghdad.design_system.theme.Theme
 
 @Composable
 fun ErrorImageContent() {
@@ -16,7 +16,7 @@ fun ErrorImageContent() {
         contentAlignment = Alignment.Center,
     ) {
         Image(
-            painter = painterResource(R.drawable.img_defualt_image),
+            painter = painterResource(Theme.drawable.imagePlaceholder),
             contentDescription = "Default Image",
             modifier = Modifier.size(56.dp)
         )

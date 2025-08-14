@@ -30,18 +30,18 @@ fun HomeAppBar(
     )
     BasicTopAppBar(modifier = modifier) {
         Icon(
-            painter = painterResource(R.drawable.app_logo_light),
+            painter = painterResource(R.drawable.app_logo),
             contentDescription = stringResource(R.string.home_icon),
             tint = Theme.color.primary,
             modifier =
                 Modifier
                     .graphicsLayer(alpha = 0.99f)
-                .drawWithCache {
-                    onDrawWithContent {
-                        drawContent()
-                        drawRect(brush = gradient, blendMode = BlendMode.SrcAtop)
+                    .drawWithCache {
+                        onDrawWithContent {
+                            drawContent()
+                            drawRect(brush = gradient, blendMode = BlendMode.SrcAtop)
+                        }
                     }
-                }
         )
 
         Column(
