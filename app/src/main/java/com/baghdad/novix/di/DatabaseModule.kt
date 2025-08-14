@@ -46,7 +46,7 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideContinueWatchingDao(database: NovixDatabase): UserWatchedMediaDao {
+    fun provideUserWatchedMediaDao(database: NovixDatabase): UserWatchedMediaDao {
         return database.userWatchedMediaDao()
     }
 }
