@@ -16,8 +16,8 @@ import org.junit.jupiter.api.*
 @OptIn(ExperimentalCoroutinesApi::class)
 class ReviewViewModelTest {
 
-    private val mockGetMovieReviews = GetMovieReviewsUseCase(mockk())
-    private val mockGetTvReviews = GetTvShowReviewsUseCase(mockk())
+    private var mockGetMovieReviews : GetMovieReviewsUseCase = mockk()
+    private var mockGetTvReviews : GetTvShowReviewsUseCase = mockk()
     private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var reviewViewModel: ReviewViewModel
