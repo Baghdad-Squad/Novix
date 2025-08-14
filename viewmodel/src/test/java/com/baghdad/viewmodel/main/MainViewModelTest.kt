@@ -14,10 +14,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -34,26 +32,16 @@ class MainViewModelTest {
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-
-        coEvery { isUserLoggedInUseCase.invoke() } returns true
-        coEvery { isFirstTimeLaunchAppUseCase() } returns true
-        coEvery { getAppThemeUseCase() } returns flowOf(true)
-        coEvery { getAppLanguageUseCase() } returns flowOf("en")
-        coEvery { syncSavedMoviesUseCase() } returns Unit
-    }
-
-    @AfterEach
-    fun tearDown() {
-        Dispatchers.resetMain()
     }
 
     private fun createViewModel(): MainViewModel {
         return MainViewModel(
-            isUserLoggedInUseCase,
-            getAppThemeUseCase,
-            getAppLanguageUseCase,
-            isFirstTimeLaunchAppUseCase,
-            syncSavedMoviesUseCase
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
+            getAppThemeUseCase = getAppThemeUseCase,
+            getAppLanguageUseCase = getAppLanguageUseCase,
+            isFirstTimeLaunchAppUseCase = isFirstTimeLaunchAppUseCase,
+            syncSavedMoviesUseCase = syncSavedMoviesUseCase,
+            defaultDispatcher = testDispatcher
         )
     }
 
@@ -89,7 +77,6 @@ class MainViewModelTest {
     @Test
     fun `should update isAppInDarkTheme when getAppThemeUseCase returns true`() = runTest {
         coEvery { getAppThemeUseCase() } returns flowOf(true)
-
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 

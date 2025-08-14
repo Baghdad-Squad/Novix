@@ -8,6 +8,8 @@ import com.baghdad.domain.usecase.savedList.SyncSavedMoviesUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,6 +19,7 @@ class MainViewModel @Inject constructor(
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
     private val isFirstTimeLaunchAppUseCase: IsFirstTimeLaunchAppUseCase,
     private val syncSavedMoviesUseCase: SyncSavedMoviesUseCase,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<MainState, MainEffect>(
     MainState()
 ), MainInteractionListener {
@@ -34,14 +37,16 @@ class MainViewModel @Inject constructor(
     private fun getAppTheme() {
         tryToCollect(
             flowProvider = getAppThemeUseCase::invoke,
-            onNewValue = ::onSuccessGetAppTheme
+            onNewValue = ::onSuccessGetAppTheme,
+            dispatcher = defaultDispatcher
         )
     }
 
     private fun getAppLanguage() {
         tryToCollect(
             flowProvider = getAppLanguageUseCase::invoke,
-            onNewValue = ::onSuccessGetAppLanguage
+            onNewValue = ::onSuccessGetAppLanguage,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -50,7 +55,8 @@ class MainViewModel @Inject constructor(
             callee = isUserLoggedInUseCase::invoke,
             onSuccess = ::onSuccessLoggedIn,
             onError = ::onError,
-            onFinally = ::onFinally
+            onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -58,7 +64,8 @@ class MainViewModel @Inject constructor(
         tryToExecute(
             callee = isFirstTimeLaunchAppUseCase::invoke,
             onSuccess = ::onSuccessFirstTimeLaunch,
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = defaultDispatcher
         )
     }
 
