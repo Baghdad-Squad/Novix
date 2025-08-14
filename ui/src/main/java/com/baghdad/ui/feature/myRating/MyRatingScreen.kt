@@ -1,10 +1,10 @@
 package com.baghdad.ui.feature.myRating
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,7 +31,8 @@ import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
-import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
+import com.baghdad.ui.feature.myRating.component.EmptyRatingScreen
+import com.baghdad.ui.feature.myRating.component.MyRatingVerticalGrid
 import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -113,37 +113,35 @@ private fun MyRatingContent(
                     },
                     screenTitle = stringResource(com.baghdad.ui.R.string.my_rating),
                 )
-                MediaTabs(
-                    selectedTab = uiState.selectedMediaTab,
-                    onTabClick = { listener.onMediaTabClick(it) },
-                    genresScrollState = rememberLazyListState(),
-                    modifier = Modifier.padding(vertical = 12.dp)
-                )
+                AnimatedContent(
+                    targetState = mediaItems.itemCount != 0 && uiState.isLoading,
+                ) { emptyRating ->
+                    if (emptyRating)
+                        MediaTabs(
+                            selectedTab = uiState.selectedMediaTab,
+                            onTabClick = { listener.onMediaTabClick(it) },
+                            genresScrollState = rememberLazyListState(),
+                            modifier = Modifier.padding(vertical = 12.dp)
+                        )
+                }
             }
         },
 
         backgroundBlur = { BackgroundBlur() }
     ) {
-        LazyPagingVerticalGrid<MyRatingState.MediaItemUiState>(
-            columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier
-                .fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 12.dp,
-            ),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            items = mediaItems,
-        ) { media ->
-            RatingCard(
-                url = media.posterPictureURL,
-                rating = media.rating,
-                contentDescription = null,
-                onClick = { listener.onMediaClick(media.id, media.contentType) },
-                onDeleteClick = { listener.onDeleteClick(media.id, media.contentType) }
-            )
+
+        AnimatedContent(
+            targetState = mediaItems.itemCount == 0 && uiState.isLoading.not(),
+        ) { emptyRating ->
+            if (emptyRating) {
+                EmptyRatingScreen()
+            } else {
+                MyRatingVerticalGrid(
+                    mediaItems = mediaItems,
+                    onMediaClick = listener::onMediaClick,
+                    onDeleteClick = listener::onDeleteClick
+                )
+            }
         }
     }
 }

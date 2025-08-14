@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.myRating
+package com.baghdad.ui.feature.myRating.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
