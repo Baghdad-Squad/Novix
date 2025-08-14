@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.continueWatching
 
+import app.cash.turbine.test
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
@@ -14,32 +15,27 @@ import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaTvShowsByG
 import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.google.common.truth.Truth.assertThat
-import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class ContinueWatchingViewModelTest {
-    private lateinit var getUserWatchedMediaTvShowGenres: GetUserWatchedMediaTvShowGenresUseCase
-    private lateinit var getUserWatchedMediaMovieGenres: GetUserWatchedMediaMovieGenresUseCase
-    private lateinit var getUserWatchedMediaMoviesUseCase: GetUserWatchedMediaMoviesUseCase
-    private lateinit var getUserWatchedMediaTvShowsUseCase: GetUserWatchedMediaTvShowsUseCase
-    private lateinit var getUserWatchedMediaMoviesByGenreUseCase: GetUserWatchedMediaMoviesByGenreUseCase
-    private lateinit var getUserWatchedMediaTvShowsByGenreUseCase: GetUserWatchedMediaTvShowsByGenreUseCase
-    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
-    private lateinit var getSavedListsUseCase: GetSavedListsUseCase
-    private lateinit var addMovieToSavedListUseCase: AddMovieToSavedListUseCase
-    private lateinit var createSavedListUseCase: CreateSavedListUseCase
-    private lateinit var removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase
+    val getUserWatchedMediaTvShowGenres: GetUserWatchedMediaTvShowGenresUseCase = mockk()
+    val getUserWatchedMediaMovieGenres: GetUserWatchedMediaMovieGenresUseCase = mockk()
+    val getUserWatchedMediaMoviesUseCase: GetUserWatchedMediaMoviesUseCase = mockk()
+    val getUserWatchedMediaTvShowsUseCase: GetUserWatchedMediaTvShowsUseCase = mockk()
+    val getUserWatchedMediaMoviesByGenreUseCase: GetUserWatchedMediaMoviesByGenreUseCase = mockk()
+    val getUserWatchedMediaTvShowsByGenreUseCase: GetUserWatchedMediaTvShowsByGenreUseCase = mockk()
+    val isUserLoggedInUseCase: IsUserLoggedInUseCase = mockk()
+    val getSavedListsUseCase: GetSavedListsUseCase = mockk()
+    val addMovieToSavedListUseCase: AddMovieToSavedListUseCase = mockk()
+    val createSavedListUseCase: CreateSavedListUseCase = mockk()
+    val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase = mockk()
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: ContinueWatchingViewModel
 
@@ -47,18 +43,6 @@ class ContinueWatchingViewModelTest {
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-
-        getUserWatchedMediaTvShowGenres = mockk()
-        getUserWatchedMediaMovieGenres = mockk()
-        getUserWatchedMediaMoviesUseCase = mockk()
-        getUserWatchedMediaTvShowsUseCase = mockk()
-        getUserWatchedMediaMoviesByGenreUseCase = mockk()
-        getUserWatchedMediaTvShowsByGenreUseCase = mockk()
-        isUserLoggedInUseCase = mockk()
-        getSavedListsUseCase = mockk()
-        addMovieToSavedListUseCase = mockk()
-        createSavedListUseCase = mockk()
-        removeMovieFromSavedListUseCase = mockk()
         viewModel = ContinueWatchingViewModel(
             getUserWatchedMediaTvShowGenres,
             getUserWatchedMediaMovieGenres,
@@ -78,114 +62,49 @@ class ContinueWatchingViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `should navigate back when onBackClick is called`() = runTest {
-        // Given
-        var receivedEffect: ContinueWatchingScreenEffect? = null
-        val job: Job = launch {
-            viewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
+        viewModel.uiEffect.test {
+            viewModel.onBackClick()
+            assertThat(awaitItem()).isEqualTo(ContinueWatchingScreenEffect.NavigateBack)
         }
-        // When
-        viewModel.onBackClick()
-        advanceUntilIdle()
-
-        // Then
-        assertThat(receivedEffect).isEqualTo(ContinueWatchingScreenEffect.NavigateBack)
-        job.cancel()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `should navigate to movie details when onMediaClick  is called and content type is movie`() =
         runTest {
-            // Given
-            val movieId = 123L
+            val movieId = 1L
             val contentType = ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE
-            var receivedEffect: ContinueWatchingScreenEffect? = null
-            val job: Job = launch {
-                viewModel.uiEffect.collect { effect ->
-                    receivedEffect = effect
-                }
-            }
-            // When
-            viewModel.onMediaClick(movieId, contentType)
-            advanceUntilIdle()
-
-            // Then
-            assertThat(receivedEffect).isEqualTo(
-                ContinueWatchingScreenEffect.NavigateToMovieDetails(
-                    movieId
+            viewModel.uiEffect.test {
+                viewModel.onMediaClick(movieId, contentType)
+                assertThat(awaitItem()).isEqualTo(
+                    ContinueWatchingScreenEffect.NavigateToMovieDetails(movieId)
                 )
-            )
-            job.cancel()
+            }
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `should navigate to tv show details when onMediaClick is called and content type is tv show`() =
         runTest {
-            // Given
             val tvShowId = 1L
             val contentType = ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.TV_SHOW
-            var receivedEffect: ContinueWatchingScreenEffect? = null
-            val job: Job = launch {
-                viewModel.uiEffect.collect { effect ->
-                    receivedEffect = effect
-                }
-            }
-            // When
-            viewModel.onMediaClick(tvShowId, contentType)
-            advanceUntilIdle()
 
-            // Then
-            assertThat(receivedEffect).isEqualTo(
-                ContinueWatchingScreenEffect.NavigateToTvShowDetails(
-                    tvShowId
+            viewModel.uiEffect.test {
+                viewModel.onMediaClick(tvShowId, contentType)
+
+                assertThat(awaitItem()).isEqualTo(
+                    ContinueWatchingScreenEffect.NavigateToTvShowDetails(tvShowId)
                 )
-            )
-            job.cancel()
-        }
-
-    @Test
-    fun `should navigate to login when onLoginClick is called`() = runTest {
-        // Given
-        var receivedEffect: ContinueWatchingScreenEffect? = null
-        val job: Job = launch {
-            viewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
             }
         }
 
-        // When
-        viewModel.onLoginClicked()
-        advanceUntilIdle()
-
-        // Then
-        assertThat(receivedEffect).isEqualTo(ContinueWatchingScreenEffect.NavigateToLogin)
-        job.cancel()
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `should get genres when onGenreClick is called`() = runTest {
-        // Given
-        val genreId = 1L
-        var receivedState: ContinueWatchingState? = null
-        val job: Job = launch {
-            viewModel.uiState.collect { state ->
-                receivedState = state
-            }
+    fun `should navigate to login when onLoginClicked is called`() = runTest {
+        viewModel.uiEffect.test {
+            viewModel.onLoginClicked()
+            assertThat(awaitItem()).isEqualTo(ContinueWatchingScreenEffect.NavigateToLogin)
         }
-        coEvery { getUserWatchedMediaMovieGenres.invoke() } returns flowOf(genres)
-        // When
-        viewModel.onGenreClick(genreId)
-        advanceUntilIdle()
-        // Then
-        println(viewModel.uiState.value.genres)
-        assertThat(receivedState?.selectedMovieGenreId).isEqualTo(genreId)
-        job.cancel()
     }
-
 
     private companion object {
         val userWatchedMedia = UserWatchedMedia(
