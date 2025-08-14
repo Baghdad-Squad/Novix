@@ -57,13 +57,13 @@ class TopRatingViewModelTest {
 
     @Test
     fun `onLoginClick should navigate to login screen when it is clicked`() = runTest {
-            viewModel.onLoginClick()
+        viewModel.onLoginClick()
 
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect is TopRatingEffect.NavigateToLogin).isTrue()
         }
-        }
+    }
 
     @Test
     fun `onMovieDetailsClick should navigate to movie details screen when it is clicked`() =
@@ -223,46 +223,35 @@ class TopRatingViewModelTest {
             viewModel.onCreateListBottomSheetDismiss()
             advanceUntilIdle()
 
-            val addListBottomSheetState = viewModel.uiState.value.addListBottomSheetState
-            val addToListBottomSheetState = viewModel.uiState.value.addToListBottomSheetState
-            assertThat(addListBottomSheetState.isVisible == false).isTrue()
-            assertThat(addListBottomSheetState.listName == "").isTrue()
-            assertThat(addListBottomSheetState.isLoading == false).isTrue()
-            assertThat(addToListBottomSheetState.isVisible == true).isTrue()
+            val addListState = viewModel.uiState.value.addListBottomSheetState
+            val addMovieToListState = viewModel.uiState.value.addToListBottomSheetState
+            with(addListState) {
+                assertThat(isVisible).isFalse()
+                assertThat(listName == "").isTrue()
+                assertThat(isLoading).isFalse()
+            }
+            assertThat(addMovieToListState.isVisible).isTrue()
         }
 
     @Test
-    fun `onTopRatingItemSaveClick should update addToListBottomSheetState when it is clicked`() =
+    fun `onTopRatingItemSaveClick should show bottom sheet when movie not saved`() =
         runTest {
+            val movie = MOVIE_UI_STATE.copy(isSaved = false)
 
-            val item = TopRatingState.MovieUiState(
-                id = 123L,
-                isSaved = false,
-                posterPictureURL = "",
-                savedListId = 123L
-            )
-
-            viewModel.onTopRatingItemSaveClick(item)
+            viewModel.onTopRatingItemSaveClick(movie)
             advanceUntilIdle()
 
             val addToListBottomSheetState = viewModel.uiState.value.addToListBottomSheetState
-            assertThat(addToListBottomSheetState.isVisible == true).isTrue()
-            assertThat(addToListBottomSheetState.selectedItemId == item.id).isTrue()
+            assertThat(addToListBottomSheetState.isVisible).isTrue()
+            assertThat(addToListBottomSheetState.selectedItemId == movie.id).isTrue()
             assertThat(addToListBottomSheetState.selectedListId == null).isTrue()
         }
 
     @Test
-    fun `onTopRatingItemSaveClick should remove save item when it is clicked`() = runTest {
-
-        val item = TopRatingState.MovieUiState(
-            id = 123L,
-            isSaved = true,
-            posterPictureURL = "",
-            savedListId = 123L
-        )
+    fun `onTopRatingItemSaveClick should remove save item when movie is saved`() = runTest {
         coEvery { removeMovieFromSavedListUseCase(any(), any()) } returns Unit
 
-        viewModel.onTopRatingItemSaveClick(item)
+        viewModel.onTopRatingItemSaveClick(MOVIE_UI_STATE)
         advanceUntilIdle()
 
         coVerify { removeMovieFromSavedListUseCase(any(), any()) }
@@ -276,8 +265,8 @@ class TopRatingViewModelTest {
 
         viewModel.uiState.test {
             val state = awaitItem()
-            assertThat(state.addListBottomSheetState.isVisible == false).isTrue()
-            assertThat(state.addToListBottomSheetState.isVisible == true).isTrue()
+            assertThat(state.addListBottomSheetState.isVisible).isFalse()
+            assertThat(state.addToListBottomSheetState.isVisible).isTrue()
         }
         coVerify { createSavedListUseCase(any()) }
     }
@@ -293,4 +282,12 @@ class TopRatingViewModelTest {
         coVerify { addMovieToSavedListUseCase(any(), any()) }
     }
 
+    companion object {
+        private val MOVIE_UI_STATE = TopRatingState.MovieUiState(
+            id = 123L,
+            isSaved = true,
+            posterPictureURL = "",
+            savedListId = 123L
+        )
+    }
 }
