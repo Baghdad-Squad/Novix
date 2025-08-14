@@ -11,7 +11,6 @@ class TrendingMovieMapperTest {
 
     @Test
     fun `should map savedMovie fields to MovieUiState when movie is saved`() {
-        // When
         val result = savedMovie.toMovieUiState()
 
         // Then
@@ -22,19 +21,15 @@ class TrendingMovieMapperTest {
 
     @Test
     fun `should map savedMovie to MovieUiState using default listId when listId is null`() {
-        // Given
         val savedMovie = savedMovie.copy(listId = null)
 
-        // When
         val result = savedMovie.toMovieUiState()
 
-        // Given
         assertThat(result.savedListId).isEqualTo(savedMovie.listId ?: -1L)
     }
 
     @Test
     fun `should map genre to UI model when all data is valid`() {
-        // When
         val result = genre.toGenreUiState()
 
         // Then
