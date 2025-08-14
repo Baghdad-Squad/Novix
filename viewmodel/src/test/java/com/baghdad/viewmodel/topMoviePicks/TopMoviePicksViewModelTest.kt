@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.topMoviePicks
 
 import androidx.lifecycle.SavedStateHandle
+import app.cash.turbine.test
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
@@ -44,7 +45,6 @@ class TopMoviePicksViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-
         coEvery { getActorMoviesUseCase(actorId) } returns mockedMovies()
 
         viewModel = TopMoviePicksViewModel(
@@ -62,18 +62,13 @@ class TopMoviePicksViewModelTest {
     @Test
     fun `onMovieDetailsClicked should Navigate To MovieDetails when clicked`() = runTest {
 
-        var receivedEffect: TopMoviePicksEffect? = null
-        val job = launch {
-            viewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
-        }
         viewModel.onMovieDetailsClicked(movieId)
-        advanceUntilIdle()
 
-        assertThat(receivedEffect is TopMoviePicksEffect.NavigateToMovieDetails).isTrue()
-        assertThat(movieId == (receivedEffect as TopMoviePicksEffect.NavigateToMovieDetails).movieId).isTrue()
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect is TopMoviePicksEffect.NavigateToMovieDetails).isTrue()
+            assertThat(movieId == (effect as TopMoviePicksEffect.NavigateToMovieDetails).movieId).isTrue()
+        }
     }
 
     @Test
@@ -83,10 +78,8 @@ class TopMoviePicksViewModelTest {
         val movie = initialState.movies.find { it.id == movieId }!!
         assertThat(movie.isSaved).isFalse()
 
-
         viewModel.onSaveMovieClicked(movie)
         advanceUntilIdle()
-
 
         val updatedState = viewModel.uiState.value
         assertThat(updatedState.addToListBottomSheetState.isVisible).isTrue()
@@ -103,7 +96,6 @@ class TopMoviePicksViewModelTest {
         viewModel.onSaveMovieClicked(movie)
         advanceUntilIdle()
 
-
         coVerify { removeMovieFromListUseCase(any(), any()) }
     }
 
@@ -115,7 +107,6 @@ class TopMoviePicksViewModelTest {
 
         viewModel.onSaveItemToListClicked()
         advanceUntilIdle()
-
 
         coVerify { addMovieToSavedListUseCase(any(), any()) }
     }
@@ -129,26 +120,18 @@ class TopMoviePicksViewModelTest {
             viewModel.onSaveItemToListClicked()
             advanceUntilIdle()
 
-
             coVerify(inverse = true) { addMovieToSavedListUseCase(any(), any()) }
         }
-
 
     @Test
     fun `onBackClicked should Navigate Back when clicked`() = runTest {
 
-        var receivedEffect: TopMoviePicksEffect? = null
-        val job = launch {
-            viewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
-        }
-
         viewModel.onBackClicked()
-        advanceUntilIdle()
 
-        assertThat(receivedEffect is TopMoviePicksEffect.NavigateBack).isTrue()
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect is TopMoviePicksEffect.NavigateBack).isTrue()
+        }
     }
 
     @Test
@@ -186,7 +169,6 @@ class TopMoviePicksViewModelTest {
         viewModel.onCreateListBottomSheetAddClick()
         advanceUntilIdle()
 
-
         coVerify { createSavedListUseCase(any()) }
     }
 
@@ -196,20 +178,18 @@ class TopMoviePicksViewModelTest {
 
             coEvery { getActorMoviesUseCase(actorId) } throws NoInternetException()
             val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
-
             val job = launch {
                 viewModel.snackBarState.collect {
                     emittedSnackBarMessages.add(it.message)
                 }
             }
 
-
             viewModel.onSnackBarActionLabelClicked()
             advanceUntilIdle()
-            job.cancel()
-
 
             assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+            job.cancel()
+
         }
 
     companion object {
