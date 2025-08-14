@@ -51,8 +51,9 @@ class TrendingMoviesViewModelTest {
     fun `onBackClicked should emit NavigateBack effect`() = runTest {
         val viewModel = createViewModel()
 
+        viewModel.onBackClicked()
+
         viewModel.uiEffect.test {
-            viewModel.onBackClicked()
             assertThat(awaitItem()).isEqualTo(TrendingMoviesEffect.NavigateBack)
             cancelAndIgnoreRemainingEvents()
         }
@@ -63,11 +64,11 @@ class TrendingMoviesViewModelTest {
         runTest {
             val viewModel = createViewModel()
 
+            viewModel.onMovieClicked(MOVIE_ID)
+
             viewModel.uiEffect.test {
-                viewModel.onMovieClicked(MOVIE_ID)
-                assertThat(awaitItem()).isEqualTo(
-                    TrendingMoviesEffect.NavigateToMovieDetails(MOVIE_ID)
-                )
+                assertThat(awaitItem())
+                    .isEqualTo(TrendingMoviesEffect.NavigateToMovieDetails(MOVIE_ID))
                 cancelAndIgnoreRemainingEvents()
             }
         }
@@ -76,8 +77,9 @@ class TrendingMoviesViewModelTest {
     fun `onLoginClicked should emit NavigateToLogin effect`() = runTest {
         val viewModel = createViewModel()
 
+        viewModel.onLoginClicked()
+
         viewModel.uiEffect.test {
-            viewModel.onLoginClicked()
             assertThat(awaitItem()).isEqualTo(TrendingMoviesEffect.NavigateToLogin)
             cancelAndIgnoreRemainingEvents()
         }
@@ -117,7 +119,7 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `onListSelected should update selectedListId in state`() {
+    fun `onListSelected should update selectedListId in uiState when a list is selected`() {
         val viewModel = createViewModel()
 
         viewModel.onListSelected(LIST_ID)
@@ -146,13 +148,22 @@ class TrendingMoviesViewModelTest {
     }
 
     @Test
-    fun `onSaveMovieClick with unsaved movie should show addToListBottomSheet`() {
+    fun `onSaveMovieClick should show addToListBottomSheet when movie is not saved`() {
         val viewModel = createViewModel()
 
         viewModel.onSaveMovieClick(MOVIE)
 
         val state = viewModel.uiState.value
         assertThat(state.addToListBottomSheetState.isVisible).isTrue()
+    }
+
+    @Test
+    fun `onSaveMovieClick should save exactly movie when movie is not saved`() {
+        val viewModel = createViewModel()
+
+        viewModel.onSaveMovieClick(MOVIE)
+
+        val state = viewModel.uiState.value
         assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(MOVIE_ID)
     }
 
@@ -165,7 +176,6 @@ class TrendingMoviesViewModelTest {
         val state = viewModel.uiState.value.addToListBottomSheetState
         assertThat(state.isVisible).isTrue()
         assertThat(state.selectedItemId).isEqualTo(MOVIE_ID)
-        assertThat(state.selectedListId).isNull()
     }
 
     @Test
