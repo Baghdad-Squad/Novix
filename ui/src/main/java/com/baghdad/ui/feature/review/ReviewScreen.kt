@@ -60,7 +60,7 @@ fun ReviewScreen(
 }
 
 @Composable
-fun ReviewContent(
+private fun ReviewContent(
     uiState: ReviewScreenState, listener: ReviewInteractionListener, snackBarState: SnackBarState
 ) {
     Scaffold(
@@ -74,8 +74,9 @@ fun ReviewContent(
                 screenTitle = stringResource(R.string.reviews),
                 onGoBackClick = { listener.onNavigateBack() },
                 modifier = Modifier.padding(top = 20.dp, bottom = 8.dp)
-            ) {}
+            )
         },
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -86,11 +87,15 @@ fun ReviewContent(
                 position = position,
             )
         },
+
         isLoading = uiState.isLoading,
+
         backgroundBlur = {
             BackgroundBlur()
         },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null
+
         ) {
 
         Column(
