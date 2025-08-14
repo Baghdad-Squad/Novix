@@ -39,12 +39,12 @@ class LoginViewModel @Inject constructor(
     }
 
 
-    fun onLoginSuccess() {
+    private fun onLoginSuccess() {
         showSnackBar(message = BaseSnackBarMessage.LoginSuccessfully, isSuccess = true)
         sendEffect(LoginUiEffect.RecreateActivity)
     }
 
-    fun onLoginError(t: Throwable) {
+    private fun onLoginError(t: Throwable) {
         when (t) {
             is EmptyFieldException -> showSnackBar(
                 message = BaseSnackBarMessage.EmptyFieldError, isSuccess = false
