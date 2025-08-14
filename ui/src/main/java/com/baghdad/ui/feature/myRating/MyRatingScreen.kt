@@ -2,16 +2,11 @@ package com.baghdad.ui.feature.myRating
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,9 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -32,6 +25,7 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.EmptyListScreen
+import com.baghdad.ui.feature.myRating.component.MediaTabs
 import com.baghdad.ui.feature.myRating.component.MyRatingVerticalGrid
 import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
@@ -49,6 +43,7 @@ fun MyRatingScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val mediaItem = uiState.mediaFlow.collectAsLazyPagingItems()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+    
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
             is MyRatingEffect.NavigateBack -> handleNavigation(MyAccountNavEvent.NavigateBack)
@@ -149,41 +144,4 @@ private fun MyRatingContent(
 
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return type.toStringResource()
-}
-
-@Composable
-private fun MediaTabs(
-    selectedTab: MyRatingState.MediaTab?,
-    onTabClick: (MyRatingState.MediaTab?) -> Unit,
-    genresScrollState: LazyListState,
-    modifier: Modifier = Modifier
-) {
-    LazyRow(
-        modifier = modifier.wrapContentSize(),
-        state = genresScrollState,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
-    ) {
-        item {
-            Chip(
-                title = stringResource(R.string.all),
-                isSelected = selectedTab == null,
-                onClick = { onTabClick(null) }
-            )
-        }
-        item {
-            Chip(
-                title = stringResource(com.baghdad.ui.R.string.tab_movies),
-                isSelected = selectedTab == MyRatingState.MediaTab.MOVIE,
-                onClick = { onTabClick(MyRatingState.MediaTab.MOVIE) }
-            )
-        }
-        item {
-            Chip(
-                title = stringResource(com.baghdad.ui.R.string.tab_tv_shows),
-                isSelected = selectedTab == MyRatingState.MediaTab.TV_SHOW,
-                onClick = { onTabClick(MyRatingState.MediaTab.TV_SHOW) }
-            )
-        }
-    }
 }
