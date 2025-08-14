@@ -2,12 +2,6 @@ plugins {
     `kotlin-dsl`
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
-    }
-}
-
 dependencies {
     compileOnly("com.android.tools.build:gradle:8.1.4")
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
