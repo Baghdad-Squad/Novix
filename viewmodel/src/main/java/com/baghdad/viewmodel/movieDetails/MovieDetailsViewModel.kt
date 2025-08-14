@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.movieDetails
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
@@ -57,18 +56,12 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun loadInitData() {
-        try {
             checkIfUserIsLoggedIn()
             getMovieGallery()
             getMovieDetails()
             getCastMembers()
             getMoreLikeThisShow()
             isUserLoggedIn()
-        } catch (e: Throwable) {
-            Log.e("CRASHHHHH", "CRASHHHHHHHHHHHHHHH HIIIIIII ${e.message}")
-        }
-
-
     }
 
     override fun onSaveCurrentMovieClick() {
