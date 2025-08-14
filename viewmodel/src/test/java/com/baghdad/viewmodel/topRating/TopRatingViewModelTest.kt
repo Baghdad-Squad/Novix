@@ -25,15 +25,15 @@ import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TopRatingViewModelTest {
-    private var getMovieTopRatingUseCase: GetMovieTopRatingUseCase = mockk()
-    private var getTvShowTopRatingUseCase: GetTvShowTopRatingUseCase = mockk()
-    private var getMovieGenresUseCase: GetMovieGenresUseCase = mockk()
-    private var getTvShowGenresUseCase: GetTvShowGenresUseCase = mockk()
-    private var isUserLoggedInUseCase: IsUserLoggedInUseCase = mockk()
-    private var getSavedListsUseCase: GetSavedListsUseCase = mockk()
-    private var addMovieToSavedListUseCase: AddMovieToSavedListUseCase = mockk()
-    private var createSavedListUseCase: CreateSavedListUseCase = mockk()
-    private var removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase = mockk()
+    private val getMovieTopRatingUseCase = mockk<GetMovieTopRatingUseCase>()
+    private val getTvShowTopRatingUseCase = mockk<GetTvShowTopRatingUseCase>()
+    private val getMovieGenresUseCase = mockk<GetMovieGenresUseCase>()
+    private val getTvShowGenresUseCase = mockk<GetTvShowGenresUseCase>()
+    private val isUserLoggedInUseCase = mockk<IsUserLoggedInUseCase>()
+    private val getSavedListsUseCase = mockk<GetSavedListsUseCase>()
+    private val addMovieToSavedListUseCase = mockk<AddMovieToSavedListUseCase>()
+    private val createSavedListUseCase = mockk<CreateSavedListUseCase>()
+    private val removeMovieFromSavedListUseCase = mockk<RemoveMovieFromSavedListUseCase>()
 
     private lateinit var viewModel: TopRatingViewModel
     private val testDispatcher = StandardTestDispatcher()
