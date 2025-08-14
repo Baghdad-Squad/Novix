@@ -59,10 +59,12 @@ dependencies {
     implementation("androidx.paging:paging-runtime:3.3.6")
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
+    testImplementation(libs.turbine)
+
 
 }
 
-kapt{
+kapt {
     correctErrorTypes = true
 }
 
