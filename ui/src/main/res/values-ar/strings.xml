@@ -43,7 +43,7 @@
     <string name="episode">حلقة %1$s</string>
     <string name="view_reviews">عرض المراجعات</string>
     <string name="add_to_list">إضافة إلى القائمة</string>
-    <string name="please_login_to_save_to_list">الرجاء تسجيل الدخول لحفظ القائمه</string>
+    <string name="please_login_to_save_to_list">الرجاء تسجيل الدخول لحفظ القائمة</string>
     <string name="bottom_sheet_content_description">وصف محتوى الصفحة السفلية</string>
     <string name="login">تسجيل الدخول</string>
     <string name="rate_it">قيمه</string>
@@ -54,7 +54,7 @@
     <string name="save">حفظ</string>
     <string name="create_new_list">إنشاء قائمة جديدة</string>
     <string name="select_how_much_you_like_it">حدد مدى إعجابك به</string>
-    <string name="save_to_list">حفظ الى القائمه</string>
+    <string name="save_to_list">حفظ إلى القائمة</string>
     <string name="guests_of_honor">ضيوف الشرف</string>
     <string name="season_template">موسم %1$s</string>
     <string name="login_icon">ايقونة تسجيل الدخول</string>
