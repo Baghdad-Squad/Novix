@@ -81,7 +81,7 @@ fun LoginScreen(
 }
 
 @Composable
-fun LoginScreenContent(
+private fun LoginScreenContent(
     state: LoginUiState,
     snackBarState: SnackBarState,
     listener: LoginInteractionListener,
@@ -95,6 +95,7 @@ fun LoginScreenContent(
             .fillMaxWidth()
             .statusBarsPadding()
             .navigationBarsPadding(),
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarState.message.toStringResource()),
@@ -104,9 +105,11 @@ fun LoginScreenContent(
             )
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+
         topBar = {
             TopBar(listener)
         },
+
         backgroundBlur = { BackgroundBlur() }
     ) {
 
@@ -136,7 +139,7 @@ private fun TopBar(listener: LoginInteractionListener) {
     ) {
         IconButton(
             icon = painterResource(R.drawable.ic_go_back),
-            onClick = listener::onNavigateBackClicked,
+            onClick = listener::onBackClick,
             modifier = Modifier.padding(end = 12.dp, top = 8.dp, bottom = 8.dp)
         )
         Text(
@@ -189,7 +192,7 @@ private fun LoginForm(
         trailingVisibility = true,
         trailingIcon = if (!state.isPasswordVisible) painterResource(R.drawable.ic_closed_eye)
         else painterResource(R.drawable.ic_opened_eye),
-        onClickTrailingIcon = listener::togglePasswordVisibility
+        onClickTrailingIcon = listener::onTogglePasswordChange
     )
 
     PrimaryButton(
@@ -201,7 +204,7 @@ private fun LoginForm(
             .padding(top = 32.dp, bottom = 12.dp)
             .clip(RoundedCornerShape(12.dp))
     ) {
-        listener.onLoginClicked()
+        listener.onLoginClick()
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -210,7 +213,7 @@ private fun LoginForm(
             textAlign = TextAlign.Center,
             label = stringResource(com.baghdad.ui.R.string.forgot_password),
             modifier = Modifier.align(Alignment.Center),
-            onClick = listener::onForgotPasswordClicked
+            onClick = listener::onForgotPasswordClick
         )
     }
 }
@@ -232,7 +235,7 @@ private fun BottomCreateAccount(listener: LoginInteractionListener) {
         )
         TextButton(
             label = stringResource(com.baghdad.ui.R.string.create_account),
-            onClick = listener::onRegisterClicked,
+            onClick = listener::onRegisterClick,
             noRipple = true
         )
     }
@@ -257,11 +260,11 @@ private fun handleLoginEffect(
 
 private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent? =
     when (this) {
-        LoginUiEffect.NavigateBack -> AuthenticationNavEvent.NavigateBack
-    LoginUiEffect.NavigateToForgotPassword -> AuthenticationNavEvent.NavigateToForgotPassword
-    LoginUiEffect.NavigateToRegister -> AuthenticationNavEvent.NavigateToRegister
+        is LoginUiEffect.NavigateBack -> AuthenticationNavEvent.NavigateBack
+        is LoginUiEffect.NavigateToForgotPassword -> AuthenticationNavEvent.NavigateToForgotPassword
+        is LoginUiEffect.NavigateToRegister -> AuthenticationNavEvent.NavigateToRegister
         else -> null
-}
+    }
 
 @Preview
 @Composable
