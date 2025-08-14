@@ -186,7 +186,6 @@ private fun ProfileScreenContent(
             isVisible = state.logoutBottomSheetState.isVisible,
             onBottomSheetCloseClick = listener::onLogoutDialogDismissed,
             onLogOutClick = listener::onLogOutConfirmed,
-            modifier = Modifier.padding(horizontal = 16.dp),
         )
     }
 }
