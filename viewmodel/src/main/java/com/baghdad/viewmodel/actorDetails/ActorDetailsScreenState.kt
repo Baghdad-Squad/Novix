@@ -9,6 +9,7 @@ data class ActorDetailsScreenState(
     val actorInfo: ActorInfoUiState = ActorInfoUiState(),
     val isGalleryLoading: Boolean = false,
     val gallery: List<String> = emptyList(),
+    val selectedImage: String = "",
     val isTopMoviePicksLoading: Boolean = false,
     val topMoviesPicks: List<MovieUiState> = emptyList(),
     val isTopTvShowPicksLoading: Boolean = false,

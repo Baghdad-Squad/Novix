@@ -18,4 +18,6 @@ interface ActorDetailsInteractionListener {
     fun onCreatedListNameChanged(name: String)
     fun onCreateListBottomSheetDismiss()
     fun onCreateListBottomSheetAddClick()
+    fun onGalleryImageClick(imageUrl: String)
+    fun onImageDialogDismiss()
 }

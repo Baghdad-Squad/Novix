@@ -42,6 +42,7 @@ import com.baghdad.ui.feature.actorDetails.component.ActorBiographySection
 import com.baghdad.ui.feature.actorDetails.component.ActorHeaderWithDetailsCard
 import com.baghdad.ui.feature.actorDetails.component.GallerySection
 import com.baghdad.ui.feature.actorDetails.component.TopMediaPicksSection
+import com.baghdad.ui.feature.component.ActorImageDialog
 import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
 import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
@@ -206,8 +207,15 @@ fun ActorDetailsContent(
                         imageUrls = uiState.gallery,
                         isShowAllVisible = uiState.gallery.size >= 10,
                         onClickShowAll = { listener.onViewAllGalleryClick() },
+                        onImageClick = { listener.onGalleryImageClick(it) },
                         modifier = Modifier.padding(bottom = 16.dp),
                     )
+                }
+
+                if (uiState.selectedImage.isNotBlank()) {
+                    ActorImageDialog(
+                        selectedImage = uiState.selectedImage,
+                        onDismiss = { listener.onImageDialogDismiss() })
                 }
 
                 if (uiState.topMoviesPicks.isNotEmpty()) {
