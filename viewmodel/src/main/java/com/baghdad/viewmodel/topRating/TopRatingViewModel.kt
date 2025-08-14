@@ -4,13 +4,13 @@ import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
+import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
-import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
-import com.baghdad.domain.usecase.tvShow.GetTvShowTopRatingUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowGenresUseCase
+import com.baghdad.domain.usecase.tvShow.GetTvShowTopRatingUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
@@ -165,7 +165,7 @@ class TopRatingViewModel @Inject constructor(
         }
     }
 
-    override fun onSaveMovieClick() {
+    override fun onSaveItemToListClicked() {
         tryToExecute(
             callee = {
                 addMovieToSavedListUseCase(
@@ -175,9 +175,21 @@ class TopRatingViewModel @Inject constructor(
                     movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
             },
+            onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
+        )
+    }
+
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
         )
     }
 
