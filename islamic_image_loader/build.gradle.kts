@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.baghdad.build_logic.common")
+    alias(libs.plugins.common)
 }
 
 android {

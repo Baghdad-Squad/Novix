@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    id("com.baghdad.build_logic.common")
+    alias(libs.plugins.common)
     jacoco
     kotlin("kapt")
 }

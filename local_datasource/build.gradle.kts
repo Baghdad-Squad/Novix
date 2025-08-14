@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     id("com.google.protobuf") version "0.9.4"
     alias(libs.plugins.kotlin.kapt)
-    id("com.baghdad.build_logic.common")
+    alias(libs.plugins.common)
     jacoco
 }
 

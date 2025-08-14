@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     jacoco
     alias(libs.plugins.kotlin.kapt)
-    id("com.baghdad.build_logic.common")
+    alias(libs.plugins.common)
 }
 
 android {

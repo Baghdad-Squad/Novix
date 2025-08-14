@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.kapt)
-    id("com.baghdad.build_logic.common")
+    alias(libs.plugins.common)
 }
 
 android {
