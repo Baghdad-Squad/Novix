@@ -31,10 +31,8 @@ import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
-import com.baghdad.ui.feature.myRating.component.EmptyRatingScreen
-import com.baghdad.ui.feature.myRating.component.MyRatingVerticalGrid
 import com.baghdad.ui.feature.component.EmptyListScreen
-import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
+import com.baghdad.ui.feature.myRating.component.MyRatingVerticalGrid
 import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage

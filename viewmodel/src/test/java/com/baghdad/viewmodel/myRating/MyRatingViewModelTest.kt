@@ -58,9 +58,8 @@ class MyRatingViewModelTest {
 
 
     @Test
-    fun `clicking movie tab should fetch movies when clicked`() = runTest {
+    fun `onMediaTabClick should fetch movies when clicked on movie tab`() = runTest {
         myRatingViewModel = createViewModel()
-
         coEvery { getUserRatedMoviesUseCase(1, 20) } returns mockPagedResult()
 
 
@@ -72,7 +71,7 @@ class MyRatingViewModelTest {
     }
 
     @Test
-    fun `clicking tv show tab should fetch tv shows when clicked`() = runTest {
+    fun `onMediaTabClick should fetch tv shows when clicked on tv show tab`() = runTest {
         myRatingViewModel = createViewModel()
         advanceUntilIdle()
         coEvery { getUserRatedTvShowsUseCase.invoke(any(), any()) } returns mockPagedResult()
@@ -100,7 +99,6 @@ class MyRatingViewModelTest {
         myRatingViewModel.onMediaClick(20L, MyRatingState.ContentType.TV_SHOW)
 
         val effect = myRatingViewModel.uiEffect.first()
-
         assertThat(effect).isEqualTo(MyRatingEffect.NavigateToTvShowDetails(20L))
     }
 
@@ -111,7 +109,6 @@ class MyRatingViewModelTest {
         myRatingViewModel.onBackClick()
 
         val effect = myRatingViewModel.uiEffect.first()
-
         assertThat(effect).isEqualTo(MyRatingEffect.NavigateBack)
     }
 
