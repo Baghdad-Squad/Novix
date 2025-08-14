@@ -37,31 +37,35 @@ class ContinueWatchingViewModelTest {
     val createSavedListUseCase: CreateSavedListUseCase = mockk()
     val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase = mockk()
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var viewModel: ContinueWatchingViewModel
+
+
+    private fun createViewModel(): ContinueWatchingViewModel {
+        return ContinueWatchingViewModel(
+            getContinueWatchingTvShowGenres = getUserWatchedMediaTvShowGenres,
+            getContinueWatchingMovieGenres = getUserWatchedMediaMovieGenres,
+            getUserWatchedMediaMoviesUseCase = getUserWatchedMediaMoviesUseCase,
+            getUserWatchedMediaTvShowsUseCase = getUserWatchedMediaTvShowsUseCase,
+            getUserWatchedMediaMoviesByGenreUseCase = getUserWatchedMediaMoviesByGenreUseCase,
+            getUserWatchedMediaTvShowsByGenreUseCase = getUserWatchedMediaTvShowsByGenreUseCase,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
+            getSavedListsUseCase = getSavedListsUseCase,
+            addMovieToSavedListUseCase = addMovieToSavedListUseCase,
+            createSavedListUseCase = createSavedListUseCase,
+            removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
+            defaultDispatcher = testDispatcher
+        )
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = ContinueWatchingViewModel(
-            getUserWatchedMediaTvShowGenres,
-            getUserWatchedMediaMovieGenres,
-            getUserWatchedMediaMoviesUseCase,
-            getUserWatchedMediaTvShowsUseCase,
-            getUserWatchedMediaMoviesByGenreUseCase,
-            getUserWatchedMediaTvShowsByGenreUseCase,
-            isUserLoggedInUseCase,
-            getSavedListsUseCase,
-            addMovieToSavedListUseCase,
-            createSavedListUseCase,
-            removeMovieFromSavedListUseCase,
-            testDispatcher
-        )
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `should navigate back when onBackClick is called`() = runTest {
+        val viewModel = createViewModel()
         viewModel.uiEffect.test {
             viewModel.onBackClick()
             assertThat(awaitItem()).isEqualTo(ContinueWatchingScreenEffect.NavigateBack)
@@ -72,6 +76,7 @@ class ContinueWatchingViewModelTest {
     @Test
     fun `should navigate to movie details when onMediaClick  is called and content type is movie`() =
         runTest {
+            val viewModel = createViewModel()
             val movieId = 1L
             val contentType = ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE
             viewModel.uiEffect.test {
@@ -86,6 +91,7 @@ class ContinueWatchingViewModelTest {
     @Test
     fun `should navigate to tv show details when onMediaClick is called and content type is tv show`() =
         runTest {
+            val viewModel = createViewModel()
             val tvShowId = 1L
             val contentType = ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.TV_SHOW
 
@@ -100,6 +106,7 @@ class ContinueWatchingViewModelTest {
 
     @Test
     fun `should navigate to login when onLoginClicked is called`() = runTest {
+        val viewModel = createViewModel()
         viewModel.uiEffect.test {
             viewModel.onLoginClicked()
             assertThat(awaitItem()).isEqualTo(ContinueWatchingScreenEffect.NavigateToLogin)

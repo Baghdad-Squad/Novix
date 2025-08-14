@@ -46,6 +46,10 @@ class ContinueWatchingViewModel @Inject constructor(
 ) : BaseViewModel<ContinueWatchingState, ContinueWatchingScreenEffect>(ContinueWatchingState()),
     ContinueWatchingInteractionListener {
     init {
+        loadData()
+    }
+
+    private fun loadData() {
         checkIfUserIsLoggedIn()
         getGenres()
         getMedia(null)
