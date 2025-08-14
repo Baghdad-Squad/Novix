@@ -32,7 +32,7 @@ fun BaseBottomSheet(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = false,
+        skipPartiallyExpanded = true,
         confirmValueChange = { sheetValue ->
             true
         }
@@ -44,7 +44,7 @@ fun BaseBottomSheet(
         if (isVisible) {
             showBottomSheet = true
             delay(50)
-            sheetState.partialExpand()
+            sheetState.show()
         } else {
             sheetState.hide()
         }
