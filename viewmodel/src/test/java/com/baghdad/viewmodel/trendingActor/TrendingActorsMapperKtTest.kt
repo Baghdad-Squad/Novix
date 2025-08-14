@@ -1,4 +1,4 @@
-package com.baghdad.viewmodel.TrendingActor
+package com.baghdad.viewmodel.trendingActor
 
 import com.baghdad.entity.person.Actor
 import com.baghdad.viewmodel.trendingActors.toTrendingActorsUi
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 class TrendingActorsMapperKtTest {
     @Test
     fun `should map Actor to TrendingActorUiState`() {
-        // Given
         val trendingActor = Actor(
             id = 22,
             name = "Mahmoud Tarek",
@@ -22,10 +21,8 @@ class TrendingActorsMapperKtTest {
             department = "Test"
         )
 
-        // When
         val result = trendingActor.toTrendingActorsUi()
 
-        // Then
         Assertions.assertEquals(trendingActor.id, result.id)
         Assertions.assertEquals(trendingActor.name, result.name)
         Assertions.assertEquals(trendingActor.profilePictureURL, result.profilePictureURL)
