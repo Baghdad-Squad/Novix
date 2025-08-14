@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.savedListDetails.component
+package com.baghdad.ui.feature.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
