@@ -2,11 +2,11 @@ package com.baghdad.localDatasource
 
 import com.baghdad.localDatasource.errorHandler.executeFlowWithErrorHandling
 import com.baghdad.localDatasource.errorHandler.executeWithErrorHandling
+import com.baghdad.localDatasource.mapper.toDto
+import com.baghdad.localDatasource.mapper.toDtos
+import com.baghdad.localDatasource.mapper.toLocalDto
 import com.baghdad.localDatasource.roomDB.dao.UserWatchedMediaDao
 import com.baghdad.localDatasource.roomDB.entity.UserWatchedMedia
-import com.baghdad.localDatasource.roomDB.entity.toDto
-import com.baghdad.localDatasource.roomDB.entity.toDtos
-import com.baghdad.localDatasource.roomDB.entity.toLocalDto
 import com.baghdad.localDatasource.util.calculatePageOffset
 import com.baghdad.repository.datasource.local.UserWatchedMediaDataSource
 import com.baghdad.repository.logger.Logger
@@ -21,9 +21,9 @@ class UserWatchedMediaDataSourceImpl @Inject constructor(
     private val userWatchedMediaDao: UserWatchedMediaDao,
     private val logger: Logger
 ) : UserWatchedMediaDataSource {
-    override suspend fun addUserWatchedMedia(continueWatching: UserWatchedMediaDto) {
+    override suspend fun addUserWatchedMedia(userWatchedMediaDto: UserWatchedMediaDto) {
         executeWithErrorHandling(logger = logger) {
-            userWatchedMediaDao.upsertUserWatchedMedia(continueWatching.toLocalDto())
+            userWatchedMediaDao.upsertUserWatchedMedia(userWatchedMediaDto.toLocalDto())
         }
     }
 

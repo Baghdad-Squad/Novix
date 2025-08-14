@@ -4,7 +4,7 @@ import com.baghdad.repository.model.UserWatchedMediaDto
 import kotlinx.coroutines.flow.Flow
 
 interface UserWatchedMediaDataSource {
-    suspend fun addUserWatchedMedia(continueWatching: UserWatchedMediaDto)
+    suspend fun addUserWatchedMedia(userWatchedMediaDto: UserWatchedMediaDto)
 
     suspend fun getPagedUserWatchedMediaMovies(
         userId: Long,
