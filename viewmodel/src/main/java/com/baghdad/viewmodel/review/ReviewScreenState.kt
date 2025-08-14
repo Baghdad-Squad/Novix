@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.review
 
+import androidx.annotation.Keep
 import com.baghdad.viewmodel.base.BaseUiState
 
 data class ReviewScreenState(
@@ -17,4 +18,10 @@ data class ReviewScreenState(
         val rating: Double = 0.0,
         val isExpanded: Boolean = false
     )
+}
+
+@Keep
+enum class ContentType {
+    MOVIE,
+    SERIES
 }

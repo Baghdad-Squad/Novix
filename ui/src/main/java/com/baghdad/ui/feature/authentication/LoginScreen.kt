@@ -152,7 +152,7 @@ private fun LoginForm(
     state: LoginUiState, listener: LoginInteractionListener
 ) {
     Icon(
-        imageVector = ImageVector.vectorResource(R.drawable.app_logo_light),
+        imageVector = ImageVector.vectorResource(R.drawable.app_logo),
         contentDescription = stringResource(com.baghdad.ui.R.string.login_icon),
         tint = Theme.color.primary,
         modifier = Modifier
