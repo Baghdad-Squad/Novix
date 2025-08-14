@@ -11,12 +11,16 @@ class TrendingMovieMapperTest {
 
     @Test
     fun `should map savedMovie fields to MovieUiState when movie is saved`() {
+        val expectedUiState = TrendingMoviesScreenState.TrendingMovieUiState(
+            id = savedMovie.movie.id,
+            posterPictureURL = savedMovie.movie.posterImageURL,
+            isSaved = savedMovie.isSaved,
+            savedListId = savedMovie.listId ?: -1L
+        )
+
         val result = savedMovie.toMovieUiState()
 
-        // Then
-        assertThat(result.id).isEqualTo(savedMovie.movie.id)
-        assertThat(result.posterPictureURL).isEqualTo(savedMovie.movie.posterImageURL)
-        assertThat(result.isSaved).isTrue()
+        assertThat(result).isEqualTo(expectedUiState)
     }
 
     @Test
@@ -30,11 +34,15 @@ class TrendingMovieMapperTest {
 
     @Test
     fun `should map genre to UI model when all data is valid`() {
+        val genre = Genre(id = 1L, name = "Action")
+        val expectedGenreUiState = TrendingMoviesScreenState.TrendingCategoryUiState(
+            id = genre.id,
+            name = genre.name
+        )
+
         val result = genre.toGenreUiState()
 
-        // Then
-        assertThat(result.id).isEqualTo(genre.id)
-        assertThat(result.name).isEqualTo(genre.name)
+        assertThat(result).isEqualTo(expectedGenreUiState)
     }
 
     companion object {
@@ -54,9 +62,7 @@ class TrendingMovieMapperTest {
         val savedMovie = SavedMovie(
             movie = movie,
             isSaved = true,
-            listId = 22
+            listId = -1
         )
-
-        val genre = Genre(id = 1L, name = "Action")
     }
 }
