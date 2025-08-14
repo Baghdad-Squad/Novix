@@ -3,12 +3,10 @@ package com.baghdad.viewmodel.onBoarding
 import app.cash.turbine.test
 import com.baghdad.domain.usecase.appConfigurations.SetFirstTimeLaunchAppUseCase
 import com.google.common.truth.Truth.assertThat
-import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -29,7 +27,6 @@ class OnBoardingViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        coEvery { setFirstTimeLaunchAppUseCase(any()) } returns Unit
     }
     
     @AfterEach
@@ -83,30 +80,26 @@ class OnBoardingViewModelTest {
     @Test
     fun `onNextButtonClick should navigate to welcome screen when on last page`() = runTest {
         val pageSize = 3
+
+        for (i in 1..pageSize) {
+            viewModel.onNextButtonClick(pageSize)
+        }
+
         viewModel.uiEffect.test {
-            for (i in 1..pageSize) {
-                viewModel.onNextButtonClick(pageSize)
-                advanceUntilIdle()
-            }
             val effect = awaitItem()
-            assertThat(effect).isInstanceOf(OnBoardingEffect.NavigateToWelcomeToNovix::class.java)
+            assertThat(effect).isEqualTo(OnBoardingEffect.NavigateToWelcomeToNovix)
         }
     }
 
     @Test
     fun `onSkipButtonClick should navigate to welcome screen`() = runTest {
-        var receivedEffect: OnBoardingEffect? = null
-        val job = launch {
-            viewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
-        }
-
         viewModel.onSkipButtonClick()
-        advanceUntilIdle()
 
-        assertThat(receivedEffect is OnBoardingEffect.NavigateToWelcomeToNovix).isTrue()
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(OnBoardingEffect.NavigateToWelcomeToNovix)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
 }
