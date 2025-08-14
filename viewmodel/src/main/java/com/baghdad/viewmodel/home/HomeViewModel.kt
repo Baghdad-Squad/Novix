@@ -417,12 +417,25 @@ class HomeViewModel
                         movieId = currentState.addToListBottomSheetState.selectedItemId,
                     )
                 },
+                onError = { onAddItemToListError() },
                 onSuccess = { onAddItemToListSuccess() },
                 dispatcher = defaultDispatcher,
                 onStart = ::onAddItemToListStart,
                 onFinally = ::onAddItemToListFinished,
             )
         }
+
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
+        )
+    }
+
 
         private fun onAddItemToListSuccess() {
             loadData()

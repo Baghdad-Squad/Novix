@@ -143,17 +143,18 @@ private fun HomeContent(
                 )
             }
 
-            if (state.isUpcomingMoviesLoading) {
-                upcomingSectionLoading(upcomingItems = state.upcomingItems)
+            if (state.isUpcomingMoviesLoading || state.isUpcomingGenresLoading) {
+                upcomingSectionLoading(
+                    modifier = Modifier.padding(top = 24.dp),
+                    upcomingItems = state.upcomingItems,
+                )
             } else {
                 upcomingSection(
                     modifier = Modifier.padding(top = 24.dp),
                     selectedGenreId = state.selectedUpcomingGenreId,
                     genres = state.upcomingGenres,
-                    isGenresLoading = state.isUpcomingGenresLoading,
                     onGenreSelected = interactionListener::onUpcomingGenreSelected,
                     upcomingItems = state.upcomingItems,
-                    isUpcomingItemsLoading = state.isUpcomingMoviesLoading,
                     onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
                     onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
                 )

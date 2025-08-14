@@ -31,8 +31,11 @@ fun BaseBottomSheet(
     onDismiss: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = false,
+        confirmValueChange = { sheetValue ->
+            true
+        }
     )
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -41,14 +44,14 @@ fun BaseBottomSheet(
         if (isVisible) {
             showBottomSheet = true
             delay(50)
-            bottomSheetState.show()
+            sheetState.partialExpand()
         } else {
-            bottomSheetState.hide()
+            sheetState.hide()
         }
     }
 
-    LaunchedEffect(bottomSheetState.isVisible) {
-        if (!bottomSheetState.isVisible && !isVisible) {
+    LaunchedEffect(sheetState.isVisible) {
+        if (!sheetState.isVisible && !isVisible) {
             showBottomSheet = false
         }
     }
@@ -56,7 +59,7 @@ fun BaseBottomSheet(
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = onDismiss,
-            sheetState = bottomSheetState,
+            sheetState = sheetState,
             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
             containerColor = Theme.color.surface,
             dragHandle = {
@@ -71,7 +74,6 @@ fun BaseBottomSheet(
         }
     }
 }
-
 
 @Composable
 private fun DragHandle(){

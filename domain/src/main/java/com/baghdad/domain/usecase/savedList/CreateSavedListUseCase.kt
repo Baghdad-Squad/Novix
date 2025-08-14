@@ -7,6 +7,6 @@ class CreateSavedListUseCase @Inject constructor(
     private val savedListRepository: SavedListRepository
 ) {
     suspend operator fun invoke(title: String) {
-        savedListRepository.createSavedList(title = title)
+        savedListRepository.createSavedList(title = title.trim())
     }
 }
