@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.topRating
 
+import app.cash.turbine.test
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
@@ -15,7 +16,6 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -56,113 +56,69 @@ class TopRatingViewModelTest {
     }
 
     @Test
-    fun `onLoginClick should navigate to login screen when it is clicked`() =
-        runTest {
-            var receivedEffect: TopRatingEffect? = null
-            val job = launch {
-                viewModel.uiEffect.collect { effect ->
-                    receivedEffect = effect
-                }
-            }
-
+    fun `onLoginClick should navigate to login screen when it is clicked`() = runTest {
             viewModel.onLoginClick()
-            advanceUntilIdle()
 
-
-            assertThat(
-                receivedEffect is TopRatingEffect.NavigateToLogin,
-            ).isTrue()
-            job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect is TopRatingEffect.NavigateToLogin).isTrue()
+        }
         }
 
     @Test
     fun `onMovieDetailsClick should navigate to movie details screen when it is clicked`() =
         runTest {
-
-            var receivedEffect: TopRatingEffect? = null
             val movieId = 123L
-            val job = launch {
-                viewModel.uiEffect.collect { effect ->
-                    receivedEffect = effect
-                }
-            }
 
             viewModel.onMovieDetailsClick(movieId)
 
-            advanceUntilIdle()
-
-            assertThat(
-                receivedEffect is TopRatingEffect.NavigateToMovieDetails,
-            ).isTrue()
-            job.cancel()
+            viewModel.uiEffect.test {
+                val effect = awaitItem()
+                assertThat(effect is TopRatingEffect.NavigateToMovieDetails).isTrue()
+            }
         }
 
     @Test
     fun `onTvShowDetailsClick should navigate to tv show details screen when it is clicked`() =
         runTest {
-
-            var receivedEffect: TopRatingEffect? = null
             val tvShowId = 123L
-            val job = launch {
-                viewModel.uiEffect.collect { effect ->
-                    receivedEffect = effect
-                }
-            }
 
             viewModel.onTvShowDetailsClick(tvShowId)
-            advanceUntilIdle()
 
-            assertThat(
-                receivedEffect is TopRatingEffect.NavigateToTvShowDetails,
-            ).isTrue()
-            job.cancel()
+            viewModel.uiEffect.test {
+                val effect = awaitItem()
+                assertThat(effect is TopRatingEffect.NavigateToTvShowDetails).isTrue()
+            }
         }
 
     @Test
     fun `onBackClick should navigate back when it is clicked`() = runTest {
-
-        var receivedEffect: TopRatingEffect? = null
-        val job = launch() {
-            viewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
-        }
-
-
         viewModel.onBackClick()
-        testDispatcher.scheduler.advanceUntilIdle()
 
-
-        assertThat(
-            receivedEffect is TopRatingEffect.NavigateBack
-        ).isTrue()
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect is TopRatingEffect.NavigateBack).isTrue()
+        }
     }
 
     @Test
     fun `onGenreClick should return updated genre tab when selected tab is movies`() = runTest {
-
         val genreId = 1L
         viewModel.onSelectedTab(TopRatingTab.MOVIES)
 
         viewModel.onGenreClick(genreId)
 
-        assertThat(
-            viewModel.uiState.value.selectedMovieGenreId == genreId
-        ).isTrue()
+        assertThat(viewModel.uiState.value.selectedMovieGenreId == genreId).isTrue()
     }
 
     @Test
     fun `onGenreClick should return updated genre tab when selected tab is tv shows`() = runTest {
-
         val genreId = 1L
         viewModel.onSelectedTab(TopRatingTab.TV_SHOWS)
 
         viewModel.onGenreClick(genreId)
 
-        assertThat(
-            viewModel.uiState.value.selectedTvShowGenreId == genreId
-        ).isTrue()
+        assertThat(viewModel.uiState.value.selectedTvShowGenreId == genreId).isTrue()
     }
 
     @Test
@@ -176,25 +132,20 @@ class TopRatingViewModelTest {
             viewModel.onSelectedTab(selectedTab)
             advanceUntilIdle()
 
-            assertThat(
-                viewModel.uiState.value.selectedTab == selectedTab
-            ).isTrue()
+            assertThat(viewModel.uiState.value.selectedTab == selectedTab).isTrue()
             coVerify { getMovieGenresUseCase.getMovieGenres() }
         }
 
     @Test
     fun `onSelectedTab should return genres and fetch tv shows when selected tab is tv shows`() =
         runTest {
-
             val selectedTab = TopRatingTab.TV_SHOWS
             coEvery { getTvShowGenresUseCase.getTvShowGenres() } returns emptyList()
 
             viewModel.onSelectedTab(selectedTab)
             advanceUntilIdle()
 
-            assertThat(
-                viewModel.uiState.value.selectedTab == selectedTab
-            ).isTrue()
+            assertThat(viewModel.uiState.value.selectedTab == selectedTab).isTrue()
             coVerify { getTvShowGenresUseCase.getTvShowGenres() }
         }
 
@@ -208,9 +159,7 @@ class TopRatingViewModelTest {
             viewModel.onSnackBarActionLabelClick()
             advanceUntilIdle()
 
-            assertThat(
-                viewModel.snackBarState.value.isVisible == false
-            ).isTrue()
+            assertThat(viewModel.snackBarState.value.isVisible == false).isTrue()
             coVerify { getTvShowGenresUseCase.getTvShowGenres() }
         }
 
@@ -223,9 +172,7 @@ class TopRatingViewModelTest {
             viewModel.onSnackBarActionLabelClick()
             advanceUntilIdle()
 
-            assertThat(
-                viewModel.snackBarState.value.isVisible == false
-            ).isTrue()
+            assertThat(viewModel.snackBarState.value.isVisible == false).isTrue()
             coVerify { getMovieGenresUseCase.getMovieGenres() }
         }
 
@@ -255,9 +202,7 @@ class TopRatingViewModelTest {
         viewModel.onListSelected(selectedListId)
         advanceUntilIdle()
 
-        assertThat(
-            viewModel.uiState.value.addToListBottomSheetState.selectedListId == selectedListId
-        ).isTrue()
+        assertThat(viewModel.uiState.value.addToListBottomSheetState.selectedListId == selectedListId).isTrue()
     }
 
     @Test
@@ -268,9 +213,7 @@ class TopRatingViewModelTest {
         viewModel.onCreatedListNameChanged(listName)
         advanceUntilIdle()
 
-        assertThat(
-            viewModel.uiState.value.addListBottomSheetState.listName == listName
-        ).isTrue()
+        assertThat(viewModel.uiState.value.addListBottomSheetState.listName == listName).isTrue()
     }
 
     @Test
@@ -327,20 +270,16 @@ class TopRatingViewModelTest {
 
     @Test
     fun `onCreateListBottomSheetAddClick should create new list when it is clicked`() = runTest {
-        //Given
         coEvery { createSavedListUseCase(any()) } returns Unit
-        val states = mutableListOf<TopRatingState>()
 
-        val job = launch {
-            viewModel.uiState.collect { states.add(it) }
-        }
         viewModel.onCreateListBottomSheetAddClick()
-        advanceUntilIdle()
 
-        assertThat(states.last().addListBottomSheetState.isVisible == false).isTrue()
-        assertThat(states.last().addToListBottomSheetState.isVisible == true).isTrue()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addListBottomSheetState.isVisible == false).isTrue()
+            assertThat(state.addToListBottomSheetState.isVisible == true).isTrue()
+        }
         coVerify { createSavedListUseCase(any()) }
-        job.cancel()
     }
 
     @Test
@@ -352,7 +291,6 @@ class TopRatingViewModelTest {
         advanceUntilIdle()
 
         coVerify { addMovieToSavedListUseCase(any(), any()) }
-
     }
 
 }
