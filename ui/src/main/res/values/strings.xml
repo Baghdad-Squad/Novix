@@ -156,4 +156,5 @@
     <string name="delete_rating_successfully">Delete rating successfully</string>
     <string name="password_should_be_more_than_3_chars">Password should be more than 3 chars</string>
     <string name="invalid_credentials">Invalid Credentials</string>
+    <string name="actor_image">Actor Image</string>
 </resources>

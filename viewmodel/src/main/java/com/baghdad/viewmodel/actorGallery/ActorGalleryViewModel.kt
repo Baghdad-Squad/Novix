@@ -65,6 +65,14 @@ class ActorGalleryViewModel @Inject constructor(
         updateState { it.copy(images = images) }
     }
 
+    override fun onGalleryImageClick(imageUrl: String) {
+        updateState { it.copy(selectedImage = imageUrl) }
+    }
+
+    override fun onImageDialogDismiss() {
+        updateState { it.copy(selectedImage = "") }
+    }
+
     private fun onStart() {
         updateState { it.copy(isLoading = true) }
     }

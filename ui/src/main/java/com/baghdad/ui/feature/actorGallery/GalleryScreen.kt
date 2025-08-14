@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.actorGallery
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.feature.component.ActorImageDialog
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
 import com.baghdad.viewmodel.actorGallery.ActorGalleryInteractionListener
@@ -126,9 +128,16 @@ fun ActorGalleryScreenContent(
                             .size(104.dp)
                             .clip(RoundedCornerShape(12))
                             .border(1.dp, Theme.color.stroke)
+                            .clickable{ listener .onGalleryImageClick(actorItem)}
                     )
                 }
             }
+            if (uiState.selectedImage.isNotBlank()) {
+                ActorImageDialog(
+                    selectedImage = uiState.selectedImage,
+                    onDismiss = { listener.onImageDialogDismiss() })
+            }
+
         }
     }
 }
