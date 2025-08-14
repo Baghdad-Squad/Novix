@@ -77,7 +77,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getUsedMovieGenres(): Flow<List<Genre>> {
-        return getUsedGenres(
+        return getUserWatchedGenres(
             localDataCall = userWatchedMediaDataSource::getUserWatchedMediaMovies,
             remoteGenreCall = { remoteGenreDataSource.getMovieGenre(Locale.getDefault().language) }
         )
@@ -85,7 +85,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getUsedTvShowGenres(): Flow<List<Genre>> {
-        return getUsedGenres(
+        return getUserWatchedGenres(
             localDataCall = userWatchedMediaDataSource::getUserWatchedMediaTvShows,
             remoteGenreCall = { remoteGenreDataSource.getTvShowGenre(Locale.getDefault().language) }
         )
@@ -110,7 +110,7 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private suspend fun getUsedGenres(
+    private suspend fun getUserWatchedGenres(
         localDataCall: suspend (userId: Long) -> Flow<List<UserWatchedMediaDto>>,
         remoteGenreCall: suspend () -> List<GenreDto>
     ): Flow<List<Genre>> {
@@ -121,16 +121,16 @@ class UserWatchedMediaRepositoryImpl @Inject constructor(
         return localDataCall(user.id)
             .mapLatest { items ->
                 val entities = items.map(mapDtoToEntityWithSavedMovies(savedMovies))
-                filterUsedGenres(entities, remoteGenres).map { it.toEntity() }
+                filterWatchedGenres(entities, remoteGenres).map { it.toEntity() }
             }
     }
 
-    private fun filterUsedGenres(
+    private fun filterWatchedGenres(
         items: List<UserWatchedMedia>,
         genres: List<GenreDto>
     ): List<GenreDto> {
-        val usedGenreIds = items.flatMap { it.genreIds }.toSet()
-        return genres.filter { it.id in usedGenreIds }
+        val watchedGenresIds = items.flatMap { it.genreIds }.toSet()
+        return genres.filter { it.id in watchedGenresIds }
     }
 
     private fun mapDtoToEntityWithSavedMovies(
