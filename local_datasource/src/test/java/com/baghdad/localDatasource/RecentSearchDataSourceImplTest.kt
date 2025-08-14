@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
-class LocalRecentSearchDataSourceImplTest {
+class RecentSearchDataSourceImplTest {
     private var recentSearchDao: RecentSearchDao = mockk()
     private var logger: Logger = mockk(relaxed = true)
-    private var localSearchDataSourceImpl: LocalRecentSearchDataSourceImpl =
-        LocalRecentSearchDataSourceImpl(recentSearchDao = recentSearchDao, logger = logger)
+    private var localSearchDataSourceImpl: RecentSearchDataSourceImpl =
+        RecentSearchDataSourceImpl(recentSearchDao = recentSearchDao, logger = logger)
 
     @Test
     fun `addRecentSearchQuery should save recent search query to database when it invoked`() =

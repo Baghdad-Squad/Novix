@@ -24,7 +24,7 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 
 @Composable
-fun LoggedOutUserScreen(
+fun GuestScreen(
     onLoginClick: () -> Unit
 ) {
     Box(
