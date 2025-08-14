@@ -466,11 +466,11 @@ class ActorDetailsViewModel @Inject constructor(
     }
 
     override fun onGalleryImageClick(imageUrl: String) {
-        updateState { it.copy(selectedImage = imageUrl) }
+        updateState { it.copy(selectedImageUrl = imageUrl) }
     }
 
     override fun onImageDialogDismiss() {
-        updateState { it.copy(selectedImage = "") }
+        updateState { it.copy(selectedImageUrl = "") }
     }
 
     private fun onCreateListSuccess() {

@@ -212,9 +212,9 @@ fun ActorDetailsContent(
                     )
                 }
 
-                if (uiState.selectedImage.isNotBlank()) {
+                if (uiState.selectedImageUrl.isNotBlank()) {
                     ActorImageDialog(
-                        selectedImage = uiState.selectedImage,
+                        selectedImage = uiState.selectedImageUrl,
                         onDismiss = { listener.onImageDialogDismiss() })
                 }
 
