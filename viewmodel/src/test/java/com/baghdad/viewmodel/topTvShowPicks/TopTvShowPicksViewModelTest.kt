@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 class TopTvShowPicksViewModelTest {
     private var getActorTvShowUseCase = mockk<GetActorTvShowUseCase>()
     private val testDispatcher = StandardTestDispatcher()
-
+    lateinit var viewModel: TopTvShowViewModel
 
     @BeforeEach
     fun setUp() {
@@ -40,7 +40,7 @@ class TopTvShowPicksViewModelTest {
     @Test
     fun `onTvShowDetailsClick should send NavigateToTvShowDetails effect with correct tvShowId`() =
         runTest {
-            val viewModel = createViewModel()
+            viewModel = createViewModel()
 
             viewModel.onTvShowDetailsClick(TV_SHOW_ID)
 
@@ -53,7 +53,7 @@ class TopTvShowPicksViewModelTest {
 
     @Test
     fun `onBackClick should Navigate Back when clicked `() = runTest {
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onBackClick()
 
@@ -66,7 +66,7 @@ class TopTvShowPicksViewModelTest {
     @Test
     fun `should show no internet snackBar when NoInternetException is thrown`() = runTest {
         coEvery { getActorTvShowUseCase(ACTOR_ID) } throws NoInternetException()
-        val viewModel = createViewModel()
+        viewModel = createViewModel()
 
         viewModel.onSnackBarActionLabelClick()
         advanceUntilIdle()
