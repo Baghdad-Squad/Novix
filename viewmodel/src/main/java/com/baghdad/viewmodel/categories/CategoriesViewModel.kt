@@ -52,7 +52,7 @@ class CategoriesViewModel @Inject constructor(
 
     private fun onGetMovieGenresSuccess(movieGenre: List<Genre>) {
         val movieIds = MovieCategory.entries.map { it.id }.toSet()
-        val filteredAndMappedGenres = filterAndMapGenres(movieGenre, movieIds)
+        val filteredAndMappedGenres = mapSupportedGenres(movieGenre, movieIds)
         updateState { genre ->
             genre.copy(movieGenres = filteredAndMappedGenres)
         }
@@ -60,16 +60,17 @@ class CategoriesViewModel @Inject constructor(
 
     private fun onGetTvShowGenresSuccess(tvShowGenre: List<Genre>) {
         val tvShowIds = TvShowCategory.entries.map { it.id }.toSet()
-        val filteredAndMappedGenres = filterAndMapGenres(tvShowGenre, tvShowIds)
+        val filteredAndMappedGenres = mapSupportedGenres(tvShowGenre, tvShowIds)
         updateState { genre ->
             genre.copy(tvShowGenres = filteredAndMappedGenres)
         }
     }
 
-    private fun filterAndMapGenres(
-        genres: List<Genre>, allowedIds: Set<Long>
+    private fun mapSupportedGenres(
+        genres: List<Genre>,
+        availableCategoryIds: Set<Long>
     ): List<CategoriesState.GenreUiState> {
-        return genres.filter { it.id in allowedIds }.map { it.toGenreUiState() }
+        return genres.filter { it.id in availableCategoryIds }.map { it.toGenreUiState() }
     }
 
 
