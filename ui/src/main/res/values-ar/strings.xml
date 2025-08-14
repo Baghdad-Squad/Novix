@@ -165,5 +165,6 @@
     <string name="delete_rating_successfully">تم حذف التقييم بنجاح</string>
     <string name="password_should_be_more_than_3_chars">كلمة السر يجب ان تكون اكثر من 3 حروف</string>
     <string name="invalid_credentials">البيانات غير صحيحة</string>
+    <string name="categories">الفئات</string>
 </resources>
 
