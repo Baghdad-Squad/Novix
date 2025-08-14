@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -56,23 +57,25 @@ private fun OnBoardingContent(
     state: OnBoardingState,
     listener: OnBoardingInteractionListener,
 ) {
-    val onBoardingInfo: List<OnBoardingInfo> = listOf(
-        OnBoardingInfo(
-            imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_1,
-            title = R.string.discover_best_movies_and_series,
-            description = R.string.browse_the_latest_releases_trends_and_content_tailored_to_your_taste_all_in_one_place
-        ),
-        OnBoardingInfo(
-            imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_2,
-            title = R.string.search_easily_and_watch_to_your_taste,
-            description = R.string.use_smart_search_and_filters_to_find_exactly_what_you_love_action_drama_crime_anime_and_more
-        ),
-        OnBoardingInfo(
-            imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_3,
-            title = R.string.rate_save_and_create_your_own_lists,
-            description = R.string.rate_movies_track_your_viewing_history_and_easily_save_your_favorite_lists
-        ),
-    )
+    val onBoardingInfo: List<OnBoardingInfo> = remember {
+        listOf(
+            OnBoardingInfo(
+                imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_1,
+                title = R.string.discover_best_movies_and_series,
+                description = R.string.browse_the_latest_releases_trends_and_content_tailored_to_your_taste_all_in_one_place
+            ),
+            OnBoardingInfo(
+                imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_2,
+                title = R.string.search_easily_and_watch_to_your_taste,
+                description = R.string.use_smart_search_and_filters_to_find_exactly_what_you_love_action_drama_crime_anime_and_more
+            ),
+            OnBoardingInfo(
+                imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_3,
+                title = R.string.rate_save_and_create_your_own_lists,
+                description = R.string.rate_movies_track_your_viewing_history_and_easily_save_your_favorite_lists
+            ),
+        )
+    }
     val pagerState = rememberPagerState { onBoardingInfo.size }
 
     val systemUiController = rememberSystemUiController()
