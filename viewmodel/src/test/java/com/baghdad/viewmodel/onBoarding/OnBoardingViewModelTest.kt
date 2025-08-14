@@ -39,16 +39,14 @@ class OnBoardingViewModelTest {
     @Test
     fun `should initial state be page 0 when viewModel initialized`() = runTest {
         val initialState = viewModel.uiState.value
+        val expectedPage = 0
 
-        assertThat(initialState.currentPage).isEqualTo(0)
+        assertThat(initialState.currentPage).isEqualTo(expectedPage)
     }
 
     @Test
     fun `onNextButtonClick should increment current page when not on last page`() = runTest {
-        val initialState = viewModel.uiState.value
-        assertThat(initialState.currentPage).isEqualTo(0)
-
-        viewModel.onNextButtonClick(3)
+        viewModel.onNextButtonClick(PAGE_SIZE)
         advanceUntilIdle()
 
         val updatedState = viewModel.uiState.value
@@ -59,7 +57,7 @@ class OnBoardingViewModelTest {
     fun `onBackButtonClick should back to page 0 when the page is second`() = runTest {
         val initialPage = viewModel.uiState.value.currentPage
 
-        viewModel.onNextButtonClick(3)
+        viewModel.onNextButtonClick(PAGE_SIZE)
         advanceUntilIdle()
         viewModel.onBackButtonClick()
         advanceUntilIdle()
@@ -79,10 +77,8 @@ class OnBoardingViewModelTest {
 
     @Test
     fun `onNextButtonClick should navigate to welcome screen when on last page`() = runTest {
-        val pageSize = 3
-
-        for (i in 1..pageSize) {
-            viewModel.onNextButtonClick(pageSize)
+        for (i in 1..PAGE_SIZE) {
+            viewModel.onNextButtonClick(PAGE_SIZE)
         }
 
         viewModel.uiEffect.test {
@@ -100,6 +96,10 @@ class OnBoardingViewModelTest {
             assertThat(effect).isEqualTo(OnBoardingEffect.NavigateToWelcomeToNovix)
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    private companion object {
+        const val PAGE_SIZE = 3
     }
 
 }
