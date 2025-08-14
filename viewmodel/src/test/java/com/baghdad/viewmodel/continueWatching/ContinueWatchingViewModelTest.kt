@@ -15,6 +15,7 @@ import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaTvShowGenr
 import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaTvShowsByGenreUseCase
 import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaTvShowsUseCase
 import com.baghdad.entity.media.Genre
+import com.baghdad.entity.savedList.SavedList
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.just
@@ -294,6 +295,19 @@ class ContinueWatchingViewModelTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `should check if user is logged in and get saved lists when user is logged in and view model is initialized`() =
+        runTest {
+            val viewModel = createViewModel()
+            coEvery { isUserLoggedInUseCase() } returns true
+            coEvery { getSavedListsUseCase(any(), any()) } returns pagedSavedList
+
+            advanceUntilIdle()
+
+            assertThat(viewModel.uiState.value.isUserLoggedIn).isTrue()
+        }
+
 
     private companion object {
         val userWatchedMedia = UserWatchedMedia(
@@ -308,6 +322,18 @@ class ContinueWatchingViewModelTest {
 
         val pagedMovie = PagedResult(
             data = listOf(userWatchedMedia),
+            nextKey = null,
+            prevKey = null,
+        )
+
+        val savedList = SavedList(
+            id = 1L,
+            name = "List 1",
+            itemCount = 1,
+        )
+
+        val pagedSavedList = PagedResult(
+            data = listOf(savedList),
             nextKey = null,
             prevKey = null,
         )

@@ -128,7 +128,7 @@ class ContinueWatchingViewModel @Inject constructor(
 
     private fun getMedia(genreId: Long?) {
         collectPagingFlow(
-            { page -> onGetMedia(genreId, page) },
+            loadData = { page -> onGetMedia(genreId, page) },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toContinueWatchingUiState() },
             onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow) } },
