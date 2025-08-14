@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import com.baghdad.viewmodel.onBoarding.OnBoardingInteractionListener
 import com.baghdad.viewmodel.onBoarding.OnBoardingState
 import com.baghdad.viewmodel.onBoarding.OnBoardingViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 
 @Composable
 fun OnBoardingScreen(
@@ -78,6 +80,8 @@ private fun OnBoardingContent(
     }
     val pagerState = rememberPagerState { onBoardingInfo.size }
 
+    val scope = rememberCoroutineScope()
+
     val systemUiController = rememberSystemUiController()
 
     LaunchedEffect(Unit) {
@@ -87,8 +91,12 @@ private fun OnBoardingContent(
         )
     }
 
-    LaunchedEffect(state.currentPage) {
-        pagerState.animateScrollToPage(state.currentPage)
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage > state.currentPage) {
+            listener.onNextButtonClick(onBoardingInfo.size)
+        } else {
+            listener.onBackButtonClick()
+        }
     }
     Scaffold(
         backgroundBlur = { BackgroundBlur() }
@@ -117,8 +125,24 @@ private fun OnBoardingContent(
 
                 BottomSlidingSection(
                     pagerState = pagerState,
-                    onClickNext = { listener.onNextButtonClick(onBoardingInfo.size) },
-                    onClickBack = { listener.onBackButtonClick() }
+                    onClickNext = {
+                        scope.launch {
+                            val isLastPage = pagerState.currentPage >= onBoardingInfo.size - 1
+
+                            if (isLastPage) {
+                                listener.onNextButtonClick(onBoardingInfo.size)
+                            } else {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        }
+                    },
+                    onClickBack = {
+                        scope.launch {
+                            if (pagerState.currentPage > 0) {
+                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                            }
+                        }
+                    },
                 )
             }
         }
