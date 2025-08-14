@@ -20,12 +20,16 @@ class CategoriesViewModel @Inject constructor(
     CategoriesInteractionListener {
 
     init {
-        getGenreMovies()
-        getGenreTvShows()
+        loadData()
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
         return BaseSnackBarMessage.UnknownError
+    }
+
+   private fun loadData() {
+        getGenreMovies()
+        getGenreTvShows()
     }
 
     private fun getGenreMovies() {
@@ -93,14 +97,11 @@ class CategoriesViewModel @Inject constructor(
     override fun onTabSelected(tab: CategoriesState.CategoriesTab) {
         if (currentState.selectedCategoriesTab == tab) return
         updateState { it.copy(selectedCategoriesTab = tab) }
-        selectedCategoryByTab()
     }
 
-    private fun selectedCategoryByTab() {
-        when (currentState.selectedCategoriesTab) {
-            CategoriesState.CategoriesTab.MOVIES -> getGenreMovies()
-            CategoriesState.CategoriesTab.TV_SHOWS -> getGenreTvShows()
-        }
+    override fun onSnackBarActionLabelClicked() {
+        hideSnackBar()
+        loadData()
     }
 
     override fun onCategoryMovieClick(categoryId: Long) {

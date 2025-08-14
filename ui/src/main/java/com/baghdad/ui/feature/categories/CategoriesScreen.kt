@@ -27,21 +27,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.CategoryCard
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
+import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.categories.component.MovieCategoryDrawableMap
 import com.baghdad.ui.feature.categories.component.TvShowCategoryDrawableMap
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
+import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.categories.CategoriesEffect
 import com.baghdad.viewmodel.categories.CategoriesInteractionListener
 import com.baghdad.viewmodel.categories.CategoriesState
 import com.baghdad.viewmodel.categories.CategoriesViewModel
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
 @Composable
 fun CategoriesScreen(
@@ -49,6 +54,7 @@ fun CategoriesScreen(
     handleNavigation: (CategoriesNavEvent) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
+    val snackBarState = viewModel.snackBarState.collectAsStateWithLifecycle()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
@@ -56,8 +62,8 @@ fun CategoriesScreen(
 
     CategoriesScreenContent(
         state = state,
-        selectedTab = state.selectedCategoriesTab,
-        listener = viewModel
+        listener = viewModel,
+        snackBarState = snackBarState.value,
     )
 }
 
@@ -78,69 +84,83 @@ private fun handleEffect(
 @Composable
 fun CategoriesScreenContent(
     state: CategoriesState,
-    selectedTab: CategoriesState.CategoriesTab,
-    listener: CategoriesInteractionListener
+    listener: CategoriesInteractionListener,
+    snackBarState: SnackBarState
 ) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.color.surface)
             .statusBarsPadding(),
-        backgroundBlur = { BackgroundBlur() }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 12.dp, end = 16.dp, start = 16.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.categories),
-                style = Theme.typography.title.large,
-                color = Theme.color.title,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-
-            Row(
+        topBar = {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(top = 12.dp, end = 16.dp, start = 16.dp)
             ) {
-                Chip(
-                    title = stringResource(R.string.movies),
-                    isSelected = selectedTab == CategoriesState.CategoriesTab.MOVIES,
-                    onClick = { listener.onTabSelected(CategoriesState.CategoriesTab.MOVIES) }
+                Text(
+                    text = stringResource(R.string.categories),
+                    style = Theme.typography.title.large,
+                    color = Theme.color.title,
+                    modifier = Modifier.padding(bottom = 12.dp)
                 )
-                Chip(
-                    title = stringResource(R.string.tv_shows),
-                    isSelected = selectedTab == CategoriesState.CategoriesTab.TV_SHOWS,
-                    onClick = { listener.onTabSelected(CategoriesState.CategoriesTab.TV_SHOWS) }
-                )
-            }
 
-            AnimatedContent(
-                targetState = selectedTab,
-                transitionSpec = { fadeIn(tween(600)) togetherWith fadeOut(tween(600)) }
-            ) { tab ->
-                when (tab) {
-                    CategoriesState.CategoriesTab.MOVIES -> {
-                        CategoryGrid(
-                            genres = state.movieGenres,
-                            onCardClick = { listener.onCategoryMovieClick(it) }
-                        )
-                    }
-                    CategoriesState.CategoriesTab.TV_SHOWS -> {
-                        CategoryGrid(
-                            genres = state.tvShowGenres,
-                            onCardClick = { listener.onCategoryTvShowClick(it) }
-                        )
-                    }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Chip(
+                        title = stringResource(R.string.movies),
+                        isSelected = state.selectedCategoriesTab == CategoriesState.CategoriesTab.MOVIES,
+                        onClick = { listener.onTabSelected(CategoriesState.CategoriesTab.MOVIES) }
+                    )
+                    Chip(
+                        title = stringResource(R.string.tv_shows),
+                        isSelected = state.selectedCategoriesTab == CategoriesState.CategoriesTab.TV_SHOWS,
+                        onClick = { listener.onTabSelected(CategoriesState.CategoriesTab.TV_SHOWS) }
+                    )
+                }
+            }
+        },
+        snackbar = { position ->
+            SnackBar(
+                message = stringResource(snackBarMessage(snackBarState.message)),
+                isSuccess = snackBarState.isSuccess,
+                isVisible = snackBarState.isVisible,
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                onActionClick = listener::onSnackBarActionLabelClicked,
+                position = position,
+            )
+        },
+        backgroundBlur = { BackgroundBlur() },
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        isLoading = state.isLoading
+    ) {
+        AnimatedContent(
+            targetState = state.selectedCategoriesTab,
+            transitionSpec = { fadeIn(tween(600)) togetherWith fadeOut(tween(600)) },
+        ) { tab ->
+            when (tab) {
+                CategoriesState.CategoriesTab.MOVIES -> {
+                    CategoryGrid(
+                        genres = state.movieGenres,
+                        onCardClick = { listener.onCategoryMovieClick(it) }
+                    )
+                }
+                CategoriesState.CategoriesTab.TV_SHOWS -> {
+                    CategoryGrid(
+                        genres = state.tvShowGenres,
+                        onCardClick = { listener.onCategoryTvShowClick(it) }
+                    )
                 }
             }
         }
     }
 }
+
 @Composable
 fun CategoryGrid(
     genres: List<CategoriesState.GenreUiState>,
@@ -172,4 +192,8 @@ fun CategoryGrid(
             }
         }
     }
+}
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
 }

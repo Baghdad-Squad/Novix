@@ -6,4 +6,6 @@ interface CategoriesInteractionListener {
 
    fun onTabSelected(tab: CategoriesState.CategoriesTab)
 
+   fun onSnackBarActionLabelClicked()
+
 }
