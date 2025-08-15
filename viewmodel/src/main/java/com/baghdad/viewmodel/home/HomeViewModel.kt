@@ -74,6 +74,9 @@ constructor(
 
     private fun onSavedListCountChanged(count: Int) {
         getUserSavedLists()
+        getPopularItems()
+        getTopRatingMovies()
+        getUpcomingItems()
     }
 
     private fun onLanguageChanged(language: String) {
