@@ -39,27 +39,3 @@ fun MyRatingVerticalGrid(
         )
     }
 }
-/*
-
-@Composable
-fun SavedListsVerticalGrid(
-    savedLists: LazyPagingItems<MyListsScreenState.SavedListUiState>,
-    onSavedListClick: (Long) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyPagingVerticalGrid(
-        modifier = modifier,
-        items = savedLists,
-        columns = GridCells.Adaptive(minSize = 328.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) { savedList ->
-        SavedListItem(
-            name = savedList.name,
-            itemCount = savedList.itemCount,
-            onClick = { onSavedListClick(savedList.id) },
-        )
-    }
-}
-*/
