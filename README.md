@@ -253,5 +253,7 @@ AUTHORIZATION_TOKEN="your_token_here"
 ##  Contributors
 Special thanks to our mentor for the guidance and support throughout this journey.
 [Ahmed Nasser](https://github.com/ahmednasserzaza) & [Amnah](https://github.com/amnah44)
+Thanks to [Bareq](https://github.com/iBareq)for giving us [TheChance](https://github.com/TheChance101) to discover ourselves
+Thanks to [Hamsa](https://github.com/HamSaAli) because the app wouldn't have been this great without her design.
 Thanks to the amazing Baghdad Squad team who made this possible
 [Abdulaziz](https://github.com/abdulazizacc) , [Aboud](https://github.com/ABDULLAHHG),[Edrees](https://github.com/MuhammedEdrees) , [Fares](https://github.com/FaresM0hamed), [Fara7](https://github.com/Farah315), [Fatmah](https://github.com/fatmahgazy), [Karrar](https://github.com/karrar-abbas), [Malak](https://github.com/Malak187), [Mahmoud](https://github.com/MahmoodTarek), [Omer](https://github.com/omer1998), [Zinah](https://github.com/Arzo-zi)
