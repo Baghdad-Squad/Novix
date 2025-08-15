@@ -4,7 +4,7 @@ import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockActorDto
 import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockMovieDto
-import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockTvShowDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockTvShowsDto
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toSavableMovie
 import com.baghdad.repository.model.ActorDto
@@ -39,7 +39,7 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorTvShows should return list of tv shows when remote call succeeds`() = runTest {
-        val mockTvShowDtos = createMockTvShowDto()
+        val mockTvShowDtos = createMockTvShowsDto()
         val expectedTvShows = mockTvShowDtos.map { it.toEntity() }
 
         mockGetActorTvShows(mockTvShowDtos)

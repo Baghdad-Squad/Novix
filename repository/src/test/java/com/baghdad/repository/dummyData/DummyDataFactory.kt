@@ -7,6 +7,7 @@ import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
+import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.mapper.toSavableMovie
@@ -223,7 +224,21 @@ object DummyDataFactory {
             characterName = "Test Character"
         )
 
-        fun createMockTvShowDto() =
+        fun createMockTvShow() = TvShow(
+            id = 789L,
+            title = "Test TV Show",
+            genres = listOf(Genre(18L, "Drama")),
+            averageRating = 7.9,
+            userRating = 8,
+            releaseDate = LocalDate.parse("2023-01-01"),
+            overview = "Test overview for TV Show",
+            posterImageURL = "/tv_poster.jpg",
+            numberOfSeasons = 3,
+            trailerURL = " ",
+            headerImagesURLs = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg")
+        )
+
+        fun createMockTvShowsDto() =
             listOf(
                 TvShowDto(
                     id = 123L,
