@@ -21,7 +21,7 @@ class ReviewUiMapperTest {
         )
 
         // When
-        val uiReview = review.toReviewUi()
+        val uiReview = review.toUiState()
 
         // Then
         assertThat(uiReview.id).isEqualTo("r1")

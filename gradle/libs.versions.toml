@@ -41,6 +41,7 @@ uiTextAndroid = "1.8.3"
 serialization = "1.7.3"
 tensorflowLiteSupport = "0.5.0"
 truth = "1.4.4"
+turbine = "1.2.1"
 google-services = "4.4.3"
 crashlytics = "3.0.4"
 perf-plugin = "1.4.2"
@@ -138,7 +139,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 #Junit
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
-
+turbine = { module = "app.cash.turbine:turbine", name = "turbine", version.ref = "turbine" }
 # MockK
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
@@ -245,6 +246,7 @@ test-core = [
     "mockk-android",
     "truth",
     "kotlinx-coroutines-test",
+    "turbine"
 ]
 
 test-ui = [

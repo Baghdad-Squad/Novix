@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 import kotlinx.coroutines.delay
 
@@ -61,8 +62,8 @@ fun AutoSlidingImageCarousel(
                                         listOf(
                                             Color(0x99000000),
                                             Color(0x00000000)
-                                ),
-                                        )
+                                        ),
+                                )
                         )
                     }
             )
@@ -81,16 +82,16 @@ fun AutoSlidingImageCarousel(
                             Brush.verticalGradient(
                                 colors =
                                     listOf(
-                                Color(0x99000000),
-                                Color(0x00000000)
-                            ),
-                                )
+                                        Color(0x99000000),
+                                        Color(0x00000000)
+                                    ),
+                            )
                     )
                 },
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(com.baghdad.ui.R.drawable.img_defualt_image),
+                painter = painterResource(Theme.drawable.imagePlaceholder),
                 contentDescription = "Default Image",
                 modifier = Modifier.size(56.dp)
             )

@@ -146,6 +146,7 @@ class TopMoviePicksViewModel @Inject constructor(
                     movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
             },
+            onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
             dispatcher = ioDispatcher,
             onStart = ::onAddItemToListStart,
@@ -173,6 +174,17 @@ class TopMoviePicksViewModel @Inject constructor(
         showSnackBar(
             message = BaseSnackBarMessage.RemovedItemSuccessfully,
             isSuccess = true,
+        )
+    }
+
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
         )
     }
 

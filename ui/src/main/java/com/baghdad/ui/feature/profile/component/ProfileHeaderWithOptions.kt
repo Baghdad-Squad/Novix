@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -104,7 +105,8 @@ fun ProfileHeaderWithOption(
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(start = 12.dp, top = 12.dp, bottom = 12.dp)
+                        .padding(start = 12.dp)
+                        .padding(vertical = 8.dp)
                         .background(color = Theme.color.surface, shape = RoundedCornerShape(8.dp))
                         .noRippleClickable {
                             onLogoutClick()
