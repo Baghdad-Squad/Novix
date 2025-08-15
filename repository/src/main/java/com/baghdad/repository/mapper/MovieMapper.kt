@@ -1,7 +1,7 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.domain.model.RatedMedia
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
+import com.baghdad.domain.model.userRating.RatedMedia
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.repository.model.GenreDto
@@ -25,8 +25,8 @@ fun MovieDto.toEntity(): Movie =
 fun MovieDto.toSavableMovie(
     isSaved: Boolean,
     listId: Long? = null,
-): SavableMovie =
-    SavableMovie(
+): SavedMovie =
+    SavedMovie(
         movie = toEntity(),
         isSaved = isSaved,
         listId = listId
@@ -54,7 +54,7 @@ fun Genre.toDto(): GenreDto =
     )
 
 
-fun MovieDto.toMedia(): RatedMedia{
+fun MovieDto.toMedia(): RatedMedia {
     return RatedMedia(
         id = id,
         userRating = userRating?.toInt(),

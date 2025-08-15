@@ -1,11 +1,11 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedListDetails
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
-import com.baghdad.repository.datasource.local.LocalUserDataStore
+import com.baghdad.repository.datasource.local.LocalUserDataSource
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 @Singleton
 class SavedListRepositoryImpl @Inject constructor(
     private val remoteSavedListSource: RemoteSavedListDataSource,
-    private val localUserDataStore: LocalUserDataStore,
+    private val localUserDataSource: LocalUserDataSource,
     private val savableMovieDataSource: LocalSavableMovieDataSource,
 ) : SavedListRepository {
     override suspend fun createSavedList(title: String) {
@@ -32,7 +32,7 @@ class SavedListRepositoryImpl @Inject constructor(
         page: Int,
         pageSize: Int,
     ): PagedResult<SavedList> {
-        val accountId = localUserDataStore.getUser()?.id ?: 0
+        val accountId = localUserDataSource.getUser()?.id ?: 0
         return executeSafely {
             remoteSavedListSource
                 .getSavedLists(
@@ -113,7 +113,7 @@ class SavedListRepositoryImpl @Inject constructor(
         return savableMovieDataSource.getSavedMovies().isEmpty()
     }
 
-    private suspend fun getUserAccountId(): Long = localUserDataStore.getUser()?.id ?: 0
+    private suspend fun getUserAccountId(): Long = localUserDataSource.getUser()?.id ?: 0
 
     private suspend fun fetchAllSavedLists(
         accountId: Long,

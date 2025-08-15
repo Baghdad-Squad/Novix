@@ -42,23 +42,23 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
     private val logger: Logger,
 ) : RemoteTvShowDataSource {
 
-    override suspend fun getTvShowDetails(tvId: Long): TvShowDto {
-       return handleRequest<TVShowDetailsResponse>(
-            apiCall = { tvShowApiService.getTvShowDetails(tvId) },
+    override suspend fun getTvShowDetails(tvShowId: Long): TvShowDto {
+        return handleRequest<TVShowDetailsResponse>(
+            apiCall = { tvShowApiService.getTvShowDetails(tvShowId) },
             logger = logger,
         ).toDto()
     }
 
-    override suspend fun getTvShowCastMembers(tvId: Long): List<CastMemberDto> {
+    override suspend fun getTvShowCastMembers(tvShowId: Long): List<CastMemberDto> {
         return handleRequest<CastMembersResponse>(
-            apiCall = { tvShowApiService.getTvShowCastMembers(tvId) },
+            apiCall = { tvShowApiService.getTvShowCastMembers(tvShowId) },
             logger = logger,
         ).toCastMembers()
     }
 
-    override suspend fun getTvShowImages(tvId: Long): List<String> {
+    override suspend fun getTvShowImages(tvShowId: Long): List<String> {
         return handleRequest<TVShowImagesResponse>(
-            apiCall = { tvShowApiService.getTvShowImages(tvId) },
+            apiCall = { tvShowApiService.getTvShowImages(tvShowId) },
             logger = logger,
         ).toImageUrls()
     }
@@ -70,29 +70,29 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         ).toPagedTvShowDtos()
     }
 
-    override suspend fun getTvShowEpisodes(tvId: Long, seasonNumber: Int): List<EpisodeDto> {
+    override suspend fun getTvShowEpisodes(tvShowId: Long, seasonNumber: Int): List<EpisodeDto> {
         return handleRequest<SeasonDetailResponse>(
-            apiCall = { tvShowApiService.getTvShowEpisodes(tvId, seasonNumber) },
+            apiCall = { tvShowApiService.getTvShowEpisodes(tvShowId, seasonNumber) },
             logger = logger,
         ).toEpisodeDto()
     }
 
-    override suspend fun getTvShowReviews(tvId: Long): List<ReviewDto> {
+    override suspend fun getTvShowReviews(tvShowId: Long): List<ReviewDto> {
         return handleRequest<ReviewsResponse>(
-            apiCall = { tvShowApiService.getTvShowReviews(tvId) },
+            apiCall = { tvShowApiService.getTvShowReviews(tvShowId) },
             logger = logger,
         ).toReviewDto()
     }
 
-    override suspend fun getTvShowTrailer(tvId: Long): String {
+    override suspend fun getTvShowTrailer(tvShowId: Long): String {
         return handleRequest<TVShowVideosResponse>(
-            apiCall = { tvShowApiService.getTvShowTrailer(tvId) },
+            apiCall = { tvShowApiService.getTvShowTrailer(tvShowId) },
             logger = logger
         ).mapToYoutubeURL()
     }
 
     override suspend fun getTopRatedTvShows(page: Int): PagedResultDto<TvShowDto> {
-       return handleRequest<TopRatedTvShowSearchResponse>(
+        return handleRequest<TopRatedTvShowSearchResponse>(
             apiCall = {
                 tvShowApiService.getTopRatedTvShows(
                     page,
@@ -114,7 +114,6 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
     override suspend fun addTvShowRate(
         tvShowId: Long,
         rating: Int,
-        sessionId: String
     ) {
         handleRequest<RatingResponse>(
             apiCall = {
@@ -129,7 +128,6 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
 
     override suspend fun deleteTvShowRate(
         tvShowId: Long,
-        sessionId: String
     ) {
         handleRequest<RatingResponse>(
             apiCall = {
@@ -143,7 +141,6 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
 
     override suspend fun getTvShowAccountStates(
         tvShowId: Long,
-        sessionId: String
     ): MediaAccountStateDto {
         return handleRequest<MediaAccountStatesResponse>(
             apiCall = { tvShowApiService.getTvShowAccountStates(tvShowId) },
@@ -160,7 +157,6 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
 
     override suspend fun getUserRatedTvShows(
         accountId: Long,
-        sessionId: String,
         page: Int
     ): PagedResultDto<TvShowDto> {
         return handleRequest<MyRatingTvShowResponse>(

@@ -1,7 +1,7 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.domain.repository.ContinueWatchingRepository
 import com.baghdad.repository.datasource.local.LocalContinueWatchingDataSource
@@ -24,7 +24,7 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
     private val savableMovieDataSource: LocalSavableMovieDataSource,
 ) : ContinueWatchingRepository {
 
-    override suspend fun getAllContinueWatchingMovies(): Flow<List<ContinueWatching>> {
+    override suspend fun getAllContinueWatchingMovies(): Flow<List<UserWatchedMedia>> {
         val userId = getUserId() ?: return flowOf(emptyList())
         val savedMovies = getSavedMovies()
 
@@ -32,7 +32,7 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
             .map { list -> mapDtosToEntities(dtos = list, savedMovies = savedMovies) }
     }
 
-    override suspend fun observeContinueWatching(): Flow<List<ContinueWatching>> {
+    override suspend fun observeContinueWatching(): Flow<List<UserWatchedMedia>> {
         val userId = getUserId() ?: return flowOf(emptyList())
         val savedMovies = getSavedMovies()
 
@@ -43,7 +43,7 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
     override suspend fun getContinueWatching(
         page: Int,
         pageSize: Int,
-    ): PagedResult<ContinueWatching> {
+    ): PagedResult<UserWatchedMedia> {
         val userId = getUserId() ?: return emptyPagedResult()
         val savedMovies = getSavedMovies()
 
@@ -61,7 +61,7 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
         contentId: Long,
         genreIds: List<Long>,
         contentImageUrl: String,
-        contentType: ContinueWatching.ContentType,
+        contentType: UserWatchedMedia.ContentType,
     ) {
         return executeSafely {
             val userId = getUserId() ?: return@executeSafely
@@ -76,7 +76,7 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllContinueWatchingTvShows(): Flow<List<ContinueWatching>> {
+    override suspend fun getAllContinueWatchingTvShows(): Flow<List<UserWatchedMedia>> {
         val userId = getUserId() ?: return flowOf(emptyList())
         val savedMovies = getSavedMovies()
 
@@ -91,12 +91,12 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
         savableMovieDataSource.getSavedMovies()
 
     private fun emptyPagedResult() =
-        PagedResult<ContinueWatching>(data = emptyList(), nextKey = 0, prevKey = 0)
+        PagedResult<UserWatchedMedia>(data = emptyList(), nextKey = 0, prevKey = 0)
 
     private fun mapDtoToEntity(
         dto: ContinueWatchingDto,
         savedMovies: Map<Long, Long>
-    ): ContinueWatching = dto.toEntity(
+    ): UserWatchedMedia = dto.toEntity(
         isSaved = savedMovies.containsKey(dto.contentId),
         listId = savedMovies[dto.contentId]
     )
@@ -104,15 +104,15 @@ class ContinueWatchingRepositoryImpl @Inject constructor(
     private fun mapDtosToEntities(
         dtos: List<ContinueWatchingDto>,
         savedMovies: Map<Long, Long>
-    ): List<ContinueWatching> = dtos.map { mapDtoToEntity(it, savedMovies) }
+    ): List<UserWatchedMedia> = dtos.map { mapDtoToEntity(it, savedMovies) }
 
     private fun continueWatching(
         contentId: Long,
         genreIds: List<Long>,
         contentImageUrl: String,
-        contentType: ContinueWatching.ContentType,
+        contentType: UserWatchedMedia.ContentType,
         userId: Long,
-    ): ContinueWatching = ContinueWatching(
+    ): UserWatchedMedia = UserWatchedMedia(
         contentId = contentId,
         genreIds = genreIds,
         contentImageUrl = contentImageUrl,

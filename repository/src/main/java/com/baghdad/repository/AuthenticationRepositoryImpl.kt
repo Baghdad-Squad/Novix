@@ -1,9 +1,9 @@
 package com.baghdad.repository
 
 import com.baghdad.domain.repository.AuthenticationRepository
-import com.baghdad.entity.User
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
-import com.baghdad.repository.datasource.local.LocalUserDataStore
+import com.baghdad.entity.user.User
+import com.baghdad.repository.datasource.local.LocalSessionDataSource
+import com.baghdad.repository.datasource.local.LocalUserDataSource
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.util.executeLoginSafely
@@ -14,8 +14,8 @@ import javax.inject.Singleton
 @Singleton
 class AuthenticationRepositoryImpl @Inject constructor(
     private val remoteAuthenticationDataSource: RemoteAuthenticationDataSource,
-    private val localSessionDataStore: LocalSessionDataStore,
-    private val localUserDataStore: LocalUserDataStore
+    private val localSessionDataStore: LocalSessionDataSource,
+    private val localUserDataSource: LocalUserDataSource
 ) : AuthenticationRepository {
 
     override suspend fun isUserLoggedIn(): Boolean {
@@ -23,7 +23,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getLoggedInUser(): User? {
-        return localUserDataStore.getUser()?.toEntity()
+        return localUserDataSource.getUser()?.toEntity()
     }
 
     override suspend fun logOut(): Boolean {
@@ -71,7 +71,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
 
     private suspend fun saveUserDetails(sessionId: String) {
         val user = remoteAuthenticationDataSource.getUserDetails(sessionId = sessionId)
-        localUserDataStore.saveUser(
+        localUserDataSource.saveUser(
             id = user.id,
             userName = user.userName,
             imageUrl = user.imageUrl.orEmpty()

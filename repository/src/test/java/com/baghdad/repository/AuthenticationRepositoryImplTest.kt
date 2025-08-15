@@ -2,7 +2,7 @@ package com.baghdad.repository
 
 import com.baghdad.entity.User
 import com.baghdad.repository.datasource.local.LocalSessionDataStore
-import com.baghdad.repository.datasource.local.LocalUserDataStore
+import com.baghdad.repository.datasource.local.LocalUserDataSource
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
 import com.baghdad.repository.model.UserDto
 import com.google.common.truth.Truth.assertThat
@@ -17,18 +17,18 @@ class AuthenticationRepositoryImplTest {
 
     private lateinit var mockRemoteAuthDataSource: RemoteAuthenticationDataSource
     private lateinit var mockLocalSessionDataStore: LocalSessionDataStore
-    private lateinit var mockLocalUserDataStore: LocalUserDataStore
+    private lateinit var mockLocalUserDataSource: LocalUserDataSource
     private lateinit var authRepositoryUnderTest: AuthenticationRepositoryImpl
 
     @BeforeEach
     fun setUp() {
         mockRemoteAuthDataSource = mockk(relaxed = true)
         mockLocalSessionDataStore = mockk(relaxed = true)
-        mockLocalUserDataStore = mockk(relaxed = true)
+        mockLocalUserDataSource = mockk(relaxed = true)
         authRepositoryUnderTest = AuthenticationRepositoryImpl(
             remoteAuthenticationDataSource = mockRemoteAuthDataSource,
             localSessionDataStore = mockLocalSessionDataStore,
-            localUserDataStore = mockLocalUserDataStore
+            localUserDataSource = mockLocalUserDataSource
         )
     }
 
@@ -151,7 +151,7 @@ class AuthenticationRepositoryImplTest {
 
     private fun mockSaveUser(userDto: UserDto) {
         coEvery {
-            mockLocalUserDataStore.saveUser(
+            mockLocalUserDataSource.saveUser(
                 userDto.id,
                 userDto.userName,
                 userDto.imageUrl.orEmpty()
@@ -164,7 +164,7 @@ class AuthenticationRepositoryImplTest {
     }
 
     private fun mockGetUser(userDto: UserDto?) {
-        coEvery { mockLocalUserDataStore.getUser() } returns userDto
+        coEvery { mockLocalUserDataSource.getUser() } returns userDto
     }
 
     private fun mockDeleteSessionReturns(value: Boolean) {
@@ -192,12 +192,12 @@ class AuthenticationRepositoryImplTest {
         coVerify { mockLocalSessionDataStore.saveSessionId(SESSION_ID) }
 
     private fun verifySaveUser(userDto: UserDto) = coVerify {
-        mockLocalUserDataStore.saveUser(userDto.id, userDto.userName, userDto.imageUrl.orEmpty())
+        mockLocalUserDataSource.saveUser(userDto.id, userDto.userName, userDto.imageUrl.orEmpty())
     }
 
     private fun verifyGetSessionId() = coVerify { mockLocalSessionDataStore.getSessionId() }
 
-    private fun verifyGetUser() = coVerify { mockLocalUserDataStore.getUser() }
+    private fun verifyGetUser() = coVerify { mockLocalUserDataSource.getUser() }
 
     private fun verifyDeleteSession() =
         coVerify { mockRemoteAuthDataSource.deleteSession(SESSION_ID) }

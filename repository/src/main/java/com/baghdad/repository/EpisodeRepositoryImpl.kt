@@ -1,6 +1,5 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.MediaAccountStates
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
@@ -8,6 +7,7 @@ import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntities
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toIsMediaRated
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,7 +43,7 @@ class EpisodeRepositoryImpl @Inject constructor(
                 tvShowId = tvShowId,
                 seasonNumber = seasonNumber,
                 episodeNumber = episodeNumber,
-                rating = rating
+                rating = rating,
             )
         }
     }
@@ -52,13 +52,13 @@ class EpisodeRepositoryImpl @Inject constructor(
         tvShowId: Long,
         seasonNumber: Int,
         episodeNumber: Int
-    ): MediaAccountStates {
+    ): Boolean {
         return executeSafely {
             remoteEpisodeDataSource.getEpisodeAccountStates(
                 tvShowId = tvShowId,
                 seasonNumber = seasonNumber,
                 episodeNumber = episodeNumber,
-            ).toEntity()
+            ).toIsMediaRated()
         }
     }
 
