@@ -1,7 +1,10 @@
 package com.baghdad.repository
 
+import com.baghdad.domain.model.profile.ContentRestrictionTypes
 import com.baghdad.domain.repository.AppConfigurationsRepository
 import com.baghdad.repository.datasource.local.AppConfigurationDataSource
+import com.baghdad.repository.mapper.toContentRestrictionType
+import com.baghdad.repository.mapper.toContentRestrictionTypeDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.Locale
@@ -32,8 +35,17 @@ class AppConfigurationsRepositoryImpl @Inject constructor(
         appConfigurationDataSource.setAppLanguage(language)
     }
 
+    override suspend fun setContentRestriction(restriction: ContentRestrictionTypes) {
+        appConfigurationDataSource.setContentRestriction(restriction.toContentRestrictionTypeDto())
+    }
+
+    override suspend fun getContentRestriction(): Flow<ContentRestrictionTypes> {
+        return appConfigurationDataSource.getContentRestriction()
+            .map { it.toContentRestrictionType() }
+    }
+
     override suspend fun isFirstTimeUser(): Boolean {
-        return appConfigurationDataSource.isFirstTime()
+        return appConfigurationDataSource.isFirstTimeLaunchApp()
     }
 
     override suspend fun setFirstTimeUser(firstTime: Boolean) {
