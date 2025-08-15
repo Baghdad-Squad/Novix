@@ -2,13 +2,13 @@ package com.baghdad.viewmodel.tvShowDetails
 
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.tvShow.AddTvShowRateUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowAccountStatesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.AddUserWatchedMediaUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
@@ -34,7 +34,7 @@ class TvShowDetailsViewModelTest {
     private lateinit var getTvShowDetailsUseCase: GetTvShowDetailsUseCase
     private lateinit var getTvShowCastMembersUseCase: GetTvShowCastMembersUseCase
     private lateinit var getTvShowSeasonEpisodesUseCase: GetTvShowSeasonEpisodesUseCase
-    private lateinit var addContinueWatchingUseCase: AddContinueWatchingUseCase
+    private lateinit var addUserWatchedMediaUseCase: AddUserWatchedMediaUseCase
     private lateinit var getTvShowAccountStatesUseCase: GetTvShowAccountStatesUseCase
     private lateinit var addTvShowRateUseCase: AddTvShowRateUseCase
     private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
@@ -47,7 +47,7 @@ class TvShowDetailsViewModelTest {
         getTvShowDetailsUseCase = mockk()
         getTvShowCastMembersUseCase = mockk()
         getTvShowSeasonEpisodesUseCase = mockk()
-        addContinueWatchingUseCase = mockk()
+        addUserWatchedMediaUseCase = mockk()
         getTvShowAccountStatesUseCase = mockk()
         addTvShowRateUseCase = mockk()
         isUserLoggedInUseCase = mockk()
@@ -57,7 +57,7 @@ class TvShowDetailsViewModelTest {
             getTvShowDetailsUseCase = getTvShowDetailsUseCase,
             getTvShowCastMembersUseCase = getTvShowCastMembersUseCase,
             getTvShowSeasonEpisodesUseCase = getTvShowSeasonEpisodesUseCase,
-            addContinueWatchingUseCase = addContinueWatchingUseCase,
+            addUserWatchedMediaUseCase = addUserWatchedMediaUseCase,
             getTvShowAccountStatesUseCase = getTvShowAccountStatesUseCase,
             addTvShowRateUseCase = addTvShowRateUseCase,
             isUserLoggedInUseCase = isUserLoggedInUseCase,
@@ -71,7 +71,7 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+        coEvery { addUserWatchedMediaUseCase.invoke(any(), any(), any(), any()) } returns Unit
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
         val job = launch {
             tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
@@ -90,7 +90,7 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+        coEvery { addUserWatchedMediaUseCase.invoke(any(), any(), any(), any()) } returns Unit
         // When
         advanceUntilIdle()
         val initialExpanded = tvShowDetailsViewModel.uiState.value.isTextExpanded
@@ -106,7 +106,7 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+        coEvery { addUserWatchedMediaUseCase.invoke(any(), any(), any(), any()) } returns Unit
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
         val job = launch {
             tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
@@ -126,7 +126,7 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+        coEvery { addUserWatchedMediaUseCase.invoke(any(), any(), any(), any()) } returns Unit
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
         val job = launch {
             tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
@@ -146,7 +146,7 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+        coEvery { addUserWatchedMediaUseCase.invoke(any(), any(), any(), any()) } returns Unit
 
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
         val job = launch { tvShowDetailsViewModel.uiEffect.collect { effects.add(it) } }
@@ -174,7 +174,7 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+        coEvery { addUserWatchedMediaUseCase.invoke(any(), any(), any(), any()) } returns Unit
         val effects = mutableListOf<TvShowDetailsScreenEffect>()
         val job = launch {
             tvShowDetailsViewModel.uiEffect.collect { effects.add(it) }
@@ -196,7 +196,7 @@ class TvShowDetailsViewModelTest {
             coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
             coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
             coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 2) } returns mockEpisodes
-            coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+            coEvery { addUserWatchedMediaUseCase.invoke(any(), any(), any(), any()) } returns Unit
             // When
             tvShowDetailsViewModel.onClickSeasonTab(1)
             advanceUntilIdle()
@@ -211,7 +211,7 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } returns mockTvShow
         coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
         coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-        coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+        coEvery { addUserWatchedMediaUseCase.invoke(any(), any(), any(), any()) } returns Unit
 
         assertThat(true).isTrue()
     }
@@ -223,7 +223,7 @@ class TvShowDetailsViewModelTest {
             coEvery { getTvShowDetailsUseCase.invoke(tvShowId) } throws NoInternetException()
             coEvery { getTvShowCastMembersUseCase.invoke(tvShowId) } returns emptyList()
             coEvery { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, 1) } returns emptyList()
-            coEvery { addContinueWatchingUseCase.invoke(any(), any(), any(), any()) } returns Unit
+            coEvery { addUserWatchedMediaUseCase.invoke(any(), any(), any(), any()) } returns Unit
 
             val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
             val job = launch {

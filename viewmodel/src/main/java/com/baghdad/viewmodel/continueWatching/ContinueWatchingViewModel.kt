@@ -4,15 +4,17 @@ import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.pagination.PagedResult
-import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingByGenreUseCase
-import com.baghdad.domain.usecase.continueWatching.GetAllContinueWatchingUseCase
-import com.baghdad.domain.usecase.continueWatching.GetCurrentContinueWatchingMovieGenres
-import com.baghdad.domain.usecase.continueWatching.GetCurrentContinueWatchingTvShowGenres
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaMovieGenresUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaMoviesByGenreUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaMoviesUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaTvShowGenresUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaTvShowsByGenreUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.GetUserWatchedMediaTvShowsUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
@@ -29,10 +31,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContinueWatchingViewModel @Inject constructor(
-    private val getCurrentContinueWatchingTvShowGenres: GetCurrentContinueWatchingTvShowGenres,
-    private val getCurrentContinueWatchingMovieGenres: GetCurrentContinueWatchingMovieGenres,
-    private val getAllContinueWatchingUseCase: GetAllContinueWatchingUseCase,
-    private val getAllContinueWatchingByGenreUseCase: GetAllContinueWatchingByGenreUseCase,
+    private val getContinueWatchingTvShowGenres: GetUserWatchedMediaTvShowGenresUseCase,
+    private val getContinueWatchingMovieGenres: GetUserWatchedMediaMovieGenresUseCase,
+    private val getUserWatchedMediaMoviesUseCase: GetUserWatchedMediaMoviesUseCase,
+    private val getUserWatchedMediaTvShowsUseCase: GetUserWatchedMediaTvShowsUseCase,
+    private val getUserWatchedMediaMoviesByGenreUseCase: GetUserWatchedMediaMoviesByGenreUseCase,
+    private val getUserWatchedMediaTvShowsByGenreUseCase: GetUserWatchedMediaTvShowsByGenreUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
@@ -42,6 +46,10 @@ class ContinueWatchingViewModel @Inject constructor(
 ) : BaseViewModel<ContinueWatchingState, ContinueWatchingScreenEffect>(ContinueWatchingState()),
     ContinueWatchingInteractionListener {
     init {
+        loadData()
+    }
+
+    private fun loadData() {
         checkIfUserIsLoggedIn()
         getGenres()
         getMedia(null)
@@ -49,9 +57,9 @@ class ContinueWatchingViewModel @Inject constructor(
 
     private fun checkIfUserIsLoggedIn() {
         tryToExecute(
-            callee = { isUserLoggedInUseCase() },
+            callee = isUserLoggedInUseCase::invoke,
             onSuccess = ::onCheckIfUserIsLoggedInSuccess,
-            dispatcher = defaultDispatcher,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -69,7 +77,7 @@ class ContinueWatchingViewModel @Inject constructor(
             loadData = { page ->
                 getSavedListsUseCase(
                     page = page,
-                    pageSize = DEFAULT_PAGE_SIZE,
+                    pageSize = DEFAULT_PAGE_SIZE
                 )
             },
             onInitialLoadError = ::onGetGenresError,
@@ -84,18 +92,22 @@ class ContinueWatchingViewModel @Inject constructor(
             it.copy(
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
-                        savedLists = flow,
-                    ),
+                        savedLists = flow
+                    )
             )
         }
     }
 
     private fun getGenres() {
         tryToCollect(
-            { if (currentState.selectedMediaTabIsMovie) getCurrentContinueWatchingMovieGenres.invoke() else getCurrentContinueWatchingTvShowGenres.invoke() },
-            ::onGenresFetched,
-            onError = ::onGetGenresError,
+            flowProvider = ::onFetchGenres,
+            onNewValue = ::onGenresFetched,
+            onError = ::onGetGenresError
         )
+    }
+
+    private suspend fun onFetchGenres(): Flow<List<Genre>> {
+        return if (currentState.selectedMediaTabIsMovie) getContinueWatchingMovieGenres.invoke() else getContinueWatchingTvShowGenres.invoke()
     }
 
     private fun onGetGenresError(throwable: Throwable) {
@@ -110,17 +122,17 @@ class ContinueWatchingViewModel @Inject constructor(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
             isSuccess = false,
-            durationMillis = Int.MAX_VALUE.toLong(),
+            durationMillis = Int.MAX_VALUE.toLong()
         )
     }
 
     private fun getMedia(genreId: Long?) {
         collectPagingFlow(
-            { page -> onGetMedia(genreId, page) },
+            loadData = { page -> onGetMedia(genreId, page) },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toContinueWatchingUiState() },
             onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow) } },
-            onLoadingChanged = ::onGetMediaLoadingChanged,
+            onLoadingChanged = ::onGetMediaLoadingChanged
         )
     }
 
@@ -130,32 +142,34 @@ class ContinueWatchingViewModel @Inject constructor(
 
     private suspend fun onGetMedia(
         genreId: Long?,
-        page: Int,
+        page: Int
     ): PagedResult<UserWatchedMedia> {
-        val result =
-            if (genreId == null) {
-                getAllContinueWatchingUseCase(page, DEFAULT_PAGE_SIZE)
-            } else {
-                getAllContinueWatchingByGenreUseCase(genreId, page)
-            }
+        val isMovie = currentState.selectedMediaTabIsMovie
 
-        val filteredData =
-            result.data.filter { item ->
-                (item.contentType == UserWatchedMedia.ContentType.MOVIE && currentState.selectedMediaTabIsMovie) ||
-                        (item.contentType == UserWatchedMedia.ContentType.TV_SHOW && !currentState.selectedMediaTabIsMovie)
-            }
+        return when {
+            isMovie && genreId == null -> getUserWatchedMediaMoviesUseCase(page, DEFAULT_PAGE_SIZE)
+            isMovie && genreId != null -> getUserWatchedMediaMoviesByGenreUseCase(
+                genreId,
+                page,
+                DEFAULT_PAGE_SIZE
+            )
 
-        return result.copy(data = filteredData)
+            !isMovie && genreId == null -> getUserWatchedMediaTvShowsUseCase(
+                page,
+                DEFAULT_PAGE_SIZE
+            )
+
+            else -> getUserWatchedMediaTvShowsByGenreUseCase(genreId!!, page, DEFAULT_PAGE_SIZE)
+        }
     }
+
 
     private fun onGenresFetched(genres: List<Genre>) {
         hideSnackBar()
         updateState {
             it.copy(
                 genres =
-                    genres
-                        .distinctBy { genre -> genre.id }
-                        .map { genre -> genre.toContinueWatchingUiState() },
+                    genres.map { genre -> genre.toContinueWatchingUiState() }
             )
         }
     }
@@ -183,41 +197,33 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     override fun onGenreClick(genreId: Long?) {
-        if (currentState.selectedMediaTabIsMovie) {
-            handleGenreSelection(
-                currentSelectedId = currentState.selectedMovieGenreId,
-                newGenreId = genreId,
-                update = { id ->
-                    updateState {
-                        it.copy(
-                            selectedMovieGenreId = id,
-                            isLoading = true,
-                            mediaFlow = flowOf(),
-                        )
-                    }
-                },
-            )
+        val isMovie = currentState.selectedMediaTabIsMovie
+        val currentSelectedId = if (isMovie) {
+            currentState.selectedMovieGenreId
         } else {
-            handleGenreSelection(
-                currentSelectedId = currentState.selectedTvShowGenreId,
-                newGenreId = genreId,
-                update = { id ->
-                    updateState {
-                        it.copy(
-                            selectedTvShowGenreId = id,
-                            isLoading = true,
-                            mediaFlow = flowOf(),
-                        )
-                    }
-                },
-            )
+            currentState.selectedTvShowGenreId
         }
+
+        handleGenreSelection(
+            currentSelectedId = currentSelectedId,
+            newGenreId = genreId,
+            update = { id ->
+                updateState {
+                    it.copy(
+                        selectedMovieGenreId = if (isMovie) id else it.selectedMovieGenreId,
+                        selectedTvShowGenreId = if (isMovie) it.selectedTvShowGenreId else id,
+                        isLoading = true,
+                        mediaFlow = flowOf()
+                    )
+                }
+            }
+        )
     }
 
     private fun handleGenreSelection(
         currentSelectedId: Long?,
         newGenreId: Long?,
-        update: (Long?) -> Unit,
+        update: (Long?) -> Unit
     ) {
         if (newGenreId != currentSelectedId) {
             update(newGenreId)
@@ -233,7 +239,7 @@ class ContinueWatchingViewModel @Inject constructor(
             it.copy(
                 selectedMediaTabIsMovie = isMovieTab,
                 isLoading = true,
-                mediaFlow = flowOf(),
+                mediaFlow = flowOf()
             )
         }
         getGenres()
@@ -241,13 +247,13 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     override fun onMovieSaveClick(movie: ContinueWatchingState.ContinueWatchingMovieUiState) {
-        onSaveMovieClick(movie.isSaved, movie.savedListId, movie.id)
+        onSaveMovieClick(isSaved = movie.isSaved, listId = movie.savedListId, movieId = movie.id)
     }
 
     private fun onSaveMovieClick(
         isSaved: Boolean,
         listId: Long,
-        movieId: Long,
+        movieId: Long
     ) {
         if (isSaved) {
             removeSavedItem(listId, movieId)
@@ -258,8 +264,8 @@ class ContinueWatchingViewModel @Inject constructor(
                         it.addToListBottomSheetState.copy(
                             isVisible = true,
                             selectedItemId = movieId,
-                            selectedListId = null,
-                        ),
+                            selectedListId = null
+                        )
                 )
             }
         }
@@ -267,13 +273,13 @@ class ContinueWatchingViewModel @Inject constructor(
 
     private fun removeSavedItem(
         listId: Long,
-        itemId: Long,
+        itemId: Long
     ) {
         tryToExecute(
             callee = { removeMovieFromSavedListUseCase(listId = listId, movieId = itemId) },
             onSuccess = { onRemoveSavedItemSuccess() },
             dispatcher = defaultDispatcher,
-            onFinally = ::onRemoveSavedItemFinished,
+            onFinally = ::onRemoveSavedItemFinished
         )
     }
 
@@ -285,7 +291,7 @@ class ContinueWatchingViewModel @Inject constructor(
     private fun showItemRemovedSuccessfullySnackBar() {
         showSnackBar(
             message = BaseSnackBarMessage.RemovedItemSuccessfully,
-            isSuccess = true,
+            isSuccess = true
         )
     }
 
@@ -294,8 +300,8 @@ class ContinueWatchingViewModel @Inject constructor(
             it.copy(
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
-                        isVisible = false,
-                    ),
+                        isVisible = false
+                    )
             )
         }
     }
@@ -312,14 +318,14 @@ class ContinueWatchingViewModel @Inject constructor(
                     listId =
                         currentState.addToListBottomSheetState.selectedListId
                             ?: return@tryToExecute,
-                    movieId = currentState.addToListBottomSheetState.selectedItemId,
+                    movieId = currentState.addToListBottomSheetState.selectedItemId
                 )
             },
             onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
             dispatcher = defaultDispatcher,
             onStart = ::onAddItemToListStart,
-            onFinally = ::onAddItemToListFinished,
+            onFinally = ::onAddItemToListFinished
         )
     }
 
@@ -352,7 +358,7 @@ class ContinueWatchingViewModel @Inject constructor(
     private fun showItemSavedSuccessfullySnackBar() {
         showSnackBar(
             message = BaseSnackBarMessage.SavedItemSuccessfully,
-            isSuccess = true,
+            isSuccess = true
         )
     }
 
@@ -361,8 +367,8 @@ class ContinueWatchingViewModel @Inject constructor(
             it.copy(
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
-                        isLoading = true,
-                    ),
+                        isLoading = true
+                    )
             )
         }
     }
@@ -372,8 +378,8 @@ class ContinueWatchingViewModel @Inject constructor(
             it.copy(
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
-                        isLoading = false,
-                    ),
+                        isLoading = false
+                    )
             )
         }
     }
@@ -383,12 +389,12 @@ class ContinueWatchingViewModel @Inject constructor(
             it.copy(
                 addListBottomSheetState =
                     it.addListBottomSheetState.copy(
-                        isVisible = true,
+                        isVisible = true
                     ),
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
-                        isVisible = false,
-                    ),
+                        isVisible = false
+                    )
             )
         }
     }
@@ -404,8 +410,8 @@ class ContinueWatchingViewModel @Inject constructor(
             it.copy(
                 addToListBottomSheetState =
                     AddToListBottomSheetState(
-                        savedLists = it.addToListBottomSheetState.savedLists,
-                    ),
+                        savedLists = it.addToListBottomSheetState.savedLists
+                    )
             )
         }
     }
@@ -415,8 +421,8 @@ class ContinueWatchingViewModel @Inject constructor(
             it.copy(
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
-                        selectedListId = listId,
-                    ),
+                        selectedListId = listId
+                    )
             )
         }
     }
@@ -426,8 +432,8 @@ class ContinueWatchingViewModel @Inject constructor(
             it.copy(
                 addListBottomSheetState =
                     it.addListBottomSheetState.copy(
-                        listName = name,
-                    ),
+                        listName = name
+                    )
             )
         }
     }
@@ -439,12 +445,12 @@ class ContinueWatchingViewModel @Inject constructor(
                     it.addListBottomSheetState.copy(
                         isVisible = false,
                         listName = "",
-                        isLoading = false,
+                        isLoading = false
                     ),
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
-                        isVisible = true,
-                    ),
+                        isVisible = true
+                    )
             )
         }
     }
@@ -459,7 +465,7 @@ class ContinueWatchingViewModel @Inject constructor(
             onSuccess = { onCreateListSuccess() },
             dispatcher = defaultDispatcher,
             onStart = ::onCreateListStart,
-            onFinally = ::onCreateListFinished,
+            onFinally = ::onCreateListFinished
         )
     }
 
@@ -474,7 +480,7 @@ class ContinueWatchingViewModel @Inject constructor(
                 addListBottomSheetState =
                     it.addListBottomSheetState.copy(
                         isLoading = true,
-                    ),
+                    )
             )
         }
     }
@@ -485,7 +491,7 @@ class ContinueWatchingViewModel @Inject constructor(
                 addListBottomSheetState =
                     it.addListBottomSheetState.copy(
                         isLoading = false,
-                    ),
+                    )
             )
         }
     }

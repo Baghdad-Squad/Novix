@@ -2,7 +2,7 @@ package com.baghdad.viewmodel.movieDetils
 
 import androidx.lifecycle.SavedStateHandle
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
+import com.baghdad.domain.usecase.continueWatching.AddUserWatchedMediaUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
 import com.baghdad.domain.usecase.movie.GetMovieAccountStatesUseCase
@@ -42,7 +42,7 @@ class MovieDetailsViewModelTest {
     private lateinit var getCastsInfoUseCase: GetMovieCastMembersUseCase
     private lateinit var getMovieImagesUseCase: GetMovieGalleryUseCase
     private lateinit var getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase
-    private lateinit var addContinueWatchingUseCase: AddContinueWatchingUseCase
+    private lateinit var addUserWatchedMediaUseCase: AddUserWatchedMediaUseCase
     private lateinit var getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase
     private lateinit var addMovieRateUseCase: AddMovieRateUseCase
     private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
@@ -63,7 +63,7 @@ class MovieDetailsViewModelTest {
         getCastsInfoUseCase = mockk()
         getMovieImagesUseCase = mockk()
         getMoreLikeThisPosterImageUseCase = mockk()
-        addContinueWatchingUseCase = mockk()
+        addUserWatchedMediaUseCase = mockk()
         getMovieAccountStatesUseCase = mockk()
         addMovieRateUseCase = mockk()
         isUserLoggedInUseCase = mockk()
@@ -76,7 +76,7 @@ class MovieDetailsViewModelTest {
         coEvery { getCastsInfoUseCase(any()) } returns createMockCastMembers()
         coEvery { getMovieImagesUseCase(any()) } returns createMockImages()
         coEvery { getMoreLikeThisPosterImageUseCase(any()) } returns createMockSimilarMovies()
-        coEvery { addContinueWatchingUseCase(any(), any(), any(), any()) } returns Unit
+        coEvery { addUserWatchedMediaUseCase(any(), any(), any(), any()) } returns Unit
         coEvery { getMovieAccountStatesUseCase(any()) } returns createMockAccountStates()
         coEvery { addMovieRateUseCase(any(), any()) } returns Unit
         coEvery { isUserLoggedInUseCase() } returns true
@@ -91,7 +91,7 @@ class MovieDetailsViewModelTest {
             getCastsInfoUseCase = getCastsInfoUseCase,
             getMovieImagesUseCase = getMovieImagesUseCase,
             getMoreLikeThisPosterImageUseCase = getMoreLikeThisPosterImageUseCase,
-            addContinueWatchingUseCase = addContinueWatchingUseCase,
+            addUserWatchedMediaUseCase = addUserWatchedMediaUseCase,
             savedStateHandle = savedStateHandle,
             getMovieAccountStatesUseCase = getMovieAccountStatesUseCase,
             addMovieRateUseCase = addMovieRateUseCase,
@@ -286,7 +286,7 @@ class MovieDetailsViewModelTest {
                 getCastsInfoUseCase = getCastsInfoUseCase,
                 getMovieImagesUseCase = getMovieImagesUseCase,
                 getMoreLikeThisPosterImageUseCase = getMoreLikeThisPosterImageUseCase,
-                addContinueWatchingUseCase = addContinueWatchingUseCase,
+                addUserWatchedMediaUseCase = addUserWatchedMediaUseCase,
                 savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId)),
                 getMovieAccountStatesUseCase = getMovieAccountStatesUseCase,
                 addMovieRateUseCase = addMovieRateUseCase,
