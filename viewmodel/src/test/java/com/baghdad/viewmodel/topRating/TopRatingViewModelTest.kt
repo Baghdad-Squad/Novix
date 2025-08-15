@@ -179,19 +179,11 @@ class TopRatingViewModelTest {
     @Test
     fun `onCreateNewListClick should show list bottom sheet when it is clicked`() = runTest {
 
-        val addListBottomSheetState = true
-        val addToListBottomSheetState = false
-
         viewModel.onCreateNewListClick()
         advanceUntilIdle()
 
-        assertThat(
-            viewModel.uiState.value.addListBottomSheetState.isVisible == addListBottomSheetState
-        ).isTrue()
-        assertThat(
-            viewModel.uiState.value.addToListBottomSheetState.isVisible == addToListBottomSheetState
-        ).isTrue()
-
+        assertThat(viewModel.uiState.value.addListBottomSheetState.isVisible).isTrue()
+        assertThat(viewModel.uiState.value.addToListBottomSheetState.isVisible).isTrue()
     }
 
     @Test
