@@ -77,13 +77,15 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun onAddItemToListSuccess() {
-        onSaveToListBottomSheetDismiss()
         refreshSavedItems()
+        onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
+
     }
 
     private fun refreshSavedItems() {
-        loadInitData()
+        getMovieDetails()
+        getMoreLikeThisShow()
         getUserSavedLists()
     }
 
@@ -334,10 +336,22 @@ class MovieDetailsViewModel @Inject constructor(
                     movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
             },
+            onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
             dispatcher = ioDispatcher,
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
+        )
+    }
+
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
         )
     }
 
@@ -619,7 +633,6 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onGetMovieMoreLikeThisSuccess(savedMovies: List<SavedMovie>) {
-        hideSnackBar()
         updateState { state ->
             state.copy(
                 moreLikeThisMovie =

@@ -1,10 +1,11 @@
-package com.baghdad.novix
+package com.baghdad.ui
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,24 +24,34 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val state by mainViewModel.uiState.collectAsStateWithLifecycle()
-            val isDarkTheme = state.isAppInDarkTheme
+            MainContent(mainViewModel = mainViewModel)
+        }
+    }
 
-            NovixTheme(isDarkTheme = isDarkTheme) {
-                val systemUiController = rememberSystemUiController()
-                val surfaceColor = Theme.color.surface
+    @Composable
+    private fun MainContent(mainViewModel: MainViewModel) {
+        val state by mainViewModel.uiState.collectAsStateWithLifecycle()
+        val isDarkTheme = state.isAppInDarkTheme
 
-                LaunchedEffect(isDarkTheme) {
-                    if (isDarkTheme != null) {
-                        systemUiController.setSystemBarsColor(
-                            color = surfaceColor,
-                            darkIcons = !isDarkTheme
-                        )
-                    }
-                }
+        NovixTheme(isDarkTheme = isDarkTheme) {
+            ConfigureSystemBars(isDarkTheme = isDarkTheme)
+            MainScreen(state = state)
+        }
+    }
 
-                MainScreen(state = state)
+    @Composable
+    private fun ConfigureSystemBars(isDarkTheme: Boolean?) {
+        val systemUiController = rememberSystemUiController()
+        val surfaceColor = Theme.color.surface
+
+        LaunchedEffect(isDarkTheme) {
+            isDarkTheme?.let { darkTheme ->
+                systemUiController.setSystemBarsColor(
+                    color = surfaceColor,
+                    darkIcons = !darkTheme
+                )
             }
         }
     }
+
 }

@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.search.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -167,11 +166,7 @@ private fun EmptyStateContent() {
         contentAlignment = Alignment.Center
     ) {
         EmptySearchState(
-            imagePath = if (Theme.isDarkTheme) {
-                com.baghdad.design_system.R.drawable.no_search_results_night
-            } else {
-                com.baghdad.design_system.R.drawable.no_search_results
-            },
+            imagePath = Theme.drawable.noSearchResult,
             contentDescription = stringResource(R.string.no_search_result_picture),
             message = stringResource(R.string.no_search_result_please_try_with_another_keyword),
             modifier = Modifier.padding(bottom = 60.dp)
@@ -192,7 +187,6 @@ private fun SearchResultContentPreview() {
         movies = flowOf(PagingData.empty<SearchScreenState.MovieUiState>()).collectAsLazyPagingItems(),
         actors = flowOf(PagingData.empty<SearchScreenState.ActorUiState>()).collectAsLazyPagingItems(),
         tvShows = flowOf(PagingData.empty<SearchScreenState.TvShowUiState>()).collectAsLazyPagingItems(),
-
         onMovieClick = { _, _ -> },
         onTvShowClick = { _, _ -> },
         onActorClick = {},

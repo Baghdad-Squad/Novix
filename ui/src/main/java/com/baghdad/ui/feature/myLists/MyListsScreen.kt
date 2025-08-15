@@ -63,7 +63,7 @@ private fun MyListsScreenContent(
             TopAppBar(
                 modifier = Modifier
                     .statusBarsPadding()
-                    .padding(vertical = 12.dp),
+                    .padding(top = 25.dp, bottom = 12.dp),
                 screenTitle = stringResource(R.string.my_lists),
             )
         },
