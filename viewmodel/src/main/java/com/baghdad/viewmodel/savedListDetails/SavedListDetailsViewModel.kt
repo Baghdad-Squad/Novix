@@ -100,7 +100,6 @@ class SavedListDetailsViewModel @Inject constructor(
             onSuccess = { onSuccessRemoveSavedMovieClick() },
             onError = ::onError,
             onStart = ::startLoading,
-            onFinally = ::stopLoading
         )
     }
 
