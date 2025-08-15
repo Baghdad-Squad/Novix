@@ -12,6 +12,6 @@ fun ReviewDto.toEntity(): Review {
         contentTitle = contentTitle,
         rating = rating,
         reviewText = reviewText,
-        postedDate = LocalDate.parse(this.postedDate.substring(0, 10))
+        postedDate = LocalDate.parse(input = postedDate.substring(0, 10))
     )
 }

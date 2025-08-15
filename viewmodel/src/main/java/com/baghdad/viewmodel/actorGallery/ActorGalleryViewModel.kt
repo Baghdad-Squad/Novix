@@ -6,8 +6,8 @@ import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import kotlinx.coroutines.CoroutineDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 @HiltViewModel

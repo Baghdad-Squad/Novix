@@ -44,7 +44,6 @@ suspend fun <T> executeSafely(block: suspend () -> T): T {
     }
 }
 
-
 fun <T> getFlowSafely(block: () -> Flow<T>): Flow<T> {
     return try {
         block()
@@ -109,7 +108,6 @@ suspend fun <TEntity, TDto> getRemotePagedSafely(
         prevKey = remoteData.prevKey
     )
 }
-
 
 suspend fun <TEntity, TDto> getLocalPagedSafely(
     page: Int,
