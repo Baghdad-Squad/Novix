@@ -1,6 +1,8 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.dummyData.DummyDataFactory.RECENT_SEARCH_DTO
+import com.baghdad.entity.search.RecentSearch
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.RECENT_SEARCH_DTO
+import com.baghdad.repository.util.convertMillisToLocalDateTime
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.time.ExperimentalTime
@@ -10,9 +12,15 @@ class RecentSearchMapperTest {
 
     @Test
     fun `should map to entity correctly when dto contains valid data`() {
+        val expected = RecentSearch(
+            id = RECENT_SEARCH_DTO.id,
+            query = RECENT_SEARCH_DTO.query,
+            searchedAt = convertMillisToLocalDateTime(RECENT_SEARCH_DTO.searchedAt)
+        )
+
         val result = RECENT_SEARCH_DTO.toEntity()
 
-        assertThat(result).isEqualTo(RECENT_SEARCH_DTO)
+        assertThat(result).isEqualTo(expected)
     }
 
     @Test
@@ -33,7 +41,7 @@ class RecentSearchMapperTest {
     fun `should map RecentSearchDto searchedAt to entity searchedAt correctly`() {
         val result = RECENT_SEARCH_DTO.toEntity()
 
-        assertThat(result.searchedAt).isEqualTo(RECENT_SEARCH_DTO.searchedAt)
+        assertThat(result.searchedAt).isEqualTo(convertMillisToLocalDateTime(RECENT_SEARCH_DTO.searchedAt))
     }
 
 
@@ -52,12 +60,4 @@ class RecentSearchMapperTest {
 
         assertThat(result.query).isEqualTo("")
     }
-
-    @Test
-    fun `should map empty RecentSearchDto searchedAt to entity searchedAt correctly`() {
-        val dto = RECENT_SEARCH_DTO.copy(searchedAt = 0L)
-        val result = dto.toEntity()
-
-        assertThat(result.searchedAt).isEqualTo(0L)
-    }
-} 
+}

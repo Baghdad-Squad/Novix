@@ -84,8 +84,8 @@ object DummyDataFactory {
         )
 
         val RATED_MEDIA = RatedMedia(
-            id = 101L,
-            userRating = 10,
+            id = 123L,
+            userRating = 8,
             posterImageURL = "https://example.com/breakingbad.jpg",
             contentType = RatedMedia.ContentType.TV_SHOW
         )
@@ -142,7 +142,7 @@ object DummyDataFactory {
             userRating = 8,
             releaseDate = "2023-01-01",
             overview = "Test TV show overview",
-            posterPictureURL = "/tv_show_poster.jpg",
+            posterPictureURL = "https://example.com/breakingbad.jpg",
             headerImagesURLs = listOf("/header1.jpg", "/header2.jpg"),
             trailerURL = " ",
             numberOfSeasons = 3

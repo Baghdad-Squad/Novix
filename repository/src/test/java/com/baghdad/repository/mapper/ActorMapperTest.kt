@@ -10,11 +10,10 @@ class ActorMapperTest {
 
     @Test
     fun `toEntity should return Actor entity when given valid ActorDto`() {
-        // Given
         val actorDto = createMockActorDto()
-        // When
+
         val result = actorDto.toEntity()
-        // Then
+
         val expectedResult = Actor(
             id = 789L,
             name = "Test Actor",
@@ -31,11 +30,10 @@ class ActorMapperTest {
 
     @Test
     fun `toEntity should return deathDate when Actor is dead`() {
-        // Given
         val actorDto = createMockActorDto().copy(deathDate = "2020-12-25")
-        // When
+
         val result = actorDto.toEntity()
-        // Then
+
         assertThat(result.deathDate).isEqualTo(LocalDate.parse("2020-12-25"))
     }
 } 

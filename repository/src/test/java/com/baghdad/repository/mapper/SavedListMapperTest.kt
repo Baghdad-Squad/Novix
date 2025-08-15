@@ -1,15 +1,22 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.dummyData.DummyDataFactory.SAVED_LIST_DTO
+import com.baghdad.entity.savedList.SavedList
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.SAVED_LIST_DTO
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class SavedListMapperTest {
     @Test
     fun `should map SavedListDto to SavedList entity when enter correctly`() {
+        val excepted = SavedList(
+            id = SAVED_LIST_DTO.id,
+            name = SAVED_LIST_DTO.name,
+            itemCount = SAVED_LIST_DTO.itemCount
+        )
+
         val result = SAVED_LIST_DTO.toEntity()
 
-        assertThat(result).isEqualTo(SAVED_LIST_DTO)
+        assertThat(result).isEqualTo(excepted)
     }
 
     @Test

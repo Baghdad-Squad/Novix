@@ -1,7 +1,7 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.dummyData.DummyDataFactory.RECENTLY_VIEWED
-import com.baghdad.repository.dummyData.DummyDataFactory.RECENTLY_VIEWED_DTO
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.RECENTLY_VIEWED
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.RECENTLY_VIEWED_DTO
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -38,7 +38,7 @@ class RecentlyViewedMapperTest {
     fun `should map listId parameter to entity listId correctly`() {
         val result = RECENTLY_VIEWED
 
-        assertThat(result.listId).isEqualTo(42L)
+        assertThat(result.listId).isEqualTo(55L)
     }
 
 

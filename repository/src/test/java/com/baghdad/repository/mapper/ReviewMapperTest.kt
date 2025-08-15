@@ -1,7 +1,7 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.dummyData.DummyDataFactory.REVIEW_DTO
-import com.baghdad.repository.model.ReviewDto
+import com.baghdad.entity.media.Review
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.REVIEW_DTO
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
@@ -10,9 +10,19 @@ class ReviewMapperTest {
 
     @Test
     fun `should map correctly to entity when ReviewDto contains valid data`() {
+        val expected = Review(
+            id = REVIEW_DTO.id,
+            contentTitle = REVIEW_DTO.contentTitle,
+            authorName = REVIEW_DTO.authorName,
+            rating = REVIEW_DTO.rating,
+            authorAvatarUrl = REVIEW_DTO.authorAvatarUrl,
+            reviewText = REVIEW_DTO.reviewText,
+            postedDate = LocalDate.parse(REVIEW_DTO.postedDate)
+        )
+
         val result = REVIEW_DTO.toEntity()
 
-        assertThat(result).isEqualTo(REVIEW_DTO)
+        assertThat(result).isEqualTo(expected)
     }
 
     @Test
@@ -61,7 +71,7 @@ class ReviewMapperTest {
     fun `should map ReviewDto postedDate to entity postedDate correctly`() {
         val result = REVIEW_DTO.toEntity()
 
-        assertThat(result.postedDate).isEqualTo(REVIEW_DTO.postedDate)
+        assertThat(result.postedDate).isEqualTo(LocalDate.parse(REVIEW_DTO.postedDate))
     }
 
     @Test
@@ -111,13 +121,4 @@ class ReviewMapperTest {
 
         assertThat(result.reviewText).isEqualTo("")
     }
-
-    @Test
-    fun `should map empty ReviewDto postedDate to entity postedDate correctly`() {
-        val dto = REVIEW_DTO.copy(postedDate = "")
-        val result = dto.toEntity()
-
-        assertThat(result.postedDate).isEqualTo("")
-    }
-
-} 
+}

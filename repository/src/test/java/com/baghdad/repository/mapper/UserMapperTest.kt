@@ -1,15 +1,22 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.dummyData.DummyDataFactory.USER_DTO
+import com.baghdad.entity.user.User
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.USER_DTO
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class UserMapperTest {
     @Test
     fun `should map UserDto to entity when enter correctly`() {
+        val excepted = User(
+            id = USER_DTO.id,
+            userName = USER_DTO.userName,
+            imageUrl = USER_DTO.imageUrl.orEmpty()
+        )
+
         val result = USER_DTO.toEntity()
 
-        assertThat(result).isEqualTo(USER_DTO)
+        assertThat(result).isEqualTo(excepted)
     }
 
     @Test

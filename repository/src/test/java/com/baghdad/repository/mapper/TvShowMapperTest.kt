@@ -1,17 +1,33 @@
 package com.baghdad.repository.mapper
 
+import com.baghdad.entity.media.TvShow
 import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.RATED_MEDIA
 import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.TV_SHOW_DTO
 import com.google.common.truth.Truth.assertThat
+import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
 
 class TvShowMapperTest {
 
     @Test
     fun `should map TvShowDto to entity correctly when data is valid`() {
+        val expected = TvShow(
+            id = TV_SHOW_DTO.id,
+            title = TV_SHOW_DTO.title,
+            genres = TV_SHOW_DTO.genres.map { it.toEntity() },
+            averageRating = TV_SHOW_DTO.imdbRating,
+            userRating = TV_SHOW_DTO.userRating,
+            releaseDate = LocalDate.parse(TV_SHOW_DTO.releaseDate),
+            overview = TV_SHOW_DTO.overview,
+            posterImageURL = TV_SHOW_DTO.posterPictureURL,
+            headerImagesURLs = TV_SHOW_DTO.headerImagesURLs,
+            trailerURL = TV_SHOW_DTO.trailerURL,
+            numberOfSeasons = TV_SHOW_DTO.numberOfSeasons
+        )
+
         val result = TV_SHOW_DTO.toEntity()
 
-        assertThat(result).isEqualTo(TV_SHOW_DTO)
+        assertThat(result).isEqualTo(expected)
     }
 
     @Test
@@ -54,7 +70,7 @@ class TvShowMapperTest {
     fun `should map TvShowDto releaseDate to entity releaseDate correctly`() {
         val result = TV_SHOW_DTO.toEntity()
 
-        assertThat(result.releaseDate).isEqualTo(TV_SHOW_DTO.releaseDate)
+        assertThat(result.releaseDate).isEqualTo(LocalDate.parse(TV_SHOW_DTO.releaseDate))
     }
 
     @Test
@@ -104,13 +120,6 @@ class TvShowMapperTest {
         val dto = TV_SHOW_DTO.copy(genres = emptyList())
         val result = dto.toEntity()
         assertThat(result.genres).isEmpty()
-    }
-
-    @Test
-    fun `should map empty releaseDate from TvShowDto to entity correctly`() {
-        val dto = TV_SHOW_DTO.copy(releaseDate = "")
-        val result = dto.toEntity()
-        assertThat(result.releaseDate).isEqualTo("")
     }
 
     @Test

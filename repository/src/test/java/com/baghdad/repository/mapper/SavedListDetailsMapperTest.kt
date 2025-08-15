@@ -1,8 +1,9 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.dummyData.DummyDataFactory.PAGED_ITEMS_DTO
-import com.baghdad.repository.dummyData.DummyDataFactory.SAVED_LIST_DETAILS_DTO
-import com.baghdad.repository.dummyData.DummyDataFactory.SAVED_LIST_DTO
+import com.baghdad.entity.savedList.SavedList
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.PAGED_ITEMS_DTO
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.SAVED_LIST_DETAILS_DTO
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.SAVED_LIST_DTO
 import com.baghdad.repository.model.savedList.SavableMovieDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -10,9 +11,15 @@ import org.junit.jupiter.api.Test
 class SavedListDetailsMapperTest {
     @Test
     fun `should map savedList correctly`() {
+        val excepted = SavedList(
+            id = SAVED_LIST_DTO.id,
+            name = SAVED_LIST_DTO.name,
+            itemCount = SAVED_LIST_DTO.itemCount
+        )
+
         val result = SAVED_LIST_DETAILS_DTO.toEntity()
 
-        assertThat(result.savedList).isEqualTo(SAVED_LIST_DTO)
+        assertThat(result.savedList).isEqualTo(excepted)
     }
 
     @Test
