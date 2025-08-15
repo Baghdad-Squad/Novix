@@ -202,23 +202,13 @@ fun EpisodeDetailsContent(
         }
 
         TopAppBar(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .background(animatedColor)
-                    .zIndex(1f)
-                    .align(Alignment.TopCenter)
-                    .padding(top = 56.dp, bottom = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(animatedColor)
+                .zIndex(1f)
+                .align(Alignment.TopCenter)
+                .padding(top = 56.dp, bottom = 8.dp),
             onGoBackClick = listener::onBackClick,
-            content = {
-                SaveIcon(
-                    size = 40,
-                    backgroundColor = Theme.color.iconBackgroundLow,
-                    isSaved = state.isSavedToList,
-                    tint = Theme.color.title,
-                    onClick = listener::onSaveEpisodeClick,
-                )
-            },
         )
     }
 }
