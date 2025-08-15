@@ -4,73 +4,78 @@
 
 >### Novix is a mix of two words: `Nova` – a star that suddenly increases in brightness `Flix` from *"flicks"*  a casual term for movies and shows.
 
+-  <img width="1000" height="472" alt="Image" src="https://github.com/user-attachments/assets/5f71af45-1433-4ce1-9b67-ce69148cc10f" />
+
+- <img width="1000" height="473" alt="Image" src="https://github.com/user-attachments/assets/666986be-87c9-4506-a036-a57a8ec3cc6c" />
+
+   ----
 ## Why Novix ?
 In our humble little project, we’ve sprinkled a few special touches just for you, little things to make your experience extra delightful!
 
 - ### Use Component Modularization
-    -  **Reusability** : Use the same component in different projects or features.
+  -  **Reusability** : Use the same component in different projects or features.
 
-    - **Faster builds** : Only rebuild the part that changed, not the whole project.
+  - **Faster builds** : Only rebuild the part that changed, not the whole project.
 
-    - **Better code organization** : Structured by features or functionality.
+  - **Better code organization** : Structured by features or functionality.
 
-    - **Parallel development** : Developers work on different parts without conflicts.
+  - **Parallel development** : Developers work on different parts without conflicts.
 
-    - **Easier testing** : Test each module independently.
+  - **Easier testing** : Test each module independently.
 
-    - **Better dependency control** : Each part only gets the libraries it needs.
+  - **Better dependency control** : Each part only gets the libraries it needs.
 
-    - **Maintainability & scalability** : Easily add or remove features.
+  - **Maintainability & scalability** : Easily add or remove features.
 
-    - **Dynamic delivery support** : Load certain parts only when needed.
+  - **Dynamic delivery support** : Load certain parts only when needed.
 
 - ###  Use Firebase
 
-    - **Firebase App Performance** : Monitor app performance in real time, track slow screens, and detect bottlenecks.
+  - **Firebase App Performance** : Monitor app performance in real time, track slow screens, and detect bottlenecks.
 
-    - **Firebase Analytics** : Track user behavior, events, and engagement to make data-driven decisions.
+  - **Firebase Analytics** : Track user behavior, events, and engagement to make data-driven decisions.
 
-    - **Firebase Crashlytics** : Get real-time crash reports with stack traces to quickly fix issues.
+  - **Firebase Crashlytics** : Get real-time crash reports with stack traces to quickly fix issues.
 
-    - #### Steps to integrate:
+  - #### Steps to integrate:
 
-    - Add Firebase SDK to the project `google-services.json for Android`.
+  - Add Firebase SDK to the project `google-services.json for Android`.
 
-    - Enable the desired services in Firebase Console.
+  - Enable the desired services in Firebase Console.
 
-    - Initialize Firebase in our app code.
+  - Initialize Firebase in our app code.
 
-    - Add tracking *for Analytics* or custom logging *for Crashlytics*.
+  - Add tracking *for Analytics* or custom logging *for Crashlytics*.
 
 - ### CI/CD Setup
 
-    - #### *CI* Build Verification
+  - #### *CI* Build Verification
 
-      Pipeline ensures the project compiles successfully before merging into develop.
+    Pipeline ensures the project compiles successfully before merging into develop.
 
-    - ####  *CI*  Test Coverage
+  - ####  *CI*  Test Coverage
 
-      Pipeline checks unit test coverage, must exceed 80%.
+    Pipeline checks unit test coverage, must exceed 80%.
 
-      Merge into develop is blocked if coverage is below threshold.
+    Merge into develop is blocked if coverage is below threshold.
 
-    - #### *CD* Deployment
+  - #### *CD* Deployment
 
-      Pipeline generates APK or App Bundle after a PR is approved and merged into develop.
+    Pipeline generates APK or App Bundle after a PR is approved and merged into develop.
 
-      Automatically publishes the build to Firebase App Distribution.
+    Automatically publishes the build to Firebase App Distribution.
 
 - #### Islamic Image Viewer
 
-    * a sleek **Coil** based module with one simple Image composable, using on-device AI to gently blur content sensitive to Islamic culture for a safe and smooth experience.
+  * a sleek **Coil** based module with one simple Image composable, using on-device AI to gently blur content sensitive to Islamic culture for a safe and smooth experience.
 
 ## Application Build
 
 - ###  Use Navigation 2
-    - We use **Navigation 2** to make moving between screens simple and reliable. It helps us manage complex navigation flows, handle back actions correctly, and keep your experience smooth without glitches.
+  - We use **Navigation 2** to make moving between screens simple and reliable. It helps us manage complex navigation flows, handle back actions correctly, and keep your experience smooth without glitches.
 
 - ### TMDb API
-    * Our app is powered by The Movie Database **TMDb API**, bringing you *up to date* movie data, trailers, and more all thanks to [TMDb’s developer resources](https://developer.themoviedb.org/reference/intro/getting-started)
+  * Our app is powered by The Movie Database **TMDb API**, bringing you *up to date* movie data, trailers, and more all thanks to [TMDb’s developer resources](https://developer.themoviedb.org/reference/intro/getting-started)
 
 
 - ###  [Use Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview)
@@ -249,11 +254,4 @@ AUTHORIZATION_TOKEN="your_token_here"
 Special thanks to our mentor for the guidance and support throughout this journey.
 [Ahmed Nasser](https://github.com/ahmednasserzaza) & [Amnah](https://github.com/amnah44)
 Thanks to the amazing Baghdad Squad team who made this possible
-[Abdulaziz](https://github.com/abdulazizacc) , [Aboud](https://github.com/ABDULLAHHG),[Edrees](https://github.com/MuhammedEdrees) , [Fares](https://github.com/FaresM0hamed)
-, [Fara7](https://github.com/Farah315)
-, [Fatmah](https://github.com/fatmahgazy)
-, [Karrar](https://github.com/karrar-abbas)
-, [Malak](https://github.com/Malak187)
-, [Mahmoud](https://github.com/MahmoodTarek)
-, [Omer](https://github.com/omer1998)
-, [Zinah](https://github.com/Arzo-zi)
+[Abdulaziz](https://github.com/abdulazizacc) , [Aboud](https://github.com/ABDULLAHHG),[Edrees](https://github.com/MuhammedEdrees) , [Fares](https://github.com/FaresM0hamed), [Fara7](https://github.com/Farah315), [Fatmah](https://github.com/fatmahgazy), [Karrar](https://github.com/karrar-abbas), [Malak](https://github.com/Malak187), [Mahmoud](https://github.com/MahmoodTarek), [Omer](https://github.com/omer1998), [Zinah](https://github.com/Arzo-zi)
