@@ -12,6 +12,7 @@ data class ProfileScreenState(
     val languageBottomSheetState: LanguageBottomSheetState = LanguageBottomSheetState(),
     val themeBottomSheetState: ThemeBottomSheetState = ThemeBottomSheetState(),
     val logoutBottomSheetState: LogoutBottomSheetState = LogoutBottomSheetState(),
+    val contentRestrictionBottomSheetState: ContentRestrictionBottomSheetState = ContentRestrictionBottomSheetState()
 ) : BaseUiState {
 
     data class User(
@@ -38,6 +39,11 @@ data class ProfileScreenState(
         val isVisible: Boolean = false,
     )
 
+    data class ContentRestrictionBottomSheetState(
+        val isVisible: Boolean = false,
+        val currentRestriction: ContentRestriction = ContentRestriction.STRICT,
+    )
+
     enum class LanguagePreferences(
         @StringRes val title: Int,
         val languageCode: String = "",
@@ -56,4 +62,13 @@ data class ProfileScreenState(
         DARK(R.string.dark, true),
         LIGHT(R.string.light, false)
     }
+}
+
+enum class ContentRestriction(@StringRes val title: Int, @StringRes val description: Int) {
+    STRICT(R.string.content_restriction_strict, R.string.content_restriction_strict_description),
+    MODERATE(
+        R.string.content_restriction_moderate,
+        R.string.content_restriction_moderate_description
+    ),
+    NONE(R.string.content_restriction_none, R.string.content_restriction_none_description)
 }

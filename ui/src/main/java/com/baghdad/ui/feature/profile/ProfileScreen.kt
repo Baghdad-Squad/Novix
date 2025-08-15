@@ -25,6 +25,7 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.bottomSheet.AppLanguageBottomSheet
 import com.baghdad.ui.feature.component.bottomSheet.AppThemeBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.ContentRestrictionBottomSheet
 import com.baghdad.ui.feature.profile.component.GuestScreen
 import com.baghdad.ui.feature.profile.component.LogOutBottomSheet
 import com.baghdad.ui.feature.profile.component.ProfileHeaderWithOption
@@ -32,6 +33,7 @@ import com.baghdad.ui.feature.profile.component.ProfileScreenItemsList
 import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.profile.ContentRestriction
 import com.baghdad.viewmodel.profile.ProfileEffect
 import com.baghdad.viewmodel.profile.ProfileInteractionListener
 import com.baghdad.viewmodel.profile.ProfileScreenState
@@ -60,30 +62,25 @@ private fun handleEffect(
     handleNavigation: (MyAccountNavEvent) -> Unit,
 ) {
     when (effect) {
-        is ProfileEffect.NavigateBack ->
-            handleNavigation(
-                MyAccountNavEvent.NavigateBack,
-            )
+        is ProfileEffect.NavigateBack -> handleNavigation(
+            MyAccountNavEvent.NavigateBack,
+        )
 
-        is ProfileEffect.NavigateToMyRatings ->
-            handleNavigation(
-                MyAccountNavEvent.NavigateToMyRatings,
-            )
+        is ProfileEffect.NavigateToMyRatings -> handleNavigation(
+            MyAccountNavEvent.NavigateToMyRatings,
+        )
 
-        is ProfileEffect.NavigateToWatchingHistory ->
-            handleNavigation(
-                MyAccountNavEvent.NavigateToWatchingHistory,
-            )
+        is ProfileEffect.NavigateToWatchingHistory -> handleNavigation(
+            MyAccountNavEvent.NavigateToWatchingHistory,
+        )
 
-        is ProfileEffect.NavigateToLogin ->
-            handleNavigation(
-                MyAccountNavEvent.NavigateToLogin,
-            )
+        is ProfileEffect.NavigateToLogin -> handleNavigation(
+            MyAccountNavEvent.NavigateToLogin,
+        )
 
-        is ProfileEffect.NavigateToChangePassword ->
-            handleNavigation(
-                MyAccountNavEvent.NavigateToChangePassword,
-            )
+        is ProfileEffect.NavigateToChangePassword -> handleNavigation(
+            MyAccountNavEvent.NavigateToChangePassword,
+        )
     }
 }
 
@@ -181,6 +178,28 @@ private fun ProfileScreenContent(
             ),
             onLanguageSelected = { listener.onLanguageChanged(it) },
             onSaveClick = listener::onLanguageConfirmed,
+        )
+
+        ContentRestrictionBottomSheet(
+            onBottomSheetCloseClick = listener::onContentRestrictionDialogDismissed,
+            isVisible = state.contentRestrictionBottomSheetState.isVisible,
+            contentRestrictionOptions = listOf(
+                Selectable(
+                    value = ContentRestriction.STRICT,
+                    isSelected = state.contentRestrictionBottomSheetState.currentRestriction == ContentRestriction.STRICT
+                ),
+                Selectable(
+                    value = ContentRestriction.MODERATE,
+                    isSelected = state.contentRestrictionBottomSheetState.currentRestriction == ContentRestriction.MODERATE
+                ),
+                Selectable(
+                    value = ContentRestriction.NONE,
+                    isSelected = state.contentRestrictionBottomSheetState.currentRestriction == ContentRestriction.NONE
+                ),
+            ),
+            onContentRestrictionSelected = { listener.onContentRestrictionChanged(it) },
+            onSaveClick = listener::onContentRestrictionConfirmed,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         LogOutBottomSheet(

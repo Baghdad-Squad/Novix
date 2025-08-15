@@ -1,5 +1,6 @@
 package com.baghdad.repository.datasource.local
 
+import com.baghdad.repository.model.ContentRestrictionTypesDto
 import kotlinx.coroutines.flow.Flow
 
 interface AppConfigurationDataSource {
@@ -8,5 +9,7 @@ interface AppConfigurationDataSource {
     suspend fun getAppLanguage(): Flow<String?>
     suspend fun setAppLanguage(language: String)
     suspend fun setFirstTimeStatus()
-    suspend fun isFirstTime(): Boolean
+    suspend fun isFirstTimeLaunchApp(): Boolean
+    suspend fun setContentRestriction(restriction: ContentRestrictionTypesDto)
+    suspend fun getContentRestriction(): Flow<ContentRestrictionTypesDto>
 }
