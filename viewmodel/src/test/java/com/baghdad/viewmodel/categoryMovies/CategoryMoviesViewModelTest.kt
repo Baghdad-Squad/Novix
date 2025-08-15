@@ -39,8 +39,8 @@ class CategoryMoviesViewModelTest {
 
         coEvery { getGenreMoviesUseCase(any(), any()) } returns PagedResult(
             data = listOf(testMovie),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         coEvery { getMovieGenreNameByIdUseCase(any()) } returns Genre(1L, "Action")
@@ -181,8 +181,8 @@ class CategoryMoviesViewModelTest {
             // Given
             coEvery { getGenreMoviesUseCase(1L, any()) } returns PagedResult(
                 data = listOf(testMovie),
-                nextKey = null,
-                prevKey = null
+                nextPage = null,
+                prevPage = null
             )
             val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
 

@@ -66,14 +66,14 @@ class GetSavedListsUseCaseTest {
 
         private val expectedPagedResultWithData = PagedResult(
             data = expectedSavedLists,
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         private val expectedPagedResultEmpty = PagedResult<SavedList>(
             data = emptyList(),
-            nextKey = null,
-            prevKey = null
+            nextPage = null,
+            prevPage = null
         )
     }
 }

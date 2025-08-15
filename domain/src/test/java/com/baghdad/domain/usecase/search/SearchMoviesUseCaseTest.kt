@@ -3,14 +3,11 @@ package com.baghdad.domain.usecase.search
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.testHelper.getSampleSavedMovie
-import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.Movie
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -21,8 +18,8 @@ class SearchMoviesUseCaseTest {
     private lateinit var searchMoviesUseCase: SearchMoviesUseCase
     val sampleSavedMovie = PagedResult(
         data = listOf(getSampleSavedMovie()),
-        nextKey = null,
-        prevKey = null
+        nextPage = null,
+        prevPage = null
     )
 
     @BeforeEach
@@ -50,8 +47,8 @@ class SearchMoviesUseCaseTest {
 
         val result = searchMoviesUseCase(query, 1)
 
-        assertThat(result.prevKey).isNull()
-        assertThat(result.nextKey).isEqualTo(2)
+        assertThat(result.prevPage).isNull()
+        assertThat(result.nextPage).isEqualTo(2)
     }
 
     @Test

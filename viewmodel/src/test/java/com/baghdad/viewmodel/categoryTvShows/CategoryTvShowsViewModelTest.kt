@@ -54,8 +54,8 @@ class CategoryTvShowsViewModelTest {
 
         coEvery { getTvShowsByGenreUseCase(any(), any()) } returns PagedResult(
             data = listOf(testTvShow),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         coEvery { getGenresUseCase.getTvShowGenres() } returns listOf(genre)
@@ -178,8 +178,8 @@ class CategoryTvShowsViewModelTest {
             // Given
             coEvery { getTvShowsByGenreUseCase(1L, any()) } returns PagedResult(
                 data = listOf(testTvShow),
-                nextKey = null,
-                prevKey = null
+                nextPage = null,
+                prevPage = null
             )
 
             val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))

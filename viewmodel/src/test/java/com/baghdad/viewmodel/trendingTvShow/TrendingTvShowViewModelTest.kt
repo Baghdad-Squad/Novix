@@ -29,7 +29,7 @@ class TrendingTvShowViewModelTest {
     fun setUp() {
         coEvery { getGenresUseCase.getTvShowGenres() } returns genres
         coEvery { getTrendingTvShowUseCase(any(), any()) } returns PagedResult(
-            tvShows, nextKey = null, prevKey = null
+            tvShows, nextPage = null, prevPage = null
         )
         Dispatchers.setMain(testDispatcher)
         viewModel = TrendingTvShowViewModel(getTrendingTvShowUseCase, getGenresUseCase, testDispatcher)

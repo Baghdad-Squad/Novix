@@ -5,13 +5,11 @@ import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.domain.testHelper.getSampleMovie
 import com.baghdad.domain.testHelper.getSampleSavedMovie
 import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.Movie
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -64,8 +62,8 @@ class GetTrendingMoviesUseCaseTest {
                     )
                 )
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
     }
 }

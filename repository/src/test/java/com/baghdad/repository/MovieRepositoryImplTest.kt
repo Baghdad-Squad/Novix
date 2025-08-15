@@ -145,8 +145,8 @@ class MovieRepositoryImplTest {
         )
         val expectedPagedResult = PagedResult(
             data = listOf(DummyDataFactory.DummyDataFactory.MOVIE_DTO.toMedia()),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         mockGetLoggedInUser(userDto)
@@ -165,7 +165,7 @@ class MovieRepositoryImplTest {
             val page = 1
             val pageSize = 20
             val expectedPagedResult = PagedResult<RatedMedia>(
-                data = emptyList(), nextKey = null, prevKey = null
+                data = emptyList(), nextPage = null, prevPage = null
             )
 
             mockGetLoggedInUser(null)
