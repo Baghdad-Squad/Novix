@@ -18,4 +18,7 @@ interface ProfileInteractionListener {
     fun onAppearanceConfirmed()
     fun onLanguageConfirmed()
     fun onLanguageChanged(language: ProfileScreenState.LanguagePreferences)
+    fun onContentRestrictionChanged(contentRestriction: ContentRestriction)
+    fun onContentRestrictionDialogDismissed()
+    fun onContentRestrictionConfirmed()
 }

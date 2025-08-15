@@ -10,10 +10,15 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 
-class HaramImageDetector(private val context: Context) {
+class HaramImageDetector(
+    private val context: Context
+) {
     private val inputImageSize = INPUT_IMAGE_SIZE
 
-    fun isImageHaram(selectedBitmap: Bitmap): Boolean {
+    fun isImageHaram(
+        selectedBitmap: Bitmap,
+        contentRestrictionTypes: ContentRestrictionTypes = ContentRestrictionTypes.STRICT
+    ): Boolean {
         val model = IslamicImageModel.newInstance(context)
 
         val tensorImage = TensorImage(DataType.FLOAT32)
@@ -33,7 +38,7 @@ class HaramImageDetector(private val context: Context) {
         val result = outputBuffer.floatArray
         result.getOrNull(0) ?: 0f
         val nudeScore = result.getOrNull(1) ?: 0f
-        return nudeScore > NSFW_DETECTION_THRESHOLD
+        return nudeScore > contentRestrictionTypes.thresholds
     }
 
     private fun buildImageProcessor(): ImageProcessor {
@@ -45,6 +50,6 @@ class HaramImageDetector(private val context: Context) {
 
     companion object {
         private const val INPUT_IMAGE_SIZE = 224
-        private const val NSFW_DETECTION_THRESHOLD = 0.4
     }
+
 }
