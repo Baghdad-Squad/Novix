@@ -1,4 +1,4 @@
-package com.baghdad.ui.feature.myRating
+package com.baghdad.ui.feature.myRating.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,11 +22,11 @@ import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 @Composable
 fun RatingCard(
     url: String,
-    rating: String,
+    rating: Int,
     contentDescription: String?,
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier
@@ -35,8 +35,7 @@ fun RatingCard(
             .background(Theme.color.surface, shape = RoundedCornerShape(12.dp))
             .border(1.dp, Theme.color.stroke, shape = RoundedCornerShape(12.dp))
             .noRippleClickable { onClick() },
-        contentAlignment = Alignment.Center,
-
+        contentAlignment = Alignment.Center
         ) {
         IslamicImage(
             imageUrl = url,
@@ -44,10 +43,10 @@ fun RatingCard(
             loadingContent = null,
             modifier = Modifier
                 .fillMaxSize()
-                .align(alignment = Alignment.Center),
+                .align(alignment = Alignment.Center)
         )
         RatingChip(
-            rating,
+            rating.toString(),
             modifier = Modifier
                 .padding(8.dp)
                 .align(Alignment.TopStart)
@@ -66,7 +65,7 @@ fun RatingCard(
 private fun RatingCardPrev() {
     RatingCard(
         url = "",
-        rating = "10",
+        rating = 10,
         contentDescription = "hi",
         onClick = {},
         onDeleteClick = {},
