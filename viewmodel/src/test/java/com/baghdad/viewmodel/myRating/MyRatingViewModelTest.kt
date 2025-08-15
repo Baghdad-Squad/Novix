@@ -26,11 +26,11 @@ import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MyRatingViewModelTest {
-    private var getUserRatedMoviesUseCase: GetUserRatedMoviesUseCase = mockk()
-    private var getUserRatedTvShowsUseCase: GetUserRatedTvShowsUseCase = mockk()
-    private var deleteMovieRateUseCase: DeleteMovieRateUseCase = mockk()
-    private var deleteTvShowRateUseCase: DeleteTvShowRateUseCase = mockk()
-    private var getUserMediaRatedUseCase: GetUserMediaRatedUseCase = mockk()
+    private val getUserRatedMoviesUseCase: GetUserRatedMoviesUseCase = mockk()
+    private val getUserRatedTvShowsUseCase: GetUserRatedTvShowsUseCase = mockk()
+    private val deleteMovieRateUseCase: DeleteMovieRateUseCase = mockk()
+    private val deleteTvShowRateUseCase: DeleteTvShowRateUseCase = mockk()
+    private val getUserMediaRatedUseCase: GetUserMediaRatedUseCase = mockk()
 
     private lateinit var myRatingViewModel: MyRatingViewModel
 
