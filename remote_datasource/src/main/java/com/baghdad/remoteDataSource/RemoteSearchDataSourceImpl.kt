@@ -55,18 +55,6 @@ class RemoteSearchDataSourceImpl @Inject constructor(
         ).toPagedTvShowDtos(genres = genres)
     }
 
-    override suspend fun getMoviesResultCount(title: String): Int {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getTvShowsResultCount(title: String): Int {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getActorsResultCount(name: String): Int {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun searchActors(
         query: String,
         page: Int,
