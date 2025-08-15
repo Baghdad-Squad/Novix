@@ -1,6 +1,6 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockGenreDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockGenreDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -17,4 +17,4 @@ class GenreMapperTest {
         assertThat(result.id).isEqualTo(28L)
         assertThat(result.name).isEqualTo("Action")
     }
-} 
+}

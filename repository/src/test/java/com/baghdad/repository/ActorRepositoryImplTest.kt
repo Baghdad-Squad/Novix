@@ -2,14 +2,13 @@ package com.baghdad.repository
 
 import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockActor
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockActorDto
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockMovieDto
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockTvShowDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockActorDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockMovieDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockTvShowDto
 import com.baghdad.repository.mapper.toEntity
+import com.baghdad.repository.mapper.toSavableMovie
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.MovieDto
-import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.TvShowDto
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -22,7 +21,7 @@ import org.junit.jupiter.api.Test
 class ActorRepositoryImplTest {
 
     private lateinit var remoteActorDataSource: RemoteActorDataSource
-    private lateinit var savableMovieDataSource: LocalSavableMovieDataSource
+    private lateinit var savableMovieDataSource: LocalSavableMovieDataSource.SavableMovieDataSource
     private lateinit var actorRepositoryImpl: ActorRepositoryImpl
     private val actorId = 123L
 
@@ -35,46 +34,6 @@ class ActorRepositoryImplTest {
             savableMovieDataSource = savableMovieDataSource,
         )
     }
-
-    @Test
-    fun `getActorInfo should return complete actor details when remote calls succeed`() = runTest {
-        val expectedActorDto = createMockActorDto()
-        val mockImages = listOf("/actor_header1.jpg", "/actor_header2.jpg")
-        val expectedActor = createMockActor()
-
-        mockGetActorDetails(expectedActorDto)
-        mockGetActorImages(mockImages)
-
-        val result = actorRepositoryImpl.getActorInfo(actorId)
-
-        assertThat(result).isEqualTo(expectedActor)
-        verifyGetActorDetailsCalled()
-        verifyGetActorImagesCalled()
-    }
-
-    @Test
-    fun `getActorMovies should return empty list when actor has no movies`() = runTest {
-        mockGetActorMovies(emptyList())
-
-        val result = actorRepositoryImpl.getActorMovies(actorId)
-
-        assertThat(result).isEmpty()
-        verifyGetActorMoviesCalled()
-    }
-
-    @Test
-    fun `getActorMovies should return mapped movie entities when remote data is available`() =
-        runTest {
-            val mockMovieDtos = createMockMovieDto()
-            val expectedMovies = mockMovieDtos.map { it.toEntity() }
-
-            mockGetActorMovies(mockMovieDtos)
-
-            val result = actorRepositoryImpl.getActorMovies(actorId)
-
-            assertThat(result).isEqualTo(expectedMovies)
-            verifyGetActorMoviesCalled()
-        }
 
     @Test
     fun `getActorTvShows should return empty list when actor has no tv shows`() = runTest {
@@ -100,29 +59,52 @@ class ActorRepositoryImplTest {
     }
 
     @Test
-    fun `getTrendingActors should return mapped actors and pagination info`() = runTest {
-        val page = 1
-        val mockActorDtos = listOf(
-            createMockActorDto(),
-            createMockActorDto().copy(id = 124L, name = "Max ")
-        )
-        val mockPagedResult = PagedResultDto(mockActorDtos, nextKey = 2, prevKey = null)
-        val expectedActors = listOf(
-            createMockActor(),
-            createMockActor().copy(id = 124L, name = "Max")
-        )
-        val expectedPagedResult = PagedResultDto(
-            data = expectedActors,
-            nextKey = 2,
-            prevKey = null
-        )
+    fun `getActorDetails should return actor with header pictures`() = runTest {
+        val mockActorDto = createMockActorDto()
+        val mockImages = listOf("img1.jpg", "img2.jpg")
 
-        mockGetTrendingActors(page, mockPagedResult)
+        mockGetActorDetails(mockActorDto)
+        mockGetActorImages(mockImages)
 
-        val result = actorRepositoryImpl.getTrendingActors(page)
+        val expected = mockActorDto.toEntity().copy(headerPictures = mockImages)
 
-        assertThat(result).isEqualTo(expectedPagedResult)
-        verifyGetTrendingActorsCalled(page)
+        val result = actorRepositoryImpl.getActorDetails(actorId)
+
+        assertThat(result).isEqualTo(expected)
+        verifyGetActorDetailsCalled()
+        verifyGetActorImagesCalled()
+    }
+
+    @Test
+    fun `getActorMovies should map movies with saved state`() = runTest {
+        val movieDtos = createMockMovieDto()
+        val savedMoviesMap = mapOf(movieDtos.first().id to 1L)
+
+        coEvery { savableMovieDataSource.getSavedMovies() } returns savedMoviesMap
+        mockGetActorMovies(movieDtos)
+
+        val expected = movieDtos.map {
+            it.toSavableMovie(
+                isSaved = savedMoviesMap.containsKey(it.id),
+                listId = savedMoviesMap[it.id],
+            )
+        }
+
+        val result = actorRepositoryImpl.getActorMovies(actorId)
+
+        assertThat(result).isEqualTo(expected)
+        verifyGetActorMoviesCalled()
+    }
+
+    @Test
+    fun `getActorGallery should return images from remote`() = runTest {
+        val mockImages = listOf("img1", "img2")
+        mockGetActorImages(mockImages)
+
+        val result = actorRepositoryImpl.getActorGallery(actorId)
+
+        assertThat(result).isEqualTo(mockImages)
+        verifyGetActorImagesCalled()
     }
 
     private fun mockGetActorDetails(actorDto: ActorDto) {
@@ -139,10 +121,6 @@ class ActorRepositoryImplTest {
 
     private fun mockGetActorTvShows(tvShowDtos: List<TvShowDto>) {
         coEvery { remoteActorDataSource.getActorTvShows(actorId) } returns tvShowDtos
-    }
-
-    private fun mockGetTrendingActors(page: Int, pagedResultDto: PagedResultDto<ActorDto>) {
-        coEvery { remoteActorDataSource.getTrendingActors(page) } returns pagedResultDto
     }
 
     private fun verifyGetActorDetailsCalled() {

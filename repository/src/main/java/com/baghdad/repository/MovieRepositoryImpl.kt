@@ -8,7 +8,7 @@ import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.mapper.toEntity
@@ -28,7 +28,7 @@ import javax.inject.Singleton
 class MovieRepositoryImpl @Inject constructor(
     private val remoteGenreDataSource: RemoteGenreDataSource,
     private val remoteMovieDataSource: RemoteMovieDataSource,
-    private val savableMovieDataSource: LocalSavableMovieDataSource,
+    private val savableMovieDataSource: SavableMovieDataSource,
     private val authenticationRepository: AuthenticationRepository
 ) : MovieRepository {
 
@@ -51,10 +51,14 @@ class MovieRepositoryImpl @Inject constructor(
             remoteMovieDataSource.getMovieImages(movieId = movieId)
         }
 
-    override suspend fun getMovieStates(movieId: Long): Boolean =
-        executeSafely {
-            remoteMovieDataSource.getMovieAccountStates(movieId = movieId).toIsMediaRated()
+    override suspend fun getMovieStates(movieId: Long): Boolean {
+        return executeSafely {
+            remoteMovieDataSource.getMovieAccountStates(
+                movieId = movieId
+            ).toIsMediaRated()
         }
+    }
+
 
     override suspend fun getSimilarMovies(movieId: Long): List<SavedMovie> =
         executeWithSavedMovies { savedMovies ->
@@ -142,7 +146,7 @@ class MovieRepositoryImpl @Inject constructor(
                 page = page,
                 pageSize = pageSize,
                 getRemoteData = { page, _ ->
-                    authenticationRepository.getLoggedInUser()?.let {
+                    authenticationRepository.getUserInfo()?.let {
                         remoteMovieDataSource.getUserRatedMovies(it.id, page = page)
                     } ?: PagedResultDto(
                         data = emptyList(),

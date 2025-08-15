@@ -16,7 +16,6 @@ import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
-import com.baghdad.domain.usecase.tvShow.GetTvShowGenresUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.savedList.SavedList
@@ -36,7 +35,6 @@ class HomeViewModel
     @Inject
     constructor(
         private val getMovieGenresUseCase: GetMovieGenresUseCase,
-        private val getTvShowGenresUseCase: GetTvShowGenresUseCase,
         private val observeContinueWatchingUseCase: ObserveContinueWatchingUseCase,
         private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
         private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
@@ -52,6 +50,18 @@ class HomeViewModel
     ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
         HomeInteractionListener {
         init {
+            observeAppLanguage()
+        }
+
+    private fun observeAppLanguage() {
+        tryToCollect(
+            flowProvider = { getAppLanguageUseCase.invoke() },
+            onNewValue = ::onLanguageChanged,
+            onError = ::onLoadDataError,
+        )
+    }
+
+    private fun onLanguageChanged(language: String) {
             loadData()
         }
 
@@ -62,25 +72,6 @@ class HomeViewModel
             observeContinueWatchingItems()
             getMovieGenres()
             getUpcomingItems()
-            observeAppLanguage()
-        }
-
-        fun reloadData() {
-            loadData()
-        }
-
-        private fun observeAppLanguage() {
-            tryToCollect(
-                flowProvider = { getAppLanguageUseCase.invoke() },
-                onNewValue = { newLanguage ->
-                    updateState {
-                        it.copy(
-                            language = newLanguage,
-                        )
-                    }
-                },
-                onError = ::onLoadDataError,
-            )
         }
 
         private fun checkIfUserIsLoggedIn() {
@@ -128,27 +119,33 @@ class HomeViewModel
 
         private fun getPopularItems() {
             tryToExecute(
-                callee = { getPopularMoviesUseCase() to getPopularTvShowsUseCase() },
-            dispatcher = defaultDispatcher,
-            onSuccess = ::onGetPopularItemsSuccess,
-            onStart = ::onGetPopularItemsStart,
-            onFinally = ::onGetPopularItemsFinished,
+                callee = {
+                    val popularMovies = getPopularMoviesUseCase()
+                    val popularTvShows = getPopularTvShowsUseCase()
+                    PopularItems(
+                        movies = popularMovies,
+                        tvShows = popularTvShows,
+                    )
+                },
+                dispatcher = defaultDispatcher,
+                onSuccess = ::onGetPopularItemsSuccess,
+                onStart = ::onGetPopularItemsStart,
+                onFinally = ::onGetPopularItemsFinished,
                 onError = ::onLoadDataError,
             )
         }
 
-        private fun onGetPopularItemsSuccess(popularItems: Pair<List<SavedMovie>, List<TvShow>>) {
-            val (movies, tvShows) = popularItems
+    private fun onGetPopularItemsSuccess(popularItems: PopularItems) {
             val popularMovies =
-                movies.take(POPULAR_MOVIES_LIMIT).map(SavedMovie::toPopularItemUiState)
+                popularItems.movies.take(POPULAR_MOVIES_LIMIT).map(SavedMovie::toPopularItemUiState)
             val popularTvShows =
-                tvShows.take(POPULAR_TV_SHOWS_LIMIT).map(TvShow::toPopularItemUiState)
+                popularItems.tvShows.take(POPULAR_TV_SHOWS_LIMIT).map(TvShow::toPopularItemUiState)
             updateState {
                 it.copy(
                     popularItems = (popularMovies + popularTvShows).shuffled(),
                 )
             }
-        }
+    }
 
         private fun onLoadDataError(throwable: Throwable) {
             when (throwable) {
@@ -166,17 +163,17 @@ class HomeViewModel
         private fun onGetPopularItemsFinished() {
             updateState {
                 it.copy(isPopularLoading = false)
+            }
         }
-    }
 
     private fun getTopRatingMovies() {
         tryToExecute(
             callee = { getMovieTopRatingUseCase(DEFAULT_PAGE, null).data },
                 dispatcher = defaultDispatcher,
                 onSuccess = ::onGetTopRatingMoviesSuccess,
-                onStart = ::onGetTopRatingMoviesStart,
+            onStart = ::onGetTopRatingMoviesStart,
             onFinally = ::onGetTopRatingMoviesFinished,
-                onError = ::onLoadDataError,
+            onError = ::onLoadDataError,
             )
         }
 
@@ -243,9 +240,9 @@ class HomeViewModel
 
         private fun onGetMovieGenresStart() {
             updateState {
-            it.copy(isUpcomingGenresLoading = true)
+                it.copy(isUpcomingGenresLoading = true)
+            }
         }
-    }
 
     private fun onGetMovieGenresFinished() {
         updateState {
@@ -265,7 +262,6 @@ class HomeViewModel
         }
 
         private fun onGetUpcomingSuccess(movies: List<SavedMovie>) {
-            hideSnackBar()
             updateState {
                 it.copy(upcomingItems = movies.map(SavedMovie::toUpcomingItemUiState))
             }
@@ -306,7 +302,7 @@ class HomeViewModel
                 removeSavedItem(listId, itemId)
             } else {
                 updateState {
-                it.copy(
+                    it.copy(
                         addToListBottomSheetState =
                             it.addToListBottomSheetState.copy(
                                 isVisible = true,
@@ -421,12 +417,25 @@ class HomeViewModel
                         movieId = currentState.addToListBottomSheetState.selectedItemId,
                     )
                 },
+                onError = { onAddItemToListError() },
                 onSuccess = { onAddItemToListSuccess() },
                 dispatcher = defaultDispatcher,
                 onStart = ::onAddItemToListStart,
                 onFinally = ::onAddItemToListFinished,
             )
         }
+
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
+        )
+    }
+
 
         private fun onAddItemToListSuccess() {
             loadData()
@@ -469,14 +478,14 @@ class HomeViewModel
                     addListBottomSheetState =
                         it.addListBottomSheetState.copy(
                             isVisible = true,
-                    ),
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(
-                        isVisible = false,
-                    ),
-            )
+                        ),
+                    addToListBottomSheetState =
+                        it.addToListBottomSheetState.copy(
+                            isVisible = false,
+                        ),
+                )
+            }
         }
-    }
 
     override fun onLoginClicked() {
         sendEffect(
@@ -543,10 +552,10 @@ class HomeViewModel
                 },
                 onSuccess = { onCreateListSuccess() },
                 dispatcher = defaultDispatcher,
-            onStart = ::onCreateListStart,
-            onFinally = ::onCreateListFinished,
-        )
-    }
+                onStart = ::onCreateListStart,
+                onFinally = ::onCreateListFinished,
+            )
+        }
 
     private fun onCreateListSuccess() {
         onCreateListBottomSheetDismiss()
@@ -587,9 +596,12 @@ class HomeViewModel
     companion object {
         private const val POPULAR_MOVIES_LIMIT = 5
         private const val POPULAR_TV_SHOWS_LIMIT = 5
-        private const val TOP_RATING_MOVIES_LIMIT = 10
-        private const val CONTINUE_WATCHING_LIMIT = 10
         private const val DEFAULT_PAGE = 1
         private const val DEFAULT_PAGE_SIZE = 20
     }
+
+    private data class PopularItems(
+        val movies: List<SavedMovie>,
+        val tvShows: List<TvShow>,
+    )
 }

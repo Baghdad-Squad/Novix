@@ -127,7 +127,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
     }
 
     override suspend fun deleteTvShowRate(
-        tvShowId: Long,
+        tvShowId: Long
     ) {
         handleRequest<RatingResponse>(
             apiCall = {
@@ -140,7 +140,7 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getTvShowAccountStates(
-        tvShowId: Long,
+        tvShowId: Long
     ): MediaAccountStateDto {
         return handleRequest<MediaAccountStatesResponse>(
             apiCall = { tvShowApiService.getTvShowAccountStates(tvShowId) },

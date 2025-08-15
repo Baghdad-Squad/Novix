@@ -24,15 +24,18 @@ interface RemoteTvShowDataSource {
 
     suspend fun getTrendingTvShows(page: Int): PagedResultDto<TvShowDto>
 
-    suspend fun deleteTvShowRate(tvShowId: Long)
+    suspend fun addTvShowRate(tvShowId: Long, rating: Int)
+
+    suspend fun getTvShowAccountStates(tvShowId: Long): MediaAccountStateDto
+    suspend fun getUserRatedTvShows(
+        accountId: Long,
+        page: Int
+    ): PagedResultDto<TvShowDto>
 
     suspend fun getTvShowsByGenre(genreId: Long, page: Int): PagedResultDto<TvShowDto>
 
     suspend fun getTvShowEpisodes(tvShowId: Long, seasonNumber: Int): List<EpisodeDto>
 
-    suspend fun getTvShowAccountStates(tvShowId: Long): MediaAccountStateDto
+    suspend fun deleteTvShowRate(tvShowId: Long)
 
-    suspend fun addTvShowRate(tvShowId: Long, rating: Int)
-
-    suspend fun getUserRatedTvShows(accountId: Long, page: Int): PagedResultDto<TvShowDto>
 }

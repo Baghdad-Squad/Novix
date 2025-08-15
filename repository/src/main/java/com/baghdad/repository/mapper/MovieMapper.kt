@@ -63,6 +63,14 @@ fun MovieDto.toMedia(): RatedMedia {
     )
 }
 
+fun SavedMovie.toDto(): SavedMovie {
+    return SavedMovie(
+        movie = movie,
+        isSaved = isSaved,
+        listId = listId
+    )
+}
+
 /**
  * note: here we use typealias cuz the type string is not always format like a date
  */

@@ -1,9 +1,8 @@
 package com.baghdad.repository.mapper
 
 import com.baghdad.entity.person.Actor
-import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockActorDto
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockCastMemberDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockActorDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockCastMemberDto
 import com.baghdad.repository.model.CastMemberDto
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
@@ -65,5 +64,4 @@ class CastMemberMapperTest {
         assertThat(result.actor.headerPictures).isEmpty()
         assertThat(result.characterName).isEqualTo("Test Character")
     }
-
-} 
+}

@@ -6,16 +6,16 @@ import kotlinx.datetime.LocalDate
 
 fun EpisodeDto.toEntity(): Episode =
     Episode(
-        id = this.id,
-        title = this.title,
-        episodeNumber = this.episodeNumber,
-        rating = this.rating,
-        duration = this.duration,
+        id = id,
+        title = title,
+        episodeNumber = episodeNumber,
+        rating = rating,
+        duration = duration,
         releasedDate = releasedDate?.let { LocalDate.parse(it) },
-        currentSeason = this.currentSeason,
-        overview = this.overview,
-        headerPictures = this.headerPictures,
-        trailerUrl = this.trailerUrl,
-        userRating = this.userRating,
-        genres = this.genres.map { it.toEntity() },
+        currentSeason = currentSeason,
+        overview = overview,
+        headerPictures = headerPictures,
+        trailerUrl = trailerUrl,
+        userRating = userRating,
+        genres = genres.map { it.toEntity() },
     )

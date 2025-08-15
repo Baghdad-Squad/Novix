@@ -2,7 +2,7 @@ package com.baghdad.repository.mapper
 
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockMovieDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockMovieDto
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
@@ -10,13 +10,10 @@ import org.junit.jupiter.api.Test
 class MovieMapperTest {
     @Test
     fun `toEntity should return Movie entity when given valid MovieDto`() {
-        // Given
         val movieDto = createMockMovieDto().first()
 
-        // When
         val result = movieDto.toEntity()
 
-        // Then
         val expectedResult = Movie(
             id = 1L,
             title = "Test Movie",

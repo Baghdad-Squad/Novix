@@ -4,8 +4,8 @@ import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedListDetails
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.entity.savedList.SavedList
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
-import com.baghdad.repository.datasource.local.LocalUserDataSource
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
+import com.baghdad.repository.datasource.local.UserDataSource
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
@@ -17,14 +17,16 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SavedListRepositoryImpl @Inject constructor(
+class SavedListRepositoryImpl
+@Inject
+constructor(
     private val remoteSavedListSource: RemoteSavedListDataSource,
-    private val localUserDataSource: LocalUserDataSource,
-    private val savableMovieDataSource: LocalSavableMovieDataSource,
+    private val userDataSource: UserDataSource,
+    private val savableMovieDataSource: SavableMovieDataSource,
 ) : SavedListRepository {
     override suspend fun createSavedList(title: String) {
         return executeSafely {
-            remoteSavedListSource.createSavedList(title = title)
+            remoteSavedListSource.createSavedList(title)
         }
     }
 
@@ -32,14 +34,14 @@ class SavedListRepositoryImpl @Inject constructor(
         page: Int,
         pageSize: Int,
     ): PagedResult<SavedList> {
-        val accountId = localUserDataSource.getUser()?.id ?: 0
+        val accountId = userDataSource.getUser()?.id ?: 0
         return executeSafely {
             remoteSavedListSource
                 .getSavedLists(
                     page = page,
                     pageSize = pageSize,
                     accountId = accountId,
-                ).toPagedResult(dataMapper = SavedListDto::toEntity)
+                ).toPagedResult(SavedListDto::toEntity)
         }
     }
 
@@ -48,11 +50,8 @@ class SavedListRepositoryImpl @Inject constructor(
         movieId: Long,
     ) {
         executeSafely {
-            remoteSavedListSource.addMovieToSavedList(
-                listId = listId,
-                movieId = movieId,
-            )
-            savableMovieDataSource.addSavedMovie(listId = listId, movieId = movieId)
+            remoteSavedListSource.addMovieToSavedList(listId, movieId)
+            savableMovieDataSource.addSavedMovie(listId, movieId)
         }
     }
 
@@ -61,11 +60,8 @@ class SavedListRepositoryImpl @Inject constructor(
         movieId: Long,
     ) {
         executeSafely {
-            remoteSavedListSource.removeMovieFromSavedList(
-                listId = listId,
-                movieId = movieId,
-            )
-            savableMovieDataSource.deleteSavedMovie(movieId = movieId)
+            remoteSavedListSource.removeMovieFromSavedList(listId, movieId)
+            savableMovieDataSource.deleteSavedMovie(movieId)
         }
     }
 
@@ -73,20 +69,15 @@ class SavedListRepositoryImpl @Inject constructor(
         listId: Long,
         page: Int,
         pageSize: Int,
-    ): SavedListDetails {
-        return executeSafely {
-            remoteSavedListSource.getSavedListDetails(
-                listId = listId,
-                page = page,
-                pageSize = pageSize
-            ).toEntity()
+    ): SavedListDetails =
+        executeSafely {
+            remoteSavedListSource.getSavedListDetails(listId, page, pageSize).toEntity()
         }
-    }
 
     override suspend fun deleteSavedListById(listId: Long) {
         executeSafely {
-            remoteSavedListSource.deleteSavedListById(listId = listId)
-            savableMovieDataSource.deleteListMovies(listId = listId)
+            remoteSavedListSource.deleteSavedListById(listId)
+            savableMovieDataSource.deleteListMovies(listId)
         }
     }
 
@@ -113,7 +104,7 @@ class SavedListRepositoryImpl @Inject constructor(
         return savableMovieDataSource.getSavedMovies().isEmpty()
     }
 
-    private suspend fun getUserAccountId(): Long = localUserDataSource.getUser()?.id ?: 0
+    private suspend fun getUserAccountId(): Long = userDataSource.getUser()?.id ?: 0
 
     private suspend fun fetchAllSavedLists(
         accountId: Long,

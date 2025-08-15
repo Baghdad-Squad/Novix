@@ -1,7 +1,7 @@
 package com.baghdad.repository.mapper
 
 import com.baghdad.entity.person.Actor
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockActorDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockActorDto
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test

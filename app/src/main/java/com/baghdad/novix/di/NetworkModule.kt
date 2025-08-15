@@ -6,7 +6,7 @@ import com.baghdad.remoteDataSource.interceptor.AuthenticationInterceptor
 import com.baghdad.remoteDataSource.interceptor.CacheInterceptor
 import com.baghdad.remoteDataSource.interceptor.LanguageInterceptor
 import com.baghdad.repository.datasource.local.AppConfigurationDataSource
-import com.baghdad.repository.datasource.local.LocalSessionDataSource
+import com.baghdad.repository.datasource.local.SessionDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,10 +46,10 @@ abstract class NetworkModule {
 
         @Provides
         fun provideAuthenticationInterceptor(
-            localSessionDataSource: LocalSessionDataSource,
+            sessionDataSource: SessionDataSource,
             @Named("AUTHORIZATION_TOKEN") authorizationToken: String,
         ): AuthenticationInterceptor =
-            AuthenticationInterceptor(authorizationToken, localSessionDataSource)
+            AuthenticationInterceptor(authorizationToken, sessionDataSource)
 
         @Provides
         fun provideLanguageInterceptor(

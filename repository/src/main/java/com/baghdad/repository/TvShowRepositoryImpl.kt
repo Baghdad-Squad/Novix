@@ -25,9 +25,9 @@ import javax.inject.Singleton
 
 @Singleton
 class TvShowRepositoryImpl @Inject constructor(
-    private val remoteGenreDataSource: RemoteGenreDataSource,
-    private val tvShowRemoteDataSource: RemoteTvShowDataSource,
-    private val authenticationRepository: AuthenticationRepository
+    val remoteGenreDataSource: RemoteGenreDataSource,
+    val tvShowRemoteDataSource: RemoteTvShowDataSource,
+    val authenticationRepository: AuthenticationRepository
 ) : TvShowRepository {
     override suspend fun getGenres(): List<Genre> {
         return executeSafely {
@@ -39,11 +39,10 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTvShowDetails(tvShowId: Long): TvShow {
         return executeSafely {
-            val tvShowImages = tvShowRemoteDataSource.getTvShowImages(tvShowId = tvShowId)
-            val tvShowTrailer = tvShowRemoteDataSource.getTvShowTrailer(tvShowId = tvShowId)
-
-            tvShowRemoteDataSource.getTvShowDetails(tvShowId = tvShowId)
-                .toEntity()
+            val tvShowImages =
+                tvShowRemoteDataSource.getTvShowImages(tvShowId)
+            val tvShowTrailer = tvShowRemoteDataSource.getTvShowTrailer(tvShowId)
+            tvShowRemoteDataSource.getTvShowDetails(tvShowId).toEntity()
                 .copy(headerImagesURLs = tvShowImages, trailerURL = tvShowTrailer)
         }
     }
@@ -75,9 +74,8 @@ class TvShowRepositoryImpl @Inject constructor(
                     page = page,
                 )
             },
-        ) {
-            it.toEntity()
-        }
+            mapToEntity = { it.toEntity() }
+        )
     }
 
     override suspend fun getTvShowSeasonEpisodes(tvShowId: Long, seasonNumber: Int): List<Episode> {
@@ -118,7 +116,10 @@ class TvShowRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addTvShowRate(tvShowId: Long, rating: Int) {
+    override suspend fun addTvShowRate(
+        tvShowId: Long,
+        rating: Int
+    ) {
         executeSafely {
             tvShowRemoteDataSource.addTvShowRate(
                 tvShowId = tvShowId,
@@ -129,13 +130,17 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun deleteTvShowRate(tvShowId: Long) {
         executeSafely {
-            tvShowRemoteDataSource.deleteTvShowRate(tvShowId = tvShowId)
+            tvShowRemoteDataSource.deleteTvShowRate(
+                tvShowId = tvShowId,
+            )
         }
     }
 
     override suspend fun getTvShowAccountStates(tvShowId: Long): Boolean {
         return executeSafely {
-            tvShowRemoteDataSource.getTvShowAccountStates(tvShowId = tvShowId).toIsMediaRated()
+            tvShowRemoteDataSource.getTvShowAccountStates(
+                tvShowId = tvShowId,
+            ).toIsMediaRated()
         }
     }
 
@@ -144,16 +149,17 @@ class TvShowRepositoryImpl @Inject constructor(
             getRemotePagedSafely(
                 page = page, pageSize = pageSize,
                 getRemoteData = { page, _ ->
-                    authenticationRepository.getLoggedInUser()?.let {
-                        tvShowRemoteDataSource.getUserRatedTvShows(accountId = it.id, page)
+                    authenticationRepository.getUserInfo()?.let {
+                        tvShowRemoteDataSource.getUserRatedTvShows(it.id, page)
                     } ?: PagedResultDto(
                         data = emptyList(),
                         nextKey = null,
                         prevKey = null
                     )
                 },
-                mapToEntity = { it.toMedia() }
-            )
+            ) {
+                it.toMedia()
+            }
         }
     }
 }

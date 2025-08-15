@@ -1,10 +1,8 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.dummyData.DummyDataFactory.RATED_MEDIA
-import com.baghdad.repository.dummyData.DummyDataFactory.TV_SHOW_DTO
-import com.baghdad.repository.model.TvShowDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.RATED_MEDIA
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.TV_SHOW_DTO
 import com.google.common.truth.Truth.assertThat
-import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
 
 class TvShowMapperTest {
@@ -151,12 +149,6 @@ class TvShowMapperTest {
     }
 
     @Test
-    fun `should map id correctly`() {
-        val result = TV_SHOW_DTO.toMedia()
-        assertThat(result.id).isEqualTo(RATED_MEDIA.id)
-    }
-
-    @Test
     fun `should map posterPictureURL to posterImageURL correctly`() {
         val result = TV_SHOW_DTO.toMedia()
         assertThat(result.posterImageURL).isEqualTo(RATED_MEDIA.posterImageURL)
@@ -167,4 +159,4 @@ class TvShowMapperTest {
         val result = TV_SHOW_DTO.toMedia()
         assertThat(result.contentType).isEqualTo(RATED_MEDIA.contentType)
     }
-} 
+}

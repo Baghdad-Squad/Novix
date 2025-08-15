@@ -5,7 +5,7 @@ import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.repository.ActorRepository
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toPagedResult
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class ActorRepositoryImpl @Inject constructor(
     private val remoteActorDataSource: RemoteActorDataSource,
-    private val savableMovieDataSource: LocalSavableMovieDataSource,
+    private val savableMovieDataSource: SavableMovieDataSource,
 ) : ActorRepository {
     override suspend fun getActorDetails(actorId: Long): Actor {
         return executeSafely {

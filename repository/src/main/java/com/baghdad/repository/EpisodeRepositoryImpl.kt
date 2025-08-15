@@ -51,7 +51,7 @@ class EpisodeRepositoryImpl @Inject constructor(
     override suspend fun getEpisodeAccountStates(
         tvShowId: Long,
         seasonNumber: Int,
-        episodeNumber: Int
+        episodeNumber: Int,
     ): Boolean {
         return executeSafely {
             remoteEpisodeDataSource.getEpisodeAccountStates(

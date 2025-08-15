@@ -15,14 +15,14 @@ import javax.inject.Inject
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase,
-    private val getSeriesReviewsUseCase: GetTvShowReviewsUseCase,
+    private val getTvShowReviewsUseCase: GetTvShowReviewsUseCase,
     private val ioDispatcher: CoroutineDispatcher,
-    savedStateHandle: SavedStateHandle,
-    ) : BaseViewModel<ReviewScreenState, ReviewScreenEffect>(ReviewScreenState()),
+    savedStateHandle: SavedStateHandle
+) : BaseViewModel<ReviewScreenState, ReviewScreenEffect>(ReviewScreenState()),
     ReviewInteractionListener {
 
-        private val contentId: Long = checkNotNull(savedStateHandle["mediaId"])
-        private val contentType : ContentType = checkNotNull(savedStateHandle["mediaType"])
+    private val contentId: Long = checkNotNull(savedStateHandle["mediaId"])
+    private val contentType: ContentType = checkNotNull(savedStateHandle["mediaType"])
 
     init {
         loadData()
@@ -48,8 +48,8 @@ class ReviewViewModel @Inject constructor(
 
     fun loadReviewsForSeries() {
         tryToExecute(
-            onStart = { updateState { it.copy(isLoading = true) } },
-            callee = { getSeriesReviewsUseCase(contentId) },
+            onStart = ::onStart,
+            callee = { getTvShowReviewsUseCase(contentId) },
             onSuccess = ::onReviewsSuccess,
             onFinally = ::onFinally,
             onError = ::onLoadDataError,
@@ -69,22 +69,17 @@ class ReviewViewModel @Inject constructor(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
             isSuccess = false,
-            durationMillis = Int.MAX_VALUE.toLong(),
+            durationMillis = Int.MAX_VALUE.toLong()
         )
     }
 
     private fun onReviewsSuccess(reviews: List<Review>) {
         hideSnackBar()
-        val uiStates = reviews.map { it.toReviewUi() }
-        updateState { it.copy(reviews = uiStates, isLoading = false) }
-    }
+        val uiStates = reviews.map { it.toUiState() }
 
-    private fun onStart(){
-        updateState { it.copy(isLoading = true) }
-    }
-
-    private fun onFinally() {
-        updateState { it.copy(isLoading = false) }
+        updateState {
+            it.copy(reviews = uiStates, isLoading = false)
+        }
     }
 
     override fun onNavigateBack() {
@@ -109,7 +104,20 @@ class ReviewViewModel @Inject constructor(
         loadData()
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
-        BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
+        return BaseSnackBarMessage.UnknownError
+    }
+
+    private fun onStart() {
+        updateState {
+            it.copy(isLoading = true)
+        }
+    }
+
+    private fun onFinally() {
+        updateState {
+            it.copy(isLoading = false)
+        }
+    }
 
 }

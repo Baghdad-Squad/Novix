@@ -1,5 +1,6 @@
 package com.baghdad.repository.dummyData
 
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.model.userRating.RatedMedia
 import com.baghdad.entity.media.Episode
@@ -8,6 +9,7 @@ import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
+import com.baghdad.repository.mapper.toSavableMovie
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.ContinueWatchingDto
@@ -15,9 +17,9 @@ import com.baghdad.repository.model.EpisodeDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
-import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.RecentSearchDto
 import com.baghdad.repository.model.RecentlyViewedDto
+import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.TvShowDto
 import com.baghdad.repository.model.UserDto
@@ -69,6 +71,7 @@ object DummyDataFactory {
             nextKey = 1,
             prevKey = 2,
         )
+
         val SAVED_LIST_DTO = SavedListDto(
             id = 10L,
             name = "Favorites",
@@ -86,6 +89,7 @@ object DummyDataFactory {
             posterImageURL = "https://example.com/breakingbad.jpg",
             contentType = RatedMedia.ContentType.TV_SHOW
         )
+
         val MOVIE_DTO = MovieDto(
             id = 1L,
             title = "Test Movie",
@@ -108,12 +112,12 @@ object DummyDataFactory {
             listId = 42L
         )
 
-
         val USER_DTO = UserDto(
             id = 1L,
             userName = "johndoe",
             imageUrl = "https://example.com/avatar.jpg"
         )
+
         val RECENT_SEARCH_DTO = RecentSearchDto(
             id = 1L,
             query = "test query",
@@ -352,5 +356,9 @@ object DummyDataFactory {
             trailerURL = " ",
             headerImagesURLs = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg")
         )
+
+        fun SavableMovieDto.toSavableMovie(): SavedMovie {
+            return movie.toSavableMovie(isSaved, listId)
+        }
     }
 }
