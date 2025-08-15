@@ -17,6 +17,7 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.transformations
+import com.baghdad.islamic_image_loader.model.ContentRestrictionTypes
 import com.baghdad.islamic_image_loader.model.HaramImageDetector
 import com.baghdad.islamic_image_loader.transformation.BlurHaramTransformation
 
@@ -29,7 +30,8 @@ fun SafeImage(
     errorContent: (@Composable () -> Unit)? = null,
     onBlurContent: (@Composable () -> Unit)? = null,
     blurRadius: Dp = SafeImageDefaults.BlurRadius,
-    contentScale: ContentScale = SafeImageDefaults.ContentScale
+    contentScale: ContentScale = SafeImageDefaults.ContentScale,
+    contentRestrictionTypes: ContentRestrictionTypes = ContentRestrictionTypes.STRICT
 ) {
     val context = LocalContext.current
     var isBlurred by rememberSaveable(imageUrl) { mutableStateOf(false) }
@@ -41,7 +43,8 @@ fun SafeImage(
                     isBlurred = it
                 },
                 haramImageDetector = HaramImageDetector(context),
-                blurRadiusPx = blurRadius.value.toInt()
+                blurRadiusPx = blurRadius.value.toInt(),
+                contentRestrictionTypes = contentRestrictionTypes
             )
         )
         .memoryCachePolicy(CachePolicy.DISABLED)

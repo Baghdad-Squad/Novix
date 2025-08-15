@@ -12,6 +12,7 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
+    enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
@@ -30,3 +31,4 @@ include(":repository")
 include(":local_datasource")
 include(":remote_datasource")
 include(":islamic_image_loader")
+includeBuild("build_logic")

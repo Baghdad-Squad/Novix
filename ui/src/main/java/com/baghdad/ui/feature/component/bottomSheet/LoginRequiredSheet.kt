@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BaseBottomSheet
 import com.baghdad.design_system.component.button.OutlinedButton
 import com.baghdad.design_system.theme.Theme
@@ -44,11 +43,7 @@ fun LoginRequiredSheet(
             )
 
             EmptyMediaState(
-                imagePath = if (Theme.isDarkTheme) {
-                    R.drawable.user_profile_dark
-                } else {
-                    R.drawable.user_person_profile
-                },
+                imagePath = Theme.drawable.personAvatar,
                 contentDescription = stringResource(com.baghdad.ui.R.string.bottom_sheet_content_description),
                 message = description,
                 modifier = Modifier

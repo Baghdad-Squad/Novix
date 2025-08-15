@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.myRating
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.feature.component.EmptyListScreen
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
@@ -120,26 +122,36 @@ fun MyRatingContent(
         },
         backgroundBlur = { BackgroundBlur() }
     ) {
-        LazyPagingVerticalGrid<MyRatingState.MediaItemUiState>(
-            columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier
-                .fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 12.dp,
-            ),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            items = mediaItems,
-        ) { media ->
-            RatingCard(
-                url = media.posterPictureURL,
-                rating = media.rating,
-                contentDescription = null,
-                onClick = { listener.onMediaClick(media.id, media.contentType) },
-                onDeleteClick = { listener.onDeleteClick(media.id, media.contentType) }
-            )
+        AnimatedContent(
+            targetState = mediaItems.itemCount == 0 && uiState.isLoading.not(),
+        ) { isEmpty ->
+            if (isEmpty) {
+                EmptyListScreen()
+            } else {
+                LazyPagingVerticalGrid<MyRatingState.MediaItemUiState>(
+                    columns = GridCells.Adaptive(minSize = 150.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
+                    contentPadding =
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 12.dp,
+                        ),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    items = mediaItems,
+                ) { media ->
+                    RatingCard(
+                        url = media.posterPictureURL,
+                        rating = media.rating,
+                        contentDescription = null,
+                        onClick = { listener.onMediaClick(media.id, media.contentType) },
+                        onDeleteClick = { listener.onDeleteClick(media.id, media.contentType) }
+                    )
+                }
+            }
         }
     }
 }

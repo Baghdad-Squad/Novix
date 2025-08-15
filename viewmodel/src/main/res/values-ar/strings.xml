@@ -13,4 +13,10 @@
     <string name="dark">غامق</string>
     <string name="english">الإنجليزية</string>
     <string name="arabic">العربية</string>
+    <string name="content_restriction_strict">صارم</string>
+    <string name="content_restriction_strict_description">حجب كل المحتوى الحساس .</string>
+    <string name="content_restriction_moderate">معتدل</string>
+    <string name="content_restriction_moderate_description">حجب بعض المشاهد فقط .</string>
+    <string name="content_restriction_none">مغلق</string>
+    <string name="content_restriction_none_description">الغاء الحجب .</string>
 </resources>

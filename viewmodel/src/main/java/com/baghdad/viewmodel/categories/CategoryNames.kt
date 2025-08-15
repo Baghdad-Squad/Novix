@@ -1,0 +1,44 @@
+package com.baghdad.viewmodel.categories
+
+enum class MovieCategory(val id: Long) {
+    ANIMATION(16L),
+    DRAMA(18L),
+    COMEDY(35L),
+    WESTERN(37L),
+    CRIME(80L),
+    DOCUMENTARY(99L),
+    MYSTERY(9648L),
+    FAMILY(10751L),
+
+    ADVENTURE(12L),
+    FANTASY(14L),
+    HORROR(27L),
+    ACTION(28L),
+    HISTORY(36L),
+    THRILLER(53L),
+    SCIENCE_FICTION(878L),
+    MUSIC(10402L),
+    ROMANCE(10749L),
+    WAR(10752L),
+    TV_MOVIE(10770L)
+}
+
+enum class TvShowCategory(val id: Long) {
+    ANIMATION(16L),
+    COMEDY(35L),
+    WESTERN(37L),
+    CRIME(80L),
+    DOCUMENTARY(99L),
+    MYSTERY(9648L),
+    FAMILY(10751L),
+
+    DRAMA(18L),
+    ACTION_ADVENTURE(10759L),
+    KIDS(10762L),
+    NEWS(10763L),
+    REALITY(10764L),
+    SCI_FI_FANTASY(10765L),
+    SOAP(10766L),
+    TALK(10767L),
+    WAR_POLITICS(10768L)
+}

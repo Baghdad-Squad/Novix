@@ -3,23 +3,23 @@ package com.baghdad.novix.di
 import com.baghdad.domain.repository.ActorRepository
 import com.baghdad.domain.repository.AppConfigurationsRepository
 import com.baghdad.domain.repository.AuthenticationRepository
-import com.baghdad.domain.repository.ContinueWatchingRepository
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.domain.repository.RecentlyViewedRepository
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.domain.repository.TvShowRepository
+import com.baghdad.domain.repository.UserWatchedMediaRepository
 import com.baghdad.repository.ActorRepositoryImpl
 import com.baghdad.repository.AppConfigurationsRepositoryImpl
 import com.baghdad.repository.AuthenticationRepositoryImpl
-import com.baghdad.repository.ContinueWatchingRepositoryImpl
 import com.baghdad.repository.EpisodeRepositoryImpl
 import com.baghdad.repository.MovieRepositoryImpl
 import com.baghdad.repository.RecentlyViewedRepositoryImpl
 import com.baghdad.repository.SavedListRepositoryImpl
 import com.baghdad.repository.SearchRepositoryImpl
 import com.baghdad.repository.TvShowRepositoryImpl
+import com.baghdad.repository.UserWatchedMediaRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -61,9 +61,9 @@ abstract class RepositoryModule {
 
 
     @Binds
-    abstract fun provideContinueWatchingRepository(
-        continueWatchingRepositoryImpl: ContinueWatchingRepositoryImpl
-    ): ContinueWatchingRepository
+    abstract fun provideUserWatchedMediaRepository(
+        userWatchedMediaRepositoryImpl: UserWatchedMediaRepositoryImpl
+    ): UserWatchedMediaRepository
 
     @Binds
     abstract fun provideAuthRepository(

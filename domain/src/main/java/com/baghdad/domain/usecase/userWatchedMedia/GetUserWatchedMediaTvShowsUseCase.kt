@@ -1,0 +1,17 @@
+package com.baghdad.domain.usecase.userWatchedMedia
+
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.pagination.PagedResult
+import com.baghdad.domain.repository.UserWatchedMediaRepository
+import javax.inject.Inject
+
+class GetUserWatchedMediaTvShowsUseCase @Inject constructor(
+    private val userWatchedMediaRepository: UserWatchedMediaRepository
+) {
+    suspend operator fun invoke(
+        page: Int,
+        pageSize: Int
+    ): PagedResult<UserWatchedMedia> {
+        return userWatchedMediaRepository.getPagedTvShows(page = page, pageSize = pageSize)
+    }
+}
