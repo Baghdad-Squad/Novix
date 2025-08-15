@@ -6,16 +6,55 @@ plugins {
     alias(libs.plugins.ksp)
     id("com.google.protobuf") version "0.9.4"
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.common)
     jacoco
 }
 
 android {
-    namespace = "com.baghdad.local_datasource"
+    namespace = "com.baghdad.localDatasource"
+    compileSdk = 35
+
+    defaultConfig {
+        minSdk = 24
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
+        }
+    }
 }
 
 dependencies {
-    implementation(projects.repository)
+    implementation(project(":repository"))
     implementation(libs.bundles.coroutines)
     implementation(libs.bundles.room)
     implementation(libs.androidx.junit.ktx)
