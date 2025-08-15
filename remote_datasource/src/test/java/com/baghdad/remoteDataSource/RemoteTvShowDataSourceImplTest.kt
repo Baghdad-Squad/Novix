@@ -349,7 +349,7 @@ class RemoteTvShowDataSourceImplTest {
             tvShowApiService.addTvShowRate(TV_SHOW_ID, RatingRequest(RATING))
         } returns successResponse
 
-        dataSource.addTvShowRate(TV_SHOW_ID, RATING, SESSION_ID)
+        dataSource.addTvShowRate(TV_SHOW_ID, RATING)
 
         coVerify(exactly = 1) {
             tvShowApiService.addTvShowRate(TV_SHOW_ID, RatingRequest(RATING))
@@ -359,13 +359,12 @@ class RemoteTvShowDataSourceImplTest {
     @Test
     fun `should add tv show rating with different parameters`() = runTest {
         val differentRating = 5
-        val differentSessionId = "different_session"
         val successResponse = Response.success(ratingResponse)
         coEvery {
             tvShowApiService.addTvShowRate(TV_SHOW_ID, RatingRequest(differentRating))
         } returns successResponse
 
-        dataSource.addTvShowRate(TV_SHOW_ID, differentRating, differentSessionId)
+        dataSource.addTvShowRate(TV_SHOW_ID, differentRating)
 
         coVerify(exactly = 1) {
             tvShowApiService.addTvShowRate(TV_SHOW_ID, RatingRequest(differentRating))
@@ -378,7 +377,7 @@ class RemoteTvShowDataSourceImplTest {
         val successResponse = Response.success(ratingResponse)
         coEvery { tvShowApiService.deleteTvShowRate(TV_SHOW_ID) } returns successResponse
 
-        dataSource.deleteTvShowRate(TV_SHOW_ID, SESSION_ID)
+        dataSource.deleteTvShowRate(TV_SHOW_ID)
 
         coVerify(exactly = 1) { tvShowApiService.deleteTvShowRate(TV_SHOW_ID) }
     }
@@ -386,11 +385,10 @@ class RemoteTvShowDataSourceImplTest {
     @Test
     fun `should delete tv show rating with different parameters`() = runTest {
         val differentTvShowId = 999L
-        val differentSessionId = "different_session"
         val successResponse = Response.success(ratingResponse)
         coEvery { tvShowApiService.deleteTvShowRate(differentTvShowId) } returns successResponse
 
-        dataSource.deleteTvShowRate(differentTvShowId, differentSessionId)
+        dataSource.deleteTvShowRate(differentTvShowId)
 
         coVerify(exactly = 1) { tvShowApiService.deleteTvShowRate(differentTvShowId) }
     }
@@ -400,7 +398,7 @@ class RemoteTvShowDataSourceImplTest {
         val successResponse = Response.success(mediaAccountStatesResponse)
         coEvery { tvShowApiService.getTvShowAccountStates(TV_SHOW_ID) } returns successResponse
 
-        val result = dataSource.getTvShowAccountStates(TV_SHOW_ID, SESSION_ID)
+        val result = dataSource.getTvShowAccountStates(TV_SHOW_ID)
 
         assertThat(result).isEqualTo(expectedMediaAccountStateDto)
         coVerify(exactly = 1) { tvShowApiService.getTvShowAccountStates(TV_SHOW_ID) }
@@ -412,7 +410,7 @@ class RemoteTvShowDataSourceImplTest {
             val successResponse = Response.success(mediaAccountStatesResponseNotRated)
             coEvery { tvShowApiService.getTvShowAccountStates(TV_SHOW_ID) } returns successResponse
 
-            val result = dataSource.getTvShowAccountStates(TV_SHOW_ID, SESSION_ID)
+            val result = dataSource.getTvShowAccountStates(TV_SHOW_ID)
 
             assertThat(result).isEqualTo(expectedMediaAccountStateDtoNotRated)
         }
@@ -420,11 +418,10 @@ class RemoteTvShowDataSourceImplTest {
     @Test
     fun `should call getTvShowAccountStates with different parameters`() = runTest {
         val differentTvShowId = 456L
-        val differentSessionId = "different_session"
         val successResponse = Response.success(mediaAccountStatesResponse)
         coEvery { tvShowApiService.getTvShowAccountStates(differentTvShowId) } returns successResponse
 
-        dataSource.getTvShowAccountStates(differentTvShowId, differentSessionId)
+        dataSource.getTvShowAccountStates(differentTvShowId)
 
         coVerify(exactly = 1) { tvShowApiService.getTvShowAccountStates(differentTvShowId) }
     }
@@ -477,7 +474,7 @@ class RemoteTvShowDataSourceImplTest {
         val successResponse = Response.success(myRatingTvShowResponse)
         coEvery { tvShowApiService.getUserRatedTvShows(ACCOUNT_ID, PAGE) } returns successResponse
 
-        val result = dataSource.getUserRatedTvShows(ACCOUNT_ID, SESSION_ID, PAGE)
+        val result = dataSource.getUserRatedTvShows(ACCOUNT_ID, PAGE)
 
         assertThat(result.data).hasSize(1)
         assertThat(result.nextKey).isEqualTo(2)
@@ -488,7 +485,6 @@ class RemoteTvShowDataSourceImplTest {
     @Test
     fun `should call getUserRatedTvShows with different parameters`() = runTest {
         val differentAccountId = 456L
-        val differentSessionId = "different_session"
         val differentPage = 3
         val successResponse = Response.success(myRatingTvShowResponse)
         coEvery {
@@ -498,7 +494,7 @@ class RemoteTvShowDataSourceImplTest {
             )
         } returns successResponse
 
-        dataSource.getUserRatedTvShows(differentAccountId, differentSessionId, differentPage)
+        dataSource.getUserRatedTvShows(differentAccountId, differentPage)
 
         coVerify(exactly = 1) {
             tvShowApiService.getUserRatedTvShows(
@@ -525,7 +521,7 @@ class RemoteTvShowDataSourceImplTest {
                 )
             } returns successResponse
 
-            val result = dataSource.getUserRatedTvShows(ACCOUNT_ID, SESSION_ID, PAGE)
+            val result = dataSource.getUserRatedTvShows(ACCOUNT_ID, PAGE)
 
             assertThat(result.data).isEmpty()
             assertThat(result.nextKey).isNull()
@@ -562,7 +558,7 @@ class RemoteTvShowDataSourceImplTest {
         val successResponse = Response.success(myRatingTvShowResponseWithNulls)
         coEvery { tvShowApiService.getUserRatedTvShows(ACCOUNT_ID, PAGE) } returns successResponse
 
-        val result = dataSource.getUserRatedTvShows(ACCOUNT_ID, SESSION_ID, PAGE)
+        val result = dataSource.getUserRatedTvShows(ACCOUNT_ID, PAGE)
 
         assertThat(result.data).hasSize(1)
     }
@@ -570,11 +566,8 @@ class RemoteTvShowDataSourceImplTest {
     companion object {
         const val TV_SHOW_ID = 1L
 
-        const val TV_SHOW_STRING_ID = ""
-
         const val SEASON_NUMBER = 1
         const val ACCOUNT_ID = 123L
-        const val SESSION_ID = "test_session_id"
         const val GENRE_ID = 18L
         const val PAGE = 1
         const val RATING = 8
