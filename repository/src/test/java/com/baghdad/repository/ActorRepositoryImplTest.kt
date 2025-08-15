@@ -1,6 +1,6 @@
 package com.baghdad.repository
 
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
 import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockActorDto
 import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockMovieDto
@@ -15,25 +15,17 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class ActorRepositoryImplTest {
 
-    private lateinit var remoteActorDataSource: RemoteActorDataSource
-    private lateinit var savableMovieDataSource: LocalSavableMovieDataSource.SavableMovieDataSource
-    private lateinit var actorRepositoryImpl: ActorRepositoryImpl
+    private val remoteActorDataSource: RemoteActorDataSource = mockk()
+    private val savableMovieDataSource: SavableMovieDataSource = mockk()
+    private val actorRepositoryImpl: ActorRepositoryImpl = ActorRepositoryImpl(
+        remoteActorDataSource = remoteActorDataSource,
+        savableMovieDataSource = savableMovieDataSource,
+    )
     private val actorId = 123L
-
-    @BeforeEach
-    fun setUp() {
-        remoteActorDataSource = mockk()
-        savableMovieDataSource = mockk()
-        actorRepositoryImpl = ActorRepositoryImpl(
-            remoteActorDataSource = remoteActorDataSource,
-            savableMovieDataSource = savableMovieDataSource,
-        )
-    }
 
     @Test
     fun `getActorTvShows should return empty list when actor has no tv shows`() = runTest {

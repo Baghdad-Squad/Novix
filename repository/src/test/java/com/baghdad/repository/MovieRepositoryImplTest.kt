@@ -3,7 +3,6 @@ package com.baghdad.repository
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.userRating.RatedMedia
 import com.baghdad.domain.repository.AuthenticationRepository
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
 import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
@@ -23,31 +22,21 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Locale
 
 class MovieRepositoryImplTest {
 
-    private lateinit var mockRemoteGenreDataSource: RemoteGenreDataSource
-    private lateinit var mockRemoteMovieDataSource: RemoteMovieDataSource
-    private lateinit var mockSavableMovieDataSource: LocalSavableMovieDataSource.SavableMovieDataSource
-    private lateinit var mockAuthenticationRepository: AuthenticationRepository
-    private lateinit var movieRepositoryUnderTest: MovieRepositoryImpl
-
-    @BeforeEach
-    fun setUp() {
-        mockRemoteGenreDataSource = mockk(relaxed = true)
-        mockRemoteMovieDataSource = mockk(relaxed = true)
-        mockSavableMovieDataSource = mockk(relaxed = true)
-        mockAuthenticationRepository = mockk(relaxed = true)
-        movieRepositoryUnderTest = MovieRepositoryImpl(
-            remoteGenreDataSource = mockRemoteGenreDataSource,
-            remoteMovieDataSource = mockRemoteMovieDataSource,
-            savableMovieDataSource = mockSavableMovieDataSource,
-            authenticationRepository = mockAuthenticationRepository
-        )
-    }
+    private val mockRemoteGenreDataSource: RemoteGenreDataSource = mockk(relaxed = true)
+    private val mockRemoteMovieDataSource: RemoteMovieDataSource = mockk(relaxed = true)
+    private val mockSavableMovieDataSource: SavableMovieDataSource = mockk(relaxed = true)
+    private val mockAuthenticationRepository: AuthenticationRepository = mockk(relaxed = true)
+    private val movieRepositoryUnderTest: MovieRepositoryImpl = MovieRepositoryImpl(
+        remoteGenreDataSource = mockRemoteGenreDataSource,
+        remoteMovieDataSource = mockRemoteMovieDataSource,
+        savableMovieDataSource = mockSavableMovieDataSource,
+        authenticationRepository = mockAuthenticationRepository
+    )
 
     @Test
     fun `getGenres should return mapped genres when remote call succeeds`() = runTest {
