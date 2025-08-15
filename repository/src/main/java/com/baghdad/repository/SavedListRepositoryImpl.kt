@@ -14,6 +14,8 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.savedList.SavableMovieDto
 import com.baghdad.repository.util.executeSafely
+import com.baghdad.repository.util.getFlowSafely
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +29,7 @@ class SavedListRepositoryImpl
         private val savableMovieDataSource: SavableMovieDataSource,
     ) : SavedListRepository {
         override suspend fun createSavedList(title: String) {
-            val sessionId = sessionDataSource.getSessionId()
+            sessionDataSource.getSessionId()
             return executeSafely {
                 remoteSavedListSource.createSavedList(title)
             }
@@ -52,7 +54,7 @@ class SavedListRepositoryImpl
             listId: Long,
             movieId: Long,
         ) {
-            val sessionId = sessionDataSource.getSessionId()
+            sessionDataSource.getSessionId()
             executeSafely{
                 remoteSavedListSource.addMovieToSavedList(listId, movieId)
                 savableMovieDataSource.addSavedMovie(listId, movieId)
@@ -63,7 +65,7 @@ class SavedListRepositoryImpl
             listId: Long,
             movieId: Long,
         ) {
-            val sessionId = sessionDataSource.getSessionId()
+            sessionDataSource.getSessionId()
             executeSafely{
                 remoteSavedListSource.removeMovieFromSavedList(listId, movieId)
                 savableMovieDataSource.deleteSavedMovie(movieId)
@@ -105,7 +107,14 @@ class SavedListRepositoryImpl
             }
         }
 
-        private suspend fun shouldPreformSync(): Boolean = savableMovieDataSource.getSavedMovies().isEmpty()
+    override fun getSavedListCount(): Flow<Int> {
+        return getFlowSafely {
+            savableMovieDataSource.getSavedListCount()
+        }
+    }
+
+    private suspend fun shouldPreformSync(): Boolean =
+        savableMovieDataSource.getSavedMovies().isEmpty()
 
     private suspend fun getUserAccountId(): Long = userDataSource.getUser()?.id ?: 0
 

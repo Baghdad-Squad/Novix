@@ -1,11 +1,13 @@
 package com.baghdad.localDatasource
 
+import com.baghdad.localDatasource.errorHandler.executeFlowWithErrorHandling
 import com.baghdad.localDatasource.errorHandler.executeWithErrorHandling
 import com.baghdad.localDatasource.roomDB.dao.SavedListMovieDao
 import com.baghdad.localDatasource.roomDB.entity.SavedListMovie
 import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.savedList.SavableMovieDto
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -50,6 +52,12 @@ constructor(
                 ),
             )
             savedMovies[movieId] = listId
+        }
+    }
+
+    override fun getSavedListCount(): Flow<Int> {
+        return executeFlowWithErrorHandling(logger = logger) {
+            savedListMovieDao.getSavedListCount()
         }
     }
 

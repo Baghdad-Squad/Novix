@@ -12,6 +12,7 @@ import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListCountUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
@@ -35,7 +36,7 @@ class HomeViewModel
 @Inject
 constructor(
     private val getMovieGenresUseCase: GetMovieGenresUseCase,
-    private val observeUserWatchedMediaUseCase: ObserveUserWatchedMediaUseCase,
+    private val observeContinueWatchingUseCase: ObserveUserWatchedMediaUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
     private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
@@ -46,11 +47,13 @@ constructor(
     private val createSavedListUseCase: CreateSavedListUseCase,
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
+    private val getSavedListCountUseCase: GetSavedListCountUseCase,
     private val defaultDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
     HomeInteractionListener {
     init {
         observeAppLanguage()
+        observeSavedListCount()
     }
 
     private fun observeAppLanguage() {
@@ -59,6 +62,18 @@ constructor(
             onNewValue = ::onLanguageChanged,
             onError = ::onLoadDataError,
         )
+    }
+
+    private fun observeSavedListCount() {
+        tryToCollect(
+            flowProvider = { getSavedListCountUseCase.invoke() },
+            onNewValue = ::onSavedListCountChanged,
+            onError = ::onLoadDataError,
+        )
+    }
+
+    private fun onSavedListCountChanged(count: Int) {
+        getUserSavedLists()
     }
 
     private fun onLanguageChanged(language: String) {
@@ -202,7 +217,7 @@ constructor(
 
     private fun observeContinueWatchingItems() {
         tryToCollect(
-            flowProvider = observeUserWatchedMediaUseCase::invoke,
+            flowProvider = observeContinueWatchingUseCase::invoke,
             dispatcher = defaultDispatcher,
             onNewValue = ::onNewContinueWatchingItems,
             onError = ::onLoadDataError,

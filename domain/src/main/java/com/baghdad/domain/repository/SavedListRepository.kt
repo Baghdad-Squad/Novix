@@ -3,6 +3,7 @@ package com.baghdad.domain.repository
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedListDetails
 import com.baghdad.entity.savedList.SavedList
+import kotlinx.coroutines.flow.Flow
 
 interface SavedListRepository {
 
@@ -28,4 +29,6 @@ interface SavedListRepository {
     suspend fun syncSavedMoviesCache()
 
     suspend fun clearSavedMoviesCache()
+
+    fun getSavedListCount(): Flow<Int>
 }

@@ -1,6 +1,7 @@
 package com.baghdad.repository.datasource.local
 
 import com.baghdad.repository.model.savedList.SavableMovieDto
+import kotlinx.coroutines.flow.Flow
 
 interface SavableMovieDataSource {
     suspend fun deleteSavedMovie(movieId: Long)
@@ -20,4 +21,5 @@ interface SavableMovieDataSource {
         listId: Long,
         movieId: Long,
     )
+    fun getSavedListCount(): Flow<Int>
 }
