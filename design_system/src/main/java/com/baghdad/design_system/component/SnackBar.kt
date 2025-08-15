@@ -65,8 +65,7 @@ fun SnackBar(
                 ),
     ) {
         Row(
-            modifier =
-                modifier
+            modifier = modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
                     .background(color = Theme.color.surface)
@@ -79,13 +78,15 @@ fun SnackBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+
             SnackBarIcon(
                 isSuccess = isSuccess,
                 modifier =
                     Modifier
                         .size(24.dp)
-                        .align(Alignment.Top),
-                    )
+                        .align(Alignment.Top)
+            )
+
             Text(
                 text = message,
                 style = Theme.typography.body.medium,
@@ -93,6 +94,7 @@ fun SnackBar(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )
+
             actionLabel?.let {
                 TextButton(
                     label = it,

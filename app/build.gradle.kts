@@ -117,15 +117,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":ui"))
-    implementation(project(":design_system"))
-    implementation(project(":viewmodel"))
-    implementation(project(":repository"))
-    implementation(project(":local_datasource"))
-    implementation(project(":remote_datasource"))
-    implementation(project(":domain"))
-    implementation(project(":entity"))
-    implementation(project(":islamic_image_loader"))
+    addCoreModules()
     implementation(platform(libs.androidx.compose.bom))
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.androidx.core)
@@ -140,7 +132,18 @@ dependencies {
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
     implementation(libs.accompanist.systemuicontroller)
+}
 
+fun DependencyHandlerScope.addCoreModules() {
+    implementation(projects.ui)
+    implementation(projects.designSystem)
+    implementation(projects.viewmodel)
+    implementation(projects.repository)
+    implementation(projects.localDatasource)
+    implementation(projects.remoteDatasource)
+    implementation(projects.domain)
+    implementation(projects.entity)
+    implementation(projects.islamicImageLoader)
 }
 
 /**

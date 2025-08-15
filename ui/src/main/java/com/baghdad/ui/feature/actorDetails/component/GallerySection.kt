@@ -1,6 +1,7 @@
 package com.baghdad.ui.feature.actorDetails.component
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +25,7 @@ import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 fun GallerySection(
     imageUrls: List<String>,
     isShowAllVisible: Boolean,
+    onImageClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     onClickShowAll: () -> Unit = {}
 ) {
@@ -49,7 +51,8 @@ fun GallerySection(
                     modifier = Modifier
                         .size(88.dp)
                         .clip(RoundedCornerShape(12))
-                        .border(1.dp, Theme.color.stroke, RoundedCornerShape(12)),
+                        .border(1.dp, Theme.color.stroke, RoundedCornerShape(12))
+                        .clickable { onImageClick(it) },
                 )
             }
         }

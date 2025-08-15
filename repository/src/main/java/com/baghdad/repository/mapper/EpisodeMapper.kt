@@ -16,6 +16,6 @@ fun EpisodeDto.toEntity(): Episode =
         overview = overview,
         headerPictures = headerPictures,
         trailerUrl = trailerUrl,
-        userRating =userRating,
+        userRating = userRating,
         genres = genres.map { it.toEntity() },
     )

@@ -9,7 +9,6 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.SessionDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntity
@@ -27,7 +26,6 @@ import javax.inject.Singleton
 @Singleton
 class TvShowRepositoryImpl @Inject constructor(
     val remoteGenreDataSource: RemoteGenreDataSource,
-    val sessionDataSource: SessionDataSource,
     val tvShowRemoteDataSource: RemoteTvShowDataSource,
     val authenticationRepository: AuthenticationRepository
 ) : TvShowRepository {
@@ -42,7 +40,7 @@ class TvShowRepositoryImpl @Inject constructor(
     override suspend fun getTvShowDetails(tvShowId: Long): TvShow {
         return executeSafely {
             val tvShowImages =
-                tvShowRemoteDataSource.getTvShowImages(tvShowId).take(MAX_IMAGE_COUNT)
+                tvShowRemoteDataSource.getTvShowImages(tvShowId)
             val tvShowTrailer = tvShowRemoteDataSource.getTvShowTrailer(tvShowId)
             tvShowRemoteDataSource.getTvShowDetails(tvShowId).toEntity()
                 .copy(headerImagesURLs = tvShowImages, trailerURL = tvShowTrailer)
@@ -51,7 +49,7 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTvShowCastMembers(tvShowId: Long): List<CastMember> {
         return executeSafely {
-            tvShowRemoteDataSource.getTvShowCastMembers(tvShowId).map {
+            tvShowRemoteDataSource.getTvShowCastMembers(tvShowId = tvShowId).map {
                 it.toEntity()
             }
         }
@@ -59,7 +57,7 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTvShowImages(tvShowId: Long): List<String> {
         return executeSafely {
-            tvShowRemoteDataSource.getTvShowImages(tvShowId)
+            tvShowRemoteDataSource.getTvShowImages(tvShowId = tvShowId)
         }
     }
 
@@ -69,21 +67,21 @@ class TvShowRepositoryImpl @Inject constructor(
         pageSize: Int
     ): PagedResult<TvShow> {
         return getRemotePagedSafely(
-            page = page, pageSize = pageSize,
+            page = page,
+            pageSize = pageSize,
             getRemoteData = { page, _ ->
                 tvShowRemoteDataSource.getTvShowsByGenre(
                     genreId = genreId,
                     page = page,
                 )
             },
-        ) {
-            it.toEntity()
-        }
+            mapToEntity = { it.toEntity() }
+        )
     }
 
     override suspend fun getTvShowSeasonEpisodes(tvShowId: Long, seasonNumber: Int): List<Episode> {
         return executeSafely {
-            tvShowRemoteDataSource.getTvShowEpisodes(tvShowId, seasonNumber).map {
+            tvShowRemoteDataSource.getTvShowEpisodes(tvShowId = tvShowId, seasonNumber).map {
                 it.toEntity()
             }
         }
@@ -91,7 +89,7 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTvShowReviews(tvShowId: Long): List<Review> {
         return executeSafely {
-            tvShowRemoteDataSource.getTvShowReviews(tvShowId).map {
+            tvShowRemoteDataSource.getTvShowReviews(tvShowId = tvShowId).map {
                 it.toEntity()
             }
         }
@@ -107,7 +105,7 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getPopularTvShows(): List<TvShow> {
         return executeSafely {
-            tvShowRemoteDataSource.getPopularTvShows().map(TvShowDto::toEntity)
+            tvShowRemoteDataSource.getPopularTvShows().map(transform = TvShowDto::toEntity)
         }
     }
 
@@ -150,7 +148,8 @@ class TvShowRepositoryImpl @Inject constructor(
     override suspend fun getUserRatedTvShows(page: Int, pageSize: Int): PagedResult<RatedMedia> {
         return executeSafely {
             getRemotePagedSafely(
-                page = page, pageSize = pageSize,
+                page = page,
+                pageSize = pageSize,
                 getRemoteData = { page, _ ->
                     authenticationRepository.getUserInfo()?.let {
                         tvShowRemoteDataSource.getUserRatedTvShows(it.id, page)
@@ -165,9 +164,4 @@ class TvShowRepositoryImpl @Inject constructor(
             }
         }
     }
-
-    companion object {
-        private const val MAX_IMAGE_COUNT = 10
-    }
-
 }

@@ -124,6 +124,7 @@ private fun AddListBottomSheetContent(
         )
         NovixTextField(
             value = listName,
+            maxLength = 100,
             onValueChange = onListNameChange,
             singleLine = true,
             leadingIcon = painterResource(R.drawable.ic_all_bookmark),

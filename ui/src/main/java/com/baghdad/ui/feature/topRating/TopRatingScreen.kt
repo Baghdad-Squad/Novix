@@ -256,7 +256,7 @@ private fun TopRatingContent(
         SavedListBottomSheet(
             isVisible = uiState.addToListBottomSheetState.isVisible,
             isUserLoggedIn = uiState.isUserLoggedIn,
-            onAddClick = listener::onSaveMovieClick,
+            onAddClick = listener::onSaveItemToListClicked,
             onCreateNewListClick = listener::onCreateNewListClick,
             onLoginClick = listener::onLoginClick,
             onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,

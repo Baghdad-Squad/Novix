@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -17,9 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.shared.Selectable
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
 
@@ -72,6 +76,7 @@ fun Selection(
                 .padding(horizontal = 12.dp, vertical = 16.dp)
                 .weight(1f)
         ) {
+
             Text(
                 text = option.value,
                 color = Theme.color.body,
@@ -94,6 +99,35 @@ fun Selection(
                 modifier = Modifier.padding(end = 12.dp),
                 color = Theme.color.hint,
                 style = Theme.typography.label.small
+            )
+        }
+    }
+}
+
+@NovixPreviews
+@Composable
+private fun SelectionPreview() {
+    NovixTheme {
+        Column(
+            modifier = Modifier
+                .background(Theme.color.surface)
+                .padding(vertical = 44.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Selection(
+                option = Selectable("Option 1", true),
+                onClick = {},
+                description = "Description",
+                trailingText = "Trailing Text",
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Selection(
+                option = Selectable("Option 2", false),
+                onClick = {},
+                description = "Description",
+                trailingText = "Trailing Text",
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
     }

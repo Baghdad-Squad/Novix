@@ -10,27 +10,20 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class AuthenticationRepositoryImplTest {
 
-    private lateinit var mockRemoteAuthDataSource: RemoteAuthenticationDataSource
-    private lateinit var mockLocalSessionDataStore: SessionDataSource
-    private lateinit var mockLocalUserDataStore: UserDataSource
-    private lateinit var authRepositoryUnderTest: AuthenticationRepositoryImpl
-
-    @BeforeEach
-    fun setUp() {
-        mockRemoteAuthDataSource = mockk(relaxed = true)
-        mockLocalSessionDataStore = mockk(relaxed = true)
-        mockLocalUserDataStore = mockk(relaxed = true)
-        authRepositoryUnderTest = AuthenticationRepositoryImpl(
+    private val mockRemoteAuthDataSource: RemoteAuthenticationDataSource = mockk(relaxed = true)
+    private val mockLocalSessionDataStore: SessionDataSource = mockk(relaxed = true)
+    private val mockLocalUserDataStore: UserDataSource = mockk(relaxed = true)
+    private val authRepositoryUnderTest: AuthenticationRepositoryImpl =
+        AuthenticationRepositoryImpl(
             remoteAuthenticationDataSource = mockRemoteAuthDataSource,
             sessionDataSource = mockLocalSessionDataStore,
             userDataSource = mockLocalUserDataStore,
         )
-    }
+
 
     @Test
     fun `login should complete full authentication flow when all remote calls succeed`() = runTest {
@@ -83,7 +76,7 @@ class AuthenticationRepositoryImplTest {
 
             mockGetUser(localUserDto)
 
-            val actual = authRepositoryUnderTest.getLoggedInUser()
+            val actual = authRepositoryUnderTest.getUserInfo()
 
             assertThat(actual).isEqualTo(expectedUser)
             verifyGetUser()
@@ -93,7 +86,7 @@ class AuthenticationRepositoryImplTest {
     fun `getLoggedInUser should return null when no user data exists locally`() = runTest {
         mockGetUser(null)
 
-        val actual = authRepositoryUnderTest.getLoggedInUser()
+        val actual = authRepositoryUnderTest.getUserInfo()
 
         assertThat(actual).isNull()
         verifyGetUser()

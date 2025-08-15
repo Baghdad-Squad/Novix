@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
@@ -60,7 +59,7 @@ private fun EmptySearchScreenPreview() {
             verticalArrangement = Arrangement.Center
         ) {
             EmptySearchState(
-                imagePath = R.drawable.start_explore_night,
+                imagePath = Theme.drawable.startExplore,
                 contentDescription = "Search",
                 message = "Start exploring! Search for your favorite movies, series and shows"
             )

@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.firebase.perf) apply false
     jacoco
     alias(libs.plugins.hilt.android) apply false
+    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
 
 }
 

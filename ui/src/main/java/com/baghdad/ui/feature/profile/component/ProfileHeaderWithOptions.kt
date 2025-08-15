@@ -104,7 +104,8 @@ fun ProfileHeaderWithOption(
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(start = 12.dp, top = 12.dp, bottom = 12.dp)
+                        .padding(start = 12.dp)
+                        .padding(vertical = 8.dp)
                         .background(color = Theme.color.surface, shape = RoundedCornerShape(8.dp))
                         .noRippleClickable {
                             onLogoutClick()

@@ -3,7 +3,6 @@ import com.baghdad.domain.exception.NetworkException
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
-import com.baghdad.domain.usecase.continueWatching.ObserveContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
@@ -14,6 +13,7 @@ import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.ObserveUserWatchedMediaUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -50,7 +50,7 @@ class HomeViewModelTest {
     val createSavedListUseCase: CreateSavedListUseCase = mockk(relaxed = true)
     val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase = mockk(relaxed = true)
     val getAppLanguageUseCase: GetAppLanguageUseCase = mockk(relaxed = true)
-    val observeContinueWatchingUseCase: ObserveContinueWatchingUseCase = mockk(relaxed = true)
+    val observeContinueWatchingUseCase: ObserveUserWatchedMediaUseCase = mockk(relaxed = true)
     val getMovieGenresUseCase: GetMovieGenresUseCase = mockk(relaxed = true)
     private lateinit var viewModel: HomeViewModel
 
@@ -78,7 +78,7 @@ class HomeViewModelTest {
             addMovieToSavedListUseCase = addMovieToSavedListUseCase,
             createSavedListUseCase = createSavedListUseCase,
             removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
-            observeContinueWatchingUseCase = observeContinueWatchingUseCase,
+            observeUserWatchedMediaUseCase = observeContinueWatchingUseCase,
             getAppLanguageUseCase = getAppLanguageUseCase,
             getMovieGenresUseCase = getMovieGenresUseCase,
             defaultDispatcher = testDispatcher

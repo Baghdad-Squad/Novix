@@ -15,7 +15,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.baghdad.design_system.R
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
@@ -64,11 +63,7 @@ private fun EmptySearchScreenPreview() {
             verticalArrangement = Arrangement.Center
         ) {
             EmptyMediaState(
-                imagePath = if (Theme.isDarkTheme) {
-                    R.drawable.user_person_profile_night
-                } else {
-                    R.drawable.user_person_profile
-                },
+                imagePath = Theme.drawable.personAvatar,
                 contentDescription = "",
                 message = "Please login to rate your favorite items."
             )

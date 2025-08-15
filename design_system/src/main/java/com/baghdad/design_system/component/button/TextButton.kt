@@ -3,8 +3,11 @@ package com.baghdad.design_system.component.button
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.preview.NovixPreviews
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
 @Composable
@@ -66,6 +71,24 @@ fun TextButton(
         ) {
             StripedCircularProgressIndicator(
                 color = animatedContentColor
+            )
+        }
+    }
+}
+
+@NovixPreviews
+@Composable
+fun TextButtonPrev() {
+    NovixTheme {
+        Column(
+            modifier = Modifier
+                .background(Theme.color.surface)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextButton(
+                label = "Label",
+                onClick = {}
             )
         }
     }
