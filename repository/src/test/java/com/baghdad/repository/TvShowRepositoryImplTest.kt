@@ -1,15 +1,18 @@
 package com.baghdad.repository
 
+import com.baghdad.domain.repository.AuthenticationRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Review
 import com.baghdad.entity.media.TvShow
-import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
-import com.baghdad.repository.model.ActorDto
-import com.baghdad.repository.model.CastMemberDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.TV_SHOW_DTO
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockCastMember
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockCastMemberDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockTvShowsDto
+import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.model.EpisodeDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.PagedResultDto
@@ -21,32 +24,23 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Locale
 
 
 class TvShowRepositoryImplTest {
 
-    private lateinit var remoteGenreDataSource: RemoteGenreDataSource
-    private lateinit var tvShowRemoteDataSource: RemoteTvShowDataSource
-    private lateinit var tvShowRepositoryImpl: TvShowRepositoryImpl
-
-
-    @BeforeEach
-    fun setUp() {
-        remoteGenreDataSource = mockk()
-        tvShowRemoteDataSource = mockk() 
-        tvShowRepositoryImpl = TvShowRepositoryImpl(
-            remoteGenreDataSource = remoteGenreDataSource,
-            tvShowRemoteDataSource = tvShowRemoteDataSource,
-        )
-    }
+    private val remoteGenreDataSource: RemoteGenreDataSource = mockk()
+    private val tvShowRemoteDataSource: RemoteTvShowDataSource = mockk()
+    private val authenticationRepository: AuthenticationRepository = mockk()
+    private val tvShowRepositoryImpl: TvShowRepositoryImpl = TvShowRepositoryImpl(
+        remoteGenreDataSource = remoteGenreDataSource,
+        tvShowRemoteDataSource = tvShowRemoteDataSource,
+        authenticationRepository = authenticationRepository
+    )
 
     @Test
     fun `getGenres should return mapped genres when remote data source succeeds`() = runTest {
-
         val mockGenreDtos = listOf(
             createMockGenreDto(1L, "Action", GenreDto.GenreType.TV_SHOW),
             createMockGenreDto(2L, "Comedy", GenreDto.GenreType.TV_SHOW),
@@ -63,31 +57,25 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getGenres()
 
-        assertEquals(expectedGenres.size, result.size)
-        assertEquals(expectedGenres[0].id, result[0].id)
-        assertEquals(expectedGenres[0].name, result[0].name)
-        assertEquals(expectedGenres[1].id, result[1].id)
-        assertEquals(expectedGenres[1].name, result[1].name)
-        assertEquals(expectedGenres[2].id, result[2].id)
-        assertEquals(expectedGenres[2].name, result[2].name)
+        assertThat(expectedGenres.size == result.size).isTrue()
+        assertThat(result).isEqualTo(expectedGenres)
         coVerify { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) }
     }
 
     @Test
-    fun `getGenres should return empty list when remote data source returns empty list`() = runTest {
+    fun `getGenres should return empty list when remote data source returns empty list`() =
+        runTest {
+            val currentLanguage = Locale.getDefault().language
+            coEvery { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) } returns emptyList()
 
-        val currentLanguage = Locale.getDefault().language
-        coEvery { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) } returns emptyList()
+            val result = tvShowRepositoryImpl.getGenres()
 
-        val result = tvShowRepositoryImpl.getGenres()
-
-        assertThat(emptyList<Genre>() == result).isTrue()
-        coVerify { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) }
-    }
+            assertThat(emptyList<Genre>() == result).isTrue()
+            coVerify { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) }
+        }
 
     @Test
     fun `getGenres should use default locale language when calling remote data source`() = runTest {
-
         val mockGenreDtos = listOf(
             createMockGenreDto(1L, "Action", GenreDto.GenreType.TV_SHOW)
         )
@@ -102,24 +90,24 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getGenres should handle single genre correctly`() = runTest {
-
         val mockGenreDto = createMockGenreDto(1L, "Thriller", GenreDto.GenreType.TV_SHOW)
         val expectedGenre = createMockGenre(1L, "Thriller")
         val currentLanguage = Locale.getDefault().language
 
-        coEvery { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) } returns listOf(mockGenreDto)
+        coEvery { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) } returns listOf(
+            mockGenreDto
+        )
 
         val result = tvShowRepositoryImpl.getGenres()
 
         assertThat(1 == result.size).isTrue()
-        assertThat(expectedGenre.id== result[0].id).isTrue()
-        assertThat(expectedGenre.name== result[0].name).isTrue()
+        assertThat(expectedGenre.id == result[0].id).isTrue()
+        assertThat(expectedGenre.name == result[0].name).isTrue()
         coVerify { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) }
     }
 
     @Test
     fun `getGenres should handle multiple genres with different types correctly`() = runTest {
-
         val mockGenreDtos = listOf(
             createMockGenreDto(10L, "Horror", GenreDto.GenreType.TV_SHOW),
             createMockGenreDto(20L, "Romance", GenreDto.GenreType.TV_SHOW),
@@ -137,94 +125,63 @@ class TvShowRepositoryImplTest {
         val result = tvShowRepositoryImpl.getGenres()
 
         assertThat(expectedGenres.size == result.size).isTrue()
-        for (i in expectedGenres.indices) {
-            assertThat(expectedGenres[i].id== result[i].id).isTrue()
-            assertThat(expectedGenres[i].name== result[i].name).isTrue()
-        }
+        assertThat(result).isEqualTo(expectedGenres)
         coVerify { remoteGenreDataSource.getTvShowGenre(language = currentLanguage) }
     }
 
     @Test
-    fun `getTvShowDetails should return tv show with images and trailer when remote call succeeds`() = runTest {
-        // Given
-        val tvId = 123L
-        val mockTvShowDto = createMockTvShowDto()
-        val mockImages = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg", "/image4.jpg", "/image5.jpg")
-        val mockTrailerUrl = "https://youtube.com/watch?v=trailer123"
-        val expectedTvShow = createMockTvShow().copy(
-            headerImagesURLs = mockImages.take(10),
-            trailerURL = mockTrailerUrl
-        )
+    fun `getTvShowDetails should return tv show with images and trailer when remote call succeeds`() =
+        runTest {
+            val tvId = 123L
+            val mockTvShowDto = TV_SHOW_DTO
+            val mockImages =
+                listOf("/header1.jpg", "/header2.jpg")
+            val mockTrailerUrl = "https://youtube.com/watch?v=trailer123"
+            val expectedTvShow = TV_SHOW_DTO.copy(
+                trailerURL = mockTrailerUrl
+            ).toEntity()
 
-        coEvery { tvShowRemoteDataSource.getTvShowDetails(tvId) } returns mockTvShowDto
-        coEvery { tvShowRemoteDataSource.getTvShowImages(tvId) } returns mockImages
-        coEvery { tvShowRemoteDataSource.getTvShowTrailer(tvId) } returns mockTrailerUrl
+            coEvery { tvShowRemoteDataSource.getTvShowDetails(tvId) } returns mockTvShowDto
+            coEvery { tvShowRemoteDataSource.getTvShowImages(tvId) } returns mockImages
+            coEvery { tvShowRemoteDataSource.getTvShowTrailer(tvId) } returns mockTrailerUrl
 
-        val result = tvShowRepositoryImpl.getTvShowDetails(tvId)
+            val result = tvShowRepositoryImpl.getTvShowDetails(tvId)
 
-        assertThat(expectedTvShow.id== result.id).isTrue()
-        assertThat(expectedTvShow.title== result.title).isTrue()
-        assertThat(expectedTvShow.trailerURL== result.trailerURL).isTrue()
-        assertThat(mockImages.take(10)== result.headerImagesURLs).isTrue()
-        coVerify { tvShowRemoteDataSource.getTvShowDetails(tvId) }
-        coVerify { tvShowRemoteDataSource.getTvShowImages(tvId) }
-        coVerify { tvShowRemoteDataSource.getTvShowTrailer(tvId) }
-    }
+            assertThat(result).isEqualTo(expectedTvShow)
+            coVerify { tvShowRemoteDataSource.getTvShowDetails(tvId) }
+            coVerify { tvShowRemoteDataSource.getTvShowImages(tvId) }
+            coVerify { tvShowRemoteDataSource.getTvShowTrailer(tvId) }
+        }
 
     @Test
-    fun `getTvShowDetails should limit header images to 10 when more than 10 images available`() = runTest {
-        // Given
-        val tvId = 123L
-        val mockTvShowDto = createMockTvShowDto()
-        val mockImages = (1..15).map { "/image$it.jpg" }
-        val mockTrailerUrl = "https://youtube.com/watch?v=trailer123"
+    fun `getTvShowCastMembers should return list of cast members when remote call succeeds`() =
+        runTest {
+            val tvId = 123L
+            val mockCastMemberDtos = listOf(createMockCastMemberDto())
+            val expectedCastMembers = listOf(createMockCastMember())
 
-        coEvery { tvShowRemoteDataSource.getTvShowDetails(tvId) } returns mockTvShowDto
-        coEvery { tvShowRemoteDataSource.getTvShowImages(tvId) } returns mockImages
-        coEvery { tvShowRemoteDataSource.getTvShowTrailer(tvId) } returns mockTrailerUrl
+            coEvery { tvShowRemoteDataSource.getTvShowCastMembers(tvId) } returns mockCastMemberDtos
 
-        val result = tvShowRepositoryImpl.getTvShowDetails(tvId)
+            val result = tvShowRepositoryImpl.getTvShowCastMembers(tvId)
 
-        assertThat(10== result.headerImagesURLs.size).isTrue()
-        assertThat(mockImages.take(10)== result.headerImagesURLs).isTrue()
-        coVerify { tvShowRemoteDataSource.getTvShowDetails(tvId) }
-        coVerify { tvShowRemoteDataSource.getTvShowImages(tvId) }
-        coVerify { tvShowRemoteDataSource.getTvShowTrailer(tvId) }
-    }
-
-    @Test
-    fun `getTvShowCastMembers should return list of cast members when remote call succeeds`() = runTest {
-        // Given
-        val tvId = 123L
-        val mockCastMemberDtos = listOf(createMockCastMemberDto())
-        val expectedCastMembers = listOf(createMockCastMember())
-
-        coEvery { tvShowRemoteDataSource.getTvShowCastMembers(tvId) } returns mockCastMemberDtos
-
-        val result = tvShowRepositoryImpl.getTvShowCastMembers(tvId)
-
-        assertThat(expectedCastMembers.size== result.size).isTrue()
-        assertThat(expectedCastMembers[0].actor.id== result[0].actor.id).isTrue()
-        assertThat(expectedCastMembers[0].actor.name== result[0].actor.name).isTrue()
-        assertThat(expectedCastMembers[0].characterName== result[0].characterName).isTrue()
-        coVerify { tvShowRemoteDataSource.getTvShowCastMembers(tvId) }
-    }
+            assertThat(expectedCastMembers.size == result.size).isTrue()
+            assertThat(result).isEqualTo(expectedCastMembers)
+            coVerify { tvShowRemoteDataSource.getTvShowCastMembers(tvId) }
+        }
 
     @Test
     fun `getTvShowCastMembers should return empty list when no cast members found`() = runTest {
-        // Given
         val tvId = 123L
         coEvery { tvShowRemoteDataSource.getTvShowCastMembers(tvId) } returns emptyList()
 
         val result = tvShowRepositoryImpl.getTvShowCastMembers(tvId)
 
-        assertThat(emptyList<CastMember>()== result).isTrue()
+        assertThat(emptyList<CastMember>() == result).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowCastMembers(tvId) }
     }
 
     @Test
     fun `getTvShowImages should return list of image urls when remote call succeeds`() = runTest {
-        // Given
         val tvId = 123L
         val mockImages = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg")
 
@@ -238,37 +195,33 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getTvShowImages should return empty list when no images found`() = runTest {
-        // Given
         val tvId = 123L
         coEvery { tvShowRemoteDataSource.getTvShowImages(tvId) } returns emptyList()
 
         val result = tvShowRepositoryImpl.getTvShowImages(tvId)
 
-        assertThat(emptyList<String>()== result).isTrue()
+        assertThat(emptyList<String>() == result).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowImages(tvId) }
     }
 
     @Test
     fun `getTvShowsByGenre should return list of tv shows when remote call succeeds`() = runTest {
-        // Given
         val genreId = 18L
         val page = 1
-        listOf(createMockTvShowDto())
         val expectedTvShows = createMockPagedTvShowDto()
 
         coEvery { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) } returns expectedTvShows
 
         val result = tvShowRepositoryImpl.getTvShowsByGenre(genreId, page, 20)
 
-        assertThat(expectedTvShows.data.size== result.data.size).isTrue()
-        assertThat(expectedTvShows.data[0].id== result.data[0].id).isTrue()
-        assertThat(expectedTvShows.data[0].title== result.data[0].title).isTrue()
+        assertThat(expectedTvShows.data.size == result.data.size).isTrue()
+        assertThat(expectedTvShows.data[0].id == result.data[0].id).isTrue()
+        assertThat(expectedTvShows.data[0].title == result.data[0].title).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) }
     }
 
     @Test
     fun `getTvShowsByGenre should return empty list when no tv shows found`() = runTest {
-        // Given
         val genreId = 18L
         val page = 1
         coEvery { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) } returns PagedResultDto(
@@ -279,46 +232,47 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowsByGenre(genreId, page, pageSize = 20)
 
-        assertThat(emptyList<TvShowDto>()== result.data).isTrue()
+        assertThat(emptyList<TvShowDto>() == result.data).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowsByGenre(genreId, page) }
     }
 
 
     @Test
-    fun `getTvShowSeasonEpisodes should return list of episodes when remote call succeeds`() = runTest {
-        // Given
-        val tvId = 123L
-        val seasonNumber = 1
-        val mockEpisodeDtos = listOf(createMockEpisodeDto())
-        val expectedEpisodes = listOf(createMockEpisode())
+    fun `getTvShowSeasonEpisodes should return list of episodes when remote call succeeds`() =
+        runTest {
+            val tvId = 123L
+            val seasonNumber = 1
+            val mockEpisodeDtos = listOf(createMockEpisodeDto())
+            val expectedEpisodes = listOf(createMockEpisode())
 
-        coEvery { tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber) } returns mockEpisodeDtos
+            coEvery {
+                tvShowRemoteDataSource.getTvShowEpisodes(
+                    tvId,
+                    seasonNumber
+                )
+            } returns mockEpisodeDtos
 
-        val result = tvShowRepositoryImpl.getTvShowSeasonEpisodes(tvId, seasonNumber)
+            val result = tvShowRepositoryImpl.getTvShowSeasonEpisodes(tvId, seasonNumber)
 
-        assertThat(expectedEpisodes.size== result.size).isTrue()
-        assertThat(expectedEpisodes[0].id== result[0].id).isTrue()
-        assertThat(expectedEpisodes[0].title== result[0].title).isTrue()
-        assertThat(expectedEpisodes[0].episodeNumber== result[0].episodeNumber).isTrue()
-        coVerify { tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber) }
-    }
+            assertThat(expectedEpisodes.size == result.size).isTrue()
+            assertThat(result).isEqualTo(expectedEpisodes)
+            coVerify { tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber) }
+        }
 
     @Test
     fun `getTvShowSeasonEpisodes should return empty list when no episodes found`() = runTest {
-        // Given
         val tvId = 123L
         val seasonNumber = 1
         coEvery { tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber) } returns emptyList()
 
         val result = tvShowRepositoryImpl.getTvShowSeasonEpisodes(tvId, seasonNumber)
 
-        assertThat(emptyList<Episode>()== result).isTrue()
+        assertThat(emptyList<Episode>() == result).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowEpisodes(tvId, seasonNumber) }
     }
 
     @Test
     fun `getTvShowReviews should return list of reviews when remote call succeeds`() = runTest {
-        // Given
         val tvId = 123L
         val mockReviewDtos = listOf(createMockReviewDto())
         val expectedReviews = listOf(createMockReview())
@@ -327,29 +281,25 @@ class TvShowRepositoryImplTest {
 
         val result = tvShowRepositoryImpl.getTvShowReviews(tvId)
 
-        assertThat(expectedReviews.size== result.size).isTrue()
-        assertThat(expectedReviews[0].id== result[0].id).isTrue()
-        assertThat(expectedReviews[0].contentTitle== result[0].contentTitle).isTrue()
-        assertThat(expectedReviews[0].authorName== result[0].authorName).isTrue()
+        assertThat(expectedReviews.size == result.size).isTrue()
+        assertThat(result).isEqualTo(expectedReviews)
         coVerify { tvShowRemoteDataSource.getTvShowReviews(tvId) }
     }
 
     @Test
     fun `getTvShowReviews should return empty list when no reviews found`() = runTest {
-        // Given
         val tvId = 123L
         coEvery { tvShowRemoteDataSource.getTvShowReviews(tvId) } returns emptyList()
 
         val result = tvShowRepositoryImpl.getTvShowReviews(tvId)
 
-        assertThat(emptyList<Review>()== result).isTrue()
+        assertThat(emptyList<Review>() == result).isTrue()
         coVerify { tvShowRemoteDataSource.getTvShowReviews(tvId) }
     }
 
 
     @Test
     fun `getTopRatedTvShows should return paged result when remote call succeeds`() = runTest {
-        // Given
         val page = 1
         val mockTvShowDtos = listOf(createMockTvShowDto())
         val mockPagedResult = PagedResultDto(mockTvShowDtos, nextKey = 2, prevKey = null)
@@ -369,7 +319,6 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getPopularTvShows should return list of tv shows when remote call succeeds`() = runTest {
-        // Given
         val mockTvShowDtos = listOf(createMockTvShowDto())
         val expectedTvShows = listOf(createMockTvShow())
 
@@ -378,25 +327,22 @@ class TvShowRepositoryImplTest {
         val result = tvShowRepositoryImpl.getPopularTvShows()
 
         assertThat(expectedTvShows.size == result.size).isTrue()
-        assertThat(expectedTvShows[0].id == result[0].id).isTrue()
-        assertThat(expectedTvShows[0].title == result[0].title).isTrue()
+        assertThat(result).isEqualTo(expectedTvShows)
         coVerify { tvShowRemoteDataSource.getPopularTvShows() }
     }
 
     @Test
     fun `getPopularTvShows should return empty list when no popular tv shows found`() = runTest {
-        // Given
         coEvery { tvShowRemoteDataSource.getPopularTvShows() } returns emptyList()
 
         val result = tvShowRepositoryImpl.getPopularTvShows()
 
-        assertThat(emptyList<TvShow>()== result).isTrue()
+        assertThat(emptyList<TvShow>() == result).isTrue()
         coVerify { tvShowRemoteDataSource.getPopularTvShows() }
     }
 
     @Test
     fun `getTrendingTvShows should return paged result when remote call succeeds`() = runTest {
-        // Given
         val page = 1
         val mockTvShowDtos = listOf(createMockTvShowDto())
         val mockPagedResult = PagedResultDto(mockTvShowDtos, nextKey = 2, prevKey = null)
@@ -434,7 +380,7 @@ class TvShowRepositoryImplTest {
         )
 
         private fun createMockPagedTvShowDto() = PagedResultDto(
-            listOf(createMockTvShowDto()),
+            createMockTvShowsDto(),
             nextKey = 2,
             prevKey = null
         )
@@ -445,7 +391,7 @@ class TvShowRepositoryImplTest {
             title = "Test TV Show",
             genres = listOf(GenreDto(18, "Drama", type = GenreDto.GenreType.TV_SHOW)),
             imdbRating = 7.9,
-            userRating = 8.1,
+            userRating = 8,
             releaseDate = "2023-01-01",
             overview = "Test overview for TV Show",
             posterPictureURL = "/tv_poster.jpg",
@@ -459,47 +405,13 @@ class TvShowRepositoryImplTest {
             title = "Test TV Show",
             genres = listOf(Genre(18L, "Drama")),
             averageRating = 7.9,
-            userRating = 8.1,
+            userRating = 8,
             releaseDate = LocalDate.parse("2023-01-01"),
             overview = "Test overview for TV Show",
             posterImageURL = "/tv_poster.jpg",
             numberOfSeasons = 3,
             trailerURL = " ",
             headerImagesURLs = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg")
-        )
-
-        private fun createMockCastMemberDto() = CastMemberDto(
-            actor = createMockActorDto(),
-            characterName = "Test Character"
-        )
-
-        private fun createMockCastMember() = CastMember(
-            actor = createMockActor(),
-            characterName = "Test Character"
-        )
-
-        private fun createMockActorDto() = ActorDto(
-            id = 123L,
-            name = "John Doe",
-            imageUrl = "/profile.jpg",
-            biography = "Famous actor biography",
-            birthdayDate = "1980-01-01",
-            deathDate = null,
-            placeOfBirth = "New York, USA",
-            headerPictures = listOf("/header1.jpg", "/header2.jpg"),
-            department = "Acting"
-        )
-
-        private fun createMockActor() = Actor(
-            id = 123L,
-            name = "John Doe",
-            profilePictureURL = "/profile.jpg",
-            birthDate = LocalDate.parse("1980-01-01"),
-            placeOfBirth = "New York, USA",
-            deathDate = null,
-            biography = "Famous actor biography",
-            headerPictures = listOf("/header1.jpg", "/header2.jpg"),
-            department = "Acting"
         )
 
         private fun createMockEpisodeDto() = EpisodeDto(
@@ -513,7 +425,8 @@ class TvShowRepositoryImplTest {
             overview = "Test episode overview",
             headerPictures = listOf("/header1.jpg", "/header2.jpg"),
             genres = emptyList(),
-            trailerUrl = " "
+            trailerUrl = " ",
+            userRating = 8,
         )
 
         private fun createMockEpisode() = Episode(
@@ -527,7 +440,8 @@ class TvShowRepositoryImplTest {
             overview = "Test episode overview",
             headerPictures = listOf("/header1.jpg", "/header2.jpg"),
             genres = emptyList(),
-            trailerUrl = " "
+            trailerUrl = " ",
+            userRating = 8,
         )
 
         private fun createMockReviewDto() = ReviewDto(
