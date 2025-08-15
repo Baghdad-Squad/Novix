@@ -1,8 +1,11 @@
 package com.baghdad.design_system.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +24,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.baghdad.design_system.component.button.PrimaryButton
+import com.baghdad.design_system.preview.NovixPreviews
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 import kotlinx.coroutines.delay
 
@@ -76,7 +82,7 @@ fun BaseBottomSheet(
 }
 
 @Composable
-private fun DragHandle(){
+private fun DragHandle() {
     Box(
         modifier = Modifier
             .padding(vertical = 16.dp)
@@ -92,5 +98,49 @@ private fun DragHandle(){
                     shape = RoundedCornerShape(2.dp)
                 )
         )
+    }
+}
+
+
+@NovixPreviews
+@Composable
+private fun PreviewBaseBottomSheet() {
+    NovixTheme(isDarkTheme = false) {
+        var isVisible by remember { mutableStateOf(false) }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.color.surface),
+            contentAlignment = Alignment.Center
+        ) {
+            PrimaryButton(
+                onClick = { isVisible = true },
+                label = "Open Bottom Sheet",
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            BaseBottomSheet(
+                isVisible = isVisible,
+                onDismiss = { isVisible = false }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        "Bottom Sheet Content",
+                        style = Theme.typography.body.medium
+                    )
+                    PrimaryButton(
+                        onClick = { isVisible = false },
+                        label = "Close Bottom Sheet",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
     }
 }
