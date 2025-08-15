@@ -13,4 +13,10 @@
     <string name="dark">Dark</string>
     <string name="english">English</string>
     <string name="arabic">Arabic</string>
+    <string name="content_restriction_strict">Strict</string>
+    <string name="content_restriction_strict_description">Blurs all sensitive content.</string>
+    <string name="content_restriction_moderate">Moderate</string>
+    <string name="content_restriction_moderate_description">Blurs explicit scenes only.</string>
+    <string name="content_restriction_none">Off</string>
+    <string name="content_restriction_none_description">No content is blurred.</string>
 </resources>
