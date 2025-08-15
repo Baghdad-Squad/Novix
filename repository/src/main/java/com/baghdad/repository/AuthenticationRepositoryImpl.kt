@@ -19,7 +19,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
 ) : AuthenticationRepository {
 
     override suspend fun isUserLoggedIn(): Boolean {
-        return sessionDataSource.getSessionId() != null
+        return executeSafely { sessionDataSource.getSessionId() != null }
     }
 
     override suspend fun getUserInfo(): User? {
@@ -50,18 +50,21 @@ class AuthenticationRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun getRequestToken(): String =
-        remoteAuthenticationDataSource.getRequestToken()
+    private suspend fun getRequestToken(): String {
+        return remoteAuthenticationDataSource.getRequestToken()
+    }
 
     private suspend fun validateCredentials(
         userName: String,
         password: String,
         requestToken: String
-    ): String = remoteAuthenticationDataSource.validateCredentialWithToken(
-        userName = userName,
-        password = password,
-        requestToken = requestToken
-    )
+    ): String {
+        return remoteAuthenticationDataSource.validateCredentialWithToken(
+            userName = userName,
+            password = password,
+            requestToken = requestToken
+        )
+    }
 
     private suspend fun createSession(validatedToken: String): String =
         remoteAuthenticationDataSource.createSession(requestToken = validatedToken)
