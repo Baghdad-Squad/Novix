@@ -2,11 +2,13 @@ package com.baghdad.viewmodel.main
 
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.appConfigurations.GetAppThemeUseCase
+import com.baghdad.domain.usecase.appConfigurations.GetContentRestrictionUseCase
 import com.baghdad.domain.usecase.appConfigurations.IsFirstTimeLaunchAppUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.savedList.SyncSavedMoviesUseCase
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.profile.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +21,7 @@ class MainViewModel @Inject constructor(
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
     private val isFirstTimeLaunchAppUseCase: IsFirstTimeLaunchAppUseCase,
     private val syncSavedMoviesUseCase: SyncSavedMoviesUseCase,
+    private val getContentRestrictionUseCase: GetContentRestrictionUseCase,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<MainState, MainEffect>(
     MainState()
@@ -32,6 +35,7 @@ class MainViewModel @Inject constructor(
         checkIsLoggedIn()
         getAppTheme()
         getAppLanguage()
+        getContentRestriction()
     }
 
     private fun getAppTheme() {
@@ -90,6 +94,15 @@ class MainViewModel @Inject constructor(
                 callee = syncSavedMoviesUseCase::invoke
             )
         }
+    }
+
+    private fun getContentRestriction() {
+        tryToCollect(
+            flowProvider = { getContentRestrictionUseCase() },
+            onNewValue = { contentRestriction ->
+                updateState { it.copy(contentRestriction = contentRestriction.toUiState()) }
+            }
+        )
     }
 
     private fun onError(throwable: Throwable) {
