@@ -96,7 +96,7 @@ private fun CategoriesScreenContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp, end = 16.dp, start = 16.dp)
+                    .padding(top = 25.dp, end = 16.dp, start = 16.dp)
             ) {
                 Text(
                     text = stringResource(R.string.categories),
@@ -170,10 +170,11 @@ fun CategoryGrid(
     val gridState = rememberLazyGridState()
 
     LazyVerticalGrid(
-        columns = Adaptive(minSize = 160.dp),
+        columns = Adaptive(minSize = 150.dp),
         state = gridState,
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 8.dp),
+        modifier = modifier.fillMaxSize()
+            .padding(horizontal = 16.dp),
+        contentPadding = PaddingValues(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
