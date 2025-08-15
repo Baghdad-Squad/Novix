@@ -44,49 +44,54 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
 
     override suspend fun getTvShowDetails(tvShowId: Long): TvShowDto {
         return handleRequest<TVShowDetailsResponse>(
-            apiCall = { tvShowApiService.getTvShowDetails(tvShowId) },
+            apiCall = { tvShowApiService.getTvShowDetails(tvShowId = tvShowId) },
             logger = logger,
         ).toDto()
     }
 
     override suspend fun getTvShowCastMembers(tvShowId: Long): List<CastMemberDto> {
         return handleRequest<CastMembersResponse>(
-            apiCall = { tvShowApiService.getTvShowCastMembers(tvShowId) },
+            apiCall = { tvShowApiService.getTvShowCastMembers(tvShowId = tvShowId) },
             logger = logger,
         ).toCastMembers()
     }
 
     override suspend fun getTvShowImages(tvShowId: Long): List<String> {
         return handleRequest<TVShowImagesResponse>(
-            apiCall = { tvShowApiService.getTvShowImages(tvShowId) },
+            apiCall = { tvShowApiService.getTvShowImages(tvShowId = tvShowId) },
             logger = logger,
         ).toImageUrls()
     }
 
     override suspend fun getTvShowsByGenre(genreId: Long, page: Int): PagedResultDto<TvShowDto> {
         return handleRequest<TvShowResponse>(
-            apiCall = { tvShowApiService.getTvShowsByGenre(genreId, page) },
+            apiCall = { tvShowApiService.getTvShowsByGenre(genreId = genreId, page = page) },
             logger = logger,
         ).toPagedTvShowDtos()
     }
 
     override suspend fun getTvShowEpisodes(tvShowId: Long, seasonNumber: Int): List<EpisodeDto> {
         return handleRequest<SeasonDetailResponse>(
-            apiCall = { tvShowApiService.getTvShowEpisodes(tvShowId, seasonNumber) },
+            apiCall = {
+                tvShowApiService.getTvShowEpisodes(
+                    tvShowId = tvShowId,
+                    seasonNumber = seasonNumber
+                )
+            },
             logger = logger,
         ).toEpisodeDto()
     }
 
     override suspend fun getTvShowReviews(tvShowId: Long): List<ReviewDto> {
         return handleRequest<ReviewsResponse>(
-            apiCall = { tvShowApiService.getTvShowReviews(tvShowId) },
+            apiCall = { tvShowApiService.getTvShowReviews(tvShowId = tvShowId) },
             logger = logger,
         ).toReviewDto()
     }
 
     override suspend fun getTvShowTrailer(tvShowId: Long): String {
         return handleRequest<TVShowVideosResponse>(
-            apiCall = { tvShowApiService.getTvShowTrailer(tvShowId) },
+            apiCall = { tvShowApiService.getTvShowTrailer(tvShowId = tvShowId) },
             logger = logger
         ).mapToYoutubeURL()
     }
@@ -118,8 +123,8 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         handleRequest<RatingResponse>(
             apiCall = {
                 tvShowApiService.addTvShowRate(
-                    tvShowId,
-                    RatingRequest(rating)
+                    seriesId = tvShowId,
+                    rating = RatingRequest(rating)
                 )
             },
             logger = logger

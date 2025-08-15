@@ -85,7 +85,7 @@ class AppConfigurationsRepositoryImplTest {
 
     @Test
     fun `isFirstTimeUser should returns true when data source returns true`() = runTest {
-        coEvery { appConfigurationDataSource.isFirstTime() } returns true
+        coEvery { appConfigurationDataSource.isFirstTimeLaunchApp() } returns true
 
         val result = repository.isFirstTimeUser()
 
