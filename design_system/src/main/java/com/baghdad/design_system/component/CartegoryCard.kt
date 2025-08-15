@@ -54,8 +54,8 @@ fun CategoryCard(
                     brush = Brush.linearGradient(
                         listOf<Color>(
                             Color(0xFF0D0608),
-                            Color(0xB20D0608),
                             Color(0xCC0D0608),
+                            Color(0xB20D0608),
                             Color(0x000D0608),
                         )
                     )
