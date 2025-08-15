@@ -1,6 +1,7 @@
 package com.baghdad.ui.feature.myRating
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -113,16 +114,15 @@ private fun MyRatingContent(
                     },
                     screenTitle = stringResource(com.baghdad.ui.R.string.my_rating),
                 )
-                AnimatedContent(
-                    targetState = mediaItems.itemCount != 0 && uiState.isLoading,
-                ) { emptyRating ->
-                    if (emptyRating)
-                        MediaTabs(
-                            selectedTab = uiState.selectedMediaTab,
-                            onTabClick = { listener.onMediaTabClick(it) },
-                            genresScrollState = rememberLazyListState(),
-                            modifier = Modifier.padding(vertical = 12.dp)
-                        )
+                AnimatedVisibility(
+                    mediaItems.itemCount != 0 || uiState.isLoading,
+                ) {
+                    MediaTabs(
+                        selectedTab = uiState.selectedMediaTab,
+                        onTabClick = { listener.onMediaTabClick(it) },
+                        genresScrollState = rememberLazyListState(),
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
                 }
             }
         },

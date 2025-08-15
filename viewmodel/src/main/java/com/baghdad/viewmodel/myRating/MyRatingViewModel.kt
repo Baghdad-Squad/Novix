@@ -133,7 +133,6 @@ class MyRatingViewModel @Inject constructor(
             callee = { action() },
             onSuccess = { onDeletedSuccess() },
             onStart = ::onStart,
-            onFinally = ::onFinally,
             onError = ::onError,
             dispatcher = ioDispatcher
         )
