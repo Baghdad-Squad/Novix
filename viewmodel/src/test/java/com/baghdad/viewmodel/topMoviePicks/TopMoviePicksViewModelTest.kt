@@ -67,7 +67,7 @@ class TopMoviePicksViewModelTest {
         viewModel.uiEffect.test {
             val effect = awaitItem()
             assertThat(effect is TopMoviePicksEffect.NavigateToMovieDetails).isTrue()
-            assertThat(movieId == (effect as TopMoviePicksEffect.NavigateToMovieDetails).movieId).isTrue()
+            assertThat((effect as TopMoviePicksEffect.NavigateToMovieDetails).movieId == movieId).isTrue()
         }
     }
 
@@ -76,12 +76,12 @@ class TopMoviePicksViewModelTest {
 
         val initialState = viewModel.uiState.value
         val movie = initialState.movies.find { it.id == movieId }!!
-        assertThat(movie.isSaved).isFalse()
 
         viewModel.onSaveMovieClicked(movie)
         advanceUntilIdle()
 
         val updatedState = viewModel.uiState.value
+        assertThat(movie.isSaved).isFalse()
         assertThat(updatedState.addToListBottomSheetState.isVisible).isTrue()
         assertThat(updatedState.addToListBottomSheetState.selectedItemId).isEqualTo(movieId)
     }
