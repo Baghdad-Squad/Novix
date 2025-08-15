@@ -14,15 +14,12 @@ import com.baghdad.repository.model.TvShowDto
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.util.Locale
 
 class SearchRepositoryImplTest {
     private val searchRemoteDataSource: RemoteSearchDataSource = mockk()
@@ -37,28 +34,19 @@ class SearchRepositoryImplTest {
     )
 
     @Test
-    fun `searchActorsByName should fetch from remote`() = runTest {
-        // Given
+    fun `searchActorsByName should fetch actors from remote`() = runTest {
         val query = "Test Actor"
         val page = 1
         val pageSize = 20
         val remoteActors = listOf(createMockActorDto())
         val remoteResult = PagedResultDto(remoteActors, nextKey = 2, prevKey = null)
-        coEvery {
-            searchRemoteDataSource.searchActors(
-                query,
-                page,
-            )
-        } returns remoteResult
-
 
         coEvery { searchRemoteDataSource.searchActors(query, page) } returns remoteResult
         coEvery { recentSearchDataSource.addRecentSearchQuery(query) } returns Unit
+        coEvery { searchRemoteDataSource.searchActors(query, page) } returns remoteResult
 
-        // When
         val result = searchRepositoryImpl.searchActorsByName(query, page, pageSize)
 
-        // Then
         assertThat(1 == result.data.size).isTrue()
         assertThat("Test Actor" == result.data[0].name).isTrue()
         assertThat(2 == result.nextKey).isTrue()
@@ -68,7 +56,7 @@ class SearchRepositoryImplTest {
 
 
     @Test
-    fun `searchMoviesByTitle should fetch from remote`() =
+    fun `searchMoviesByTitle should fetch movies from remote`() =
         runTest {
             val title = "Avatar"
             val page = 1
@@ -77,20 +65,9 @@ class SearchRepositoryImplTest {
             val remoteMovies = listOf(createMockMovieDto(3L, "Avatar"))
             val remoteResult = PagedResultDto(remoteMovies, nextKey = 2, prevKey = null)
 
-            mockkStatic(Locale::class)
-            every { Locale.getDefault().language } returns "en"
-
             coEvery { savableMovieDataSource.getSavedMovies() } returns emptyMap()
             coEvery { remoteGenreDataSource.getMovieGenre("en") } returns movieGenres
             coEvery { recentSearchDataSource.addRecentSearchQuery(title) } returns Unit
-
-            coEvery {
-                searchRemoteDataSource.searchMovies(
-                    title,
-                    page,
-                    movieGenres
-                )
-            } returns remoteResult
             coEvery {
                 searchRemoteDataSource.searchMovies(
                     title,
@@ -108,7 +85,7 @@ class SearchRepositoryImplTest {
         }
 
     @Test
-    fun `searchTvShowsByName should fetch from remote`() =
+    fun `searchTvShowsByName should fetch tv shows from remote`() =
         runTest {
             val title = "The Office"
             val page = 1
@@ -117,18 +94,8 @@ class SearchRepositoryImplTest {
             val remoteTvShows = listOf(createMockTvShowDto(3L, "The Office"))
             val remoteResult = PagedResultDto(remoteTvShows, nextKey = 2, prevKey = null)
 
-            mockkStatic(Locale::class)
-            every { Locale.getDefault().language } returns "en"
-
-            coEvery {
-                searchRemoteDataSource.searchTvShows(
-                    title,
-                    page,
-                    tvGenres
-                )
-            } returns remoteResult
-
             coEvery { remoteGenreDataSource.getTvShowGenre("en") } returns tvGenres
+            coEvery { recentSearchDataSource.addRecentSearchQuery(title) } returns Unit
             coEvery {
                 searchRemoteDataSource.searchTvShows(
                     title,
@@ -136,7 +103,6 @@ class SearchRepositoryImplTest {
                     tvGenres
                 )
             } returns remoteResult
-            coEvery { recentSearchDataSource.addRecentSearchQuery(title) } returns Unit
 
             val result = searchRepositoryImpl.searchTvShowsByName(title, page, pageSize)
 
@@ -148,7 +114,6 @@ class SearchRepositoryImplTest {
 
     @Test
     fun `getRecentSearches should return mapped recent searches flow`() = runTest {
-        // Given
         val mockRecentSearchDtos: List<RecentSearchDto> = listOf(
             createMockRecentSearchDto(1L, "John Doe"),
             createMockRecentSearchDto(2L, "Inception")
@@ -174,7 +139,6 @@ class SearchRepositoryImplTest {
 
     @Test
     fun `getRecentSearches should return empty flow when no recent searches exist`() = runTest {
-
         coEvery { recentSearchDataSource.getAllRecentSearches() } returns flowOf(emptyList())
 
         val resultFlow = searchRepositoryImpl.getRecentSearches()
@@ -182,13 +146,11 @@ class SearchRepositoryImplTest {
         resultFlow.collect { result ->
             assertEquals(emptyList<RecentSearch>(), result)
         }
-
         coVerify { recentSearchDataSource.getAllRecentSearches() }
     }
 
     @Test
     fun `deleteRecentSearchById should call local data source with correct id`() = runTest {
-
         val searchId = 123L
         coEvery { recentSearchDataSource.deleteRecentSearchById(searchId) } returns Unit
 
@@ -199,7 +161,6 @@ class SearchRepositoryImplTest {
 
     @Test
     fun `deleteAllRecentSearches should call local data source`() = runTest {
-
         coEvery { recentSearchDataSource.deleteAllRecentSearches() } returns Unit
 
         searchRepositoryImpl.deleteAllRecentSearches()
