@@ -43,7 +43,6 @@ class TvShowDetailsViewModel @Inject constructor(
         getTvShowDetails(tvShowId)
         getTvShowCast(tvShowId)
         onClickSeasonTab(0)
-        getTvShowAccountStates()
         isUserLoggedIn()
     }
 
@@ -151,14 +150,18 @@ class TvShowDetailsViewModel @Inject constructor(
         } else {
             BottomSheetType.RequireLogin
         }
+        if (isLoggedIn) {
+            getTvShowAccountStates()
+
+        }
 
         updateState {
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
                     bottomSheetType = newBottomSheetType,
-                    ),
-                    isRated = it.isRated && isLoggedIn,
-                )
+                ),
+                isRated = it.isRated && isLoggedIn,
+            )
         }
     }
 

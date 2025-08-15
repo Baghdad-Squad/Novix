@@ -2,6 +2,7 @@ package com.baghdad.repository.util
 
 import com.baghdad.domain.exception.LocalDataBaseException
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.domain.exception.UnknownException
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.repository.exception.DatabaseException
@@ -13,6 +14,7 @@ import com.baghdad.repository.exception.SerializationNetworkException
 import com.baghdad.repository.exception.ServerNetworkException
 import com.baghdad.repository.exception.StorageFullException
 import com.baghdad.repository.exception.TooManyRequestsNetworkException
+import com.baghdad.repository.exception.UnauthorizedNetworkException
 import com.baghdad.repository.exception.UnknownNetworkException
 import com.baghdad.repository.model.PagedResultDto
 import kotlinx.coroutines.flow.Flow
@@ -39,7 +41,10 @@ suspend fun <T> executeSafely(block: suspend () -> T): T {
         throw LocalDataBaseException()
     } catch (_: ItemCreationFailedException) {
         throw NetworkException()
-    } catch (_: Exception) {
+    } catch (_: UnauthorizedNetworkException){
+        throw UnAuthorizedException()
+    }
+    catch (_: Exception) {
         throw UnknownException()
     }
 }
