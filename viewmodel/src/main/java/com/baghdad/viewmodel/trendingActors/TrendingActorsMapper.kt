@@ -6,5 +6,4 @@ fun Actor.toTrendingActorsUi() = TrendingActorsUiState.TrendingActor(
     id = this.id,
     profilePictureURL = this.profilePictureURL,
     name = this.name
-
 )
