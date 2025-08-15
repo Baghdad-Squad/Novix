@@ -40,7 +40,6 @@ class EpisodeDetailsViewModel @Inject constructor(
     private fun loadInitData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
         getEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
         getEpisodeCastMembers(tvShowId, seasonNumber, episodeNumber)
-        getEpisodeAccountStates()
         isUserLoggedIn()
     }
 
@@ -165,6 +164,9 @@ class EpisodeDetailsViewModel @Inject constructor(
             BottomSheetType.RequireLogin
         }
 
+        if (isLoggedIn) {
+            getEpisodeAccountStates()
+        }
         updateState {
             it.copy(
                 ratingStatus = it.ratingStatus.copy(

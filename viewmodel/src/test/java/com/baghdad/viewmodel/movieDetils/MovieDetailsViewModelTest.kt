@@ -3,7 +3,6 @@ package com.baghdad.viewmodel.movieDetils
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.baghdad.domain.model.savedList.SavedMovie
-import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
 import com.baghdad.domain.usecase.movie.GetMovieAccountStatesUseCase
@@ -15,6 +14,7 @@ import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.AddUserWatchedMediaUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.person.Actor
@@ -59,7 +59,7 @@ class MovieDetailsViewModelTest {
         coEvery { getCastsInfoUseCase(any()) } returns TestData.createMockCastMembers()
         coEvery { getMovieImagesUseCase(any()) } returns TestData.createMockImages()
         coEvery { getMoreLikeThisPosterImageUseCase(any()) } returns TestData.createMockSimilarMovies()
-        coEvery { addContinueWatchingUseCase(any(), any(), any(), any()) } returns Unit
+        coEvery { addUserWatchedMediaUseCase(any(), any(), any(), any()) } returns Unit
         coEvery { getMovieAccountStatesUseCase(any()) } returns true
         coEvery { addMovieRateUseCase(any(), any()) } returns Unit
         coEvery { isUserLoggedInUseCase() } returns true
@@ -212,7 +212,7 @@ class MovieDetailsViewModelTest {
             getCastsInfoUseCase = getCastsInfoUseCase,
             getMovieImagesUseCase = getMovieImagesUseCase,
             getMoreLikeThisPosterImageUseCase = getMoreLikeThisPosterImageUseCase,
-            addContinueWatchingUseCase = addContinueWatchingUseCase,
+            addUserWatchedMediaUseCase = addUserWatchedMediaUseCase,
             savedStateHandle = savedStateHandle,
             getMovieAccountStatesUseCase = getMovieAccountStatesUseCase,
             addMovieRateUseCase = addMovieRateUseCase,
@@ -297,7 +297,7 @@ class MovieDetailsViewModelTest {
     private val getCastsInfoUseCase = mockk<GetMovieCastMembersUseCase>()
     private val getMovieImagesUseCase = mockk<GetMovieGalleryUseCase>()
     private val getMoreLikeThisPosterImageUseCase = mockk<GetSimilarMoviesUseCase>()
-    private val addContinueWatchingUseCase = mockk<AddContinueWatchingUseCase>()
+    private val addUserWatchedMediaUseCase = mockk<AddUserWatchedMediaUseCase>()
     private val getMovieAccountStatesUseCase = mockk<GetMovieAccountStatesUseCase>()
     private val addMovieRateUseCase = mockk<AddMovieRateUseCase>()
     private val isUserLoggedInUseCase = mockk<IsUserLoggedInUseCase>()

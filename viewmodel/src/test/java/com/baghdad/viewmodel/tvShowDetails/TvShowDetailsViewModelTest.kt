@@ -3,13 +3,13 @@ package com.baghdad.viewmodel.tvShowDetails
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.tvShow.AddTvShowRateUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowAccountStatesUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowCastMembersUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowDetailsUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowSeasonEpisodesUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.AddUserWatchedMediaUseCase
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
@@ -38,7 +38,7 @@ class TvShowDetailsViewModelTest {
     private val getTvShowDetailsUseCase = mockk<GetTvShowDetailsUseCase>()
     private val getTvShowCastMembersUseCase = mockk<GetTvShowCastMembersUseCase>()
     private val getTvShowSeasonEpisodesUseCase = mockk<GetTvShowSeasonEpisodesUseCase>()
-    private val addContinueWatchingUseCase = mockk<AddContinueWatchingUseCase>()
+    private val addUserWatchedMediaUseCase = mockk<AddUserWatchedMediaUseCase>()
     private val getTvShowAccountStatesUseCase = mockk<GetTvShowAccountStatesUseCase>()
     private val addTvShowRateUseCase = mockk<AddTvShowRateUseCase>()
     private val isUserLoggedInUseCase = mockk<IsUserLoggedInUseCase>()
@@ -64,7 +64,7 @@ class TvShowDetailsViewModelTest {
         coEvery { getTvShowDetailsUseCase(any()) } returns TestData.createMockTvShow()
         coEvery { getTvShowCastMembersUseCase(any()) } returns TestData.createMockCastMembers()
         coEvery { getTvShowSeasonEpisodesUseCase(any(), any()) } returns TestData.createMockEpisodes()
-        coEvery { addContinueWatchingUseCase(any(), any(), any(), any()) } returns Unit
+        coEvery { addUserWatchedMediaUseCase(any(), any(), any(), any()) } returns Unit
         coEvery { getTvShowAccountStatesUseCase(any()) } returns true
         coEvery { addTvShowRateUseCase(any(), any()) } returns Unit
         coEvery { isUserLoggedInUseCase() } returns true
@@ -204,7 +204,7 @@ class TvShowDetailsViewModelTest {
             getTvShowDetailsUseCase = getTvShowDetailsUseCase,
             getTvShowCastMembersUseCase = getTvShowCastMembersUseCase,
             getTvShowSeasonEpisodesUseCase = getTvShowSeasonEpisodesUseCase,
-            addContinueWatchingUseCase = addContinueWatchingUseCase,
+            addUserWatchedMediaUseCase = addUserWatchedMediaUseCase,
             getTvShowAccountStatesUseCase = getTvShowAccountStatesUseCase,
             addTvShowRateUseCase = addTvShowRateUseCase,
             isUserLoggedInUseCase = isUserLoggedInUseCase,
