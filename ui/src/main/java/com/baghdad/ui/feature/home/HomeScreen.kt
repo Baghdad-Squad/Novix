@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -104,12 +105,14 @@ private fun HomeContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item(key = "popular_section", span = { GridItemSpan(maxLineSpan) }) {
-                PopularSection(
-                    isLoading = state.isPopularLoading,
-                    popularItems = state.popularItems,
-                    onClick = interactionListener::onPopularItemClicked,
-                    onSaveClick = interactionListener::onPopularItemSaveClicked,
-                )
+                AnimatedVisibility(state.isPopularLoading || state.popularItems.isNotEmpty()) {
+                    PopularSection(
+                        isLoading = state.isPopularLoading,
+                        popularItems = state.popularItems,
+                        onClick = interactionListener::onPopularItemClicked,
+                        onSaveClick = interactionListener::onPopularItemSaveClicked,
+                    )
+                }
             }
 
             item(key = "what_to_watch_section", span = { GridItemSpan(maxLineSpan) }) {
@@ -122,25 +125,33 @@ private fun HomeContent(
             }
 
             item(key = "top_rating_section", span = { GridItemSpan(maxLineSpan) }) {
-                TopRatingSection(
-                    modifier = Modifier.padding(top = 24.dp),
-                    isLoading = state.isTopRatingLoading,
-                    items = state.topRatingItems,
-                    onClick = interactionListener::onTopRatingItemClicked,
-                    onSaveClick = interactionListener::onTopRatingItemSaveClicked,
-                    onViewAllClick = interactionListener::onViewAllTopRatingClicked,
-                )
+                AnimatedVisibility(
+                    visible = state.isTopRatingLoading || state.topRatingItems.isNotEmpty()
+                ) {
+                    TopRatingSection(
+                        modifier = Modifier.padding(top = 24.dp),
+                        isLoading = state.isTopRatingLoading,
+                        items = state.topRatingItems,
+                        onClick = interactionListener::onTopRatingItemClicked,
+                        onSaveClick = interactionListener::onTopRatingItemSaveClicked,
+                        onViewAllClick = interactionListener::onViewAllTopRatingClicked,
+                    )
+                }
             }
 
             item(key = "continue_watching_section", span = { GridItemSpan(maxLineSpan) }) {
-                ContinueWatchingSection(
-                    modifier = Modifier.padding(top = 24.dp),
-                    isLoading = state.isContinueWatchingLoading,
-                    items = state.continueWatchingItems,
-                    onClick = interactionListener::onContinueWatchingItemClicked,
-                    onSaveClick = interactionListener::onContinueWatchingItemSaveClicked,
-                    onViewAllClick = interactionListener::onViewAllContinueWatchingClicked,
-                )
+                AnimatedVisibility(
+                    visible = state.isContinueWatchingLoading || state.continueWatchingItems.isNotEmpty()
+                ) {
+                    ContinueWatchingSection(
+                        modifier = Modifier.padding(top = 24.dp),
+                        isLoading = state.isContinueWatchingLoading,
+                        items = state.continueWatchingItems,
+                        onClick = interactionListener::onContinueWatchingItemClicked,
+                        onSaveClick = interactionListener::onContinueWatchingItemSaveClicked,
+                        onViewAllClick = interactionListener::onViewAllContinueWatchingClicked,
+                    )
+                }
             }
 
             if (state.isUpcomingMoviesLoading || state.isUpcomingGenresLoading) {
