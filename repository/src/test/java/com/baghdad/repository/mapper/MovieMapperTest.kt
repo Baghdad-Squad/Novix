@@ -10,13 +10,10 @@ import org.junit.jupiter.api.Test
 class MovieMapperTest {
     @Test
     fun `toEntity should return Movie entity when given valid MovieDto`() {
-        // Given
         val movieDto = createMockMovieDto().first()
 
-        // When
         val result = movieDto.toEntity()
 
-        // Then
         val expectedResult = Movie(
             id = 1L,
             title = "Test Movie",

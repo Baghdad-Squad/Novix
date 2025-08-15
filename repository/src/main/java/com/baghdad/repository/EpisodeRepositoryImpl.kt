@@ -3,7 +3,6 @@ package com.baghdad.repository
 import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.entity.media.Episode
 import com.baghdad.entity.person.CastMember
-import com.baghdad.repository.datasource.local.SessionDataSource
 import com.baghdad.repository.datasource.remote.RemoteEpisodeDataSource
 import com.baghdad.repository.datasource.remote.RemoteTvShowDataSource
 import com.baghdad.repository.mapper.toEntities
@@ -55,14 +54,12 @@ class EpisodeRepositoryImpl @Inject constructor(
         episodeNumber: Int,
     ): Boolean {
         return executeSafely {
-
             remoteEpisodeDataSource.getEpisodeAccountStates(
                 tvShowId = tvShowId,
                 seasonNumber = seasonNumber,
                 episodeNumber = episodeNumber,
             ).toIsMediaRated()
         }
-
     }
 
     override suspend fun getEpisodeDetails(
@@ -77,9 +74,9 @@ class EpisodeRepositoryImpl @Inject constructor(
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber
                 )
-            val tvShowImages = remoteTvShowDataSource.getTvShowImages(tvId = tvShowId)
+            val tvShowImages = remoteTvShowDataSource.getTvShowImages(tvShowId = tvShowId)
             val tvShowGenres =
-                remoteTvShowDataSource.getTvShowDetails(tvId = tvShowId).genres
+                remoteTvShowDataSource.getTvShowDetails(tvShowId = tvShowId).genres
             remoteEpisodeDataSource.getEpisodeDetails(
                 tvShowId = tvShowId,
                 seasonNumber = seasonNumber,

@@ -8,6 +8,7 @@ import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteMovieDataSource
 import com.baghdad.repository.dummyData.DummyDataFactory
 import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.toSavableMovie
+import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.mapper.toIsMediaRated
 import com.baghdad.repository.mapper.toMedia
 import com.baghdad.repository.model.CastMemberDto
@@ -16,37 +17,26 @@ import com.baghdad.repository.model.MovieDto
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.UserDto
-import com.baghdad.repository.model.toEntity
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Locale
 
 class MovieRepositoryImplTest {
 
-    private lateinit var mockRemoteGenreDataSource: RemoteGenreDataSource
-    private lateinit var mockRemoteMovieDataSource: RemoteMovieDataSource
-    private lateinit var mockSavableMovieDataSource: SavableMovieDataSource
-    private lateinit var mockAuthenticationRepository: AuthenticationRepository
-    private lateinit var movieRepositoryUnderTest: MovieRepositoryImpl
-
-    @BeforeEach
-    fun setUp() {
-        mockRemoteGenreDataSource = mockk(relaxed = true)
-        mockRemoteMovieDataSource = mockk(relaxed = true)
-        mockSavableMovieDataSource = mockk(relaxed = true)
-        mockAuthenticationRepository = mockk(relaxed = true)
-        movieRepositoryUnderTest = MovieRepositoryImpl(
-            remoteGenreDataSource = mockRemoteGenreDataSource,
-            remoteMovieDataSource = mockRemoteMovieDataSource,
-            savableMovieDataSource = mockSavableMovieDataSource,
-            authenticationRepository = mockAuthenticationRepository
-        )
-    }
+    private val mockRemoteGenreDataSource: RemoteGenreDataSource = mockk(relaxed = true)
+    private val mockRemoteMovieDataSource: RemoteMovieDataSource = mockk(relaxed = true)
+    private val mockSavableMovieDataSource: SavableMovieDataSource = mockk(relaxed = true)
+    private val mockAuthenticationRepository: AuthenticationRepository = mockk(relaxed = true)
+    private val movieRepositoryUnderTest: MovieRepositoryImpl = MovieRepositoryImpl(
+        remoteGenreDataSource = mockRemoteGenreDataSource,
+        remoteMovieDataSource = mockRemoteMovieDataSource,
+        savableMovieDataSource = mockSavableMovieDataSource,
+        authenticationRepository = mockAuthenticationRepository
+    )
 
     @Test
     fun `getGenres should return mapped genres when remote call succeeds`() = runTest {
@@ -257,7 +247,7 @@ class MovieRepositoryImplTest {
 
     private fun mockGetLoggedInUser(userDto: UserDto?) {
         val user = userDto?.toEntity()
-        coEvery { mockAuthenticationRepository.getLoggedInUser() } returns user
+        coEvery { mockAuthenticationRepository.getUserInfo() } returns user
     }
 
     private fun mockGetUserRatedMovies(
@@ -335,7 +325,7 @@ class MovieRepositoryImplTest {
     }
 
     private fun verifyGetLoggedInUser() {
-        coVerify { mockAuthenticationRepository.getLoggedInUser() }
+        coVerify { mockAuthenticationRepository.getUserInfo() }
     }
 
     private fun verifyGetUserRatedMovies(userId: Long, page: Int) {

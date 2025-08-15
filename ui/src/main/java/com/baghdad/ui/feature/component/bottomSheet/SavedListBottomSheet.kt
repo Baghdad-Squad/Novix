@@ -4,12 +4,16 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,15 +45,18 @@ fun SavedListBottomSheet(
     onListSelected: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
+    val screenHeight = with(density) { LocalWindowInfo.current.containerSize.height.toDp() }
+    val maxHeight = remember { screenHeight * 0.75f }
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = { onBottomSheetCloseClick() },
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
-            modifier =
-                modifier
-                    .padding(start = 16.dp, end = 16.dp),
+            modifier = modifier
+                .padding(start = 16.dp, end = 16.dp)
+                .heightIn(max = maxHeight),
         ) {
             BottomSheetHeader(
                 onCloseClick = { onBottomSheetCloseClick() },
@@ -65,6 +72,7 @@ fun SavedListBottomSheet(
                         onCreateNewListClick = onCreateNewListClick,
                         modifier = Modifier.padding(top = 12.dp),
                     )
+
                 } else {
                     NoLoginContent(
                         onLoginClick = onLoginClick,
@@ -85,11 +93,22 @@ private fun SavedListsBottomSheetContent(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
+    val density = LocalDensity.current
+    val screenHeight = with(density) { LocalWindowInfo.current.containerSize.height.toDp() }
+    val maxHeight = remember { screenHeight * 0.75f }
+
+    if (lists.itemCount == 0) 0.dp else maxHeight
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         LazyPagingColumn(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.then(
+                if (lists.itemCount == 0) {
+                    Modifier.height(0.dp)
+                } else {
+                    Modifier.weight(1f)
+                }
+            ),
             items = lists,
             state = listState,
             contentPadding = PaddingValues(vertical = 12.dp),
@@ -99,9 +118,12 @@ private fun SavedListsBottomSheetContent(
             Selection(
                 option = list.toSelectable(selectedListId),
                 onClick = { onListSelected(list.id) },
-                description = stringResource(R.string.list_item_count_placeholder, list.itemsCount),
+                description = stringResource(
+                    R.string.list_item_count_placeholder, list.itemsCount
+                ),
             )
         }
+
         BottomSheetFooter(
             applyLabel = stringResource(R.string.add),
             clearLabel = stringResource(R.string.create_new_list),
@@ -126,28 +148,25 @@ private fun NoLoginContent(
             imagePath = Theme.drawable.personAvatar,
             contentDescription = stringResource(R.string.bottom_sheet_content_description),
             message = stringResource(R.string.please_login_to_save_to_list),
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
         )
 
         OutlinedButton(
             label = stringResource(R.string.login),
             onClick = onLoginClick,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
         )
     }
 }
 
-fun SavedListUiState.toSelectable(selectedListId: Long?): Selectable<String> =
-    Selectable(
-        value = this.name,
-        isSelected = this.id == selectedListId,
-    )
+fun SavedListUiState.toSelectable(selectedListId: Long?): Selectable<String> = Selectable(
+    value = this.name,
+    isSelected = this.id == selectedListId,
+)
 
 @Preview(showBackground = true)
 @Composable

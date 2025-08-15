@@ -13,13 +13,10 @@ class CastMemberMapperTest {
 
     @Test
     fun `toEntity should return Cast Member entity when given valid CastMemberDto`() {
-        // Given
         val castMemberDto = createMockCastMemberDto()
 
-        // When
         val result = castMemberDto.toEntity()
 
-        // Then
         val expectedActor = Actor(
             id = 789L,
             name = "Test Actor",
@@ -40,28 +37,22 @@ class CastMemberMapperTest {
 
     @Test
     fun `should return null for death date when actor still a live`() {
-        // Given
         val actorDto = createMockActorDto().copy(deathDate = null)
         val castMemberDto = CastMemberDto(actor = actorDto, characterName = "Test Character")
 
-        // When
         val result = castMemberDto.toEntity()
 
-        // Then
         assertThat(result.actor.deathDate).isNull()
         assertThat(result.characterName).isEqualTo("Test Character")
     }
 
     @Test
     fun `should return empty list for headerPictures when actor has no response pictures`() {
-        // Given
         val actorDto = createMockActorDto().copy(headerPictures = emptyList())
         val castMemberDto = CastMemberDto(actor = actorDto, characterName = "Test Character")
 
-        // When
         val result = castMemberDto.toEntity()
 
-        // Then
         assertThat(result.actor.headerPictures).isEmpty()
         assertThat(result.characterName).isEqualTo("Test Character")
     }

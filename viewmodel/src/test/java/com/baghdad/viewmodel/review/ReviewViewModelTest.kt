@@ -6,12 +6,21 @@ import com.baghdad.domain.usecase.review.GetMovieReviewsUseCase
 import com.baghdad.domain.usecase.review.GetTvShowReviewsUseCase
 import com.baghdad.entity.media.Review
 import com.google.common.truth.Truth.assertThat
-import io.mockk.*
+import io.mockk.clearAllMocks
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ReviewViewModelTest {
@@ -51,7 +60,7 @@ class ReviewViewModelTest {
         coEvery { mockGetMovieReviews(mediaId) } returns emptyList()
 
         createViewModel(ContentType.MOVIE)
-       advanceUntilIdle()
+        advanceUntilIdle()
 
         coVerify(exactly = 1) { mockGetMovieReviews(mediaId) }
     }
@@ -61,7 +70,7 @@ class ReviewViewModelTest {
         coEvery { mockGetTvReviews(mediaId) } returns emptyList()
 
         createViewModel(ContentType.SERIES)
-       advanceUntilIdle()
+        advanceUntilIdle()
 
         coVerify(exactly = 1) { mockGetTvReviews(mediaId) }
     }
@@ -71,18 +80,18 @@ class ReviewViewModelTest {
         coEvery { mockGetMovieReviews(mediaId) } returns emptyList()
 
         reviewViewModel = createViewModel(ContentType.MOVIE)
-       advanceUntilIdle()
+        advanceUntilIdle()
 
         assertThat(reviewViewModel.uiState.value.reviews).isEmpty()
     }
 
     @Test
     fun `should populate state with reviews when series type has reviews`() = runTest {
-        val reviews = listOf(mockReview,secondMockReview)
+        val reviews = listOf(mockReview, secondMockReview)
         coEvery { mockGetTvReviews(mediaId) } returns reviews
 
         reviewViewModel = createViewModel(ContentType.SERIES)
-       advanceUntilIdle()
+        advanceUntilIdle()
 
         val state = reviewViewModel.uiState.value
         assertThat(state.isLoading).isFalse()
@@ -103,10 +112,10 @@ class ReviewViewModelTest {
     fun `should call tv reviews use case again when loadReviewsForSeries is invoked`() = runTest {
         coEvery { mockGetTvReviews(mediaId) } returns emptyList()
         reviewViewModel = createViewModel(ContentType.SERIES)
-       advanceUntilIdle()
+        advanceUntilIdle()
 
         reviewViewModel.loadReviewsForSeries()
-       advanceUntilIdle()
+        advanceUntilIdle()
 
         coVerify { mockGetTvReviews(mediaId) }
     }
@@ -125,11 +134,11 @@ class ReviewViewModelTest {
     }
 
 
-    companion object{
+    companion object {
         val mockReview = Review(
             id = "1",
             authorName = "Smith",
-            authorAvatarUrl ="https://example.com/avatar.jpg",
+            authorAvatarUrl = "https://example.com/avatar.jpg",
             contentTitle = "MovieBuff1967",
             rating = 5.5,
             reviewText = "Amazing plot!",
@@ -139,7 +148,7 @@ class ReviewViewModelTest {
         val secondMockReview = Review(
             id = "2",
             authorName = "max",
-            authorAvatarUrl ="https://2example.com/avatar.jpg",
+            authorAvatarUrl = "https://2example.com/avatar.jpg",
             contentTitle = "MovieBuff1968",
             rating = 5.5,
             reviewText = "Amazing plot!",

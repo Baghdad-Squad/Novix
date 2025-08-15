@@ -32,20 +32,20 @@ interface TvShowApiService {
     @Authenticated
     @GET("tv/{tv_id}")
     suspend fun getTvShowDetails(
-        @Path("tv_id") tvId: Long
+        @Path("tv_id") tvShowId: Long
     ): Response<TVShowDetailsResponse>
 
     @Authenticated
     @GET("tv/{tv_id}/credits")
     suspend fun getTvShowCastMembers(
-        @Path("tv_id") tvId: Long
+        @Path("tv_id") tvShowId: Long
     ): Response<CastMembersResponse>
 
     @ForceLocaleEnglish
     @Authenticated
     @GET("tv/{tv_id}/images")
     suspend fun getTvShowImages(
-        @Path("tv_id") tvId: Long
+        @Path("tv_id") tvShowId: Long
     ): Response<TVShowImagesResponse>
 
     @Authenticated
@@ -58,7 +58,7 @@ interface TvShowApiService {
     @Authenticated
     @GET("tv/{tv_id}/season/{season_number}")
     suspend fun getTvShowEpisodes(
-        @Path("tv_id") tvId: Long,
+        @Path("tv_id") tvShowId: Long,
         @Path("season_number") seasonNumber: Int
     ): Response<SeasonDetailResponse>
 
@@ -66,13 +66,13 @@ interface TvShowApiService {
     @Authenticated
     @GET("tv/{tv_id}/reviews")
     suspend fun getTvShowReviews(
-        @Path("tv_id") tvId: Long
+        @Path("tv_id") tvShowId: Long
     ): Response<ReviewsResponse>
 
     @Authenticated
     @GET("tv/{tv_id}/videos")
     suspend fun getTvShowTrailer(
-        @Path("tv_id") tvId: Long
+        @Path("tv_id") tvShowId: Long
     ): Response<TVShowVideosResponse>
 
     @Authenticated

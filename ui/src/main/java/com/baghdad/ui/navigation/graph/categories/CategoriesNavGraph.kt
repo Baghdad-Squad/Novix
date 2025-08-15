@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.baghdad.ui.feature.categories.CategoriesScreen
 import com.baghdad.ui.navigation.graph.DummyScreen
 import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.CategoriesRoute
@@ -19,7 +20,14 @@ fun NavGraphBuilder.categoriesNavGraph(navController: NavHostController) {
         startDestination = CategoriesRoute.CategoriesScreen
     ) {
         composable<CategoriesRoute.CategoriesScreen> {
-            DummyScreen("Categories Screen")
+            CategoriesScreen(
+                handleNavigation = { event ->
+                    handleCategoriesNavEvent(
+                        event,
+                        navController
+                    )
+                }
+            )
         }
         composable<CategoryMoviesScreen> { backStackEntry ->
             com.baghdad.ui.feature.categoryMovies.CategoryMoviesScreen{

@@ -90,12 +90,12 @@ class ActorDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onGetSavedListFlowCreated(flow: Flow<PagingData<SavedListUiState>>) {
+    private fun onGetSavedListFlowCreated(savedLists: Flow<PagingData<SavedListUiState>>) {
         updateState {
             it.copy(
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
-                        savedLists = flow,
+                        savedLists = savedLists,
                     ),
             )
         }
@@ -120,7 +120,8 @@ class ActorDetailsViewModel @Inject constructor(
     private fun onGetActorInfoSuccess(actor: Actor) {
         updateState { actorDetailsScreenState ->
             actorDetailsScreenState.copy(
-                actorInfo = actor.toActorInfoUI().copy(headerPictures = actor.headerPictures.take(MAX_ACTOR_IMAGES)),
+                actorInfo = actor.toActorInfoUI()
+                    .copy(headerPictures = actor.headerPictures.take(MAX_ACTOR_IMAGES)),
             )
         }
     }
@@ -276,6 +277,18 @@ class ActorDetailsViewModel @Inject constructor(
             dispatcher = ioDispatcher,
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
+            onError = { onAddItemToListError() }
+        )
+    }
+
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
         )
     }
 

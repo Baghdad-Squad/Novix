@@ -8,6 +8,8 @@ import com.baghdad.repository.model.ReviewDto
 
 interface RemoteMovieDataSource {
 
+    suspend fun getPopularMovies(): List<MovieDto>
+
     suspend fun getSimilarMovies(movieId: Long): List<MovieDto>
 
     suspend fun getMovieDetails(movieId: Long): MovieDto
@@ -28,11 +30,9 @@ interface RemoteMovieDataSource {
 
     suspend fun getUpcomingMovies(genreId: Long?): List<MovieDto>
 
-    suspend fun getPopularMovies(): List<MovieDto>
+    suspend fun getMovieAccountStates(movieId: Long): MediaAccountStateDto
 
     suspend fun addMovieRate(movieId: Long, rating: Int)
-
-    suspend fun getMovieAccountStates(movieId: Long): MediaAccountStateDto
 
     suspend fun deleteMovieRate(movieId: Long)
 
@@ -40,5 +40,4 @@ interface RemoteMovieDataSource {
         accountId: Long,
         page: Int
     ): PagedResultDto<MovieDto>
-
 }

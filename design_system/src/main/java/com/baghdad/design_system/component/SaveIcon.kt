@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
+import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
@@ -57,6 +58,7 @@ fun SaveIcon(
             .clickable { onClick() },
         contentAlignment = Alignment.Center,
     ) {
+
         AnimatedContent(
             targetState = isSaved,
             transitionSpec = {
@@ -76,10 +78,10 @@ fun SaveIcon(
     }
 }
 
-@Preview
+@NovixPreviews
 @Composable
 private fun SaveIconPreview() {
-    NovixTheme(isDarkTheme = true) {
+    NovixTheme {
         var isSaved by remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
