@@ -1,8 +1,6 @@
 package com.baghdad.localDatasource.mapper
 
 import com.baghdad.localDatasource.roomDB.entity.UserWatchedMedia
-import com.baghdad.localDatasource.roomDB.entity.toDto
-import com.baghdad.localDatasource.roomDB.entity.toDtos
 import com.baghdad.repository.model.UserWatchedMediaDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows

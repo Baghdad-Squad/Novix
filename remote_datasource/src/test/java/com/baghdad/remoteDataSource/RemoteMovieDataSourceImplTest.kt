@@ -244,7 +244,7 @@ class RemoteMovieDataSourceImplTest {
         val successResponse = Response.success(ratingResponse)
         coEvery { movieApiService.addMovieRate(MOVIE_ID, ratingRequest) } returns successResponse
 
-        dataSource.addMovieRate(MOVIE_ID, RATING, SESSION_ID)
+        dataSource.addMovieRate(MOVIE_ID, RATING)
 
         coVerify(exactly = 1) { movieApiService.addMovieRate(MOVIE_ID, ratingRequest) }
     }
@@ -255,7 +255,7 @@ class RemoteMovieDataSourceImplTest {
         val successResponse = Response.success(ratingResponse)
         coEvery { movieApiService.deleteMovieRate(MOVIE_ID) } returns successResponse
 
-        dataSource.deleteMovieRate(MOVIE_ID, SESSION_ID)
+        dataSource.deleteMovieRate(MOVIE_ID)
 
         coVerify(exactly = 1) { movieApiService.deleteMovieRate(MOVIE_ID) }
     }
@@ -265,7 +265,7 @@ class RemoteMovieDataSourceImplTest {
         val successResponse = Response.success(myRatingMoviesResponse)
         coEvery { movieApiService.getUserRatedMovies(ACCOUNT_ID, PAGE) } returns successResponse
 
-        val result = dataSource.getUserRatedMovies(ACCOUNT_ID, SESSION_ID, PAGE)
+        val result = dataSource.getUserRatedMovies(ACCOUNT_ID, PAGE)
 
         assertThat(result.data).hasSize(1)
         assertThat(result.data[0].id).isEqualTo(MOVIE_ID)
@@ -277,7 +277,6 @@ class RemoteMovieDataSourceImplTest {
         const val GENRE_ID = 28L
         const val PAGE = 1
         const val RATING = 8
-        const val SESSION_ID = "session123"
         const val ACCOUNT_ID = 456L
         const val MOVIE_TITLE = "Test Movie"
         const val OVERVIEW = "Movie overview"
@@ -358,28 +357,6 @@ class RemoteMovieDataSourceImplTest {
             id = MOVIE_ID,
             title = MOVIE_TITLE,
             genres = listOf(movieGenre),
-            voteAverage = VOTE_AVERAGE,
-            releaseDate = RELEASE_DATE,
-            overview = OVERVIEW,
-            posterPath = POSTER_PATH,
-            runtime = RUNTIME
-        )
-
-        val movieDetailsResponseWithNulls = MovieDetailsResponse(
-            id = null,
-            title = null,
-            genres = null,
-            voteAverage = null,
-            releaseDate = null,
-            overview = null,
-            posterPath = null,
-            runtime = null
-        )
-
-        val movieDetailsResponseWithNullGenres = MovieDetailsResponse(
-            id = MOVIE_ID,
-            title = MOVIE_TITLE,
-            genres = listOf(movieGenreWithNulls, movieGenreWithBlankName),
             voteAverage = VOTE_AVERAGE,
             releaseDate = RELEASE_DATE,
             overview = OVERVIEW,
@@ -605,6 +582,5 @@ class RemoteMovieDataSourceImplTest {
             reviewText = REVIEW_CONTENT,
             postedDate = CREATED_AT
         )
-
     }
 }
