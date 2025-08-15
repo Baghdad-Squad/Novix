@@ -82,7 +82,7 @@ private fun handleEffect(
 }
 
 @Composable
-fun CategoriesScreenContent(
+private fun CategoriesScreenContent(
     state: CategoriesState,
     listener: CategoriesInteractionListener,
     snackBarState: SnackBarState
