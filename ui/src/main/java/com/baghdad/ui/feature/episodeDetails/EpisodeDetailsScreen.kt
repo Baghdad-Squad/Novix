@@ -30,7 +30,6 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -202,23 +201,13 @@ fun EpisodeDetailsContent(
         }
 
         TopAppBar(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .background(animatedColor)
-                    .zIndex(1f)
-                    .align(Alignment.TopCenter)
-                    .padding(top = 56.dp, bottom = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(animatedColor)
+                .zIndex(1f)
+                .align(Alignment.TopCenter)
+                .padding(top = 56.dp, bottom = 8.dp),
             onGoBackClick = listener::onBackClick,
-            content = {
-                SaveIcon(
-                    size = 40,
-                    backgroundColor = Theme.color.iconBackgroundLow,
-                    isSaved = state.isSavedToList,
-                    tint = Theme.color.title,
-                    onClick = listener::onSaveEpisodeClick,
-                )
-            },
         )
     }
 }

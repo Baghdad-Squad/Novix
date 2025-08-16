@@ -25,7 +25,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val addEpisodeRateUseCase: AddEpisodeRateUseCase,
     private val getEpisodeAccountStatesUseCase: GetEpisodeAccountStatesUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
-    private val ioDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<EpisodeDetailsScreenState, EpisodeDetailsScreenEffect>(EpisodeDetailsScreenState()),
     EpisodeDetailsInteractionListener {
 
@@ -95,7 +95,6 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-//        TODO("Not yet implemented")
         return BaseSnackBarMessage.DefaultMessage
     }
 
@@ -115,12 +114,6 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     override fun onGuestOfHonorClick(guestOfHonorId: Long) {
         sendEffect(EpisodeDetailsScreenEffect.NavigateToActorDetails(guestOfHonorId))
-    }
-
-    override fun onSaveEpisodeClick() {
-        updateState {
-            it.copy(addToListBottomSheetState = it.addToListBottomSheetState.copy(isVisible = true))
-        }
     }
 
     override fun onDismissAddToListBottomSheetClick() {
