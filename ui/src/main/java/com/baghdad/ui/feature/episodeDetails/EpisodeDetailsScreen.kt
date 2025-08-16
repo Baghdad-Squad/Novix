@@ -44,6 +44,7 @@ import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
 import com.baghdad.ui.feature.episodeDetails.component.EpisodeHeaderWithDetailsCard
 import com.baghdad.ui.feature.episodeDetails.component.guestsOfHonorItems
 import com.baghdad.ui.feature.movieDetails.component.OverviewSection
+import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsInteractionListener
@@ -172,10 +173,10 @@ private fun EpisodeDetailsContent(
 
             item {
                 AnimatedVisibility(state.episode.overview.isNotBlank()) {
-                    OverviewSection(
+                    TvShowOverviewSection(
                         overview = state.episode.overview,
-                        isExtended = state.isOverviewExpanded,
-                        onExtendClicked = listener::onReadMoreOverviewClick,
+                        isExpanded = state.isOverviewExpanded,
+                        onExpandedChange = listener::onReadMoreOverviewClick,
                         modifier = Modifier.padding(bottom = 16.dp),
                     )
                 }

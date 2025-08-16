@@ -25,16 +25,14 @@ fun OverviewSection(
             fontSize = 18.sp,
             style = Theme.typography.title.medium,
             color = Theme.color.title,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 8.dp)
         )
         ExpandableText(
-            modifier = Modifier.padding(horizontal = 16.dp),
             isExpanded = isExtended,
             text = overview,
             readMoreMaxLines = readMoreMaxLines,
-        ) {
-            onExtendClicked()
-        }
+            onExpandedChange = { onExtendClicked() }
+        )
     }
 
 }

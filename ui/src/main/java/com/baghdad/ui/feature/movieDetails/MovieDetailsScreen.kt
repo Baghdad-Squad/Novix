@@ -10,15 +10,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -150,7 +153,7 @@ private fun MovieDetailsContent(
     snackBarState: SnackBarState
 ) {
     val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
-    val lazyState = rememberLazyGridState()
+    val lazyState = rememberLazyStaggeredGridState()
     var shouldShowBackground by remember { mutableStateOf(false) }
 
     val backgroundAlpha by animateFloatAsState(
@@ -233,32 +236,20 @@ private fun MovieDetailsContent(
         ) {
 
             LazyVerticalStaggeredGrid(
+                state = lazyState,
                 columns = StaggeredGridCells.Adaptive(150.dp),
                 modifier = Modifier.fillMaxSize(),
-                verticalItemSpacing = 8.dp,
+                verticalItemSpacing = 12.dp,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
 
-                item(span = StaggeredGridItemSpan.FullLine ) {
-                    Box(
-                        modifier = Modifier
-                            .layout { measurable, constraints ->
-                                val placeable = measurable.measure(
-                                    constraints.copy(
-                                        maxWidth = constraints.maxWidth + 32.dp.roundToPx()
-                                    )
-                                )
-                                layout(placeable.width, placeable.height) {
-                                    placeable.placeRelative(0, 0)
-                                }
-                            }
-                    ) {
-                        MovieHeaderWithDetailsCard(
-                            uiState = state,
-                            listener = listener
-                        )
-                    }
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    MovieHeaderWithDetailsCard(
+                        uiState = state,
+                        listener = listener,
+                        modifier = Modifier.ignoreHorizontalPadding()
+                    )
                 }
 
                 item(span = StaggeredGridItemSpan.FullLine) {
@@ -270,7 +261,8 @@ private fun MovieDetailsContent(
                         OverviewSection(
                             overview = state.overView,
                             isExtended = state.isExtendText,
-                        ) { listener.onExtendOverviewClick() }
+                            onExtendClicked = listener::onExtendOverviewClick
+                        )
                     }
                 }
 
@@ -278,7 +270,8 @@ private fun MovieDetailsContent(
                     item(span = StaggeredGridItemSpan.FullLine) {
                         ActorsSection(
                             actors = state.castMembers,
-                            onClick = { listener.onActorClick(id = it) }
+                            onClick = { listener.onActorClick(id = it) },
+                            modifier = Modifier.ignoreHorizontalPadding()
                         )
                     }
                 }
@@ -294,24 +287,20 @@ private fun MovieDetailsContent(
                         )
                     }
 
-                    state.moreLikeThisMovie.forEach { movie ->
-                        item {
-                            HomeCard(
-                                url = movie.imageUrl,
-                                contentDescription = stringResource(R.string.card_movie_image),
-                                isSaved = movie.isSaved,
-                                onSavedClick = { listener.onSaveMoreLikeThisMedia(movie) },
-                                onClick = { listener.onMovieClick(movie.id) },
-                                modifier = Modifier.clip(RoundedCornerShape(12.dp))
-                            )
-
-                        }
+                    items(items = state.moreLikeThisMovie) { movie ->
+                        HomeCard(
+                            url = movie.imageUrl,
+                            contentDescription = stringResource(R.string.card_movie_image),
+                            isSaved = movie.isSaved,
+                            onSavedClick = { listener.onSaveMoreLikeThisMedia(movie) },
+                            onClick = { listener.onMovieClick(movie.id) },
+                            modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                                .aspectRatio(0.75f)
+                        )
                     }
                 }
 
             }
-
-
 
             TopAppBar(
                 modifier = Modifier
@@ -333,6 +322,8 @@ private fun MovieDetailsContent(
         }
 
     }
+
+
 
     RatingBottomSheet(
         isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType
@@ -374,6 +365,20 @@ private fun MovieDetailsContent(
         onListNameChange = listener::onCreatedListNameChanged,
     )
 }
+
+private fun Modifier.ignoreHorizontalPadding(extra: Dp = 32.dp): Modifier =
+    this.then(
+        Modifier.layout { measurable, constraints ->
+            val placeable = measurable.measure(
+                constraints.copy(
+                    maxWidth = constraints.maxWidth + extra.roundToPx()
+                )
+            )
+            layout(placeable.width, placeable.height) {
+                placeable.placeRelative(0, 0)
+            }
+        }
+    )
 
 
 @Composable
