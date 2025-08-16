@@ -248,7 +248,11 @@ class ProfileViewModel @Inject constructor(
 
     override fun onContentRestrictionConfirmed() {
         tryToExecute(
-            callee = { setContentRestrictionUseCase(currentState.contentRestrictionBottomSheetState.currentRestriction.toDomainModel()) },
+            callee = {
+                setContentRestrictionUseCase(
+                    currentState.contentRestrictionBottomSheetState.currentRestriction.toDomainModel()
+                )
+            },
             onSuccess = { onContentRestrictionConfirmedSuccess() },
             dispatcher = ioDispatcher
         )
@@ -270,7 +274,8 @@ class ProfileViewModel @Inject constructor(
             onNewValue = { contentRestriction ->
                 onGetContentRestrictionSuccess(contentRestriction)
             },
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 
