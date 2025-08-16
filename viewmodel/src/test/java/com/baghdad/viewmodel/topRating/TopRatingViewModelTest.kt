@@ -255,6 +255,7 @@ class TopRatingViewModelTest {
         coEvery { createSavedListUseCase(any()) } returns Unit
 
         viewModel.onCreateListBottomSheetAddClick()
+        advanceUntilIdle()
 
         viewModel.uiState.test {
             val state = awaitItem()
@@ -295,6 +296,7 @@ class TopRatingViewModelTest {
             addMovieToSavedListUseCase,
             createSavedListUseCase,
             removeMovieFromSavedListUseCase,
+            defaultDispatcher = testDispatcher
         )
     }
 }
