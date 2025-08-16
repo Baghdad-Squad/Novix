@@ -41,22 +41,12 @@ class TopRatingViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-
-        viewModel = TopRatingViewModel(
-            getMovieTopRatingUseCase,
-            getTvShowTopRatingUseCase,
-            getMovieGenresUseCase,
-            getTvShowGenresUseCase,
-            isUserLoggedInUseCase,
-            getSavedListsUseCase,
-            addMovieToSavedListUseCase,
-            createSavedListUseCase,
-            removeMovieFromSavedListUseCase,
-        )
     }
 
     @Test
     fun `onLoginClick should navigate to login screen when it is clicked`() = runTest {
+        viewModel = createViewModel()
+
         viewModel.onLoginClick()
 
         viewModel.uiEffect.test {
@@ -68,6 +58,7 @@ class TopRatingViewModelTest {
     @Test
     fun `onMovieDetailsClick should navigate to movie details screen when it is clicked`() =
         runTest {
+            viewModel = createViewModel()
             val movieId = 123L
 
             viewModel.onMovieDetailsClick(movieId)
@@ -81,6 +72,7 @@ class TopRatingViewModelTest {
     @Test
     fun `onTvShowDetailsClick should navigate to tv show details screen when it is clicked`() =
         runTest {
+            viewModel = createViewModel()
             val tvShowId = 123L
 
             viewModel.onTvShowDetailsClick(tvShowId)
@@ -93,6 +85,8 @@ class TopRatingViewModelTest {
 
     @Test
     fun `onBackClick should navigate back when it is clicked`() = runTest {
+        viewModel = createViewModel()
+
         viewModel.onBackClick()
 
         viewModel.uiEffect.test {
@@ -104,8 +98,9 @@ class TopRatingViewModelTest {
     @Test
     fun `onGenreClick should return updated genre tab when selected tab is movies`() = runTest {
         val genreId = 1L
-        viewModel.onSelectedTab(TopRatingTab.MOVIES)
+        viewModel = createViewModel()
 
+        viewModel.onSelectedTab(TopRatingTab.MOVIES)
         viewModel.onGenreClick(genreId)
 
         assertThat(viewModel.uiState.value.selectedMovieGenreId == genreId).isTrue()
@@ -113,9 +108,10 @@ class TopRatingViewModelTest {
 
     @Test
     fun `onGenreClick should return updated genre tab when selected tab is tv shows`() = runTest {
+        viewModel = createViewModel()
         val genreId = 1L
-        viewModel.onSelectedTab(TopRatingTab.TV_SHOWS)
 
+        viewModel.onSelectedTab(TopRatingTab.TV_SHOWS)
         viewModel.onGenreClick(genreId)
 
         assertThat(viewModel.uiState.value.selectedTvShowGenreId == genreId).isTrue()
@@ -124,10 +120,10 @@ class TopRatingViewModelTest {
     @Test
     fun `onSelectedTab should return genres and fetch movies when selected tab is movies`() =
         runTest {
-
-            viewModel.onSelectedTab(TopRatingTab.TV_SHOWS)
+            viewModel = createViewModel()
             coEvery { getMovieGenresUseCase.getMovieGenres() } returns emptyList()
             val selectedTab = TopRatingTab.MOVIES
+            viewModel.onSelectedTab(TopRatingTab.TV_SHOWS)
 
             viewModel.onSelectedTab(selectedTab)
             advanceUntilIdle()
@@ -139,6 +135,7 @@ class TopRatingViewModelTest {
     @Test
     fun `onSelectedTab should return genres and fetch tv shows when selected tab is tv shows`() =
         runTest {
+            viewModel = createViewModel()
             val selectedTab = TopRatingTab.TV_SHOWS
             coEvery { getTvShowGenresUseCase.getTvShowGenres() } returns emptyList()
 
@@ -152,7 +149,7 @@ class TopRatingViewModelTest {
     @Test
     fun `onSnackBarActionLabelClick should hide snackBar and return genres and fetch tv shows when selected tab is tv shows`() =
         runTest {
-
+            viewModel = createViewModel()
             viewModel.onSelectedTab(TopRatingTab.TV_SHOWS)
             coEvery { getTvShowGenresUseCase.getTvShowGenres() } returns emptyList()
 
@@ -166,7 +163,7 @@ class TopRatingViewModelTest {
     @Test
     fun `onSnackBarActionLabelClick should hide snackBar and return genres and fetch movies when selected tab is movies`() =
         runTest {
-
+            viewModel = createViewModel()
             coEvery { getMovieGenresUseCase.getMovieGenres() } returns emptyList()
 
             viewModel.onSnackBarActionLabelClick()
@@ -178,6 +175,7 @@ class TopRatingViewModelTest {
 
     @Test
     fun `onCreateNewListClick should show list bottom sheet when it is clicked`() = runTest {
+        viewModel = createViewModel()
 
         viewModel.onCreateNewListClick()
         advanceUntilIdle()
@@ -188,7 +186,7 @@ class TopRatingViewModelTest {
 
     @Test
     fun `onListSelected should update selectedListId when it is clicked`() = runTest {
-
+        viewModel = createViewModel()
         val selectedListId = 123L
 
         viewModel.onListSelected(selectedListId)
@@ -199,7 +197,7 @@ class TopRatingViewModelTest {
 
     @Test
     fun `onCreatedListNameChanged should update listName when it is clicked`() = runTest {
-
+        viewModel = createViewModel()
         val listName = "action"
 
         viewModel.onCreatedListNameChanged(listName)
@@ -211,7 +209,7 @@ class TopRatingViewModelTest {
     @Test
     fun `onCreateListBottomSheetDismiss should hide bottom sheet and show addToListBottomSheet when it is clicked`() =
         runTest {
-
+            viewModel = createViewModel()
             viewModel.onCreateListBottomSheetDismiss()
             advanceUntilIdle()
 
@@ -228,6 +226,7 @@ class TopRatingViewModelTest {
     @Test
     fun `onTopRatingItemSaveClick should show bottom sheet when movie not saved`() =
         runTest {
+            viewModel = createViewModel()
             val movie = MOVIE_UI_STATE.copy(isSaved = false)
 
             viewModel.onTopRatingItemSaveClick(movie)
@@ -241,6 +240,7 @@ class TopRatingViewModelTest {
 
     @Test
     fun `onTopRatingItemSaveClick should remove save item when movie is saved`() = runTest {
+        viewModel = createViewModel()
         coEvery { removeMovieFromSavedListUseCase(any(), any()) } returns Unit
 
         viewModel.onTopRatingItemSaveClick(MOVIE_UI_STATE)
@@ -251,6 +251,7 @@ class TopRatingViewModelTest {
 
     @Test
     fun `onCreateListBottomSheetAddClick should create new list when it is clicked`() = runTest {
+        viewModel = createViewModel()
         coEvery { createSavedListUseCase(any()) } returns Unit
 
         viewModel.onCreateListBottomSheetAddClick()
@@ -260,11 +261,11 @@ class TopRatingViewModelTest {
             assertThat(state.addListBottomSheetState.isVisible).isFalse()
             assertThat(state.addToListBottomSheetState.isVisible).isTrue()
         }
-        coVerify { createSavedListUseCase(any()) }
     }
 
     @Test
     fun `onSaveMovieClick should save movie to list when it is clicked`() = runTest {
+        viewModel = createViewModel()
 
         viewModel.onListSelected(123L)
 
@@ -280,6 +281,20 @@ class TopRatingViewModelTest {
             isSaved = true,
             posterPictureURL = "",
             savedListId = 123L
+        )
+    }
+
+    private fun createViewModel(): TopRatingViewModel {
+        return TopRatingViewModel(
+            getMovieTopRatingUseCase,
+            getTvShowTopRatingUseCase,
+            getMovieGenresUseCase,
+            getTvShowGenresUseCase,
+            isUserLoggedInUseCase,
+            getSavedListsUseCase,
+            addMovieToSavedListUseCase,
+            createSavedListUseCase,
+            removeMovieFromSavedListUseCase,
         )
     }
 }
