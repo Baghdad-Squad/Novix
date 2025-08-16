@@ -15,10 +15,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
@@ -37,7 +35,6 @@ import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.shared.SavedListUiState
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesEffect
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesInteractionListener
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesScreenState
@@ -51,19 +48,16 @@ fun TrendingMoviesScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    val movieItems = uiState.movies.collectAsLazyPagingItems()
-    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
 
     TrendingMoviesContent(
-        movieItems = movieItems,
         uiState = uiState,
         listener = viewModel,
-        snackBarState = snackBarState,
-        savedLists = savedLists
+        snackBarState = snackBarState
     )
 }
 
@@ -88,12 +82,13 @@ private fun handleEffect(
 
 @Composable
 private fun TrendingMoviesContent(
-    movieItems: LazyPagingItems<TrendingMoviesScreenState.TrendingMovieUiState>,
     uiState: TrendingMoviesScreenState,
     listener: TrendingMoviesInteractionListener,
     snackBarState: SnackBarState,
-    savedLists: LazyPagingItems<SavedListUiState>
 ) {
+    val movieItems = uiState.movies.collectAsLazyPagingItems()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -124,18 +119,18 @@ private fun TrendingMoviesContent(
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = { listener.onSnackBarActionLabelClicked(uiState.selectedGenreId) },
-                position = position,
+                position = position
             )
         },
+
         isLoading = uiState.isLoading,
-        backgroundBlur = {
-            BackgroundBlur()
-        },
+
+        backgroundBlur = { BackgroundBlur() },
+
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             LazyPagingVerticalGrid(
                 items = movieItems,
@@ -153,8 +148,8 @@ private fun TrendingMoviesContent(
                     url = movie.posterPictureURL,
                     isSaved = movie.isSaved,
                     contentDescription = stringResource(R.string.movie_card),
-                    onSavedClick = { listener.onSaveMovieClick(movie) },
-                    onClick = { listener.onMovieClicked(movie.id) },
+                    onSavedClick = { listener::onSaveMovieClick },
+                    onClick = { listener::onMovieClicked },
                 )
             }
         }

@@ -17,10 +17,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
@@ -47,14 +45,12 @@ fun TrendingTvShowScreen(
     handleNavigation: (HomeNavEvent) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val trendingTvShows = uiState.trendingTvShows.collectAsLazyPagingItems()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
 
     TrendingTvShowContent(
         uiState = uiState,
         listener = viewModel,
-        snackBarState = snackBarState,
-        trendingTvShows = trendingTvShows
+        snackBarState = snackBarState
     )
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
@@ -83,14 +79,15 @@ fun TrendingTvShowContent(
     uiState: TrendingTvShowScreenState,
     listener: TrendingTvShowInteractionListener,
     snackBarState: SnackBarState,
-    trendingTvShows: LazyPagingItems<TrendingTvShowScreenState.TvShowUiState>,
-    modifier: Modifier = Modifier
 ) {
+    val trendingTvShows = uiState.trendingTvShows.collectAsLazyPagingItems()
+
     Scaffold(
-        modifier = modifier
+        modifier = Modifier
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -101,8 +98,11 @@ fun TrendingTvShowContent(
                 position = position,
             )
         },
+
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+
         isLoading = uiState.isLoading,
+
         topBar = {
             Column {
                 TopAppBar(
@@ -119,14 +119,15 @@ fun TrendingTvShowContent(
                 GenresSection(
                     allGenres = uiState.genres,
                     selectedGenre = uiState.selectedGenreId,
-                    onGenreSelected = { listener.onGenreClicked(it?.id) },
+                    onGenreSelected = { listener::onGenreClicked },
                     modifier = Modifier.padding(vertical = 12.dp)
                 )
             }
         },
-        backgroundBlur = {
-            BackgroundBlur()
-        }) {
+
+        backgroundBlur = { BackgroundBlur() }
+    ) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()

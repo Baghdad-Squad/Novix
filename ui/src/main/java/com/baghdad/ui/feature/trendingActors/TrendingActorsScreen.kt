@@ -39,6 +39,7 @@ fun TrendingActorsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+
     TrendingActorsContent(
         uiState = uiState,
         listener = viewModel,
@@ -73,7 +74,9 @@ private fun TrendingActorsContent(
             .systemBarsPadding()
             .statusBarsPadding()
             .padding(vertical = 12.dp),
+
         isLoading = uiState.isLoading,
+
         topBar = {
             TopAppBar(
                 modifier = Modifier.padding(vertical = 8.dp),
@@ -92,7 +95,9 @@ private fun TrendingActorsContent(
             )
         },
         backgroundBlur = { BackgroundBlur() },
+
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -107,7 +112,7 @@ private fun TrendingActorsContent(
                         ActorCard(
                             actorName = actor.name,
                             actorImage = actor.profilePictureURL,
-                            onClick = { listener.onTrendingActorClick(actor.id) },
+                            onClick = { listener::onTrendingActorClick },
                             modifier = Modifier.padding(vertical = 12.dp)
                         )
                     }
