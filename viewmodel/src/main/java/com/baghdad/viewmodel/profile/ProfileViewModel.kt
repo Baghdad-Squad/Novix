@@ -274,7 +274,8 @@ class ProfileViewModel @Inject constructor(
             onNewValue = { contentRestriction ->
                 onGetContentRestrictionSuccess(contentRestriction)
             },
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 
