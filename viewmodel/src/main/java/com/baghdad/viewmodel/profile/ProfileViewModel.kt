@@ -35,10 +35,10 @@ class ProfileViewModel @Inject constructor(
     ProfileInteractionListener {
 
     init {
-        loadInitData()
+        loadData()
     }
 
-    private fun loadInitData() {
+    private fun loadData() {
         checkIsUserLoggedIn()
         getAppTheme()
         getAppLanguage()

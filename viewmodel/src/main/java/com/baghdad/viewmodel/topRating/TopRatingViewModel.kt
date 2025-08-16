@@ -37,11 +37,11 @@ class TopRatingViewModel @Inject constructor(
 ) : BaseViewModel<TopRatingState, TopRatingEffect>(TopRatingState()),
     TopRatingInteractionListener {
     init {
-        loadInitData()
+        loadData()
         checkIfUserIsLoggedIn()
     }
 
-    private fun loadInitData() {
+    private fun loadData() {
         getMovieGenres()
         fetchMoviesByGenre(null)
     }
@@ -262,7 +262,7 @@ class TopRatingViewModel @Inject constructor(
     }
 
     private fun refreshSavedItems() {
-        loadInitData()
+        loadData()
         getUserSavedLists()
     }
 

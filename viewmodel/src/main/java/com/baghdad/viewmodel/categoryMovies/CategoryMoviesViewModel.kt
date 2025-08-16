@@ -39,11 +39,11 @@ class CategoryMoviesViewModel @Inject constructor(
     private val categoryId: Long = checkNotNull(savedStateHandle["categoryId"])
 
     init {
-        loadInitData()
+        loadData()
         checkIfUserIsLoggedIn()
     }
 
-    private fun loadInitData() {
+    private fun loadData() {
         getGenreMovies()
         getGenreName()
     }
@@ -52,7 +52,7 @@ class CategoryMoviesViewModel @Inject constructor(
         tryToExecute(
             callee = { isUserLoggedInUseCase() },
             onSuccess = ::onCheckIfUserIsLoggedInSuccess,
-            dispatcher = ioDispatcher,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -188,7 +188,7 @@ class CategoryMoviesViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
-        loadInitData()
+        loadData()
     }
 
     override fun onMovieToListClick(item: CategoryMoviesState.MovieUiState) {
@@ -202,7 +202,7 @@ class CategoryMoviesViewModel @Inject constructor(
     }
 
     private fun refreshSavedItems() {
-        loadInitData()
+        loadData()
         getUserSavedLists()
     }
 

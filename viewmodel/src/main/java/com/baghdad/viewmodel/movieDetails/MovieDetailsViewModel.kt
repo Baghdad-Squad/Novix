@@ -52,10 +52,10 @@ class MovieDetailsViewModel @Inject constructor(
     private val movieId: Long = checkNotNull(savedStateHandle["movieId"])
 
     init {
-        loadInitData()
+        loadData()
     }
 
-    private fun loadInitData() {
+    private fun loadData() {
             checkIfUserIsLoggedIn()
             getMovieGallery()
             getMovieDetails()
@@ -468,7 +468,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
-        loadInitData()
+        loadData()
     }
 
     private fun getMovieGallery() {
