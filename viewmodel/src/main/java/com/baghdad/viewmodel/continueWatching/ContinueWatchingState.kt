@@ -30,17 +30,8 @@ data class ContinueWatchingState(
             TV_SHOW
         }
     }
-
-    data class ContinueWatchingTvShowUiState(
-        val id: Long = 0,
-        val posterPictureURL: String = "",
-        val isSaved: Boolean = false
-    )
-
     data class GenreUiState(
         val id: Long = 0,
         val name: String = ""
     )
-
-
 }

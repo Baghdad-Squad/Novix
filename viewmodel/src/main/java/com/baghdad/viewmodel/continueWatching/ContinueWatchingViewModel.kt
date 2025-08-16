@@ -45,6 +45,7 @@ class ContinueWatchingViewModel @Inject constructor(
     private val defaultDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<ContinueWatchingState, ContinueWatchingScreenEffect>(ContinueWatchingState()),
     ContinueWatchingInteractionListener {
+
     init {
         loadData()
     }
@@ -52,7 +53,7 @@ class ContinueWatchingViewModel @Inject constructor(
     private fun loadData() {
         checkIfUserIsLoggedIn()
         getGenres()
-        getMedia(null)
+        getMedia(genreId = null)
     }
 
     private fun checkIfUserIsLoggedIn() {
@@ -107,13 +108,16 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     private suspend fun onFetchGenres(): Flow<List<Genre>> {
-        return if (currentState.selectedMediaTabIsMovie) getContinueWatchingMovieGenres.invoke() else getContinueWatchingTvShowGenres.invoke()
+        return if (currentState.selectedMediaTabIsMovie)
+            getContinueWatchingMovieGenres.invoke()
+        else
+            getContinueWatchingTvShowGenres.invoke()
     }
 
     private fun onGetGenresError(throwable: Throwable) {
         when (throwable) {
             is NoInternetException -> showNoInternetSnackBar()
-            else -> handleError(throwable)
+            else -> handleError(throwable = throwable)
         }
     }
 
@@ -128,10 +132,10 @@ class ContinueWatchingViewModel @Inject constructor(
 
     private fun getMedia(genreId: Long?) {
         collectPagingFlow(
-            loadData = { page -> onGetMedia(genreId, page) },
+            loadData = { page -> onGetMedia(genreId = genreId, page = page) },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toContinueWatchingUiState() },
-            onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow) } },
+            onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow = mediaFlow) } },
             onLoadingChanged = ::onGetMediaLoadingChanged
         )
     }
@@ -145,24 +149,30 @@ class ContinueWatchingViewModel @Inject constructor(
         page: Int
     ): PagedResult<UserWatchedMedia> {
         val isMovie = currentState.selectedMediaTabIsMovie
-
         return when {
-            isMovie && genreId == null -> getUserWatchedMediaMoviesUseCase(page, DEFAULT_PAGE_SIZE)
+            isMovie && genreId == null -> getUserWatchedMediaMoviesUseCase(
+                page = page,
+                pageSize = DEFAULT_PAGE_SIZE
+            )
+
             isMovie && genreId != null -> getUserWatchedMediaMoviesByGenreUseCase(
-                genreId,
-                page,
-                DEFAULT_PAGE_SIZE
+                genreId = genreId,
+                page = page,
+                pageSize = DEFAULT_PAGE_SIZE
             )
 
             !isMovie && genreId == null -> getUserWatchedMediaTvShowsUseCase(
-                page,
-                DEFAULT_PAGE_SIZE
+                page = page,
+                pageSize = DEFAULT_PAGE_SIZE
             )
 
-            else -> getUserWatchedMediaTvShowsByGenreUseCase(genreId!!, page, DEFAULT_PAGE_SIZE)
+            else -> getUserWatchedMediaTvShowsByGenreUseCase(
+                genreId = genreId!!,
+                page = page,
+                pageSize = DEFAULT_PAGE_SIZE
+            )
         }
     }
-
 
     private fun onGenresFetched(genres: List<Genre>) {
         hideSnackBar()
@@ -174,11 +184,12 @@ class ContinueWatchingViewModel @Inject constructor(
         }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
-        BaseSnackBarMessage.DefaultMessage
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
+        return BaseSnackBarMessage.DefaultMessage
+    }
 
     override fun onBackClick() {
-        sendEffect(ContinueWatchingScreenEffect.NavigateBack)
+        sendEffect(effect = ContinueWatchingScreenEffect.NavigateBack)
     }
 
     override fun onMediaClick(
@@ -186,9 +197,9 @@ class ContinueWatchingViewModel @Inject constructor(
         contentType: ContinueWatchingState.ContinueWatchingMovieUiState.ContentType,
     ) {
         if (contentType == ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE) {
-            sendEffect(ContinueWatchingScreenEffect.NavigateToMovieDetails(mediaId))
+            sendEffect(effect = ContinueWatchingScreenEffect.NavigateToMovieDetails(mediaId))
         } else {
-            sendEffect(ContinueWatchingScreenEffect.NavigateToTvShowDetails(mediaId))
+            sendEffect(effect = ContinueWatchingScreenEffect.NavigateToTvShowDetails(mediaId))
         }
     }
 
@@ -203,7 +214,6 @@ class ContinueWatchingViewModel @Inject constructor(
         } else {
             currentState.selectedTvShowGenreId
         }
-
         handleGenreSelection(
             currentSelectedId = currentSelectedId,
             newGenreId = genreId,
@@ -289,10 +299,7 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     private fun showItemRemovedSuccessfullySnackBar() {
-        showSnackBar(
-            message = BaseSnackBarMessage.RemovedItemSuccessfully,
-            isSuccess = true
-        )
+        showSnackBar(message = BaseSnackBarMessage.RemovedItemSuccessfully, isSuccess = true)
     }
 
     private fun onRemoveSavedItemFinished() {
@@ -400,9 +407,7 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     override fun onLoginClicked() {
-        sendEffect(
-            ContinueWatchingScreenEffect.NavigateToLogin,
-        )
+        sendEffect(effect = ContinueWatchingScreenEffect.NavigateToLogin)
     }
 
     override fun onSaveToListBottomSheetDismiss() {

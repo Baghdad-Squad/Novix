@@ -28,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BackgroundBlur
@@ -54,33 +53,29 @@ import com.baghdad.viewmodel.continueWatching.ContinueWatchingScreenEffect
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.shared.SavedListUiState
 
 @Composable
 fun ContinueWatchingScreen(
     viewModel: ContinueWatchingViewModel = hiltViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit,
-    ) {
+) {
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
-    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
+
     ContinueWatchingContent(
         uiState = uiState,
         listener = viewModel,
-        savedLists = savedLists,
-        mediaItems = mediaItems,
         snackBarState = snackBarState,
     )
 }
 
 private fun handleEffect(
     effect: ContinueWatchingScreenEffect,
-    handleNavigation: (HomeNavEvent) -> Unit,
+    handleNavigation: (HomeNavEvent) -> Unit
 ) {
     when (effect) {
         is ContinueWatchingScreenEffect.NavigateBack -> handleNavigation(
@@ -101,17 +96,15 @@ private fun handleEffect(
     }
 }
 
-
 @Composable
 fun ContinueWatchingContent(
     uiState: ContinueWatchingState,
-    mediaItems: LazyPagingItems<ContinueWatchingState.ContinueWatchingMovieUiState>,
-    savedLists: LazyPagingItems<SavedListUiState>,
     listener: ContinueWatchingInteractionListener,
     snackBarState: SnackBarState,
     modifier: Modifier = Modifier
 ) {
-
+    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
     val movieGenresScrollState = rememberLazyListState()
     val tvGenresScrollState = rememberLazyListState()
 
@@ -127,12 +120,9 @@ fun ContinueWatchingContent(
                     .fillMaxWidth()
                     .statusBarsPadding()
                     .padding(top = 22.dp, bottom = 8.dp),
-                onGoBackClick = {
-                    listener.onBackClick()
-                },
-                screenTitle = stringResource(com.baghdad.ui.R.string.continue_watching),
-
-                )
+                onGoBackClick = { listener.onBackClick() },
+                screenTitle = stringResource(com.baghdad.ui.R.string.continue_watching)
+            )
         },
         snackbar = { position ->
             SnackBar(
@@ -141,13 +131,10 @@ fun ContinueWatchingContent(
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionClick,
-                position = position,
+                position = position
             )
         },
-        backgroundBlur = {
-            BackgroundBlur()
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        backgroundBlur = { BackgroundBlur() }
     ) {
         Column(
             modifier = Modifier
@@ -178,9 +165,9 @@ fun ContinueWatchingContent(
                 ) {
                     Tab(
                         text = stringResource(com.baghdad.ui.R.string.movies),
-                        onClick = { listener.onSelectedTab(true) },
+                        onClick = { listener.onSelectedTab(isMovieTab = true) },
                         isSelected = uiState.selectedMediaTabIsMovie,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(weight = 1f)
                     )
                     Tab(
                         text = stringResource(com.baghdad.ui.R.string.tv_shows),
@@ -190,6 +177,7 @@ fun ContinueWatchingContent(
                     )
                 }
             }
+
             GenresTabs(
                 genres = uiState.genres,
                 selectedTab = when (uiState.selectedMediaTabIsMovie) {
@@ -201,12 +189,12 @@ fun ContinueWatchingContent(
                     false -> tvGenresScrollState
                 },
                 onTabClick = { listener.onGenreClick(it) },
-                isListEmpty = mediaItems.itemCount == 0,
+                isListEmpty = uiState.genres.isEmpty(),
                 modifier = Modifier.padding(vertical = 12.dp)
             )
 
             AnimatedContent(
-                targetState = mediaItems.itemCount == 0 && uiState.isLoading.not(),
+                targetState = uiState.genres.isEmpty() && uiState.isLoading.not(),
             ) { isEmpty ->
                 if (isEmpty) {
                     EmptyListScreen()
@@ -247,21 +235,26 @@ fun ContinueWatchingContent(
                 onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
                 lists = savedLists,
                 selectedListId = uiState.addToListBottomSheetState.selectedListId,
-                onListSelected = listener::onListSelected,
+                onListSelected = listener::onListSelected
             )
+
             AddListBottomSheet(
                 isVisible = uiState.addListBottomSheetState.isVisible,
                 isLoading = uiState.addListBottomSheetState.isLoading,
                 listName = uiState.addListBottomSheetState.listName,
                 onDismiss = listener::onCreateListBottomSheetDismiss,
                 onAddClick = listener::onCreateListBottomSheetAddClick,
-                onListNameChange = listener::onCreatedListNameChanged,
+                onListNameChange = listener::onCreatedListNameChanged
             )
         }
     }
 
 }
 
+@Composable
+private fun snackBarMessage(type: BaseSnackBarMessage): Int {
+    return type.toStringResource()
+}
 
 @Composable
 private fun GenresTabs(
@@ -272,13 +265,12 @@ private fun GenresTabs(
     isListEmpty: Boolean,
     modifier: Modifier = Modifier
 ) {
-
     LazyRow(
         modifier = modifier
             .wrapContentSize(),
         state = genresScrollState,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
         if (isListEmpty.not()) {
             item {
@@ -288,18 +280,13 @@ private fun GenresTabs(
                     onClick = { onTabClick(null) },
                 )
             }
-        }
-        items(genres.size) { index ->
-            Chip(
-                title = genres[index].name,
-                isSelected = selectedTab == genres[index].id,
-                onClick = { onTabClick(genres[index].id) }
-            )
+            items(genres.size) { index ->
+                Chip(
+                    title = genres[index].name,
+                    isSelected = selectedTab == genres[index].id,
+                    onClick = { onTabClick(genres[index].id) }
+                )
+            }
         }
     }
-}
-
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
 }

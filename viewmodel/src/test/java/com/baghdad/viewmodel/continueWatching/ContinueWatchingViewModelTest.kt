@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.continueWatching
 
 import app.cash.turbine.test
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
@@ -307,6 +308,17 @@ class ContinueWatchingViewModelTest {
 
             assertThat(viewModel.uiState.value.isUserLoggedIn).isTrue()
         }
+
+    @Test
+    fun `should show no internet snack bar when Genre fetch fails`() = runTest {
+        coEvery { getUserWatchedMediaMovieGenres() } throws NoInternetException()
+
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            assertThat(awaitItem().genres.isEmpty()).isTrue()
+        }
+    }
 
 
     private companion object {
