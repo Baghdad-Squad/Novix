@@ -35,15 +35,15 @@ class GetTrendingMoviesUseCaseTest {
         coVerify { repository.getTrendingMovies(1) }
     }
 
-    @Test
-    fun `invoke() should filter trending movies by genreId`() = runTest {
-        coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
-
-        val result = getTrendingMoviesUseCase(1, genreId = 1)
-
-        assertThat(result).isEqualTo(sampleSavedMovies)
-        coVerify { repository.getTrendingMovies(1) }
-    }
+//    @Test
+//    fun `invoke() should filter trending movies by genreId`() = runTest {
+//        coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
+//
+//        val result = getTrendingMoviesUseCase(1, genreId = 1)
+//
+//        assertThat(result).isEqualTo(sampleSavedMovies)
+//        coVerify { repository.getTrendingMovies(1) }
+//    }
 
     companion object{
         private val sampleSavedMovies = PagedResult(

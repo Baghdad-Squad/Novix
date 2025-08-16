@@ -1,7 +1,7 @@
 package com.baghdad.localDatasource
 
+import com.baghdad.localDatasource.mapper.toLocalDto
 import com.baghdad.localDatasource.roomDB.dao.UserWatchedMediaDao
-import com.baghdad.localDatasource.roomDB.entity.toLocalDto
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.UserWatchedMediaDto
 import com.google.common.truth.Truth.assertThat

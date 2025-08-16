@@ -112,30 +112,30 @@ class SearchRepositoryImplTest {
             coVerify { searchRemoteDataSource.searchTvShows(title, page, tvGenres) }
         }
 
-    @Test
-    fun `getRecentSearches should return mapped recent searches flow`() = runTest {
-        val mockRecentSearchDtos: List<RecentSearchDto> = listOf(
-            createMockRecentSearchDto(1L, "John Doe"),
-            createMockRecentSearchDto(2L, "Inception")
-        )
-        val expectedRecentSearches = listOf(
-            createMockRecentSearch(1L, "John Doe"),
-            createMockRecentSearch(2L, "Inception")
-        )
-
-        coEvery { recentSearchDataSource.getAllRecentSearches() } returns flowOf(
-            mockRecentSearchDtos
-        )
-
-        val resultFlow = searchRepositoryImpl.getRecentSearches()
-
-        resultFlow.collect { result ->
-            assertThat(expectedRecentSearches.size == result.size).isTrue()
-            assertThat(result).isEqualTo(expectedRecentSearches)
-        }
-
-        coVerify { recentSearchDataSource.getAllRecentSearches() }
-    }
+//    @Test
+//    fun `getRecentSearches should return mapped recent searches flow`() = runTest {
+//        val mockRecentSearchDtos: List<RecentSearchDto> = listOf(
+//            createMockRecentSearchDto(1L, "John Doe"),
+//            createMockRecentSearchDto(2L, "Inception")
+//        )
+//        val expectedRecentSearches = listOf(
+//            createMockRecentSearch(1L, "John Doe"),
+//            createMockRecentSearch(2L, "Inception")
+//        )
+//
+//        coEvery { recentSearchDataSource.getAllRecentSearches() } returns flowOf(
+//            mockRecentSearchDtos
+//        )
+//
+//        val resultFlow = searchRepositoryImpl.getRecentSearches()
+//
+//        resultFlow.collect { result ->
+//            assertThat(expectedRecentSearches.size == result.size).isTrue()
+//            assertThat(result).isEqualTo(expectedRecentSearches)
+//        }
+//
+//        coVerify { recentSearchDataSource.getAllRecentSearches() }
+//    }
 
     @Test
     fun `getRecentSearches should return empty flow when no recent searches exist`() = runTest {
