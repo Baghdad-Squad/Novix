@@ -179,8 +179,8 @@ private fun ListContent(
             url = movie.posterUrl,
             isSaved = true,
             contentDescription = stringResource(R.string.movie_card),
-            onSavedClick = { listener::onRemoveSavedMovieClick },
-            onClick = { listener::onMovieClick }
+            onSavedClick = { listener.onRemoveSavedMovieClick(movie.id) },
+            onClick = { listener.onMovieClick(movie.id) }
         )
     }
 }

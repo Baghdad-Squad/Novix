@@ -211,18 +211,18 @@ private fun EpisodeDetailsContent(
 
     RatingBottomSheet(
         isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
-        onBottomSheetCloseClick =  listener::onDismissRatingBottomSheet ,
+        onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
         rate = state.episode.userRating,
         isButtonEnabled = state.episode.userRating != 0,
-        onRateChanged =  listener::onRatingChanged,
-        onSubmitClick =  { listener::onClickSubmitRating }
+        onRateChanged = { listener.onRatingChanged(it) },
+        onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating) }
     )
 
 
     LoginRequiredSheet(
         isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
-        onBottomSheetCloseClick =  listener::onDismissRatingBottomSheet,
-        onLoginClick =  listener::onClickLoginButton ,
+        onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
+        onLoginClick = listener::onClickLoginButton,
         title = stringResource(R.string.rate_it),
         description = stringResource(R.string.please_login_to_rate)
     )

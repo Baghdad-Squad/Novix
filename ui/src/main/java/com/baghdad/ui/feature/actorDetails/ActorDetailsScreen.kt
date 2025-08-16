@@ -200,7 +200,7 @@ private fun ActorDetailsContent(
                 if (uiState.actorInfo.biography.isNotBlank()) {
                     ActorBiographySection(
                         biography = uiState.actorInfo.biography,
-                        onExpandedChange = { listener::onReadMoreBiographyClick },
+                        onExpandedChange = { listener.onReadMoreBiographyClick() },
                         isExpanded = uiState.isTextExpanded,
                         modifier = Modifier.padding(bottom = 16.dp),
                     )

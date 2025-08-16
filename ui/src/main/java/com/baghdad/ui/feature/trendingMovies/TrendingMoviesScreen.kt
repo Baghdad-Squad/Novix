@@ -148,8 +148,8 @@ private fun TrendingMoviesContent(
                     url = movie.posterPictureURL,
                     isSaved = movie.isSaved,
                     contentDescription = stringResource(R.string.movie_card),
-                    onSavedClick = { listener::onSaveMovieClick },
-                    onClick = { listener::onMovieClicked },
+                    onSavedClick = { listener.onSaveMovieClick(movie) },
+                    onClick = { listener.onMovieClicked(movie.id) },
                 )
             }
         }

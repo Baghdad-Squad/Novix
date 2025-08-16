@@ -195,7 +195,7 @@ fun ContinueWatchingContent(
                     true -> movieGenresScrollState
                     false -> tvGenresScrollState
                 },
-                onTabClick = listener::onGenreClick ,
+                onTabClick = { listener.onGenreClick(it) },
                 isListEmpty = mediaItems.itemCount == 0,
                 modifier = Modifier.padding(vertical = 12.dp)
             )
@@ -226,9 +226,9 @@ fun ContinueWatchingContent(
                             contentDescription = null,
                             isSaveToListVisible = media.contentType == ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE,
                             isSaved = media.isSaved,
-                            onSavedClick =  { listener::onMovieSaveClick },
-                            onClick = { listener::onMediaClick },
-                            modifier = Modifier.aspectRatio(0.8f)
+                            onSavedClick = { listener.onMovieSaveClick(media) },
+                            onClick = { listener.onMediaClick(media.id, media.contentType) },
+                            modifier = Modifier.aspectRatio(0.8f),
                         )
                     }
                 }

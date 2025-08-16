@@ -102,7 +102,7 @@ private fun MyRatingContent(
                         .fillMaxWidth()
                         .statusBarsPadding()
                         .padding(top = 22.dp, bottom = 8.dp),
-                    onGoBackClick = { listener.onBackClick() },
+                    onGoBackClick =  listener::onBackClick,
                     screenTitle = stringResource(com.baghdad.ui.R.string.my_rating),
                 )
                 AnimatedVisibility(

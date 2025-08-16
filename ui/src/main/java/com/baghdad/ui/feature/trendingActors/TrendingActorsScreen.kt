@@ -112,7 +112,7 @@ private fun TrendingActorsContent(
                         ActorCard(
                             actorName = actor.name,
                             actorImage = actor.profilePictureURL,
-                            onClick = { listener::onTrendingActorClick },
+                            onClick = { listener.onTrendingActorClick(actor.id) },
                             modifier = Modifier.padding(vertical = 12.dp)
                         )
                     }

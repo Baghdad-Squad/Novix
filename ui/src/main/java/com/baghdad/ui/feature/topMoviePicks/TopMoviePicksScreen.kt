@@ -136,8 +136,8 @@ private fun TopMoviePicksContent(
                     url = movie.posterPictureURL,
                     contentDescription = null,
                     isSaved = movie.isSaved,
-                    onSavedClick = { listener::onSaveMovieClicked },
-                    onClick = { listener::onMovieDetailsClicked },
+                    onSavedClick = { listener.onSaveMovieClicked(movie) },
+                    onClick = { listener.onMovieDetailsClicked(movie.id) },
                     modifier = Modifier.aspectRatio(0.8f),
                 )
             }

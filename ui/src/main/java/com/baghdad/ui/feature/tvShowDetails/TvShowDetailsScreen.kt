@@ -308,7 +308,7 @@ private fun TvShowDetailsContent(
                 rate = uiState.tvShowInfo.userRating,
                 isButtonEnabled = uiState.tvShowInfo.userRating != 0,
                 onRateChanged = listener::onRatingChanged,
-                onSubmitClick = { listener::onClickSubmitRating }
+                onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating) }
             )
 
             LoginRequiredSheet(

@@ -122,7 +122,7 @@ private fun ReviewContent(
                             authorAvatar = review.authorAvatarUrl,
                             contentName = review.contentTitle,
                             isExpanded = review.isExpanded,
-                            onExpandedChange = {listener::onExpandedTextChange }
+                            onExpandedChange = {listener.onExpandedTextChange(review.id) }
                         )
                     }
                 }
