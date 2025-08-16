@@ -7,7 +7,6 @@ import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
-import com.baghdad.domain.usecase.movie.GetMovieAccountStatesUseCase
 import com.baghdad.domain.usecase.movie.GetMovieCastMembersUseCase
 import com.baghdad.domain.usecase.movie.GetMovieDetailsUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGalleryUseCase
@@ -39,7 +38,6 @@ class MovieDetailsViewModel @Inject constructor(
     private val addUserWatchedMediaUseCase: AddUserWatchedMediaUseCase,
     private val ioDispatcher: CoroutineDispatcher,
     private val addMovieRateUseCase: AddMovieRateUseCase,
-    private val getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val getSavedListsUseCase: GetSavedListsUseCase,
@@ -61,7 +59,6 @@ class MovieDetailsViewModel @Inject constructor(
             getMovieDetails()
             getCastMembers()
             getMoreLikeThisShow()
-            isUserLoggedIn()
     }
 
     override fun onSaveCurrentMovieClick() {
@@ -174,32 +171,6 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun isUserLoggedIn() {
-        tryToExecute(
-            callee = { isUserLoggedInUseCase() },
-            dispatcher = ioDispatcher,
-            onSuccess = ::onIsUserLoggedInSuccess,
-            onError = ::onError
-        )
-    }
-
-    private fun onIsUserLoggedInSuccess(isLoggedIn: Boolean) {
-        val newBottomSheetType = if (isLoggedIn) {
-            BottomSheetType.ShowRating
-        } else {
-            BottomSheetType.RequireLogin
-        }
-
-        updateState {
-            it.copy(
-                ratingStatus = it.ratingStatus.copy(
-                    bottomSheetType = newBottomSheetType,
-                ),
-                isRated = it.isRated && isLoggedIn,
-            )
-        }
-    }
-
     override fun onRatingChanged(rating: Int) {
         updateState {
             it.copy(
@@ -224,6 +195,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun showItemSavedSuccessfullySnackBar() {
+        updateState { it.copy(isSaved = true) }
         showSnackBar(
             message = BaseSnackBarMessage.SavedItemSuccessfully,
             isSuccess = true,
@@ -236,6 +208,7 @@ class MovieDetailsViewModel @Inject constructor(
         isSaved: Boolean,
     ) {
         if (isSaved) {
+            updateState { it.copy(isSaved = false) }
             removeSavedItem(listId = listId, itemId = itemId)
         } else {
             updateState {
@@ -245,7 +218,7 @@ class MovieDetailsViewModel @Inject constructor(
                             isVisible = true,
                             selectedItemId = itemId,
                             selectedListId = null,
-                        )
+                        ),
                 )
             }
         }
@@ -444,23 +417,6 @@ class MovieDetailsViewModel @Inject constructor(
             message = BaseSnackBarMessage.ItemRateSuccessfully,
             isSuccess = true
         )
-    }
-
-    private fun getMovieAccountStates() {
-        tryToExecute(
-            callee = { getMovieAccountStatesUseCase(movieId) },
-            dispatcher = ioDispatcher,
-            onSuccess = ::onGetMovieAccountStatesSuccess,
-            onError = ::onError
-        )
-    }
-
-    private fun onGetMovieAccountStatesSuccess(isMovieRated: Boolean) {
-        updateState {
-            it.copy(
-                isRated = isMovieRated,
-            )
-        }
     }
 
     override fun onSnackBarActionLabelClick() {
