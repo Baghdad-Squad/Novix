@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.home.component
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -20,21 +19,19 @@ fun PopularSection(
     onSaveClick: (PopularItemUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    AnimatedVisibility(isLoading || popularItems.isNotEmpty()) {
-        Column(modifier) {
-            Text(
-                text = stringResource(R.string.popular),
-                style = Theme.typography.headline.small,
-                color = Theme.color.title,
-                modifier = Modifier.padding(start = 16.dp)
-            )
-            PopularCardPager(
-                isLoading = isLoading,
-                items = popularItems,
-                onClick = onClick,
-                onSaveClick = onSaveClick,
-                modifier = Modifier.padding(top = 12.dp)
-            )
-        }
+    Column(modifier) {
+        Text(
+            text = stringResource(R.string.popular),
+            style = Theme.typography.headline.small,
+            color = Theme.color.title,
+            modifier = Modifier.padding(start = 16.dp)
+        )
+        PopularCardPager(
+            isLoading = isLoading,
+            items = popularItems,
+            onClick = onClick,
+            onSaveClick = onSaveClick,
+            modifier = Modifier.padding(top = 12.dp)
+        )
     }
 }
