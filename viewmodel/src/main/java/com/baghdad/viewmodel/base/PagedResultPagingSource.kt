@@ -27,8 +27,8 @@ class PagedResultPagingSource<T : Any>(
             }
             LoadResult.Page(
                 data = result.data,
-                prevKey = result.prevKey,
-                nextKey = result.nextKey,
+                prevKey = result.prevPage,
+                nextKey = result.nextPage,
             )
         } catch (e: Exception) {
             onInitialLoadFinished()

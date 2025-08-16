@@ -80,8 +80,8 @@ class SavedListRepositoryImplTest {
                     itemCount = 5,
                 ),
             )
-            assertThat(result.nextKey).isEqualTo(2)
-            assertThat(result.prevKey).isNull()
+            assertThat(result.nextPage).isEqualTo(2)
+            assertThat(result.prevPage).isNull()
 
             coVerify(exactly = 1) { localUserDataSource.getUser() }
             coVerify(exactly = 1) {
@@ -115,8 +115,8 @@ class SavedListRepositoryImplTest {
             val result = repository.getSavedLists(PAGE, PAGE_SIZE)
 
             assertThat(result.data).isEmpty()
-            assertThat(result.nextKey).isNull()
-            assertThat(result.prevKey).isNull()
+            assertThat(result.nextPage).isNull()
+            assertThat(result.prevPage).isNull()
 
             coVerify(exactly = 1) { localUserDataSource.getUser() }
             coVerify(exactly = 1) {

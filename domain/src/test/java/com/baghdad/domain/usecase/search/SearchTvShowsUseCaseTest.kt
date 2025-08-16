@@ -56,8 +56,8 @@ class SearchTvShowsUseCaseTest {
         val query = "Pagination"
         val page = 2
         val paginatedResult = sampleTvShows.copy(
-            prevKey = 1,
-            nextKey = 3,
+            prevPage = 1,
+            nextPage = 3,
             data = listOf(sampleTvShows.data[0])
         )
 
@@ -65,15 +65,15 @@ class SearchTvShowsUseCaseTest {
 
         val result = searchTvShowsUseCase(query, page)
 
-        assertThat(result.prevKey).isEqualTo(1)
-        assertThat(result.nextKey).isEqualTo(3)
+        assertThat(result.prevPage).isEqualTo(1)
+        assertThat(result.nextPage).isEqualTo(3)
         assertThat(result.data).hasSize(1)
     }
 
     companion object {
         private val sampleTvShows = PagedResult(
-            prevKey = null,
-            nextKey = 2,
+            prevPage = null,
+            nextPage = 2,
             data = listOf(
                 TvShow(
                     id = 1L,

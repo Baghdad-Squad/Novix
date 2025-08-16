@@ -8,7 +8,7 @@ fun <DTO, ENTITY> PagedResultDto<DTO>.toPagedResult(
 ): PagedResult<ENTITY> {
     return PagedResult(
         data = this.data.map(dataMapper),
-        nextKey = this.nextKey,
-        prevKey = this.prevKey
+        nextPage = this.nextKey,
+        prevPage = this.prevKey
     )
 }
