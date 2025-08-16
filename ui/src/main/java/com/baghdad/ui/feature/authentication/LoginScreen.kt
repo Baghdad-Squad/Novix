@@ -58,7 +58,6 @@ import com.baghdad.viewmodel.login.LoginViewModel
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = hiltViewModel(),
     handleNavigation: (AuthenticationNavEvent) -> Unit,
 ) {
@@ -70,9 +69,7 @@ fun LoginScreen(
         handleLoginEffect(it, context, handleNavigation)
     }
 
-
     LoginScreenContent(
-        modifier = modifier,
         state = state,
         snackBarState = snackBarState,
         listener = loginViewModel
@@ -103,11 +100,11 @@ private fun LoginScreenContent(
     state: LoginUiState,
     snackBarState: SnackBarState,
     listener: LoginInteractionListener,
-    modifier: Modifier = Modifier
 ) {
+
     val screenHeight = LocalWindowInfo.current.containerSize.height.dp
     Scaffold(
-        modifier = modifier
+        modifier = Modifier
             .background(Theme.color.surface)
             .height(screenHeight)
             .fillMaxWidth()
@@ -122,6 +119,7 @@ private fun LoginScreenContent(
                 position = position,
             )
         },
+
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
 
         topBar = {

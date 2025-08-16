@@ -42,7 +42,6 @@ fun MyRatingScreen(
     handleNavigation: (MyAccountNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val mediaItem = uiState.mediaFlow.collectAsLazyPagingItems()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
@@ -65,8 +64,7 @@ fun MyRatingScreen(
     MyRatingContent(
         uiState = uiState,
         listener = viewModel,
-        snackBarState = snackBarState,
-        mediaItems = mediaItem,
+        snackBarState = snackBarState
     )
 }
 
@@ -75,8 +73,8 @@ private fun MyRatingContent(
     uiState: MyRatingState,
     listener: MyRatingInteractionListener,
     snackBarState: SnackBarState,
-    mediaItems: LazyPagingItems<MyRatingState.MediaItemUiState>
 ) {
+    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -104,9 +102,7 @@ private fun MyRatingContent(
                         .fillMaxWidth()
                         .statusBarsPadding()
                         .padding(top = 22.dp, bottom = 8.dp),
-                    onGoBackClick = {
-                        listener.onBackClick()
-                    },
+                    onGoBackClick =  listener::onBackClick,
                     screenTitle = stringResource(com.baghdad.ui.R.string.my_rating),
                 )
                 AnimatedVisibility(

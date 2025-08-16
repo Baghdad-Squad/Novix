@@ -35,15 +35,15 @@ class TopRatingViewModel @Inject constructor(
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val createSavedListUseCase: CreateSavedListUseCase,
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
-    private val defaultDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<TopRatingState, TopRatingEffect>(TopRatingState()),
     TopRatingInteractionListener {
     init {
-        loadInitData()
+        loadData()
         checkIfUserIsLoggedIn()
     }
 
-    private fun loadInitData() {
+    private fun loadData() {
         getMovieGenres()
         fetchMoviesByGenre(null)
     }
@@ -54,8 +54,8 @@ class TopRatingViewModel @Inject constructor(
             onSuccess = ::onGenresFetched,
             onError = ::onError,
             onStart = ::onStart,
-            onFinally = ::onFinally,
-            dispatcher = defaultDispatcher
+            dispatcher = ioDispatcher,
+            onFinally = ::onFinally
         )
     }
 
@@ -65,8 +65,8 @@ class TopRatingViewModel @Inject constructor(
             onSuccess = ::onGenresFetched,
             onError = ::onError,
             onStart = ::onStart,
-            onFinally = ::onFinally,
-            dispatcher = defaultDispatcher
+            dispatcher = ioDispatcher,
+            onFinally = ::onFinally
         )
     }
 
@@ -182,7 +182,7 @@ class TopRatingViewModel @Inject constructor(
             onSuccess = { onAddItemToListSuccess() },
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
-            dispatcher = defaultDispatcher
+            dispatcher = ioDispatcher
         )
     }
 
@@ -200,8 +200,7 @@ class TopRatingViewModel @Inject constructor(
     private fun checkIfUserIsLoggedIn() {
         tryToExecute(
             callee = { isUserLoggedInUseCase() },
-            onSuccess = ::onCheckIfUserIsLoggedInSuccess,
-            dispatcher = defaultDispatcher
+            onSuccess = ::onCheckIfUserIsLoggedInSuccess
         )
     }
 
@@ -232,7 +231,7 @@ class TopRatingViewModel @Inject constructor(
     private fun showItemRemovedSuccessfullySnackBar() {
         showSnackBar(
             message = BaseSnackBarMessage.RemovedItemSuccessfully,
-            isSuccess = true,
+            isSuccess = true
         )
     }
 
@@ -240,8 +239,7 @@ class TopRatingViewModel @Inject constructor(
         tryToExecute(
             callee = { removeMovieFromSavedListUseCase(listId = listId, movieId = itemId) },
             onSuccess = { onRemoveSavedItemSuccess() },
-            onFinally = ::onRemoveSavedItemFinished,
-            dispatcher = defaultDispatcher
+            onFinally = ::onRemoveSavedItemFinished
         )
     }
 
@@ -253,7 +251,10 @@ class TopRatingViewModel @Inject constructor(
     private fun onRemoveSavedItemFinished() {
         updateState {
             it.copy(
-                addToListBottomSheetState = it.addToListBottomSheetState.copy(isVisible = false)
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = false
+                    ),
             )
         }
     }
@@ -265,7 +266,7 @@ class TopRatingViewModel @Inject constructor(
     }
 
     private fun refreshSavedItems() {
-        loadInitData()
+        loadData()
         getUserSavedLists()
     }
 
@@ -279,7 +280,10 @@ class TopRatingViewModel @Inject constructor(
     private fun onAddItemToListStart() {
         updateState {
             it.copy(
-                addToListBottomSheetState = it.addToListBottomSheetState.copy(isLoading = true)
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isLoading = true
+                    ),
             )
         }
     }
@@ -288,7 +292,9 @@ class TopRatingViewModel @Inject constructor(
         updateState {
             it.copy(
                 addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(isLoading = false)
+                    it.addToListBottomSheetState.copy(
+                        isLoading = false
+                    ),
             )
         }
     }
@@ -305,7 +311,7 @@ class TopRatingViewModel @Inject constructor(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
             isSuccess = false,
-            durationMillis = Int.MAX_VALUE.toLong(),
+            durationMillis = Int.MAX_VALUE.toLong()
         )
     }
 
@@ -324,8 +330,14 @@ class TopRatingViewModel @Inject constructor(
     override fun onCreateNewListClick() {
         updateState {
             it.copy(
-                addListBottomSheetState = it.addListBottomSheetState.copy(isVisible = true),
-                addToListBottomSheetState = it.addToListBottomSheetState.copy(isVisible = false)
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isVisible = true
+                    ),
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = false
+                    )
             )
         }
     }
@@ -338,7 +350,9 @@ class TopRatingViewModel @Inject constructor(
         updateState {
             it.copy(
                 addToListBottomSheetState =
-                    AddToListBottomSheetState(savedLists = it.addToListBottomSheetState.savedLists)
+                    AddToListBottomSheetState(
+                        savedLists = it.addToListBottomSheetState.savedLists
+                    ),
             )
         }
     }
@@ -347,7 +361,9 @@ class TopRatingViewModel @Inject constructor(
         updateState {
             it.copy(
                 addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(selectedListId = listId)
+                    it.addToListBottomSheetState.copy(
+                        selectedListId = listId
+                    )
             )
         }
     }
@@ -356,7 +372,9 @@ class TopRatingViewModel @Inject constructor(
         updateState {
             it.copy(
                 addListBottomSheetState =
-                    it.addListBottomSheetState.copy(listName = name)
+                    it.addListBottomSheetState.copy(
+                        listName = name
+                    )
             )
         }
     }
@@ -370,18 +388,24 @@ class TopRatingViewModel @Inject constructor(
                         listName = "",
                         isLoading = false
                     ),
-                addToListBottomSheetState = it.addToListBottomSheetState.copy(isVisible = true)
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        isVisible = true
+                    )
             )
         }
     }
 
     override fun onCreateListBottomSheetAddClick() {
         tryToExecute(
-            callee = { createSavedListUseCase(title = currentState.addListBottomSheetState.listName) },
+            callee = {
+                createSavedListUseCase(
+                    title = currentState.addListBottomSheetState.listName
+                )
+            },
             onSuccess = { onCreateListSuccess() },
             onStart = ::onCreateListStart,
             onFinally = ::onCreateListFinished,
-            dispatcher = defaultDispatcher
         )
     }
 
@@ -405,14 +429,22 @@ class TopRatingViewModel @Inject constructor(
 
     private fun onCreateListStart() {
         updateState {
-            it.copy(addListBottomSheetState = it.addListBottomSheetState.copy(isLoading = true))
+            it.copy(
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isLoading = true,
+                    )
+            )
         }
     }
 
     private fun onCreateListFinished() {
         updateState {
             it.copy(
-                addListBottomSheetState = it.addListBottomSheetState.copy(isLoading = false)
+                addListBottomSheetState =
+                    it.addListBottomSheetState.copy(
+                        isLoading = false
+                    )
             )
         }
     }
@@ -422,7 +454,7 @@ class TopRatingViewModel @Inject constructor(
             loadData = { page ->
                 getSavedListsUseCase(
                     page = page,
-                    pageSize = 20,
+                    pageSize = 20
                 )
             },
             onInitialLoadError = ::onError,
@@ -434,7 +466,10 @@ class TopRatingViewModel @Inject constructor(
     private fun onGetSavedListFlowCreated(flow: Flow<PagingData<SavedListUiState>>) {
         updateState {
             it.copy(
-                addToListBottomSheetState = it.addToListBottomSheetState.copy(savedLists = flow)
+                addToListBottomSheetState =
+                    it.addToListBottomSheetState.copy(
+                        savedLists = flow
+                    )
             )
         }
     }

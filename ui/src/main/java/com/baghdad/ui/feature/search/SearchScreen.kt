@@ -70,19 +70,11 @@ fun SearchScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
 
-    val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
-    val actorItems = uiState.actorsFlow.collectAsLazyPagingItems()
-    val tvShowItems = uiState.tvShowsFlow.collectAsLazyPagingItems()
-    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     SearchContent(
         uiState = uiState,
         listener = viewModel,
         snackBarState = snackBarState,
-        movieItems = movieItems,
-        actorItems = actorItems,
-        tvShowItems = tvShowItems,
-        savedLists = savedLists,
     )
 
     HandleNavigationEffects(
@@ -121,12 +113,13 @@ private fun HandleNavigationEffects(
 fun SearchContent(
     uiState: SearchScreenState,
     listener: SearchInteractionListener,
-    snackBarState: SnackBarState,
-    movieItems: LazyPagingItems<SearchScreenState.MovieUiState>,
-    actorItems: LazyPagingItems<SearchScreenState.ActorUiState>,
-    tvShowItems: LazyPagingItems<SearchScreenState.TvShowUiState>,
-    savedLists: LazyPagingItems<SavedListUiState>,
+    snackBarState: SnackBarState
 ) {
+    val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
+    val actorItems = uiState.actorsFlow.collectAsLazyPagingItems()
+    val tvShowItems = uiState.tvShowsFlow.collectAsLazyPagingItems()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     val moviesState = rememberSaveableLazyGridState(key = "movies_grid")
     val actorsState = remeberSaveableLazyListState(key = "actors_list")
     val tvShowsState = rememberSaveableLazyGridState(key = "tv_shows_grid")
@@ -398,10 +391,6 @@ private fun SearchScreenPreview() {
             ),
             listener = createPreviewListener(),
             snackBarState = SnackBarState(),
-            movieItems = flowOf(PagingData.empty<SearchScreenState.MovieUiState>()).collectAsLazyPagingItems(),
-            actorItems = flowOf(PagingData.empty<SearchScreenState.ActorUiState>()).collectAsLazyPagingItems(),
-            tvShowItems = flowOf(PagingData.empty<SearchScreenState.TvShowUiState>()).collectAsLazyPagingItems(),
-            savedLists = flowOf(PagingData.empty<SavedListUiState>()).collectAsLazyPagingItems(),
         )
     }
 }

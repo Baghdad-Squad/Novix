@@ -34,10 +34,10 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val tvShowId: Long = checkNotNull(savedStateHandle["tvShowId"])
 
     init {
-        loadInitData(tvShowId, seasonNumber, episodeNumber)
+        loadData(tvShowId, seasonNumber, episodeNumber)
     }
 
-    private fun loadInitData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
+    private fun loadData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
         getEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
         getEpisodeCastMembers(tvShowId, seasonNumber, episodeNumber)
         isUserLoggedIn()
@@ -93,7 +93,6 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-//        TODO("Not yet implemented")
         return BaseSnackBarMessage.DefaultMessage
     }
 
@@ -111,12 +110,6 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     override fun onGuestOfHonorClick(guestOfHonorId: Long) {
         sendEffect(EpisodeDetailsScreenEffect.NavigateToActorDetails(guestOfHonorId))
-    }
-
-    override fun onSaveEpisodeClick() {
-        updateState {
-            it.copy(addToListBottomSheetState = it.addToListBottomSheetState.copy(isVisible = true))
-        }
     }
 
     override fun onDismissAddToListBottomSheetClick() {
@@ -264,7 +257,7 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
-        loadInitData(
+        loadData(
             tvShowId, seasonNumber, episodeNumber
         )
     }

@@ -127,8 +127,8 @@ private fun WelcomeScreenContent(
 
         item {
             ActionButtons(
-                onClickLogin = { listener.onClickLogin() },
-                onClickContinueAsGuest = { listener.onClickContinueAsGuest() },
+                onClickLogin =  listener::onClickLogin,
+                onClickContinueAsGuest =  listener::onClickContinueAsGuest ,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .navigationBarsPadding()
