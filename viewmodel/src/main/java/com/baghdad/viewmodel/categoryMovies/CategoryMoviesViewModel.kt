@@ -113,6 +113,7 @@ class CategoryMoviesViewModel @Inject constructor(
             onSuccess = { onAddItemToListSuccess() },
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
+            dispatcher = ioDispatcher
         )
     }
 

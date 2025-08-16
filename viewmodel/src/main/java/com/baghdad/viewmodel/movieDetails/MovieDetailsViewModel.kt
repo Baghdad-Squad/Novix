@@ -575,7 +575,8 @@ class MovieDetailsViewModel @Inject constructor(
             },
             onStart = ::onGetCastMembersStarted,
             onFinally = ::onGetCastMembersFinally,
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 

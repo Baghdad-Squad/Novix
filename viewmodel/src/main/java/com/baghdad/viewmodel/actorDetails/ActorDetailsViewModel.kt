@@ -193,6 +193,7 @@ class ActorDetailsViewModel @Inject constructor(
             onStart = ::onGetActorTvShowsStart,
             onError = ::onError,
             onFinally = ::onGetActorTvShowsFinally,
+            dispatcher = ioDispatcher
         )
     }
 

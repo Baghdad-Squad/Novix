@@ -75,7 +75,8 @@ class ProfileViewModel @Inject constructor(
             onNewValue = { isDarkTheme ->
                 onGetAppThemeSuccess(isDarkTheme)
             },
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 
