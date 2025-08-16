@@ -248,7 +248,8 @@ class SavedListRepositoryImplTest {
         private const val PAGE = 1
         private const val PAGE_SIZE = 20
         private const val TEST_ACCOUNT_ID = 12345L
-        private val TEST_USER = UserDto(id = TEST_ACCOUNT_ID, userName = "testuser")
+        private val TEST_USER =
+            UserDto(id = TEST_ACCOUNT_ID, userName = "testuser", imageUrl = null)
         private const val MOVIE_ID = 22002L
         private const val TITLE = "Favorite"
 
