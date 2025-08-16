@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.onBoarding.component
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -18,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -34,15 +31,13 @@ fun OnBoardingHorizontalPagerContent(
     pagerState: PagerState,
     onBoardingInfo: List<OnBoardingInfo>,
     modifier: Modifier = Modifier,
-    imageWidthFraction: Float = if (isTablet()) 0.50f else 0.80f,
 ) {
 
     Box(modifier) {
         Box(
             modifier = Modifier
-                .offset(y= (-64).dp)
+                .fillMaxWidth(0.7f)
                 .align(Alignment.Center)
-                .fillMaxWidth(imageWidthFraction)
                 .height(250.dp)
                 .dropShadow(
                     CircleShape,
@@ -69,18 +64,7 @@ fun OnBoardingHorizontalPagerContent(
                     page = page,
                     onBoardingInfo = onBoardingInfo,
                     pageOffset = pageOffset,
-                    imageWidthFraction = imageWidthFraction
                 )
-                Column(
-                    modifier = Modifier
-                        .padding(top = 32.dp)
-                ) {
-                    TextSlidingAnimationVisibility(
-                        onBoardingInfo = onBoardingInfo,
-                        currentPage = page,
-                        pageOffset = pageOffset,
-                    )
-                }
             }
         }
     }
@@ -92,7 +76,6 @@ private fun ImageAnimated(
     page: Int,
     onBoardingInfo: List<OnBoardingInfo>,
     pageOffset: Float,
-    imageWidthFraction: Float = if (isTablet()) 0.50f else 0.80f,
 ) {
     Crossfade(
         targetState = page,
@@ -101,7 +84,6 @@ private fun ImageAnimated(
             painter = painterResource(onBoardingInfo[currentPage].imageIndex),
             contentDescription = stringResource(onBoardingInfo[currentPage].title),
             modifier = Modifier
-                .fillMaxWidth(imageWidthFraction)
                 .graphicsLayer {
                     val scale = 1f - (0.9f * abs(pageOffset))
                     scaleX = scale
@@ -114,7 +96,7 @@ private fun ImageAnimated(
 }
 
 @Composable
-private fun TextSlidingAnimationVisibility(
+fun TextSlidingAnimationVisibility(
     onBoardingInfo: List<OnBoardingInfo>,
     currentPage: Int,
     pageOffset: Float = 0f
@@ -145,11 +127,3 @@ private fun TextSlidingAnimationVisibility(
         )
     }
 }
-
-@SuppressLint("ConfigurationScreenWidthHeight")
-@Composable
-fun isTablet(): Boolean {
-    val configuration = LocalConfiguration.current
-    return configuration.screenWidthDp >= 600
-}
-
