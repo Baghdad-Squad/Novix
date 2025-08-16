@@ -33,7 +33,7 @@ class RemoteSavedListDataSourceImplTest {
         val successResponse = Response.success(createSavedListResponse)
         coEvery { savedListApiService.createSavedList(createListRequest) } returns successResponse
 
-        dataSource.createSavedList(LIST_TITLE, SESSION_ID)
+        dataSource.createSavedList(LIST_TITLE)
 
         coVerify(exactly = 1) { savedListApiService.createSavedList(createListRequest) }
     }
@@ -43,7 +43,7 @@ class RemoteSavedListDataSourceImplTest {
         val successResponse = Response.success(createSavedListResponseWithNulls)
         coEvery { savedListApiService.createSavedList(createListRequest) } returns successResponse
 
-        dataSource.createSavedList(LIST_TITLE, SESSION_ID)
+        dataSource.createSavedList(LIST_TITLE)
 
         coVerify(exactly = 1) { savedListApiService.createSavedList(createListRequest) }
     }
@@ -53,7 +53,7 @@ class RemoteSavedListDataSourceImplTest {
         val successResponse = Response.success(userListsResponse)
         coEvery { savedListApiService.getSavedLists(ACCOUNT_ID, PAGE) } returns successResponse
 
-        val result = dataSource.getSavedLists(PAGE, PAGE_SIZE, ACCOUNT_ID, SESSION_ID)
+        val result = dataSource.getSavedLists(PAGE, PAGE_SIZE, ACCOUNT_ID)
 
         assertThat(result.data).hasSize(1)
         assertThat(result.data[0]).isEqualTo(expectedSavedListDto)
@@ -67,7 +67,7 @@ class RemoteSavedListDataSourceImplTest {
         val successResponse = Response.success(userListsResponseEmpty)
         coEvery { savedListApiService.getSavedLists(ACCOUNT_ID, PAGE) } returns successResponse
 
-        val result = dataSource.getSavedLists(PAGE, PAGE_SIZE, ACCOUNT_ID, SESSION_ID)
+        val result = dataSource.getSavedLists(PAGE, PAGE_SIZE, ACCOUNT_ID)
 
         assertThat(result.data).isEmpty()
         assertThat(result.nextKey).isNull()
@@ -79,7 +79,7 @@ class RemoteSavedListDataSourceImplTest {
         val successResponse = Response.success(userListsResponseNullResults)
         coEvery { savedListApiService.getSavedLists(ACCOUNT_ID, PAGE) } returns successResponse
 
-        val result = dataSource.getSavedLists(PAGE, PAGE_SIZE, ACCOUNT_ID, SESSION_ID)
+        val result = dataSource.getSavedLists(PAGE, PAGE_SIZE, ACCOUNT_ID)
 
         assertThat(result.data).isEmpty()
     }
@@ -115,7 +115,7 @@ class RemoteSavedListDataSourceImplTest {
         val successResponse = Response.success(deleteSavedListResponse)
         coEvery { savedListApiService.deleteSavedListById(LIST_ID) } returns successResponse
 
-        dataSource.deleteSavedListById(LIST_ID, SESSION_ID)
+        dataSource.deleteSavedListById(LIST_ID)
 
         coVerify(exactly = 1) { savedListApiService.deleteSavedListById(LIST_ID) }
     }
@@ -173,7 +173,7 @@ class RemoteSavedListDataSourceImplTest {
             savedListApiService.addMovieToSavedList(LIST_ID, capture(capturedRequest))
         } returns Response.success(expectedResponse)
 
-        dataSource.addMovieToSavedList(LIST_ID, differentMovieId, SESSION_ID)
+        dataSource.addMovieToSavedList(LIST_ID, differentMovieId)
 
         assertThat(capturedRequest.captured.mediaId).isEqualTo(differentMovieId)
         assertThat(capturedRequest.captured).isEqualTo(expectedRequest)
@@ -193,7 +193,7 @@ class RemoteSavedListDataSourceImplTest {
             savedListApiService.removeMovieFromSavedList(LIST_ID, capture(capturedRequest))
         } returns Response.success(expectedResponse)
 
-        dataSource.removeMovieFromSavedList(LIST_ID, differentMovieId, SESSION_ID)
+        dataSource.removeMovieFromSavedList(LIST_ID, differentMovieId)
 
         assertThat(capturedRequest.captured.mediaId).isEqualTo(differentMovieId)
         assertThat(capturedRequest.captured).isEqualTo(expectedRequest)
@@ -213,7 +213,7 @@ class RemoteSavedListDataSourceImplTest {
 
         coEvery { savedListApiService.addMovieToSavedList(differentListId, addItemRequest) } returns successResponse
 
-        dataSource.addMovieToSavedList(differentListId, MOVIE_ID, SESSION_ID)
+        dataSource.addMovieToSavedList(differentListId, MOVIE_ID)
 
         coVerify(exactly = 1) { savedListApiService.addMovieToSavedList(differentListId, addItemRequest) }
     }
@@ -226,7 +226,6 @@ class RemoteSavedListDataSourceImplTest {
         const val PAGE_SIZE = 20
         const val TOTAL_PAGES = 5
         const val TOTAL_RESULTS = 100
-        const val SESSION_ID = "session123"
         const val LIST_TITLE = "My Favorite Movies"
         const val LIST_DESCRIPTION = "A collection of my favorite movies"
         const val ITEM_COUNT = 10
@@ -241,7 +240,6 @@ class RemoteSavedListDataSourceImplTest {
 
         val createListRequest = CreateListRequest(name = LIST_TITLE)
         val addItemRequest = AddListItemRequest(mediaId = MOVIE_ID)
-        val removeItemRequest = RemoveListItemRequest(mediaId = MOVIE_ID)
 
         val createSavedListResponse = CreateSavedListResponse(
             listId = LIST_ID,
@@ -287,13 +285,6 @@ class RemoteSavedListDataSourceImplTest {
         val userListsResponse = UserListsResponse(
             page = PAGE,
             results = listOf(userListDto),
-            totalPages = TOTAL_PAGES,
-            totalResults = TOTAL_RESULTS
-        )
-
-        val userListsResponseWithNulls = UserListsResponse(
-            page = PAGE,
-            results = listOf(userListDto, userListDtoWithNulls),
             totalPages = TOTAL_PAGES,
             totalResults = TOTAL_RESULTS
         )
@@ -360,12 +351,6 @@ class RemoteSavedListDataSourceImplTest {
             id = LIST_ID,
             name = LIST_TITLE,
             itemCount = ITEM_COUNT
-        )
-
-        val expectedSavedListDtoWithDefaults = SavedListDto(
-            id = 0L,
-            name = "",
-            itemCount = 0
         )
 
         val expectedMovieDto = MovieDto(

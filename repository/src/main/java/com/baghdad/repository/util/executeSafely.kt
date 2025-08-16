@@ -73,8 +73,8 @@ suspend fun <TEntity, TDto> getPagedSafely(
     if (localData.isNotEmpty()) {
         PagedResult(
             data = localData.map(mapToEntity),
-            nextKey = if (localData.size == pageSize) page + 1 else null,
-            prevKey = if (page > 1) page - 1 else null
+            nextPage = if (localData.size == pageSize) page + 1 else null,
+            prevPage = if (page > 1) page - 1 else null
         )
     } else {
         val remoteData = getRemoteData(page, pageSize)
@@ -83,14 +83,14 @@ suspend fun <TEntity, TDto> getPagedSafely(
             val localData = getCachedPage(page, pageSize)
             PagedResult(
                 data = localData.map(mapToEntity),
-                nextKey = remoteData.nextKey,
-                prevKey = remoteData.prevKey
+                nextPage = remoteData.nextKey,
+                prevPage = remoteData.prevKey
             )
         } else {
             PagedResult(
                 data = emptyList(),
-                nextKey = null,
-                prevKey = if (page > 1) page - 1 else null
+                nextPage = null,
+                prevPage = if (page > 1) page - 1 else null
             )
         }
     }
@@ -109,8 +109,8 @@ suspend fun <TEntity, TDto> getRemotePagedSafely(
 
     PagedResult(
         data = remoteData.data.map(mapToEntity),
-        nextKey = remoteData.nextKey,
-        prevKey = remoteData.prevKey
+        nextPage = remoteData.nextKey,
+        prevPage = remoteData.prevKey
     )
 }
 
@@ -125,7 +125,7 @@ suspend fun <TEntity, TDto> getLocalPagedSafely(
     val localData = getCachedPage(page, pageSize)
     PagedResult(
         data = localData.map(mapToEntity),
-        nextKey = if (localData.size == pageSize) page + 1 else null,
-        prevKey = if (page > 1) page - 1 else null
+        nextPage = if (localData.size == pageSize) page + 1 else null,
+        prevPage = if (page > 1) page - 1 else null
     )
 }

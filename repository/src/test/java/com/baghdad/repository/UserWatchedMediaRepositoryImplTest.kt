@@ -53,8 +53,8 @@ class UserWatchedMediaRepositoryImplTest {
             }
             val expectedResult = PagedResult(
                 data = expectedData,
-                nextKey = null,
-                prevKey = null
+                nextPage = null,
+                prevPage = null
             )
 
             coEvery {
@@ -87,8 +87,8 @@ class UserWatchedMediaRepositoryImplTest {
             }
             val expectedResult = PagedResult(
                 data = expectedData,
-                nextKey = null,
-                prevKey = null
+                nextPage = null,
+                prevPage = null
             )
 
             coEvery {
@@ -113,8 +113,8 @@ class UserWatchedMediaRepositoryImplTest {
         val pageSize = 10
         val expectedResult = PagedResult<UserWatchedMedia>(
             data = emptyList(),
-            nextKey = null,
-            prevKey = null
+            nextPage = null,
+            prevPage = null
         )
 
         coEvery {
@@ -148,8 +148,8 @@ class UserWatchedMediaRepositoryImplTest {
 
             val expectedResult = PagedResult(
                 data = expectedData,
-                nextKey = 2,
-                prevKey = null
+                nextPage = 2,
+                prevPage = null
             )
 
             coEvery {
