@@ -27,8 +27,8 @@ class GetUserWatchedMediaMoviesUseCaseTest {
         val pageSize = 20
         val expectedResult = PagedResult(
             data = expectedData,
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         coEvery { repository.getPagedMovies(page, pageSize) } returns expectedResult
@@ -45,8 +45,8 @@ class GetUserWatchedMediaMoviesUseCaseTest {
         val pageSize = 20
         val expectedResult = PagedResult<UserWatchedMedia>(
             data = emptyList(),
-            nextKey = null,
-            prevKey = 4
+            nextPage = null,
+            prevPage = 4
         )
 
         coEvery { repository.getPagedMovies(page, pageSize) } returns expectedResult

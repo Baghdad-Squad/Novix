@@ -49,8 +49,8 @@ class SearchRepositoryImplTest {
 
         assertThat(1 == result.data.size).isTrue()
         assertThat("Test Actor" == result.data[0].name).isTrue()
-        assertThat(2 == result.nextKey).isTrue()
-        assertThat(result.prevKey).isNull()
+        assertThat(2 == result.nextPage).isTrue()
+        assertThat(result.prevPage).isNull()
         coVerify { searchRemoteDataSource.searchActors(query, page) }
     }
 

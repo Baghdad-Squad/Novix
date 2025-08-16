@@ -62,8 +62,8 @@ class GetTrendingMoviesUseCaseTest {
                     )
                 )
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
     }
 }

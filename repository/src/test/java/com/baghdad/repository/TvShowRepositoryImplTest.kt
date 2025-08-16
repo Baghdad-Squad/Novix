@@ -311,8 +311,8 @@ class TvShowRepositoryImplTest {
         assertThat(1 == result.data.size).isTrue()
         assertThat(789L == result.data[0].id).isTrue()
         assertThat("Test TV Show" == result.data[0].title).isTrue()
-        assertThat(2 == result.nextKey).isTrue()
-        assertThat(null == result.prevKey).isTrue()
+        assertThat(2 == result.nextPage).isTrue()
+        assertThat(null == result.prevPage).isTrue()
         coVerify { tvShowRemoteDataSource.getTopRatedTvShows(page) }
     }
 
@@ -354,8 +354,8 @@ class TvShowRepositoryImplTest {
         assertThat(1 == result.data.size).isTrue()
         assertThat(789L == result.data[0].id).isTrue()
         assertThat("Test TV Show" == result.data[0].title).isTrue()
-        assertThat(2 == result.nextKey).isTrue()
-        assertThat(null == result.prevKey).isTrue()
+        assertThat(2 == result.nextPage).isTrue()
+        assertThat(null == result.prevPage).isTrue()
         coVerify { tvShowRemoteDataSource.getTrendingTvShows(page) }
     }
 

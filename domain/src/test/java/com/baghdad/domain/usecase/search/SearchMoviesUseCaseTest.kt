@@ -17,8 +17,8 @@ class SearchMoviesUseCaseTest {
     private lateinit var searchMoviesUseCase: SearchMoviesUseCase
     val sampleSavedMovie = PagedResult(
         data = listOf(getSampleSavedMovie()),
-        nextKey = null,
-        prevKey = null
+        nextPage = null,
+        prevPage = null
     )
 
     @BeforeEach
@@ -46,8 +46,8 @@ class SearchMoviesUseCaseTest {
 //
 //        val result = searchMoviesUseCase(query, 1)
 //
-//        assertThat(result.prevKey).isNull()
-//        assertThat(result.nextKey).isEqualTo(2)
+//        assertThat(result.prevPage).isNull()
+//        assertThat(result.nextPage).isEqualTo(2)
 //    }
 
     @Test

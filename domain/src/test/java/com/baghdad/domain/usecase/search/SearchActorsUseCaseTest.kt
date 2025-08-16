@@ -33,8 +33,8 @@ class SearchActorsUseCaseTest {
         // Then
         assertThat(result.data).hasSize(2)
         assertThat(result.data[0].name).contains("Tom")
-        assertThat(result.nextKey).isEqualTo(2)
-        assertThat(result.prevKey).isNull()
+        assertThat(result.nextPage).isEqualTo(2)
+        assertThat(result.prevPage).isNull()
     }
 
     @Test
@@ -49,8 +49,8 @@ class SearchActorsUseCaseTest {
 
         // Then
         assertThat(result.data).isEmpty()
-        assertThat(result.nextKey).isNull()
-        assertThat(result.prevKey).isNull()
+        assertThat(result.nextPage).isNull()
+        assertThat(result.prevPage).isNull()
     }
 
     @Test
@@ -60,8 +60,8 @@ class SearchActorsUseCaseTest {
         val page = 1
         val singleActorResult = sampleActors.copy(
             data = listOf(sampleActors.data[1]),
-            nextKey = null,
-            prevKey = 1
+            nextPage = null,
+            prevPage = 1
         )
         coEvery { searchRepository.searchActorsByName(query, page) } returns singleActorResult
 
@@ -71,8 +71,8 @@ class SearchActorsUseCaseTest {
         // Then
         assertThat(result.data).hasSize(1)
         assertThat(result.data[0].name).isEqualTo("Meryl Streep")
-        assertThat(result.nextKey).isNull()
-        assertThat(result.prevKey).isEqualTo(1)
+        assertThat(result.nextPage).isNull()
+        assertThat(result.prevPage).isEqualTo(1)
     }
 
     @Test
@@ -80,8 +80,8 @@ class SearchActorsUseCaseTest {
         // Given
         val query = "actor"
         val page1Result = sampleActors.copy(
-            prevKey = null,
-            nextKey = 2
+            prevPage = null,
+            nextPage = 2
         )
         val page2Result = sampleActors.copy(
             data = listOf(
@@ -100,8 +100,8 @@ class SearchActorsUseCaseTest {
                     department = "Acting",
                 )
             ),
-            prevKey = 1,
-            nextKey = null
+            prevPage = 1,
+            nextPage = null
         )
         coEvery { searchRepository.searchActorsByName(query, 1) } returns page1Result
         coEvery { searchRepository.searchActorsByName(query, 2) } returns page2Result
@@ -113,8 +113,8 @@ class SearchActorsUseCaseTest {
         // Then
         assertThat(result1.data).hasSize(2)
         assertThat(result2.data).hasSize(1)
-        assertThat(result1.nextKey).isEqualTo(2)
-        assertThat(result2.prevKey).isEqualTo(1)
+        assertThat(result1.nextPage).isEqualTo(2)
+        assertThat(result2.prevPage).isEqualTo(1)
     }
 
     @Test
@@ -139,8 +139,8 @@ class SearchActorsUseCaseTest {
                     department = "Acting",
                 )
             ),
-            nextKey = null,
-            prevKey = null
+            nextPage = null,
+            prevPage = null
         )
         coEvery { searchRepository.searchActorsByName(query, page) } returns specialActorResult
 
@@ -171,8 +171,8 @@ class SearchActorsUseCaseTest {
         val query = "first"
         val page = 1
         val firstPageResult = sampleActors.copy(
-            prevKey = null,
-            nextKey = 2
+            prevPage = null,
+            nextPage = 2
         )
         coEvery { searchRepository.searchActorsByName(query, page) } returns firstPageResult
 
@@ -180,8 +180,8 @@ class SearchActorsUseCaseTest {
         val result = searchActorsUseCase(query, page)
 
         // Then
-        assertThat(result.prevKey).isNull()
-        assertThat(result.nextKey).isEqualTo(2)
+        assertThat(result.prevPage).isNull()
+        assertThat(result.nextPage).isEqualTo(2)
     }
 
     @Test
@@ -190,8 +190,8 @@ class SearchActorsUseCaseTest {
         val query = "middle"
         val page = 3
         val middlePageResult = sampleActors.copy(
-            prevKey = 2,
-            nextKey = 4
+            prevPage = 2,
+            nextPage = 4
         )
         coEvery { searchRepository.searchActorsByName(query, page) } returns middlePageResult
 
@@ -199,8 +199,8 @@ class SearchActorsUseCaseTest {
         val result = searchActorsUseCase(query, page)
 
         // Then
-        assertThat(result.prevKey).isEqualTo(2)
-        assertThat(result.nextKey).isEqualTo(4)
+        assertThat(result.prevPage).isEqualTo(2)
+        assertThat(result.nextPage).isEqualTo(4)
     }
 
     @Test
@@ -209,8 +209,8 @@ class SearchActorsUseCaseTest {
         val query = "last"
         val page = 5
         val lastPageResult = sampleActors.copy(
-            prevKey = 4,
-            nextKey = null
+            prevPage = 4,
+            nextPage = null
         )
         coEvery { searchRepository.searchActorsByName(query, page) } returns lastPageResult
 
@@ -218,8 +218,8 @@ class SearchActorsUseCaseTest {
         val result = searchActorsUseCase(query, page)
 
         // Then
-        assertThat(result.prevKey).isEqualTo(4)
-        assertThat(result.nextKey).isNull()
+        assertThat(result.prevPage).isEqualTo(4)
+        assertThat(result.nextPage).isNull()
     }
 
     companion object {
@@ -227,8 +227,8 @@ class SearchActorsUseCaseTest {
         private lateinit var searchActorsUseCase: SearchActorsUseCase
 
         private val sampleActors = PagedResult(
-            prevKey = null,
-            nextKey = 2,
+            prevPage = null,
+            nextPage = 2,
             data = listOf(
                 Actor(
                     id = 1L,
@@ -256,8 +256,8 @@ class SearchActorsUseCaseTest {
         )
 
         private val emptyResult = PagedResult<Actor>(
-            prevKey = null,
-            nextKey = null,
+            prevPage = null,
+            nextPage = null,
             data = emptyList()
         )
     }

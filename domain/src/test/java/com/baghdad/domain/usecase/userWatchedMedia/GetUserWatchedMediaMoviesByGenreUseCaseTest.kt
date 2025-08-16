@@ -24,16 +24,16 @@ class GetUserWatchedMediaMoviesByGenreUseCaseTest {
 
         val pagedResult = PagedResult(
             data = userWatchMediaItems,
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         coEvery { repository.getPagedMovies(page, pageSize) } returns pagedResult
         val result = useCase(genreId, page, pageSize)
 
         assertThat(result.data).isEqualTo(listOf(userWatchMediaItems[0]))
-        assertThat(result.nextKey).isEqualTo(pagedResult.nextKey)
-        assertThat(result.prevKey).isEqualTo(pagedResult.prevKey)
+        assertThat(result.nextPage).isEqualTo(pagedResult.nextPage)
+        assertThat(result.prevPage).isEqualTo(pagedResult.prevPage)
 
         coVerify(exactly = 1) { repository.getPagedMovies(page, pageSize) }
     }
@@ -46,16 +46,16 @@ class GetUserWatchedMediaMoviesByGenreUseCaseTest {
 
         val pagedResult = PagedResult(
             data = userWatchMediaItems,
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         coEvery { repository.getPagedMovies(page, pageSize) } returns pagedResult
         val result = useCase(genreId, page, pageSize)
 
         assertThat(result.data).isEmpty()
-        assertThat(result.nextKey).isEqualTo(pagedResult.nextKey)
-        assertThat(result.prevKey).isEqualTo(pagedResult.prevKey)
+        assertThat(result.nextPage).isEqualTo(pagedResult.nextPage)
+        assertThat(result.prevPage).isEqualTo(pagedResult.prevPage)
 
         coVerify(exactly = 1) { repository.getPagedMovies(page, pageSize) }
     }

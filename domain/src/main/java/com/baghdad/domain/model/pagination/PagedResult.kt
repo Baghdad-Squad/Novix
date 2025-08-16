@@ -2,6 +2,6 @@ package com.baghdad.domain.model.pagination
 
 data class PagedResult<T>(
     val data: List<T>,
-    val nextKey: Int?,
-    val prevKey: Int?
+    val nextPage: Int?,
+    val prevPage: Int?
 )
