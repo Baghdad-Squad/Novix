@@ -16,7 +16,6 @@ class EpisodeDetailsScreenStateTest {
         assertThat(state.episode).isEqualTo(EpisodeDetailsScreenState.EpisodeUiState())
         assertThat(state.guestsOfHonor).isEmpty()
         assertThat(state.isOverviewExpanded).isFalse()
-        assertThat(state.isSavedToList).isFalse()
         assertThat(state.isRated).isTrue()
         assertThat(state.addToListBottomSheetState.isVisible).isFalse()
         assertThat(state.rateEpisodeBottomSheetState.isVisible).isFalse()
@@ -36,7 +35,6 @@ class EpisodeDetailsScreenStateTest {
             episode = episodeUiState,
             guestsOfHonor = guests,
             isOverviewExpanded = true,
-            isSavedToList = true,
             isRated = true,
             addToListBottomSheetState = EpisodeDetailsScreenState.AddToListBottomSheetState(true),
             rateEpisodeBottomSheetState = EpisodeDetailsScreenState.RateEpisodeBottomSheetState(true)
@@ -48,7 +46,6 @@ class EpisodeDetailsScreenStateTest {
         assertThat(state.episode).isEqualTo(episodeUiState)
         assertThat(state.guestsOfHonor).isEqualTo(guests)
         assertThat(state.isOverviewExpanded).isTrue()
-        assertThat(state.isSavedToList).isTrue()
         assertThat(state.isRated).isTrue()
         assertThat(state.addToListBottomSheetState.isVisible).isTrue()
         assertThat(state.rateEpisodeBottomSheetState.isVisible).isTrue()
