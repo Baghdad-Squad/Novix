@@ -50,7 +50,8 @@ class ProfileViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { getAppLanguageUseCase.invoke() }, onNewValue = { language ->
                 onGetAppLanguageSuccess(language)
-            }, onError = ::onError
+            }, onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 
