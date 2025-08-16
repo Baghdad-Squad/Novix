@@ -16,6 +16,7 @@ import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.AddUserWatchedMediaUseCase
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
