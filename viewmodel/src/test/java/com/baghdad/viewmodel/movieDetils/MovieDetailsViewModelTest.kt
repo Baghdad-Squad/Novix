@@ -14,6 +14,7 @@ import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.AddUserWatchedMediaUseCase
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.person.Actor
@@ -55,18 +56,6 @@ class MovieDetailsViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun setupHappyPathMocks() {
-        coEvery { getMovieDetailsUseCase(any()) } returns TestData.createMockMovie()
-        coEvery { getCastsInfoUseCase(any()) } returns TestData.createMockCastMembers()
-        coEvery { getMovieImagesUseCase(any()) } returns TestData.createMockImages()
-        coEvery { getMoreLikeThisPosterImageUseCase(any()) } returns TestData.createMockSimilarMovies()
-        coEvery { getMovieAccountStatesUseCase(any()) } returns true
-        coEvery { addMovieRateUseCase(any(), any()) } returns Unit
-        coEvery { isUserLoggedInUseCase() } returns true
-        coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
-        coEvery { createSavedListUseCase(any()) } returns Unit
-        coEvery { removeMovieFromSavedListUseCase(any(), any()) } returns Unit
-    }
 
     @Test
     fun `when viewModel is initialized, should load all movie data`() = runTest {
@@ -302,8 +291,20 @@ class MovieDetailsViewModelTest {
     private val getSavedListsUseCase = mockk<GetSavedListsUseCase>()
     private val removeMovieFromSavedListUseCase = mockk<RemoveMovieFromSavedListUseCase>()
 
-    private val tesztDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: MovieDetailsViewModel
 
     private val similarMovieId = 456L
+
+    private fun setupHappyPathMocks() {
+        coEvery { getMovieDetailsUseCase(any()) } returns TestData.createMockMovie()
+        coEvery { getCastsInfoUseCase(any()) } returns TestData.createMockCastMembers()
+        coEvery { getMovieImagesUseCase(any()) } returns TestData.createMockImages()
+        coEvery { getMoreLikeThisPosterImageUseCase(any()) } returns TestData.createMockSimilarMovies()
+        coEvery { getMovieAccountStatesUseCase(any()) } returns true
+        coEvery { addMovieRateUseCase(any(), any()) } returns Unit
+        coEvery { isUserLoggedInUseCase() } returns true
+        coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
+        coEvery { createSavedListUseCase(any()) } returns Unit
+        coEvery { removeMovieFromSavedListUseCase(any(), any()) } returns Unit
+    }
 }
