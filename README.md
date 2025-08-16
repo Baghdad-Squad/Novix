@@ -4,13 +4,48 @@
 
 >### Novix is a mix of two words: `Nova` – a star that suddenly increases in brightness `Flix` from *"flicks"*  a casual term for movies and shows.
 
--  <img width="1000" height="472" alt="Image" src="https://github.com/user-attachments/assets/5f71af45-1433-4ce1-9b67-ce69148cc10f" />
+-  <img width="606" height="472" alt="Image" src="https://github.com/user-attachments/assets/5f71af45-1433-4ce1-9b67-ce69148cc10f" />
 
-- <img width="1000" height="473" alt="Image" src="https://github.com/user-attachments/assets/666986be-87c9-4506-a036-a57a8ec3cc6c" />
+- <img width="606" height="473" alt="Image" src="https://github.com/user-attachments/assets/666986be-87c9-4506-a036-a57a8ec3cc6c" />
 
    ----
 ## Why Novix ?
 In our humble little project, we’ve sprinkled a few special touches just for you, little things to make your experience extra delightful!
+
+## Setup
+
+- [Android Studio](https://developer.android.com/studio)
+
+- [JDK 17+](https://adoptium.net/temurin/releases/)
+
+- Android SDK 34
+
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/Baghdad-Squad/Novix
+cd Novix
+```
+
+### 2. Add API Configuration
+Get your API key from [TMDb API](https://www.themoviedb.org/settings/api), then create `secrets.properties` in root directory:
+```properties
+API_KEY="your_api_key_here"
+BASE_URL="https://api.themoviedb.org/3/"
+AUTHORIZATION_TOKEN="your_token_here"
+```
+
+### 3. Firebase Setup (Optional)
+- Create project at [Firebase Console](https://console.firebase.google.com/)
+- Add `google-services.json` to `app/` folder
+- Enable *Analytics*, *Crashlytics*, *Performance*
+
+### 4. Build & Run
+```bash
+./gradlew build
+./gradlew installDebug
+```
+
 
 - ### Use Component Modularization
   -  **Reusability** : Use the same component in different projects or features.
@@ -110,10 +145,8 @@ In our humble little project, we’ve sprinkled a few special touches just for y
 | [Kotlin](https://kotlinlang.org/) | Programming Language |
 | [Jetpack Compose](https://developer.android.com/jetpack/compose) | Declarative UI Framework |
 | [MVVM](https://proandroiddev.com/mvi-architecture-pattern-for-android-apps-5c7e6f4a7c6a) | Architecture Pattern |
-| [Koin](https://insert-koin.io/) | Dependency Injection |
 | [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) | Dependency Injection |
 | [Dagger](https://dagger.dev/) | Dependency Injection |
-| [Ktor](https://ktor.io/) | Integrating with Backend |
 | [Retrofit](https://square.github.io/retrofit/) | Integrating with Backend |
 | [Paging3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) | Pagination |
 | [Room](https://developer.android.com/training/data-storage/room) | Caching and Local Storage |
@@ -152,7 +185,7 @@ Handles presentation logic and state management:
 - **Screen-specific ViewModels** following MVVM pattern
 - **UI state management** and user interactions
 - **Business logic coordination** between UI and domain
-- Depends on: `domain`, `entity`
+- Depends on: `domain`
 
 ## Domain Module
 The heart of our business logic - completely framework independent:
@@ -175,7 +208,7 @@ Handles all network communications:
 - **Network DTOs** and response models
 - **Retrofit configurations** and interceptors
 - **Error handling** for network operations
-- Depends on: `entity`
+- Depends on: `repository`
 
 ##  Local DataSource Module
 Manages local data persistence:
@@ -184,7 +217,7 @@ Manages local data persistence:
 - **Local DTOs** and database entities
 - **Error handling** for Storage
 
-- Depends on: `entity`
+- Depends on: `repository`
 
 ##  Repository Module
 Implements the repository pattern as a single source of truth:
@@ -192,7 +225,7 @@ Implements the repository pattern as a single source of truth:
 - **Data mapping** between different data representations
 - **Caching strategies** and offline-first approach
 - **Data synchronization** logic between local and remote
-- Depends on: `domain`, `entity`, `local_datasource`, `remote_datasource`
+- Depends on: `domain`
 
 ##  Islamic Image Loader Module
 A specialized module for culturally-sensitive image handling:
@@ -205,45 +238,12 @@ A specialized module for culturally-sensitive image handling:
 ---
 ##  Download Latest Release
 
-- [Quick Tour](https://github.com/Baghdad-Squad/Novix)
+- [Quick Tour](https://youtu.be/8bWvNDF2fPs)
 
-- [![Download APK](https://img.shields.io/badge/Download-APK-brightgreen?style=for-the-badge&logo=android)]( )
+- [![Download APK](https://img.shields.io/badge/Download-APK-brightgreen?style=for-the-badge&logo=android)](https://www.mediafire.com/file/7eodqd8mzimqbc1/app.apk/file)
 
 ---
 
-## Setup
-
-- [Android Studio](https://developer.android.com/studio)
-
-- [JDK 17+](https://adoptium.net/temurin/releases/)
-
-- Android SDK 34
-
-
-### 1. Clone Repository
-```bash
-git clone https://github.com/Baghdad-Squad/Novix
-cd Novix
-```
-
-### 2. Add API Configuration
-Get your API key from [TMDb API](https://www.themoviedb.org/settings/api), then create `secrets.properties` in root directory:
-```properties
-API_KEY="your_api_key_here"
-BASE_URL="https://api.themoviedb.org/3/"
-AUTHORIZATION_TOKEN="your_token_here"
-```
-
-### 3. Firebase Setup (Optional)
-- Create project at [Firebase Console](https://console.firebase.google.com/)
-- Add `google-services.json` to `app/` folder
-- Enable *Analytics*, *Crashlytics*, *Performance*
-
-### 4. Build & Run
-```bash
-./gradlew build
-./gradlew installDebug
-```
 
 ## Common Issues
 - **Build fails**: Check `secrets.properties` exists in root
@@ -256,4 +256,20 @@ Special thanks to our mentor for the guidance and support throughout this journe
 Thanks to [Bareq](https://github.com/iBareq)for giving us [TheChance](https://github.com/TheChance101) to discover ourselves
 Thanks to [Hamsa](https://github.com/HamSaAli) because the app wouldn't have been this great without her design.
 Thanks to the amazing Baghdad Squad team who made this possible
-[Abdulaziz](https://github.com/abdulazizacc) , [Aboud](https://github.com/ABDULLAHHG),[Edrees](https://github.com/MuhammedEdrees) , [Fares](https://github.com/FaresM0hamed), [Fara7](https://github.com/Farah315), [Fatmah](https://github.com/fatmahgazy), [Karrar](https://github.com/karrar-abbas), [Malak](https://github.com/Malak187), [Mahmoud](https://github.com/MahmoodTarek), [Omer](https://github.com/omer1998), [Zinah](https://github.com/Arzo-zi)
+
+- [Abdulaziz](https://github.com/abdulazizacc)
+- [Aboud](https://github.com/ABDULLAHHG)
+
+- [Edrees](https://github.com/MuhammedEdrees)
+-  [Fares](https://github.com/FaresM0hamed)
+
+-  [Fara7](https://github.com/Farah315)
+-  [Fatmah](https://github.com/fatmahgazy)
+- [Hasan](https://github.com/Hasa9nAli)
+
+-  [Karrar](https://github.com/karrar-abbas)
+-  [Malak](https://github.com/Malak187)
+
+-  [Mahmoud](https://github.com/MahmoodTarek)
+- [Omer](https://github.com/omer1998)
+-  [Zinah](https://github.com/Arzo-zi)
