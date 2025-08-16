@@ -1,7 +1,6 @@
 package com.baghdad.ui.feature.categoryTvShows
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -17,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -49,16 +47,21 @@ fun CategoryTvShowsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
+
     CategoryTvShowsContent(
-        uiState = uiState, listener = viewModel, snackBarState = snackBarState
+        uiState = uiState,
+        listener = viewModel,
+        snackBarState = snackBarState
     )
 }
 
 private fun handleEffect(
-    effect: CategoryTvShowsEffect, handleNavigation: (CategoriesNavEvent) -> Unit
+    effect: CategoryTvShowsEffect,
+    handleNavigation: (CategoriesNavEvent) -> Unit
 ) {
     when (effect) {
         is CategoryTvShowsEffect.NavigateBack -> handleNavigation(
@@ -118,34 +121,31 @@ private fun CategoryTvShowsContent(
             )
         },
         isLoading = uiState.isLoading,
-        backgroundBlur = {
-            BackgroundBlur()
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-    ) {
-        Column {
-            LazyPagingVerticalGrid(
-                items = lazyPagingTvShows,
-                columns = GridCells.Adaptive(minSize = 150.dp),
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(
-                    horizontal = 16.dp,
-                    vertical = 8.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                state = rememberSaveableLazyGridState()
-            ) { tvShow ->
-                HomeCard(
-                    url = tvShow.posterPictureURL,
-                    contentDescription = null,
-                    onClick = { listener.onTvShowClicked(tvShow.id) },
-                    isSaveToListVisible = false,
-                    modifier = Modifier.aspectRatio(0.8f)
-                )
-            }
 
+        backgroundBlur = { BackgroundBlur() },
+
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+
+        ) {
+        LazyPagingVerticalGrid(
+            items = lazyPagingTvShows,
+            columns = GridCells.Adaptive(minSize = 150.dp),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                horizontal = 16.dp,
+                vertical = 8.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            state = rememberSaveableLazyGridState()
+        ) { tvShow ->
+            HomeCard(
+                url = tvShow.posterPictureURL,
+                contentDescription = null,
+                onClick = { listener.onTvShowClicked(tvShow.id) },
+                isSaveToListVisible = false,
+                modifier = Modifier.aspectRatio(0.8f)
+            )
         }
     }
 }

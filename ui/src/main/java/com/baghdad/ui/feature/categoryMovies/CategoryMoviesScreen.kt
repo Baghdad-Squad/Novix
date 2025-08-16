@@ -2,7 +2,6 @@ package com.baghdad.ui.feature.categoryMovies
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -21,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BackgroundBlur
@@ -51,7 +49,6 @@ fun CategoryMoviesScreen(
     handleNavigation: (CategoriesNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
@@ -61,7 +58,6 @@ fun CategoryMoviesScreen(
     CategoryMoviesContent(
         uiState = uiState,
         listener = viewModel,
-        movieItems = movieItems,
         snackBarState = snackBarState
     )
 }
@@ -89,21 +85,22 @@ private fun handleEffect(
 private fun CategoryMoviesContent(
     uiState: CategoryMoviesState,
     listener: CategoryMoviesViewModel,
-    movieItems: LazyPagingItems<CategoryMoviesState.MovieUiState>,
     snackBarState: SnackBarState
 ) {
+    val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
     val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .navigationBarsPadding(),
+
         isLoading = uiState.isLoading,
+
         topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Theme.color.surface)
                     .statusBarsPadding()
                     .padding(top = 12.dp, bottom = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -114,15 +111,16 @@ private fun CategoryMoviesContent(
                     modifier = Modifier
                         .padding(start = 16.dp, end = 12.dp)
                 )
+
                 Text(
                     text = uiState.categoryName,
                     style = Theme.typography.title.large,
                     color = Theme.color.title,
-                    modifier = Modifier
-                        .padding(start = 8.dp, bottom = 8.dp)
+                    modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
                 )
             }
         },
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -130,58 +128,57 @@ private fun CategoryMoviesContent(
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
+                position = position
             )
         },
-        backgroundBlur = {
-            BackgroundBlur()
-        },
+
+        backgroundBlur = { BackgroundBlur() },
+
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
-        Column {
-            LazyPagingVerticalGrid<CategoryMoviesState.MovieUiState>(
-                columns = GridCells.Adaptive(minSize = 150.dp),
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(
-                    horizontal = 16.dp,
-                    vertical = 8.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                items = movieItems,
-            ) { movie ->
-                HomeCard(
-                    url = movie.posterPictureURL,
-                    contentDescription = null,
-                    isSaved = movie.isSaved,
-                    onSavedClick = { listener.onMovieToListClick(movie) },
-                    onClick = { listener.onMovieClicked(movie.id) },
-                    modifier = Modifier.aspectRatio(0.8f)
-                )
-            }
-        }
-        SavedListBottomSheet(
-            isVisible = uiState.addToListBottomSheetState.isVisible,
-            isUserLoggedIn = uiState.isUserLoggedIn,
-            onAddClick = listener::onSaveItemToListClick,
-            onCreateNewListClick = listener::onCreateNewListClick,
-            onLoginClick = listener::onLoginClick,
-            onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
-            lists = savedLists ,
-            selectedListId = uiState.addToListBottomSheetState.selectedListId,
-            onListSelected = listener::onListSelected,
-        )
 
-        AddListBottomSheet(
-            isVisible = uiState.addListBottomSheetState.isVisible,
-            isLoading = uiState.addListBottomSheetState.isLoading,
-            listName = uiState.addListBottomSheetState.listName,
-            onDismiss = listener::onCreateListBottomSheetDismiss,
-            onAddClick = listener::onCreateListBottomSheetAddClick,
-            onListNameChange = listener::onCreatedListNameChanged,
-        )
+        LazyPagingVerticalGrid<CategoryMoviesState.MovieUiState>(
+            columns = GridCells.Adaptive(minSize = 150.dp),
+            modifier = Modifier
+                .fillMaxSize(),
+            contentPadding = PaddingValues(
+                horizontal = 16.dp,
+                vertical = 8.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            items = movieItems
+        ) { movie ->
+            HomeCard(
+                url = movie.posterPictureURL,
+                contentDescription = null,
+                isSaved = movie.isSaved,
+                onSavedClick = { listener.onMovieToListClick(movie) },
+                onClick = { listener.onMovieClicked(movie.id) },
+                modifier = Modifier.aspectRatio(0.8f)
+            )
+        }
     }
+    SavedListBottomSheet(
+        isVisible = uiState.addToListBottomSheetState.isVisible,
+        isUserLoggedIn = uiState.isUserLoggedIn,
+        onAddClick = listener::onSaveItemToListClick,
+        onCreateNewListClick = listener::onCreateNewListClick,
+        onLoginClick = listener::onLoginClick,
+        onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
+        lists = savedLists,
+        selectedListId = uiState.addToListBottomSheetState.selectedListId,
+        onListSelected = listener::onListSelected
+    )
+
+    AddListBottomSheet(
+        isVisible = uiState.addListBottomSheetState.isVisible,
+        isLoading = uiState.addListBottomSheetState.isLoading,
+        listName = uiState.addListBottomSheetState.listName,
+        onDismiss = listener::onCreateListBottomSheetDismiss,
+        onAddClick = listener::onCreateListBottomSheetAddClick,
+        onListNameChange = listener::onCreatedListNameChanged
+    )
 }
 
 @Composable

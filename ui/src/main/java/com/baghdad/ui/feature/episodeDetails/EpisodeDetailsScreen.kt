@@ -72,7 +72,7 @@ fun EpisodeDetailsScreen(
 }
 
 @Composable
-fun EpisodeDetailsContent(
+private fun EpisodeDetailsContent(
     state: EpisodeDetailsScreenState,
     listener: EpisodeDetailsInteractionListener,
     snackBarState: SnackBarState,
@@ -123,16 +123,19 @@ fun EpisodeDetailsContent(
                 .background(Theme.color.surface)
                 .fillMaxSize()
                 .navigationBarsPadding(),
+
         isLoading = state.isLoading,
+
         bottomBar = {
             DetailsScreenBottomBar(
                 isRated = state.isRated,
                 onRateClicked = listener::onClickStarButton,
                 hasTrailer = state.episode.trailerUrl.isNotBlank(),
                 isLoading = state.isEpisodeDetailsLoading,
-                onPlayTrailerClicked = listener::onPlayTrailerClick,
+                onPlayTrailerClicked = listener::onPlayTrailerClick
             )
         },
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -143,29 +146,11 @@ fun EpisodeDetailsContent(
                 position = position,
             )
         },
-        backgroundBlur = {
-            BackgroundBlur()
-        },
+
+        backgroundBlur = { BackgroundBlur() },
+
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        ) {
-
-        RatingBottomSheet(
-            isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
-            onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-            rate = state.episode.userRating,
-            isButtonEnabled = state.episode.userRating != 0,
-            onRateChanged = { listener.onRatingChanged(it) },
-            onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating) }
-        )
-
-
-        LoginRequiredSheet(
-            isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
-            onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-            onLoginClick = { listener.onClickLoginButton() },
-            title = stringResource(R.string.rate_it),
-            description = stringResource(R.string.please_login_to_rate)
-        )
+    ) {
 
         LazyColumn(
             state = listState,
@@ -201,6 +186,7 @@ fun EpisodeDetailsContent(
             )
         }
 
+
         TopAppBar(
             modifier =
                 Modifier
@@ -210,6 +196,7 @@ fun EpisodeDetailsContent(
                     .align(Alignment.TopCenter)
                     .padding(top = 56.dp, bottom = 8.dp),
             onGoBackClick = listener::onBackClick,
+
             content = {
                 SaveIcon(
                     size = 40,
@@ -221,9 +208,27 @@ fun EpisodeDetailsContent(
             },
         )
     }
+
+    RatingBottomSheet(
+        isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
+        onBottomSheetCloseClick =  listener::onDismissRatingBottomSheet ,
+        rate = state.episode.userRating,
+        isButtonEnabled = state.episode.userRating != 0,
+        onRateChanged =  listener::onRatingChanged,
+        onSubmitClick =  { listener::onClickSubmitRating }
+    )
+
+
+    LoginRequiredSheet(
+        isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
+        onBottomSheetCloseClick =  listener::onDismissRatingBottomSheet,
+        onLoginClick =  listener::onClickLoginButton ,
+        title = stringResource(R.string.rate_it),
+        description = stringResource(R.string.please_login_to_rate)
+    )
 }
 
-fun handleEffect(
+private fun handleEffect(
     effect: EpisodeDetailsScreenEffect,
     handleNavigation: (TvShowDetailsNavEvent) -> Unit,
 ) {

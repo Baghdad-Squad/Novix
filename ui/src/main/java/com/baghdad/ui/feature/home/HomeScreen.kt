@@ -75,12 +75,15 @@ private fun HomeContent(
     snackBarState: SnackBarState,
 ) {
     val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.color.surface)
             .statusBarsPadding(),
+
         topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) },
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -91,11 +94,10 @@ private fun HomeContent(
                 position = position,
             )
         },
-        backgroundBlur = {
-            BackgroundBlur()
-        },
+        backgroundBlur = { BackgroundBlur() },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-    ) {
+        ) {
+
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             contentPadding = PaddingValues(bottom = 16.dp, top = 8.dp),
@@ -103,6 +105,7 @@ private fun HomeContent(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+
             item(key = "popular_section", span = { GridItemSpan(maxLineSpan) }) {
                 PopularSection(
                     isLoading = state.isPopularLoading,
@@ -170,7 +173,7 @@ private fun HomeContent(
             onBottomSheetCloseClick = interactionListener::onSaveToListBottomSheetDismiss,
             lists = savedLists,
             selectedListId = state.addToListBottomSheetState.selectedListId,
-            onListSelected = interactionListener::onListSelected,
+            onListSelected = interactionListener::onListSelected
         )
         AddListBottomSheet(
             isVisible = state.addListBottomSheetState.isVisible,
@@ -178,7 +181,7 @@ private fun HomeContent(
             listName = state.addListBottomSheetState.listName,
             onDismiss = interactionListener::onCreateListBottomSheetDismiss,
             onAddClick = interactionListener::onCreateListBottomSheetAddClick,
-            onListNameChange = interactionListener::onCreatedListNameChanged,
+            onListNameChange = interactionListener::onCreatedListNameChanged
         )
     }
 }
