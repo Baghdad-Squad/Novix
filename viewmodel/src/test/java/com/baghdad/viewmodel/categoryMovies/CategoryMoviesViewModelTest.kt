@@ -293,6 +293,7 @@ class CategoryMoviesViewModelTest {
         coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
 
         viewModel.onSaveItemToListClick()
+
         advanceUntilIdle()
         coVerify { addMovieToSavedListUseCase(5L, 1L) }
     }
@@ -308,6 +309,7 @@ class CategoryMoviesViewModelTest {
         viewModel.onSaveItemToListClick()
 
         advanceUntilIdle()
+
         assertThat(snackBarMessages).contains(BaseSnackBarMessage.SavedItemSuccessfully)
         job.cancel()
     }
@@ -321,6 +323,7 @@ class CategoryMoviesViewModelTest {
         val snackBarMessages = mutableListOf<BaseSnackBarMessage>()
         val job = launch { viewModel.snackBarState.collect { snackBarMessages.add(it.message) } }
         viewModel.onSaveItemToListClick()
+
         advanceUntilIdle()
 
         assertThat(snackBarMessages).contains(BaseSnackBarMessage.NetworkError)
@@ -331,8 +334,8 @@ class CategoryMoviesViewModelTest {
     fun `should show createListBottomSheet when onCreateNewListClick called`() = runTest {
         val states = mutableListOf<CategoryMoviesState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
-
         viewModel.onCreateNewListClick()
+
         advanceUntilIdle()
 
         assertThat(states.last().addListBottomSheetState.isVisible).isTrue()
@@ -344,8 +347,8 @@ class CategoryMoviesViewModelTest {
     fun `should update list name when onCreatedListNameChanged called`() = runTest {
         val states = mutableListOf<CategoryMoviesState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
-
         viewModel.onCreatedListNameChanged("My New List")
+
         advanceUntilIdle()
 
         assertThat(states.last().addListBottomSheetState.listName).isEqualTo("My New List")
@@ -358,6 +361,7 @@ class CategoryMoviesViewModelTest {
         val job = launch { viewModel.uiState.collect { states.add(it) } }
 
         viewModel.onCreateListBottomSheetDismiss()
+
         advanceUntilIdle()
 
         assertThat(states.last().addListBottomSheetState.isVisible).isFalse()
@@ -371,6 +375,7 @@ class CategoryMoviesViewModelTest {
         viewModel.onMovieToListClick(movieUiStateFalse)
 
         viewModel.onSaveItemToListClick()
+
         advanceUntilIdle()
 
         coVerify(exactly = 0) { addMovieToSavedListUseCase(any(), any()) }
@@ -384,6 +389,7 @@ class CategoryMoviesViewModelTest {
         val job = launch { viewModel.uiState.collect { states.add(it) } }
 
         viewModel.onMovieToListClick(movieUiStateTrue)
+
         advanceUntilIdle()
 
         assertThat(states.last().addToListBottomSheetState.isVisible).isFalse()
