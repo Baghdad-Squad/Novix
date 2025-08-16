@@ -40,10 +40,10 @@ fun ActorCard(
     characterName: String? = null
 ) {
     val isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val textContainerShape = RoundedCornerShape(12.dp)
     val imageShape = RoundedCornerShape(
         topEnd = 12.dp, topStart = 12.dp, bottomStart = 12.dp
     )
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -63,15 +63,14 @@ fun ActorCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .widthIn(min = 218.dp)
-                .height(55.dp)
-                .clip(textContainerShape)
                 .threeSidedBorder(
                     width = 1.dp,
                     color = Theme.color.stroke,
                     cornerRadius = 12.dp,
                     isRTL = isRTL
                 )
-                .background(Theme.color.surface)
+                .clip(RoundedCornerShape(12.dp))
+                .height(55.dp)
                 .padding(horizontal = 8.dp)
                 .align(alignment = Alignment.Bottom)
         ) {
