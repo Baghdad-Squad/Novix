@@ -8,16 +8,21 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -222,9 +227,7 @@ private fun MovieDetailsContent(
                 position = position,
             )
         },
-        backgroundBlur = {
-            BackgroundBlur()
-        },
+        backgroundBlur = { BackgroundBlur() },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
 
@@ -237,13 +240,17 @@ private fun MovieDetailsContent(
         ) {
 
             LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 150.dp),
                 state = lazyState,
-                columns = GridCells.Adaptive(150.dp),
-                modifier = Modifier
-                    .fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 16.dp,
+                    bottom = 8.dp,
+                ),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(bottom = 80.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxSize()
             ) {
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
@@ -262,7 +269,8 @@ private fun MovieDetailsContent(
                         OverviewSection(
                             overview = state.overView,
                             isExtended = state.isExtendText,
-                        ) { listener.onExtendOverviewClick() }
+                            onExtendClicked = { listener.onExtendOverviewClick() }
+                        )
                     }
                 }
 
@@ -281,48 +289,32 @@ private fun MovieDetailsContent(
                             fontSize = 18.sp,
                             style = Theme.typography.title.medium,
                             color = Theme.color.title,
-                            modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                            modifier = Modifier.padding(bottom = 8.dp),
                         )
                     }
 
-                    itemsIndexed(state.moreLikeThisMovie) { index, movie ->
-                        val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 150))
-                        val isItemInFirstRow = index < itemsPerRow
-                        val isFirstInRow = index % itemsPerRow == 0
-                        val isLastInRow =
-                            (index + 1) % itemsPerRow == 0 || index == state.moreLikeThisMovie.size - 1
-
+                    items(state.moreLikeThisMovie) { movie ->
                         HomeCard(
                             url = movie.imageUrl,
                             contentDescription = stringResource(R.string.card_movie_image),
                             isSaved = movie.isSaved,
-                            onSavedClick = {
-                                listener.onSaveMoreLikeThisMedia(
-                                    movie = state.moreLikeThisMovie[index]
-                                )
-                            },
-                            onClick = { listener::onMovieClick },
+                            onSavedClick = { listener.onSaveMoreLikeThisMedia(movie) },
+                            onClick = { listener.onMovieClick(movie.id) },
                             modifier = Modifier
-                                .padding(
-                                    top = if (isItemInFirstRow) 0.dp else 4.dp,
-                                    start = if (isFirstInRow) 16.dp else 0.dp,
-                                    end = if (isLastInRow) 16.dp else 0.dp,
-                                )
                                 .clip(RoundedCornerShape(12.dp))
+                                .aspectRatio(2f / 3f)
                         )
                     }
                 }
             }
+
             TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(animatedColor)
                     .zIndex(1f)
                     .padding(top = 56.dp, bottom = 8.dp),
-                onGoBackClick = {
-                    listener.onBackClick()
-                },
+                onGoBackClick = listener::onBackClick,
                 content = {
                     SaveIcon(
                         tint = Theme.color.title,
@@ -339,9 +331,9 @@ private fun MovieDetailsContent(
     RatingBottomSheet(
         isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType
                 == BottomSheetType.ShowRating,
-        onBottomSheetCloseClick =  listener::onDismissRatingBottomSheet ,
+        onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
         rate = state.userRating,
-        onRateChanged =  listener::onRatingChanged ,
+        onRateChanged = listener::onRatingChanged,
         isButtonEnabled = state.userRating != 0,
         onSubmitClick = { listener::onClickSubmitRating }
     )
@@ -349,8 +341,8 @@ private fun MovieDetailsContent(
     LoginRequiredSheet(
         isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType
                 == BottomSheetType.RequireLogin,
-        onBottomSheetCloseClick =  listener::onDismissRatingBottomSheet ,
-        onLoginClick =  listener::onLoginClick ,
+        onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
+        onLoginClick = listener::onLoginClick,
         title = stringResource(R.string.rate_it),
         description = stringResource(R.string.please_login_to_rate)
     )
