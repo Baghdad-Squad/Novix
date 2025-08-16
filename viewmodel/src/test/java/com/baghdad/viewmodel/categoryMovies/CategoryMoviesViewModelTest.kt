@@ -193,8 +193,7 @@ class CategoryMoviesViewModelTest {
     }
 
     @Test
-    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() =
-        runTest {
+    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
             coEvery { getMovieGenreNameByIdUseCase(any()) } throws NoInternetException()
             val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
             val job = launch { viewModel.snackBarState.collect { emittedSnackBarMessages.add(it.message) } }
@@ -270,6 +269,7 @@ class CategoryMoviesViewModelTest {
         val states = mutableListOf<CategoryMoviesState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
         viewModel.onSaveToListBottomSheetDismiss()
+
         advanceUntilIdle()
         assertThat(states.last().addToListBottomSheetState.isVisible).isFalse()
         job.cancel()
@@ -280,6 +280,7 @@ class CategoryMoviesViewModelTest {
         val states = mutableListOf<CategoryMoviesState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
         viewModel.onListSelected(10L)
+
         advanceUntilIdle()
         assertThat(states.last().addToListBottomSheetState.selectedListId).isEqualTo(10L)
         job.cancel()
