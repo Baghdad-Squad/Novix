@@ -72,7 +72,7 @@ private fun TrendingActorsContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding()
-            .padding(vertical = 12.dp),
+            .padding(top = 12.dp),
         isLoading = uiState.isLoading,
         topBar = {
             TopAppBar(
