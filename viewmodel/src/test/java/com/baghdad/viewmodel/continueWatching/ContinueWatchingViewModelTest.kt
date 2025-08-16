@@ -334,8 +334,8 @@ class ContinueWatchingViewModelTest {
 
         val pagedMovie = PagedResult(
             data = listOf(userWatchedMedia),
-            nextKey = null,
-            prevKey = null,
+            nextPage = null,
+            prevPage = null,
         )
 
         val savedList = SavedList(
@@ -346,8 +346,8 @@ class ContinueWatchingViewModelTest {
 
         val pagedSavedList = PagedResult(
             data = listOf(savedList),
-            nextKey = null,
-            prevKey = null,
+            nextPage = null,
+            prevPage = null,
         )
 
         val genres = listOf(

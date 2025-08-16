@@ -245,7 +245,7 @@ class SavedListDetailsViewModelTest {
         }
         val savedListDetailsSample = SavedListDetails(
             savedList = savedListSample, pagedItems = PagedResult(
-                data = savedMediaItemsSample, nextKey = null, prevKey = null
+                data = savedMediaItemsSample, nextPage = null, prevPage = null
             )
         )
     }

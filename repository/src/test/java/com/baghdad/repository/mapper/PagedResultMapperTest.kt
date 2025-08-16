@@ -20,8 +20,8 @@ class PagedResultMapperTest {
 
         val expectedResult = PagedResult(
             data = listOf("ITEM1", "ITEM2", "ITEM3"),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         assertThat(result).isEqualTo(expectedResult)

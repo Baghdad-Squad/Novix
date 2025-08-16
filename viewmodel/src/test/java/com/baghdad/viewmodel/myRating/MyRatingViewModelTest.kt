@@ -140,7 +140,7 @@ class MyRatingViewModelTest {
     companion object {
 
         private fun mockPagedResult(items: List<RatedMedia> = mockMediaList()) =
-            PagedResult(items, prevKey = 1, nextKey = null)
+            PagedResult(items, prevPage = 1, nextPage = null)
 
         private fun mockMediaList() = listOf(
             RatedMedia(1L, 8, "/poster.jpg", ContentType.MOVIE),

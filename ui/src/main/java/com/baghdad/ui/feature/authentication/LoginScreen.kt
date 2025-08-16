@@ -80,6 +80,24 @@ fun LoginScreen(
 
 }
 
+private fun handleLoginEffect(
+    effect: LoginUiEffect,
+    context: Context,
+    handleNavigation: (AuthenticationNavEvent) -> Unit,
+) {
+    if (effect == LoginUiEffect.RecreateActivity) {
+        val activity = context as? AppCompatActivity
+        activity?.let {
+            val intent = it.intent
+            it.finish()
+            it.startActivity(intent)
+        }
+    } else {
+        effect.toNavEvent()?.let { handleNavigation(it) }
+    }
+}
+
+
 @Composable
 private fun LoginScreenContent(
     state: LoginUiState,
@@ -178,6 +196,12 @@ private fun LoginForm(
         modifier = Modifier.padding(bottom = 16.dp)
     )
 
+    val trailingIcon = if (state.isPasswordVisible.not()) {
+        painterResource(R.drawable.ic_closed_eye)
+    } else {
+        painterResource(R.drawable.ic_opened_eye)
+    }
+
     NovixTextField(
         label = stringResource(com.baghdad.ui.R.string.password),
         keyBoardOptions = KeyboardOptions(
@@ -188,17 +212,16 @@ private fun LoginForm(
         onValueChange = listener::onPasswordValueChange,
         leadingIcon = painterResource(R.drawable.ic_lock_key),
         singleLine = true,
-        isTextMasked = !state.isPasswordVisible,
+        isTextMasked = state.isPasswordVisible.not(),
         trailingVisibility = true,
-        trailingIcon = if (!state.isPasswordVisible) painterResource(R.drawable.ic_closed_eye)
-        else painterResource(R.drawable.ic_opened_eye),
+        trailingIcon = trailingIcon,
         onClickTrailingIcon = listener::onTogglePasswordChange
     )
 
     PrimaryButton(
         isLoading = state.isLoading,
         label = stringResource(com.baghdad.ui.R.string.login),
-        isEnabled = !state.isAnyFieldEmpty,
+        isEnabled = state.isAnyFieldEmpty.not(),
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 32.dp, bottom = 12.dp)
@@ -241,22 +264,6 @@ private fun BottomCreateAccount(listener: LoginInteractionListener) {
     }
 }
 
-private fun handleLoginEffect(
-    effect: LoginUiEffect,
-    context: Context,
-    handleNavigation: (AuthenticationNavEvent) -> Unit,
-) {
-    if (effect == LoginUiEffect.RecreateActivity) {
-        val activity = context as? AppCompatActivity
-        activity?.let {
-            val intent = it.intent
-            it.finish()
-            it.startActivity(intent)
-        }
-    } else {
-        effect.toNavEvent()?.let { handleNavigation(it) }
-    }
-}
 
 private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent? =
     when (this) {
