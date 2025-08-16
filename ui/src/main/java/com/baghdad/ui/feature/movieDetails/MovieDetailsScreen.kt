@@ -8,23 +8,17 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +30,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -239,51 +233,61 @@ private fun MovieDetailsContent(
 
         ) {
 
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 150.dp),
-                state = lazyState,
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 16.dp,
-                    bottom = 8.dp,
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxSize()
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Adaptive(150.dp),
+                modifier = Modifier.fillMaxSize(),
+                verticalItemSpacing = 8.dp,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
 
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    MovieHeaderWithDetailsCard(
-                        uiState = state,
-                        listener = listener
-                    )
-                }
-
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Spacer(Modifier.height(104.dp))
-                }
-
-                if (state.overView.isNotBlank()) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        OverviewSection(
-                            overview = state.overView,
-                            isExtended = state.isExtendText,
-                            onExtendClicked = { listener.onExtendOverviewClick() }
+                item(span = StaggeredGridItemSpan.FullLine ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .layout { measurable, constraints ->
+                                val placeable = measurable.measure(
+                                    constraints.copy(
+                                        maxWidth = constraints.maxWidth + 32.dp.roundToPx() // Add back the padding
+                                    )
+                                )
+                                layout(placeable.width, placeable.height) {
+                                    placeable.placeRelative(0, 0)
+                                }
+                            }
+                    ) {
+                        MovieHeaderWithDetailsCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            uiState = state,
+                            listener = listener
                         )
                     }
                 }
 
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    Spacer(Modifier.height(104.dp))
+                }
+
+                if (state.overView.isNotBlank()) {
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        OverviewSection(
+                            overview = state.overView,
+                            isExtended = state.isExtendText,
+                        ) { listener.onExtendOverviewClick() }
+                    }
+                }
+
                 if (state.castMembers.isNotEmpty()) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
+                    item(span = StaggeredGridItemSpan.FullLine) {
                         ActorsSection(
                             actors = state.castMembers,
                             onClick = { listener.onActorClick(id = it) }
                         )
                     }
                 }
+
                 if (state.moreLikeThisMovie.isNotEmpty()) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
+                    item(span = StaggeredGridItemSpan.FullLine) {
                         Text(
                             text = stringResource(R.string.more_like_this),
                             fontSize = 18.sp,
@@ -293,21 +297,22 @@ private fun MovieDetailsContent(
                         )
                     }
 
-                    items(state.moreLikeThisMovie) { movie ->
-                        HomeCard(
-                            url = movie.imageUrl,
-                            contentDescription = stringResource(R.string.card_movie_image),
-                            isSaved = movie.isSaved,
-                            onSavedClick = { listener.onSaveMoreLikeThisMedia(movie) },
-                            onClick = { listener.onMovieClick(movie.id) },
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .aspectRatio(2f / 3f)
-                        )
+                    state.moreLikeThisMovie.forEach { movie ->
+                        item {
+                            HomeCard(
+                                url = movie.imageUrl,
+                                contentDescription = stringResource(R.string.card_movie_image),
+                                isSaved = movie.isSaved,
+                                onSavedClick = { listener.onSaveMoreLikeThisMedia(movie) },
+                                onClick = { listener.onMovieClick(movie.id) },
+                                modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                            )
+
+                        }
                     }
                 }
-            }
 
+            }
             TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -321,28 +326,29 @@ private fun MovieDetailsContent(
                         size = 40,
                         backgroundColor = Theme.color.iconBackgroundLow,
                         isSaved = state.isSaved,
-                        onClick = { listener::onSaveCurrentMovieClick }
+                        onClick = { listener.onSaveCurrentMovieClick() }
                     )
                 }
             )
         }
+
     }
 
     RatingBottomSheet(
         isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType
                 == BottomSheetType.ShowRating,
-        onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
+        onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
         rate = state.userRating,
         onRateChanged = listener::onRatingChanged,
         isButtonEnabled = state.userRating != 0,
-        onSubmitClick = { listener::onClickSubmitRating }
+        onSubmitClick = { listener.onClickSubmitRating(rating = state.userRating) }
     )
 
     LoginRequiredSheet(
         isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType
                 == BottomSheetType.RequireLogin,
-        onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
-        onLoginClick = listener::onLoginClick,
+        onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+        onLoginClick = { listener.onLoginClick() },
         title = stringResource(R.string.rate_it),
         description = stringResource(R.string.please_login_to_rate)
     )
