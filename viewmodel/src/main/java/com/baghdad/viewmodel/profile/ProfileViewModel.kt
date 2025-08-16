@@ -35,10 +35,10 @@ class ProfileViewModel @Inject constructor(
     ProfileInteractionListener {
 
     init {
-        loadInitData()
+        loadData()
     }
 
-    private fun loadInitData() {
+    private fun loadData() {
         checkIsUserLoggedIn()
         getAppTheme()
         getAppLanguage()
@@ -50,7 +50,8 @@ class ProfileViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { getAppLanguageUseCase.invoke() }, onNewValue = { language ->
                 onGetAppLanguageSuccess(language)
-            }, onError = ::onError
+            }, onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -75,7 +76,8 @@ class ProfileViewModel @Inject constructor(
             onNewValue = { isDarkTheme ->
                 onGetAppThemeSuccess(isDarkTheme)
             },
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 

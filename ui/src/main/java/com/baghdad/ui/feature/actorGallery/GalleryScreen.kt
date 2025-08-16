@@ -67,7 +67,7 @@ fun GalleryScreen(
 }
 
 @Composable
-fun ActorGalleryScreenContent(
+private fun ActorGalleryScreenContent(
     uiState: ActorGalleryScreenState,
     listener: ActorGalleryInteractionListener,
     snackBarState: SnackBarState
@@ -78,6 +78,7 @@ fun ActorGalleryScreenContent(
             .systemBarsPadding()
             .statusBarsPadding(),
         isLoading = uiState.isLoading,
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -89,6 +90,7 @@ fun ActorGalleryScreenContent(
             )
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+
         topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClick,
@@ -96,11 +98,11 @@ fun ActorGalleryScreenContent(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .padding(top = 12.dp)
-            ) {}
+            )
         },
-        backgroundBlur = {
-            BackgroundBlur()
-        }) {
+
+        backgroundBlur = { BackgroundBlur() }
+    ) {
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize()) {
                 WavyLoadingIndicator(modifier = Modifier.align(Alignment.Center))
@@ -127,14 +129,15 @@ fun ActorGalleryScreenContent(
                             .size(104.dp)
                             .clip(RoundedCornerShape(12))
                             .border(1.dp, Theme.color.stroke)
-                            .clickable { listener.onGalleryImageClick(actorItem) }
+                            .clickable { listener::onGalleryImageClick }
                     )
                 }
             }
             if (uiState.selectedImageUrl.isNotBlank()) {
                 ActorImageDialog(
                     selectedImage = uiState.selectedImageUrl,
-                    onDismiss = { listener.onImageDialogDismiss() })
+                    onDismiss =  listener::onImageDialogDismiss
+                )
             }
 
         }
@@ -145,7 +148,3 @@ fun ActorGalleryScreenContent(
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
     return type.toStringResource()
 }
-
-
-
-

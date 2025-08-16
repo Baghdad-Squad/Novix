@@ -40,9 +40,11 @@ fun MyListsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
+
     MyListsScreenContent(
         uiState = uiState,
         listener = viewModel,
@@ -57,6 +59,7 @@ private fun MyListsScreenContent(
     snackBarState: SnackBarState,
 ) {
     val savedLists = uiState.savedLists.collectAsLazyPagingItems()
+
     Scaffold(
         isLoading = uiState.isLoading,
         topBar = {
@@ -74,7 +77,7 @@ private fun MyListsScreenContent(
                 message = stringResource(snackBarMessage(snackBarState.message)),
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
+                position = position
             )
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
@@ -82,12 +85,15 @@ private fun MyListsScreenContent(
             AnimatedVisibility(uiState.isUsedLoggedIn) {
                 FloatingActionButton(
                     painter = painterResource(R.drawable.ic_add),
-                    onClick = listener::onAddListFabClick,
+                    onClick = listener::onAddListFabClick
                 )
             }
         },
+
         backgroundBlur = { BackgroundBlur() }
+
     ) {
+
         AnimatedContent(
             targetState = savedLists.itemCount == 0 && uiState.isLoading.not(),
         ) { isEmptyList ->

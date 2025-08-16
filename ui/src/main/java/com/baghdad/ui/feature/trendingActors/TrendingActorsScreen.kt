@@ -74,6 +74,7 @@ private fun TrendingActorsContent(
             .statusBarsPadding()
             .padding(top = 12.dp),
         isLoading = uiState.isLoading,
+
         topBar = {
             TopAppBar(
                 modifier = Modifier.padding(vertical = 8.dp),
@@ -92,7 +93,9 @@ private fun TrendingActorsContent(
             )
         },
         backgroundBlur = { BackgroundBlur() },
+
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
