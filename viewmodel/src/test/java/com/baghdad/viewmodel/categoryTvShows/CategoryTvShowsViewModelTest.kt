@@ -4,10 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.baghdad.domain.usecase.genre.GetTvShowGenreNameByIdUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowsByGenreUseCase
-import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.TvShow
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState.TvShowUiState
 import com.baghdad.viewmodel.home.FakeHomeScreenData.tvShow
+import com.baghdad.viewmodel.topTvShowPicks.MockTvShow
 import com.google.common.truth.Truth.assertThat
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -66,6 +64,7 @@ class CategoryTvShowsViewModelTest {
 
     @Test
     fun `toUiState should map TvShow to TvShowUiState correctly`() {
+        val testTvShow = MockTvShow.TV_SHOW
         val expectedUiState = TvShowUiState(
             id = testTvShow.id,
             posterPictureURL = testTvShow.posterImageURL
@@ -94,26 +93,6 @@ class CategoryTvShowsViewModelTest {
             viewModel.onSnackBarActionLabelClick()
             assertThat(viewModel.snackBarState.value.isVisible).isFalse()
         }
-
-    companion object {
-
-        private val genre = Genre(id = 1L, name = "Comedy")
-
-        private val testTvShow = TvShow(
-            id = 1L,
-            title = "Test Tv Show",
-            genres = listOf(genre),
-            averageRating = 9.0,
-            userRating = null,
-            releaseDate = LocalDate.parse("2023-05-01"),
-            overview = "Test overview",
-            posterImageURL = "https://example.com/poster.jpg",
-            trailerURL = "https://example.com/trailer.mp4",
-            headerImagesURLs = listOf("header.jpg"),
-            numberOfSeasons = 3
-        )
-    }
-
 
     private fun createViewModel(): CategoryTvShowsViewModel {
         return CategoryTvShowsViewModel(
