@@ -109,12 +109,23 @@ class CategoryMoviesViewModel @Inject constructor(
                     movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
             },
+            onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
         )
     }
 
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
+        )
+    }
     private fun onSaveButtonClicked(
         listId: Long,
         itemId: Long,
@@ -376,7 +387,7 @@ class CategoryMoviesViewModel @Inject constructor(
     private fun getGenreMovies() {
         collectPagingFlow(
             loadData = { page ->
-                getGenreMoviesUseCase(categoryId, page)
+                getGenreMoviesUseCase(categoryId, page, DEFAULT_PAGE_SIZE)
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toUiState() },

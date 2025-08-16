@@ -3,10 +3,8 @@ package com.baghdad.viewmodel.movieDetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.ContinueWatching
-import com.baghdad.domain.model.MediaAccountStates
-import com.baghdad.domain.model.savedList.SavableMovie
-import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
+import com.baghdad.domain.model.continueWatching.UserWatchedMedia
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
 import com.baghdad.domain.usecase.movie.GetMovieAccountStatesUseCase
@@ -18,6 +16,7 @@ import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
+import com.baghdad.domain.usecase.userWatchedMedia.AddUserWatchedMediaUseCase
 import com.baghdad.entity.savedList.SavedList
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
@@ -26,8 +25,6 @@ import com.baghdad.viewmodel.shared.AddToListBottomSheetState
 import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.shared.SavedListUiState
 import com.baghdad.viewmodel.shared.toUiState
-import com.baghdad.viewmodel.util.roundToFirstDecimal
-import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -39,7 +36,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val getCastsInfoUseCase: GetMovieCastMembersUseCase,
     private val getMovieImagesUseCase: GetMovieGalleryUseCase,
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
-    private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
+    private val addUserWatchedMediaUseCase: AddUserWatchedMediaUseCase,
     private val ioDispatcher: CoroutineDispatcher,
     private val addMovieRateUseCase: AddMovieRateUseCase,
     private val getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase,
@@ -59,13 +56,12 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun loadInitData() {
-        checkIfUserIsLoggedIn()
-        getMovieGallery()
-        getMovieDetails()
-        getCastMembers()
-        getMoreLikeThisShow()
-        getMovieAccountStates()
-        isUserLoggedIn()
+            checkIfUserIsLoggedIn()
+            getMovieGallery()
+            getMovieDetails()
+            getCastMembers()
+            getMoreLikeThisShow()
+            isUserLoggedIn()
     }
 
     override fun onSaveCurrentMovieClick() {
@@ -78,13 +74,15 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun onAddItemToListSuccess() {
-        onSaveToListBottomSheetDismiss()
         refreshSavedItems()
+        onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
+
     }
 
     private fun refreshSavedItems() {
-        loadInitData()
+        getMovieDetails()
+        getMoreLikeThisShow()
         getUserSavedLists()
     }
 
@@ -190,6 +188,9 @@ class MovieDetailsViewModel @Inject constructor(
             BottomSheetType.ShowRating
         } else {
             BottomSheetType.RequireLogin
+        }
+        if (isLoggedIn) {
+            getMovieAccountStates()
         }
 
         updateState {
@@ -335,10 +336,22 @@ class MovieDetailsViewModel @Inject constructor(
                     movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
             },
+            onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
             dispatcher = ioDispatcher,
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
+        )
+    }
+
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
         )
     }
 
@@ -445,10 +458,10 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onGetMovieAccountStatesSuccess(accountStates: MediaAccountStates) {
+    private fun onGetMovieAccountStatesSuccess(isMovieRated: Boolean) {
         updateState {
             it.copy(
-                isRated = accountStates.isMediaRated,
+                isRated = isMovieRated,
             )
         }
     }
@@ -548,27 +561,8 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { state -> state.copy(isMovieDetailsLoading = true) }
     }
 
-    private fun onGetMovieDetailsSuccess(details: SavableMovie) {
-        updateState { state ->
-            state.copy(
-                movieName = details.movie.title,
-                movieTrailerURL = details.movie.trailerURL,
-                overView = details.movie.overview,
-                rating = details.movie.averageRating.roundToFirstDecimal(),
-                duration = details.movie.runtimeMinutes,
-                posterImageURL = details.movie.posterImageURL,
-                date = details.movie.releaseDate.toDDMMYYYYFormat(),
-                isSaved = details.isSaved,
-                savedListId = details.listId ?: -1,
-                categories =
-                    details.movie.genres.map {
-                    MovieDetailsState.CategoryUiState(
-                        id = it.id,
-                        name = it.name
-                    )
-                }
-            )
-        }
+    private fun onGetMovieDetailsSuccess(details: SavedMovie) {
+        updateState(details.toMovieDetailsStateUpdate())
     }
 
     private fun getCastMembers() {
@@ -576,14 +570,7 @@ class MovieDetailsViewModel @Inject constructor(
             callee = { getCastsInfoUseCase(movieId) },
             onSuccess = { actors ->
                 onGetMovieCastSuccess(
-                    actors = actors.map { actor ->
-                        MovieDetailsState.ActorCardInfo(
-                            name = actor.actor.name,
-                            imageUrl = actor.actor.profilePictureURL,
-                            characterName = actor.characterName,
-                            id = actor.actor.id.toInt()
-                        )
-                    }
+                    actors = actors.map { it.toActorCardInfo() }
                 )
             },
             onStart = ::onGetCastMembersStarted,
@@ -619,20 +606,9 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { state -> state.copy(isMoreLikeThisMovieLoading = false) }
     }
 
-    private fun onGetMovieMoreLikeThisSuccess(savableMovies: List<SavableMovie>) {
-        hideSnackBar()
+    private fun onGetMovieMoreLikeThisSuccess(savedMovies: List<SavedMovie>) {
         updateState { state ->
-            state.copy(
-                moreLikeThisMovie =
-                    savableMovies.map { savableMovie ->
-                        MovieDetailsState.MoreLikeThisMovie(
-                            imageUrl = savableMovie.movie.posterImageURL,
-                            id = savableMovie.movie.id,
-                            isSaved = savableMovie.isSaved,
-                            savedListId = savableMovie.listId ?: -1L
-                    )
-                },
-                    )
+            state.copy(moreLikeThisMovie = savedMovies.map { it.toMoreLikeThisMovie() })
         }
     }
 
@@ -653,10 +629,10 @@ class MovieDetailsViewModel @Inject constructor(
         tryToExecute(
             dispatcher = ioDispatcher,
             callee = {
-                addContinueWatchingUseCase(
+                addUserWatchedMediaUseCase(
                     movieId, currentState.categories.map { it.id },
                     contentImageUrl = currentState.posterImageURL,
-                    contentType = ContinueWatching.ContentType.MOVIE,
+                    contentType = UserWatchedMedia.ContentType.MOVIE,
                 )
             },
         )

@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -29,14 +30,13 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.feature.component.EmptyListScreen
 import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.savedListDetails.component.ConfirmListDeletionBottomSheet
-import com.baghdad.ui.feature.savedListDetails.component.EmptyListScreen
 import com.baghdad.ui.navigation.graph.myLists.MyListsNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
 import com.baghdad.viewmodel.savedListDetails.SavedListDetailsEffect
 import com.baghdad.viewmodel.savedListDetails.SavedListDetailsInteractionListener
 import com.baghdad.viewmodel.savedListDetails.SavedListDetailsScreenState
@@ -53,12 +53,10 @@ fun SavedListDetailsScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
 
     SavedListDetailsContent(
         uiState = uiState,
         listener = viewModel,
-        mediaItems = mediaItems,
         snackBar = snackBarState
     )
 }
@@ -69,7 +67,6 @@ private fun handleEffect(
 ) {
     when (effect) {
         is SavedListDetailsEffect.NavigateBack -> handleNavigation(MyListsNavEvent.NavigateToMyLists)
-
         is SavedListDetailsEffect.NavigateToMovieDetails ->
             handleNavigation(MyListsNavEvent.NavigateToMovieDetails(effect.movieId))
 
@@ -80,36 +77,19 @@ private fun handleEffect(
 fun SavedListDetailsContent(
     uiState: SavedListDetailsScreenState,
     listener: SavedListDetailsInteractionListener,
-    mediaItems: LazyPagingItems<SavedListDetailsScreenState.SavedListDetailsMovieUiState>,
     snackBar: SnackBarState,
 ) {
+    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
+
     Scaffold(
         modifier = Modifier.background(Theme.color.surface),
+        backgroundBlur = { BackgroundBlur() },
         isLoading = uiState.isLoading,
         topBar = {
-            Column {
-                TopAppBar(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .statusBarsPadding()
-                        .padding(top = 22.dp, bottom = 8.dp)
-                        .background(Theme.color.surface),
-                    onGoBackClick = { listener.onBackClick() },
-                    screenTitle = uiState.savedList.name,
-                    maxLines = 1,
-                    textEllipsize = TextOverflow.Ellipsis
-                ) {
-                    IconButton(
-                        icon = painterResource(com.baghdad.design_system.R.drawable.ic_delete),
-                        tintIcon = Theme.color.redAccent,
-                        onClick = {
-                            listener.onDeleteClick()
-                        },
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                }
-
-            }
+            SavedListDetailTopBar(
+                uiState = uiState,
+                listener = listener
+            )
         },
         snackbar = { position ->
             SnackBar(
@@ -129,7 +109,7 @@ fun SavedListDetailsContent(
             if (isEmptyList) {
                 EmptyListScreen()
             } else {
-                ShowSavedList(listener, mediaItems)
+                ListContent(listener, mediaItems)
             }
         }
 
@@ -142,9 +122,38 @@ fun SavedListDetailsContent(
         )
     }
 }
+@Composable
+private fun SavedListDetailTopBar(
+    uiState: SavedListDetailsScreenState,
+    listener: SavedListDetailsInteractionListener
+) {
+    Column {
+        TopAppBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(top = 22.dp, bottom = 8.dp)
+                .background(Theme.color.surface),
+            onGoBackClick = { listener.onBackClick() },
+            screenTitle = uiState.savedList.name,
+            maxLines = 1,
+            textEllipsize = TextOverflow.Ellipsis
+        ) {
+            IconButton(
+                icon = painterResource(com.baghdad.design_system.R.drawable.ic_delete),
+                tintIcon = Theme.color.redAccent,
+                onClick = {
+                    listener.onDeleteClick()
+                },
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+
+    }
+}
 
 @Composable
-fun ShowSavedList(
+private fun ListContent(
     listener: SavedListDetailsInteractionListener,
     mediaItems: LazyPagingItems<SavedListDetailsScreenState.SavedListDetailsMovieUiState>
 ) {
@@ -175,8 +184,5 @@ fun ShowSavedList(
 
 @Composable
 private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return when (type) {
-        SearchSnackBarMessage.SavedItemSuccessfully -> R.string.snackbar_saved_success
-        else -> type.toStringResource()
-    }
+    return type.toStringResource()
 }

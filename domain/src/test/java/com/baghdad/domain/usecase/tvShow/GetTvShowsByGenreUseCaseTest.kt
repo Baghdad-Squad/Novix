@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.tvShow
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
@@ -34,8 +34,8 @@ class GetTvShowsByGenreUseCaseTest {
                 sampleTvShow.copy(id = 1, title = "Breaking Bad"),
                 sampleTvShow.copy(id = 2, title = "The Sopranos")
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         coEvery {
             tvShowRepository.getTvShowsByGenre(
@@ -46,7 +46,7 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        val result = getTvShowsByGenreUseCase(genreId, page)
+        val result = getTvShowsByGenreUseCase(genreId, page, PAGE_SIZE)
 
         // Then
         assertThat(result.data).hasSize(2)
@@ -60,8 +60,8 @@ class GetTvShowsByGenreUseCaseTest {
         val page = 1
         val expectedShows = PagedResult(
             data = emptyList<TvShow>(),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         coEvery {
             tvShowRepository.getTvShowsByGenre(
@@ -72,7 +72,7 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        val result = getTvShowsByGenreUseCase(genreId, page)
+        val result = getTvShowsByGenreUseCase(genreId, page, PAGE_SIZE)
 
         // Then
         assertThat(result.data).isEmpty()
@@ -88,8 +88,8 @@ class GetTvShowsByGenreUseCaseTest {
                 sampleTvShow.copy(id = 1, title = "Breaking Bad"),
                 sampleTvShow.copy(id = 2, title = "The Sopranos")
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         coEvery {
             tvShowRepository.getTvShowsByGenre(
@@ -100,7 +100,7 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        getTvShowsByGenreUseCase(genreId, page)
+        getTvShowsByGenreUseCase(genreId, page, PAGE_SIZE)
 
         // Then
         coVerify(exactly = 1) { tvShowRepository.getTvShowsByGenre(genreId, page, pageSize = 20) }
@@ -115,23 +115,23 @@ class GetTvShowsByGenreUseCaseTest {
                 sampleTvShow.copy(id = 1, title = "Breaking Bad"),
                 sampleTvShow.copy(id = 2, title = "The Sopranos")
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         val page2Shows = PagedResult(
             data = listOf(
                 sampleTvShow.copy(id = 3, title = "The Crown"),
                 sampleTvShow.copy(id = 4, title = "The Office")
             ),
-            nextKey = 3,
-            prevKey = 1
+            nextPage = 3,
+            prevPage = 1
         )
         coEvery { tvShowRepository.getTvShowsByGenre(genreId, 1, pageSize = 20) } returns page1Shows
         coEvery { tvShowRepository.getTvShowsByGenre(genreId, 2, pageSize = 20) } returns page2Shows
 
         // When
-        val resultPage1 = getTvShowsByGenreUseCase(genreId, 1)
-        val resultPage2 = getTvShowsByGenreUseCase(genreId, 2)
+        val resultPage1 = getTvShowsByGenreUseCase(genreId, 1, PAGE_SIZE)
+        val resultPage2 = getTvShowsByGenreUseCase(genreId, 2, PAGE_SIZE)
 
         // Then
         assertThat(resultPage1.data.map { it.id }).containsExactly(1L, 2L)
@@ -146,23 +146,23 @@ class GetTvShowsByGenreUseCaseTest {
                 sampleTvShow.copy(id = 1, title = "The Crown"),
                 sampleTvShow.copy(id = 2, title = "The Sopranos")
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         val comedyShows = PagedResult(
             data = listOf(
                 sampleTvShow.copy(id = 3, title = "The Office"),
                 sampleTvShow.copy(id = 4, title = "The Simpsons")
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         coEvery { tvShowRepository.getTvShowsByGenre(18L, 1, pageSize = 20) } returns dramaShows // Drama
         coEvery { tvShowRepository.getTvShowsByGenre(35L, 1, pageSize = 20) } returns comedyShows // Comedy
 
         // When
-        val dramaResult = getTvShowsByGenreUseCase(18L, 1)
-        val comedyResult = getTvShowsByGenreUseCase(35L, 1)
+        val dramaResult = getTvShowsByGenreUseCase(18L, 1, PAGE_SIZE)
+        val comedyResult = getTvShowsByGenreUseCase(35L, 1, PAGE_SIZE)
 
         // Then
         assertThat(dramaResult.data[0].title).isEqualTo("The Crown")
@@ -179,8 +179,8 @@ class GetTvShowsByGenreUseCaseTest {
         }
         val expectedShows = PagedResult(
             data = largeList,
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         coEvery {
             tvShowRepository.getTvShowsByGenre(
@@ -191,7 +191,7 @@ class GetTvShowsByGenreUseCaseTest {
         } returns expectedShows
 
         // When
-        val result = getTvShowsByGenreUseCase(genreId, page)
+        val result = getTvShowsByGenreUseCase(genreId, page, PAGE_SIZE)
 
         // Then
         assertThat(result.data).hasSize(50)
@@ -206,11 +206,12 @@ class GetTvShowsByGenreUseCaseTest {
             overview = "Sample overview",
             genres = listOf(Genre(id = 18L, name = "Drama")),
             averageRating = 9.5,
-            userRating = 8.5,
+            userRating = 8,
             releaseDate = LocalDate(2020, 1, 1),
             trailerURL = "sample_trailer.mp4",
             headerImagesURLs = listOf("/header1.jpg", "/header2.jpg"),
             numberOfSeasons = 5,
         )
+        private const val PAGE_SIZE = 20
     }
 }

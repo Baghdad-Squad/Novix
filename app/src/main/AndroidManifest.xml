@@ -17,7 +17,7 @@
         android:localeConfig="@xml/locales_config"
         tools:targetApi="33">
         <activity
-            android:name="com.baghdad.novix.MainActivity"
+            android:name="com.baghdad.ui.MainActivity"
             android:label="@string/app_name"
             android:exported="true"
             android:theme="@style/Theme.Novix">

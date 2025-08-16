@@ -1,11 +1,11 @@
 package com.baghdad.repository
 
 import com.baghdad.domain.repository.AuthenticationRepository
-import com.baghdad.entity.User
-import com.baghdad.repository.datasource.local.LocalSessionDataStore
-import com.baghdad.repository.datasource.local.LocalUserDataStore
+import com.baghdad.entity.user.User
+import com.baghdad.repository.datasource.local.SessionDataSource
+import com.baghdad.repository.datasource.local.UserDataSource
 import com.baghdad.repository.datasource.remote.RemoteAuthenticationDataSource
-import com.baghdad.repository.model.toEntity
+import com.baghdad.repository.mapper.toEntity
 import com.baghdad.repository.util.executeLoginSafely
 import com.baghdad.repository.util.executeSafely
 import javax.inject.Inject
@@ -14,50 +14,71 @@ import javax.inject.Singleton
 @Singleton
 class AuthenticationRepositoryImpl @Inject constructor(
     private val remoteAuthenticationDataSource: RemoteAuthenticationDataSource,
-    private val localSessionDataStore: LocalSessionDataStore,
-    private val localUserDataStore: LocalUserDataStore
+    private val sessionDataSource: SessionDataSource,
+    private val userDataSource: UserDataSource
 ) : AuthenticationRepository {
+
+    override suspend fun isUserLoggedIn(): Boolean {
+        return executeSafely { sessionDataSource.getSessionId() != null }
+    }
+
+    override suspend fun getUserInfo(): User? {
+        return userDataSource.getUser()?.toEntity()
+    }
+
+    override suspend fun logOut(): Boolean {
+        return executeSafely {
+            sessionDataSource.getSessionId()?.let { sessionId ->
+                remoteAuthenticationDataSource.deleteSession(sessionId = sessionId)
+                sessionDataSource.deleteSessionId()
+                true
+            } ?: false
+        }
+    }
+
     override suspend fun login(userName: String, password: String) {
-        return executeLoginSafely {
-            val requestToken = remoteAuthenticationDataSource.getRequestToken()
-            val validatedRequestToken = remoteAuthenticationDataSource.validateCredentialWithToken(
+        executeLoginSafely {
+            val requestToken = getRequestToken()
+            val validatedToken = validateCredentials(
                 userName = userName,
                 password = password,
                 requestToken = requestToken
             )
-            val sessionId = remoteAuthenticationDataSource.createSession(validatedRequestToken)
-            val user = remoteAuthenticationDataSource.getUserDetails(sessionId)
-            localSessionDataStore.saveSessionId(sessionId)
-            localUserDataStore.saveUser(
-                id = user.id,
-                userName = user.userName,
-                imageUrl = user.imageUrl.orEmpty()
-            )
+            val sessionId = createSession(validatedToken = validatedToken)
+            saveSession(sessionId = sessionId)
+            saveUserDetails(sessionId = sessionId)
         }
     }
 
-
-    override suspend fun isUserLoggedIn(): Boolean {
-        return localSessionDataStore.getSessionId() != null
+    private suspend fun getRequestToken(): String {
+        return remoteAuthenticationDataSource.getRequestToken()
     }
 
-    override suspend fun getLoggedInUser(): User? {
-        return localUserDataStore.getUser()?.toEntity()
+    private suspend fun validateCredentials(
+        userName: String,
+        password: String,
+        requestToken: String
+    ): String {
+        return remoteAuthenticationDataSource.validateCredentialWithToken(
+            userName = userName,
+            password = password,
+            requestToken = requestToken
+        )
     }
 
+    private suspend fun createSession(validatedToken: String): String =
+        remoteAuthenticationDataSource.createSession(requestToken = validatedToken)
 
-    override suspend fun logOut(): Boolean {
-        return executeSafely {
-            val sessionId = localSessionDataStore.getSessionId()
-            if (sessionId != null) {
-                remoteAuthenticationDataSource.deleteSession(sessionId)
-                localSessionDataStore.deleteSessionId()
-                true
-            } else {
-                false
-            }
-        }
+    private suspend fun saveSession(sessionId: String) =
+        sessionDataSource.saveSessionId(sessionId = sessionId)
 
-
+    private suspend fun saveUserDetails(sessionId: String) {
+        val user = remoteAuthenticationDataSource.getUserDetails(sessionId = sessionId)
+        userDataSource.saveUser(
+            id = user.id,
+            userName = user.userName,
+            imageUrl = user.imageUrl.orEmpty()
+        )
     }
+
 }

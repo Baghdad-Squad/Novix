@@ -14,5 +14,5 @@ data class Episode(
     val userRating: Int?,
     val overview: String,
     val genres: List<Genre>,
-    val headerPictures: List<String>,
+    val headerPictures: List<String>
 )

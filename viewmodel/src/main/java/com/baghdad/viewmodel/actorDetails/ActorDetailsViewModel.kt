@@ -3,7 +3,7 @@ package com.baghdad.viewmodel.actorDetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
 import com.baghdad.domain.usecase.actor.GetActorInfoUseCase
 import com.baghdad.domain.usecase.actor.GetActorMoviesUseCase
@@ -90,12 +90,12 @@ class ActorDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onGetSavedListFlowCreated(flow: Flow<PagingData<SavedListUiState>>) {
+    private fun onGetSavedListFlowCreated(savedLists: Flow<PagingData<SavedListUiState>>) {
         updateState {
             it.copy(
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
-                        savedLists = flow,
+                        savedLists = savedLists,
                     ),
             )
         }
@@ -120,7 +120,8 @@ class ActorDetailsViewModel @Inject constructor(
     private fun onGetActorInfoSuccess(actor: Actor) {
         updateState { actorDetailsScreenState ->
             actorDetailsScreenState.copy(
-                actorInfo = actor.toActorInfoUI(),
+                actorInfo = actor.toActorInfoUI()
+                    .copy(headerPictures = actor.headerPictures.take(MAX_ACTOR_IMAGES)),
             )
         }
     }
@@ -169,8 +170,8 @@ class ActorDetailsViewModel @Inject constructor(
         )
     }
 
-        private fun onGetActorMoviesSuccess(movies: List<SavableMovie>) {
-            updateState { actorDetailsScreenState ->
+    private fun onGetActorMoviesSuccess(movies: List<SavedMovie>) {
+        updateState { actorDetailsScreenState ->
             actorDetailsScreenState.copy(
                 topMoviesPicks = movies.take(MAX_TOP_MOVIE_PICKS).map { it.toMovieUI() },
             )
@@ -276,6 +277,18 @@ class ActorDetailsViewModel @Inject constructor(
             dispatcher = ioDispatcher,
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
+            onError = { onAddItemToListError() }
+        )
+    }
+
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
         )
     }
 
@@ -313,7 +326,7 @@ class ActorDetailsViewModel @Inject constructor(
     }
 
     private fun onRemoveSavedItemSuccess() {
-            refreshSavedItems()
+        refreshSavedItems()
         showItemRemovedSuccessfullySnackBar()
     }
 
@@ -359,13 +372,13 @@ class ActorDetailsViewModel @Inject constructor(
 
     private fun onAddItemToListSuccess() {
         onSaveToListBottomSheetDismiss()
-            refreshSavedItems()
+        refreshSavedItems()
         showItemSavedSuccessfullySnackBar()
-        }
+    }
 
-        private fun refreshSavedItems() {
-            getActorMovies(actorId)
-            getUserSavedLists()
+    private fun refreshSavedItems() {
+        getActorMovies(actorId)
+        getUserSavedLists()
     }
 
     private fun showItemSavedSuccessfullySnackBar() {
@@ -440,9 +453,9 @@ class ActorDetailsViewModel @Inject constructor(
                 addListBottomSheetState =
                     it.addListBottomSheetState.copy(
                         isVisible = false,
-                            listName = "",
-                            isLoading = false,
-                        ),
+                        listName = "",
+                        isLoading = false,
+                    ),
                 addToListBottomSheetState =
                     it.addToListBottomSheetState.copy(
                         isVisible = true,
@@ -463,6 +476,14 @@ class ActorDetailsViewModel @Inject constructor(
             onStart = ::onCreateListStart,
             onFinally = ::onCreateListFinished,
         )
+    }
+
+    override fun onGalleryImageClick(imageUrl: String) {
+        updateState { it.copy(selectedImageUrl = imageUrl) }
+    }
+
+    override fun onImageDialogDismiss() {
+        updateState { it.copy(selectedImageUrl = "") }
     }
 
     private fun onCreateListSuccess() {
@@ -497,5 +518,6 @@ class ActorDetailsViewModel @Inject constructor(
         private const val MAX_TOP_MOVIE_PICKS = 10
         private const val MAX_TOP_TV_SHOW_PICKS = 10
         private const val DEFAULT_PAGE_SIZE = 20
+        private const val MAX_ACTOR_IMAGES = 10
     }
 }

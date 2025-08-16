@@ -2,126 +2,153 @@ package com.baghdad.remoteDataSource.mapper.movie
 
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse
 import com.baghdad.remoteDataSource.response.movie.TrendingMovieResponse.Result
+import com.baghdad.repository.model.GenreDto
+import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.PagedResultDto
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class TrendingMovieResponseMapperTest {
 
-    @Test
-    fun `should return empty list when results is null`() {
-        // Given
-        val response = TrendingMovieResponse(page = 1, totalPages = 5, results = null)
-
-        // When
-        val result = response.toMovieDtos()
-
-        // Then
-        assertThat(result.data).isEmpty()
-        assertThat(result.nextKey).isNotNull()
-        assertThat(result.prevKey).isNull()
-    }
-
-    @Test
-    fun `should skip movies when id is null`() {
-        // Given
-        val response = TrendingMovieResponse(
+    companion object {
+        private val COMPLETE_RESPONSE = TrendingMovieResponse(
             page = 1,
-            totalPages = 3,
-            results = listOf(Result(id = null))
-        )
-
-        // When
-        val result = response.toMovieDtos()
-
-        // Then
-        assertThat(result.data).isEmpty()
-    }
-
-    @Test
-    fun `should map movies correctly when results contain valid data`() {
-        // Given
-        val response = TrendingMovieResponse(
-            page = 1,
-            totalPages = 3,
+            totalPages = 10,
             results = listOf(
                 Result(
-                    id = 101L,
-                    title = "Dune",
-                    posterPath = "/poster.jpg",
-                    backdropPath = "/backdrop.jpg",
-                    overview = "Epic sci-fi movie",
-                    releaseDate = "2021-10-22",
-                    voteAverage = 8.2,
-                    popularity = 100.5,
-                    genreIds = listOf(12, 18)
+                    id = 123L,
+                    title = "Inception",
+                    posterPath = "/inception.jpg",
+                    backdropPath = "/inception_bg.jpg",
+                    overview = "A thief who steals corporate secrets...",
+                    releaseDate = "2010-07-16",
+                    voteAverage = 8.4,
+                    popularity = 85.5,
+                    genreIds = listOf(28L, 878L)
                 )
             )
         )
 
-        // When
-        val result = response.toMovieDtos()
+        private val EXPECTED_COMPLETE_DTO = PagedResultDto(
+            data = listOf(
+                MovieDto(
+                    id = 123L,
+                    title = "Inception",
+                    posterPictureURL = "https://image.tmdb.org/t/p/w500/inception.jpg",
+                    trailerURL = "https://image.tmdb.org/t/p/w500/inception_bg.jpg",
+                    overview = "A thief who steals corporate secrets...",
+                    releaseDate = "2010-07-16",
+                    imdbRating = 8.4,
+                    runtimeMinutes = 0,
+                    userRating = 85.5,
+                    genres = listOf(
+                        GenreDto(28L, "", GenreDto.GenreType.MOVIE),
+                        GenreDto(878L, "", GenreDto.GenreType.MOVIE)
+                    )
+                )
+            ),
+            nextKey = 2,
+            prevKey = null
+        )
 
-        // Then
-        assertThat(result.data).hasSize(1)
-        val movie = result.data.first()
-        assertThat(movie.id).isEqualTo(response.results?.first()?.id)
-        assertThat(movie.title).isEqualTo(response.results?.first()?.title)
-        assertThat(movie.posterPictureURL)
-            .isEqualTo("https://image.tmdb.org/t/p/w500${response.results?.first()?.posterPath}")
-        assertThat(movie.trailerURL)
-            .isEqualTo("https://image.tmdb.org/t/p/w500${response.results?.first()?.backdropPath}")
-        assertThat(movie.overview).isEqualTo(response.results?.first()?.overview)
-        assertThat(movie.releaseDate).isEqualTo(response.results?.first()?.releaseDate)
-        assertThat(movie.imdbRating).isEqualTo(response.results?.first()?.voteAverage)
-        assertThat(movie.userRating).isEqualTo(response.results?.first()?.popularity)
-        assertThat(movie.genres).hasSize(2)
-        assertThat(movie.genres.first().id)
-            .isEqualTo(response.results?.first()?.genreIds?.first()?.toLong())
-    }
+        private val NULL_VALUES_RESPONSE = TrendingMovieResponse(
+            page = null,
+            totalPages = null,
+            results = null
+        )
 
-    @Test
-    fun `should set nextKey to null when on last page`() {
-        // Given
-        val response = TrendingMovieResponse(
+        private val EXPECTED_NULL_VALUES_DTO = PagedResultDto<MovieDto>(
+            data = emptyList(),
+            nextKey = null,
+            prevKey = null
+        )
+
+        private val FIRST_PAGE_RESPONSE = TrendingMovieResponse(
+            page = 1,
+            totalPages = 5,
+            results = emptyList()
+        )
+
+        private val EXPECTED_FIRST_PAGE_DTO = PagedResultDto<MovieDto>(
+            data = emptyList(),
+            nextKey = 2,
+            prevKey = null
+        )
+
+        private val LAST_PAGE_RESPONSE = TrendingMovieResponse(
+            page = 5,
+            totalPages = 5,
+            results = emptyList()
+        )
+
+        private val EXPECTED_LAST_PAGE_DTO = PagedResultDto<MovieDto>(
+            data = emptyList(),
+            nextKey = null,
+            prevKey = 4
+        )
+
+        private val MIDDLE_PAGE_RESPONSE = TrendingMovieResponse(
             page = 3,
-            totalPages = 3,
-            results = listOf(Result(id = 1, title = "Last Page Movie"))
+            totalPages = 5,
+            results = emptyList()
         )
 
-        // When
-        val result = response.toMovieDtos()
-
-        // Then
-        assertThat(result.nextKey).isNull()
-        assertThat(result.prevKey).isNotNull()
+        private val EXPECTED_MIDDLE_PAGE_DTO = PagedResultDto<MovieDto>(
+            data = emptyList(),
+            nextKey = 4,
+            prevKey = 2
+        )
     }
 
     @Test
-    fun `should use defaults when optional fields are null`() {
-        // Given
-        val result = Result(
-            id = 200L,
-            title = null,
-            posterPath = null,
-            backdropPath = null,
-            overview = null,
-            releaseDate = null,
-            voteAverage = null,
-            popularity = null,
-            genreIds = null
+    fun `should convert complete TrendingMovieResponse to PagedResultDto`() {
+        val result = COMPLETE_RESPONSE.toPagedMovieDtos()
+
+        assertThat(result).isEqualTo(EXPECTED_COMPLETE_DTO)
+    }
+
+    @Test
+    fun `should handle null values in TrendingMovieResponse`() {
+        val result = NULL_VALUES_RESPONSE.toPagedMovieDtos()
+
+        assertThat(result).isEqualTo(EXPECTED_NULL_VALUES_DTO)
+    }
+
+    @Test
+    fun `should set correct pagination keys for first page`() {
+        val result = FIRST_PAGE_RESPONSE.toPagedMovieDtos()
+
+        assertThat(result).isEqualTo(EXPECTED_FIRST_PAGE_DTO)
+    }
+
+    @Test
+    fun `should set correct pagination keys for last page`() {
+        val result = LAST_PAGE_RESPONSE.toPagedMovieDtos()
+
+        assertThat(result).isEqualTo(EXPECTED_LAST_PAGE_DTO)
+    }
+
+    @Test
+    fun `should set correct pagination keys for middle page`() {
+        val result = MIDDLE_PAGE_RESPONSE.toPagedMovieDtos()
+
+        assertThat(result).isEqualTo(EXPECTED_MIDDLE_PAGE_DTO)
+    }
+
+    @Test
+    fun `should filter out results with null id`() {
+        val response = TrendingMovieResponse(
+            page = 1,
+            totalPages = 1,
+            results = listOf(
+                Result(id = 1L, title = "Valid"),
+                Result(id = null, title = "Invalid"),
+                Result(id = 2L, title = "Valid")
+            )
         )
 
-        // When
-        val movie = result.toDto()
+        val result = response.toPagedMovieDtos()
 
-        // Then
-        assertThat(movie.title).isEmpty()
-        assertThat(movie.posterPictureURL).isEmpty()
-        assertThat(movie.trailerURL).isEmpty()
-        assertThat(movie.overview).isEmpty()
-        assertThat(movie.releaseDate).isEmpty()
-        assertThat(movie.imdbRating).isEqualTo(0.0)
-        assertThat(movie.userRating).isEqualTo(0.0)
-        assertThat(movie.genres).isEmpty()
+        assertThat(result.data.map { it.title }).containsExactly("Valid", "Valid")
     }
 }

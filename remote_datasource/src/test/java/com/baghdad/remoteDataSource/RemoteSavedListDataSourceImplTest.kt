@@ -1,461 +1,375 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.SavedListApiService
+import com.baghdad.remoteDataSource.request.AddListItemRequest
 import com.baghdad.remoteDataSource.request.CreateListRequest
-import com.baghdad.remoteDataSource.response.UserListDto
-import com.baghdad.remoteDataSource.response.UserListsResponse
+import com.baghdad.remoteDataSource.request.RemoveListItemRequest
 import com.baghdad.remoteDataSource.response.savedList.AddListItemResponse
 import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
 import com.baghdad.remoteDataSource.response.savedList.DeleteSavedListResponse
 import com.baghdad.remoteDataSource.response.savedList.ListDetailsResponse
 import com.baghdad.remoteDataSource.response.savedList.RemoveListItemResponse
-import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
-import com.baghdad.repository.exception.ItemCreationFailedException
-import com.baghdad.repository.exception.UnknownNetworkException
+import com.baghdad.remoteDataSource.response.savedList.UserListsResponse
 import com.baghdad.repository.logger.Logger
-import com.baghdad.repository.model.savedList.SavedListItemDto
+import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.SavedListDto
+import com.baghdad.repository.model.savedList.SavableMovieDto
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.test.runTest
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import retrofit2.Response
 
 class RemoteSavedListDataSourceImplTest {
-    private lateinit var savedListApiService: SavedListApiService
-    private lateinit var logger: Logger
-    private lateinit var remoteSource: RemoteSavedListDataSource
-
-    @BeforeEach
-    fun setUp() {
-        savedListApiService = mockk(relaxed = true)
-        logger = mockk(relaxed = true)
-        remoteSource = RemoteSavedListDataSourceImpl(savedListApiService, logger)
-    }
-
-    val title = "Favorites"
-    val sessionId = "1"
-    val listId = 22L
-    val movieId = 2L
-    val tvShowId = 2002L
+    private val savedListApiService = mockk<SavedListApiService>()
+    private val logger = mockk<Logger>(relaxed = true)
+    private val dataSource = RemoteSavedListDataSourceImpl(savedListApiService, logger)
 
     @Test
-    fun `should createSavedList succeed when response is successful`() = runTest {
-        // Given
-        val response = CreateSavedListResponse(success = true)
+    fun `should create saved list when createSavedList is called with valid parameters`() = runTest {
+        val successResponse = Response.success(createSavedListResponse)
+        coEvery { savedListApiService.createSavedList(createListRequest) } returns successResponse
 
-        coEvery { savedListApiService.createSavedList(any(), any()) } returns mockk {
-            every { body() } returns response
-            every { isSuccessful } returns true
-        }
+        dataSource.createSavedList(LIST_TITLE)
 
-        // When
-        remoteSource.createSavedList(title, sessionId)
+        coVerify(exactly = 1) { savedListApiService.createSavedList(createListRequest) }
+    }
 
-        // Then
-        coVerify {
-            savedListApiService.createSavedList(
-                CreateListRequest(name = title),
-                sessionId = sessionId
+    @Test
+    fun `should handle null response when createSavedList is called`() = runTest {
+        val successResponse = Response.success(createSavedListResponseWithNulls)
+        coEvery { savedListApiService.createSavedList(createListRequest) } returns successResponse
+
+        dataSource.createSavedList(LIST_TITLE)
+
+        coVerify(exactly = 1) { savedListApiService.createSavedList(createListRequest) }
+    }
+
+    @Test
+    fun `should return paged saved lists when getSavedLists is called`() = runTest {
+        val successResponse = Response.success(userListsResponse)
+        coEvery { savedListApiService.getSavedLists(ACCOUNT_ID, PAGE) } returns successResponse
+
+        val result = dataSource.getSavedLists(PAGE, PAGE_SIZE, ACCOUNT_ID)
+
+        assertThat(result.data).hasSize(1)
+        assertThat(result.data[0]).isEqualTo(expectedSavedListDto)
+        assertThat(result.nextKey).isEqualTo(2)
+        assertThat(result.prevKey).isNull()
+        coVerify(exactly = 1) { savedListApiService.getSavedLists(ACCOUNT_ID, PAGE) }
+    }
+
+    @Test
+    fun `should return empty list when getSavedLists receives empty results`() = runTest {
+        val successResponse = Response.success(userListsResponseEmpty)
+        coEvery { savedListApiService.getSavedLists(ACCOUNT_ID, PAGE) } returns successResponse
+
+        val result = dataSource.getSavedLists(PAGE, PAGE_SIZE, ACCOUNT_ID)
+
+        assertThat(result.data).isEmpty()
+        assertThat(result.nextKey).isNull()
+        assertThat(result.prevKey).isNull()
+    }
+
+    @Test
+    fun `should return empty list when getSavedLists receives null results`() = runTest {
+        val successResponse = Response.success(userListsResponseNullResults)
+        coEvery { savedListApiService.getSavedLists(ACCOUNT_ID, PAGE) } returns successResponse
+
+        val result = dataSource.getSavedLists(PAGE, PAGE_SIZE, ACCOUNT_ID)
+
+        assertThat(result.data).isEmpty()
+    }
+
+    @Test
+    fun `should return saved list details when getSavedListDetails is called`() = runTest {
+        val successResponse = Response.success(listDetailsResponse)
+        coEvery { savedListApiService.getListDetails(LIST_ID, PAGE) } returns successResponse
+
+        val result = dataSource.getSavedListDetails(LIST_ID, PAGE, PAGE_SIZE)
+
+        assertThat(result.savedList).isEqualTo(expectedSavedListDto)
+        assertThat(result.pagedItems.data).hasSize(1)
+        assertThat(result.pagedItems.data[0]).isEqualTo(expectedSavableMovieDto)
+        coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID, PAGE) }
+    }
+
+    @Test
+    fun `should handle null fields in getSavedListDetails`() = runTest {
+        val successResponse = Response.success(listDetailsResponseWithNulls)
+        coEvery { savedListApiService.getListDetails(LIST_ID, PAGE) } returns successResponse
+
+        val result = dataSource.getSavedListDetails(LIST_ID, PAGE, PAGE_SIZE)
+
+        assertThat(result.savedList.id).isEqualTo(-1L)
+        assertThat(result.savedList.name).isEmpty()
+        assertThat(result.savedList.itemCount).isEqualTo(0)
+        assertThat(result.pagedItems.data).isEmpty()
+    }
+
+    @Test
+    fun `should delete saved list when deleteSavedListById is called`() = runTest {
+        val successResponse = Response.success(deleteSavedListResponse)
+        coEvery { savedListApiService.deleteSavedListById(LIST_ID) } returns successResponse
+
+        dataSource.deleteSavedListById(LIST_ID)
+
+        coVerify(exactly = 1) { savedListApiService.deleteSavedListById(LIST_ID) }
+    }
+
+    @Test
+    fun `should handle movie with empty release date in getSavedListDetails`() = runTest {
+        val itemWithEmptyReleaseDate = listDetailsItem.copy(releaseDate = "")
+        val responseWithEmptyDate = listDetailsResponse.copy(items = listOf(itemWithEmptyReleaseDate))
+        val successResponse = Response.success(responseWithEmptyDate)
+        coEvery { savedListApiService.getListDetails(LIST_ID, PAGE) } returns successResponse
+
+        val result = dataSource.getSavedListDetails(LIST_ID, PAGE, PAGE_SIZE)
+
+        assertThat(result.pagedItems.data).hasSize(1)
+        assertThat(result.pagedItems.data[0].movie.releaseDate).isEqualTo("0001-01-01")
+    }
+
+    @Test
+    fun `should handle movie with null release date in getSavedListDetails`() = runTest {
+        val itemWithNullReleaseDate = listDetailsItem.copy(releaseDate = null)
+        val responseWithNullDate = listDetailsResponse.copy(items = listOf(itemWithNullReleaseDate))
+        val successResponse = Response.success(responseWithNullDate)
+        coEvery { savedListApiService.getListDetails(LIST_ID, PAGE) } returns successResponse
+
+        val result = dataSource.getSavedListDetails(LIST_ID, PAGE, PAGE_SIZE)
+
+        assertThat(result.pagedItems.data).hasSize(1)
+        assertThat(result.pagedItems.data[0].movie.releaseDate).isEqualTo("0001-01-01")
+    }
+
+    @Test
+    fun `should use originalTitle when title is null in getSavedListDetails`() = runTest {
+        val itemWithNullTitle = listDetailsItem.copy(title = null, originalTitle = "Original Title")
+        val responseWithNullTitle = listDetailsResponse.copy(items = listOf(itemWithNullTitle))
+        val successResponse = Response.success(responseWithNullTitle)
+        coEvery { savedListApiService.getListDetails(LIST_ID, PAGE) } returns successResponse
+
+        val result = dataSource.getSavedListDetails(LIST_ID, PAGE, PAGE_SIZE)
+
+        assertThat(result.pagedItems.data).hasSize(1)
+        assertThat(result.pagedItems.data[0].movie.title).isEqualTo("Original Title")
+    }
+
+    @Test
+    fun `should create request with correct mediaId when addMovieToSavedList is called with different movieId`() = runTest {
+        val differentMovieId = 999L
+        val expectedRequest = AddListItemRequest(mediaId = differentMovieId)
+        val expectedResponse = AddListItemResponse(
+            statusCode = 1,
+            statusMessage = "Success"
+        )
+        val capturedRequest = slot<AddListItemRequest>()
+
+        coEvery {
+            savedListApiService.addMovieToSavedList(LIST_ID, capture(capturedRequest))
+        } returns Response.success(expectedResponse)
+
+        dataSource.addMovieToSavedList(LIST_ID, differentMovieId)
+
+        assertThat(capturedRequest.captured.mediaId).isEqualTo(differentMovieId)
+        assertThat(capturedRequest.captured).isEqualTo(expectedRequest)
+    }
+
+    @Test
+    fun `should create request with correct mediaId when removeMovieFromSavedList is called with different movieId`() = runTest {
+        val differentMovieId = 999L
+        val expectedRequest = RemoveListItemRequest(mediaId = differentMovieId)
+        val expectedResponse = RemoveListItemResponse(
+            statusCode = 13,
+            statusMessage = "The item/record was deleted successfully."
+        )
+        val capturedRequest = slot<RemoveListItemRequest>()
+
+        coEvery {
+            savedListApiService.removeMovieFromSavedList(LIST_ID, capture(capturedRequest))
+        } returns Response.success(expectedResponse)
+
+        dataSource.removeMovieFromSavedList(LIST_ID, differentMovieId)
+
+        assertThat(capturedRequest.captured.mediaId).isEqualTo(differentMovieId)
+        assertThat(capturedRequest.captured).isEqualTo(expectedRequest)
+    }
+
+
+
+    @Test
+    fun `should call API with correct listId when addMovieToSavedList is called with different listId`() = runTest {
+        val differentListId = 888L
+        val successResponse = Response.success(
+            AddListItemResponse(
+                statusMessage = "Success",
+                statusCode = 1
             )
-        }
+        )
+
+        coEvery { savedListApiService.addMovieToSavedList(differentListId, addItemRequest) } returns successResponse
+
+        dataSource.addMovieToSavedList(differentListId, MOVIE_ID)
+
+        coVerify(exactly = 1) { savedListApiService.addMovieToSavedList(differentListId, addItemRequest) }
     }
 
-    @Test
-    fun `should createSavedList throw ItemCreationFailedException when response success is false`() =
-        runTest {
-            // Given
-            val errorMessage = "Unauthorized access"
-            val response = CreateSavedListResponse(success = false, statusMessage = errorMessage)
+    companion object {
+        const val LIST_ID = 123L
+        const val MOVIE_ID = 456L
+        const val ACCOUNT_ID = 789L
+        const val PAGE = 1
+        const val PAGE_SIZE = 20
+        const val TOTAL_PAGES = 5
+        const val TOTAL_RESULTS = 100
+        const val LIST_TITLE = "My Favorite Movies"
+        const val LIST_DESCRIPTION = "A collection of my favorite movies"
+        const val ITEM_COUNT = 10
+        const val STATUS_MESSAGE = "Successfully created list"
+        const val STATUS_CODE = 201
+        const val MOVIE_TITLE = "Test Movie"
+        const val ORIGINAL_TITLE = "Original Test Movie"
+        const val OVERVIEW = "Movie overview"
+        const val RELEASE_DATE = "2023-01-01"
+        const val POSTER_PATH = "/poster.jpg"
+        const val VOTE_AVERAGE = 7.5
 
-            coEvery { savedListApiService.createSavedList(any(), any()) } returns mockk {
-                every { body() } returns response
-                every { isSuccessful } returns true
-            }
+        val createListRequest = CreateListRequest(name = LIST_TITLE)
+        val addItemRequest = AddListItemRequest(mediaId = MOVIE_ID)
 
-            // When
-            val resultException = runCatching {
-                remoteSource.createSavedList(title, sessionId)
-            }.exceptionOrNull()
+        val createSavedListResponse = CreateSavedListResponse(
+            listId = LIST_ID,
+            statusMessage = STATUS_MESSAGE,
+            statusCode = STATUS_CODE,
+            success = true
+        )
 
-            // Then
-            assertThat(resultException).isNotNull()
-            assertThat(resultException).isInstanceOf(ItemCreationFailedException::class.java)
-            assertThat(resultException?.message).isEqualTo(errorMessage)
+        val createSavedListResponseWithNulls = CreateSavedListResponse(
+            listId = null,
+            statusMessage = null,
+            statusCode = null,
+            success = null
+        )
 
-            coVerify {
-                savedListApiService.createSavedList(
-                    CreateListRequest(name = title),
-                    sessionId
-                )
-            }
-        }
+        val deleteSavedListResponse = DeleteSavedListResponse(
+            statusMessage = "List deleted successfully",
+            statusCode = 200,
+        )
 
+        val userListDto = UserListsResponse.UserListDto(
+            id = LIST_ID,
+            description = LIST_DESCRIPTION,
+            favoriteCount = 5,
+            itemCount = ITEM_COUNT,
+            langCode = "en",
+            listType = "movie",
+            name = LIST_TITLE,
+            posterPath = POSTER_PATH
+        )
 
-    @Test
-    fun `should createSavedList throw default message when statusMessage is null`() = runTest {
-        // Given
-        val response = CreateSavedListResponse(success = false, statusMessage = null)
+        val userListDtoWithNulls = UserListsResponse.UserListDto(
+            id = null,
+            description = null,
+            favoriteCount = null,
+            itemCount = null,
+            langCode = null,
+            listType = null,
+            name = null,
+            posterPath = null
+        )
 
-        coEvery { savedListApiService.createSavedList(any(), any()) } returns mockk {
-            every { body() } returns response
-            every { isSuccessful } returns true
-        }
+        val userListsResponse = UserListsResponse(
+            page = PAGE,
+            results = listOf(userListDto),
+            totalPages = TOTAL_PAGES,
+            totalResults = TOTAL_RESULTS
+        )
 
-        // When
-        val resultException = runCatching {
-            remoteSource.createSavedList(title, sessionId)
-        }.exceptionOrNull()
-
-        // Then
-        assertThat(resultException).isNotNull()
-        assertThat(resultException).isInstanceOf(ItemCreationFailedException::class.java)
-        assertThat(resultException?.message).isEqualTo("List creation failed")
-    }
-
-    @Test
-    fun `should createSavedList  propagate ItemCreationFailedException when API returns failure`() =
-        runTest {
-            // Given
-            val expectedMessage = "Access denied"
-            val response = CreateSavedListResponse(success = false, statusMessage = expectedMessage)
-
-            coEvery { savedListApiService.createSavedList(any(), any()) } returns mockk {
-                every { body() } returns response
-                every { isSuccessful } returns true
-            }
-
-            // When
-            val resultException = runCatching {
-                remoteSource.createSavedList(title, sessionId)
-            }.exceptionOrNull()
-
-            // Then
-            assertThat(resultException).isNotNull()
-            assertThat(resultException).isInstanceOf(ItemCreationFailedException::class.java)
-            assertThat(resultException?.message).isEqualTo(expectedMessage)
-        }
-
-    @Test
-    fun `should getSavedLists return paged results when API returns successful response`() =
-        runTest {
-            // Given
-            coEvery {
-                savedListApiService.getSavedLists(accountId, sessionId, page)
-            } returns Response.success(successResponse)
-
-            // When
-            val result = remoteSource.getSavedLists(page, pageSize, accountId, sessionId)
-
-            // Then
-            assertThat(result.data[0].id).isEqualTo(1L)
-            assertThat(result.data[0].name).isEqualTo("My Favorites")
-            assertThat(result.data[0].itemCount).isEqualTo(10)
-            coVerify(exactly = 1) { savedListApiService.getSavedLists(accountId, sessionId, page) }
-        }
-
-    @Test
-    fun `should getSavedLists return empty list when API returns empty results`() = runTest {
-        // Given
-        val response = UserListsResponse(
-            page = page,
+        val userListsResponseEmpty = UserListsResponse(
+            page = PAGE,
             results = emptyList(),
             totalPages = 0,
             totalResults = 0
         )
 
-        coEvery {
-            savedListApiService.getSavedLists(accountId, sessionId, page)
-        } returns Response.success(response)
-
-        // When
-        val result = remoteSource.getSavedLists(page, pageSize, accountId, sessionId)
-
-        // Then
-        assertThat(result.data).isEmpty()
-        assertThat(result.nextKey).isNull()
-        assertThat(result.prevKey).isNull()
-        coVerify(exactly = 1) { savedListApiService.getSavedLists(accountId, sessionId, page) }
-    }
-
-    @Test
-    fun `should return success response when adding a movie to list`() = runTest {
-        // Given
-        val successResponse = Response.success(AddListItemResponse(1, "Success"))
-
-        coEvery {
-            savedListApiService.addMovieToSavedList(listId, any(), sessionId)
-        } returns successResponse
-
-        // When
-        remoteSource.addMovieToSavedList(listId, movieId, sessionId)
-
-        // Then
-        coVerify { savedListApiService.addMovieToSavedList(listId, any(), sessionId) }
-    }
-
-
-    @Test
-    fun `should throw exception when api returns error response`() = runTest {
-        // Given
-        val errorResponse = Response.error<AddListItemResponse>(
-            401, "Unauthorized".toResponseBody("application/json".toMediaTypeOrNull())
+        val userListsResponseNullResults = UserListsResponse(
+            page = PAGE,
+            results = null,
+            totalPages = TOTAL_PAGES,
+            totalResults = TOTAL_RESULTS
         )
 
-        coEvery {
-            savedListApiService.addMovieToSavedList(listId, any(), sessionId)
-        } returns errorResponse
-
-        // When & Then
-        assertThrows<Exception> {
-            remoteSource.addMovieToSavedList(listId, movieId, sessionId)
-        }
-
-        coVerify { savedListApiService.addMovieToSavedList(listId, any(), sessionId) }
-    }
-
-    @Test
-    fun `should throw exception when network call fails`() = runTest {
-        // Given
-        val errorResponse = Response.error<AddListItemResponse>(
-            401, "Unauthorized".toResponseBody("application/json".toMediaTypeOrNull())
+        val listDetailsItem = ListDetailsResponse.Item(
+            id = MOVIE_ID,
+            title = MOVIE_TITLE,
+            originalTitle = ORIGINAL_TITLE,
+            overview = OVERVIEW,
+            releaseDate = RELEASE_DATE,
+            posterPath = POSTER_PATH,
+            voteAverage = VOTE_AVERAGE,
+            genreIds = listOf(28L, 12L),
+            adult = false,
+            backdropPath = "/backdrop.jpg",
+            originalLanguage = "en",
+            popularity = 8.5,
+            video = false,
+            voteCount = 1000
         )
 
-        coEvery {
-            savedListApiService.addMovieToSavedList(listId, any(), sessionId)
-        } returns errorResponse
-
-        // When & Then
-        assertThrows<Exception> {
-            remoteSource.addMovieToSavedList(listId, tvShowId, sessionId)
-        }
-
-        coVerify { savedListApiService.addMovieToSavedList(listId, any(), sessionId) }
-    }
-
-    @Test
-    fun `should remove movie form saved list when the movie removed successfully`() = runTest {
-        // Given
-        coEvery { savedListApiService.removeMovieFromSavedList(listId, any(), sessionId) } returns
-                Response.success(RemoveListItemResponse(1, "Success"))
-
-        // When
-        remoteSource.removeMovieFromSavedList(listId, movieId, sessionId)
-
-        // Then
-        coVerify { savedListApiService.removeMovieFromSavedList(listId, any(), sessionId) }
-    }
-
-    @Test
-    fun `getSavedListDetails should return valid DTO when API returns valid response`() =
-        runTest {
-            // Given
-            coEvery {
-                savedListApiService.getListDetails(LIST_ID, page)
-            } returns Response.success(VALID_LIST_DETAILS_RESPONSE)
-
-            // When
-            val result = remoteSource.getSavedListDetails(LIST_ID, page, pageSize)
-
-            // Then
-            assertThat(result.savedList.id).isEqualTo(123L)
-            assertThat(result.savedList.name).isEqualTo("My List")
-            assertThat(result.savedList.itemCount).isEqualTo(2)
-
-            assertThat(result.pagedItems.data).hasSize(2)
-
-            with(result.pagedItems.data[0]) {
-                assertThat(id).isEqualTo(1L)
-                assertThat(type).isEqualTo(SavedListItemDto.Type.MOVIE)
-                assertThat(title).isEqualTo("Oppenheimer")
-                assertThat(posterUrl).isEqualTo("/path1.jpg")
-            }
-
-            with(result.pagedItems.data[1]) {
-                assertThat(id).isEqualTo(2L)
-                assertThat(type).isEqualTo(SavedListItemDto.Type.TV_SHOW)
-                assertThat(title).isEqualTo("Breaking Bad")
-                assertThat(posterUrl).isEqualTo("/path2.jpg")
-            }
-
-            coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID, page) }
-        }
-
-    @Test
-    fun `should getSavedListDetails return default values and filter out invalid items`() =
-        runTest {
-            // Given
-            coEvery {
-                savedListApiService.getListDetails(LIST_ID, page)
-            } returns Response.success(INVALID_LIST_DETAILS_RESPONSE)
-
-            // When
-            val result = remoteSource.getSavedListDetails(LIST_ID, page, pageSize)
-
-            // Then
-            assertThat(result.savedList.id).isEqualTo(-1L)
-            assertThat(result.savedList.name).isEqualTo("")
-            assertThat(result.savedList.itemCount).isEqualTo(0)
-
-            assertThat(result.pagedItems.data).isEmpty()
-
-            coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID, page) }
-        }
-
-    @Test
-    fun `should getSavedListDetails throw when API returns error`() =
-        runTest {
-            // Given
-            val errorBody = "Unknown Server Error".toResponseBody(null)
-            coEvery {
-                savedListApiService.getListDetails(LIST_ID, page)
-            } returns Response.error(999, errorBody)
-
-            // When
-            val thrown =
-                runCatching {
-                    remoteSource.getSavedListDetails(
-                        LIST_ID,
-                        page,
-                        pageSize,
-                    )
-                }.exceptionOrNull()
-
-            // Then
-            assertThat(thrown).isInstanceOf(UnknownNetworkException::class.java)
-            coVerify(exactly = 1) { savedListApiService.getListDetails(LIST_ID, page) }
-        }
-
-    @Test
-    fun `should call deleteSavedListById API with its parameters`() =
-        runTest {
-            // Given
-            val mockResponse: Response<DeleteSavedListResponse> =
-                Response.success(DeleteSavedListResponse(1))
-
-            coEvery {
-                savedListApiService.deleteSavedListById(
-                    listId,
-                    sessionId
-                )
-            } returns mockResponse
-
-            // When
-            val result = savedListApiService.deleteSavedListById(listId, sessionId)
-
-            // Then
-            coVerify(exactly = 1) { savedListApiService.deleteSavedListById(listId, sessionId) }
-            assertThat(result.isSuccessful).isTrue()
-        }
-
-    @Test
-    fun `should delegate deleteSavedListById to Retrofit service`() =
-        runTest {
-            // Given
-            val mockResponse: Response<DeleteSavedListResponse> =
-                Response.success(DeleteSavedListResponse(1))
-            coEvery {
-                savedListApiService.deleteSavedListById(
-                    listId,
-                    sessionId
-                )
-            } returns mockResponse
-
-            // When
-            remoteSource.deleteSavedListById(listId, sessionId)
-
-            // Then
-            coVerify { savedListApiService.deleteSavedListById(listId, sessionId) }
-        }
-
-    companion object {
-        private const val page = 1
-        private const val pageSize = 20
-        private const val accountId = 12345L
-
-        private val successResponse = UserListsResponse(
-            page = page,
-            results = listOf(
-                UserListDto(
-                    id = 1L,
-                    name = "My Favorites",
-                    itemCount = 10,
-                    description = "My favorite movies",
-                    favoriteCount = 5
-                )
-            ),
-            totalPages = 5,
-            totalResults = 100
+        val listDetailsResponse = ListDetailsResponse(
+            id = LIST_ID,
+            name = LIST_TITLE,
+            description = LIST_DESCRIPTION,
+            itemCount = ITEM_COUNT,
+            page = PAGE,
+            totalPages = TOTAL_PAGES,
+            totalResults = TOTAL_RESULTS,
+            items = listOf(listDetailsItem),
+            createdBy = "user123",
+            favoriteCount = 5,
+            posterPath = POSTER_PATH,
         )
 
-        private const val LIST_ID = 123L
+        val listDetailsResponseWithNulls = ListDetailsResponse(
+            id = null,
+            name = null,
+            description = null,
+            itemCount = null,
+            page = PAGE,
+            totalPages = TOTAL_PAGES,
+            totalResults = TOTAL_RESULTS,
+            items = null,
+            createdBy = null,
+            favoriteCount = null,
+            posterPath = null,
+        )
+        val expectedSavedListDto = SavedListDto(
+            id = LIST_ID,
+            name = LIST_TITLE,
+            itemCount = ITEM_COUNT
+        )
 
-        private val VALID_MOVIE_ITEM =
-            ListDetailsResponse.Item(
-                id = 1L,
-                mediaType = "movie",
-                title = "Oppenheimer",
-                originalTitle = null,
-                posterPath = "/path1.jpg",
-            )
+        val expectedMovieDto = MovieDto(
+            id = MOVIE_ID,
+            title = MOVIE_TITLE,
+            genres = emptyList(),
+            imdbRating = VOTE_AVERAGE,
+            userRating = null,
+            releaseDate = RELEASE_DATE,
+            overview = OVERVIEW,
+            posterPictureURL = "https://image.tmdb.org/t/p/w500$POSTER_PATH",
+            trailerURL = "",
+            runtimeMinutes = 0
+        )
 
-        private val VALID_TV_ITEM =
-            ListDetailsResponse.Item(
-                id = 2L,
-                mediaType = "tv",
-                title = null,
-                originalTitle = "Breaking Bad",
-                posterPath = "/path2.jpg",
-            )
-
-        private val VALID_LIST_DETAILS_RESPONSE =
-            ListDetailsResponse(
-                id = 123L,
-                name = "My List",
-                itemCount = 2,
-                items =
-                    listOf(
-                        VALID_MOVIE_ITEM,
-                        VALID_TV_ITEM,
-                    ),
-            )
-
-        private val INVALID_LIST_DETAILS_RESPONSE =
-            ListDetailsResponse(
-                id = null,
-                name = null,
-                itemCount = null,
-                items =
-                    listOf(
-                        null,
-                        ListDetailsResponse.Item(
-                            id = null,
-                            mediaType = "movie",
-                            title = "Title",
-                            originalTitle = null,
-                            posterPath = null,
-                        ),
-                        ListDetailsResponse.Item(
-                            id = 3L,
-                            mediaType = "invalid",
-                            title = "Title",
-                            originalTitle = null,
-                            posterPath = null,
-                        ),
-                        ListDetailsResponse.Item(
-                            id = 4L,
-                            mediaType = "tv",
-                            title = null,
-                            originalTitle = null,
-                            posterPath = null
-                        )
-                    )
-            )
+        val expectedSavableMovieDto = SavableMovieDto(
+            movie = expectedMovieDto,
+            isSaved = false,
+            listId = null
+        )
     }
 }

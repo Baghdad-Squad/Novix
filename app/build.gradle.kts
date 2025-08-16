@@ -13,7 +13,6 @@ plugins {
     jacoco
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.kapt)
-
 }
 
 val formattedDate: String = ZonedDateTime.now(ZoneId.of("Africa/Cairo"))
@@ -88,12 +87,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            ndk {
+                abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+            }
         }
         debug {
             enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
         }
     }
+
     firebaseCrashlytics {
         mappingFileUploadEnabled = true
     }
@@ -102,13 +105,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+
     testOptions {
         unitTests.all {
             it.useJUnitPlatform()

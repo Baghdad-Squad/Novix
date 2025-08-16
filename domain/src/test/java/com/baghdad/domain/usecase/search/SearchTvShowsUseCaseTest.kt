@@ -1,8 +1,6 @@
 package com.baghdad.domain.usecase.search
 
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.search.SearchFilter
-import com.baghdad.domain.repository.FavoriteGenreRepository
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
@@ -19,13 +17,11 @@ import org.junit.jupiter.api.Test
 class SearchTvShowsUseCaseTest {
 
     private lateinit var searchRepository: SearchRepository
-    private lateinit var favoriteGenreRepository: FavoriteGenreRepository
     private lateinit var searchTvShowsUseCase: SearchTvShowsUseCase
 
     @BeforeEach
     fun setUp() {
         searchRepository = mockk(relaxed = true)
-        favoriteGenreRepository = mockk(relaxed = true)
         searchTvShowsUseCase = SearchTvShowsUseCase(searchRepository)
     }
 
@@ -60,8 +56,8 @@ class SearchTvShowsUseCaseTest {
         val query = "Pagination"
         val page = 2
         val paginatedResult = sampleTvShows.copy(
-            prevKey = 1,
-            nextKey = 3,
+            prevPage = 1,
+            nextPage = 3,
             data = listOf(sampleTvShows.data[0])
         )
 
@@ -69,15 +65,15 @@ class SearchTvShowsUseCaseTest {
 
         val result = searchTvShowsUseCase(query, page)
 
-        assertThat(result.prevKey).isEqualTo(1)
-        assertThat(result.nextKey).isEqualTo(3)
+        assertThat(result.prevPage).isEqualTo(1)
+        assertThat(result.nextPage).isEqualTo(3)
         assertThat(result.data).hasSize(1)
     }
 
     companion object {
         private val sampleTvShows = PagedResult(
-            prevKey = null,
-            nextKey = 2,
+            prevPage = null,
+            nextPage = 2,
             data = listOf(
                 TvShow(
                     id = 1L,
@@ -89,7 +85,7 @@ class SearchTvShowsUseCaseTest {
                     releaseDate = LocalDate(2011, 4, 17),
                     genres = listOf(Genre(1L, "Drama"), Genre(2L, "Action")),
                     numberOfSeasons = 8,
-                    userRating = 9.0,
+                    userRating = 9,
                     trailerURL = "https://example.com/got_trailer.mp4"
                 ),
                 TvShow(
@@ -102,7 +98,7 @@ class SearchTvShowsUseCaseTest {
                     releaseDate = LocalDate(2011, 1, 20),
                     genres = listOf(Genre(1L, "Drama")),
                     numberOfSeasons = 5,
-                    userRating = 9.0,
+                    userRating = 9,
                     trailerURL = "https://example.com/bb_trailer.mp4"
                 ),
                 TvShow(
@@ -115,7 +111,7 @@ class SearchTvShowsUseCaseTest {
                     releaseDate = LocalDate(2019, 7, 15),
                     genres = listOf(Genre(3L, "Comedy")),
                     numberOfSeasons = 9,
-                    userRating = 9.0,
+                    userRating = 9,
                     trailerURL = "https://example.com/office_trailer.mp4"
                 )
             )

@@ -13,8 +13,8 @@ data class MyRatingState(
     data class MediaItemUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
-        val contentType: ContentType,
-        val rating: String = "0",
+        val contentType: ContentType = ContentType.MOVIE,
+        val rating: Int = 0,
     )
     enum class MediaTab {
         MOVIE, TV_SHOW

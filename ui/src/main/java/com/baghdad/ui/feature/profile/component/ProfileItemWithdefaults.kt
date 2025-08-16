@@ -25,10 +25,11 @@ fun ProfileItemWithDefaults(
     title: String,
     icon: Painter,
     defaultValue: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.noRippleClickable {
+        modifier = modifier.noRippleClickable {
             onClick()
         },
         verticalAlignment = Alignment.CenterVertically,

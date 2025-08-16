@@ -7,6 +7,6 @@ class AddTvShowRateUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository,
 ) {
     suspend operator fun invoke(tvShowId: Long, rating: Int) {
-        tvShowRepository.addTvShowRate(tvShowId, rating)
+        tvShowRepository.addTvShowRate(tvShowId = tvShowId, rating =  rating)
     }
 }

@@ -7,7 +7,15 @@ import javax.inject.Inject
 class GetEpisodeCastMembersUseCase @Inject constructor(
     private val episodeRepository: EpisodeRepository
 ) {
-    suspend operator fun invoke(tvId: Long, seasonNumber: Int, episodeNumber: Int): List<CastMember> {
-        return episodeRepository.getEpisodeCastMembers(tvId, seasonNumber, episodeNumber)
+    suspend operator fun invoke(
+        tvShowId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): List<CastMember> {
+        return episodeRepository.getEpisodeCastMembers(
+            tvShowId = tvShowId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber
+        )
     }
 }

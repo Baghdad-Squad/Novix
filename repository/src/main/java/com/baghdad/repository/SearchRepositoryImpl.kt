@@ -1,13 +1,13 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.pagination.PagedResult
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.repository.SearchRepository
 import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.search.RecentSearch
-import com.baghdad.repository.datasource.local.LocalRecentSearchDataSource
-import com.baghdad.repository.datasource.local.LocalSavableMovieDataSource
+import com.baghdad.repository.datasource.local.RecentSearchDataSource
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteGenreDataSource
 import com.baghdad.repository.datasource.remote.RemoteSearchDataSource
 import com.baghdad.repository.mapper.toEntity
@@ -27,8 +27,8 @@ import javax.inject.Singleton
 class SearchRepositoryImpl @Inject constructor(
     private val searchRemoteDataSource: RemoteSearchDataSource,
     private val remoteGenreDataSource: RemoteGenreDataSource,
-    private val localRecentSearchDataSource: LocalRecentSearchDataSource,
-    private val savableMovieDataSource: LocalSavableMovieDataSource,
+    private val recentSearchDataSource: RecentSearchDataSource,
+    private val savableMovieDataSource: SavableMovieDataSource,
 ) : SearchRepository {
 
     override suspend fun searchActorsByName(
@@ -38,7 +38,7 @@ class SearchRepositoryImpl @Inject constructor(
         pageSize = pageSize,
         mapToEntity = ActorDto::toEntity,
         onStart = {
-            if (page == 1) localRecentSearchDataSource.addRecentSearchQuery(name)
+            if (page == 1) recentSearchDataSource.addRecentSearchQuery(name)
         },
         getRemoteData = { page, _ ->
             searchRemoteDataSource.searchActors(query = name, page = page)
@@ -48,7 +48,7 @@ class SearchRepositoryImpl @Inject constructor(
         title: String,
         page: Int,
         pageSize: Int,
-    ): PagedResult<SavableMovie> {
+    ): PagedResult<SavedMovie> {
         val savedMovies = savableMovieDataSource.getSavedMovies()
         return getRemotePagedSafely(
             page = page,
@@ -61,7 +61,7 @@ class SearchRepositoryImpl @Inject constructor(
             },
             onStart = {
                 if (page == 1)
-                    localRecentSearchDataSource.addRecentSearchQuery(title)
+                    recentSearchDataSource.addRecentSearchQuery(title)
             },
             getRemoteData = { page, _ ->
                 val genres = remoteGenreDataSource.getMovieGenre(Locale.getDefault().language)
@@ -78,7 +78,7 @@ class SearchRepositoryImpl @Inject constructor(
             mapToEntity = TvShowDto::toEntity,
             onStart = {
                 if (page == 1)
-                    localRecentSearchDataSource.addRecentSearchQuery(title)
+                    recentSearchDataSource.addRecentSearchQuery(title)
             },
             getRemoteData = { page, _ ->
                 val genres = remoteGenreDataSource.getTvShowGenre(Locale.getDefault().language)
@@ -88,7 +88,7 @@ class SearchRepositoryImpl @Inject constructor(
 
     override fun getRecentSearches(): Flow<List<RecentSearch>> {
         return getFlowSafely {
-            localRecentSearchDataSource.getAllRecentSearches().map {
+            recentSearchDataSource.getAllRecentSearches().map {
                 it.map {
                     it.toEntity()
                 }
@@ -98,15 +98,13 @@ class SearchRepositoryImpl @Inject constructor(
 
     override suspend fun deleteRecentSearchById(id: Long) {
         return executeSafely {
-            localRecentSearchDataSource.deleteRecentSearchById(id)
+            recentSearchDataSource.deleteRecentSearchById(id)
         }
     }
 
     override suspend fun deleteAllRecentSearches() {
         return executeSafely {
-            localRecentSearchDataSource.deleteAllRecentSearches()
+            recentSearchDataSource.deleteAllRecentSearches()
         }
     }
 }
-
-

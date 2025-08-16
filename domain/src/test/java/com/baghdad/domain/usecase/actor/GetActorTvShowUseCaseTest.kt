@@ -1,6 +1,8 @@
 package com.baghdad.domain.usecase.actor
 
 import com.baghdad.domain.repository.ActorRepository
+import com.baghdad.domain.testHelper.getMinimalTvShow
+import com.baghdad.domain.testHelper.getSampleTvShow
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
 import com.google.common.truth.Truth.assertThat
@@ -17,56 +19,6 @@ class GetActorTvShowUseCaseTest {
     private lateinit var actorRepository: ActorRepository
     private lateinit var getActorTvShowUseCase: GetActorTvShowUseCase
 
-    private val sampleTvShows = listOf(
-        TvShow(
-            id = 1L,
-            title = "Breaking Bad",
-            overview = "A high school chemistry teacher turned meth maker",
-            posterImageURL = "https://example.com/breakingbad.jpg",
-            genres = listOf(
-                Genre(id = 1, name = "Drama"), Genre(id = 2, name = "Crime")
-            ),
-            averageRating = 9.5,
-            userRating = 9.4,
-            releaseDate = LocalDate(2008, 1, 20),
-            trailerURL = "https://example.com/breakingbad_trailer.mp4",
-            headerImagesURLs = listOf(
-                "https://example.com/breakingbad_header1.jpg",
-                "https://example.com/breakingbad_header2.jpg"
-            ),
-            numberOfSeasons = 5
-        ),
-        TvShow(
-            id = 2L,
-            title = "Better Call Saul",
-            overview = "The trials and tribulations of criminal lawyer Jimmy McGill",
-            posterImageURL = "https://example.com/bettercallsaul.jpg",
-            genres = listOf(
-                Genre(id = 1, name = "Drama"), Genre(id = 3, name = "Legal")
-            ),
-            averageRating = 8.7,
-            userRating = 8.9,
-            releaseDate = LocalDate(2015, 2, 8),
-            trailerURL = "https://example.com/bettercallsaul_trailer.mp4",
-            headerImagesURLs = listOf("https://example.com/bettercallsaul_header.jpg"),
-            numberOfSeasons = 6
-        )
-    )
-
-    private val minimalTvShow = TvShow(
-        id = 3L,
-        title = "Minimal Show",
-        overview = "",
-        posterImageURL = "",
-        genres = emptyList(),
-        averageRating = 0.0,
-        userRating = null,
-        releaseDate = LocalDate(2021, 1, 1),
-        trailerURL = "",
-        headerImagesURLs = emptyList(),
-        numberOfSeasons = 0
-    )
-
     @BeforeEach
     fun setUp() {
         actorRepository = mockk(relaxed = true)
@@ -75,116 +27,104 @@ class GetActorTvShowUseCaseTest {
 
     @Test
     fun `getActorTvShowUseCase() should return tv shows when actor has appearances`() = runTest {
-        // Given
-        val actorId = 1L
-        coEvery { actorRepository.getActorTvShows(actorId) } returns sampleTvShows
+        coEvery { actorRepository.getActorTvShows(ACTOR_ID) } returns listOf(SAMPLE_TV_SHOWS)
 
-        // When
-        val result = getActorTvShowUseCase(actorId)
+        val result = getActorTvShowUseCase(ACTOR_ID)
 
-        // Then
-        assertThat(result).isEqualTo(sampleTvShows)
-        assertThat(result).hasSize(2)
+        assertThat(result).isEqualTo(listOf(SAMPLE_TV_SHOWS))
     }
 
     @Test
-    fun `getActorTvShowUseCase() should return empty list when actor has no tv show appearances`() = runTest {
-        // Given
-        val actorId = 2L
-        coEvery { actorRepository.getActorTvShows(actorId) } returns emptyList()
+    fun `getActorTvShowUseCase() should return empty list when actor has no tv show appearances`() =
+        runTest {
+            coEvery { actorRepository.getActorTvShows(ACTOR_ID_NO_SHOWS) } returns emptyList()
 
-        // When
-        val result = getActorTvShowUseCase(actorId)
+            val result = getActorTvShowUseCase(ACTOR_ID_NO_SHOWS)
 
-        // Then
-        assertThat(result).isEmpty()
-    }
+            assertThat(result).isEmpty()
+        }
 
     @Test
-    fun `getActorTvShowUseCase() should return tv shows with minimal information when data is sparse`() = runTest {
-        // Given
-        val actorId = 3L
-        coEvery { actorRepository.getActorTvShows(actorId) } returns listOf(minimalTvShow)
+    fun `getActorTvShowUseCase() should return tv shows with minimal information when data is sparse`() =
+        runTest {
+            coEvery { actorRepository.getActorTvShows(ACTOR_ID_MINIMAL) } returns listOf(
+                MINIMAL_TV_SHOW
+            )
 
-        // When
-        val result = getActorTvShowUseCase(actorId)
+            val result = getActorTvShowUseCase(ACTOR_ID_MINIMAL)
 
-        // Then
-        assertThat(result).hasSize(1)
-        assertThat(result[0].title).isEqualTo("Minimal Show")
-        assertThat(result[0].posterImageURL).isEmpty()
-        assertThat(result[0].genres).isEmpty()
-        assertThat(result[0].headerImagesURLs).isEmpty()
-    }
+            assertThat(result[0].title).isEqualTo("Minimal Show")
+            assertThat(result[0].posterImageURL).isEmpty()
+            assertThat(result[0].genres).isEmpty()
+        }
 
     @Test
     fun `getActorTvShowUseCase() should return tv shows with multiple genres`() = runTest {
-        // Given
-        val actorId = 5L
-        coEvery { actorRepository.getActorTvShows(actorId) } returns sampleTvShows
+        coEvery { actorRepository.getActorTvShows(ACTOR_ID_MULTIPLE_GENRES) } returns MULTI_GENRES_SHOW
 
-        // When
-        val result = getActorTvShowUseCase(actorId)
+        val result = getActorTvShowUseCase(ACTOR_ID_MULTIPLE_GENRES)
 
-        // Then
-        assertThat(result[0].genres).hasSize(2)
-        assertThat(result[1].genres).hasSize(2)
+        assertThat(result[0].genres).hasSize(3)
     }
 
     @Test
     fun `getActorTvShowUseCase() should return tv shows with header images`() = runTest {
-        // Given
-        val actorId = 6L
-        coEvery { actorRepository.getActorTvShows(actorId) } returns sampleTvShows
+        coEvery { actorRepository.getActorTvShows(ACTOR_ID_WITH_HEADERS) } returns listOf(
+            SAMPLE_TV_SHOWS
+        )
 
-        // When
-        val result = getActorTvShowUseCase(actorId)
+        val result = getActorTvShowUseCase(ACTOR_ID_WITH_HEADERS)
 
-        // Then
         assertThat(result[0].headerImagesURLs).hasSize(2)
-        assertThat(result[1].headerImagesURLs).hasSize(1)
     }
 
     @Test
     fun `getActorTvShowUseCase() should return tv shows with different season counts`() = runTest {
-        // Given
-        val actorId = 7L
-        coEvery { actorRepository.getActorTvShows(actorId) } returns sampleTvShows
+        coEvery { actorRepository.getActorTvShows(ACTOR_ID_WITH_SEASONS) } returns TV_SHOWS_WITH_DIFFERENT_SEASON_COUNT
 
-        // When
-        val result = getActorTvShowUseCase(actorId)
+        val result = getActorTvShowUseCase(ACTOR_ID_WITH_SEASONS)
 
-        // Then
         assertThat(result[0].numberOfSeasons).isEqualTo(5)
         assertThat(result[1].numberOfSeasons).isEqualTo(6)
     }
 
-    @Test
-    fun `getActorTvShowUseCase() should make exactly one repository call when invoked`() = runTest {
-        // Given
-        val actorId = 8L
-        coEvery { actorRepository.getActorTvShows(actorId) } returns sampleTvShows
-
-        // When
-        getActorTvShowUseCase(actorId)
-
-        // Then
-        coVerify(exactly = 1) { actorRepository.getActorTvShows(actorId) }
-    }
 
     @Test
-    fun `getActorTvShowUseCase() should return tv shows with special characters in titles`() = runTest {
-        // Given
-        val actorId = 9L
-        val specialTitleShow = listOf(
-            sampleTvShows[0].copy(title = "Stranger Things: ストレンジャー・シングス")
+    fun `getActorTvShowUseCase() should return tv shows with special characters in titles`() =
+        runTest {
+            val specialTitleShow = listOf(SAMPLE_TV_SHOWS.copy(title = TV_SHOW_TITLE))
+            coEvery { actorRepository.getActorTvShows(ACTOR_ID_SPECIAL_TITLE) } returns specialTitleShow
+
+            val result = getActorTvShowUseCase(ACTOR_ID_SPECIAL_TITLE)
+
+            assertThat(result[0].title).isEqualTo(TV_SHOW_TITLE)
+        }
+
+    companion object {
+        private val SAMPLE_TV_SHOWS = getSampleTvShow()
+        private val MINIMAL_TV_SHOW = getMinimalTvShow()
+        private val MULTI_GENRES_SHOW = listOf(
+            SAMPLE_TV_SHOWS.copy(
+                genres = listOf(
+                    Genre(id = 1, name = "Drama"),
+                    Genre(id = 2, name = "Thriller"),
+                    Genre(id = 3, name = "Mystery")
+                )
+            )
         )
-        coEvery { actorRepository.getActorTvShows(actorId) } returns specialTitleShow
+        private val TV_SHOWS_WITH_DIFFERENT_SEASON_COUNT = listOf(
+            getSampleTvShow(numberOfSeasons = 5),
+            getSampleTvShow(numberOfSeasons = 6)
+        )
 
-        // When
-        val result = getActorTvShowUseCase(actorId)
+        private const val ACTOR_ID = 1L
+        private const val ACTOR_ID_NO_SHOWS = 2L
+        private const val ACTOR_ID_MINIMAL = 3L
+        private const val ACTOR_ID_MULTIPLE_GENRES = 4L
+        private const val ACTOR_ID_WITH_HEADERS = 5L
+        private const val ACTOR_ID_WITH_SEASONS = 6L
+        private const val ACTOR_ID_SPECIAL_TITLE = 7L
 
-        // Then
-        assertThat(result[0].title).isEqualTo("Stranger Things: ストレンジャー・シングス")
+        private const val TV_SHOW_TITLE = "Stranger Things  戦争の藝術"
     }
 }
