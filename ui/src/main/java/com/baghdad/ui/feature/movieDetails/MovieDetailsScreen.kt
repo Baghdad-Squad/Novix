@@ -147,8 +147,7 @@ private fun handleEffect(
 private fun MovieDetailsContent(
     listener: MovieDetailsInteractionListener,
     state: MovieDetailsState,
-    snackBarState: SnackBarState,
-    modifier: Modifier = Modifier
+    snackBarState: SnackBarState
 ) {
     val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
     val lazyState = rememberLazyGridState()
@@ -226,7 +225,7 @@ private fun MovieDetailsContent(
     ) {
 
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .background(Theme.color.surface.copy(backgroundAlpha))
                 .fillMaxSize()
                 .navigationBarsPadding()

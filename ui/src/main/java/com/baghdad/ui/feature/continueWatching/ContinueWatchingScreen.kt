@@ -99,11 +99,10 @@ private fun handleEffect(
 
 
 @Composable
-fun ContinueWatchingContent(
+private fun ContinueWatchingContent(
     uiState: ContinueWatchingState,
     listener: ContinueWatchingInteractionListener,
     snackBarState: SnackBarState,
-    modifier: Modifier = Modifier
 ) {
     val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
     val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
@@ -111,7 +110,7 @@ fun ContinueWatchingContent(
     val tvGenresScrollState = rememberLazyListState()
 
     Scaffold(
-        modifier = modifier
+        modifier = Modifier
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
