@@ -1,6 +1,8 @@
 package com.baghdad.design_system.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.preview.NovixPreviews
+import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
 @Composable
@@ -32,6 +36,7 @@ fun SectionHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+
         Text(
             text = title,
             style = Theme.typography.headline.small,
@@ -42,11 +47,13 @@ fun SectionHeader(
             Row(
                 modifier = Modifier.noRippleClickable { onClick() },
             ) {
+
                 Text(
                     text = stringResource(R.string.all),
                     style = Theme.typography.label.medium,
                     color = Theme.color.primary
                 )
+
                 Icon(
                     painter = painterResource(id = R.drawable.arrow_right),
                     contentDescription = stringResource(R.string.arrow_icon),
@@ -61,13 +68,23 @@ fun SectionHeader(
     }
 }
 
-@Preview(showBackground = true)
+@NovixPreviews
 @Composable
 fun SectionHeaderPreview() {
-    SectionHeader(
-        title = "New arrival",
-        isShowAllVisible = true,
-        onClick = { }
-    )
+    NovixTheme {
+        Column(
+            modifier = Modifier
+                .background(Theme.color.surface)
+                .padding(vertical = 44.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            SectionHeader(
+                title = "New arrival",
+                isShowAllVisible = true,
+                onClick = { }
+            )
+        }
+    }
 }
 

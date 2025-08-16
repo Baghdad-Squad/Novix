@@ -1,10 +1,10 @@
 package com.baghdad.repository
 
-import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.entity.savedList.SavedList
-import com.baghdad.repository.datasource.local.LocalSessionDataSource
-import com.baghdad.repository.datasource.local.LocalUserDataSource
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
+import com.baghdad.repository.datasource.local.UserDataSource
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.SAVABLE_MOVIE_DTO
 import com.baghdad.repository.exception.NetworkException
 import com.baghdad.repository.exception.UnknownNetworkException
 import com.baghdad.repository.mapper.toEntity
@@ -12,60 +12,35 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.UserDto
 import com.baghdad.repository.model.savedList.SavedListDetailsDto
-import com.baghdad.repository.model.savedList.SavedListItemDto
 import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class SavedListRepositoryImplTest {
-    private lateinit var remoteSource: RemoteSavedListDataSource
-    private lateinit var localSessionDataSource: LocalSessionDataSource
-    private lateinit var localUserDataSource: LocalUserDataSource
-    private lateinit var repository: SavedListRepositoryImpl
-
-    val listId = 22L
-    val movieId = 22002L
-    val sessionId = "session_id"
-    val title = "Favorite"
-
-    @BeforeEach
-    fun setUp() {
-        remoteSource = mockk(relaxed = true)
-        localSessionDataSource = mockk(relaxed = true)
-        localUserDataSource = mockk(relaxed = true)
-        repository =
-            SavedListRepositoryImpl(
-                remoteSavedListSource = remoteSource,
-                localSessionDataSource = localSessionDataSource,
-                localUserDataSource = localUserDataSource,
-            )
-    }
+    private val remoteSource: RemoteSavedListDataSource = mockk()
+    private val localUserDataSource: UserDataSource = mockk(relaxed = true)
+    private val savableMovieDataSource: SavableMovieDataSource = mockk(relaxed = true)
+    private val repository: SavedListRepositoryImpl =
+        SavedListRepositoryImpl(
+            remoteSavedListSource = remoteSource,
+            userDataSource = localUserDataSource,
+            savableMovieDataSource = savableMovieDataSource
+        )
 
     @Test
     fun `should createSavedList call remote source with correct session ID`() =
         runTest {
-            // Given
-            coEvery { localSessionDataSource.getSessionId() } returns sessionId
-            coEvery { remoteSource.createSavedList(title, sessionId) } returns Unit
+            coEvery { remoteSource.createSavedList(TITLE) } returns Unit
 
-            // When
-            repository.createSavedList(title)
+            repository.createSavedList(TITLE)
 
-            // Then
-            coVerify(exactly = 1) { localSessionDataSource.getSessionId() }
-            coVerify(exactly = 1) { remoteSource.createSavedList(title, sessionId) }
-            localSessionDataSource = mockk(relaxed = true)
-            localUserDataSource = mockk(relaxed = true)
-            repository =
-                SavedListRepositoryImpl(remoteSource, localSessionDataSource, localUserDataSource)
+            coVerify(exactly = 1) { remoteSource.createSavedList(TITLE) }
         }
 
     @Test
@@ -79,21 +54,17 @@ class SavedListRepositoryImplTest {
                     prevKey = null,
                 )
 
-            coEvery { localSessionDataSource.getSessionId() } returns SESSION_ID
             coEvery { localUserDataSource.getUser() } returns TEST_USER
             coEvery {
                 remoteSource.getSavedLists(
                     PAGE,
                     PAGE_SIZE,
                     TEST_ACCOUNT_ID,
-                    SESSION_ID,
                 )
             } returns pagedResultDto
 
-            // When
             val result = repository.getSavedLists(PAGE, PAGE_SIZE)
 
-            // Then
             assertThat(result.data).hasSize(2)
             assertThat(result.data[0]).isEqualTo(
                 SavedList(
@@ -109,17 +80,15 @@ class SavedListRepositoryImplTest {
                     itemCount = 5,
                 ),
             )
-            assertThat(result.nextKey).isEqualTo(2)
-            assertThat(result.prevKey).isNull()
+            assertThat(result.nextPage).isEqualTo(2)
+            assertThat(result.prevPage).isNull()
 
-            coVerify(exactly = 1) { localSessionDataSource.getSessionId() }
             coVerify(exactly = 1) { localUserDataSource.getUser() }
             coVerify(exactly = 1) {
                 remoteSource.getSavedLists(
-                    PAGE,
-                    PAGE_SIZE,
-                    TEST_ACCOUNT_ID,
-                    SESSION_ID,
+                    page = PAGE,
+                    pageSize = PAGE_SIZE,
+                    accountId = TEST_ACCOUNT_ID,
                 )
             }
         }
@@ -127,7 +96,6 @@ class SavedListRepositoryImplTest {
     @Test
     fun `getSavedLists should return empty result when remote source returns empty data`() =
         runTest {
-            // Given
             val pagedResultDto =
                 PagedResultDto<SavedListDto>(
                     data = emptyList(),
@@ -135,33 +103,27 @@ class SavedListRepositoryImplTest {
                     prevKey = null,
                 )
 
-            coEvery { localSessionDataSource.getSessionId() } returns SESSION_ID
             coEvery { localUserDataSource.getUser() } returns TEST_USER
             coEvery {
                 remoteSource.getSavedLists(
-                    PAGE,
-                    PAGE_SIZE,
-                    TEST_ACCOUNT_ID,
-                    SESSION_ID,
+                    page = PAGE,
+                    pageSize = PAGE_SIZE,
+                    accountId = TEST_ACCOUNT_ID,
                 )
             } returns pagedResultDto
 
-            // When
             val result = repository.getSavedLists(PAGE, PAGE_SIZE)
 
-            // Then
             assertThat(result.data).isEmpty()
-            assertThat(result.nextKey).isNull()
-            assertThat(result.prevKey).isNull()
+            assertThat(result.nextPage).isNull()
+            assertThat(result.prevPage).isNull()
 
-            coVerify(exactly = 1) { localSessionDataSource.getSessionId() }
             coVerify(exactly = 1) { localUserDataSource.getUser() }
             coVerify(exactly = 1) {
                 remoteSource.getSavedLists(
-                    PAGE,
-                    PAGE_SIZE,
-                    TEST_ACCOUNT_ID,
-                    SESSION_ID,
+                    page = PAGE,
+                    pageSize = PAGE_SIZE,
+                    accountId = TEST_ACCOUNT_ID,
                 )
             }
         }
@@ -169,82 +131,50 @@ class SavedListRepositoryImplTest {
     @Test
     fun `should return success response when adding a movie to saved list`() =
         runTest {
-            // Given
-            coEvery { localSessionDataSource.getSessionId() } returns sessionId
-            coEvery { remoteSource.addMovieToSavedList(listId, movieId, sessionId) } just Runs
+            coEvery { remoteSource.addMovieToSavedList(LIST_ID, MOVIE_ID) } just Runs
 
-            // When
-            repository.addMovieToSavedList(listId, movieId)
+            repository.addMovieToSavedList(LIST_ID, MOVIE_ID)
 
-            // Then
-            coVerify { remoteSource.addMovieToSavedList(listId, movieId, sessionId) }
+            coVerify { remoteSource.addMovieToSavedList(LIST_ID, MOVIE_ID) }
         }
 
     @Test
     fun `should throw exception when api returns error while adding a movie to saved list`() =
         runTest {
-            // Given
-            coEvery { localSessionDataSource.getSessionId() } returns sessionId
             coEvery {
-                remoteSource.addMovieToSavedList(listId, movieId, sessionId)
+                remoteSource.addMovieToSavedList(LIST_ID, MOVIE_ID)
             } throws Exception()
 
-            // When & Then
-            assertThrows<Exception> { repository.addMovieToSavedList(listId, movieId) }
+            assertThrows<Exception> { repository.addMovieToSavedList(LIST_ID, MOVIE_ID) }
 
-            coVerify { remoteSource.addMovieToSavedList(listId, movieId, sessionId) }
+            coVerify { remoteSource.addMovieToSavedList(LIST_ID, MOVIE_ID) }
         }
 
     @Test
     fun `should remove movie from saved list when the movie removed successfully`() = runTest {
-        // Given
-        coEvery { localSessionDataSource.getSessionId() } returns sessionId
+        coEvery { remoteSource.removeMovieFromSavedList(LIST_ID, MOVIE_ID) } just Runs
 
-        // When
-        repository.removeMovieFromSavedList(listId, movieId)
+        repository.removeMovieFromSavedList(LIST_ID, MOVIE_ID)
 
-        // Then
-        coVerify { remoteSource.removeMovieFromSavedList(listId, movieId, sessionId) }
+        coVerify { remoteSource.removeMovieFromSavedList(LIST_ID, MOVIE_ID) }
     }
-
-    @Test
-    fun `should createSavedList not crash when session ID is null`() =
-        runBlocking {
-            // Given
-            val title = "Empty Session Test"
-            coEvery { localSessionDataSource.getSessionId() } returns null
-            coEvery { remoteSource.createSavedList(title, any()) } returns Unit
-
-            // When
-            val exception = runCatching { repository.createSavedList(title) }.exceptionOrNull()
-
-            // Then
-            assertThat(exception).isInstanceOf(UnAuthorizedException::class.java)
-            coVerify { localSessionDataSource.getSessionId() }
-        }
 
     @Test
     fun `createSavedList() should propagate exception when remote source fails`() =
         runTest {
-            // Given
             val exception = RuntimeException("Network failure")
 
-            coEvery { localSessionDataSource.getSessionId() } returns sessionId
-            coEvery { remoteSource.createSavedList(title, sessionId) } throws exception
+            coEvery { remoteSource.createSavedList(TITLE) } throws exception
 
-            // When
             val resultException =
-                runCatching { repository.createSavedList(title) }.exceptionOrNull()
+                runCatching { repository.createSavedList(TITLE) }.exceptionOrNull()
 
-            // Then
-            coVerify(exactly = 1) { localSessionDataSource.getSessionId() }
             assertThat(resultException).isNotNull()
         }
 
     @Test
     fun `getSavedListDetails should return mapped SavedListDetails from remote source when data is retrieved successfully`() =
         runTest {
-            // Given
             val listId = 1L
             val dto =
                 SavedListDetailsDto(
@@ -253,18 +183,8 @@ class SavedListRepositoryImplTest {
                         PagedResultDto(
                             data =
                                 listOf(
-                                    SavedListItemDto(
-                                        100,
-                                        SavedListItemDto.Type.MOVIE,
-                                        "Oppenheimer",
-                                        "poster1"
-                                    ),
-                                    SavedListItemDto(
-                                        101,
-                                        SavedListItemDto.Type.TV_SHOW,
-                                        "Dark",
-                                        "poster2"
-                                    ),
+                                    SAVABLE_MOVIE_DTO,
+                                    SAVABLE_MOVIE_DTO,
                                 ),
                             nextKey = null,
                             prevKey = 1
@@ -274,10 +194,8 @@ class SavedListRepositoryImplTest {
 
             coEvery { remoteSource.getSavedListDetails(listId, PAGE, PAGE_SIZE) } returns dto
 
-            // When
             val result = repository.getSavedListDetails(listId, PAGE, PAGE_SIZE)
 
-            // Then
             assertThat(result).isEqualTo(expectedEntity)
             coVerify(exactly = 1) { remoteSource.getSavedListDetails(listId, PAGE, PAGE_SIZE) }
         }
@@ -285,63 +203,40 @@ class SavedListRepositoryImplTest {
     @Test
     fun `getSavedListDetails throws when remote source throws`() =
         runTest {
-            // Given
             val listId = 999L
             val exception = UnknownNetworkException()
             coEvery { remoteSource.getSavedListDetails(listId, PAGE, PAGE_SIZE) } throws exception
 
-            // When
             val thrown =
                 runCatching {
                     repository.getSavedListDetails(
-                        listId,
-                        PAGE,
-                        PAGE_SIZE,
+                        listId = listId,
+                        page = PAGE,
+                        pageSize = PAGE_SIZE,
                     )
                 }.exceptionOrNull()
 
-            // Then
             assertThat(thrown).isInstanceOf(NetworkException::class.java)
             coVerify(exactly = 1) { remoteSource.getSavedListDetails(listId, PAGE, PAGE_SIZE) }
         }
 
     @Test
-    fun `should delete saved list when enter session ID`() =
+    fun `should delete saved list when remote delete is successful`() =
         runTest {
-            // Given
-            coEvery { localSessionDataSource.getSessionId() } returns "test_session_id"
-            coEvery { remoteSource.deleteSavedListById(LIST_ID, SESSION_ID) } just Runs
+            coEvery { remoteSource.deleteSavedListById(LIST_ID) } just Runs
 
-            //When
             repository.deleteSavedListById(LIST_ID)
 
-            // Then
-            coVerify { localSessionDataSource.getSessionId() }
-        }
-
-    @Test
-    fun `should not call remote when session ID is missing`() =
-        runTest {
-            // Given
-            coEvery { localSessionDataSource.getSessionId() } returns ""
-
-            // When
-            repository.deleteSavedListById(LIST_ID)
-
-            // Then
-            coVerify { localSessionDataSource.getSessionId() }
+            coVerify { remoteSource.deleteSavedListById(LIST_ID) }
         }
 
     @Test
     fun `should throw exception when remote delete fails`() =
         runTest {
-            // Given
-            coEvery { localSessionDataSource.getSessionId() } returns SESSION_ID
             coEvery {
-                remoteSource.deleteSavedListById(LIST_ID, SESSION_ID)
+                remoteSource.deleteSavedListById(LIST_ID)
             } throws RuntimeException("Remote failure")
 
-            // When & Then
             assertThrows<RuntimeException> {
                 runTest { repository.deleteSavedListById(LIST_ID) }
             }
@@ -352,9 +247,11 @@ class SavedListRepositoryImplTest {
         private const val LIST_ID = 1L
         private const val PAGE = 1
         private const val PAGE_SIZE = 20
-        private const val SESSION_ID = "test_session_id"
         private const val TEST_ACCOUNT_ID = 12345L
-        private val TEST_USER = UserDto(id = TEST_ACCOUNT_ID, userName = "testuser")
+        private val TEST_USER =
+            UserDto(id = TEST_ACCOUNT_ID, userName = "testuser", imageUrl = null)
+        private const val MOVIE_ID = 22002L
+        private const val TITLE = "Favorite"
 
         private val SAMPLE_SAVED_LIST_DTOS =
             listOf(

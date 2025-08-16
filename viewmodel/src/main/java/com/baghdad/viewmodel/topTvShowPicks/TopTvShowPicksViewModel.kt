@@ -39,14 +39,13 @@ class TopTvShowViewModel @Inject constructor(
     private fun onGetActorTvShowSuccess(tvShows: List<TvShow>) {
         hideSnackBar()
         updateState { topTvShowState ->
-            topTvShowState.copy(
-                tvShows = tvShows.map { it.toUIState() }
-            )
+            topTvShowState.copy(tvShows = tvShows.toUIStateList())
         }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
-        BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
+        return BaseSnackBarMessage.UnknownError
+    }
 
     private fun onGetActorTvShowError(throwable: Throwable) {
         when (throwable) {
@@ -60,7 +59,7 @@ class TopTvShowViewModel @Inject constructor(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
             isSuccess = false,
-            durationMillis = Int.MAX_VALUE.toLong(),
+            durationMillis = Int.MAX_VALUE.toLong()
         )
     }
 

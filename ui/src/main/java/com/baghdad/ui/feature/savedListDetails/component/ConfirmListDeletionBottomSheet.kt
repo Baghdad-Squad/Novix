@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.component.BaseBottomSheet
 import com.baghdad.design_system.component.button.PrimaryButton
+import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.component.bottomSheet.EmptyMediaState
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
 
@@ -43,7 +44,7 @@ fun ConfirmListDeletionBottomSheet(
             )
 
             EmptyMediaState(
-                imagePath = com.baghdad.ui.R.drawable.trash,
+                imagePath = Theme.drawable.trashCan,
                 contentDescription = stringResource(com.baghdad.ui.R.string.bottom_sheet_content_description),
                 message = description,
                 modifier = Modifier

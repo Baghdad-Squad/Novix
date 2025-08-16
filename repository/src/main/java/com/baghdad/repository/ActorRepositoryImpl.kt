@@ -21,12 +21,10 @@ class ActorRepositoryImpl @Inject constructor(
 ) : ActorRepository {
     override suspend fun getActorDetails(actorId: Long): Actor {
         return executeSafely {
-
             remoteActorDataSource.getActorDetails(personId = actorId).toEntity().copy(
                 headerPictures = remoteActorDataSource.getActorImages(personId = actorId)
             )
         }
-
     }
 
     override suspend fun getActorMovies(actorId: Long): List<SavedMovie> {

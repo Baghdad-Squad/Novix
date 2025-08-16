@@ -12,20 +12,25 @@ import kotlin.time.Instant
 fun RecentlyViewedDto.toEntity(
     isSaved: Boolean,
     listId: Long?,
-) = RecentlyViewed(
-    contentId = contentId,
-    contentImageUrl = contentImageUrl,
-    contentType = RecentlyViewed.ContentType.valueOf(contentType.name),
-    isSaved = isSaved,
-    listId = listId,
-    viewedAt = Instant.fromEpochMilliseconds(viewedAtEpochMillis)
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-)
+): RecentlyViewed {
+    return RecentlyViewed(
+        contentId = contentId,
+        contentImageUrl = contentImageUrl,
+        contentType = RecentlyViewed.ContentType.valueOf(value = contentType.name),
+        isSaved = isSaved,
+        listId = listId,
+        viewedAt = Instant.fromEpochMilliseconds(epochMilliseconds = viewedAtEpochMillis)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    )
+}
 
 @OptIn(ExperimentalTime::class)
-fun RecentlyViewed.toDto() = RecentlyViewedDto(
-    contentId = contentId,
-    contentImageUrl = contentImageUrl,
-    contentType = RecentlyViewedDto.ContentType.valueOf(contentType.name),
-    viewedAtEpochMillis = viewedAt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
-)
+fun RecentlyViewed.toDto(): RecentlyViewedDto {
+    return RecentlyViewedDto(
+        contentId = contentId,
+        contentImageUrl = contentImageUrl,
+        contentType = RecentlyViewedDto.ContentType.valueOf(contentType.name),
+        viewedAtEpochMillis = viewedAt.toInstant(TimeZone.currentSystemDefault())
+            .toEpochMilliseconds()
+    )
+}

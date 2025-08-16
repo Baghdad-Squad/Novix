@@ -5,7 +5,6 @@ import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.savedList.SavedMovie
-import com.baghdad.domain.usecase.continueWatching.AddContinueWatchingUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.AddMovieRateUseCase
 import com.baghdad.domain.usecase.movie.GetMovieAccountStatesUseCase
@@ -36,7 +35,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val getCastsInfoUseCase: GetMovieCastMembersUseCase,
     private val getMovieImagesUseCase: GetMovieGalleryUseCase,
     private val getMoreLikeThisPosterImageUseCase: GetSimilarMoviesUseCase,
-    private val addContinueWatchingUseCase: AddContinueWatchingUseCase,
+    private val addUserWatchedMediaUseCase: AddUserWatchedMediaUseCase,
     private val ioDispatcher: CoroutineDispatcher,
     private val addMovieRateUseCase: AddMovieRateUseCase,
     private val getMovieAccountStatesUseCase: GetMovieAccountStatesUseCase,
@@ -56,13 +55,12 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun loadInitData() {
-        checkIfUserIsLoggedIn()
-        getMovieGallery()
-        getMovieDetails()
-        getCastMembers()
-        getMoreLikeThisShow()
-        getMovieAccountStates()
-        isUserLoggedIn()
+            checkIfUserIsLoggedIn()
+            getMovieGallery()
+            getMovieDetails()
+            getCastMembers()
+            getMoreLikeThisShow()
+            isUserLoggedIn()
     }
 
     override fun onSaveCurrentMovieClick() {
@@ -75,13 +73,15 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun onAddItemToListSuccess() {
-        onSaveToListBottomSheetDismiss()
         refreshSavedItems()
+        onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
+
     }
 
     private fun refreshSavedItems() {
-        loadInitData()
+        getMovieDetails()
+        getMoreLikeThisShow()
         getUserSavedLists()
     }
 
@@ -332,10 +332,22 @@ class MovieDetailsViewModel @Inject constructor(
                     movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
             },
+            onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
             dispatcher = ioDispatcher,
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
+        )
+    }
+
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
         )
     }
 
@@ -545,31 +557,8 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { state -> state.copy(isMovieDetailsLoading = true) }
     }
 
-    private fun onGetMovieDetailsSuccess(details: SavableMovie) {
-        updateState(details.toMovieDetailsStateUpdate())
-    }
-    
     private fun onGetMovieDetailsSuccess(details: SavedMovie) {
-        updateState { state ->
-            state.copy(
-                movieName = details.movie.title,
-                movieTrailerURL = details.movie.trailerURL,
-                overView = details.movie.overview,
-                rating = details.movie.averageRating.roundToFirstDecimal(),
-                duration = details.movie.runtimeMinutes,
-                posterImageURL = details.movie.posterImageURL,
-                date = details.movie.releaseDate.toDDMMYYYYFormat(),
-                isSaved = details.isSaved,
-                savedListId = details.listId ?: -1,
-                categories =
-                    details.movie.genres.map {
-                    MovieDetailsState.CategoryUiState(
-                        id = it.id,
-                        name = it.name
-                    )
-                }
-            )
-        }
+        updateState(details.toMovieDetailsStateUpdate())
     }
 
     private fun getCastMembers() {
@@ -578,7 +567,6 @@ class MovieDetailsViewModel @Inject constructor(
             onSuccess = { actors ->
                 onGetMovieCastSuccess(
                     actors = actors.map { it.toActorCardInfo() }
-
                 )
             },
             onStart = ::onGetCastMembersStarted,
@@ -615,10 +603,8 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onGetMovieMoreLikeThisSuccess(savedMovies: List<SavedMovie>) {
-        hideSnackBar()
         updateState { state ->
-            state.copy(moreLikeThisMovie = savableMovies.map { it.toMoreLikeThisMovie() })
-
+            state.copy(moreLikeThisMovie = savedMovies.map { it.toMoreLikeThisMovie() })
         }
     }
 
@@ -639,7 +625,7 @@ class MovieDetailsViewModel @Inject constructor(
         tryToExecute(
             dispatcher = ioDispatcher,
             callee = {
-                addContinueWatchingUseCase(
+                addUserWatchedMediaUseCase(
                     movieId, currentState.categories.map { it.id },
                     contentImageUrl = currentState.posterImageURL,
                     contentType = UserWatchedMedia.ContentType.MOVIE,

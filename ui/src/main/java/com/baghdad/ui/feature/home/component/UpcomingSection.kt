@@ -32,24 +32,24 @@ import com.baghdad.viewmodel.home.HomeScreenState.UpcomingItemUiState
 fun LazyGridScope.upcomingSection(
     selectedGenreId: Long?,
     genres: List<GenreUiState>,
-    isGenresLoading: Boolean,
     onGenreSelected: (GenreUiState?) -> Unit,
     upcomingItems: List<UpcomingItemUiState>,
-    isUpcomingItemsLoading: Boolean,
     onUpcomingItemClicked: (UpcomingItemUiState) -> Unit,
     onUpcomingItemSaveClicked: (UpcomingItemUiState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (isUpcomingItemsLoading.not() && isGenresLoading.not() && upcomingItems.isEmpty()) return
+    if (upcomingItems.isEmpty()) return
     upcomingSectionHeader(
         modifier = modifier,
         genres = genres,
-        isGenresLoading = isGenresLoading,
         onSelectGenre = onGenreSelected,
         selectedGenreId = selectedGenreId,
     )
 
-    itemsIndexed(items = upcomingItems) { index, item ->
+    itemsIndexed(
+        items = upcomingItems,
+        key = { index, _ -> index },
+    ) { index, item ->
         val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 150))
         val isInFirstRow = index < itemsPerRow
         val isFirstInRow = index % itemsPerRow == 0
@@ -73,63 +73,65 @@ fun LazyGridScope.upcomingSection(
                     ),
         )
     }
-
 }
 
 private fun LazyGridScope.upcomingSectionHeader(
     selectedGenreId: Long?,
     genres: List<GenreUiState>,
-    isGenresLoading: Boolean,
     onSelectGenre: (GenreUiState?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (isGenresLoading) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            UpcomingSectionHeaderLoadingPlaceHolder(modifier = modifier)
-        }
-    } else {
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            SectionHeader(
-                title = stringResource(R.string.upcoming),
-                isShowAllVisible = false,
-                modifier =
-                    modifier
-                        .wrapContentSize()
-                        .padding(bottom = 8.dp),
-            )
-        }
-        stickyHeader {
-            LazyRow(
-                modifier =
-                    Modifier
-                        .wrapContentSize()
-                        .background(Theme.color.surface)
-                        .padding(top = 4.dp, bottom = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-            ) {
-                item {
-                    Chip(
-                        title = stringResource(com.baghdad.design_system.R.string.all),
-                        isSelected = selectedGenreId == null,
-                        onClick = { onSelectGenre(null) },
-                    )
-                }
-                items(genres.size) { index ->
-                    val genre = genres[index]
-                    Chip(
-                        title = genre.name,
-                        isSelected = selectedGenreId == genre.id,
-                        onClick = { onSelectGenre(genre) },
-                    )
-                }
+    item(span = { GridItemSpan(maxLineSpan) }) {
+        SectionHeader(
+            title = stringResource(R.string.upcoming),
+            isShowAllVisible = false,
+            modifier =
+                modifier
+                    .wrapContentSize()
+                    .padding(bottom = 8.dp),
+        )
+    }
+    stickyHeader {
+        LazyRow(
+            modifier =
+                Modifier
+                    .wrapContentSize()
+                    .background(Theme.color.surface)
+                    .padding(top = 4.dp, bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+        ) {
+            item {
+                Chip(
+                    title = stringResource(com.baghdad.design_system.R.string.all),
+                    isSelected = selectedGenreId == null,
+                    onClick = { onSelectGenre(null) },
+                )
+            }
+            items(genres.size) { index ->
+                val genre = genres[index]
+                Chip(
+                    title = genre.name,
+                    isSelected = selectedGenreId == genre.id,
+                    onClick = { onSelectGenre(genre) },
+                )
             }
         }
     }
 }
 
-fun LazyGridScope.upcomingSectionLoading(upcomingItems: List<UpcomingItemUiState>) {
-    items(20) { index ->
+fun LazyGridScope.upcomingSectionLoading(
+    upcomingItems: List<UpcomingItemUiState>,
+    modifier: Modifier = Modifier,
+) {
+    item(span = { GridItemSpan(maxLineSpan) }) {
+        UpcomingSectionHeaderLoadingPlaceHolder(modifier = modifier)
+    }
+
+    items(
+        count = 20,
+        key = { it },
+    ) { index ->
         val itemsPerRow = maxOf(1, (LocalConfiguration.current.screenWidthDp / 158))
         val isFirstInRow = index % itemsPerRow == 0
         val isLastInRow = (index + 1) % itemsPerRow == 0 || index == upcomingItems.size - 1
@@ -137,12 +139,12 @@ fun LazyGridScope.upcomingSectionLoading(upcomingItems: List<UpcomingItemUiState
         Box(
             modifier =
                 Modifier
-                    .size(width = 158.dp, height = 210.dp)
                     .padding(
                         top = 12.dp,
                         start = if (isFirstInRow) 16.dp else 0.dp,
                         end = if (isLastInRow) 16.dp else 0.dp,
                     )
+                    .size(width = 158.dp, height = 210.dp)
                     .background(Theme.color.surface, RoundedCornerShape(12.dp))
                     .clip(RoundedCornerShape(12.dp))
                     .shimmerEffect(),
@@ -151,7 +153,7 @@ fun LazyGridScope.upcomingSectionLoading(upcomingItems: List<UpcomingItemUiState
 }
 
 @Composable
-private fun UpcomingSectionHeaderLoadingPlaceHolder(modifier: Modifier = Modifier) {
+fun UpcomingSectionHeaderLoadingPlaceHolder(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Box(
             modifier =
@@ -167,7 +169,7 @@ private fun UpcomingSectionHeaderLoadingPlaceHolder(modifier: Modifier = Modifie
                 Modifier
                     .wrapContentSize()
                     .padding(top = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
             items(20) {

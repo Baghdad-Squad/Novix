@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -29,10 +30,10 @@ import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.feature.component.EmptyListScreen
 import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.savedListDetails.component.ConfirmListDeletionBottomSheet
-import com.baghdad.ui.feature.savedListDetails.component.EmptyListScreen
 import com.baghdad.ui.navigation.graph.myLists.MyListsNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
@@ -52,12 +53,10 @@ fun SavedListDetailsScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
 
     SavedListDetailsContent(
         uiState = uiState,
         listener = viewModel,
-        mediaItems = mediaItems,
         snackBar = snackBarState
     )
 }
@@ -78,11 +77,13 @@ private fun handleEffect(
 fun SavedListDetailsContent(
     uiState: SavedListDetailsScreenState,
     listener: SavedListDetailsInteractionListener,
-    mediaItems: LazyPagingItems<SavedListDetailsScreenState.SavedListDetailsMovieUiState>,
     snackBar: SnackBarState,
 ) {
+    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
+
     Scaffold(
         modifier = Modifier.background(Theme.color.surface),
+        backgroundBlur = { BackgroundBlur() },
         isLoading = uiState.isLoading,
         topBar = {
             SavedListDetailTopBar(

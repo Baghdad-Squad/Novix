@@ -24,9 +24,7 @@ class TrendingActorViewModel @Inject constructor(
 
     private fun getTrendingActors() {
         collectPagingFlow(
-            loadData = { page ->
-                getTrendingActorsUseCase(page)
-            },
+            loadData = { page -> getTrendingActorsUseCase(page) },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toTrendingActorsUi() },
             onFlowCreated = { flow ->
@@ -34,9 +32,7 @@ class TrendingActorViewModel @Inject constructor(
                 hideSnackBar()
             },
             onInitialLoadError = ::onError,
-            onLoadingChanged = { isLoading ->
-                updateState { it.copy(isLoading = isLoading) }
-            }
+            onLoadingChanged = { isLoading -> updateState { it.copy(isLoading = isLoading) } }
         )
     }
 
@@ -60,7 +56,7 @@ class TrendingActorViewModel @Inject constructor(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
             isSuccess = false,
-            durationMillis = Int.MAX_VALUE.toLong(),
+            durationMillis = Int.MAX_VALUE.toLong()
         )
     }
 

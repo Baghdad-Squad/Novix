@@ -16,25 +16,17 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class EpisodeRepositoryImplTest {
-    private lateinit var remoteEpisodeDataSource: RemoteEpisodeDataSource
-    private lateinit var remoteTvShowDataSource: RemoteTvShowDataSource
-    private lateinit var episodeRepositoryImpl: EpisodeRepositoryImpl
+    private val remoteEpisodeDataSource: RemoteEpisodeDataSource = mockk()
+    private val remoteTvShowDataSource: RemoteTvShowDataSource = mockk()
+    private val episodeRepositoryImpl: EpisodeRepositoryImpl =
+        EpisodeRepositoryImpl(remoteEpisodeDataSource, remoteTvShowDataSource)
 
     private val tvId = 123L
     private val seasonNumber = 2
     private val episodeNumber = 5
-
-    @BeforeEach
-    fun setUp() {
-        remoteTvShowDataSource = mockk()
-        remoteEpisodeDataSource = mockk()
-        episodeRepositoryImpl =
-            EpisodeRepositoryImpl(remoteEpisodeDataSource, remoteTvShowDataSource)
-    }
 
     @Test
     fun `getEpisodeCastMembers returns cast members when remote call succeeds`() = runTest {

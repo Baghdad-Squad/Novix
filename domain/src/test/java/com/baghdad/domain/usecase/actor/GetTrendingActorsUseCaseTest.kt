@@ -3,13 +3,11 @@ package com.baghdad.domain.usecase.actor
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.ActorRepository
 import com.baghdad.domain.testHelper.getSampleActor
-import com.baghdad.entity.person.Actor
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -41,8 +39,8 @@ class GetTrendingActorsUseCaseTest {
 
         private val EXPECTED_RESULT = PagedResult(
             data = listOf(sampleActor()),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
     }
 }

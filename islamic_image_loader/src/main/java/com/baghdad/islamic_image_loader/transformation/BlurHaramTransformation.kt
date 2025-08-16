@@ -2,6 +2,7 @@ package com.baghdad.islamic_image_loader.transformation
 
 import android.graphics.Bitmap
 import coil3.size.Size
+import com.baghdad.islamic_image_loader.model.ContentRestrictionTypes
 import com.baghdad.islamic_image_loader.model.HaramImageDetector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -9,13 +10,14 @@ import kotlinx.coroutines.withContext
 class BlurHaramTransformation(
     private val onBlur: (Boolean) -> Unit,
     private val haramImageDetector: HaramImageDetector,
+    private val contentRestrictionTypes: ContentRestrictionTypes,
     blurRadiusPx: Int,
     downscaleFactor: Float = DEFAULT_SCALE,
     blurPasses: Int = DEFAULT_PASSES
 ) : BlurTransformation(blurRadiusPx, downscaleFactor, blurPasses) {
     override suspend fun transform(input: Bitmap, size: Size): Bitmap =
         withContext(Dispatchers.Default) {
-            val isImageSensitive = haramImageDetector.isImageHaram(input)
+            val isImageSensitive = haramImageDetector.isImageHaram(input, contentRestrictionTypes)
             if (isImageSensitive) {
                 onBlur(true)
                 super.transform(input, size)

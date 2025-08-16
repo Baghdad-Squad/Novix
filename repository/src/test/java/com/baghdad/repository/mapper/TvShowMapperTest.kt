@@ -1,6 +1,8 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.repository.model.TvShowDto
+import com.baghdad.entity.media.TvShow
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.RATED_MEDIA
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.TV_SHOW_DTO
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
@@ -9,49 +11,161 @@ class TvShowMapperTest {
 
     @Test
     fun `should map TvShowDto to entity correctly when data is valid`() {
-        // Given
-        val tvShowDto = createMockTvShowDto()
-
-        // When
-        val result = tvShowDto.toEntity()
-
-        // Then
-        assertThat(result.id).isEqualTo(123L)
-        assertThat(result.title).isEqualTo("Test TV Show")
-        assertThat(result.genres.size).isEqualTo(1)
-        assertThat(result.genres[0].id).isEqualTo(35L)
-        assertThat(result.genres[0].name).isEqualTo("Comedy")
-        assertThat(result.averageRating).isEqualTo(8.5)
-        assertThat(result.userRating).isEqualTo(8.0)
-        assertThat(result.releaseDate).isEqualTo(LocalDate.parse("2023-01-01"))
-        assertThat(result.overview).isEqualTo("Test TV show overview")
-        assertThat(result.posterImageURL).isEqualTo("/tv_show_poster.jpg")
-        assertThat(result.headerImagesURLs.size).isEqualTo(2)
-        assertThat(result.headerImagesURLs[0]).isEqualTo("/header1.jpg")
-        assertThat(result.headerImagesURLs[1]).isEqualTo("/header2.jpg")
-        assertThat(result.trailerURL).isEqualTo(" ")
-        assertThat(result.numberOfSeasons).isEqualTo(3)
-    }
-
-    companion object {
-        private fun createMockTvShowDto() = TvShowDto(
-            id = 123L,
-            title = "Test TV Show",
-            genres = listOf(createMockGenreDto(35L, "Comedy")),
-            imdbRating = 8.5,
-            userRating = 8,
-            releaseDate = "2023-01-01",
-            overview = "Test TV show overview",
-            posterPictureURL = "/tv_show_poster.jpg",
-            headerImagesURLs = listOf("/header1.jpg", "/header2.jpg"),
-            trailerURL = " ",
-            numberOfSeasons = 3
+        val expected = TvShow(
+            id = TV_SHOW_DTO.id,
+            title = TV_SHOW_DTO.title,
+            genres = TV_SHOW_DTO.genres.map { it.toEntity() },
+            averageRating = TV_SHOW_DTO.imdbRating,
+            userRating = TV_SHOW_DTO.userRating,
+            releaseDate = LocalDate.parse(TV_SHOW_DTO.releaseDate),
+            overview = TV_SHOW_DTO.overview,
+            posterImageURL = TV_SHOW_DTO.posterPictureURL,
+            headerImagesURLs = TV_SHOW_DTO.headerImagesURLs,
+            trailerURL = TV_SHOW_DTO.trailerURL,
+            numberOfSeasons = TV_SHOW_DTO.numberOfSeasons
         )
 
-        private fun createMockGenreDto(id: Long, name: String) = com.baghdad.repository.model.GenreDto(
-            id = id,
-            name = name,
-            type = com.baghdad.repository.model.GenreDto.GenreType.TV_SHOW
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @Test
+    fun `should map TvShowDto id to entity id correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.id).isEqualTo(TV_SHOW_DTO.id)
+    }
+
+    @Test
+    fun `should map TvShowDto title to entity title correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.title).isEqualTo(TV_SHOW_DTO.title)
+    }
+
+    @Test
+    fun `should map TvShowDto genres to entity genres correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.genres).isEqualTo(TV_SHOW_DTO.genres.map { it.toEntity() }
         )
     }
-} 
+
+    @Test
+    fun `should map TvShowDto imdbRating to entity imdbRating correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.averageRating).isEqualTo(TV_SHOW_DTO.imdbRating)
+    }
+
+    @Test
+    fun `should map TvShowDto userRating to entity userRating correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.userRating).isEqualTo(TV_SHOW_DTO.userRating)
+    }
+
+    @Test
+    fun `should map TvShowDto releaseDate to entity releaseDate correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.releaseDate).isEqualTo(LocalDate.parse(TV_SHOW_DTO.releaseDate))
+    }
+
+    @Test
+    fun `should map TvShowDto overview to entity overview correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.overview).isEqualTo(TV_SHOW_DTO.overview)
+    }
+
+    @Test
+    fun `should map TvShowDto posterPictureURL to entity posterPictureURL correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.posterImageURL).isEqualTo(TV_SHOW_DTO.posterPictureURL)
+    }
+
+    @Test
+    fun `should map TvShowDto headerImagesURLs to entity headerImagesURLs correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.headerImagesURLs).isEqualTo(TV_SHOW_DTO.headerImagesURLs)
+    }
+
+    @Test
+    fun `should map TvShowDto trailerURL to entity trailerURL correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.trailerURL).isEqualTo(TV_SHOW_DTO.trailerURL)
+    }
+
+    @Test
+    fun `should map TvShowDto numberOfSeasons to entity numberOfSeasons correctly`() {
+        val result = TV_SHOW_DTO.toEntity()
+
+        assertThat(result.numberOfSeasons).isEqualTo(TV_SHOW_DTO.numberOfSeasons)
+    }
+
+    @Test
+    fun `should map empty title from TvShowDto to entity correctly`() {
+        val dto = TV_SHOW_DTO.copy(title = "")
+        val result = dto.toEntity()
+        assertThat(result.title).isEqualTo("")
+    }
+
+    @Test
+    fun `should map empty genres list from TvShowDto to entity correctly`() {
+        val dto = TV_SHOW_DTO.copy(genres = emptyList())
+        val result = dto.toEntity()
+        assertThat(result.genres).isEmpty()
+    }
+
+    @Test
+    fun `should map empty overview from TvShowDto to entity correctly`() {
+        val dto = TV_SHOW_DTO.copy(overview = "")
+        val result = dto.toEntity()
+        assertThat(result.overview).isEqualTo("")
+    }
+
+    @Test
+    fun `should map empty posterPictureURL from TvShowDto to entity correctly`() {
+        val dto = TV_SHOW_DTO.copy(posterPictureURL = "")
+        val result = dto.toEntity()
+        assertThat(result.posterImageURL).isEqualTo("")
+    }
+
+    @Test
+    fun `should map empty headerImagesURLs list from TvShowDto to entity correctly`() {
+        val dto = TV_SHOW_DTO.copy(headerImagesURLs = emptyList())
+        val result = dto.toEntity()
+        assertThat(result.headerImagesURLs).isEmpty()
+    }
+
+    @Test
+    fun `should map empty trailerURL from TvShowDto to entity correctly`() {
+        val dto = TV_SHOW_DTO.copy(trailerURL = "")
+        val result = dto.toEntity()
+        assertThat(result.trailerURL).isEqualTo("")
+    }
+
+    @Test
+    fun `should map TvShowDto to RatedMedia correctly`() {
+        val result = TV_SHOW_DTO.toMedia()
+
+        assertThat(result).isEqualTo(RATED_MEDIA)
+    }
+
+    @Test
+    fun `should map posterPictureURL to posterImageURL correctly`() {
+        val result = TV_SHOW_DTO.toMedia()
+        assertThat(result.posterImageURL).isEqualTo(RATED_MEDIA.posterImageURL)
+    }
+
+    @Test
+    fun `should set contentType to TV_SHOW`() {
+        val result = TV_SHOW_DTO.toMedia()
+        assertThat(result.contentType).isEqualTo(RATED_MEDIA.contentType)
+    }
+}

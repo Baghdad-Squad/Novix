@@ -7,12 +7,12 @@ import com.baghdad.entity.media.Episode
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.media.Review
+import com.baghdad.entity.media.TvShow
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
 import com.baghdad.repository.mapper.toSavableMovie
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
-import com.baghdad.repository.model.ContinueWatchingDto
 import com.baghdad.repository.model.EpisodeDto
 import com.baghdad.repository.model.GenreDto
 import com.baghdad.repository.model.MovieDto
@@ -23,6 +23,7 @@ import com.baghdad.repository.model.ReviewDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.TvShowDto
 import com.baghdad.repository.model.UserDto
+import com.baghdad.repository.model.UserWatchedMediaDto
 import com.baghdad.repository.model.savedList.SavableMovieDto
 import com.baghdad.repository.model.savedList.SavedListDetailsDto
 import kotlinx.datetime.LocalDate
@@ -84,8 +85,8 @@ object DummyDataFactory {
         )
 
         val RATED_MEDIA = RatedMedia(
-            id = 101L,
-            userRating = 10,
+            id = 123L,
+            userRating = 8,
             posterImageURL = "https://example.com/breakingbad.jpg",
             contentType = RatedMedia.ContentType.TV_SHOW
         )
@@ -142,7 +143,7 @@ object DummyDataFactory {
             userRating = 8,
             releaseDate = "2023-01-01",
             overview = "Test TV show overview",
-            posterPictureURL = "/tv_show_poster.jpg",
+            posterPictureURL = "https://example.com/breakingbad.jpg",
             headerImagesURLs = listOf("/header1.jpg", "/header2.jpg"),
             trailerURL = " ",
             numberOfSeasons = 3
@@ -223,7 +224,21 @@ object DummyDataFactory {
             characterName = "Test Character"
         )
 
-        fun createMockTvShowDto() =
+        fun createMockTvShow() = TvShow(
+            id = 789L,
+            title = "Test TV Show",
+            genres = listOf(Genre(18L, "Drama")),
+            averageRating = 7.9,
+            userRating = 8,
+            releaseDate = LocalDate.parse("2023-01-01"),
+            overview = "Test overview for TV Show",
+            posterImageURL = "/tv_poster.jpg",
+            numberOfSeasons = 3,
+            trailerURL = " ",
+            headerImagesURLs = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg")
+        )
+
+        fun createMockTvShowsDto() =
             listOf(
                 TvShowDto(
                     id = 123L,
@@ -306,13 +321,13 @@ object DummyDataFactory {
                 )
             )
 
-        fun createMockContinueWatchingDto(
+        fun createMockUserWatchedMediaDto(
             contentId: Long = 123L,
             genreIds: List<Long> = listOf(28L, 12L),
             contentImageUrl: String = "/content_image.jpg",
-            contentType: ContinueWatchingDto.ContentType = ContinueWatchingDto.ContentType.MOVIE,
+            contentType: UserWatchedMediaDto.ContentType = UserWatchedMediaDto.ContentType.MOVIE,
             userId: Long = 123L,
-        ) = ContinueWatchingDto(
+        ) = UserWatchedMediaDto(
             contentId = contentId,
             genreIds = genreIds,
             contentImageUrl = contentImageUrl,
@@ -356,6 +371,7 @@ object DummyDataFactory {
             trailerURL = " ",
             headerImagesURLs = listOf("/header1.jpg", "/header2.jpg", "/header3.jpg")
         )
+
         fun SavableMovieDto.toSavableMovie(): SavedMovie {
             return movie.toSavableMovie(isSaved, listId)
         }

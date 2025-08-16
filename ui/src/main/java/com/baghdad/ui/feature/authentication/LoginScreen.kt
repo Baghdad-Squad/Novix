@@ -80,8 +80,26 @@ fun LoginScreen(
 
 }
 
+private fun handleLoginEffect(
+    effect: LoginUiEffect,
+    context: Context,
+    handleNavigation: (AuthenticationNavEvent) -> Unit,
+) {
+    if (effect == LoginUiEffect.RecreateActivity) {
+        val activity = context as? AppCompatActivity
+        activity?.let {
+            val intent = it.intent
+            it.finish()
+            it.startActivity(intent)
+        }
+    } else {
+        effect.toNavEvent()?.let { handleNavigation(it) }
+    }
+}
+
+
 @Composable
-fun LoginScreenContent(
+private fun LoginScreenContent(
     state: LoginUiState,
     snackBarState: SnackBarState,
     listener: LoginInteractionListener,
@@ -95,6 +113,7 @@ fun LoginScreenContent(
             .fillMaxWidth()
             .statusBarsPadding()
             .navigationBarsPadding(),
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarState.message.toStringResource()),
@@ -104,9 +123,11 @@ fun LoginScreenContent(
             )
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+
         topBar = {
             TopBar(listener)
         },
+
         backgroundBlur = { BackgroundBlur() }
     ) {
 
@@ -136,7 +157,7 @@ private fun TopBar(listener: LoginInteractionListener) {
     ) {
         IconButton(
             icon = painterResource(R.drawable.ic_go_back),
-            onClick = listener::onNavigateBackClicked,
+            onClick = listener::onBackClick,
             modifier = Modifier.padding(end = 12.dp, top = 8.dp, bottom = 8.dp)
         )
         Text(
@@ -152,7 +173,7 @@ private fun LoginForm(
     state: LoginUiState, listener: LoginInteractionListener
 ) {
     Icon(
-        imageVector = ImageVector.vectorResource(R.drawable.app_logo_light),
+        imageVector = ImageVector.vectorResource(R.drawable.app_logo),
         contentDescription = stringResource(com.baghdad.ui.R.string.login_icon),
         tint = Theme.color.primary,
         modifier = Modifier
@@ -175,6 +196,12 @@ private fun LoginForm(
         modifier = Modifier.padding(bottom = 16.dp)
     )
 
+    val trailingIcon = if (state.isPasswordVisible.not()) {
+        painterResource(R.drawable.ic_closed_eye)
+    } else {
+        painterResource(R.drawable.ic_opened_eye)
+    }
+
     NovixTextField(
         label = stringResource(com.baghdad.ui.R.string.password),
         keyBoardOptions = KeyboardOptions(
@@ -185,23 +212,22 @@ private fun LoginForm(
         onValueChange = listener::onPasswordValueChange,
         leadingIcon = painterResource(R.drawable.ic_lock_key),
         singleLine = true,
-        isTextMasked = !state.isPasswordVisible,
+        isTextMasked = state.isPasswordVisible.not(),
         trailingVisibility = true,
-        trailingIcon = if (!state.isPasswordVisible) painterResource(R.drawable.ic_closed_eye)
-        else painterResource(R.drawable.ic_opened_eye),
-        onClickTrailingIcon = listener::togglePasswordVisibility
+        trailingIcon = trailingIcon,
+        onClickTrailingIcon = listener::onTogglePasswordChange
     )
 
     PrimaryButton(
         isLoading = state.isLoading,
         label = stringResource(com.baghdad.ui.R.string.login),
-        isEnabled = !state.isAnyFieldEmpty,
+        isEnabled = state.isAnyFieldEmpty.not(),
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 32.dp, bottom = 12.dp)
             .clip(RoundedCornerShape(12.dp))
     ) {
-        listener.onLoginClicked()
+        listener.onLoginClick()
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -210,7 +236,7 @@ private fun LoginForm(
             textAlign = TextAlign.Center,
             label = stringResource(com.baghdad.ui.R.string.forgot_password),
             modifier = Modifier.align(Alignment.Center),
-            onClick = listener::onForgotPasswordClicked
+            onClick = listener::onForgotPasswordClick
         )
     }
 }
@@ -232,36 +258,20 @@ private fun BottomCreateAccount(listener: LoginInteractionListener) {
         )
         TextButton(
             label = stringResource(com.baghdad.ui.R.string.create_account),
-            onClick = listener::onRegisterClicked,
+            onClick = listener::onRegisterClick,
             noRipple = true
         )
     }
 }
 
-private fun handleLoginEffect(
-    effect: LoginUiEffect,
-    context: Context,
-    handleNavigation: (AuthenticationNavEvent) -> Unit,
-) {
-    if (effect == LoginUiEffect.RecreateActivity) {
-        val activity = context as? AppCompatActivity
-        activity?.let {
-            val intent = it.intent
-            it.finish()
-            it.startActivity(intent)
-        }
-    } else {
-        effect.toNavEvent()?.let { handleNavigation(it) }
-    }
-}
 
 private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent? =
     when (this) {
-        LoginUiEffect.NavigateBack -> AuthenticationNavEvent.NavigateBack
-    LoginUiEffect.NavigateToForgotPassword -> AuthenticationNavEvent.NavigateToForgotPassword
-    LoginUiEffect.NavigateToRegister -> AuthenticationNavEvent.NavigateToRegister
+        is LoginUiEffect.NavigateBack -> AuthenticationNavEvent.NavigateBack
+        is LoginUiEffect.NavigateToForgotPassword -> AuthenticationNavEvent.NavigateToForgotPassword
+        is LoginUiEffect.NavigateToRegister -> AuthenticationNavEvent.NavigateToRegister
         else -> null
-}
+    }
 
 @Preview
 @Composable
