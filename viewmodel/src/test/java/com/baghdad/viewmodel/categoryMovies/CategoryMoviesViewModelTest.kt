@@ -397,6 +397,7 @@ class CategoryMoviesViewModelTest {
     }
 
     private companion object {
+        val longUrl = "https://example.com/very/long/path/poster.jpg"
         val testMovie = Movie(
             id = 1L,
             title = "Test Movie",
@@ -447,7 +448,5 @@ class CategoryMoviesViewModelTest {
             isSaved = false,
             savedListId = 0L
         )
-
-        val longUrl = "https://example.com/very/long/path/poster.jpg"
     }
 }
