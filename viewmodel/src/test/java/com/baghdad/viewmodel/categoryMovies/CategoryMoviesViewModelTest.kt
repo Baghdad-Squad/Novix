@@ -134,6 +134,7 @@ class CategoryMoviesViewModelTest {
         )
         val states = mutableListOf<CategoryMoviesState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
+
         advanceUntilIdle()
         assertThat(states.last().categoryName).isEqualTo("")
         job.cancel()
@@ -184,6 +185,7 @@ class CategoryMoviesViewModelTest {
             createSavedListUseCase = createSavedListUseCase,
             removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
         )
+
         advanceUntilIdle()
         val items = collectAndSnapshot(flow = viewModel.uiState.value.moviesFlow)
         assertThat(items).isNotEmpty()
