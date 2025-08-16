@@ -17,6 +17,7 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.transformations
+import com.baghdad.islamic_image_loader.cache.BlurStateCache
 import com.baghdad.islamic_image_loader.model.ContentRestrictionTypes
 import com.baghdad.islamic_image_loader.model.HaramImageDetector
 import com.baghdad.islamic_image_loader.transformation.BlurHaramTransformation
@@ -34,23 +35,28 @@ fun SafeImage(
     contentRestrictionTypes: ContentRestrictionTypes = ContentRestrictionTypes.STRICT
 ) {
     val context = LocalContext.current
-    var isBlurred by rememberSaveable(imageUrl) { mutableStateOf(false) }
+    val blurCacheKey = "${imageUrl}_${contentRestrictionTypes.hashCode()}"
+    var isBlurred by rememberSaveable(imageUrl) {
+        mutableStateOf(BlurStateCache.getBlurState(blurCacheKey) ?: false)
+    }
+
     val request = ImageRequest.Builder(context)
         .data(imageUrl)
         .transformations(
             BlurHaramTransformation(
-                onBlur = {
-                    isBlurred = it
+                onBlur = { blurState ->
+                    isBlurred = blurState
+                    BlurStateCache.setBlurState(blurCacheKey, blurState)
                 },
                 haramImageDetector = HaramImageDetector(context),
                 blurRadiusPx = blurRadius.value.toInt(),
                 contentRestrictionTypes = contentRestrictionTypes
             )
-        )
-        .memoryCachePolicy(CachePolicy.DISABLED)
-        .diskCachePolicy(policy = CachePolicy.DISABLED)
+        ).memoryCachePolicy(CachePolicy.ENABLED)
+        .diskCachePolicy(policy = CachePolicy.ENABLED)
         .crossfade(true)
         .build()
+
     SubcomposeAsyncImage(
         modifier = modifier,
         model = request,

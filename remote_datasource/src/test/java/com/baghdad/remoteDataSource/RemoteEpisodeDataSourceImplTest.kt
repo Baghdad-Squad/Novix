@@ -10,9 +10,10 @@ import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.ActorDto
 import com.baghdad.repository.model.CastMemberDto
 import com.baghdad.repository.model.EpisodeDto
-import com.baghdad.repository.model.MediaAccountStateDto
 import com.google.common.truth.Truth.assertThat
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import retrofit2.Response
@@ -121,7 +122,7 @@ class RemoteEpisodeDataSourceImplTest {
             episodeApiService.addEpisodeRate(TV_ID, SEASON_NUMBER, EPISODE_NUMBER, ratingRequest)
         } returns successResponse
 
-        dataSource.addEpisodeRate(TV_ID, SEASON_NUMBER, EPISODE_NUMBER, SESSION_ID, RATING)
+        dataSource.addEpisodeRate(TV_ID, SEASON_NUMBER, EPISODE_NUMBER, RATING)
 
         coVerify(exactly = 1) {
             episodeApiService.addEpisodeRate(TV_ID, SEASON_NUMBER, EPISODE_NUMBER, ratingRequest)
@@ -132,7 +133,6 @@ class RemoteEpisodeDataSourceImplTest {
         const val TV_ID = 123L
         const val SEASON_NUMBER = 1
         const val EPISODE_NUMBER = 5
-        const val SESSION_ID = "session123"
         const val RATING = 8
         const val EPISODE_ID = 456L
         const val EPISODE_NAME = "Episode Title"
@@ -157,17 +157,6 @@ class RemoteEpisodeDataSourceImplTest {
             airDate = AIR_DATE,
             seasonNumber = SEASON_NUMBER,
             overview = OVERVIEW
-        )
-
-        val episodeDetailsResponseWithNulls = EpisodeDetailsResponse(
-            id = null,
-            name = null,
-            episodeNumber = EPISODE_NUMBER,
-            voteAverage = VOTE_AVERAGE,
-            runtime = RUNTIME,
-            airDate = AIR_DATE,
-            seasonNumber = SEASON_NUMBER,
-            overview = null
         )
 
         val castMemberResponse = CastMembersResponse.CastMemberResponse(
@@ -224,14 +213,6 @@ class RemoteEpisodeDataSourceImplTest {
             type = "Trailer"
         )
 
-        val episodeVideosResponseWithTrailer = EpisodeVideosResponse(
-            results = listOf(youtubeTrailerVideo)
-        )
-
-        val episodeVideosResponseWithNonTrailer = EpisodeVideosResponse(
-            results = listOf(youtubeNonTrailerVideo)
-        )
-
         val episodeVideosResponseWithNoYoutube = EpisodeVideosResponse(
             results = listOf(nonYoutubeVideo)
         )
@@ -261,21 +242,6 @@ class RemoteEpisodeDataSourceImplTest {
             releasedDate = AIR_DATE,
             currentSeason = SEASON_NUMBER,
             overview = OVERVIEW,
-            headerPictures = emptyList(),
-            trailerUrl = "",
-            userRating = 0,
-            genres = emptyList()
-        )
-
-        val expectedEpisodeDtoWithDefaults = EpisodeDto(
-            id = 0L,
-            title = "",
-            episodeNumber = EPISODE_NUMBER,
-            rating = VOTE_AVERAGE,
-            duration = RUNTIME.toString(),
-            releasedDate = AIR_DATE,
-            currentSeason = SEASON_NUMBER,
-            overview = "",
             headerPictures = emptyList(),
             trailerUrl = "",
             userRating = 0,

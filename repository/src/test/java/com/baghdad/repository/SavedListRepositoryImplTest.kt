@@ -80,8 +80,8 @@ class SavedListRepositoryImplTest {
                     itemCount = 5,
                 ),
             )
-            assertThat(result.nextKey).isEqualTo(2)
-            assertThat(result.prevKey).isNull()
+            assertThat(result.nextPage).isEqualTo(2)
+            assertThat(result.prevPage).isNull()
 
             coVerify(exactly = 1) { localUserDataSource.getUser() }
             coVerify(exactly = 1) {
@@ -115,8 +115,8 @@ class SavedListRepositoryImplTest {
             val result = repository.getSavedLists(PAGE, PAGE_SIZE)
 
             assertThat(result.data).isEmpty()
-            assertThat(result.nextKey).isNull()
-            assertThat(result.prevKey).isNull()
+            assertThat(result.nextPage).isNull()
+            assertThat(result.prevPage).isNull()
 
             coVerify(exactly = 1) { localUserDataSource.getUser() }
             coVerify(exactly = 1) {
@@ -248,7 +248,8 @@ class SavedListRepositoryImplTest {
         private const val PAGE = 1
         private const val PAGE_SIZE = 20
         private const val TEST_ACCOUNT_ID = 12345L
-        private val TEST_USER = UserDto(id = TEST_ACCOUNT_ID, userName = "testuser")
+        private val TEST_USER =
+            UserDto(id = TEST_ACCOUNT_ID, userName = "testuser", imageUrl = null)
         private const val MOVIE_ID = 22002L
         private const val TITLE = "Favorite"
 

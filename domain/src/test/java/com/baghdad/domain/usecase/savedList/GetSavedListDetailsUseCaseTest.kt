@@ -41,8 +41,8 @@ class GetSavedListDetailsUseCaseTest {
                                 listOf(
                                     sampleSavedMovie
                                 ),
-                            nextKey = null,
-                            prevKey = 1,
+                            nextPage = null,
+                            prevPage = 1,
                         ),
                 )
             coEvery {

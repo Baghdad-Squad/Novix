@@ -91,7 +91,7 @@ class MyListsViewModelTest {
     fun `should update saved lists when initialize viewmodel and user is logged in`() = runTest {
         coEvery { isUserLoggedInUseCase() } returns true
         coEvery { getSavedListsUseCase(any(), any()) } returns PagedResult(
-            data = listOf(savedListSample), nextKey = null, prevKey = null
+            data = listOf(savedListSample), nextPage = null, prevPage = null
         )
         viewModel = createViewModel()
         advanceUntilIdle()

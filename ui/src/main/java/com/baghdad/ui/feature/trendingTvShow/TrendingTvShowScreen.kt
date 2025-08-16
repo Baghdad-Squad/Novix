@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -36,8 +34,8 @@ import com.baghdad.ui.feature.trendingTvShow.component.GenresSection
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowEffect
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowInteractionListener
-import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowScreenEffect
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowScreenState
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
 
@@ -64,22 +62,22 @@ fun TrendingTvShowScreen(
 }
 
 private fun handleEffect(
-    effect: TrendingTvShowScreenEffect,
+    effect: TrendingTvShowEffect,
     handleNavigation: (HomeNavEvent) -> Unit
 ) {
     when (effect) {
-        is TrendingTvShowScreenEffect.NavigateToTvShowDetails -> {
+        is TrendingTvShowEffect.NavigateToTvShowDetails -> {
             handleNavigation(HomeNavEvent.NavigateToTvShowDetails(effect.tvShowId))
         }
 
-        TrendingTvShowScreenEffect.NavigateBack -> {
+        TrendingTvShowEffect.NavigateBack -> {
             handleNavigation(HomeNavEvent.NavigateBack)
         }
     }
 }
 
 @Composable
-fun TrendingTvShowContent(
+private fun TrendingTvShowContent(
     uiState: TrendingTvShowScreenState,
     listener: TrendingTvShowInteractionListener,
     snackBarState: SnackBarState,
@@ -89,8 +87,9 @@ fun TrendingTvShowContent(
     Scaffold(
         modifier = modifier
             .background(Theme.color.surface)
-            .systemBarsPadding()
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .padding(top = 12.dp),
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -101,21 +100,18 @@ fun TrendingTvShowContent(
                 position = position,
             )
         },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        isLoading = uiState.isLoading,
+
         topBar = {
             Column {
                 TopAppBar(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(top = 22.dp, bottom = 8.dp),
-                    onGoBackClick = {
-                        listener.onBackIconClicked()
-                    },
+                        .padding(vertical = 8.dp),
+                    onGoBackClick = { listener.onBackIconClicked() },
                     screenTitle = stringResource(R.string.trending_tv_shows),
+                )
 
-                    )
                 GenresSection(
                     allGenres = uiState.genres,
                     selectedGenre = uiState.selectedGenreId,
@@ -124,9 +120,10 @@ fun TrendingTvShowContent(
                 )
             }
         },
-        backgroundBlur = {
-            BackgroundBlur()
-        }) {
+        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        isLoading = uiState.isLoading,
+        backgroundBlur = { BackgroundBlur() }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -135,8 +132,7 @@ fun TrendingTvShowContent(
         ) {
             LazyPagingVerticalGrid<TrendingTvShowScreenState.TvShowUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
-                modifier = Modifier
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
@@ -144,7 +140,7 @@ fun TrendingTvShowContent(
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                items = trendingTvShows,
+                items = trendingTvShows
             ) { tvShow ->
                 HomeCard(
                     url = tvShow.posterPictureURL,
