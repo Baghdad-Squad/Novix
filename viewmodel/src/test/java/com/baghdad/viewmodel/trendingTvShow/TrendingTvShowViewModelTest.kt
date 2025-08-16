@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.baghdad.domain.usecase.tvShow.GetTrendingTvShowUseCase
 import com.baghdad.domain.usecase.tvShow.GetTvShowGenresUseCase
 import com.baghdad.entity.media.Genre
-import com.baghdad.entity.media.TvShow
+import com.baghdad.viewmodel.topTvShowPicks.MockTvShow
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowScreenState.GenreUiState
 import com.google.common.truth.Truth.assertThat
 import io.mockk.mockk
@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -42,6 +41,7 @@ class TrendingTvShowViewModelTest {
     @Test
     fun `onTvShowClicked should send NavigateToTvShowDetails effect with correct tvShowId when tv show clicked`() =
         runTest {
+            val tvShow = MockTvShow.TV_SHOW
             viewModel = createViewModel()
 
             viewModel.onTvShowClicked(tvShow.id)
@@ -102,20 +102,6 @@ class TrendingTvShowViewModelTest {
 
     companion object {
         private val genre = Genre(id = 1L, name = "Action")
-
-        private val tvShow = TvShow(
-            id = 22L,
-            title = "Test Show",
-            genres = listOf(genre),
-            averageRating = 8.5,
-            userRating = 7,
-            releaseDate = LocalDate.parse("2002-02-22"),
-            overview = "test overview",
-            posterImageURL = "poster.jpg",
-            trailerURL = "trailer.mp4",
-            headerImagesURLs = listOf("header1.jpg", "header2.jpg"),
-            numberOfSeasons = 3
-        )
     }
 
     private fun createViewModel(): TrendingTvShowViewModel {
