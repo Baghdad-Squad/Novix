@@ -17,10 +17,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
@@ -36,8 +34,8 @@ import com.baghdad.ui.feature.trendingTvShow.component.GenresSection
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowEffect
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowInteractionListener
-import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowScreenEffect
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowScreenState
 import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowViewModel
 

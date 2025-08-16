@@ -30,6 +30,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
+import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
@@ -42,7 +43,6 @@ import com.baghdad.ui.feature.component.bottomSheet.LoginRequiredSheet
 import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
 import com.baghdad.ui.feature.episodeDetails.component.EpisodeHeaderWithDetailsCard
 import com.baghdad.ui.feature.episodeDetails.component.guestsOfHonorItems
-import com.baghdad.ui.feature.movieDetails.component.OverviewSection
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
 import com.baghdad.viewmodel.base.SnackBarState
@@ -194,22 +194,13 @@ private fun EpisodeDetailsContent(
                     .zIndex(1f)
                     .align(Alignment.TopCenter)
                     .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = listener::onBackClick,
-
-            content = {
-                SaveIcon(
-                    size = 40,
-                    backgroundColor = Theme.color.iconBackgroundLow,
-                    isSaved = state.isSavedToList,
-                    tint = Theme.color.title,
-                    onClick = listener::onSaveEpisodeClick,
-                )
-            },
+            onGoBackClick = listener::onBackClick
         )
     }
 
     RatingBottomSheet(
-        isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
+        isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType
+                == BottomSheetType.ShowRating,
         onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
         rate = state.episode.userRating,
         isButtonEnabled = state.episode.userRating != 0,
