@@ -10,7 +10,8 @@ android {
     namespace = "com.baghdad.viewmodel"
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
     jvmArgs("-XX:+EnableDynamicAgentLoading")
 }
 
@@ -31,4 +32,3 @@ dependencies {
 kapt {
     correctErrorTypes = true
 }
-
