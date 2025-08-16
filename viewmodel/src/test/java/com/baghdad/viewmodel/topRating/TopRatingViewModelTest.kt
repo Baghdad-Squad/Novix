@@ -183,7 +183,7 @@ class TopRatingViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.uiState.value.addListBottomSheetState.isVisible).isTrue()
-        assertThat(viewModel.uiState.value.addToListBottomSheetState.isVisible).isTrue()
+        assertThat(viewModel.uiState.value.addToListBottomSheetState.isVisible).isFalse()
     }
 
     @Test
