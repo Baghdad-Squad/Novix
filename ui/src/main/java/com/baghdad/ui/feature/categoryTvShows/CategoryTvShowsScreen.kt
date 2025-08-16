@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -41,7 +40,6 @@ import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsState
 import com.baghdad.viewmodel.categoryTvShows.CategoryTvShowsViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 
-
 @Composable
 fun CategoryTvShowsScreen(
     viewModel: CategoryTvShowsViewModel = hiltViewModel(),
@@ -49,9 +47,9 @@ fun CategoryTvShowsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    ObserveAsEffect(viewModel.uiEffect) { effect ->
-        handleEffect(effect, handleNavigation)
-    }
+
+    ObserveAsEffect(viewModel.uiEffect) { handleEffect(it, handleNavigation) }
+
     CategoryTvShowsContent(
         uiState = uiState, listener = viewModel, snackBarState = snackBarState
     )
@@ -85,20 +83,15 @@ private fun CategoryTvShowsContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(
-                        top = 12.dp,
-                        bottom = 12.dp
-                    ),
+                    .padding(vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     icon = painterResource(R.drawable.ic_go_back),
                     onClick = { listener.onBackClicked() },
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        end = 12.dp,
-                    )
+                    modifier = Modifier.padding(start = 16.dp, end = 12.dp)
                 )
+
                 Text(
                     text = uiState.categoryName,
                     style = Theme.typography.title.large,
@@ -107,6 +100,7 @@ private fun CategoryTvShowsContent(
                 )
             }
         },
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -114,25 +108,20 @@ private fun CategoryTvShowsContent(
                 isVisible = snackBarState.isVisible,
                 actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
                 onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
+                position = position
             )
         },
+
         isLoading = uiState.isLoading,
-        backgroundBlur = {
-            BackgroundBlur()
-        },
+        backgroundBlur = { BackgroundBlur() },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Column {
             LazyPagingVerticalGrid(
                 items = lazyPagingTvShows,
                 columns = GridCells.Adaptive(minSize = 150.dp),
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(
-                    horizontal = 16.dp,
-                    vertical = 8.dp
-                ),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 state = rememberSaveableLazyGridState()
@@ -145,7 +134,6 @@ private fun CategoryTvShowsContent(
                     modifier = Modifier.aspectRatio(0.8f)
                 )
             }
-
         }
     }
 }

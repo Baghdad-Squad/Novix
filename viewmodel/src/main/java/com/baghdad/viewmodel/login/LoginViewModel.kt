@@ -85,30 +85,23 @@ class LoginViewModel @Inject constructor(
     }
 
     override fun onPasswordValueChange(value: String) {
-        updateState {
-            it.copy(password = value)
-        }
+        updateState { it.copy(password = value) }
         isAnyFieldEmpty()
     }
 
     override fun onUserNameValueChange(value: String) {
-        updateState {
-            it.copy(userName = value.trim())
-        }
+        updateState { it.copy(userName = value.trim()) }
         isAnyFieldEmpty()
     }
 
     override fun onTogglePasswordChange() {
-        updateState {
-            it.copy(isPasswordVisible = !it.isPasswordVisible)
-        }
+        updateState { it.copy(isPasswordVisible = it.isPasswordVisible.not()) }
     }
 
     private fun isAnyFieldEmpty() {
         updateState {
             it.copy(
-                isAnyFieldEmpty = it.userName.isEmpty() ||
-                        it.password.isEmpty()
+                isAnyFieldEmpty = it.userName.isEmpty() || it.password.isEmpty()
             )
         }
     }

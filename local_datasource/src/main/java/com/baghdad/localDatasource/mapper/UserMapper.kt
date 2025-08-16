@@ -5,7 +5,7 @@ import com.example.application.proto.User
 
 fun User.toDto(): UserDto {
     return UserDto(
-        imageUrl = this.imageUrl,
+        imageUrl = this.imageUrl.orEmpty(),
         id = this.id,
         userName = this.userName
     )
