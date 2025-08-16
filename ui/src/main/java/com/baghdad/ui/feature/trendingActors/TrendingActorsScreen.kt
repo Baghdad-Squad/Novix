@@ -39,7 +39,6 @@ fun TrendingActorsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-
     TrendingActorsContent(
         uiState = uiState,
         listener = viewModel,
@@ -73,8 +72,7 @@ private fun TrendingActorsContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding()
-            .padding(vertical = 12.dp),
-
+            .padding(top = 12.dp),
         isLoading = uiState.isLoading,
 
         topBar = {

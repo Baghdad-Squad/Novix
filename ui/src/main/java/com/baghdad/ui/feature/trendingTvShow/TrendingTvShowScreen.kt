@@ -17,8 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Scaffold
@@ -60,22 +62,22 @@ fun TrendingTvShowScreen(
 }
 
 private fun handleEffect(
-    effect: TrendingTvShowScreenEffect,
+    effect: TrendingTvShowEffect,
     handleNavigation: (HomeNavEvent) -> Unit
 ) {
     when (effect) {
-        is TrendingTvShowScreenEffect.NavigateToTvShowDetails -> {
+        is TrendingTvShowEffect.NavigateToTvShowDetails -> {
             handleNavigation(HomeNavEvent.NavigateToTvShowDetails(effect.tvShowId))
         }
 
-        TrendingTvShowScreenEffect.NavigateBack -> {
+        TrendingTvShowEffect.NavigateBack -> {
             handleNavigation(HomeNavEvent.NavigateBack)
         }
     }
 }
 
 @Composable
-fun TrendingTvShowContent(
+private fun TrendingTvShowContent(
     uiState: TrendingTvShowScreenState,
     listener: TrendingTvShowInteractionListener,
     snackBarState: SnackBarState,
@@ -109,13 +111,11 @@ fun TrendingTvShowContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(top = 22.dp, bottom = 8.dp),
-                    onGoBackClick = {
-                        listener.onBackIconClicked()
-                    },
+                        .padding(vertical = 8.dp),
+                    onGoBackClick = { listener.onBackIconClicked() },
                     screenTitle = stringResource(R.string.trending_tv_shows),
+                )
 
-                    )
                 GenresSection(
                     allGenres = uiState.genres,
                     selectedGenre = uiState.selectedGenreId,
@@ -136,8 +136,7 @@ fun TrendingTvShowContent(
         ) {
             LazyPagingVerticalGrid<TrendingTvShowScreenState.TvShowUiState>(
                 columns = GridCells.Adaptive(minSize = 150.dp),
-                modifier = Modifier
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
@@ -145,7 +144,7 @@ fun TrendingTvShowContent(
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                items = trendingTvShows,
+                items = trendingTvShows
             ) { tvShow ->
                 HomeCard(
                     url = tvShow.posterPictureURL,
