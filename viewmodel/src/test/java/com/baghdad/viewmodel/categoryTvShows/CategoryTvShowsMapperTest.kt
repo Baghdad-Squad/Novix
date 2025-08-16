@@ -8,7 +8,6 @@ class TvShowMapperTest {
 
     @Test
     fun `should return correct TvShowUiState when toUiState called`() {
-
         val tvShow = MockTvShow.TV_SHOW
         val expectedUiState = CategoryTvShowsState.TvShowUiState(
             id = tvShow.id,
