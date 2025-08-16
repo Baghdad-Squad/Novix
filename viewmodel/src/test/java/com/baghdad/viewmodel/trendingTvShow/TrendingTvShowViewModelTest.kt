@@ -99,7 +99,6 @@ class TrendingTvShowViewModelTest {
         assertThat(genreUi).isEqualTo(expectedGenre)
     }
 
-
     companion object {
         private val genre = Genre(id = 1L, name = "Action")
     }

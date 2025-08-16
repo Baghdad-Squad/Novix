@@ -7,6 +7,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class TrendingTvShowMappersTest {
+
     @Test
     fun `toUiState should return correct GenreUiState when genre mapped`() {
         val genre = Genre(id = 22, name = "Fantasy")
