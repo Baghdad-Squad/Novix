@@ -229,7 +229,7 @@ private fun ActorDetailsContent(
                         items = uiState.topMoviesPicks,
                         imageUrl = { it.posterPictureURL },
                         onSavedClick =  listener::onSaveMovieClick ,
-                        onCardClick = { listener::onMovieCardClick },
+                        onCardClick = { listener.onMovieCardClick(it.id) },
                         isSaved = { it.isSaved },
                         isShowAllVisible = uiState.topMoviesPicks.size >= 10,
                         onClickShowAll = { listener::onViewAllTopMoviesPicksClick },

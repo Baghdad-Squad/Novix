@@ -244,11 +244,10 @@ private fun MovieDetailsContent(
                 item(span = StaggeredGridItemSpan.FullLine ) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
                             .layout { measurable, constraints ->
                                 val placeable = measurable.measure(
                                     constraints.copy(
-                                        maxWidth = constraints.maxWidth + 32.dp.roundToPx() // Add back the padding
+                                        maxWidth = constraints.maxWidth + 32.dp.roundToPx()
                                     )
                                 )
                                 layout(placeable.width, placeable.height) {
@@ -257,7 +256,6 @@ private fun MovieDetailsContent(
                             }
                     ) {
                         MovieHeaderWithDetailsCard(
-                            modifier = Modifier.fillMaxWidth(),
                             uiState = state,
                             listener = listener
                         )
@@ -313,6 +311,9 @@ private fun MovieDetailsContent(
                 }
 
             }
+
+
+
             TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
