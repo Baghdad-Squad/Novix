@@ -3,16 +3,49 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.common)
     jacoco
 }
 
 android {
     namespace = "com.baghdad.remote_datasource"
+    compileSdk = 35
+
+    defaultConfig {
+        minSdk = 24
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {
-    implementation(projects.repository)
+    implementation(project(":repository"))
     implementation(libs.bundles.coroutines)
     implementation(libs.bundles.ktor.client)
     implementation(libs.kotlinx.datetime)
@@ -20,11 +53,11 @@ dependencies {
     testImplementation(libs.bundles.test.core)
     testImplementation(libs.ktor.client.mock)
     implementation(libs.bundles.retrofit)
-    testImplementation(libs.mockwebserver)
+    testImplementation (libs.mockwebserver)
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.compiler)
 }
 
-kapt {
+kapt{
     correctErrorTypes = true
 }

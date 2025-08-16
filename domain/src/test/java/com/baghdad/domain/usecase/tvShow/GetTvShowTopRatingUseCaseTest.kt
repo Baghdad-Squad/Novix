@@ -49,7 +49,7 @@ class GetTvShowTopRatingUseCaseTest {
             createTvShow(1, listOf(1)),
             createTvShow(2, listOf(2))
         )
-        val pagedResult = PagedResult(data = tvShows, nextKey = 2, prevKey = null)
+        val pagedResult = PagedResult(data = tvShows, nextPage = 2, prevPage = null)
 
         coEvery { tvShowRepository.getTopRatedTvShows(page) } returns pagedResult
 
@@ -58,8 +58,8 @@ class GetTvShowTopRatingUseCaseTest {
 
         // Then
         Truth.assertThat(result.data).containsExactlyElementsIn(tvShows)
-        Truth.assertThat(result.nextKey).isEqualTo(2)
-        Truth.assertThat(result.prevKey).isNull()
+        Truth.assertThat(result.nextPage).isEqualTo(2)
+        Truth.assertThat(result.prevPage).isNull()
         coVerify(exactly = 1) { tvShowRepository.getTopRatedTvShows(page) }
     }
 
@@ -75,7 +75,7 @@ class GetTvShowTopRatingUseCaseTest {
                 createTvShow(3, listOf(2, 3))
             )
             val expected = listOf(tvShows[1], tvShows[2])
-            val pagedResult = PagedResult(data = tvShows, nextKey = 2, prevKey = null)
+            val pagedResult = PagedResult(data = tvShows, nextPage = 2, prevPage = null)
 
             coEvery { tvShowRepository.getTopRatedTvShows(page) } returns pagedResult
 
@@ -96,7 +96,7 @@ class GetTvShowTopRatingUseCaseTest {
             createTvShow(1, listOf(1)),
             createTvShow(2, listOf(2))
         )
-        val pagedResult = PagedResult(data = tvShows, nextKey = 2, prevKey = null)
+        val pagedResult = PagedResult(data = tvShows, nextPage = 2, prevPage = null)
 
         coEvery { tvShowRepository.getTopRatedTvShows(page) } returns pagedResult
 
@@ -120,8 +120,8 @@ class GetTvShowTopRatingUseCaseTest {
             )
             val pagedResult = PagedResult(
                 data = tvShows,
-                nextKey = 3,
-                prevKey = 1
+                nextPage = 3,
+                prevPage = 1
             )
 
             coEvery { tvShowRepository.getTopRatedTvShows(page) } returns pagedResult
@@ -130,8 +130,8 @@ class GetTvShowTopRatingUseCaseTest {
             val result = useCase(page, genreId)
 
             // Then
-            Truth.assertThat(result.nextKey).isEqualTo(3)
-            Truth.assertThat(result.prevKey).isEqualTo(1)
+            Truth.assertThat(result.nextPage).isEqualTo(3)
+            Truth.assertThat(result.prevPage).isEqualTo(1)
             Truth.assertThat(result.data).hasSize(1)
         }
 }

@@ -13,7 +13,6 @@ plugins {
     jacoco
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.kapt)
-
 }
 
 val formattedDate: String = ZonedDateTime.now(ZoneId.of("Africa/Cairo"))
@@ -88,12 +87,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            ndk {
+                abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+            }
         }
         debug {
             enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
         }
     }
+
     firebaseCrashlytics {
         mappingFileUploadEnabled = true
     }
@@ -102,13 +105,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+
     testOptions {
         unitTests.all {
             it.useJUnitPlatform()
@@ -117,7 +123,15 @@ android {
 }
 
 dependencies {
-    addCoreModules()
+    implementation(project(":ui"))
+    implementation(project(":design_system"))
+    implementation(project(":viewmodel"))
+    implementation(project(":repository"))
+    implementation(project(":local_datasource"))
+    implementation(project(":remote_datasource"))
+    implementation(project(":domain"))
+    implementation(project(":entity"))
+    implementation(project(":islamic_image_loader"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.androidx.core)
@@ -132,18 +146,7 @@ dependencies {
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
     implementation(libs.accompanist.systemuicontroller)
-}
 
-fun DependencyHandlerScope.addCoreModules() {
-    implementation(projects.ui)
-    implementation(projects.designSystem)
-    implementation(projects.viewmodel)
-    implementation(projects.repository)
-    implementation(projects.localDatasource)
-    implementation(projects.remoteDatasource)
-    implementation(projects.domain)
-    implementation(projects.entity)
-    implementation(projects.islamicImageLoader)
 }
 
 /**

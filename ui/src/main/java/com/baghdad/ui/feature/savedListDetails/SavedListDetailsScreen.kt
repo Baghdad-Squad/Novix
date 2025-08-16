@@ -53,12 +53,10 @@ fun SavedListDetailsScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
 
     SavedListDetailsContent(
         uiState = uiState,
         listener = viewModel,
-        mediaItems = mediaItems,
         snackBar = snackBarState
     )
 }
@@ -79,9 +77,10 @@ private fun handleEffect(
 fun SavedListDetailsContent(
     uiState: SavedListDetailsScreenState,
     listener: SavedListDetailsInteractionListener,
-    mediaItems: LazyPagingItems<SavedListDetailsScreenState.SavedListDetailsMovieUiState>,
     snackBar: SnackBarState,
 ) {
+    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
+
     Scaffold(
         modifier = Modifier.background(Theme.color.surface),
         backgroundBlur = { BackgroundBlur() },
