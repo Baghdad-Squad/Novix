@@ -59,7 +59,9 @@ fun ReviewScreen(
 
 @Composable
 private fun ReviewContent(
-    uiState: ReviewScreenState, listener: ReviewInteractionListener, snackBarState: SnackBarState
+    uiState: ReviewScreenState,
+    listener: ReviewInteractionListener,
+    snackBarState: SnackBarState
 ) {
     Scaffold(
         modifier = Modifier
@@ -67,6 +69,7 @@ private fun ReviewContent(
             .background(Theme.color.surface)
             .statusBarsPadding()
             .navigationBarsPadding(),
+
         topBar = {
             TopAppBar(
                 screenTitle = stringResource(R.string.reviews),
@@ -100,7 +103,6 @@ private fun ReviewContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-
             if (uiState.reviews.isEmpty()) {
                 EmptyReviewScreen()
             } else {
@@ -119,10 +121,9 @@ private fun ReviewContent(
                             reviewDate = review.postedDate,
                             authorAvatar = review.authorAvatarUrl,
                             contentName = review.contentTitle,
-                            isExpanded = review.isExpanded
-                        ) {
-                            listener.onExpandedTextChange(review.id)
-                        }
+                            isExpanded = review.isExpanded,
+                            onExpandedChange = {listener::onExpandedTextChange }
+                        )
                     }
                 }
             }

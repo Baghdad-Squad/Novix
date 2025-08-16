@@ -53,12 +53,10 @@ fun SavedListDetailsScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
 
     SavedListDetailsContent(
         uiState = uiState,
         listener = viewModel,
-        mediaItems = mediaItems,
         snackBar = snackBarState
     )
 }
@@ -68,7 +66,9 @@ private fun handleEffect(
     handleNavigation: (MyListsNavEvent) -> Unit
 ) {
     when (effect) {
-        is SavedListDetailsEffect.NavigateBack -> handleNavigation(MyListsNavEvent.NavigateToMyLists)
+        is SavedListDetailsEffect.NavigateBack ->
+            handleNavigation(MyListsNavEvent.NavigateToMyLists)
+
         is SavedListDetailsEffect.NavigateToMovieDetails ->
             handleNavigation(MyListsNavEvent.NavigateToMovieDetails(effect.movieId))
 
@@ -79,19 +79,24 @@ private fun handleEffect(
 fun SavedListDetailsContent(
     uiState: SavedListDetailsScreenState,
     listener: SavedListDetailsInteractionListener,
-    mediaItems: LazyPagingItems<SavedListDetailsScreenState.SavedListDetailsMovieUiState>,
     snackBar: SnackBarState,
 ) {
+    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
+
     Scaffold(
         modifier = Modifier.background(Theme.color.surface),
+
         backgroundBlur = { BackgroundBlur() },
+
         isLoading = uiState.isLoading,
+
         topBar = {
             SavedListDetailTopBar(
                 uiState = uiState,
                 listener = listener
             )
         },
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBar.message)),
@@ -102,8 +107,10 @@ fun SavedListDetailsContent(
                 position = position,
             )
         },
+
         isSnackBarWithActionLabel = snackBar.actionLabelRes != null,
     ) {
+
         AnimatedContent(
             targetState = mediaItems.itemCount == 0 && uiState.isLoading.not(),
         ) { isEmptyList ->
@@ -113,16 +120,16 @@ fun SavedListDetailsContent(
                 ListContent(listener, mediaItems)
             }
         }
-
-        ConfirmListDeletionBottomSheet(
-            onBottomSheetCloseClick = { listener.onDeleteListBottomSheetDismiss() },
-            title = stringResource(R.string.deleted_list),
-            description = stringResource(R.string.delete_description),
-            isVisible = uiState.isConfirmDeleteDialogVisible,
-            onDeleteClick = { listener.onDeleteListBottomSheetDeleteClick() },
-        )
     }
+    ConfirmListDeletionBottomSheet(
+        onBottomSheetCloseClick = { listener.onDeleteListBottomSheetDismiss() },
+        title = stringResource(R.string.deleted_list),
+        description = stringResource(R.string.delete_description),
+        isVisible = uiState.isConfirmDeleteDialogVisible,
+        onDeleteClick = listener::onDeleteListBottomSheetDeleteClick
+    )
 }
+
 @Composable
 private fun SavedListDetailTopBar(
     uiState: SavedListDetailsScreenState,
@@ -133,9 +140,8 @@ private fun SavedListDetailTopBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .padding(top = 22.dp, bottom = 8.dp)
-                .background(Theme.color.surface),
-            onGoBackClick = { listener.onBackClick() },
+                .padding(top = 22.dp, bottom = 8.dp),
+            onGoBackClick = listener::onBackClick,
             screenTitle = uiState.savedList.name,
             maxLines = 1,
             textEllipsize = TextOverflow.Ellipsis
@@ -143,9 +149,7 @@ private fun SavedListDetailTopBar(
             IconButton(
                 icon = painterResource(com.baghdad.design_system.R.drawable.ic_delete),
                 tintIcon = Theme.color.redAccent,
-                onClick = {
-                    listener.onDeleteClick()
-                },
+                onClick = listener::onDeleteClick,
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
@@ -175,10 +179,8 @@ private fun ListContent(
             url = movie.posterUrl,
             isSaved = true,
             contentDescription = stringResource(R.string.movie_card),
-            onSavedClick = {
-                listener.onRemoveSavedMovieClick(movie.id)
-            },
-            onClick = { listener.onMovieClick(movie.id) }
+            onSavedClick = { listener::onRemoveSavedMovieClick },
+            onClick = { listener::onMovieClick }
         )
     }
 }

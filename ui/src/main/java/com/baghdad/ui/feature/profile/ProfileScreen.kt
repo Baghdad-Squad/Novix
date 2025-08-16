@@ -100,12 +100,12 @@ private fun ProfileScreenContent(
                 text = stringResource(R.string.my_account),
                 style = Theme.typography.title.large,
                 color = Theme.color.title,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(vertical = 25.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 25.dp)
             )
         },
+
         isLoading = state.isLoading,
+
         snackbar = { position ->
             SnackBar(
                 message = stringResource(snackBarMessage(snackBarState.message)),
@@ -117,6 +117,7 @@ private fun ProfileScreenContent(
             )
         },
         backgroundBlur = { BackgroundBlur() },
+
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         if (state.isUserLoggedIn) {
@@ -176,7 +177,8 @@ private fun ProfileScreenContent(
                     isSelected = state.languageBottomSheetState.currentLanguage == ProfileScreenState.LanguagePreferences.ARABIC
                 ),
             ),
-            onLanguageSelected = { listener.onLanguageChanged(it) },
+            onLanguageSelected = listener::onLanguageChanged ,
+
             onSaveClick = listener::onLanguageConfirmed,
         )
 

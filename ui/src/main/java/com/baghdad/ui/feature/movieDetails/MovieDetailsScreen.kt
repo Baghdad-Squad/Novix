@@ -39,9 +39,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.baghdad.design_system.component.BackgroundBlur
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
@@ -75,7 +74,6 @@ import com.baghdad.viewmodel.movieDetails.MovieDetailsInteractionListener
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.baghdad.viewmodel.shared.BottomSheetType
-import com.baghdad.viewmodel.shared.SavedListUiState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
@@ -86,7 +84,6 @@ fun MovieDetailsScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, context, handleNavigation)
@@ -96,9 +93,8 @@ fun MovieDetailsScreen(
         listener = viewModel,
         state = state,
         snackBarState = snackBarState,
-        savedLists = savedLists
 
-    )
+        )
 }
 
 private fun handleEffect(
@@ -153,12 +149,12 @@ private fun MovieDetailsContent(
     listener: MovieDetailsInteractionListener,
     state: MovieDetailsState,
     snackBarState: SnackBarState,
-    savedLists: LazyPagingItems<SavedListUiState>,
     modifier: Modifier = Modifier
 ) {
-
+    val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
     val lazyState = rememberLazyGridState()
     var shouldShowBackground by remember { mutableStateOf(false) }
+
     val backgroundAlpha by animateFloatAsState(
         targetValue = if (shouldShowBackground) 1f else 0f,
         animationSpec = tween(
@@ -167,6 +163,7 @@ private fun MovieDetailsContent(
         ),
         label = stringResource(R.string.background_alpha)
     )
+
     val animatedColor by animateColorAsState(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
@@ -229,7 +226,7 @@ private fun MovieDetailsContent(
             BackgroundBlur()
         },
         isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        ) {
+    ) {
 
         Box(
             modifier = modifier
@@ -238,23 +235,6 @@ private fun MovieDetailsContent(
                 .navigationBarsPadding()
 
         ) {
-
-            RatingBottomSheet(
-                isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
-                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                rate = state.userRating ,
-                onRateChanged = { listener.onRatingChanged(it) },
-                isButtonEnabled = state.userRating != 0,
-                onSubmitClick = { listener.onClickSubmitRating(state.userRating ) }
-            )
-
-            LoginRequiredSheet(
-                isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
-                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                onLoginClick = { listener.onLoginClick() },
-                title = stringResource(R.string.rate_it),
-                description = stringResource(R.string.please_login_to_rate)
-            )
 
             LazyVerticalGrid(
                 state = lazyState,
@@ -322,9 +302,7 @@ private fun MovieDetailsContent(
                                     movie = state.moreLikeThisMovie[index]
                                 )
                             },
-                            onClick = {
-                                listener.onMovieClick(movie.id)
-                            },
+                            onClick = { listener::onMovieClick },
                             modifier = Modifier
                                 .padding(
                                     top = if (isItemInFirstRow) 0.dp else 4.dp,
@@ -351,14 +329,31 @@ private fun MovieDetailsContent(
                         size = 40,
                         backgroundColor = Theme.color.iconBackgroundLow,
                         isSaved = state.isSaved,
-                        onClick = {
-                            listener.onSaveCurrentMovieClick()
-                        }
+                        onClick = { listener::onSaveCurrentMovieClick }
                     )
                 }
             )
         }
     }
+
+    RatingBottomSheet(
+        isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType
+                == BottomSheetType.ShowRating,
+        onBottomSheetCloseClick =  listener::onDismissRatingBottomSheet ,
+        rate = state.userRating,
+        onRateChanged =  listener::onRatingChanged ,
+        isButtonEnabled = state.userRating != 0,
+        onSubmitClick = { listener::onClickSubmitRating }
+    )
+
+    LoginRequiredSheet(
+        isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType
+                == BottomSheetType.RequireLogin,
+        onBottomSheetCloseClick =  listener::onDismissRatingBottomSheet ,
+        onLoginClick =  listener::onLoginClick ,
+        title = stringResource(R.string.rate_it),
+        description = stringResource(R.string.please_login_to_rate)
+    )
 
     SavedListBottomSheet(
         isVisible = state.addToListBottomSheetState.isVisible,
