@@ -43,7 +43,8 @@ android {
     }
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
     jvmArgs("-XX:+EnableDynamicAgentLoading")
 }
 
@@ -65,4 +66,3 @@ dependencies {
 kapt{
     correctErrorTypes = true
 }
-

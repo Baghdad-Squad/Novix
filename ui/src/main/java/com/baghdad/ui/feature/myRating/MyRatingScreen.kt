@@ -16,19 +16,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.EmptyListScreen
 import com.baghdad.ui.feature.myRating.component.MediaTabs
 import com.baghdad.ui.feature.myRating.component.MyRatingVerticalGrid
 import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.myRating.MyRatingEffect
@@ -42,7 +42,6 @@ fun MyRatingScreen(
     handleNavigation: (MyAccountNavEvent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val mediaItem = uiState.mediaFlow.collectAsLazyPagingItems()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
@@ -65,8 +64,7 @@ fun MyRatingScreen(
     MyRatingContent(
         uiState = uiState,
         listener = viewModel,
-        snackBarState = snackBarState,
-        mediaItems = mediaItem,
+        snackBarState = snackBarState
     )
 }
 
@@ -75,28 +73,16 @@ private fun MyRatingContent(
     uiState: MyRatingState,
     listener: MyRatingInteractionListener,
     snackBarState: SnackBarState,
-    mediaItems: LazyPagingItems<MyRatingState.MediaItemUiState>
 ) {
+    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
-
         isLoading = uiState.isLoading,
-
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position
-            )
-        },
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         topBar = {
             Column {
                 TopAppBar(
@@ -104,10 +90,8 @@ private fun MyRatingContent(
                         .fillMaxWidth()
                         .statusBarsPadding()
                         .padding(top = 22.dp, bottom = 8.dp),
-                    onGoBackClick = {
-                        listener.onBackClick()
-                    },
-                    screenTitle = stringResource(com.baghdad.ui.R.string.my_rating),
+                    onGoBackClick =  listener::onBackClick,
+                    screenTitle = stringResource(R.string.my_rating),
                 )
                 AnimatedVisibility(
                     mediaItems.itemCount != 0 || uiState.isLoading,
@@ -121,8 +105,7 @@ private fun MyRatingContent(
                 }
             }
         },
-
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
 
         AnimatedContent(
@@ -142,6 +125,4 @@ private fun MyRatingContent(
 }
 
 
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
