@@ -48,12 +48,10 @@ private fun ResetPasswordWebViewContent(
     }
 
     val messages = remember {
-        PasswordResetMessages(
+        PasswordMessages(
             pageNotFound = context.getString(R.string.oops_we_can_t_find_the_page),
             error = context.getString(R.string.there_was_a_problem),
             success = context.getString(R.string.password_reset_completed_successfully),
-            invalidToken = context.getString(R.string.invalid_or_expired_reset_token),
-            tokenExpired = context.getString(R.string.reset_link_expired),
             mainHeader = context.getString(R.string.reset_your_password),
             successToast = context.getString(R.string.password_reset_success_redirecting_to_login),
             errorToast = context.getString(R.string.reset_password_failed)
@@ -83,8 +81,7 @@ private fun ResetPasswordWebViewContent(
                     messages.success -> shouldNavigateToLogin.value = true
                     messages.pageNotFound,
                     messages.error,
-                    messages.invalidToken,
-                    messages.tokenExpired -> shouldShowError.value = true
+                    messages.successToast -> Unit
                 }
             }
         )
@@ -95,7 +92,7 @@ private fun ResetPasswordWebViewContent(
 private fun HandleNavigationEvents(
     shouldNavigateToLogin: MutableState<Boolean>,
     shouldShowError: MutableState<Boolean>,
-    messages: PasswordResetMessages,
+    messages: PasswordMessages,
     context: android.content.Context,
     handleNavigation: (MyAccountNavEvent) -> Unit
 ) {
@@ -115,14 +112,3 @@ private fun HandleNavigationEvents(
         }
     }
 }
-
-private data class PasswordResetMessages(
-    val pageNotFound: String,
-    val error: String,
-    val success: String,
-    val invalidToken: String,
-    val tokenExpired: String,
-    val mainHeader: String,
-    val successToast: String,
-    val errorToast: String
-)

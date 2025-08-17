@@ -5,7 +5,6 @@ interface EpisodeDetailsInteractionListener {
     fun onReadMoreOverviewClick()
     fun onCategoryClick(categoryId: Long)
     fun onGuestOfHonorClick(guestOfHonorId: Long)
-    fun onSaveEpisodeClick()
     fun onDismissAddToListBottomSheetClick()
     fun onLoginClick()
     fun onPlayTrailerClick()

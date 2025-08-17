@@ -126,6 +126,7 @@ class SearchViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { observeSearchQueryFlow() },
             onNewValue = { query -> onSearchQueryChangedCollected(query) },
+            dispatcher = defaultDispatcher,
         )
     }
 
@@ -247,6 +248,7 @@ class SearchViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { getRecentlyViewedUseCase() },
             onNewValue = ::onGetRecentViewedSuccess,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -261,6 +263,7 @@ class SearchViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { getRecentSearchesUseCase() },
             onNewValue = ::onGetRecentSearchesSuccess,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -277,6 +280,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onClearRecentViewedSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -368,6 +372,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onClearRecentSearchSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -384,6 +389,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onRemoveRecentSearchItemSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -440,6 +446,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onAddRecentlyViewedMovieSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -462,6 +469,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onAddRecentlyViewedTvShowSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 

@@ -15,9 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.shared.Selectable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -31,6 +30,7 @@ import com.baghdad.ui.feature.profile.component.LogOutBottomSheet
 import com.baghdad.ui.feature.profile.component.ProfileHeaderWithOption
 import com.baghdad.ui.feature.profile.component.ProfileScreenItemsList
 import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.profile.ContentRestriction
@@ -100,24 +100,13 @@ private fun ProfileScreenContent(
                 text = stringResource(R.string.my_account),
                 style = Theme.typography.title.large,
                 color = Theme.color.title,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(vertical = 25.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 25.dp)
             )
         },
         isLoading = state.isLoading,
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-        backgroundBlur = { BackgroundBlur() },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
+        backgroundContent = { BackgroundBlur() },
     ) {
         if (state.isUserLoggedIn) {
             Column(
@@ -176,7 +165,8 @@ private fun ProfileScreenContent(
                     isSelected = state.languageBottomSheetState.currentLanguage == ProfileScreenState.LanguagePreferences.ARABIC
                 ),
             ),
-            onLanguageSelected = { listener.onLanguageChanged(it) },
+            onLanguageSelected = listener::onLanguageChanged ,
+
             onSaveClick = listener::onLanguageConfirmed,
         )
 
@@ -210,6 +200,4 @@ private fun ProfileScreenContent(
     }
 }
 
-
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

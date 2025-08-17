@@ -91,7 +91,8 @@ class MainViewModel @Inject constructor(
         }
         if (result) {
             tryToExecute(
-                callee = syncSavedMoviesUseCase::invoke
+                callee = syncSavedMoviesUseCase::invoke,
+                dispatcher = defaultDispatcher
             )
         }
     }
@@ -101,7 +102,8 @@ class MainViewModel @Inject constructor(
             flowProvider = { getContentRestrictionUseCase() },
             onNewValue = { contentRestriction ->
                 updateState { it.copy(contentRestriction = contentRestriction.toUiState()) }
-            }
+            },
+            dispatcher = defaultDispatcher
         )
     }
 

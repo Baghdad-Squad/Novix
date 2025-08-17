@@ -31,10 +31,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Chip
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -47,6 +46,7 @@ import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShowDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingInteractionListener
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingScreenEffect
@@ -97,11 +97,10 @@ private fun handleEffect(
 }
 
 @Composable
-fun ContinueWatchingContent(
+private fun ContinueWatchingContent(
     uiState: ContinueWatchingState,
     listener: ContinueWatchingInteractionListener,
     snackBarState: SnackBarState,
-    modifier: Modifier = Modifier
 ) {
     val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
     val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
@@ -109,7 +108,7 @@ fun ContinueWatchingContent(
     val tvGenresScrollState = rememberLazyListState()
 
     Scaffold(
-        modifier = modifier
+        modifier = Modifier
             .background(color = Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
@@ -120,21 +119,13 @@ fun ContinueWatchingContent(
                     .fillMaxWidth()
                     .statusBarsPadding()
                     .padding(top = 22.dp, bottom = 8.dp),
-                onGoBackClick = { listener.onBackClick() },
+                onGoBackClick = listener::onBackClick,
                 screenTitle = stringResource(R.string.continue_watching)
             )
         },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(id = snackBarMessage(type = snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(id = it) },
-                onActionClick = listener::onSnackBarActionClick,
-                position = position
-            )
-        },
-        backgroundBlur = { BackgroundBlur() }
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionClick,
+        backgroundContent = { BackgroundBlur() },
     ) {
         Column(
             modifier = Modifier
@@ -231,6 +222,7 @@ fun ContinueWatchingContent(
                     }
                 }
             }
+
             SavedListBottomSheet(
                 isVisible = uiState.addToListBottomSheetState.isVisible,
                 isUserLoggedIn = uiState.isUserLoggedIn,
@@ -295,3 +287,5 @@ private fun GenresTabs(
         }
     }
 }
+
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

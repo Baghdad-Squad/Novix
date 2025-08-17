@@ -9,12 +9,14 @@ import com.baghdad.viewmodel.trendingTvShow.TrendingTvShowScreenState.GenreUiSta
 import com.google.common.truth.Truth.assertThat
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class TrendingTvShowViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
 
@@ -69,11 +71,10 @@ class TrendingTvShowViewModelTest {
         runTest {
             viewModel = createViewModel()
 
-            viewModel.onSnackBarActionLabelClicked(genreId = genre.id)
-
+            viewModel.onSnackBarActionLabelClicked()
 
             viewModel.uiState.test {
-                assertThat(awaitItem().selectedGenreId).isEqualTo(genre.id)
+                assertThat(awaitItem().selectedGenreId).isEqualTo(null)
             }
         }
 

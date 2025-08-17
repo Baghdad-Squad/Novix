@@ -20,6 +20,7 @@ import com.baghdad.viewmodel.shared.AddToListBottomSheetState
 import com.baghdad.viewmodel.shared.SavedListUiState
 import com.baghdad.viewmodel.shared.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -34,14 +35,15 @@ class TopRatingViewModel @Inject constructor(
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase,
     private val createSavedListUseCase: CreateSavedListUseCase,
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<TopRatingState, TopRatingEffect>(TopRatingState()),
     TopRatingInteractionListener {
     init {
-        loadInitData()
+        loadData()
         checkIfUserIsLoggedIn()
     }
 
-    private fun loadInitData() {
+    private fun loadData() {
         getMovieGenres()
         fetchMoviesByGenre(null)
     }
@@ -52,7 +54,8 @@ class TopRatingViewModel @Inject constructor(
             onSuccess = ::onGenresFetched,
             onError = ::onError,
             onStart = ::onStart,
-            onFinally = ::onFinally,
+            dispatcher = ioDispatcher,
+            onFinally = ::onFinally
         )
     }
 
@@ -62,7 +65,8 @@ class TopRatingViewModel @Inject constructor(
             onSuccess = ::onGenresFetched,
             onError = ::onError,
             onStart = ::onStart,
-            onFinally = ::onFinally,
+            dispatcher = ioDispatcher,
+            onFinally = ::onFinally
         )
     }
 
@@ -179,6 +183,7 @@ class TopRatingViewModel @Inject constructor(
             onSuccess = { onAddItemToListSuccess() },
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -262,7 +267,7 @@ class TopRatingViewModel @Inject constructor(
     }
 
     private fun refreshSavedItems() {
-        loadInitData()
+        loadData()
         getUserSavedLists()
     }
 
@@ -402,6 +407,7 @@ class TopRatingViewModel @Inject constructor(
             onSuccess = { onCreateListSuccess() },
             onStart = ::onCreateListStart,
             onFinally = ::onCreateListFinished,
+            dispatcher = ioDispatcher
         )
     }
 
