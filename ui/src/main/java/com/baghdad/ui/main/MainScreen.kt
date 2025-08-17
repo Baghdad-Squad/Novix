@@ -17,15 +17,18 @@ import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.baghdad.design_system.component.NovixBottomNavigationBar
-import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.islamic_image_loader.model.ContentRestrictionTypes
 import com.baghdad.ui.navigation.NovixNavHost
 import com.baghdad.ui.navigation.bottom.BOTTOM_NAV_ITEMS
 import com.baghdad.ui.navigation.bottom.TOP_LEVEL_ROUTES
@@ -35,7 +38,6 @@ import com.baghdad.ui.navigation.bottom.rememberIsTopLevelMainRoute
 import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.viewmodel.main.MainState
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
@@ -60,32 +62,38 @@ fun MainScreen(
             modifier = modifier
                 .background(Theme.color.surface)
                 .fillMaxSize()
-                .navigationBarsPadding(), bottomBar = {
+                .navigationBarsPadding(),
+            bottomBar = {
                 AnimatedVisibility(
                     visible = isMainGraphRoute,
                     enter = bottomSheetEnterAnimation,
                     exit = bottomSheetExitAnimation
                 ) {
-                    if(!isKeyboardOpen())
-                    NovixBottomNavigationBar(
-                        items = BOTTOM_NAV_ITEMS.values.toList(), onClick = { index ->
-                            if (index != selectedIndex) {
-                                val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
-                                navController.navigateToBottomNavDestination(targetGraph)
-                            }
-                        }, selectedIconIndex = selectedIndex
-                    )
+                    if (!isKeyboardOpen())
+                        NovixBottomNavigationBar(
+                            items = BOTTOM_NAV_ITEMS.values.toList(), onClick = { index ->
+                                if (index != selectedIndex) {
+                                    val targetGraph = BOTTOM_NAV_ITEMS.keys.elementAt(index)
+                                    navController.navigateToBottomNavDestination(targetGraph)
+                                }
+                            }, selectedIconIndex = selectedIndex
+                        )
                 }
             }) {
-            NovixNavHost(
-                modifier = Modifier.padding(bottom = animatedBottomPadding),
-                navController = navController,
-                startDestination = if (state.isFirstTimeUser == true) Graph.OnBoardingGraph else if (isLoggedIn) Graph.HomeGraph else Graph.AuthenticationGraph
-            )
+            CompositionLocalProvider(
+                (LocalContentRestriction provides ContentRestrictionTypes.valueOf(state.contentRestriction.name))
+            ) {
+                NovixNavHost(
+                    modifier = Modifier.padding(bottom = animatedBottomPadding),
+                    navController = navController,
+                    startDestination = if (state.isFirstTimeUser == true) Graph.OnBoardingGraph else if (isLoggedIn) Graph.HomeGraph else Graph.AuthenticationGraph
+                )
+            }
         }
     }
 }
 
+val LocalContentRestriction = staticCompositionLocalOf { ContentRestrictionTypes.STRICT }
 
 private const val BOTTOM_BAR_HEIGHT = 70
 

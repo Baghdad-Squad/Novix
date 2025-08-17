@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,15 +14,13 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.HomeAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
@@ -42,6 +41,7 @@ import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovies
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTopRatingMovies
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShowDetails
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShows
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.home.HomeInteractionListener
@@ -75,26 +75,16 @@ private fun HomeContent(
     snackBarState: SnackBarState,
 ) {
     val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.color.surface)
             .statusBarsPadding(),
         topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = interactionListener::onSnackBarActionLabelClicked,
-                position = position,
-            )
-        },
-        backgroundBlur = {
-            BackgroundBlur()
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = interactionListener::onSnackBarActionLabelClicked,
+        backgroundContent = { BackgroundBlur() },
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
@@ -103,13 +93,16 @@ private fun HomeContent(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+
             item(key = "popular_section", span = { GridItemSpan(maxLineSpan) }) {
-                PopularSection(
-                    isLoading = state.isPopularLoading,
-                    popularItems = state.popularItems,
-                    onClick = interactionListener::onPopularItemClicked,
-                    onSaveClick = interactionListener::onPopularItemSaveClicked,
-                )
+                AnimatedVisibility(state.isPopularLoading || state.popularItems.isNotEmpty()) {
+                    PopularSection(
+                        isLoading = state.isPopularLoading,
+                        popularItems = state.popularItems,
+                        onClick = interactionListener::onPopularItemClicked,
+                        onSaveClick = interactionListener::onPopularItemSaveClicked,
+                    )
+                }
             }
 
             item(key = "what_to_watch_section", span = { GridItemSpan(maxLineSpan) }) {
@@ -122,25 +115,33 @@ private fun HomeContent(
             }
 
             item(key = "top_rating_section", span = { GridItemSpan(maxLineSpan) }) {
-                TopRatingSection(
-                    modifier = Modifier.padding(top = 24.dp),
-                    isLoading = state.isTopRatingLoading,
-                    items = state.topRatingItems,
-                    onClick = interactionListener::onTopRatingItemClicked,
-                    onSaveClick = interactionListener::onTopRatingItemSaveClicked,
-                    onViewAllClick = interactionListener::onViewAllTopRatingClicked,
-                )
+                AnimatedVisibility(
+                    visible = state.isTopRatingLoading || state.topRatingItems.isNotEmpty()
+                ) {
+                    TopRatingSection(
+                        modifier = Modifier.padding(top = 24.dp),
+                        isLoading = state.isTopRatingLoading,
+                        items = state.topRatingItems,
+                        onClick = interactionListener::onTopRatingItemClicked,
+                        onSaveClick = interactionListener::onTopRatingItemSaveClicked,
+                        onViewAllClick = interactionListener::onViewAllTopRatingClicked,
+                    )
+                }
             }
 
             item(key = "continue_watching_section", span = { GridItemSpan(maxLineSpan) }) {
-                ContinueWatchingSection(
-                    modifier = Modifier.padding(top = 24.dp),
-                    isLoading = state.isContinueWatchingLoading,
-                    items = state.continueWatchingItems,
-                    onClick = interactionListener::onContinueWatchingItemClicked,
-                    onSaveClick = interactionListener::onContinueWatchingItemSaveClicked,
-                    onViewAllClick = interactionListener::onViewAllContinueWatchingClicked,
-                )
+                AnimatedVisibility(
+                    visible = state.isContinueWatchingLoading || state.continueWatchingItems.isNotEmpty()
+                ) {
+                    ContinueWatchingSection(
+                        modifier = Modifier.padding(top = 24.dp),
+                        isLoading = state.isContinueWatchingLoading,
+                        items = state.continueWatchingItems,
+                        onClick = interactionListener::onContinueWatchingItemClicked,
+                        onSaveClick = interactionListener::onContinueWatchingItemSaveClicked,
+                        onViewAllClick = interactionListener::onViewAllContinueWatchingClicked,
+                    )
+                }
             }
 
             if (state.isUpcomingMoviesLoading || state.isUpcomingGenresLoading) {
@@ -170,7 +171,7 @@ private fun HomeContent(
             onBottomSheetCloseClick = interactionListener::onSaveToListBottomSheetDismiss,
             lists = savedLists,
             selectedListId = state.addToListBottomSheetState.selectedListId,
-            onListSelected = interactionListener::onListSelected,
+            onListSelected = interactionListener::onListSelected
         )
         AddListBottomSheet(
             isVisible = state.addListBottomSheetState.isVisible,
@@ -178,15 +179,12 @@ private fun HomeContent(
             listName = state.addListBottomSheetState.listName,
             onDismiss = interactionListener::onCreateListBottomSheetDismiss,
             onAddClick = interactionListener::onCreateListBottomSheetAddClick,
-            onListNameChange = interactionListener::onCreatedListNameChanged,
+            onListNameChange = interactionListener::onCreatedListNameChanged
         )
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
 
 private fun handleEffect(
     effect: HomeScreenEffect,

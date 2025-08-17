@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
+import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
@@ -47,6 +48,7 @@ fun RatingChip(
             tint = Theme.color.yellowAccent,
             modifier = Modifier.size(12.dp)
         )
+
         Text(
             text = rating,
             style = Theme.typography.label.small,
@@ -55,16 +57,15 @@ fun RatingChip(
     }
 }
 
-@Preview
+@NovixPreviews
 @Composable
 private fun RatingChipPrev() {
-    NovixTheme(isDarkTheme = true) {
+    NovixTheme{
         Column(
             modifier = Modifier
                 .background(color = Theme.color.surface)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             RatingChip(rating = "9.9")
         }

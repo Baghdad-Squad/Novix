@@ -4,8 +4,10 @@ import app.cash.turbine.test
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.appConfigurations.GetAppThemeUseCase
+import com.baghdad.domain.usecase.appConfigurations.GetContentRestrictionUseCase
 import com.baghdad.domain.usecase.appConfigurations.SetAppLanguageUseCase
 import com.baghdad.domain.usecase.appConfigurations.SetAppThemeUseCase
+import com.baghdad.domain.usecase.appConfigurations.SetContentRestrictionUseCase
 import com.baghdad.domain.usecase.login.GetUserInfo
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.login.LogOutUseCase
@@ -36,6 +38,8 @@ class ProfileViewModelTest {
     private val setAppLanguageUseCase = mockk<SetAppLanguageUseCase>()
     private val getAppThemeUseCase = mockk<GetAppThemeUseCase>()
     private val getAppLanguageUseCase = mockk<GetAppLanguageUseCase>()
+    private val getContentRestrictionUseCase = mockk<GetContentRestrictionUseCase>()
+    private val setContentRestrictionUseCase = mockk<SetContentRestrictionUseCase>()
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: ProfileViewModel
 
@@ -78,6 +82,11 @@ class ProfileViewModelTest {
 
     @Test
     fun `createViewModel should fetch user info when user is logged in`() = runTest {
+        val mockUser = User(
+            id = 1L,
+            userName = "testuser",
+            imageUrl = "https://example.com/avatar.jpg"
+        )
         coEvery { isUserLoggedInUseCase.invoke() } returns true
         coEvery { getUserInfo.invoke() } returns mockUser
 
@@ -371,13 +380,50 @@ class ProfileViewModelTest {
         coVerify(exactly = 1) { logOutUseCase.invoke() }
     }
 
-    companion object {
-        val mockUser = User(
-            id = 1L,
-            userName = "testuser",
-            imageUrl = "https://example.com/avatar.jpg"
-        )
-    }
+    @Test
+    fun `onContentRestrictionDialogDismissed should hide content restriction bottom sheet when called`() =
+        runTest {
+            viewModel = createViewModel()
+
+            viewModel.onContentRestrictionDialogDismissed()
+
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.contentRestrictionBottomSheetState.isVisible).isFalse()
+            }
+        }
+
+    @Test
+    fun `onContentRestrictionChanged should update content restriction in bottom sheet when called`() =
+        runTest {
+            viewModel = createViewModel()
+
+            viewModel.onContentRestrictionChanged(ContentRestriction.MODERATE)
+
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.contentRestrictionBottomSheetState.currentRestriction).isEqualTo(
+                    ContentRestriction.MODERATE
+                )
+            }
+        }
+
+    @Test
+    fun `onContentRestrictionConfirmed should save content restriction and hide bottom sheet when successful`() =
+        runTest {
+            coEvery { setContentRestrictionUseCase.invoke(any()) } returns Unit
+
+            viewModel = createViewModel()
+
+            viewModel.onContentRestrictionConfirmed()
+            advanceUntilIdle()
+
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.contentRestrictionBottomSheetState.isVisible).isFalse()
+            }
+            coVerify { setContentRestrictionUseCase.invoke(any()) }
+        }
 
     private fun createViewModel(): ProfileViewModel {
         return ProfileViewModel(
@@ -388,6 +434,8 @@ class ProfileViewModelTest {
             setAppLanguageUseCase = setAppLanguageUseCase,
             getAppThemeUseCase = getAppThemeUseCase,
             getAppLanguageUseCase = getAppLanguageUseCase,
+            getContentRestrictionUseCase = getContentRestrictionUseCase,
+            setContentRestrictionUseCase = setContentRestrictionUseCase,
             ioDispatcher = testDispatcher
         )
     }

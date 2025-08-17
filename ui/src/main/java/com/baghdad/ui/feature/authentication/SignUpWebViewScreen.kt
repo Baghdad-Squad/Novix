@@ -32,9 +32,7 @@ fun SignUpWebViewScreen(handleNavigation: (AuthenticationNavEvent) -> Unit) {
         screenUrl = screenUrl,
         shouldNavigateBack = shouldNavigateBack
     )
-
 }
-
 
 @Composable
 fun SignUpWebViewContent(
@@ -45,11 +43,12 @@ fun SignUpWebViewContent(
     val context = LocalContext.current
 
     val messages = remember {
-        mapOf(
-            "pageNotFound" to context.getString(R.string.oops_we_can_t_find_the_page),
-            "error" to context.getString(R.string.there_was_a_problem),
-            "success" to context.getString(R.string.login_to_your_account_success_message),
-            "mainHeader" to context.getString(R.string.sign_up_for_an_account),
+        PasswordMessages(
+            pageNotFound = context.getString(R.string.oops_we_can_t_find_the_page),
+            error = context.getString(R.string.there_was_a_problem),
+            success = context.getString(R.string.login_to_your_account_success_message),
+            successToast = context.getString(R.string.automatically_redirecting_to_login),
+            mainHeader = context.getString(R.string.sign_up_for_an_account)
         )
     }
 
@@ -60,7 +59,7 @@ fun SignUpWebViewContent(
                 Toast
                     .makeText(
                         context,
-                        context.getString(R.string.automatically_redirecting_to_login),
+                        messages.successToast,
                         Toast.LENGTH_LONG,
                     ).show()
             }
@@ -68,6 +67,7 @@ fun SignUpWebViewContent(
             handleNavigation(AuthenticationNavEvent.NavigateToLogin)
         }
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -84,13 +84,12 @@ fun SignUpWebViewContent(
             onReceivedError = { if (it.isNotBlank()) handleNavigation(AuthenticationNavEvent.NavigateBack) },
             onDetected = {
                 when (it.trim('"')) {
-                    messages["pageNotFound"] -> handleNavigation(AuthenticationNavEvent.NavigateBack)
-                    messages["error"] -> handleNavigation(AuthenticationNavEvent.NavigateBack)
-                    messages["success"] -> shouldNavigateBack.value = true
-                    messages["mainHeader"] -> Unit
+                    messages.pageNotFound -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    messages.error -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    messages.success -> shouldNavigateBack.value = true
+                    messages.mainHeader -> Unit
                 }
             }
         )
     }
-
 }

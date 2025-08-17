@@ -16,16 +16,15 @@ import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.shared.Selectable
 import com.baghdad.ui.R
 import com.baghdad.ui.feature.search.component.BottomSheetHeader
-import kotlin.collections.forEach
+import com.baghdad.viewmodel.profile.ContentRestriction
 
 @Composable
 fun ContentRestrictionBottomSheet(
     onBottomSheetCloseClick: () -> Unit,
     isVisible: Boolean,
-    contentRestrictionOptions: List<Selectable<String>>,
-    onContentRestrictionSelected: (String) -> Unit,
+    contentRestrictionOptions: List<Selectable<ContentRestriction>>,
+    onContentRestrictionSelected: (ContentRestriction) -> Unit,
     onSaveClick: () -> Unit,
-    description: String,
     modifier: Modifier = Modifier
 ) {
     BaseBottomSheet(
@@ -46,9 +45,12 @@ fun ContentRestrictionBottomSheet(
 
             contentRestrictionOptions.forEach { contentRestriction ->
                 Selection(
-                    option = contentRestriction,
+                    option = Selectable(
+                        value = stringResource(contentRestriction.value.title),
+                        isSelected = contentRestriction.isSelected
+                    ),
                     onClick = { onContentRestrictionSelected(contentRestriction.value) },
-                    description = description,
+                    description = stringResource(contentRestriction.value.description),
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
             }

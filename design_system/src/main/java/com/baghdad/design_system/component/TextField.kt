@@ -66,6 +66,7 @@ fun NovixTextField(
     maxLength: Int = Int.MAX_VALUE,
     maxLines: Int = 1,
 ) {
+
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val focusRequester = remember { FocusRequester() }
@@ -94,6 +95,7 @@ fun NovixTextField(
         modifier = modifier
             .fillMaxWidth()
     ) {
+
         if (!label.isNullOrEmpty()) {
             Text(
                 text = label,
@@ -108,6 +110,7 @@ fun NovixTextField(
                 .fillMaxWidth()
                 .height(48.dp)
         ) {
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -124,6 +127,7 @@ fun NovixTextField(
                         onClick = { focusRequester.requestFocus() }
                     )
             ) {
+
                 BasicTextField(
                     keyboardOptions = keyBoardOptions,
                     value = internalValue,

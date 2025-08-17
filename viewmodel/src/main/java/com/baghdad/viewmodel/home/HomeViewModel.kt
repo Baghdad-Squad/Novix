@@ -36,7 +36,7 @@ class HomeViewModel
 @Inject
 constructor(
     private val getMovieGenresUseCase: GetMovieGenresUseCase,
-    private val observeContinueWatchingUseCase: ObserveUserWatchedMediaUseCase,
+    private val observeUserWatchedMediaUseCase: ObserveUserWatchedMediaUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
     private val getPopularTvShowsUseCase: GetPopularTvShowsUseCase,
     private val getMovieTopRatingUseCase: GetMovieTopRatingUseCase,
@@ -48,12 +48,11 @@ constructor(
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
     private val getSavedListCountUseCase: GetSavedListCountUseCase,
-    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
     HomeInteractionListener {
     init {
         observeAppLanguage()
-        observeSavedListCount()
     }
 
     private fun observeAppLanguage() {
@@ -96,7 +95,7 @@ constructor(
         tryToExecute(
             callee = { isUserLoggedInUseCase() },
             onSuccess = ::onCheckIfUserIsLoggedInSuccess,
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
         )
     }
 
@@ -145,7 +144,7 @@ constructor(
                     tvShows = popularTvShows,
                 )
             },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetPopularItemsSuccess,
             onStart = ::onGetPopularItemsStart,
             onFinally = ::onGetPopularItemsFinished,
@@ -187,7 +186,7 @@ constructor(
     private fun getTopRatingMovies() {
         tryToExecute(
             callee = { getMovieTopRatingUseCase(DEFAULT_PAGE, null).data },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetTopRatingMoviesSuccess,
             onStart = ::onGetTopRatingMoviesStart,
             onFinally = ::onGetTopRatingMoviesFinished,
@@ -220,8 +219,8 @@ constructor(
 
     private fun observeContinueWatchingItems() {
         tryToCollect(
-            flowProvider = observeContinueWatchingUseCase::invoke,
-            dispatcher = defaultDispatcher,
+            flowProvider = observeUserWatchedMediaUseCase::invoke,
+            dispatcher = ioDispatcher,
             onNewValue = ::onNewContinueWatchingItems,
             onError = ::onLoadDataError,
         )
@@ -242,7 +241,7 @@ constructor(
     private fun getMovieGenres() {
         tryToExecute(
             callee = getMovieGenresUseCase::getMovieGenres,
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetMovieGenresSuccess,
             onStart = ::onGetMovieGenresStart,
             onFinally = ::onGetMovieGenresFinished,
@@ -271,7 +270,7 @@ constructor(
     private fun getUpcomingItems() {
         tryToExecute(
             callee = { getUpcomingMoviesUseCase(currentState.selectedUpcomingGenreId) },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetUpcomingSuccess,
             onStart = ::onGetUpcomingStarted,
             onFinally = ::onGetUpcomingFinished,
@@ -340,7 +339,7 @@ constructor(
         tryToExecute(
             callee = { removeMovieFromSavedListUseCase(listId = listId, movieId = itemId) },
             onSuccess = { onRemoveSavedItemSuccess() },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onFinally = ::onRemoveSavedItemFinished,
         )
     }
@@ -438,7 +437,7 @@ constructor(
             },
             onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
         )
@@ -570,7 +569,7 @@ constructor(
                 )
             },
             onSuccess = { onCreateListSuccess() },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onStart = ::onCreateListStart,
             onFinally = ::onCreateListFinished,
         )

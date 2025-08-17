@@ -25,8 +25,6 @@ import com.baghdad.viewmodel.shared.AddToListBottomSheetState
 import com.baghdad.viewmodel.shared.BottomSheetType
 import com.baghdad.viewmodel.shared.SavedListUiState
 import com.baghdad.viewmodel.shared.toUiState
-import com.baghdad.viewmodel.util.roundToFirstDecimal
-import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -54,17 +52,16 @@ class MovieDetailsViewModel @Inject constructor(
     private val movieId: Long = checkNotNull(savedStateHandle["movieId"])
 
     init {
-        loadInitData()
+        loadData()
     }
 
-    private fun loadInitData() {
-        checkIfUserIsLoggedIn()
-        getMovieGallery()
-        getMovieDetails()
-        getCastMembers()
-        getMoreLikeThisShow()
-        getMovieAccountStates()
-        isUserLoggedIn()
+    private fun loadData() {
+            checkIfUserIsLoggedIn()
+            getMovieGallery()
+            getMovieDetails()
+            getCastMembers()
+            getMoreLikeThisShow()
+            isUserLoggedIn()
     }
 
     override fun onSaveCurrentMovieClick() {
@@ -191,6 +188,9 @@ class MovieDetailsViewModel @Inject constructor(
             BottomSheetType.ShowRating
         } else {
             BottomSheetType.RequireLogin
+        }
+        if (isLoggedIn) {
+            getMovieAccountStates()
         }
 
         updateState {
@@ -468,7 +468,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
-        loadInitData()
+        loadData()
     }
 
     private fun getMovieGallery() {
@@ -562,26 +562,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onGetMovieDetailsSuccess(details: SavedMovie) {
-        updateState { state ->
-            state.copy(
-                movieName = details.movie.title,
-                movieTrailerURL = details.movie.trailerURL,
-                overView = details.movie.overview,
-                rating = details.movie.averageRating.roundToFirstDecimal(),
-                duration = details.movie.runtimeMinutes,
-                posterImageURL = details.movie.posterImageURL,
-                date = details.movie.releaseDate.toDDMMYYYYFormat(),
-                isSaved = details.isSaved,
-                savedListId = details.listId ?: -1,
-                categories =
-                    details.movie.genres.map {
-                    MovieDetailsState.CategoryUiState(
-                        id = it.id,
-                        name = it.name
-                    )
-                }
-            )
-        }
+        updateState(details.toMovieDetailsStateUpdate())
     }
 
     private fun getCastMembers() {
@@ -589,19 +570,13 @@ class MovieDetailsViewModel @Inject constructor(
             callee = { getCastsInfoUseCase(movieId) },
             onSuccess = { actors ->
                 onGetMovieCastSuccess(
-                    actors = actors.map { actor ->
-                        MovieDetailsState.ActorCardInfo(
-                            name = actor.actor.name,
-                            imageUrl = actor.actor.profilePictureURL,
-                            characterName = actor.characterName,
-                            id = actor.actor.id.toInt()
-                        )
-                    }
+                    actors = actors.map { it.toActorCardInfo() }
                 )
             },
             onStart = ::onGetCastMembersStarted,
             onFinally = ::onGetCastMembersFinally,
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -634,17 +609,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun onGetMovieMoreLikeThisSuccess(savedMovies: List<SavedMovie>) {
         updateState { state ->
-            state.copy(
-                moreLikeThisMovie =
-                    savedMovies.map { savableMovie ->
-                        MovieDetailsState.MoreLikeThisMovie(
-                            imageUrl = savableMovie.movie.posterImageURL,
-                            id = savableMovie.movie.id,
-                            isSaved = savableMovie.isSaved,
-                            savedListId = savableMovie.listId ?: -1L
-                    )
-                },
-                    )
+            state.copy(moreLikeThisMovie = savedMovies.map { it.toMoreLikeThisMovie() })
         }
     }
 

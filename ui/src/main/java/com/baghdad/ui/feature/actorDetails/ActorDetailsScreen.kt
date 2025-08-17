@@ -32,10 +32,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.actorDetails.component.ActorBiographySection
@@ -48,6 +48,7 @@ import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToTvShowDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.actorDetails.ActorDetailsInteractionListener
 import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenEffect
 import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenState
@@ -121,7 +122,7 @@ private fun handleEffect(
 }
 
 @Composable
-fun ActorDetailsContent(
+private fun ActorDetailsContent(
     uiState: ActorDetailsScreenState,
     listener: ActorDetailsInteractionListener,
     modifier: Modifier = Modifier,
@@ -132,6 +133,7 @@ fun ActorDetailsContent(
     var shouldShowBackground by remember { mutableStateOf(false) }
 
     val systemUiController = rememberSystemUiController()
+
     LaunchedEffect(Unit) {
         systemUiController.setStatusBarColor(
             color = Color.Transparent,
@@ -158,20 +160,11 @@ fun ActorDetailsContent(
                 .background(Theme.color.surface)
                 .navigationBarsPadding(),
         isLoading = uiState.isLoading,
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-        backgroundBlur = {
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
+        backgroundContent = {
             BackgroundBlur()
         },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         LaunchedEffect(scrollState) {
             snapshotFlow { scrollState.value }.collect { scrollValue ->
@@ -189,6 +182,7 @@ fun ActorDetailsContent(
                     .verticalScroll(scrollState)
                     .padding(bottom = 24.dp),
             ) {
+
                 ActorHeaderWithDetailsCard(uiState = uiState)
 
                 Spacer(Modifier.height(84.dp))
@@ -206,8 +200,8 @@ fun ActorDetailsContent(
                     GallerySection(
                         imageUrls = uiState.gallery,
                         isShowAllVisible = uiState.gallery.size >= 10,
-                        onClickShowAll = { listener.onViewAllGalleryClick() },
-                        onImageClick = { listener.onGalleryImageClick(it) },
+                        onClickShowAll = listener::onViewAllGalleryClick,
+                        onImageClick = listener::onGalleryImageClick,
                         modifier = Modifier.padding(bottom = 16.dp),
                     )
                 }
@@ -215,25 +209,26 @@ fun ActorDetailsContent(
                 if (uiState.selectedImageUrl.isNotBlank()) {
                     ActorImageDialog(
                         selectedImage = uiState.selectedImageUrl,
-                        onDismiss = { listener.onImageDialogDismiss() })
+                        onDismiss = listener::onImageDialogDismiss
+                    )
                 }
 
                 if (uiState.topMoviesPicks.isNotEmpty()) {
                     TopMediaPicksSection(
-                        title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
+                        title = stringResource(R.string.top_movies_picks),
                         items = uiState.topMoviesPicks,
                         imageUrl = { it.posterPictureURL },
-                        onSavedClick = { listener.onSaveMovieClick(movie = it) },
+                        onSavedClick =  listener::onSaveMovieClick ,
                         onCardClick = { listener.onMovieCardClick(it.id) },
                         isSaved = { it.isSaved },
                         isShowAllVisible = uiState.topMoviesPicks.size >= 10,
-                        onClickShowAll = { listener.onViewAllTopMoviesPicksClick() },
+                        onClickShowAll = { listener::onViewAllTopMoviesPicksClick },
                         modifier = Modifier.padding(bottom = 16.dp),
                     )
                 }
                 if (uiState.topTvShowsPicks.isNotEmpty()) {
                     TopMediaPicksSection(
-                        title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
+                        title = stringResource(R.string.top_tv_shows_picks),
                         items = uiState.topTvShowsPicks,
                         imageUrl = { it.posterPictureURL },
                         isSaveVisible = false,
@@ -244,6 +239,7 @@ fun ActorDetailsContent(
                     )
                 }
             }
+
             TopAppBar(
                 modifier =
                     Modifier
@@ -252,9 +248,8 @@ fun ActorDetailsContent(
                         .zIndex(1f)
                         .align(Alignment.TopCenter)
                         .padding(top = 56.dp, bottom = 8.dp),
-                onGoBackClick = {
-                    listener.onBackIconClick()
-                },
+
+                onGoBackClick = listener::onBackIconClick
             )
         }
     }
@@ -282,5 +277,4 @@ fun ActorDetailsContent(
 
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

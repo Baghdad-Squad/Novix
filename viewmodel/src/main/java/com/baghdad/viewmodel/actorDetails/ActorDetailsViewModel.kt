@@ -120,7 +120,8 @@ class ActorDetailsViewModel @Inject constructor(
     private fun onGetActorInfoSuccess(actor: Actor) {
         updateState { actorDetailsScreenState ->
             actorDetailsScreenState.copy(
-                actorInfo = actor.toActorInfoUI().copy(headerPictures = actor.headerPictures.take(MAX_ACTOR_IMAGES)),
+                actorInfo = actor.toActorInfoUI()
+                    .copy(headerPictures = actor.headerPictures.take(MAX_ACTOR_IMAGES)),
             )
         }
     }
@@ -192,6 +193,7 @@ class ActorDetailsViewModel @Inject constructor(
             onStart = ::onGetActorTvShowsStart,
             onError = ::onError,
             onFinally = ::onGetActorTvShowsFinally,
+            dispatcher = ioDispatcher
         )
     }
 

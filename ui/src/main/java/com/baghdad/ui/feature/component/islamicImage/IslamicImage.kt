@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import com.baghdad.islamic_image_loader.ui.SafeImage
+import com.baghdad.ui.main.LocalContentRestriction
 
 @Composable
 fun IslamicImage(
@@ -22,6 +23,7 @@ fun IslamicImage(
         onBlurContent = onBlurContent,
         loadingContent = loadingContent,
         errorContent = errorContent,
-        contentScale = contentScale
+        contentScale = contentScale,
+        contentRestrictionTypes = LocalContentRestriction.current
     )
 }

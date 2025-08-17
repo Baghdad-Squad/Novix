@@ -5,11 +5,16 @@ import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -17,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.modifier.noRippleClickable
+import com.baghdad.design_system.preview.NovixPreviews
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
 
@@ -64,16 +70,24 @@ fun Chip(
 }
 
 
-@Preview(showBackground = true)
+@NovixPreviews
 @Composable
 private fun PreviewChip() {
     NovixTheme(
         isDarkTheme = false
     ) {
-        Chip(
-            "All",
-            isSelected = true,
-            onClick = { },
-        )
+        var isSelected by remember { mutableStateOf(true) }
+        Column(
+            modifier = Modifier
+                .background(color = Theme.color.surface)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Chip(
+                "All",
+                isSelected = isSelected,
+                onClick = { isSelected = !isSelected },
+            )
+        }
     }
 }

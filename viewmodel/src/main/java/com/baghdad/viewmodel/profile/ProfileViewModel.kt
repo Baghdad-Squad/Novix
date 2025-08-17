@@ -1,10 +1,13 @@
 package com.baghdad.viewmodel.profile
 
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.model.profile.ContentRestrictionTypes
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.appConfigurations.GetAppThemeUseCase
+import com.baghdad.domain.usecase.appConfigurations.GetContentRestrictionUseCase
 import com.baghdad.domain.usecase.appConfigurations.SetAppLanguageUseCase
 import com.baghdad.domain.usecase.appConfigurations.SetAppThemeUseCase
+import com.baghdad.domain.usecase.appConfigurations.SetContentRestrictionUseCase
 import com.baghdad.domain.usecase.login.GetUserInfo
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.login.LogOutUseCase
@@ -25,25 +28,30 @@ class ProfileViewModel @Inject constructor(
     private val setAppLanguageUseCase: SetAppLanguageUseCase,
     private val getAppThemeUseCase: GetAppThemeUseCase,
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
+    private val getContentRestrictionUseCase: GetContentRestrictionUseCase,
+    private val setContentRestrictionUseCase: SetContentRestrictionUseCase,
     private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<ProfileScreenState, ProfileEffect>(ProfileScreenState()),
     ProfileInteractionListener {
 
     init {
-        loadInitData()
+        loadData()
     }
 
-    private fun loadInitData() {
+    private fun loadData() {
         checkIsUserLoggedIn()
         getAppTheme()
         getAppLanguage()
+        getContentRestriction()
     }
+
 
     private fun getAppLanguage() {
         tryToCollect(
             flowProvider = { getAppLanguageUseCase.invoke() }, onNewValue = { language ->
                 onGetAppLanguageSuccess(language)
-            }, onError = ::onError
+            }, onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -68,7 +76,8 @@ class ProfileViewModel @Inject constructor(
             onNewValue = { isDarkTheme ->
                 onGetAppThemeSuccess(isDarkTheme)
             },
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -133,7 +142,13 @@ class ProfileViewModel @Inject constructor(
     }
 
     override fun onContentRestrictionClick() {
-//        TODO("Not yet implemented")
+        updateState {
+            it.copy(
+                contentRestrictionBottomSheetState = it.contentRestrictionBottomSheetState.copy(
+                    isVisible = true
+                )
+            )
+        }
     }
 
     override fun onChangePasswordClick() {
@@ -208,6 +223,69 @@ class ProfileViewModel @Inject constructor(
             it.copy(
                 languageBottomSheetState = it.languageBottomSheetState.copy(
                     currentLanguage = language
+                )
+            )
+        }
+    }
+
+    override fun onContentRestrictionChanged(contentRestriction: ContentRestriction) {
+        updateState {
+            it.copy(
+                contentRestrictionBottomSheetState = it.contentRestrictionBottomSheetState.copy(
+                    currentRestriction = contentRestriction
+                )
+            )
+        }
+    }
+
+    override fun onContentRestrictionDialogDismissed() {
+        updateState {
+            it.copy(
+                contentRestrictionBottomSheetState = it.contentRestrictionBottomSheetState.copy(
+                    isVisible = false
+                )
+            )
+        }
+    }
+
+    override fun onContentRestrictionConfirmed() {
+        tryToExecute(
+            callee = {
+                setContentRestrictionUseCase(
+                    currentState.contentRestrictionBottomSheetState.currentRestriction.toDomainModel()
+                )
+            },
+            onSuccess = { onContentRestrictionConfirmedSuccess() },
+            dispatcher = ioDispatcher
+        )
+    }
+
+    private fun onContentRestrictionConfirmedSuccess() {
+        updateState {
+            it.copy(
+                contentRestrictionBottomSheetState = it.contentRestrictionBottomSheetState.copy(
+                    isVisible = false
+                )
+            )
+        }
+    }
+
+    private fun getContentRestriction() {
+        tryToCollect(
+            flowProvider = { getContentRestrictionUseCase.invoke() },
+            onNewValue = { contentRestriction ->
+                onGetContentRestrictionSuccess(contentRestriction)
+            },
+            onError = ::onError,
+            dispatcher = ioDispatcher
+        )
+    }
+
+    private fun onGetContentRestrictionSuccess(contentRestriction: ContentRestrictionTypes) {
+        updateState { profileScreenState ->
+            profileScreenState.copy(
+                contentRestrictionBottomSheetState = profileScreenState.contentRestrictionBottomSheetState.copy(
+                    currentRestriction = contentRestriction.toUiState()
                 )
             )
         }

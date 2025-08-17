@@ -31,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,18 +38,18 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.NovixTextField
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.component.button.TextButton
-import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.navigation.graph.authentication.AuthenticationNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.login.LoginInteractionListener
 import com.baghdad.viewmodel.login.LoginUiEffect
 import com.baghdad.viewmodel.login.LoginUiState
@@ -58,7 +57,6 @@ import com.baghdad.viewmodel.login.LoginViewModel
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = hiltViewModel(),
     handleNavigation: (AuthenticationNavEvent) -> Unit,
 ) {
@@ -70,9 +68,7 @@ fun LoginScreen(
         handleLoginEffect(it, context, handleNavigation)
     }
 
-
     LoginScreenContent(
-        modifier = modifier,
         state = state,
         snackBarState = snackBarState,
         listener = loginViewModel
@@ -80,37 +76,44 @@ fun LoginScreen(
 
 }
 
+private fun handleLoginEffect(
+    effect: LoginUiEffect,
+    context: Context,
+    handleNavigation: (AuthenticationNavEvent) -> Unit,
+) {
+    if (effect == LoginUiEffect.RecreateActivity) {
+        val activity = context as? AppCompatActivity
+        activity?.let {
+            val intent = it.intent
+            it.finish()
+            it.startActivity(intent)
+        }
+    } else {
+        effect.toNavEvent()?.let { handleNavigation(it) }
+    }
+}
+
+
 @Composable
 private fun LoginScreenContent(
     state: LoginUiState,
     snackBarState: SnackBarState,
     listener: LoginInteractionListener,
-    modifier: Modifier = Modifier
 ) {
+
     val screenHeight = LocalWindowInfo.current.containerSize.height.dp
     Scaffold(
-        modifier = modifier
+        modifier = Modifier
             .background(Theme.color.surface)
             .height(screenHeight)
             .fillMaxWidth()
             .statusBarsPadding()
             .navigationBarsPadding(),
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarState.message.toStringResource()),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                position = position,
-            )
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         topBar = {
             TopBar(listener)
         },
-
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
 
         Column(
@@ -178,6 +181,12 @@ private fun LoginForm(
         modifier = Modifier.padding(bottom = 16.dp)
     )
 
+    val trailingIcon = if (state.isPasswordVisible.not()) {
+        painterResource(R.drawable.ic_closed_eye)
+    } else {
+        painterResource(R.drawable.ic_opened_eye)
+    }
+
     NovixTextField(
         label = stringResource(com.baghdad.ui.R.string.password),
         keyBoardOptions = KeyboardOptions(
@@ -188,17 +197,16 @@ private fun LoginForm(
         onValueChange = listener::onPasswordValueChange,
         leadingIcon = painterResource(R.drawable.ic_lock_key),
         singleLine = true,
-        isTextMasked = !state.isPasswordVisible,
+        isTextMasked = state.isPasswordVisible.not(),
         trailingVisibility = true,
-        trailingIcon = if (!state.isPasswordVisible) painterResource(R.drawable.ic_closed_eye)
-        else painterResource(R.drawable.ic_opened_eye),
+        trailingIcon = trailingIcon,
         onClickTrailingIcon = listener::onTogglePasswordChange
     )
 
     PrimaryButton(
         isLoading = state.isLoading,
         label = stringResource(com.baghdad.ui.R.string.login),
-        isEnabled = !state.isAnyFieldEmpty,
+        isEnabled = state.isAnyFieldEmpty.not(),
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 32.dp, bottom = 12.dp)
@@ -241,22 +249,6 @@ private fun BottomCreateAccount(listener: LoginInteractionListener) {
     }
 }
 
-private fun handleLoginEffect(
-    effect: LoginUiEffect,
-    context: Context,
-    handleNavigation: (AuthenticationNavEvent) -> Unit,
-) {
-    if (effect == LoginUiEffect.RecreateActivity) {
-        val activity = context as? AppCompatActivity
-        activity?.let {
-            val intent = it.intent
-            it.finish()
-            it.startActivity(intent)
-        }
-    } else {
-        effect.toNavEvent()?.let { handleNavigation(it) }
-    }
-}
 
 private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent? =
     when (this) {
@@ -266,12 +258,4 @@ private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent? =
         else -> null
     }
 
-@Preview
-@Composable
-private fun PreviewLoginScreen() {
-    NovixTheme(isDarkTheme = true) {
-        LoginScreen(
-            handleNavigation = {}
-        )
-    }
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

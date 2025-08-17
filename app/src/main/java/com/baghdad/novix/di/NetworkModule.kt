@@ -48,7 +48,8 @@ abstract class NetworkModule {
         fun provideAuthenticationInterceptor(
             sessionDataSource: SessionDataSource,
             @Named("AUTHORIZATION_TOKEN") authorizationToken: String,
-        ): AuthenticationInterceptor = AuthenticationInterceptor(authorizationToken, sessionDataSource)
+        ): AuthenticationInterceptor =
+            AuthenticationInterceptor(authorizationToken, sessionDataSource)
 
         @Provides
         fun provideLanguageInterceptor(

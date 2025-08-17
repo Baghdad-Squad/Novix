@@ -34,8 +34,8 @@ class GetTvShowsByGenreUseCaseTest {
                 sampleTvShow.copy(id = 1, title = "Breaking Bad"),
                 sampleTvShow.copy(id = 2, title = "The Sopranos")
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         coEvery {
             tvShowRepository.getTvShowsByGenre(
@@ -60,8 +60,8 @@ class GetTvShowsByGenreUseCaseTest {
         val page = 1
         val expectedShows = PagedResult(
             data = emptyList<TvShow>(),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         coEvery {
             tvShowRepository.getTvShowsByGenre(
@@ -88,8 +88,8 @@ class GetTvShowsByGenreUseCaseTest {
                 sampleTvShow.copy(id = 1, title = "Breaking Bad"),
                 sampleTvShow.copy(id = 2, title = "The Sopranos")
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         coEvery {
             tvShowRepository.getTvShowsByGenre(
@@ -115,16 +115,16 @@ class GetTvShowsByGenreUseCaseTest {
                 sampleTvShow.copy(id = 1, title = "Breaking Bad"),
                 sampleTvShow.copy(id = 2, title = "The Sopranos")
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         val page2Shows = PagedResult(
             data = listOf(
                 sampleTvShow.copy(id = 3, title = "The Crown"),
                 sampleTvShow.copy(id = 4, title = "The Office")
             ),
-            nextKey = 3,
-            prevKey = 1
+            nextPage = 3,
+            prevPage = 1
         )
         coEvery { tvShowRepository.getTvShowsByGenre(genreId, 1, pageSize = 20) } returns page1Shows
         coEvery { tvShowRepository.getTvShowsByGenre(genreId, 2, pageSize = 20) } returns page2Shows
@@ -146,16 +146,16 @@ class GetTvShowsByGenreUseCaseTest {
                 sampleTvShow.copy(id = 1, title = "The Crown"),
                 sampleTvShow.copy(id = 2, title = "The Sopranos")
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         val comedyShows = PagedResult(
             data = listOf(
                 sampleTvShow.copy(id = 3, title = "The Office"),
                 sampleTvShow.copy(id = 4, title = "The Simpsons")
             ),
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         coEvery { tvShowRepository.getTvShowsByGenre(18L, 1, pageSize = 20) } returns dramaShows // Drama
         coEvery { tvShowRepository.getTvShowsByGenre(35L, 1, pageSize = 20) } returns comedyShows // Comedy
@@ -179,8 +179,8 @@ class GetTvShowsByGenreUseCaseTest {
         }
         val expectedShows = PagedResult(
             data = largeList,
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
         coEvery {
             tvShowRepository.getTvShowsByGenre(

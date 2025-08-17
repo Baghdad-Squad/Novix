@@ -28,7 +28,7 @@ class OnBoardingViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
     }
-    
+
     @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()

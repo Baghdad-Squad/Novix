@@ -45,12 +45,8 @@ fun SnackBar(
     position: SnackBarPosition = SnackBarPosition.TOP,
     onActionClick: (() -> Unit)? = null,
 ) {
-    val isBottomPosition = position == SnackBarPosition.BOTTOM
-    val hasActionLabel = actionLabel != null
-    val positionMatchesActionType = isBottomPosition == hasActionLabel
-
     AnimatedVisibility(
-        visible = isVisible && positionMatchesActionType,
+        visible = isVisible,
         enter =
             fadeIn(tween(animationDuration)) +
                 slideInVertically(
@@ -65,27 +61,28 @@ fun SnackBar(
                 ),
     ) {
         Row(
-            modifier =
-                modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(color = Theme.color.surface)
-                    .border(
-                        width = 1.dp,
-                        color = Theme.color.stroke,
-                        shape = RoundedCornerShape(12.dp),
-                    )
-                    .padding(horizontal = 12.dp, vertical = 16.dp),
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(color = Theme.color.surface)
+                .border(
+                    width = 1.dp,
+                    color = Theme.color.stroke,
+                    shape = RoundedCornerShape(12.dp),
+                )
+                .padding(horizontal = 12.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+
             SnackBarIcon(
                 isSuccess = isSuccess,
                 modifier =
                     Modifier
                         .size(24.dp)
-                        .align(Alignment.Top),
-                    )
+                        .align(Alignment.Top)
+            )
+
             Text(
                 text = message,
                 style = Theme.typography.body.medium,
@@ -93,6 +90,7 @@ fun SnackBar(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )
+
             actionLabel?.let {
                 TextButton(
                     label = it,

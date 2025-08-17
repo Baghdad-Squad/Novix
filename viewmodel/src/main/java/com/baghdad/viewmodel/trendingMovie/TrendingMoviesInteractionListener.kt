@@ -9,7 +9,7 @@ interface TrendingMoviesInteractionListener {
 
     fun onCategoryClicked(categoryId: Long?)
 
-    fun onSnackBarActionLabelClicked(categoryId: Long?)
+    fun onSnackBarActionLabelClicked()
 
     fun onSaveItemToListClicked()
 

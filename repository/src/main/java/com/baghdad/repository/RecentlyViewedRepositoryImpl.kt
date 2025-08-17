@@ -15,36 +15,36 @@ import javax.inject.Singleton
 
 @Singleton
 class RecentlyViewedRepositoryImpl
-    @Inject
-    constructor(
-        val recentlyViewedDataSource: RecentlyViewedDataSource,
-        private val savableMovieDataSource: SavableMovieDataSource,
-    ) : RecentlyViewedRepository {
-        override suspend fun getAllRecentlyViewed(): Flow<List<RecentlyViewed>> {
-            val savedMovies = savableMovieDataSource.getSavedMovies()
-            return getFlowSafely {
-                recentlyViewedDataSource.getAllRecentlyViewed().map {
-                    it.map { dto ->
-                        dto.toEntity(
-                            isSaved = savedMovies.containsKey(dto.contentId),
-                            listId = savedMovies[dto.contentId],
-                        )
-                    }
+@Inject
+constructor(
+    val recentlyViewedDataSource: RecentlyViewedDataSource,
+    private val savableMovieDataSource: SavableMovieDataSource,
+) : RecentlyViewedRepository {
+    override suspend fun getAllRecentlyViewed(): Flow<List<RecentlyViewed>> {
+        val savedMovies = savableMovieDataSource.getSavedMovies()
+        return getFlowSafely {
+            recentlyViewedDataSource.getAllRecentlyViewed().map {
+                it.map { dto ->
+                    dto.toEntity(
+                        isSaved = savedMovies.containsKey(dto.contentId),
+                        listId = savedMovies[dto.contentId],
+                    )
                 }
             }
         }
+    }
 
-        override suspend fun deleteAllRecentlyViewed() {
-            executeSafely {
-                recentlyViewedDataSource.deleteAllRecentlyViewed()
-            }
+    override suspend fun deleteAllRecentlyViewed() {
+        executeSafely {
+            recentlyViewedDataSource.deleteAllRecentlyViewed()
         }
+    }
 
-        override suspend fun addRecentlyViewed(recentlyViewed: RecentlyViewed) {
-            executeSafely {
-                recentlyViewedDataSource.addMediaToRecentlyViewed(
-                    recentlyViewed.toDto(),
-                )
+    override suspend fun addRecentlyViewed(recentlyViewed: RecentlyViewed) {
+        executeSafely {
+            recentlyViewedDataSource.addMediaToRecentlyViewed(
+                recentlyViewed.toDto(),
+            )
         }
         recentlyViewedDataSource.addMediaToRecentlyViewed(recentlyViewed.toDto())
     }
