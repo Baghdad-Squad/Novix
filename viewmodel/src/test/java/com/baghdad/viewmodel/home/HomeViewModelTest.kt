@@ -1,5 +1,6 @@
 import app.cash.turbine.test
 import com.baghdad.domain.exception.NetworkException
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
@@ -19,7 +20,10 @@ import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.home.HomeScreenEffect
 import com.baghdad.viewmodel.home.HomeScreenState
 import com.baghdad.viewmodel.home.HomeViewModel
+import com.baghdad.viewmodel.home.toUiState
+import com.baghdad.viewmodel.utls.awaitItemWhere
 import com.google.common.truth.Truth.assertThat
+import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -39,18 +43,18 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
 
-    val getPopularMoviesUseCase: GetPopularMoviesUseCase = mockk(relaxed = true)
-    val getPopularTvShowsUseCase: GetPopularTvShowsUseCase = mockk(relaxed = true)
-    val getMovieTopRatingUseCase: GetMovieTopRatingUseCase = mockk(relaxed = true)
-    val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase = mockk(relaxed = true)
-    val isUserLoggedInUseCase: IsUserLoggedInUseCase = mockk(relaxed = true)
-    val getSavedListsUseCase: GetSavedListsUseCase = mockk(relaxed = true)
+    val getPopularMoviesUseCase: GetPopularMoviesUseCase = mockk()
+    val getPopularTvShowsUseCase: GetPopularTvShowsUseCase = mockk()
+    val getMovieTopRatingUseCase: GetMovieTopRatingUseCase = mockk()
+    val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase = mockk()
+    val isUserLoggedInUseCase: IsUserLoggedInUseCase = mockk()
+    val getSavedListsUseCase: GetSavedListsUseCase = mockk()
     val addMovieToSavedListUseCase: AddMovieToSavedListUseCase = mockk()
-    val createSavedListUseCase: CreateSavedListUseCase = mockk(relaxed = true)
-    val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase = mockk(relaxed = true)
-    val getAppLanguageUseCase: GetAppLanguageUseCase = mockk(relaxed = true)
-    val observeContinueWatchingUseCase: ObserveUserWatchedMediaUseCase = mockk(relaxed = true)
-    val getMovieGenresUseCase: GetMovieGenresUseCase = mockk(relaxed = true)
+    val createSavedListUseCase: CreateSavedListUseCase = mockk()
+    val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase = mockk()
+    val getAppLanguageUseCase: GetAppLanguageUseCase = mockk()
+    val observeContinueWatchingUseCase: ObserveUserWatchedMediaUseCase = mockk()
+    val getMovieGenresUseCase: GetMovieGenresUseCase = mockk()
     private lateinit var viewModel: HomeViewModel
 
     private val testDispatcher = StandardTestDispatcher()
@@ -59,6 +63,7 @@ class HomeViewModelTest {
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+        coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
     }
 
     @AfterEach
@@ -131,19 +136,21 @@ class HomeViewModelTest {
         }
     }
 
-//    @Test
-//    fun `should set popular loading false when popular items finished loading`() = runTest {
-//        coEvery { getPopularMoviesUseCase.invoke() } returns emptyList()
-//        coEvery { getPopularTvShowsUseCase.invoke() } returns emptyList()
-//
-//        viewModel = createViewModel()
-//        advanceUntilIdle()
-//
-//        viewModel.uiState.test {
-//            val state = awaitItem()
-//            assertThat(state.isPopularLoading).isFalse()
-//        }
-//    }
+    @Test
+    fun `should set popular loading false when popular items finished loading`() = runTest {
+        coEvery { getPopularMoviesUseCase.invoke() } returns savableMoviesSample
+        coEvery { getPopularTvShowsUseCase.invoke() } returns emptyList()
+        coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItemWhere { it.isPopularLoading.not() }
+            assertThat(state.isPopularLoading).isFalse()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 
     @Test
     fun `should update upcoming movies when genre is selected`() = runTest {
@@ -162,16 +169,21 @@ class HomeViewModelTest {
 
     @Test
     fun `should not reload upcoming items when same genre is selected`() = runTest {
+        coEvery { getUpcomingMoviesUseCase.invoke(1L) } returns savableMoviesSample
+
         viewModel = createViewModel()
         advanceUntilIdle()
+        clearMocks(getUpcomingMoviesUseCase, answers = false)
 
-//        val initialState = viewModel.uiState.value
-//        val genreId = initialState.selectedUpcomingGenreId ?: 1L
         viewModel.onUpcomingGenreSelected(HomeScreenState.GenreUiState(1L, "Drama"))
+        advanceUntilIdle()
+        clearMocks(getUpcomingMoviesUseCase, answers = false)
+
+
         viewModel.onUpcomingGenreSelected(HomeScreenState.GenreUiState(1L, "Drama"))
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { getUpcomingMoviesUseCase.invoke(1L) }
+        coVerify(exactly = 0) { getUpcomingMoviesUseCase.invoke(1L) }
     }
 
     @Test
@@ -308,63 +320,80 @@ class HomeViewModelTest {
         }
     }
 
-//    @Test
-//    fun `should update upcomingGenres when getMovieGenres succeeds`() = runTest {
-//        coEvery { getMovieGenresUseCase.getMovieGenres() } returns genresSample
-//
-//        viewModel = createViewModel()
-//        advanceUntilIdle()
-//
-//        viewModel.uiState.test {
-//            val state = awaitItem()
-//            assertThat(state.upcomingGenres).isEqualTo(genresSample.map {
-//                HomeScreenState.GenreUiState(
-//                    it.id, it.name
-//                )
-//            })
-//        }
-//    }
+    @Test
+    fun `should get app language when the view model is created`() = runTest {
+        coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
 
-//    @Test
-//    fun `should set top rating loading false when top rating movies finished loading`() = runTest {
-//        coEvery {
-//            getMovieTopRatingUseCase.invoke(
-//                any(), any()
-//            ).data
-//        } returns emptyList<SavedMovie>()
-//
-//        viewModel = createViewModel()
-//        advanceUntilIdle()
-//
-//        viewModel.uiState.test {
-//            val state = awaitItem()
-//            assertThat(state.isTopRatingLoading).isFalse()
-//        }
-//    }
+        viewModel = createViewModel()
+        advanceUntilIdle()
 
-//    @Test
-//    fun `should set upcoming loading false when upcoming movies finished loading`() = runTest {
-//        coEvery { getUpcomingMoviesUseCase.invoke(any()) } returns emptyList()
-//
-//        viewModel = createViewModel()
-//        advanceUntilIdle()
-//
-//        viewModel.uiState.test {
-//            val state = awaitItem()
-//            assertThat(state.isUpcomingMoviesLoading).isFalse()
-//        }
-//    }
+        coVerify { getAppLanguageUseCase.invoke() }
+    }
 
-//    @Test
-//    fun `should set upcoming genres loading false when movie genres finished loading`() = runTest {
-//        viewModel = createViewModel()
-//        advanceUntilIdle()
-//
-//        viewModel.uiState.test {
-//            val state = awaitItem()
-//            assertThat(state.isUpcomingGenresLoading).isFalse()
-//        }
-//    }
+    @Test
+    fun `should update genres when getMovieGenres succeeds`() = runTest {
+
+        coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
+        coEvery { getMovieGenresUseCase.getMovieGenres() } returns genresSample
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+
+        viewModel.uiState.test {
+            val finalState = awaitItemWhere {
+                it.upcomingGenres.isNotEmpty()
+            }
+            assertThat(finalState.upcomingGenres).isEqualTo(genresSample.map {
+                it.toUiState()
+            })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should set top rating loading false when top rating movies finished loading`() = runTest {
+        coEvery {
+            getMovieTopRatingUseCase.invoke(any(), any()).data
+        } returns emptyList<SavedMovie>()
+        coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItemWhere { it.isTopRatingLoading.not() }
+            assertThat(state.isTopRatingLoading).isFalse()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+
+    @Test
+    fun `should set upcoming loading false when upcoming movies finished loading`() = runTest {
+        coEvery { getUpcomingMoviesUseCase.invoke(any()) } returns savableMoviesSample
+        coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val finalState = awaitItemWhere { it.isUpcomingMoviesLoading.not() }
+            assertThat(finalState.isUpcomingMoviesLoading).isFalse()
+        }
+    }
+
+    @Test
+    fun `should set upcoming genres loading false when movie genres finished loading`() = runTest {
+        coEvery { getMovieGenresUseCase.getMovieGenres() } returns genresSample
+        coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItemWhere { it.isUpcomingGenresLoading.not() }
+            assertThat(state.isUpcomingGenresLoading).isFalse()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 
     @Test
     fun `should update selected item id when onPopularItemSaveClicked called`() = runTest {
@@ -399,13 +428,13 @@ class HomeViewModelTest {
     @Test
     fun `should update selected item id when onContinueWatchingItemSaveClicked called`() = runTest {
         viewModel = createViewModel()
+        advanceUntilIdle()
 
         viewModel.onContinueWatchingItemSaveClicked(
             HomeScreenState.ContinueWatchingItemUiState(
                 id = 3, contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE
             )
         )
-        advanceUntilIdle()
 
         viewModel.uiState.test {
             val state = awaitItem()
@@ -416,7 +445,7 @@ class HomeViewModelTest {
     @Test
     fun `should update selected item id when onUpcomingItemSaveClicked called`() = runTest {
         viewModel = createViewModel()
-
+        advanceUntilIdle()
         viewModel.onUpcomingItemSaveClicked(HomeScreenState.UpcomingItemUiState(id = 4))
         advanceUntilIdle()
 
@@ -442,7 +471,7 @@ class HomeViewModelTest {
     @Test
     fun `should navigate to login screen when onLoginClicked`() = runTest {
         viewModel = createViewModel()
-
+        advanceUntilIdle()
         viewModel.onLoginClicked()
 
         viewModel.uiEffect.test {
@@ -465,30 +494,34 @@ class HomeViewModelTest {
             }
         }
 
-//    @Test
-//    fun `should show no internet snackbar when getPopularMoviesUseCase throw NoInternetException`() =
-//        runTest {
-//            coEvery { getPopularMoviesUseCase.invoke() } throws NoInternetException()
-//
-//            viewModel = createViewModel()
-//            advanceUntilIdle()
-//
-//            viewModel.snackBarState.test {
-//                val state = awaitItem()
-//                assertThat(state.message).isEqualTo(BaseSnackBarMessage.NetworkError)
-//                assertThat(state.isSuccess).isFalse()
-//            }
-//        }
+    @Test
+    fun `should show no internet snackbar when getPopularMoviesUseCase throw NoInternetException`() =
+        runTest {
+            coEvery { getPopularMoviesUseCase.invoke() } throws NoInternetException()
+            coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
 
-//    @Test
-//    fun `should reload data when onSnackBarActionLabelClicked`() = runTest {
-//        val viewModel = createViewModel()
-//
-//        viewModel.onSnackBarActionLabelClicked()
-//        advanceUntilIdle()
-//
-//        coVerify(exactly = 2) { getPopularMoviesUseCase.invoke() }
-//    }
+            viewModel = createViewModel()
+            advanceUntilIdle()
+
+            viewModel.snackBarState.test {
+                val state = awaitItemWhere { it.message == BaseSnackBarMessage.NetworkError }
+                assertThat(state.message).isEqualTo(BaseSnackBarMessage.NetworkError)
+                assertThat(state.isSuccess).isFalse()
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `should reload data when onSnackBarActionLabelClicked`() = runTest {
+        coEvery { getPopularMoviesUseCase.invoke() } returns savableMoviesSample
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onSnackBarActionLabelClicked()
+        advanceUntilIdle()
+
+        coVerify(atLeast = 2) { getPopularMoviesUseCase.invoke() }
+    }
 
     @Test
     fun `should update selectedItemId when onTopRatingItemSaveClicked`() = runTest {
