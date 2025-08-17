@@ -104,7 +104,7 @@ private fun TopMoviePicksContent(
                         .padding(top = 12.dp),
             )
         },
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
 
         LazyVerticalGrid(

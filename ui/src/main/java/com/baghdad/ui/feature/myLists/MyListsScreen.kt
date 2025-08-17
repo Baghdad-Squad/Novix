@@ -80,7 +80,7 @@ private fun MyListsScreenContent(
                 )
             }
         },
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
 
     ) {
 

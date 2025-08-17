@@ -125,7 +125,7 @@ private fun TopRatingContent(
         },
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionLabelClick,
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
     ) {
 
         when (uiState.selectedTab) {

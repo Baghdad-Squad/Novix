@@ -126,7 +126,7 @@ private fun ContinueWatchingContent(
         },
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionClick,
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
     ) {
         Column(
             modifier = Modifier

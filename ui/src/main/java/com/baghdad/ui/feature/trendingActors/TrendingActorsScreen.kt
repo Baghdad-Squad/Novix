@@ -84,7 +84,7 @@ private fun TrendingActorsContent(
         },
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionLabelClick,
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
     ) {
         Column(
             modifier = Modifier.fillMaxSize()

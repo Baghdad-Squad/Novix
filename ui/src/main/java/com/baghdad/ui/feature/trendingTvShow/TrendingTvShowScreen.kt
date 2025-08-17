@@ -108,7 +108,7 @@ private fun TrendingTvShowContent(
                 )
             }
         },
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
 
         Column(

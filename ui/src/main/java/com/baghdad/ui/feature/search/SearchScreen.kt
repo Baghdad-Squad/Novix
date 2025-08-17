@@ -126,7 +126,7 @@ fun SearchContent(
             .statusBarsPadding(),
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionLabelClick,
-        backgroundBlur = {
+        backgroundContent = {
             BackgroundBlur()
         },
     ) {

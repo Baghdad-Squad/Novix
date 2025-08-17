@@ -84,7 +84,7 @@ private fun HomeContent(
         topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) },
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = interactionListener::onSnackBarActionLabelClicked,
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),

@@ -188,7 +188,7 @@ private fun TvShowDetailsContent(
         isLoading = uiState.isLoading,
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionLabelClick,
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
     ) {
         Box(
             modifier = Modifier

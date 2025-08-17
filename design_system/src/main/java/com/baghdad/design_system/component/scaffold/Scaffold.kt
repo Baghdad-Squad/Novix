@@ -34,7 +34,7 @@ fun Scaffold(
     topBar: (@Composable () -> Unit)? = null,
     floatingActionButton: (@Composable () -> Unit)? = null,
     bottomBar: (@Composable () -> Unit)? = null,
-    backgroundBlur: (@Composable () -> Unit)? = null,
+    backgroundContent: (@Composable () -> Unit)? = null,
     snackBarState: ScaffoldSnackBarState = ScaffoldSnackBarState(),
     onSnackBarActionClick: (() -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,
@@ -43,7 +43,7 @@ fun Scaffold(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
-        backgroundBlur?.invoke()
+        backgroundContent?.invoke()
 
         Column(
             modifier = Modifier.matchParentSize(),
@@ -135,7 +135,7 @@ private fun ScaffoldPreview() {
     NovixTheme {
         Scaffold(
             modifier = Modifier.background(Theme.color.surface),
-            backgroundBlur = { BackgroundBlur() },
+            backgroundContent = { BackgroundBlur() },
         ) {
             Box(Modifier.fillMaxSize()) {
                 Text(text = "Content", modifier = Modifier.align(Alignment.Center))

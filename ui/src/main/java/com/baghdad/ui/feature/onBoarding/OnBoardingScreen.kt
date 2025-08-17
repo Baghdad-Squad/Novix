@@ -99,7 +99,7 @@ private fun OnBoardingContent(
         }
     }
     Scaffold(
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
         LazyColumn(
             modifier = Modifier

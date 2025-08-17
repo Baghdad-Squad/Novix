@@ -127,7 +127,7 @@ private fun CategoriesScreenContent(
         },
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionLabelClicked,
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
         isLoading = state.isLoading
     ) {
         AnimatedContent(

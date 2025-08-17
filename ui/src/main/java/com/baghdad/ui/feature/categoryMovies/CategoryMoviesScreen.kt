@@ -118,7 +118,7 @@ private fun CategoryMoviesContent(
         },
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionLabelClick,
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
     ) {
 
         LazyPagingVerticalGrid<CategoryMoviesState.MovieUiState>(

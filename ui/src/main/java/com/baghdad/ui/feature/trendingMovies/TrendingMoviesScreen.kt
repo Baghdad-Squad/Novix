@@ -114,7 +114,7 @@ private fun TrendingMoviesContent(
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionLabelClicked,
         isLoading = uiState.isLoading,
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
     ) {
         Column(
             modifier = Modifier.fillMaxSize()

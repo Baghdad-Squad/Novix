@@ -105,7 +105,7 @@ private fun MyRatingContent(
                 }
             }
         },
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
 
         AnimatedContent(

@@ -85,7 +85,7 @@ fun SavedListDetailsContent(
 
     Scaffold(
         modifier = Modifier.background(Theme.color.surface),
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
         isLoading = uiState.isLoading,
         topBar = {
             SavedListDetailTopBar(

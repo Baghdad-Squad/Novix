@@ -79,7 +79,7 @@ private fun ReviewContent(
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         isLoading = uiState.isLoading,
-        backgroundBlur = {
+        backgroundContent = {
             BackgroundBlur()
         },
         ) {

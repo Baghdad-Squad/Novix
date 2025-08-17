@@ -106,7 +106,7 @@ private fun ProfileScreenContent(
         isLoading = state.isLoading,
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionLabelClick,
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
     ) {
         if (state.isUserLoggedIn) {
             Column(

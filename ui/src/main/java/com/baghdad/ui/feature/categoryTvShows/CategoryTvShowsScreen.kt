@@ -109,7 +109,7 @@ private fun CategoryTvShowsContent(
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         isLoading = uiState.isLoading,
-        backgroundBlur = { BackgroundBlur() },
+        backgroundContent = { BackgroundBlur() },
         ) {
         LazyPagingVerticalGrid(
             items = lazyPagingTvShows,

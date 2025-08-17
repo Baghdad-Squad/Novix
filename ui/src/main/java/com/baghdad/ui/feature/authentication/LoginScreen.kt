@@ -113,7 +113,7 @@ private fun LoginScreenContent(
         topBar = {
             TopBar(listener)
         },
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
 
         Column(

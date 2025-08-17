@@ -89,7 +89,7 @@ private fun ActorGalleryScreenContent(
                     .padding(top = 12.dp)
             )
         },
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize()) {
