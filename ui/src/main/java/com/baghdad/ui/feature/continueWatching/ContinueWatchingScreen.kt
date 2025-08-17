@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Chip
 import com.baghdad.design_system.component.Scaffold
@@ -37,6 +36,7 @@ import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.EmptyListScreen
@@ -87,11 +87,11 @@ private fun handleEffect(
         )
 
         is ContinueWatchingScreenEffect.NavigateToMovieDetails -> handleNavigation(
-            NavigateToMovieDetails(effect.movieId)
+            NavigateToMovieDetails(movieId = effect.movieId)
         )
 
         is ContinueWatchingScreenEffect.NavigateToTvShowDetails -> handleNavigation(
-            NavigateToTvShowDetails(effect.tvShowId)
+            NavigateToTvShowDetails(tvShowId = effect.tvShowId)
         )
     }
 }
@@ -110,7 +110,7 @@ fun ContinueWatchingContent(
 
     Scaffold(
         modifier = modifier
-            .background(Theme.color.surface)
+            .background(color = Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
         isLoading = uiState.isLoading,
@@ -121,15 +121,15 @@ fun ContinueWatchingContent(
                     .statusBarsPadding()
                     .padding(top = 22.dp, bottom = 8.dp),
                 onGoBackClick = { listener.onBackClick() },
-                screenTitle = stringResource(com.baghdad.ui.R.string.continue_watching)
+                screenTitle = stringResource(R.string.continue_watching)
             )
         },
         snackbar = { position ->
             SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
+                message = stringResource(id = snackBarMessage(type = snackBarState.message)),
                 isSuccess = snackBarState.isSuccess,
                 isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
+                actionLabel = snackBarState.actionLabelRes?.let { stringResource(id = it) },
                 onActionClick = listener::onSnackBarActionClick,
                 position = position
             )
@@ -164,14 +164,14 @@ fun ContinueWatchingContent(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Tab(
-                        text = stringResource(com.baghdad.ui.R.string.movies),
+                        text = stringResource(R.string.movies),
                         onClick = { listener.onSelectedTab(isMovieTab = true) },
                         isSelected = uiState.selectedMediaTabIsMovie,
                         modifier = Modifier.weight(weight = 1f)
                     )
                     Tab(
-                        text = stringResource(com.baghdad.ui.R.string.tv_shows),
-                        onClick = { listener.onSelectedTab(false) },
+                        text = stringResource(R.string.tv_shows),
+                        onClick = { listener.onSelectedTab(isMovieTab = false) },
                         isSelected = !uiState.selectedMediaTabIsMovie,
                         modifier = Modifier.weight(1f)
                     )
@@ -188,7 +188,7 @@ fun ContinueWatchingContent(
                     true -> movieGenresScrollState
                     false -> tvGenresScrollState
                 },
-                onTabClick = { listener.onGenreClick(it) },
+                onTabClick = { listener.onGenreClick(genreId = it) },
                 isListEmpty = uiState.genres.isEmpty(),
                 modifier = Modifier.padding(vertical = 12.dp)
             )
@@ -219,8 +219,13 @@ fun ContinueWatchingContent(
                             contentDescription = null,
                             isSaveToListVisible = media.contentType == ContinueWatchingState.ContinueWatchingItemUiState.ContentType.MOVIE,
                             isSaved = media.isSaved,
-                            onSavedClick = { listener.onMovieSaveClick(media) },
-                            onClick = { listener.onMediaClick(media.id, media.contentType) },
+                            onSavedClick = { listener.onMovieSaveClick(movie = media) },
+                            onClick = {
+                                listener.onMediaClick(
+                                    mediaId = media.id,
+                                    contentType = media.contentType
+                                )
+                            },
                             modifier = Modifier.aspectRatio(0.8f),
                         )
                     }
