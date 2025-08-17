@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 data class ContinueWatchingState(
-    val mediaFlow: Flow<PagingData<ContinueWatchingMovieUiState>> = flowOf(),
+    val mediaFlow: Flow<PagingData<ContinueWatchingItemUiState>> = flowOf(),
     val genres: List<GenreUiState> = emptyList(),
     val selectedMovieGenreId: Long? = null,
     val selectedTvShowGenreId: Long? = null,
@@ -18,7 +18,7 @@ data class ContinueWatchingState(
     val addListBottomSheetState: AddListBottomSheetState = AddListBottomSheetState(),
     val isLoading: Boolean = false,
     ) : BaseUiState {
-    data class ContinueWatchingMovieUiState(
+    data class ContinueWatchingItemUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
         val isSaved: Boolean = false,

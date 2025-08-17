@@ -217,7 +217,7 @@ fun ContinueWatchingContent(
                         HomeCard(
                             url = media.posterPictureURL,
                             contentDescription = null,
-                            isSaveToListVisible = media.contentType == ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE,
+                            isSaveToListVisible = media.contentType == ContinueWatchingState.ContinueWatchingItemUiState.ContentType.MOVIE,
                             isSaved = media.isSaved,
                             onSavedClick = { listener.onMovieSaveClick(media) },
                             onClick = { listener.onMediaClick(media.id, media.contentType) },

@@ -87,7 +87,7 @@ class ContinueWatchingViewModelTest {
         runTest {
             val viewModel = createViewModel()
             val movieId = 1L
-            val contentType = ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE
+            val contentType = ContinueWatchingState.ContinueWatchingItemUiState.ContentType.MOVIE
 
             viewModel.onMediaClick(movieId, contentType)
 
@@ -104,7 +104,7 @@ class ContinueWatchingViewModelTest {
         runTest {
             val viewModel = createViewModel()
             val tvShowId = 1L
-            val contentType = ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.TV_SHOW
+            val contentType = ContinueWatchingState.ContinueWatchingItemUiState.ContentType.TV_SHOW
 
             viewModel.onMediaClick(tvShowId, contentType)
 

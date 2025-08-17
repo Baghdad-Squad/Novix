@@ -65,9 +65,7 @@ class ContinueWatchingViewModel @Inject constructor(
     }
 
     private fun onCheckIfUserIsLoggedInSuccess(isLoggedIn: Boolean) {
-        updateState {
-            it.copy(isUserLoggedIn = isLoggedIn)
-        }
+        updateState { it.copy(isUserLoggedIn = isLoggedIn) }
         if (isLoggedIn) {
             getUserSavedLists()
         }
@@ -150,23 +148,23 @@ class ContinueWatchingViewModel @Inject constructor(
     ): PagedResult<UserWatchedMedia> {
         val isMovie = currentState.selectedMediaTabIsMovie
         return when {
-            isMovie && genreId == null -> getUserWatchedMediaMoviesUseCase(
+            isMovie && genreId == null -> getUserWatchedMediaMoviesUseCase.invoke(
                 page = page,
                 pageSize = DEFAULT_PAGE_SIZE
             )
 
-            isMovie && genreId != null -> getUserWatchedMediaMoviesByGenreUseCase(
+            isMovie && genreId != null -> getUserWatchedMediaMoviesByGenreUseCase.invoke(
                 genreId = genreId,
                 page = page,
                 pageSize = DEFAULT_PAGE_SIZE
             )
 
-            !isMovie && genreId == null -> getUserWatchedMediaTvShowsUseCase(
+            !isMovie && genreId == null -> getUserWatchedMediaTvShowsUseCase.invoke(
                 page = page,
                 pageSize = DEFAULT_PAGE_SIZE
             )
 
-            else -> getUserWatchedMediaTvShowsByGenreUseCase(
+            else -> getUserWatchedMediaTvShowsByGenreUseCase.invoke(
                 genreId = genreId!!,
                 page = page,
                 pageSize = DEFAULT_PAGE_SIZE
@@ -178,8 +176,7 @@ class ContinueWatchingViewModel @Inject constructor(
         hideSnackBar()
         updateState {
             it.copy(
-                genres =
-                    genres.map { genre -> genre.toContinueWatchingUiState() }
+                genres = genres.map { genre -> genre.toContinueWatchingUiState() }
             )
         }
     }
@@ -194,12 +191,12 @@ class ContinueWatchingViewModel @Inject constructor(
 
     override fun onMediaClick(
         mediaId: Long,
-        contentType: ContinueWatchingState.ContinueWatchingMovieUiState.ContentType,
+        contentType: ContinueWatchingState.ContinueWatchingItemUiState.ContentType,
     ) {
-        if (contentType == ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE) {
-            sendEffect(effect = ContinueWatchingScreenEffect.NavigateToMovieDetails(mediaId))
+        if (contentType == ContinueWatchingState.ContinueWatchingItemUiState.ContentType.MOVIE) {
+            sendEffect(effect = ContinueWatchingScreenEffect.NavigateToMovieDetails(movieId = mediaId))
         } else {
-            sendEffect(effect = ContinueWatchingScreenEffect.NavigateToTvShowDetails(mediaId))
+            sendEffect(effect = ContinueWatchingScreenEffect.NavigateToTvShowDetails(tvShowId = mediaId))
         }
     }
 
@@ -256,7 +253,7 @@ class ContinueWatchingViewModel @Inject constructor(
         getMedia(genreId)
     }
 
-    override fun onMovieSaveClick(movie: ContinueWatchingState.ContinueWatchingMovieUiState) {
+    override fun onMovieSaveClick(movie: ContinueWatchingState.ContinueWatchingItemUiState) {
         onSaveMovieClick(isSaved = movie.isSaved, listId = movie.savedListId, movieId = movie.id)
     }
 
@@ -286,7 +283,7 @@ class ContinueWatchingViewModel @Inject constructor(
         itemId: Long
     ) {
         tryToExecute(
-            callee = { removeMovieFromSavedListUseCase(listId = listId, movieId = itemId) },
+            callee = { removeMovieFromSavedListUseCase.invoke(listId = listId, movieId = itemId) },
             onSuccess = { onRemoveSavedItemSuccess() },
             dispatcher = defaultDispatcher,
             onFinally = ::onRemoveSavedItemFinished
@@ -372,10 +369,7 @@ class ContinueWatchingViewModel @Inject constructor(
     private fun onAddItemToListStart() {
         updateState {
             it.copy(
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(
-                        isLoading = true
-                    )
+                addToListBottomSheetState = it.addToListBottomSheetState.copy(isLoading = true)
             )
         }
     }
@@ -383,10 +377,7 @@ class ContinueWatchingViewModel @Inject constructor(
     private fun onAddItemToListFinished() {
         updateState {
             it.copy(
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(
-                        isLoading = false
-                    )
+                addToListBottomSheetState = it.addToListBottomSheetState.copy(isLoading = false)
             )
         }
     }
@@ -394,14 +385,8 @@ class ContinueWatchingViewModel @Inject constructor(
     override fun onCreateNewListClicked() {
         updateState {
             it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isVisible = true
-                    ),
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(
-                        isVisible = false
-                    )
+                addListBottomSheetState = it.addListBottomSheetState.copy(isVisible = true),
+                addToListBottomSheetState = it.addToListBottomSheetState.copy(isVisible = false)
             )
         }
     }
@@ -413,10 +398,9 @@ class ContinueWatchingViewModel @Inject constructor(
     override fun onSaveToListBottomSheetDismiss() {
         updateState {
             it.copy(
-                addToListBottomSheetState =
-                    AddToListBottomSheetState(
-                        savedLists = it.addToListBottomSheetState.savedLists
-                    )
+                addToListBottomSheetState = AddToListBottomSheetState(
+                    savedLists = it.addToListBottomSheetState.savedLists
+                )
             )
         }
     }
@@ -424,10 +408,7 @@ class ContinueWatchingViewModel @Inject constructor(
     override fun onListSelected(listId: Long) {
         updateState {
             it.copy(
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(
-                        selectedListId = listId
-                    )
+                addToListBottomSheetState = it.addToListBottomSheetState.copy(selectedListId = listId)
             )
         }
     }
@@ -435,10 +416,7 @@ class ContinueWatchingViewModel @Inject constructor(
     override fun onCreatedListNameChanged(name: String) {
         updateState {
             it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        listName = name
-                    )
+                addListBottomSheetState = it.addListBottomSheetState.copy(listName = name)
             )
         }
     }
@@ -446,16 +424,12 @@ class ContinueWatchingViewModel @Inject constructor(
     override fun onCreateListBottomSheetDismiss() {
         updateState {
             it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isVisible = false,
-                        listName = "",
-                        isLoading = false
-                    ),
-                addToListBottomSheetState =
-                    it.addToListBottomSheetState.copy(
-                        isVisible = true
-                    )
+                addListBottomSheetState = it.addListBottomSheetState.copy(
+                    isVisible = false,
+                    listName = "",
+                    isLoading = false
+                ),
+                addToListBottomSheetState = it.addToListBottomSheetState.copy(isVisible = true)
             )
         }
     }
@@ -463,9 +437,7 @@ class ContinueWatchingViewModel @Inject constructor(
     override fun onCreateListBottomSheetAddClick() {
         tryToExecute(
             callee = {
-                createSavedListUseCase(
-                    title = currentState.addListBottomSheetState.listName,
-                )
+                createSavedListUseCase.invoke(title = currentState.addListBottomSheetState.listName)
             },
             onSuccess = { onCreateListSuccess() },
             dispatcher = defaultDispatcher,
@@ -482,10 +454,7 @@ class ContinueWatchingViewModel @Inject constructor(
     private fun onCreateListStart() {
         updateState {
             it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isLoading = true,
-                    )
+                addListBottomSheetState = it.addListBottomSheetState.copy(isLoading = true)
             )
         }
     }
@@ -493,10 +462,7 @@ class ContinueWatchingViewModel @Inject constructor(
     private fun onCreateListFinished() {
         updateState {
             it.copy(
-                addListBottomSheetState =
-                    it.addListBottomSheetState.copy(
-                        isLoading = false,
-                    )
+                addListBottomSheetState = it.addListBottomSheetState.copy(isLoading = false)
             )
         }
     }
