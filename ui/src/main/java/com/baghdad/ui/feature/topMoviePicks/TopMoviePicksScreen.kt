@@ -20,10 +20,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
@@ -32,6 +32,7 @@ import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToLogin
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.topMoviePicks.TopMoviePicksEffect
@@ -50,6 +51,7 @@ fun TopMoviePicksScreen(
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
+
     TopMoviePicksContent(
         uiState = uiState,
         listener = viewModel,
@@ -89,34 +91,20 @@ private fun TopMoviePicksContent(
                 .background(Theme.color.surface)
                 .systemBarsPadding()
                 .statusBarsPadding(),
-
         isLoading = uiState.isLoading,
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClicked,
-                isVisible = snackBarState.isVisible,
-                position = position,
-            )
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClicked,
         topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClicked,
-                screenTitle = stringResource(com.baghdad.ui.R.string.top_movies_picks),
+                screenTitle = stringResource(R.string.top_movies_picks),
                 modifier =
                     Modifier
                         .padding(vertical = 8.dp)
                         .padding(top = 12.dp),
             )
         },
-
-        backgroundBlur = { BackgroundBlur() }
-
+        backgroundContent = { BackgroundBlur() }
     ) {
 
         LazyVerticalGrid(
@@ -167,5 +155,4 @@ private fun TopMoviePicksContent(
 
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

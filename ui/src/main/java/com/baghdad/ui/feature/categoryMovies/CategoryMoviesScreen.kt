@@ -1,6 +1,5 @@
 package com.baghdad.ui.feature.categoryMovies
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,17 +15,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.button.IconButton
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
@@ -37,6 +34,7 @@ import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent.NavigateToLogin
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesEffect
 import com.baghdad.viewmodel.categoryMovies.CategoryMoviesState
@@ -94,9 +92,7 @@ private fun CategoryMoviesContent(
         modifier = Modifier
             .fillMaxSize()
             .navigationBarsPadding(),
-
         isLoading = uiState.isLoading,
-
         topBar = {
             Row(
                 modifier = Modifier
@@ -120,21 +116,9 @@ private fun CategoryMoviesContent(
                 )
             }
         },
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position
-            )
-        },
-
-        backgroundBlur = { BackgroundBlur() },
-
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
+        backgroundContent = { BackgroundBlur() },
     ) {
 
         LazyPagingVerticalGrid<CategoryMoviesState.MovieUiState>(
@@ -181,7 +165,4 @@ private fun CategoryMoviesContent(
     )
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

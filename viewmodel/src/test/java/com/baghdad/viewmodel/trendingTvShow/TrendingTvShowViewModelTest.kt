@@ -71,11 +71,10 @@ class TrendingTvShowViewModelTest {
         runTest {
             viewModel = createViewModel()
 
-            viewModel.onSnackBarActionLabelClicked(genreId = genre.id)
-
+            viewModel.onSnackBarActionLabelClicked()
 
             viewModel.uiState.test {
-                assertThat(awaitItem().selectedGenreId).isEqualTo(genre.id)
+                assertThat(awaitItem().selectedGenreId).isEqualTo(null)
             }
         }
 

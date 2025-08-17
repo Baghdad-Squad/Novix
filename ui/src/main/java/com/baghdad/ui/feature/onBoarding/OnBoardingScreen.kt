@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.onBoarding.component.BottomSlidingSection
 import com.baghdad.ui.feature.onBoarding.component.OnBoardingHorizontalPagerContent
@@ -99,7 +99,7 @@ private fun OnBoardingContent(
         }
     }
     Scaffold(
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
         LazyColumn(
             modifier = Modifier

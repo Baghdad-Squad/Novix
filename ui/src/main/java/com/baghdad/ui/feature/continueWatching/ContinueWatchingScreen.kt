@@ -32,10 +32,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Chip
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
@@ -47,6 +46,7 @@ import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShowDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingInteractionListener
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingScreenEffect
@@ -61,7 +61,6 @@ fun ContinueWatchingScreen(
 ) {
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
@@ -114,9 +113,7 @@ private fun ContinueWatchingContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
-
         isLoading = uiState.isLoading,
-
         topBar = {
             TopAppBar(
                 modifier = Modifier
@@ -127,21 +124,10 @@ private fun ContinueWatchingContent(
                 screenTitle = stringResource(com.baghdad.ui.R.string.continue_watching)
             )
         },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionClick,
-                position = position,
-            )
-        },
-        backgroundBlur = { BackgroundBlur() },
-
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionClick,
+        backgroundContent = { BackgroundBlur() },
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -294,7 +280,4 @@ private fun GenresTabs(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

@@ -204,10 +204,10 @@ class TrendingMoviesViewModel @Inject constructor(
         }
     }
 
-    override fun onSnackBarActionLabelClicked(categoryId: Long?) {
+    override fun onSnackBarActionLabelClicked() {
         hideSnackBar()
         loadGenres()
-        loadMoviesByGenres(categoryId)
+        loadMoviesByGenres(currentState.selectedGenreId)
     }
 
     override fun onSaveItemToListClicked() {

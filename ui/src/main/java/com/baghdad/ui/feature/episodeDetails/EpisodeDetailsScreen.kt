@@ -30,9 +30,8 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -44,6 +43,7 @@ import com.baghdad.ui.feature.episodeDetails.component.EpisodeHeaderWithDetailsC
 import com.baghdad.ui.feature.episodeDetails.component.guestsOfHonorItems
 import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsInteractionListener
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenEffect
@@ -122,9 +122,7 @@ private fun EpisodeDetailsContent(
                 .background(Theme.color.surface)
                 .fillMaxSize()
                 .navigationBarsPadding(),
-
         isLoading = state.isLoading,
-
         bottomBar = {
             DetailsScreenBottomBar(
                 isRated = state.isRated,
@@ -134,21 +132,9 @@ private fun EpisodeDetailsContent(
                 onPlayTrailerClicked = listener::onPlayTrailerClick
             )
         },
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-
-        backgroundBlur = { BackgroundBlur() },
-
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
+        backgroundContent = { BackgroundBlur() },
     ) {
 
         LazyColumn(
@@ -207,7 +193,6 @@ private fun EpisodeDetailsContent(
         onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating) }
     )
 
-
     LoginRequiredSheet(
         isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
         onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
@@ -236,5 +221,4 @@ private fun handleEffect(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

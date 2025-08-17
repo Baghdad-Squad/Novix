@@ -27,10 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.WavyLoadingIndicator
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -38,6 +37,7 @@ import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.ActorImageDialog
 import com.baghdad.ui.feature.component.islamicImage.IslamicImage
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.actorGallery.ActorGalleryInteractionListener
 import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenEffect
 import com.baghdad.viewmodel.actorGallery.ActorGalleryScreenState
@@ -78,19 +78,8 @@ private fun ActorGalleryScreenContent(
             .systemBarsPadding()
             .statusBarsPadding(),
         isLoading = uiState.isLoading,
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClick,
@@ -100,8 +89,7 @@ private fun ActorGalleryScreenContent(
                     .padding(top = 12.dp)
             )
         },
-
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
         if (uiState.isLoading) {
             Box(Modifier.fillMaxSize()) {
@@ -144,7 +132,4 @@ private fun ActorGalleryScreenContent(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
