@@ -80,7 +80,7 @@ fun Scaffold(
                 modifier = Modifier.padding(DefaultSnackBarPadding),
                 state = snackBarState,
                 onActionClick = onSnackBarActionClick,
-                position = SnackBarPosition.TOP,
+                position = SnackBarPosition.BOTTOM,
             )
 
             floatingActionButton?.let { fab ->
