@@ -14,15 +14,13 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.HomeAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
@@ -43,6 +41,7 @@ import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovies
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTopRatingMovies
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShowDetails
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShows
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.home.HomeInteractionListener
@@ -82,23 +81,11 @@ private fun HomeContent(
             .fillMaxSize()
             .background(Theme.color.surface)
             .statusBarsPadding(),
-
         topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) },
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = interactionListener::onSnackBarActionLabelClicked,
-                position = position,
-            )
-        },
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = interactionListener::onSnackBarActionLabelClicked,
         backgroundBlur = { BackgroundBlur() },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        ) {
-
+    ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             contentPadding = PaddingValues(bottom = 16.dp, top = 8.dp),
@@ -197,10 +184,7 @@ private fun HomeContent(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
 
 private fun handleEffect(
     effect: HomeScreenEffect,

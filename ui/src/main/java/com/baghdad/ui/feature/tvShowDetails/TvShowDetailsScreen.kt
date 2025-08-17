@@ -34,10 +34,9 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -59,6 +58,7 @@ import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.Navig
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToReviews
 import com.baghdad.ui.util.isArabicSystemLocale
 import com.baghdad.ui.util.openYouTubeLink
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.BottomSheetType
@@ -77,9 +77,11 @@ fun TvShowDetailsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, context, handleNavigation)
     }
+
     TvShowDetailsContent(
         uiState = uiState,
         listener = viewModel,
@@ -174,7 +176,6 @@ private fun TvShowDetailsContent(
             .background(Theme.color.surface)
             .consumeWindowInsets(WindowInsets(0, 0, 0, 0))
             .navigationBarsPadding(),
-
         bottomBar = {
             DetailsScreenBottomBar(
                 hasTrailer = uiState.tvShowInfo.trailerURL.isNotBlank(),
@@ -184,22 +185,10 @@ private fun TvShowDetailsContent(
                 isLoading = false
             )
         },
-
         isLoading = uiState.isLoading,
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         backgroundBlur = { BackgroundBlur() },
-
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Box(
             modifier = Modifier
@@ -334,9 +323,4 @@ private fun TvShowDetailsContent(
     }
 }
 
-
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
-
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

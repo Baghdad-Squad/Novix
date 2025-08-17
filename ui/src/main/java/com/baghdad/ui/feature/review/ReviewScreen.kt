@@ -20,9 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -30,6 +29,7 @@ import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.review.component.ReviewerCard
 import com.baghdad.ui.feature.search.component.EmptySearchState
 import com.baghdad.ui.navigation.graph.reviews.ReviewsNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
@@ -69,7 +69,6 @@ private fun ReviewContent(
             .background(Theme.color.surface)
             .statusBarsPadding()
             .navigationBarsPadding(),
-
         topBar = {
             TopAppBar(
                 screenTitle = stringResource(R.string.reviews),
@@ -77,26 +76,12 @@ private fun ReviewContent(
                 modifier = Modifier.padding(top = 20.dp, bottom = 8.dp)
             )
         },
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         isLoading = uiState.isLoading,
-
         backgroundBlur = {
             BackgroundBlur()
         },
-
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null
-
         ) {
 
         Column(
@@ -131,15 +116,12 @@ private fun ReviewContent(
     }
 }
 
-
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return when (type) {
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int =
+    when (type) {
         SearchSnackBarMessage.RemovedItemSuccessfully -> R.string.snackbar_removed_success
         SearchSnackBarMessage.SavedItemSuccessfully -> R.string.snackbar_saved_success
         else -> type.toStringResource()
     }
-}
 
 @Composable
 private fun EmptyReviewScreen() {

@@ -44,10 +44,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.SaveIcon
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -69,6 +68,7 @@ import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.Navigat
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.movieDetails.MovieDetailsNavEvent.NavigateToReviews
 import com.baghdad.ui.util.openYouTubeLink
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsEffect
@@ -213,18 +213,9 @@ private fun MovieDetailsContent(
                 isLoading = false
             )
         },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         backgroundBlur = { BackgroundBlur() },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
 
         Box(
@@ -294,7 +285,8 @@ private fun MovieDetailsContent(
                             isSaved = movie.isSaved,
                             onSavedClick = { listener.onSaveMoreLikeThisMedia(movie) },
                             onClick = { listener.onMovieClick(movie.id) },
-                            modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
                                 .aspectRatio(0.75f)
                         )
                     }
@@ -381,7 +373,4 @@ private fun Modifier.ignoreHorizontalPadding(extra: Dp = 32.dp): Modifier =
     )
 
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

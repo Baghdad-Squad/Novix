@@ -32,10 +32,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.actorDetails.component.ActorBiographySection
@@ -48,6 +48,7 @@ import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToTvShowDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.actorDetails.ActorDetailsInteractionListener
 import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenEffect
 import com.baghdad.viewmodel.actorDetails.ActorDetailsScreenState
@@ -158,23 +159,12 @@ private fun ActorDetailsContent(
             Modifier
                 .background(Theme.color.surface)
                 .navigationBarsPadding(),
-
         isLoading = uiState.isLoading,
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         backgroundBlur = {
             BackgroundBlur()
         },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         LaunchedEffect(scrollState) {
             snapshotFlow { scrollState.value }.collect { scrollValue ->
@@ -225,7 +215,7 @@ private fun ActorDetailsContent(
 
                 if (uiState.topMoviesPicks.isNotEmpty()) {
                     TopMediaPicksSection(
-                        title = stringResource(com.baghdad.ui.R.string.top_movies_picks),
+                        title = stringResource(R.string.top_movies_picks),
                         items = uiState.topMoviesPicks,
                         imageUrl = { it.posterPictureURL },
                         onSavedClick =  listener::onSaveMovieClick ,
@@ -238,7 +228,7 @@ private fun ActorDetailsContent(
                 }
                 if (uiState.topTvShowsPicks.isNotEmpty()) {
                     TopMediaPicksSection(
-                        title = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
+                        title = stringResource(R.string.top_tv_shows_picks),
                         items = uiState.topTvShowsPicks,
                         imageUrl = { it.posterPictureURL },
                         isSaveVisible = false,
@@ -287,5 +277,4 @@ private fun ActorDetailsContent(
 
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

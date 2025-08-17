@@ -26,10 +26,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -44,6 +43,7 @@ import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateBack
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToLogin
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShowDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
@@ -59,12 +59,12 @@ fun TopRatingScreen(
     viewModel: TopRatingViewModel = hiltViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit
 ) {
-    ObserveAsEffect(viewModel.uiEffect) { effect ->
-        handleEffect(effect, handleNavigation)
-    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
 
+    ObserveAsEffect(viewModel.uiEffect) { effect ->
+        handleEffect(effect, handleNavigation)
+    }
 
     TopRatingContent(
         uiState = uiState,
@@ -114,9 +114,7 @@ private fun TopRatingContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
-
         isLoading = uiState.isLoading,
-
         topBar = {
             TopRatingTopBar(
                 listener = listener,
@@ -125,20 +123,9 @@ private fun TopRatingContent(
                 tvGenresScrollState = tvGenresScrollState
             )
         },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         backgroundBlur = { BackgroundBlur() },
-
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
 
         when (uiState.selectedTab) {
@@ -287,10 +274,8 @@ private fun TopRatingTopBar(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return when (type) {
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int =
+    when (type) {
         SearchSnackBarMessage.SavedItemSuccessfully -> com.baghdad.ui.R.string.snackbar_saved_success
         else -> type.toStringResource()
     }
-}

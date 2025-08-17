@@ -31,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,18 +38,18 @@ import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Icon
 import com.baghdad.design_system.component.NovixTextField
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.button.IconButton
 import com.baghdad.design_system.component.button.PrimaryButton
 import com.baghdad.design_system.component.button.TextButton
-import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.navigation.graph.authentication.AuthenticationNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
+import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.login.LoginInteractionListener
 import com.baghdad.viewmodel.login.LoginUiEffect
 import com.baghdad.viewmodel.login.LoginUiState
@@ -110,22 +109,10 @@ private fun LoginScreenContent(
             .fillMaxWidth()
             .statusBarsPadding()
             .navigationBarsPadding(),
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarState.message.toStringResource()),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                position = position,
-            )
-        },
-
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         topBar = {
             TopBar(listener)
         },
-
         backgroundBlur = { BackgroundBlur() }
     ) {
 
@@ -271,12 +258,4 @@ private fun LoginUiEffect.toNavEvent(): AuthenticationNavEvent? =
         else -> null
     }
 
-@Preview
-@Composable
-private fun PreviewLoginScreen() {
-    NovixTheme(isDarkTheme = true) {
-        LoginScreen(
-            handleNavigation = {}
-        )
-    }
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

@@ -19,15 +19,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToTvShowDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksEffect
@@ -79,30 +80,16 @@ private fun TopTvShowPicksContent(
             .systemBarsPadding()
             .statusBarsPadding()
             .padding(top = 12.dp),
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position
-            )
-        },
-
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClick,
-                screenTitle = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
+                screenTitle = stringResource(R.string.top_tv_shows_picks),
                 modifier = Modifier.padding(vertical = 8.dp)
             )
         },
-
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-
         isLoading = uiState.isLoading,
-
         backgroundBlur = { BackgroundBlur() }
     ) {
         LazyVerticalGrid(
@@ -130,7 +117,4 @@ private fun TopTvShowPicksContent(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

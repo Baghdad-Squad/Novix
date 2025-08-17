@@ -22,10 +22,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.button.IconButton
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -35,6 +34,7 @@ import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.savedListDetails.component.ConfirmListDeletionBottomSheet
 import com.baghdad.ui.navigation.graph.myLists.MyListsNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.savedListDetails.SavedListDetailsEffect
@@ -57,7 +57,7 @@ fun SavedListDetailsScreen(
     SavedListDetailsContent(
         uiState = uiState,
         listener = viewModel,
-        snackBar = snackBarState
+        snackBarState = snackBarState,
     )
 }
 
@@ -79,36 +79,22 @@ private fun handleEffect(
 fun SavedListDetailsContent(
     uiState: SavedListDetailsScreenState,
     listener: SavedListDetailsInteractionListener,
-    snackBar: SnackBarState,
+    snackBarState: SnackBarState,
 ) {
     val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
 
     Scaffold(
         modifier = Modifier.background(Theme.color.surface),
-
         backgroundBlur = { BackgroundBlur() },
-
         isLoading = uiState.isLoading,
-
         topBar = {
             SavedListDetailTopBar(
                 uiState = uiState,
                 listener = listener
             )
         },
-
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBar.message)),
-                isSuccess = snackBar.isSuccess,
-                isVisible = snackBar.isVisible,
-                actionLabel = snackBar.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-
-        isSnackBarWithActionLabel = snackBar.actionLabelRes != null,
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
     ) {
 
         AnimatedContent(
@@ -185,7 +171,4 @@ private fun ListContent(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

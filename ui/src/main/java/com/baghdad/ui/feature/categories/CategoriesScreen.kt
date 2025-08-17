@@ -31,9 +31,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.CategoryCard
 import com.baghdad.design_system.component.Chip
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -41,6 +40,7 @@ import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.categories.component.MovieCategoryDrawableMap
 import com.baghdad.ui.feature.categories.component.TvShowCategoryDrawableMap
 import com.baghdad.ui.navigation.graph.categories.CategoriesNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.categories.CategoriesEffect
 import com.baghdad.viewmodel.categories.CategoriesInteractionListener
@@ -125,18 +125,9 @@ private fun CategoriesScreenContent(
                 }
             }
         },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClicked,
-                position = position,
-            )
-        },
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClicked,
         backgroundBlur = { BackgroundBlur() },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         isLoading = state.isLoading
     ) {
         AnimatedContent(
@@ -172,7 +163,8 @@ fun CategoryGrid(
     LazyVerticalGrid(
         columns = Adaptive(minSize = 150.dp),
         state = gridState,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -194,7 +186,5 @@ fun CategoryGrid(
         }
     }
 }
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
