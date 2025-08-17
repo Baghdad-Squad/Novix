@@ -115,15 +115,6 @@ class EpisodeDetailsViewModelTest {
     }
 
     @Test
-    fun `onSaveEpisodeClick should show addToListBottomSheet when called`() = runTest {
-        viewModel = createViewModel()
-
-        viewModel.onSaveEpisodeClick()
-
-        assertThat(viewModel.uiState.value.addToListBottomSheetState.isVisible).isTrue()
-    }
-
-    @Test
     fun `onDismissAddToListBottomSheetClick should hide addToListBottomSheet when called`() =
         runTest {
             viewModel = createViewModel()

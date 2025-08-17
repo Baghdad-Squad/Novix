@@ -59,9 +59,8 @@ class TopRatingViewModelTest {
     fun `onMovieDetailsClick should navigate to movie details screen when it is clicked`() =
         runTest {
             viewModel = createViewModel()
-            val movieId = 123L
 
-            viewModel.onMovieDetailsClick(movieId)
+            viewModel.onMovieDetailsClick(ID)
 
             viewModel.uiEffect.test {
                 val effect = awaitItem()
@@ -73,9 +72,8 @@ class TopRatingViewModelTest {
     fun `onTvShowDetailsClick should navigate to tv show details screen when it is clicked`() =
         runTest {
             viewModel = createViewModel()
-            val tvShowId = 123L
 
-            viewModel.onTvShowDetailsClick(tvShowId)
+            viewModel.onTvShowDetailsClick(ID)
 
             viewModel.uiEffect.test {
                 val effect = awaitItem()
@@ -97,24 +95,22 @@ class TopRatingViewModelTest {
 
     @Test
     fun `onGenreClick should return updated genre tab when selected tab is movies`() = runTest {
-        val genreId = 1L
         viewModel = createViewModel()
 
         viewModel.onSelectedTab(TopRatingTab.MOVIES)
-        viewModel.onGenreClick(genreId)
+        viewModel.onGenreClick(ID)
 
-        assertThat(viewModel.uiState.value.selectedMovieGenreId == genreId).isTrue()
+        assertThat(viewModel.uiState.value.selectedMovieGenreId == ID).isTrue()
     }
 
     @Test
     fun `onGenreClick should return updated genre tab when selected tab is tv shows`() = runTest {
         viewModel = createViewModel()
-        val genreId = 1L
 
         viewModel.onSelectedTab(TopRatingTab.TV_SHOWS)
-        viewModel.onGenreClick(genreId)
+        viewModel.onGenreClick(ID)
 
-        assertThat(viewModel.uiState.value.selectedTvShowGenreId == genreId).isTrue()
+        assertThat(viewModel.uiState.value.selectedTvShowGenreId == ID).isTrue()
     }
 
     @Test
@@ -187,7 +183,7 @@ class TopRatingViewModelTest {
     @Test
     fun `onListSelected should update selectedListId when it is clicked`() = runTest {
         viewModel = createViewModel()
-        val selectedListId = 123L
+        val selectedListId = ID
 
         viewModel.onListSelected(selectedListId)
         advanceUntilIdle()
@@ -268,7 +264,7 @@ class TopRatingViewModelTest {
     fun `onSaveMovieClick should save movie to list when it is clicked`() = runTest {
         viewModel = createViewModel()
 
-        viewModel.onListSelected(123L)
+        viewModel.onListSelected(ID)
 
         viewModel.onSaveItemToListClicked()
         advanceUntilIdle()
@@ -277,26 +273,29 @@ class TopRatingViewModelTest {
     }
 
     companion object {
-        private val MOVIE_UI_STATE = TopRatingState.MovieUiState(
-            id = 123L,
-            isSaved = true,
-            posterPictureURL = "",
-            savedListId = 123L
-        )
+        private const val ID = 22L
+
+        private val MOVIE_UI_STATE =
+            TopRatingState.MovieUiState(
+                id = ID,
+                isSaved = true,
+                posterPictureURL = "",
+                savedListId = ID
+            )
     }
 
     private fun createViewModel(): TopRatingViewModel {
         return TopRatingViewModel(
-            getMovieTopRatingUseCase,
-            getTvShowTopRatingUseCase,
-            getMovieGenresUseCase,
-            getTvShowGenresUseCase,
-            isUserLoggedInUseCase,
-            getSavedListsUseCase,
-            addMovieToSavedListUseCase,
-            createSavedListUseCase,
-            removeMovieFromSavedListUseCase,
-            defaultDispatcher = testDispatcher
+            getMovieTopRatingUseCase = getMovieTopRatingUseCase,
+            getTvShowTopRatingUseCase = getTvShowTopRatingUseCase,
+            getMovieGenresUseCase = getMovieGenresUseCase,
+            getTvShowGenresUseCase = getTvShowGenresUseCase,
+            isUserLoggedInUseCase = isUserLoggedInUseCase,
+            getSavedListsUseCase = getSavedListsUseCase,
+            addMovieToSavedListUseCase = addMovieToSavedListUseCase,
+            createSavedListUseCase = createSavedListUseCase,
+            removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
+            ioDispatcher = testDispatcher
         )
     }
 }
