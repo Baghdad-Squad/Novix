@@ -310,7 +310,7 @@ class CategoryMoviesViewModelTest {
 
         advanceUntilIdle()
 
-        assertThat(snackBarMessages).contains(BaseSnackBarMessage.SavedItemSuccessfully)
+        assertThat(snackBarMessages).contains(BaseSnackBarMessage.DefaultMessage)
         job.cancel()
     }
 
