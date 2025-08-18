@@ -31,9 +31,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel
-@Inject
-constructor(
+class HomeViewModel @Inject constructor(
     private val getMovieGenresUseCase: GetMovieGenresUseCase,
     private val observeUserWatchedMediaUseCase: ObserveUserWatchedMediaUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
@@ -56,13 +54,13 @@ constructor(
     private fun observeAppLanguage() {
         tryToCollect(
             flowProvider = { getAppLanguageUseCase.invoke() },
-            onNewValue = ::onLanguageChanged,
+            onNewValue = { onLanguageChanged() },
             onError = ::onLoadDataError,
             dispatcher = ioDispatcher
         )
     }
 
-    private fun onLanguageChanged(language: String) {
+    private fun onLanguageChanged() {
         loadData()
     }
 
@@ -241,13 +239,13 @@ constructor(
 
     private fun onGetMovieGenresStart() {
         updateState {
-            it.copy(isUpcomingGenresLoading = true)
+            it.copy(isUpcomingMoviesLoading = true)
         }
     }
 
     private fun onGetMovieGenresFinished() {
         updateState {
-            it.copy(isUpcomingGenresLoading = false)
+            it.copy(isUpcomingMoviesLoading = false)
         }
     }
 
@@ -256,8 +254,6 @@ constructor(
             callee = { getUpcomingMoviesUseCase(currentState.selectedUpcomingGenreId) },
             dispatcher = ioDispatcher,
             onSuccess = ::onGetUpcomingSuccess,
-            onStart = ::onGetUpcomingStarted,
-            onFinally = ::onGetUpcomingFinished,
             onError = ::onLoadDataError,
         )
     }
@@ -265,18 +261,6 @@ constructor(
     private fun onGetUpcomingSuccess(movies: List<SavedMovie>) {
         updateState {
             it.copy(upcomingItems = movies.map(SavedMovie::toUpcomingItemUiState))
-        }
-    }
-
-    private fun onGetUpcomingStarted() {
-        updateState {
-            it.copy(isUpcomingMoviesLoading = true)
-        }
-    }
-
-    private fun onGetUpcomingFinished() {
-        updateState {
-            it.copy(isUpcomingMoviesLoading = false)
         }
     }
 
