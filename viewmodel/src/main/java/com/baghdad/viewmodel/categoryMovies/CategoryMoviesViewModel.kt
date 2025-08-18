@@ -39,11 +39,11 @@ class CategoryMoviesViewModel @Inject constructor(
     private val categoryId: Long = checkNotNull(savedStateHandle["categoryId"])
 
     init {
-        loadInitData()
+        loadData()
         checkIfUserIsLoggedIn()
     }
 
-    private fun loadInitData() {
+    private fun loadData() {
         getGenreMovies()
         getGenreName()
     }
@@ -52,7 +52,7 @@ class CategoryMoviesViewModel @Inject constructor(
         tryToExecute(
             callee = { isUserLoggedInUseCase() },
             onSuccess = ::onCheckIfUserIsLoggedInSuccess,
-            dispatcher = ioDispatcher,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -109,12 +109,24 @@ class CategoryMoviesViewModel @Inject constructor(
                     movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
             },
+            onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
+            dispatcher = ioDispatcher
         )
     }
 
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
+        )
+    }
     private fun onSaveButtonClicked(
         listId: Long,
         itemId: Long,
@@ -177,7 +189,7 @@ class CategoryMoviesViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
-        loadInitData()
+        loadData()
     }
 
     override fun onMovieToListClick(item: CategoryMoviesState.MovieUiState) {
@@ -191,7 +203,7 @@ class CategoryMoviesViewModel @Inject constructor(
     }
 
     private fun refreshSavedItems() {
-        loadInitData()
+        loadData()
         getUserSavedLists()
     }
 
@@ -376,7 +388,7 @@ class CategoryMoviesViewModel @Inject constructor(
     private fun getGenreMovies() {
         collectPagingFlow(
             loadData = { page ->
-                getGenreMoviesUseCase(categoryId, page)
+                getGenreMoviesUseCase(categoryId, page, DEFAULT_PAGE_SIZE)
             },
             onInitialLoadFinished = ::onFinally,
             mapEntityToUiState = { it.toUiState() },

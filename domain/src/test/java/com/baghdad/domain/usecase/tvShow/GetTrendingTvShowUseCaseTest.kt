@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.tvShow
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.TvShowRepository
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.TvShow
@@ -34,8 +34,8 @@ class GetTrendingTvShowUseCaseTest {
         )
         val expectedResult = PagedResult(
             data = shows,
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         coEvery { tvShowRepository.getTrendingTvShows(page) } returns expectedResult
@@ -45,8 +45,8 @@ class GetTrendingTvShowUseCaseTest {
 
         // Then
         assertThat(result.data).containsExactlyElementsIn(shows)
-        assertThat(result.nextKey).isEqualTo(2)
-        assertThat(result.prevKey).isNull()
+        assertThat(result.nextPage).isEqualTo(2)
+        assertThat(result.prevPage).isNull()
         coVerify(exactly = 1) { tvShowRepository.getTrendingTvShows(page) }
     }
 
@@ -63,8 +63,8 @@ class GetTrendingTvShowUseCaseTest {
 
         val inputResult = PagedResult(
             data = shows,
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         coEvery { tvShowRepository.getTrendingTvShows(page) } returns inputResult
@@ -75,8 +75,8 @@ class GetTrendingTvShowUseCaseTest {
         // Then
         val expectedShows = listOf(shows[0], shows[2])
         assertThat(result.data).containsExactlyElementsIn(expectedShows)
-        assertThat(result.nextKey).isEqualTo(2)
-        assertThat(result.prevKey).isNull()
+        assertThat(result.nextPage).isEqualTo(2)
+        assertThat(result.prevPage).isNull()
         coVerify(exactly = 1) { tvShowRepository.getTrendingTvShows(page) }
     }
 
@@ -92,8 +92,8 @@ class GetTrendingTvShowUseCaseTest {
 
         val inputResult = PagedResult(
             data = shows,
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         coEvery { tvShowRepository.getTrendingTvShows(page) } returns inputResult
@@ -103,8 +103,8 @@ class GetTrendingTvShowUseCaseTest {
 
         // Then
         assertThat(result.data).isEmpty()
-        assertThat(result.nextKey).isEqualTo(2)
-        assertThat(result.prevKey).isNull()
+        assertThat(result.nextPage).isEqualTo(2)
+        assertThat(result.prevPage).isNull()
         coVerify(exactly = 1) { tvShowRepository.getTrendingTvShows(page) }
     }
 
@@ -120,8 +120,8 @@ class GetTrendingTvShowUseCaseTest {
 
         val inputResult = PagedResult(
             data = shows,
-            nextKey = 3,
-            prevKey = 1
+            nextPage = 3,
+            prevPage = 1
         )
 
         coEvery { tvShowRepository.getTrendingTvShows(page) } returns inputResult
@@ -131,8 +131,8 @@ class GetTrendingTvShowUseCaseTest {
 
         // Then
         assertThat(result.data).hasSize(1)
-        assertThat(result.nextKey).isEqualTo(3)
-        assertThat(result.prevKey).isEqualTo(1)
+        assertThat(result.nextPage).isEqualTo(3)
+        assertThat(result.prevPage).isEqualTo(1)
         coVerify(exactly = 1) { tvShowRepository.getTrendingTvShows(page) }
     }
 

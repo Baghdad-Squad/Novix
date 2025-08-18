@@ -16,19 +16,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
+import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent
 import com.baghdad.ui.navigation.graph.actorDetails.ActorDetailsNavEvent.NavigateToTvShowDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.topTvShowPicks.TopTvShowPicksEffect
@@ -43,9 +43,11 @@ fun TopTvShowPicksScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
+
     TopTvShowPicksContent(
         uiState = uiState,
         listener = viewModel,
@@ -58,13 +60,11 @@ private fun handleEffect(
     handleNavigation: (ActorDetailsNavEvent) -> Unit
 ) {
     when (effect) {
-        is TopTvShowPicksEffect.NavigateBack -> handleNavigation(
-            ActorDetailsNavEvent.NavigateBack
-        )
+        is TopTvShowPicksEffect.NavigateBack ->
+            handleNavigation(ActorDetailsNavEvent.NavigateBack)
 
-        is TopTvShowPicksEffect.NavigateToTvShowDetails -> handleNavigation(
-            NavigateToTvShowDetails(effect.tvShowId)
-        )
+        is TopTvShowPicksEffect.NavigateToTvShowDetails ->
+            handleNavigation(NavigateToTvShowDetails(effect.tvShowId))
     }
 }
 
@@ -78,35 +78,23 @@ private fun TopTvShowPicksContent(
         modifier = Modifier
             .background(Theme.color.surface)
             .systemBarsPadding()
-            .statusBarsPadding(),
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+            .statusBarsPadding()
+            .padding(top = 12.dp),
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         topBar = {
             TopAppBar(
                 onGoBackClick = listener::onBackClick,
-                screenTitle = stringResource(com.baghdad.ui.R.string.top_tv_shows_picks),
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .padding(top = 12.dp)
+                screenTitle = stringResource(R.string.top_tv_shows_picks),
+                modifier = Modifier.padding(vertical = 8.dp)
             )
         },
         isLoading = uiState.isLoading,
-        backgroundBlur = {
-            BackgroundBlur()
-        }) {
+        backgroundContent = { BackgroundBlur() }
+    ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
@@ -114,7 +102,7 @@ private fun TopTvShowPicksContent(
                 bottom = 8.dp
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(uiState.tvShows) { tvShow ->
                 HomeCard(
@@ -129,8 +117,4 @@ private fun TopTvShowPicksContent(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
-
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

@@ -10,7 +10,7 @@ import com.baghdad.domain.exception.NetworkException
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.domain.exception.UnknownException
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler

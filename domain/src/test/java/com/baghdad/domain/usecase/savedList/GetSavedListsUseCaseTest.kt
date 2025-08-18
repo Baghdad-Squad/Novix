@@ -1,6 +1,6 @@
 package com.baghdad.domain.usecase.savedList
 
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.repository.SavedListRepository
 import com.baghdad.entity.savedList.SavedList
 import com.google.common.truth.Truth.assertThat
@@ -66,14 +66,14 @@ class GetSavedListsUseCaseTest {
 
         private val expectedPagedResultWithData = PagedResult(
             data = expectedSavedLists,
-            nextKey = 2,
-            prevKey = null
+            nextPage = 2,
+            prevPage = null
         )
 
         private val expectedPagedResultEmpty = PagedResult<SavedList>(
             data = emptyList(),
-            nextKey = null,
-            prevKey = null
+            nextPage = null,
+            prevPage = null
         )
     }
 }

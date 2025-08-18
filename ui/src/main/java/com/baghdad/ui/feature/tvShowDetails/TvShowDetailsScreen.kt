@@ -34,10 +34,9 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -57,9 +56,9 @@ import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.Navig
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToCategoryTvShows
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToEpisodeDetails
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent.NavigateToReviews
-import com.baghdad.ui.util.arabicDuration
 import com.baghdad.ui.util.isArabicSystemLocale
 import com.baghdad.ui.util.openYouTubeLink
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.shared.BottomSheetType
@@ -78,9 +77,11 @@ fun TvShowDetailsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, context, handleNavigation)
     }
+
     TvShowDetailsContent(
         uiState = uiState,
         listener = viewModel,
@@ -128,11 +129,10 @@ private fun handleEffect(
 }
 
 @Composable
-fun TvShowDetailsContent(
+private fun TvShowDetailsContent(
     uiState: TvShowDetailsScreenState,
     listener: TvShowDetailsInteractionListener,
     snackBarState: SnackBarState,
-    modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
     var shouldShowBackground by remember { mutableStateOf(false) }
@@ -176,54 +176,25 @@ fun TvShowDetailsContent(
             .background(Theme.color.surface)
             .consumeWindowInsets(WindowInsets(0, 0, 0, 0))
             .navigationBarsPadding(),
-
         bottomBar = {
             DetailsScreenBottomBar(
                 hasTrailer = uiState.tvShowInfo.trailerURL.isNotBlank(),
                 onRateClicked = { listener.onClickStarButton() },
                 onPlayTrailerClicked = { listener.onClickPlayTrailer() },
                 isRated = uiState.isRated,
-                isLoading = false /*TODO*/
+                isLoading = false
             )
         },
         isLoading = uiState.isLoading,
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-        backgroundBlur = {
-            BackgroundBlur()
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
+        backgroundContent = { BackgroundBlur() },
     ) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .navigationBarsPadding()
         ) {
-
-            RatingBottomSheet(
-                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
-                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                rate = uiState.tvShowInfo.userRating,
-                isButtonEnabled = uiState.tvShowInfo.userRating != 0,
-                onRateChanged = { listener.onRatingChanged(it) },
-                onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating) }
-            )
-
-            LoginRequiredSheet(
-                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
-                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                onLoginClick = { listener.onClickLoginButton() },
-                title = stringResource(R.string.rate_it),
-                description = stringResource(R.string.please_login_to_rate)
-            )
 
             LazyColumn(
                 state = listState,
@@ -319,6 +290,25 @@ fun TvShowDetailsContent(
                     }
                 }
             }
+            RatingBottomSheet(
+                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType
+                        == BottomSheetType.ShowRating,
+                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+                rate = uiState.tvShowInfo.userRating,
+                isButtonEnabled = uiState.tvShowInfo.userRating != 0,
+                onRateChanged = listener::onRatingChanged,
+                onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating) }
+            )
+
+            LoginRequiredSheet(
+                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType
+                        == BottomSheetType.RequireLogin,
+                onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
+                onLoginClick = listener::onClickLoginButton,
+                title = stringResource(R.string.rate_it),
+                description = stringResource(R.string.please_login_to_rate)
+            )
+
 
         }
 
@@ -328,16 +318,9 @@ fun TvShowDetailsContent(
                 .background(animatedColor)
                 .zIndex(1f)
                 .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = {
-                listener.onClickBackIcon()
-            }
+            onGoBackClick = listener::onClickBackIcon
         )
     }
 }
 
-
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
-
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

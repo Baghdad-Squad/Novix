@@ -3,7 +3,6 @@ package com.baghdad.ui.feature.welcome
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -81,20 +80,9 @@ private fun WelcomeScreenContent(
             Box(
                 modifier = Modifier.height(imageHeight)
             ) {
-                val image = if (isSystemInDarkTheme()) {
-                    painterResource(id = R.drawable.welcome_screen_dark)
-                } else {
-                    painterResource(id = R.drawable.welcome_screen_light)
-                }
-
-                val appLogo = if (isSystemInDarkTheme()) {
-                    ImageVector.vectorResource(id = com.baghdad.design_system.R.drawable.app_logo_dark)
-                } else {
-                    ImageVector.vectorResource(id = com.baghdad.design_system.R.drawable.app_logo_light)
-                }
 
                 Image(
-                    painter = image,
+                    painter = painterResource(Theme.drawable.welcomeBackground),
                     contentDescription = stringResource(R.string.welcome_screen_background),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -118,7 +106,7 @@ private fun WelcomeScreenContent(
                 )
 
                 Icon(
-                    imageVector = appLogo,
+                    imageVector = ImageVector.vectorResource(com.baghdad.design_system.R.drawable.app_logo),
                     contentDescription = stringResource(R.string.login_icon),
                     tint = Theme.color.primary,
                     modifier = Modifier
@@ -139,8 +127,8 @@ private fun WelcomeScreenContent(
 
         item {
             ActionButtons(
-                onClickLogin = { listener.onClickLogin() },
-                onClickContinueAsGuest = { listener.onClickContinueAsGuest() },
+                onClickLogin =  listener::onClickLogin,
+                onClickContinueAsGuest =  listener::onClickContinueAsGuest ,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .navigationBarsPadding()

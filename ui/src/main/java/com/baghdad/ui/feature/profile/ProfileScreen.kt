@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -13,9 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Text
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.shared.Selectable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -23,19 +24,20 @@ import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.bottomSheet.AppLanguageBottomSheet
 import com.baghdad.ui.feature.component.bottomSheet.AppThemeBottomSheet
+import com.baghdad.ui.feature.component.bottomSheet.ContentRestrictionBottomSheet
+import com.baghdad.ui.feature.profile.component.GuestScreen
 import com.baghdad.ui.feature.profile.component.LogOutBottomSheet
-import com.baghdad.ui.feature.profile.component.LoggedOutUserScreen
 import com.baghdad.ui.feature.profile.component.ProfileHeaderWithOption
 import com.baghdad.ui.feature.profile.component.ProfileScreenItemsList
 import com.baghdad.ui.navigation.graph.myAccount.MyAccountNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.profile.LanguagePreferences
+import com.baghdad.viewmodel.profile.ContentRestriction
 import com.baghdad.viewmodel.profile.ProfileEffect
 import com.baghdad.viewmodel.profile.ProfileInteractionListener
 import com.baghdad.viewmodel.profile.ProfileScreenState
 import com.baghdad.viewmodel.profile.ProfileViewModel
-import com.baghdad.viewmodel.profile.ThemePreferences
 
 @Composable
 fun ProfileScreen(
@@ -60,29 +62,25 @@ private fun handleEffect(
     handleNavigation: (MyAccountNavEvent) -> Unit,
 ) {
     when (effect) {
-        is ProfileEffect.NavigateBack ->
-            handleNavigation(
-                MyAccountNavEvent.NavigateBack,
-            )
+        is ProfileEffect.NavigateBack -> handleNavigation(
+            MyAccountNavEvent.NavigateBack,
+        )
 
-        is ProfileEffect.NavigateToMyRatings ->
-            handleNavigation(
-                MyAccountNavEvent.NavigateToMyRatings,
-            )
+        is ProfileEffect.NavigateToMyRatings -> handleNavigation(
+            MyAccountNavEvent.NavigateToMyRatings,
+        )
 
-        is ProfileEffect.NavigateToWatchingHistory ->
-            handleNavigation(
-                MyAccountNavEvent.NavigateToWatchingHistory,
-            )
+        is ProfileEffect.NavigateToWatchingHistory -> handleNavigation(
+            MyAccountNavEvent.NavigateToWatchingHistory,
+        )
 
-        is ProfileEffect.NavigateToLogin ->
-            handleNavigation(
-                MyAccountNavEvent.NavigateToLogin,
-            )
-        is ProfileEffect.NavigateToChangePassword ->
-            handleNavigation(
-                MyAccountNavEvent.NavigateToChangePassword,
-            )
+        is ProfileEffect.NavigateToLogin -> handleNavigation(
+            MyAccountNavEvent.NavigateToLogin,
+        )
+
+        is ProfileEffect.NavigateToChangePassword -> handleNavigation(
+            MyAccountNavEvent.NavigateToChangePassword,
+        )
     }
 }
 
@@ -102,28 +100,19 @@ private fun ProfileScreenContent(
                 text = stringResource(R.string.my_account),
                 style = Theme.typography.title.large,
                 color = Theme.color.title,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(vertical = 25.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 25.dp)
             )
         },
         isLoading = state.isLoading,
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-        backgroundBlur = { BackgroundBlur() },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        ) {
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
+        backgroundContent = { BackgroundBlur() },
+    ) {
         if (state.isUserLoggedIn) {
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 ProfileHeaderWithOption(
                     userName = state.userInfo.userName,
@@ -143,7 +132,7 @@ private fun ProfileScreenContent(
             }
 
         } else {
-            LoggedOutUserScreen(listener::onLoginClick)
+            GuestScreen(listener::onLoginClick)
         }
 
         AppThemeBottomSheet(
@@ -151,12 +140,12 @@ private fun ProfileScreenContent(
             isVisible = state.themeBottomSheetState.isVisible,
             themeOptions = listOf(
                 Selectable(
-                    value = ThemePreferences.LIGHT,
-                    isSelected = state.themeBottomSheetState.currentTheme == ThemePreferences.LIGHT
+                    value = ProfileScreenState.ThemePreferences.LIGHT,
+                    isSelected = state.themeBottomSheetState.currentTheme == ProfileScreenState.ThemePreferences.LIGHT
                 ),
                 Selectable(
-                    value = ThemePreferences.DARK,
-                    isSelected = state.themeBottomSheetState.currentTheme == ThemePreferences.DARK
+                    value = ProfileScreenState.ThemePreferences.DARK,
+                    isSelected = state.themeBottomSheetState.currentTheme == ProfileScreenState.ThemePreferences.DARK
                 ),
             ),
             onThemeSelected = { listener.onAppearanceChanged(it) },
@@ -168,27 +157,47 @@ private fun ProfileScreenContent(
             isVisible = state.languageBottomSheetState.isVisible,
             languageOptions = listOf(
                 Selectable(
-                    value = LanguagePreferences.ENGLISH,
-                    isSelected = state.languageBottomSheetState.currentLanguage == LanguagePreferences.ENGLISH
+                    value = ProfileScreenState.LanguagePreferences.ENGLISH,
+                    isSelected = state.languageBottomSheetState.currentLanguage == ProfileScreenState.LanguagePreferences.ENGLISH
                 ),
                 Selectable(
-                    value = LanguagePreferences.ARABIC,
-                    isSelected = state.languageBottomSheetState.currentLanguage == LanguagePreferences.ARABIC
+                    value = ProfileScreenState.LanguagePreferences.ARABIC,
+                    isSelected = state.languageBottomSheetState.currentLanguage == ProfileScreenState.LanguagePreferences.ARABIC
                 ),
             ),
-            onLanguageSelected = { listener.onLanguageChanged(it) },
+            onLanguageSelected = listener::onLanguageChanged ,
+
             onSaveClick = listener::onLanguageConfirmed,
+        )
+
+        ContentRestrictionBottomSheet(
+            onBottomSheetCloseClick = listener::onContentRestrictionDialogDismissed,
+            isVisible = state.contentRestrictionBottomSheetState.isVisible,
+            contentRestrictionOptions = listOf(
+                Selectable(
+                    value = ContentRestriction.STRICT,
+                    isSelected = state.contentRestrictionBottomSheetState.currentRestriction == ContentRestriction.STRICT
+                ),
+                Selectable(
+                    value = ContentRestriction.MODERATE,
+                    isSelected = state.contentRestrictionBottomSheetState.currentRestriction == ContentRestriction.MODERATE
+                ),
+                Selectable(
+                    value = ContentRestriction.NONE,
+                    isSelected = state.contentRestrictionBottomSheetState.currentRestriction == ContentRestriction.NONE
+                ),
+            ),
+            onContentRestrictionSelected = { listener.onContentRestrictionChanged(it) },
+            onSaveClick = listener::onContentRestrictionConfirmed,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         LogOutBottomSheet(
             isVisible = state.logoutBottomSheetState.isVisible,
             onBottomSheetCloseClick = listener::onLogoutDialogDismissed,
             onLogOutClick = listener::onLogOutConfirmed,
-            modifier = Modifier.padding(horizontal = 16.dp),
         )
     }
 }
 
-
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

@@ -1,5 +1,6 @@
 package com.baghdad.ui.feature.continueWatching
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,18 +28,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.R
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Chip
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.Tab
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
+import com.baghdad.ui.feature.component.EmptyListScreen
 import com.baghdad.ui.feature.component.HomeCard
 import com.baghdad.ui.feature.component.bottomSheet.AddListBottomSheet
 import com.baghdad.ui.feature.component.bottomSheet.SavedListBottomSheet
@@ -46,32 +46,29 @@ import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToTvShowDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingInteractionListener
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingScreenEffect
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingState
 import com.baghdad.viewmodel.continueWatching.ContinueWatchingViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.shared.SavedListUiState
 
 @Composable
 fun ContinueWatchingScreen(
     viewModel: ContinueWatchingViewModel = hiltViewModel(),
     handleNavigation: (HomeNavEvent) -> Unit,
-    ) {
+) {
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
-    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
+
     ContinueWatchingContent(
         uiState = uiState,
         listener = viewModel,
-        savedLists = savedLists,
-        mediaItems = mediaItems,
         snackBarState = snackBarState,
     )
 }
@@ -101,50 +98,35 @@ private fun handleEffect(
 
 
 @Composable
-fun ContinueWatchingContent(
+private fun ContinueWatchingContent(
     uiState: ContinueWatchingState,
-    mediaItems: LazyPagingItems<ContinueWatchingState.ContinueWatchingMovieUiState>,
-    savedLists: LazyPagingItems<SavedListUiState>,
     listener: ContinueWatchingInteractionListener,
     snackBarState: SnackBarState,
-    modifier: Modifier = Modifier
 ) {
-
+    val mediaItems = uiState.mediaFlow.collectAsLazyPagingItems()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
     val movieGenresScrollState = rememberLazyListState()
     val tvGenresScrollState = rememberLazyListState()
 
     Scaffold(
-        modifier = modifier
+        modifier = Modifier
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
+        isLoading = uiState.isLoading,
         topBar = {
             TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
                     .padding(top = 22.dp, bottom = 8.dp),
-                onGoBackClick = {
-                    listener.onBackClick()
-                },
-                screenTitle = stringResource(com.baghdad.ui.R.string.continue_watching),
-
-                )
-        },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionClick,
-                position = position,
+                onGoBackClick = listener::onBackClick ,
+                screenTitle = stringResource(com.baghdad.ui.R.string.continue_watching)
             )
         },
-        backgroundBlur = {
-            BackgroundBlur()
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionClick,
+        backgroundContent = { BackgroundBlur() },
     ) {
         Column(
             modifier = Modifier
@@ -187,6 +169,7 @@ fun ContinueWatchingContent(
                     )
                 }
             }
+
             GenresTabs(
                 genres = uiState.genres,
                 selectedTab = when (uiState.selectedMediaTabIsMovie) {
@@ -198,32 +181,44 @@ fun ContinueWatchingContent(
                     false -> tvGenresScrollState
                 },
                 onTabClick = { listener.onGenreClick(it) },
+                isListEmpty = mediaItems.itemCount == 0,
                 modifier = Modifier.padding(vertical = 12.dp)
             )
 
-            LazyPagingVerticalGrid<ContinueWatchingState.ContinueWatchingMovieUiState>(
-                columns = GridCells.Adaptive(minSize = 150.dp),
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 12.dp,
-                ),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                items = mediaItems,
-            ) { media ->
-                HomeCard(
-                    url = media.posterPictureURL,
-                    contentDescription = null,
-                    isSaveToListVisible = media.contentType == ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE,
-                    isSaved = media.isSaved,
-                    onSavedClick = { listener.onMovieSaveClick(media) },
-                    onClick = { listener.onMediaClick(media.id, media.contentType) },
-                    modifier = Modifier.aspectRatio(0.8f)
-                )
+            AnimatedContent(
+                targetState = mediaItems.itemCount == 0 && uiState.isLoading.not(),
+            ) { isEmpty ->
+                if (isEmpty) {
+                    EmptyListScreen()
+                } else {
+                    LazyPagingVerticalGrid(
+                        columns = GridCells.Adaptive(minSize = 150.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxSize(),
+                        contentPadding =
+                            PaddingValues(
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 12.dp,
+                            ),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        items = mediaItems,
+                    ) { media ->
+                        HomeCard(
+                            url = media.posterPictureURL,
+                            contentDescription = null,
+                            isSaveToListVisible = media.contentType == ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.MOVIE,
+                            isSaved = media.isSaved,
+                            onSavedClick = { listener.onMovieSaveClick(media) },
+                            onClick = { listener.onMediaClick(media.id, media.contentType) },
+                            modifier = Modifier.aspectRatio(0.8f),
+                        )
+                    }
+                }
             }
+
             SavedListBottomSheet(
                 isVisible = uiState.addToListBottomSheetState.isVisible,
                 isUserLoggedIn = uiState.isUserLoggedIn,
@@ -233,7 +228,7 @@ fun ContinueWatchingContent(
                 onBottomSheetCloseClick = listener::onSaveToListBottomSheetDismiss,
                 lists = savedLists,
                 selectedListId = uiState.addToListBottomSheetState.selectedListId,
-                onListSelected = listener::onListSelected,
+                onListSelected = listener::onListSelected
             )
             AddListBottomSheet(
                 isVisible = uiState.addListBottomSheetState.isVisible,
@@ -241,7 +236,7 @@ fun ContinueWatchingContent(
                 listName = uiState.addListBottomSheetState.listName,
                 onDismiss = listener::onCreateListBottomSheetDismiss,
                 onAddClick = listener::onCreateListBottomSheetAddClick,
-                onListNameChange = listener::onCreatedListNameChanged,
+                onListNameChange = listener::onCreatedListNameChanged
             )
         }
     }
@@ -255,6 +250,7 @@ private fun GenresTabs(
     selectedTab: Long?,
     onTabClick: (Long?) -> Unit,
     genresScrollState: LazyListState,
+    isListEmpty: Boolean,
     modifier: Modifier = Modifier
 ) {
 
@@ -263,14 +259,16 @@ private fun GenresTabs(
             .wrapContentSize(),
         state = genresScrollState,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
-        item {
-            Chip(
-                title = stringResource(R.string.all),
-                isSelected = selectedTab == null,
-                onClick = { onTabClick(null) },
-            )
+        if (isListEmpty.not()) {
+            item {
+                Chip(
+                    title = stringResource(R.string.all),
+                    isSelected = selectedTab == null,
+                    onClick = { onTabClick(null) },
+                )
+            }
         }
         items(genres.size) { index ->
             Chip(
@@ -282,7 +280,4 @@ private fun GenresTabs(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

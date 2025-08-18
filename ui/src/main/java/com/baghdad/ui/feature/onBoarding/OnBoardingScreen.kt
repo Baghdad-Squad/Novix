@@ -10,12 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.onBoarding.component.BottomSlidingSection
 import com.baghdad.ui.feature.onBoarding.component.OnBoardingHorizontalPagerContent
@@ -29,6 +31,7 @@ import com.baghdad.viewmodel.onBoarding.OnBoardingInteractionListener
 import com.baghdad.viewmodel.onBoarding.OnBoardingState
 import com.baghdad.viewmodel.onBoarding.OnBoardingViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 
 @Composable
 fun OnBoardingScreen(
@@ -56,24 +59,28 @@ private fun OnBoardingContent(
     state: OnBoardingState,
     listener: OnBoardingInteractionListener,
 ) {
-    val onBoardingInfo: List<OnBoardingInfo> = listOf(
-        OnBoardingInfo(
-            imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_1,
-            title = R.string.discover_best_movies_and_series,
-            description = R.string.browse_the_latest_releases_trends_and_content_tailored_to_your_taste_all_in_one_place
-        ),
-        OnBoardingInfo(
-            imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_2,
-            title = R.string.search_easily_and_watch_to_your_taste,
-            description = R.string.use_smart_search_and_filters_to_find_exactly_what_you_love_action_drama_crime_anime_and_more
-        ),
-        OnBoardingInfo(
-            imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_3,
-            title = R.string.rate_save_and_create_your_own_lists,
-            description = R.string.rate_movies_track_your_viewing_history_and_easily_save_your_favorite_lists
-        ),
-    )
+    val onBoardingInfo: List<OnBoardingInfo> = remember {
+        listOf(
+            OnBoardingInfo(
+                imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_1,
+                title = R.string.discover_best_movies_and_series,
+                description = R.string.browse_the_latest_releases_trends_and_content_tailored_to_your_taste_all_in_one_place
+            ),
+            OnBoardingInfo(
+                imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_2,
+                title = R.string.search_easily_and_watch_to_your_taste,
+                description = R.string.use_smart_search_and_filters_to_find_exactly_what_you_love_action_drama_crime_anime_and_more
+            ),
+            OnBoardingInfo(
+                imageIndex = com.baghdad.ui.R.drawable.img_on_boarding_3,
+                title = R.string.rate_save_and_create_your_own_lists,
+                description = R.string.rate_movies_track_your_viewing_history_and_easily_save_your_favorite_lists
+            ),
+        )
+    }
     val pagerState = rememberPagerState { onBoardingInfo.size }
+
+    val scope = rememberCoroutineScope()
 
     val systemUiController = rememberSystemUiController()
 
@@ -84,11 +91,15 @@ private fun OnBoardingContent(
         )
     }
 
-    LaunchedEffect(state.currentPage) {
-        pagerState.animateScrollToPage(state.currentPage)
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage > state.currentPage) {
+            listener.onNextButtonClick(onBoardingInfo.size)
+        } else {
+            listener.onBackButtonClick()
+        }
     }
     Scaffold(
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
         LazyColumn(
             modifier = Modifier
@@ -114,8 +125,24 @@ private fun OnBoardingContent(
 
                 BottomSlidingSection(
                     pagerState = pagerState,
-                    onClickNext = { listener.onNextButtonClick(onBoardingInfo.size) },
-                    onClickBack = { listener.onBackButtonClick() }
+                    onClickNext = {
+                        scope.launch {
+                            val isLastPage = pagerState.currentPage >= onBoardingInfo.size - 1
+
+                            if (isLastPage) {
+                                listener.onNextButtonClick(onBoardingInfo.size)
+                            } else {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        }
+                    },
+                    onClickBack = {
+                        scope.launch {
+                            if (pagerState.currentPage > 0) {
+                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                            }
+                        }
+                    },
                 )
             }
         }

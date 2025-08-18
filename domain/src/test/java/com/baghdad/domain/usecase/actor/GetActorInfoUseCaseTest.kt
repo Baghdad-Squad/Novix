@@ -1,12 +1,15 @@
 package com.baghdad.domain.usecase.actor
 
 import com.baghdad.domain.repository.ActorRepository
+import com.baghdad.domain.testHelper.getMinimalActor
+import com.baghdad.domain.testHelper.getSampleActor
 import com.baghdad.entity.person.Actor
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -14,6 +17,8 @@ class GetActorInfoUseCaseTest {
 
     private lateinit var actorRepository: ActorRepository
     private lateinit var getActorInfoUseCase: GetActorInfoUseCase
+    val sampleActor = getSampleActor()
+    val minimalActor = getMinimalActor()
 
     @BeforeEach
     fun setUp() {
@@ -21,154 +26,107 @@ class GetActorInfoUseCaseTest {
         getActorInfoUseCase = GetActorInfoUseCase(actorRepository)
     }
 
-    private val sampleActor = Actor(
-        id = 1L,
-        name = "John Doe",
-        biography = "An actor",
-        profilePictureURL = "https://example.com/profile.jpg",
-        birthDate = kotlinx.datetime.LocalDate(1980, 1, 1),
-        placeOfBirth = "New York",
-        deathDate = null,
-        headerPictures = listOf(
-            "https://example.com/header.jpg",
-            "https://example.com/header2.jpg"
-        ),
-        department = "Acting"
-    )
-
-    private val minimalActor = Actor(
-        id = 2L,
-        name = "Jane Smith",
-        biography = "",
-        profilePictureURL = "",
-        birthDate = kotlinx.datetime.LocalDate(1990, 5, 20),
-        placeOfBirth = "",
-        deathDate = null,
-        headerPictures = emptyList(),
-        department = ""
-    )
-
     @Test
     fun `getActorInfoUseCase() should return actor info when called with valid id`() = runTest {
-        // Given
-        val actorId = 1L
-        val expectedActor = Actor(
-            id = actorId, name = "John Doe",
-            biography = "An actor",
-            profilePictureURL = "https://example.com/profile.jpg",
-            birthDate = kotlinx.datetime.LocalDate(1980, 1, 1),
-            placeOfBirth = "New York",
-            deathDate = null,
-            headerPictures = listOf(
-                "https://example.com/header.jpg",
-                "https://example.com/header2.jpg"
-            ),
-            department = "Acting",
-        )
+        coEvery { actorRepository.getActorDetails(ACTOR_ID_1) } returns sampleActor
 
-        coEvery { actorRepository.getActorInfo(actorId) } returns expectedActor
+        val result = getActorInfoUseCase(ACTOR_ID_1)
 
-        // When
-        val result = getActorInfoUseCase(actorId)
-
-        // Then
-        assertThat(result).isEqualTo(expectedActor)
+        assertThat(result).isEqualTo(sampleActor)
     }
 
-    // Edge cases
     @Test
-    fun `getActorInfoUseCase() should return actor with minimal fields when data is sparse`() = runTest {
-        // Given
-        val actorId = 2L
-        coEvery { actorRepository.getActorInfo(actorId) } returns minimalActor
+    fun `should return minimal actor when data is sparse`() = runTest {
+        coEvery { actorRepository.getActorDetails(ACTOR_ID_2) } returns minimalActor
 
-        // When
-        val result = getActorInfoUseCase(actorId)
+        val result = getActorInfoUseCase(ACTOR_ID_2)
 
-        // Then
         assertThat(result).isEqualTo(minimalActor)
+    }
+
+    @Test
+    fun `should have empty biography and header pictures when actor data is sparse`() = runTest {
+        coEvery { actorRepository.getActorDetails(ACTOR_ID_2) } returns minimalActor
+
+        val result = getActorInfoUseCase(ACTOR_ID_2)
+
         assertThat(result.biography).isEmpty()
         assertThat(result.headerPictures).isEmpty()
     }
 
-    @Test
-    fun `getActorInfoUseCase() should return actor with multiple header pictures when available`() = runTest {
-        // Given
-        val actorId = 3L
-        val actorWithManyHeaders = sampleActor.copy(
-            headerPictures = List(10) { "https://example.com/header$it.jpg" }
-        )
-        coEvery { actorRepository.getActorInfo(actorId) } returns actorWithManyHeaders
-
-        // When
-        val result = getActorInfoUseCase(actorId)
-
-        // Then
-        assertThat(result.headerPictures).hasSize(10)
-    }
 
     @Test
-    fun `getActorInfoUseCase() should return actor with birth date when place of birth is missing`() = runTest {
-        // Given
-        val actorId = 3L
-        val actorWithBirthDateOnly = minimalActor.copy(
-            birthDate = kotlinx.datetime.LocalDate(1985, 10, 15)
-        )
-        coEvery { actorRepository.getActorInfo(actorId) } returns actorWithBirthDateOnly
-
-        // When
-        val result = getActorInfoUseCase(actorId)
-
-        // Then
-        assertThat(result.birthDate).isNotNull()
-        assertThat(result.placeOfBirth).isEmpty()
-    }
-
-    @Test
-    fun `getActorInfoUseCase() should return actor with department when biography is missing`() = runTest {
-        // Given
-        val actorId = 4L
-        val actorWithDepartmentOnly = minimalActor.copy(
-            department = "Production"
-        )
-        coEvery { actorRepository.getActorInfo(actorId) } returns actorWithDepartmentOnly
-
-        // When
-        val result = getActorInfoUseCase(actorId)
-
-        // Then
-        assertThat(result.department).isEqualTo("Production")
-        assertThat(result.biography).isEmpty()
-    }
-
-    @Test
-    fun `getActorInfoUseCase() should return actor with profile picture when header pictures are missing`() =
+    fun `should return actor with multiple header pictures when available`() =
         runTest {
-            // Given
-            val actorId = 5L
+            val actorWithManyHeaders = sampleActor.copy(
+                headerPictures = List(10) { "https://example.com/header$it.jpg" }
+            )
+
+            coEvery { actorRepository.getActorDetails(ACTOR_ID_3) } returns actorWithManyHeaders
+
+            val result = getActorInfoUseCase(ACTOR_ID_3)
+
+            assertThat(result.headerPictures).hasSize(10)
+        }
+
+    @Test
+    fun `should return actor with birth date when place of birth is missing`() =
+        runTest {
+            val actorWithBirthDateOnly = minimalActor.copy(
+                birthDate = LocalDate(1985, 10, 15)
+            )
+
+            coEvery { actorRepository.getActorDetails(ACTOR_ID_3) } returns actorWithBirthDateOnly
+
+            val result = getActorInfoUseCase(ACTOR_ID_3)
+
+            assertThat(result.birthDate).isNotNull()
+        }
+
+    @Test
+    fun `should return actor with department when biography is missing`() =
+        runTest {
+            val actorWithDepartmentOnly = minimalActor.copy(
+                department = "Production"
+            )
+
+            coEvery { actorRepository.getActorDetails(ACTOR_ID_4) } returns actorWithDepartmentOnly
+
+            val result = getActorInfoUseCase(ACTOR_ID_4)
+
+            assertThat(result.department).isEqualTo("Production")
+        }
+
+    @Test
+    fun `should return actor with profile picture when header pictures are missing`() =
+        runTest {
             val actorWithProfileOnly = minimalActor.copy(
                 profilePictureURL = "https://example.com/profile2.jpg"
             )
-            coEvery { actorRepository.getActorInfo(actorId) } returns actorWithProfileOnly
 
-            // When
-            val result = getActorInfoUseCase(actorId)
+            coEvery { actorRepository.getActorDetails(ACTOR_ID_5) } returns actorWithProfileOnly
 
-            // Then
+            val result = getActorInfoUseCase(ACTOR_ID_5)
+
             assertThat(result.profilePictureURL).isNotEmpty()
-            assertThat(result.headerPictures).isEmpty()
         }
 
     @Test
     fun `getActorInfoUseCase() should make exactly one repository call when invoked`() = runTest {
-        // Given
-        val actorId = 6L
-        coEvery { actorRepository.getActorInfo(actorId) } returns sampleActor
+        val sampleActor = getSampleActor()
+        coEvery { actorRepository.getActorDetails(ACTOR_ID_6) } returns sampleActor
 
-        // When
-        getActorInfoUseCase(actorId)
+        getActorInfoUseCase(ACTOR_ID_6)
 
-        // Then
-        coVerify(exactly = 1) { actorRepository.getActorInfo(actorId) }
+        coVerify(exactly = 1) { actorRepository.getActorDetails(ACTOR_ID_6) }
+    }
+
+    companion object {
+        private const val ACTOR_ID_1 = 1L
+        private const val ACTOR_ID_2 = 2L
+        private const val ACTOR_ID_3 = 3L
+        private const val ACTOR_ID_4 = 4L
+        private const val ACTOR_ID_5 = 5L
+        private const val ACTOR_ID_6 = 6L
     }
 }

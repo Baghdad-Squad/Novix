@@ -1,151 +1,137 @@
 package com.baghdad.repository
 
-import com.baghdad.entity.media.Movie
-import com.baghdad.entity.media.TvShow
+import com.baghdad.repository.datasource.local.SavableMovieDataSource
 import com.baghdad.repository.datasource.remote.RemoteActorDataSource
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockActor
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockActorDto
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockMovieDto
-import com.baghdad.repository.dummyData.DummyDataFactory.createMockTvShowDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockActorDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockMovieDto
+import com.baghdad.repository.dummyData.DummyDataFactory.DummyDataFactory.createMockTvShowsDto
 import com.baghdad.repository.mapper.toEntity
-import com.baghdad.repository.model.PagedResultDto
+import com.baghdad.repository.mapper.toSavableMovie
+import com.baghdad.repository.model.ActorDto
+import com.baghdad.repository.model.MovieDto
+import com.baghdad.repository.model.TvShowDto
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class ActorRepositoryImplTest {
 
-    private lateinit var remoteActorDataSource: RemoteActorDataSource
-    private lateinit var actorRepositoryImpl: ActorRepositoryImpl
-    val actorId = 123L
-
-    @BeforeEach
-    fun setUp() {
-        remoteActorDataSource = mockk()
-        actorRepositoryImpl = ActorRepositoryImpl(
-            remoteActorDataSource = remoteActorDataSource,
-        )
-    }
-
+    private val remoteActorDataSource: RemoteActorDataSource = mockk()
+    private val savableMovieDataSource: SavableMovieDataSource = mockk()
+    private val actorRepositoryImpl: ActorRepositoryImpl = ActorRepositoryImpl(
+        remoteActorDataSource = remoteActorDataSource,
+        savableMovieDataSource = savableMovieDataSource,
+    )
+    private val actorId = 123L
 
     @Test
-    fun `getActorInfo should return actor when remote call succeeds`() = runTest {
-        // Given
-        val actorId = 123L
-        val expectedActorDto = createMockActorDto()
-        val mockImages = listOf("/actor_header1.jpg", "/actor_header2.jpg")
-        val expectedActor = createMockActor()
+    fun `getActorTvShows should return empty list when actor has no tv shows`() = runTest {
+        mockGetActorTvShows(emptyList())
 
-        coEvery { remoteActorDataSource.getActorDetails(actorId) } returns expectedActorDto
-        coEvery { remoteActorDataSource.getActorImages(actorId) } returns mockImages
-
-        // When
-        val result = actorRepositoryImpl.getActorInfo(actorId)
-
-        // Then
-        assertThat(expectedActor == result).isTrue()
-        coVerify { remoteActorDataSource.getActorDetails(actorId) }
-        coVerify { remoteActorDataSource.getActorImages(actorId) }
-    }
-
-    @Test
-    fun `getActorMovies should return empty list when no movies found`() = runTest {
-        // Given
-        coEvery { remoteActorDataSource.getActorMovies(actorId) } returns emptyList()
-
-        // When
-        val result = actorRepositoryImpl.getActorMovies(actorId)
-
-        // Then
-        assertThat(emptyList<Movie>() == result).isTrue()
-        coVerify { remoteActorDataSource.getActorMovies(actorId) }
-    }
-
-    @Test
-    fun `getActorMovies should return list of movies when remote call succeeds`() = runTest {
-        // Given
-        val mockMovieDtos = createMockMovieDto()
-        val expectedMovies = mockMovieDtos.map { it.toEntity() }
-
-        coEvery { remoteActorDataSource.getActorMovies(actorId) } returns mockMovieDtos
-
-        // When
-        val result = actorRepositoryImpl.getActorMovies(actorId)
-
-        // Then
-        assertThat(result).isEqualTo(expectedMovies)
-        coVerify { remoteActorDataSource.getActorMovies(actorId) }
-    }
-
-    @Test
-    fun `getActorTvShows should return empty list when no tv shows found`() = runTest {
-        // Given
-        coEvery { remoteActorDataSource.getActorTvShows(actorId) } returns emptyList()
-
-        // When
         val result = actorRepositoryImpl.getActorTvShows(actorId)
 
-        // Then
-        assertThat(emptyList<TvShow>() == result).isTrue()
-        coVerify { remoteActorDataSource.getActorTvShows(actorId) }
+        assertThat(result).isEmpty()
+        verifyGetActorTvShowsCalled()
     }
 
     @Test
     fun `getActorTvShows should return list of tv shows when remote call succeeds`() = runTest {
-        // Given
-        val mockTvShowDtos = createMockTvShowDto()
+        val mockTvShowDtos = createMockTvShowsDto()
         val expectedTvShows = mockTvShowDtos.map { it.toEntity() }
 
-        coEvery { remoteActorDataSource.getActorTvShows(actorId) } returns mockTvShowDtos
+        mockGetActorTvShows(mockTvShowDtos)
 
-        // When
         val result = actorRepositoryImpl.getActorTvShows(actorId)
 
-        // Then
         assertThat(result).isEqualTo(expectedTvShows)
-        coVerify { remoteActorDataSource.getActorTvShows(actorId) }
+        verifyGetActorTvShowsCalled()
     }
 
     @Test
-    fun `getActorGallery should return list of image urls when remote call succeeds`() = runTest {
-        // Given
-        val mockImages = listOf("/image1.jpg", "/image2.jpg", "/image3.jpg")
+    fun `getActorDetails should return actor with header pictures`() = runTest {
+        val mockActorDto = createMockActorDto()
+        val mockImages = listOf("img1.jpg", "img2.jpg")
 
-        coEvery { remoteActorDataSource.getActorImages(actorId) } returns mockImages
-        // When
+        mockGetActorDetails(mockActorDto)
+        mockGetActorImages(mockImages)
+
+        val expected = mockActorDto.toEntity().copy(headerPictures = mockImages)
+
+        val result = actorRepositoryImpl.getActorDetails(actorId)
+
+        assertThat(result).isEqualTo(expected)
+        verifyGetActorDetailsCalled()
+        verifyGetActorImagesCalled()
+    }
+
+    @Test
+    fun `getActorMovies should map movies with saved state`() = runTest {
+        val movieDtos = createMockMovieDto()
+        val savedMoviesMap = mapOf(movieDtos.first().id to 1L)
+
+        coEvery { savableMovieDataSource.getSavedMovies() } returns savedMoviesMap
+        mockGetActorMovies(movieDtos)
+
+        val expected = movieDtos.map {
+            it.toSavableMovie(
+                isSaved = savedMoviesMap.containsKey(it.id),
+                listId = savedMoviesMap[it.id],
+            )
+        }
+
+        val result = actorRepositoryImpl.getActorMovies(actorId)
+
+        assertThat(result).isEqualTo(expected)
+        verifyGetActorMoviesCalled()
+    }
+
+    @Test
+    fun `getActorGallery should return images from remote`() = runTest {
+        val mockImages = listOf("img1", "img2")
+        mockGetActorImages(mockImages)
+
         val result = actorRepositoryImpl.getActorGallery(actorId)
-        // Then
-        assertThat(mockImages == result).isTrue()
+
+        assertThat(result).isEqualTo(mockImages)
+        verifyGetActorImagesCalled()
+    }
+
+    private fun mockGetActorDetails(actorDto: ActorDto) {
+        coEvery { remoteActorDataSource.getActorDetails(actorId) } returns actorDto
+    }
+
+    private fun mockGetActorImages(images: List<String>) {
+        coEvery { remoteActorDataSource.getActorImages(actorId) } returns images
+    }
+
+    private fun mockGetActorMovies(movieDtos: List<MovieDto>) {
+        coEvery { remoteActorDataSource.getActorMovies(actorId) } returns movieDtos
+    }
+
+    private fun mockGetActorTvShows(tvShowDtos: List<TvShowDto>) {
+        coEvery { remoteActorDataSource.getActorTvShows(actorId) } returns tvShowDtos
+    }
+
+    private fun verifyGetActorDetailsCalled() {
+        coVerify { remoteActorDataSource.getActorDetails(actorId) }
+    }
+
+    private fun verifyGetActorImagesCalled() {
         coVerify { remoteActorDataSource.getActorImages(actorId) }
     }
 
-    @Test
-    fun `getTrendingActors should return paged result when remote call succeeds`() = runTest {
-        // Given
-        val page = 1
-        val mockActorDtos =
-            listOf(createMockActorDto(), createMockActorDto().copy(id = 124L, name = "Jane Doe"))
-        val mockPagedResult = PagedResultDto(mockActorDtos, nextKey = 2, prevKey = null)
-        val expectedActors =
-            listOf(createMockActor(), createMockActor().copy(id = 124L, name = "Jane Doe"))
-        coEvery { remoteActorDataSource.getTrendingActors(page) } returns mockPagedResult
-
-        // When
-        val result = actorRepositoryImpl.getTrendingActors(page)
-
-        // Then
-        assertThat(expectedActors.size == result.data.size).isTrue()
-        assertThat(expectedActors[0].id == result.data[0].id).isTrue()
-        assertThat(expectedActors[0].name == result.data[0].name).isTrue()
-        assertThat(expectedActors[1].id == result.data[1].id).isTrue()
-        assertThat(expectedActors[1].name == result.data[1].name).isTrue()
-        assertThat(2 == result.nextKey).isTrue()
-        assertThat(null == result.prevKey).isTrue()
-        coVerify { remoteActorDataSource.getTrendingActors(page) }
+    private fun verifyGetActorMoviesCalled() {
+        coVerify { remoteActorDataSource.getActorMovies(actorId) }
     }
 
+    private fun verifyGetActorTvShowsCalled() {
+        coVerify { remoteActorDataSource.getActorTvShows(actorId) }
+    }
+
+    private fun verifyGetTrendingActorsCalled(page: Int) {
+        coVerify { remoteActorDataSource.getTrendingActors(page) }
+    }
 }

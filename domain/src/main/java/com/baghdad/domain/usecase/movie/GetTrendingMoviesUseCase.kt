@@ -1,7 +1,7 @@
 package com.baghdad.domain.usecase.movie
 
-import com.baghdad.domain.model.PagedResult
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.pagination.PagedResult
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.repository.MovieRepository
 import javax.inject.Inject
 
@@ -11,17 +11,20 @@ class GetTrendingMoviesUseCase @Inject constructor(
     suspend operator fun invoke(
         page: Int,
         genreId: Long? = null,
-    ): PagedResult<SavableMovie> {
+    ): PagedResult<SavedMovie> {
         val pagedResult = movieRepository.getTrendingMovies(page)
-        if (genreId == null) return pagedResult
-
-        val filteredData =
-            pagedResult.data.filter { savableMovie ->
-                savableMovie.movie.genres.any { genre -> genre.id == genreId }
-        }
-
-        return PagedResult(
-            data = filteredData, nextKey = pagedResult.nextKey, prevKey = pagedResult.prevKey
+        return pagedResult.copy(
+            data = pagedResult.data.filterByGenre(genreId)
         )
+    }
+
+    private fun List<SavedMovie>.filterByGenre(genreId: Long?): List<SavedMovie> {
+        return if (genreId != null) {
+            filter { savableMovie ->
+                savableMovie.movie.genres.any { genre -> genre.id == genreId }
+            }
+        } else {
+            this
+        }
     }
 }

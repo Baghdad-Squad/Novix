@@ -1,7 +1,6 @@
 package com.baghdad.ui.feature.review
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,13 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -32,6 +29,7 @@ import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.review.component.ReviewerCard
 import com.baghdad.ui.feature.search.component.EmptySearchState
 import com.baghdad.ui.navigation.graph.reviews.ReviewsNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
@@ -60,8 +58,10 @@ fun ReviewScreen(
 }
 
 @Composable
-fun ReviewContent(
-    uiState: ReviewScreenState, listener: ReviewInteractionListener, snackBarState: SnackBarState
+private fun ReviewContent(
+    uiState: ReviewScreenState,
+    listener: ReviewInteractionListener,
+    snackBarState: SnackBarState
 ) {
     Scaffold(
         modifier = Modifier
@@ -74,30 +74,20 @@ fun ReviewContent(
                 screenTitle = stringResource(R.string.reviews),
                 onGoBackClick = { listener.onNavigateBack() },
                 modifier = Modifier.padding(top = 20.dp, bottom = 8.dp)
-            ) {}
-        },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
             )
         },
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
         isLoading = uiState.isLoading,
-        backgroundBlur = {
+        backgroundContent = {
             BackgroundBlur()
         },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
         ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-
             if (uiState.reviews.isEmpty()) {
                 EmptyReviewScreen()
             } else {
@@ -116,10 +106,9 @@ fun ReviewContent(
                             reviewDate = review.postedDate,
                             authorAvatar = review.authorAvatarUrl,
                             contentName = review.contentTitle,
-                            isExpanded = review.isExpanded
-                        ) {
-                            listener.onExpandedTextChange(review.id)
-                        }
+                            isExpanded = review.isExpanded,
+                            onExpandedChange = {listener.onExpandedTextChange(review.id) }
+                        )
                     }
                 }
             }
@@ -127,15 +116,12 @@ fun ReviewContent(
     }
 }
 
-
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return when (type) {
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int =
+    when (type) {
         SearchSnackBarMessage.RemovedItemSuccessfully -> R.string.snackbar_removed_success
         SearchSnackBarMessage.SavedItemSuccessfully -> R.string.snackbar_saved_success
         else -> type.toStringResource()
     }
-}
 
 @Composable
 private fun EmptyReviewScreen() {
@@ -146,11 +132,7 @@ private fun EmptyReviewScreen() {
         contentAlignment = Alignment.Center
     ) {
         EmptySearchState(
-            imagePath = if (isSystemInDarkTheme()) {
-                com.baghdad.design_system.R.drawable.ic_empty_review_screen_dark
-            } else {
-                com.baghdad.design_system.R.drawable.ic_empty_review_screen
-            },
+            imagePath = Theme.drawable.emptyReviews,
             contentDescription = stringResource(R.string.there_is_no_review),
             message = stringResource(R.string.there_is_no_review)
         )

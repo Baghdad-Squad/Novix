@@ -105,7 +105,8 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage = BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
+        BaseSnackBarMessage.UnknownError
 
     override fun onSearchTextChanged(text: String) {
         updateState { it.copy(searchText = text, isLoading = true) }
@@ -125,6 +126,7 @@ class SearchViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { observeSearchQueryFlow() },
             onNewValue = { query -> onSearchQueryChangedCollected(query) },
+            dispatcher = defaultDispatcher,
         )
     }
 
@@ -145,7 +147,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun performSearchByTab(text: String) {
-        if(text.isBlank()) return
+        if (text.isBlank()) return
         when (currentState.selectedSearchTab) {
             SearchScreenState.SearchTab.MOVIES -> searchMovies(text)
             SearchScreenState.SearchTab.TV_SHOWS -> searchTvShows(text)
@@ -246,6 +248,7 @@ class SearchViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { getRecentlyViewedUseCase() },
             onNewValue = ::onGetRecentViewedSuccess,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -260,6 +263,7 @@ class SearchViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { getRecentSearchesUseCase() },
             onNewValue = ::onGetRecentSearchesSuccess,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -276,6 +280,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onClearRecentViewedSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -367,6 +372,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onClearRecentSearchSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -383,6 +389,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onRemoveRecentSearchItemSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -439,6 +446,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onAddRecentlyViewedMovieSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -461,6 +469,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onAddRecentlyViewedTvShowSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -487,10 +496,22 @@ class SearchViewModel @Inject constructor(
                     movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
             },
+            onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
             dispatcher = defaultDispatcher,
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
+        )
+    }
+
+    private fun onAddItemToListError() {
+        showNoInternetSnackBarWithoutRetry()
+    }
+
+    private fun showNoInternetSnackBarWithoutRetry() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            isSuccess = false,
         )
     }
 

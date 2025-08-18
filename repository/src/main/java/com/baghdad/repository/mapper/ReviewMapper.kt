@@ -6,12 +6,12 @@ import kotlinx.datetime.LocalDate
 
 fun ReviewDto.toEntity(): Review {
     return Review(
-        id = this.id,
-        authorName = this.authorName,
-        authorAvatarUrl = this.authorAvatarUrl,
-        contentTitle = this.contentTitle,
-        rating = this.rating,
-        reviewText = this.reviewText,
-        postedDate = LocalDate.parse(this.postedDate.substring(0, 10))
+        id = id,
+        authorName = authorName,
+        authorAvatarUrl = authorAvatarUrl,
+        contentTitle = contentTitle,
+        rating = rating,
+        reviewText = reviewText,
+        postedDate = LocalDate.parse(input = postedDate.substring(0, 10))
     )
 }

@@ -1,7 +1,7 @@
 package com.baghdad.repository.mapper
 
-import com.baghdad.domain.model.RatedMedia
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
+import com.baghdad.domain.model.userRating.RatedMedia
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.repository.model.GenreDto
@@ -15,9 +15,7 @@ fun MovieDto.toEntity(): Movie =
         genres = genres.map { it.toEntity() },
         averageRating = imdbRating,
         userRating = userRating,
-        releaseDate =
-            releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
-                ?: LocalDate(1990, 1, 1),
+        releaseDate = releaseDate.toLocalDateOrDefault(),
         overview = overview,
         posterImageURL = posterPictureURL,
         trailerURL = trailerURL,
@@ -27,25 +25,11 @@ fun MovieDto.toEntity(): Movie =
 fun MovieDto.toSavableMovie(
     isSaved: Boolean,
     listId: Long? = null,
-): SavableMovie =
-    SavableMovie(
-        movie =
-            Movie(
-                id = id,
-                title = title,
-                genres = genres.map { it.toEntity() },
-                averageRating = imdbRating,
-                userRating = userRating,
-                releaseDate =
-                    releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
-                        ?: LocalDate(1990, 1, 1),
-                overview = overview,
-                posterImageURL = posterPictureURL,
-                trailerURL = trailerURL,
-                runtimeMinutes = runtimeMinutes,
-            ),
+): SavedMovie =
+    SavedMovie(
+        movie = toEntity(),
         isSaved = isSaved,
-        listId = listId,
+        listId = listId
     )
 
 fun Movie.toDto(): MovieDto =
@@ -70,7 +54,7 @@ fun Genre.toDto(): GenreDto =
     )
 
 
-fun MovieDto.toMedia(): RatedMedia{
+fun MovieDto.toMedia(): RatedMedia {
     return RatedMedia(
         id = id,
         userRating = userRating?.toInt(),
@@ -78,3 +62,21 @@ fun MovieDto.toMedia(): RatedMedia{
         contentType = RatedMedia.ContentType.MOVIE
     )
 }
+
+fun SavedMovie.toDto(): SavedMovie {
+    return SavedMovie(
+        movie = movie,
+        isSaved = isSaved,
+        listId = listId
+    )
+}
+
+/**
+ * note: here we use typealias cuz the type string is not always format like a date
+ */
+typealias DateString = String
+
+private fun DateString?.toLocalDateOrDefault(): LocalDate =
+    this?.takeIf { it.isNotBlank() }
+        ?.let { LocalDate.parse(it) }
+        ?: LocalDate(1990, 1, 1)

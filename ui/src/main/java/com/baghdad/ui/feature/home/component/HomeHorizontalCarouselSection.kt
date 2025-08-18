@@ -1,7 +1,6 @@
 package com.baghdad.ui.feature.home.component
 
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,26 +30,24 @@ fun <T> HomeHorizontalCarouselSection(
     items: List<T>,
     onViewAllClick: () -> Unit,
     modifier: Modifier = Modifier,
-    itemContent: @Composable (T , showSaveIcon : Boolean) -> Unit,
+    itemContent: @Composable (T, showSaveIcon: Boolean) -> Unit,
 ) {
-    AnimatedVisibility(modifier = modifier, visible = isLoading || items.isNotEmpty()) {
-        Crossfade(isLoading) { isLoading ->
-            if (isLoading) {
-                HomeHorizontalCarouselLoadingPlaceHolder()
-            } else {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    SectionHeader(
-                        title = title,
-                        isShowAllVisible = true,
-                        onClick = onViewAllClick,
-                    )
-                    HorizontalCarousel(
-                        items = items,
-                    ) { item , showSaveIcon ->
-                        itemContent(item , showSaveIcon)
-                    }
+    Crossfade(modifier = modifier, targetState = isLoading) { isLoading ->
+        if (isLoading) {
+            HomeHorizontalCarouselLoadingPlaceHolder()
+        } else {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                SectionHeader(
+                    title = title,
+                    isShowAllVisible = true,
+                    onClick = onViewAllClick,
+                )
+                HorizontalCarousel(
+                    items = items,
+                ) { item, showSaveIcon ->
+                    itemContent(item, showSaveIcon)
                 }
             }
         }
@@ -90,7 +87,7 @@ private fun HomeHorizontalCarouselLoadingPlaceHolder(modifier: Modifier = Modifi
         }
         HorizontalCarousel(
             items = List(20) { },
-        ) { item  , showSaveIcon->
+        ) { item, showSaveIcon ->
             Box(
                 modifier =
                     Modifier

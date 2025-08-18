@@ -1,17 +1,16 @@
 package com.baghdad.remoteDataSource
 
 import com.baghdad.remoteDataSource.apiService.SavedListApiService
+import com.baghdad.remoteDataSource.mapper.savedList.toPagedSavedListsDtos
 import com.baghdad.remoteDataSource.mapper.savedList.toSavedListDetailsDto
-import com.baghdad.remoteDataSource.mapper.toPagedSavedListsDtos
 import com.baghdad.remoteDataSource.request.AddListItemRequest
 import com.baghdad.remoteDataSource.request.CreateListRequest
 import com.baghdad.remoteDataSource.request.RemoveListItemRequest
-import com.baghdad.remoteDataSource.response.UserListsResponse
 import com.baghdad.remoteDataSource.response.savedList.CreateSavedListResponse
 import com.baghdad.remoteDataSource.response.savedList.ListDetailsResponse
+import com.baghdad.remoteDataSource.response.savedList.UserListsResponse
 import com.baghdad.remoteDataSource.util.handleRequest
 import com.baghdad.repository.datasource.remote.RemoteSavedListDataSource
-import com.baghdad.repository.exception.ItemCreationFailedException
 import com.baghdad.repository.logger.Logger
 import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
@@ -25,47 +24,37 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     private val logger: Logger,
 ) : RemoteSavedListDataSource {
 
-    override suspend fun createSavedList(title: String, sessionId: String) {
-        val result = handleRequest<CreateSavedListResponse>(
+    override suspend fun createSavedList(title: String) {
+        handleRequest<CreateSavedListResponse>(
             apiCall = {
                 savedListApiService.createSavedList(
                     body = CreateListRequest(name = title),
-                    sessionId = sessionId,
                 )
             },
             logger = logger,
-        )
-
-        if (result.success != true) {
-            val message = result.statusMessage ?: "List creation failed"
-            throw ItemCreationFailedException(message)
-        }
+        ).statusMessage
     }
 
     override suspend fun getSavedLists(
         page: Int,
         pageSize: Int,
         accountId: Long,
-        sessionId: String,
     ): PagedResultDto<SavedListDto> {
-        val listsResponse = handleRequest<UserListsResponse>(
+      return handleRequest<UserListsResponse>(
             apiCall = {
                 savedListApiService.getSavedLists(
                     page = page,
                     accountId = accountId,
-                    sessionId = sessionId,
                 )
             },
             logger = logger,
-        )
-        return listsResponse.toPagedSavedListsDtos()
+        ).toPagedSavedListsDtos()
     }
 
-    override suspend fun addMovieToSavedList(listId: Long, movieId: Long, sessionId: String) {
+    override suspend fun addMovieToSavedList(listId: Long, movieId: Long) {
         val body = AddListItemRequest(mediaId = movieId)
-
         handleRequest(
-            apiCall = { savedListApiService.addMovieToSavedList(listId, body, sessionId) },
+            apiCall = { savedListApiService.addMovieToSavedList(listId, body) },
             logger = logger
         )
     }
@@ -73,11 +62,10 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     override suspend fun removeMovieFromSavedList(
         listId: Long,
         movieId: Long,
-        sessionId: String
     ) {
         val body = RemoveListItemRequest(mediaId = movieId)
         handleRequest(
-            apiCall = { savedListApiService.removeMovieFromSavedList(listId, body, sessionId) },
+            apiCall = { savedListApiService.removeMovieFromSavedList(listId, body) },
             logger = logger
         )
     }
@@ -87,17 +75,15 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         page: Int,
         pageSize: Int,
     ): SavedListDetailsDto {
-        val response = handleRequest<ListDetailsResponse>(
+        return handleRequest<ListDetailsResponse>(
             apiCall = { savedListApiService.getListDetails(listId, page) },
             logger = logger,
-        )
-        return response.toSavedListDetailsDto()
+        ).toSavedListDetailsDto()
     }
 
-
-    override suspend fun deleteSavedListById(listId: Long, sessionId: String) {
+    override suspend fun deleteSavedListById(listId: Long) {
         handleRequest(
-            apiCall = { savedListApiService.deleteSavedListById(listId, sessionId) },
+            apiCall = { savedListApiService.deleteSavedListById(listId) },
             logger = logger,
         )
     }

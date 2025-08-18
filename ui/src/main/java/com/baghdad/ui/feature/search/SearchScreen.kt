@@ -20,19 +20,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.HorizontalDivider
-import com.baghdad.design_system.component.Scaffold
 import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.SnackBarPosition
-import com.baghdad.design_system.theme.NovixTheme
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -52,6 +49,7 @@ import com.baghdad.ui.navigation.graph.search.SearchNavEvent.NavigateToActorDeta
 import com.baghdad.ui.navigation.graph.search.SearchNavEvent.NavigateToLogin
 import com.baghdad.ui.navigation.graph.search.SearchNavEvent.NavigateToMovieDetails
 import com.baghdad.ui.navigation.graph.search.SearchNavEvent.NavigateToTvShowDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.errorStates.SearchSnackBarMessage
@@ -59,8 +57,6 @@ import com.baghdad.viewmodel.search.SearchInteractionListener
 import com.baghdad.viewmodel.search.SearchScreenEffect
 import com.baghdad.viewmodel.search.SearchScreenState
 import com.baghdad.viewmodel.search.SearchViewModel
-import com.baghdad.viewmodel.shared.SavedListUiState
-import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun SearchScreen(
@@ -70,19 +66,10 @@ fun SearchScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
 
-    val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
-    val actorItems = uiState.actorsFlow.collectAsLazyPagingItems()
-    val tvShowItems = uiState.tvShowsFlow.collectAsLazyPagingItems()
-    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
-
     SearchContent(
         uiState = uiState,
         listener = viewModel,
         snackBarState = snackBarState,
-        movieItems = movieItems,
-        actorItems = actorItems,
-        tvShowItems = tvShowItems,
-        savedLists = savedLists,
     )
 
     HandleNavigationEffects(
@@ -121,12 +108,13 @@ private fun HandleNavigationEffects(
 fun SearchContent(
     uiState: SearchScreenState,
     listener: SearchInteractionListener,
-    snackBarState: SnackBarState,
-    movieItems: LazyPagingItems<SearchScreenState.MovieUiState>,
-    actorItems: LazyPagingItems<SearchScreenState.ActorUiState>,
-    tvShowItems: LazyPagingItems<SearchScreenState.TvShowUiState>,
-    savedLists: LazyPagingItems<SavedListUiState>,
+    snackBarState: SnackBarState
 ) {
+    val movieItems = uiState.moviesFlow.collectAsLazyPagingItems()
+    val actorItems = uiState.actorsFlow.collectAsLazyPagingItems()
+    val tvShowItems = uiState.tvShowsFlow.collectAsLazyPagingItems()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     val moviesState = rememberSaveableLazyGridState(key = "movies_grid")
     val actorsState = remeberSaveableLazyListState(key = "actors_list")
     val tvShowsState = rememberSaveableLazyGridState(key = "tv_shows_grid")
@@ -136,17 +124,11 @@ fun SearchContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding(),
-        snackbar = { position ->
-            SearchSnackBar(
-                snackBarState = snackBarState,
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-        backgroundBlur = {
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
+        backgroundContent = {
             BackgroundBlur()
         },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
     ) {
         Column(
             modifier = Modifier
@@ -202,7 +184,7 @@ private fun SearchSnackBar(
     position: SnackBarPosition,
 ) {
     SnackBar(
-        message = stringResource(getSnackBarMessage(snackBarState.message)),
+        message = stringResource(mapSnackBarMessage(snackBarState.message)),
         isSuccess = snackBarState.isSuccess,
         isVisible = snackBarState.isVisible,
         actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
@@ -278,11 +260,7 @@ private fun EmptySearchStateSection() {
         contentAlignment = Alignment.Center
     ) {
         EmptySearchState(
-            imagePath = if (Theme.isDarkTheme) {
-                com.baghdad.design_system.R.drawable.start_explore_night
-            } else {
-                com.baghdad.design_system.R.drawable.start_explore
-            },
+            imagePath = Theme.drawable.startExplore,
             contentDescription = stringResource(R.string.start_exploring),
             message = stringResource(R.string.start_exploring),
             modifier = Modifier.padding(bottom = 60.dp)
@@ -381,65 +359,9 @@ private fun LazyListScope.addRecentSearchSection(
     }
 }
 
-@Composable
-private fun getSnackBarMessage(type: BaseSnackBarMessage): Int {
-    return when (type) {
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int =
+    when (type) {
         SearchSnackBarMessage.RemovedItemSuccessfully -> R.string.snackbar_removed_success
         SearchSnackBarMessage.SavedItemSuccessfully -> R.string.snackbar_saved_success
         else -> type.toStringResource()
     }
-}
-
-@Preview(device = "spec:width=411dp,height=891dp")
-@Composable
-private fun SearchScreenPreview() {
-    NovixTheme {
-        SearchContent(
-            uiState = SearchScreenState(
-                searchText = "",
-                recentSearch = emptyList(),
-                recentViewed = emptyList()
-            ),
-            listener = createPreviewListener(),
-            snackBarState = SnackBarState(),
-            movieItems = flowOf(PagingData.empty<SearchScreenState.MovieUiState>()).collectAsLazyPagingItems(),
-            actorItems = flowOf(PagingData.empty<SearchScreenState.ActorUiState>()).collectAsLazyPagingItems(),
-            tvShowItems = flowOf(PagingData.empty<SearchScreenState.TvShowUiState>()).collectAsLazyPagingItems(),
-            savedLists = flowOf(PagingData.empty<SavedListUiState>()).collectAsLazyPagingItems(),
-        )
-    }
-}
-
-private fun createPreviewListener() = object : SearchInteractionListener {
-    override fun onSearchTextChanged(query: String) {}
-    override fun onClearRecentlyViewedClick() {}
-    override fun onClearRecentSearchClick() {}
-    override fun onRemoveRecentSearchItemClick(id: Long) {}
-    override fun onRecentSearchItemClick(id: Long) {}
-
-    override fun onSaveMovieClick(movie: SearchScreenState.MovieUiState) {}
-
-    override fun onSaveRecentlyViewedClick(recentlyViewed: SearchScreenState.RecentlyViewedUiState) {}
-    override fun onActorItemClick(id: Long) {}
-    override fun onSelectedSearchTabChanged(selectedTab: SearchScreenState.SearchTab) {}
-    override fun onRecentlyViewedClick(id: Long, imageUrl: String) {}
-    override fun onMovieItemClick(contentId: Long, contentImageUrl: String) {}
-    override fun onTvShowItemClick(contentId: Long, contentImageUrl: String) {}
-    override fun onSnackBarActionLabelClick() {}
-
-    override fun onSaveItemToListClicked() {}
-
-    override fun onCreateNewListClicked() {}
-
-    override fun onLoginClicked() {}
-
-    override fun onSaveToListBottomSheetDismiss() {}
-
-    override fun onListSelected(listId: Long) {}
-
-    override fun onCreatedListNameChanged(name: String) {}
-
-    override fun onCreateListBottomSheetDismiss() {}
-
-    override fun onCreateListBottomSheetAddClick() {}
-}

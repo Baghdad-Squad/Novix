@@ -2,8 +2,9 @@ package com.baghdad.repository.util
 
 import com.baghdad.domain.exception.LocalDataBaseException
 import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.exception.UnAuthorizedException
 import com.baghdad.domain.exception.UnknownException
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.repository.exception.DatabaseException
 import com.baghdad.repository.exception.ItemCreationFailedException
 import com.baghdad.repository.exception.NetworkException
@@ -13,6 +14,7 @@ import com.baghdad.repository.exception.SerializationNetworkException
 import com.baghdad.repository.exception.ServerNetworkException
 import com.baghdad.repository.exception.StorageFullException
 import com.baghdad.repository.exception.TooManyRequestsNetworkException
+import com.baghdad.repository.exception.UnauthorizedNetworkException
 import com.baghdad.repository.exception.UnknownNetworkException
 import com.baghdad.repository.model.PagedResultDto
 import kotlinx.coroutines.flow.Flow
@@ -39,11 +41,13 @@ suspend fun <T> executeSafely(block: suspend () -> T): T {
         throw LocalDataBaseException()
     } catch (_: ItemCreationFailedException) {
         throw NetworkException()
-    } catch (_: Exception) {
+    } catch (_: UnauthorizedNetworkException){
+        throw UnAuthorizedException()
+    }
+    catch (_: Exception) {
         throw UnknownException()
     }
 }
-
 
 fun <T> getFlowSafely(block: () -> Flow<T>): Flow<T> {
     return try {
@@ -69,8 +73,8 @@ suspend fun <TEntity, TDto> getPagedSafely(
     if (localData.isNotEmpty()) {
         PagedResult(
             data = localData.map(mapToEntity),
-            nextKey = if (localData.size == pageSize) page + 1 else null,
-            prevKey = if (page > 1) page - 1 else null
+            nextPage = if (localData.size == pageSize) page + 1 else null,
+            prevPage = if (page > 1) page - 1 else null
         )
     } else {
         val remoteData = getRemoteData(page, pageSize)
@@ -79,14 +83,14 @@ suspend fun <TEntity, TDto> getPagedSafely(
             val localData = getCachedPage(page, pageSize)
             PagedResult(
                 data = localData.map(mapToEntity),
-                nextKey = remoteData.nextKey,
-                prevKey = remoteData.prevKey
+                nextPage = remoteData.nextKey,
+                prevPage = remoteData.prevKey
             )
         } else {
             PagedResult(
                 data = emptyList(),
-                nextKey = null,
-                prevKey = if (page > 1) page - 1 else null
+                nextPage = null,
+                prevPage = if (page > 1) page - 1 else null
             )
         }
     }
@@ -105,11 +109,10 @@ suspend fun <TEntity, TDto> getRemotePagedSafely(
 
     PagedResult(
         data = remoteData.data.map(mapToEntity),
-        nextKey = remoteData.nextKey,
-        prevKey = remoteData.prevKey
+        nextPage = remoteData.nextKey,
+        prevPage = remoteData.prevKey
     )
 }
-
 
 suspend fun <TEntity, TDto> getLocalPagedSafely(
     page: Int,
@@ -122,7 +125,7 @@ suspend fun <TEntity, TDto> getLocalPagedSafely(
     val localData = getCachedPage(page, pageSize)
     PagedResult(
         data = localData.map(mapToEntity),
-        nextKey = if (localData.size == pageSize) page + 1 else null,
-        prevKey = if (page > 1) page - 1 else null
+        nextPage = if (localData.size == pageSize) page + 1 else null,
+        prevPage = if (page > 1) page - 1 else null
     )
 }

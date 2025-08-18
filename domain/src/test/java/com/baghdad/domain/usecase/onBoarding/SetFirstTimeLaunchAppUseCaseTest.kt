@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.onBoarding
 
-import com.baghdad.domain.repository.OnBoardingRepository
+import com.baghdad.domain.repository.AppConfigurationsRepository
+import com.baghdad.domain.usecase.appConfigurations.SetFirstTimeLaunchAppUseCase
 import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -20,7 +21,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class SetFirstTimeLaunchAppUseCaseTest {
     private lateinit var useCase: SetFirstTimeLaunchAppUseCase
-    private val repository: OnBoardingRepository = mockk()
+    private val repository: AppConfigurationsRepository = mockk()
 
     @BeforeEach
     fun setup() {

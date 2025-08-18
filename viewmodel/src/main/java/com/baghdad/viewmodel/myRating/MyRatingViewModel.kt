@@ -1,13 +1,19 @@
 package com.baghdad.viewmodel.myRating
 
+import androidx.paging.PagingData
+import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.usecase.mediaRated.GetUserMediaRatedUseCase
-import com.baghdad.domain.usecase.movie.DeleteMovieRateUseCase
 import com.baghdad.domain.usecase.mediaRated.GetUserRatedMoviesUseCase
-import com.baghdad.domain.usecase.tvShow.DeleteTvShowRateUseCase
 import com.baghdad.domain.usecase.mediaRated.GetUserRatedTvShowsUseCase
+import com.baghdad.domain.usecase.movie.DeleteMovieRateUseCase
+import com.baghdad.domain.usecase.tvShow.DeleteTvShowRateUseCase
+import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.base.BaseViewModel
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.viewmodel.myRating.MyRatingState.MediaItemUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,7 +22,8 @@ class MyRatingViewModel @Inject constructor(
     private val getUserRatedTvShowsUseCase: GetUserRatedTvShowsUseCase,
     private val deleteMovieRateUseCase: DeleteMovieRateUseCase,
     private val deleteTvShowRateUseCase: DeleteTvShowRateUseCase,
-    private val getUserMediaRatedUseCase: GetUserMediaRatedUseCase
+    private val getUserMediaRatedUseCase: GetUserMediaRatedUseCase,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<MyRatingState, MyRatingEffect>(MyRatingState()),
     MyRatingInteractionListener {
 
@@ -25,6 +32,7 @@ class MyRatingViewModel @Inject constructor(
     }
 
     private fun fetchUserRatedMedia() {
+        hideSnackBar()
         when (currentState.selectedMediaTab) {
             MyRatingState.MediaTab.MOVIE -> fetchMovies()
             MyRatingState.MediaTab.TV_SHOW -> fetchTvShows()
@@ -32,8 +40,9 @@ class MyRatingViewModel @Inject constructor(
                 collectPagingFlow(
                     loadData = { page -> getUserMediaRatedUseCase(page, PAGE_SIZE) },
                     onInitialLoadFinished = ::onFinally,
-                    mapEntityToUiState = { it.toMediaItemUiState() },
-                    onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow = mediaFlow) } },
+                    onInitialLoadError = ::onError,
+                    mapEntityToUiState = { it.toUiState() },
+                    onFlowCreated = ::onFlowCreated,
                     onLoadingChanged = ::onGetMediaLoadingChanged,
                 )
             }
@@ -41,22 +50,26 @@ class MyRatingViewModel @Inject constructor(
     }
 
     private fun fetchMovies() {
+        hideSnackBar()
         collectPagingFlow(
             loadData = { page -> getUserRatedMoviesUseCase(page, PAGE_SIZE) },
             onInitialLoadFinished = ::onFinally,
-            mapEntityToUiState = { it.toMediaItemUiState() },
-            onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow = mediaFlow) } },
-            onLoadingChanged = ::onGetMediaLoadingChanged,
+            onInitialLoadError = ::onError,
+            mapEntityToUiState = { it.toUiState() },
+            onFlowCreated = ::onFlowCreated,
+            onLoadingChanged = ::onGetMediaLoadingChanged
         )
     }
 
     private fun fetchTvShows() {
+        hideSnackBar()
         collectPagingFlow(
             loadData = { page -> getUserRatedTvShowsUseCase(page, PAGE_SIZE) },
             onInitialLoadFinished = ::onFinally,
-            mapEntityToUiState = { it.toMediaItemUiState() },
-            onFlowCreated = { mediaFlow -> updateState { it.copy(mediaFlow = mediaFlow) } },
-            onLoadingChanged = ::onGetMediaLoadingChanged,
+            onInitialLoadError = ::onError,
+            mapEntityToUiState = { it.toUiState() },
+            onFlowCreated = ::onFlowCreated,
+            onLoadingChanged = ::onGetMediaLoadingChanged
         )
     }
 
@@ -65,16 +78,26 @@ class MyRatingViewModel @Inject constructor(
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-        return BaseSnackBarMessage.DefaultMessage
+        return BaseSnackBarMessage.UnknownError
     }
 
     override fun onBackClick() {
         sendEffect(MyRatingEffect.NavigateBack)
     }
 
+    private fun onFlowCreated(mediaFlow: Flow<PagingData<MediaItemUiState>>) {
+        updateState { it.copy(mediaFlow = mediaFlow) }
+    }
+
     override fun onSnackBarActionLabelClick() {
+        refreshMediaList()
+    }
+
+    private fun refreshMediaList() {
+        hideSnackBar()
         fetchUserRatedMedia()
     }
+
 
     override fun onMediaClick(
         mediaId: Long,
@@ -82,15 +105,11 @@ class MyRatingViewModel @Inject constructor(
     ) {
         when (contentType) {
             MyRatingState.ContentType.MOVIE -> sendEffect(
-                MyRatingEffect.NavigateToMovieDetails(
-                    mediaId
-                )
+                MyRatingEffect.NavigateToMovieDetails(movieId = mediaId)
             )
 
             MyRatingState.ContentType.TV_SHOW -> sendEffect(
-                MyRatingEffect.NavigateToTvShowDetails(
-                    mediaId
-                )
+                MyRatingEffect.NavigateToTvShowDetails(tvShowId = mediaId)
             )
         }
     }
@@ -109,10 +128,13 @@ class MyRatingViewModel @Inject constructor(
         }
     }
 
-    private fun onDelete(cally: suspend () -> Unit) {
+    private fun onDelete(action: suspend () -> Unit) {
         tryToExecute(
-            { cally() },
-            { onDeletedSuccess() },
+            callee = { action() },
+            onSuccess = { onDeletedSuccess() },
+            onStart = ::onStart,
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -120,22 +142,41 @@ class MyRatingViewModel @Inject constructor(
         showSnackBar(
             message = BaseSnackBarMessage.RatedRemoveSuccessfully,
             isSuccess = true
-
         )
-        updateState {
-            currentState.copy(isLoading = true)
-        }
         fetchUserRatedMedia()
+    }
+
+    private fun showNoInternetSnackBar() {
+        showSnackBar(
+            message = BaseSnackBarMessage.NetworkError,
+            actionLabelRes = R.string.retry,
+            isSuccess = false,
+            durationMillis = Int.MAX_VALUE.toLong(),
+        )
+    }
+
+
+    private fun onError(throwable: Throwable) {
+        when (throwable) {
+            is NoInternetException -> showNoInternetSnackBar()
+            else -> handleError(throwable)
+        }
+    }
+
+
+    private fun onStart() {
+        updateState {
+            it.copy(isLoading = true)
+        }
     }
 
     private fun onFinally() {
         updateState {
-            currentState.copy(isLoading = false)
+            it.copy(isLoading = false)
         }
     }
 
     private companion object {
         const val PAGE_SIZE = 20
     }
-
 }

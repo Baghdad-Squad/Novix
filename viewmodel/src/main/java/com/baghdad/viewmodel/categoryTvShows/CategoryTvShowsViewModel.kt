@@ -48,7 +48,7 @@ class CategoryTvShowsViewModel @Inject constructor(
     private fun getTvShowsByCategoryId(categoryId: Long) {
         collectPagingFlow(
             loadData = { page ->
-                getTvShowsCategoryUseCase.invoke(categoryId, page)
+                getTvShowsCategoryUseCase.invoke(categoryId, page, DEFAULT_BUFFER_SIZE)
             },
             onInitialLoadFinished = {
                 updateState { it.copy(isLoading = false) }

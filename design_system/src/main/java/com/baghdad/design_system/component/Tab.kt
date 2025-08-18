@@ -42,9 +42,11 @@ fun Tab(
     val selectedTitleStyle = Theme.typography.label.medium.copy(
         color = Theme.color.title, textAlign = TextAlign.Center
     )
+
     val unSelectedTitleStyle = Theme.typography.label.medium.copy(
         color = Theme.color.hint, textAlign = TextAlign.Center
     )
+
     val titleColor by remember(isSelected) {
         derivedStateOf {
             if (isSelected) {
@@ -60,6 +62,7 @@ fun Tab(
         color = Theme.color.primary,
         modifier = modifier,
     ) { underlineModifier ->
+
         Row(
             modifier = Modifier
                 .height(40.dp)
@@ -88,6 +91,7 @@ private fun AnimatedUnderlineWrapper(
     animationSpec: AnimationSpec<Float> = tween(ANIMATION_DURATION),
     content: @Composable (modifier: Modifier) -> Unit
 ) {
+
     val animatedScale by animateFloatAsState(
         targetValue = if (isSelected) 1f else 0f,
         animationSpec = animationSpec,
@@ -120,7 +124,6 @@ private fun AnimatedUnderlineWrapper(
                 )
             }
         }
-
     )
 }
 
