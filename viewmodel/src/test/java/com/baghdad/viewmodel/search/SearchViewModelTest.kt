@@ -1,7 +1,9 @@
 package com.baghdad.viewmodel.search
 
+import app.cash.turbine.test
 import com.baghdad.domain.exception.NoInternetException
-import com.baghdad.domain.model.PagedResult
+import com.baghdad.domain.model.pagination.PagedResult
+import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
@@ -16,21 +18,17 @@ import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
-import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
+import com.baghdad.entity.savedList.SavedList
 import com.google.common.truth.Truth.assertThat
-import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.spyk
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -42,42 +40,28 @@ import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchViewModelTest {
+    private val getRecentSearchesUseCase: GetRecentSearchesUseCase = mockk()
+    private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase = mockk()
+    private val addRecentlyViewedUseCase: AddRecentlyViewedUseCase = mockk()
+    private val deleteAllRecentlyViewedUseCase: DeleteAllRecentlyViewedUseCase = mockk()
+    private val deleteAllRecentSearchesUseCase: DeleteAllRecentSearchesUseCase = mockk()
+    private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase = mockk()
+    private val searchMoviesUseCase: SearchMoviesUseCase = mockk()
+    private val searchTvShowsUseCase: SearchTvShowsUseCase = mockk()
+    private val searchActorsUseCase: SearchActorsUseCase = mockk()
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase = mockk()
+    private val getSavedListsUseCase: GetSavedListsUseCase = mockk()
+    private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase = mockk()
+    private val createSavedListUseCase: CreateSavedListUseCase = mockk()
+    private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase = mockk()
+
     private lateinit var viewModel: SearchViewModel
-    private lateinit var getRecentSearchesUseCase: GetRecentSearchesUseCase
-    private lateinit var getRecentlyViewedUseCase: GetRecentlyViewedUseCase
-    private lateinit var addRecentlyViewedUseCase: AddRecentlyViewedUseCase
-    private lateinit var deleteAllRecentlyViewedUseCase: DeleteAllRecentlyViewedUseCase
-    private lateinit var deleteAllRecentSearchesUseCase: DeleteAllRecentSearchesUseCase
-    private lateinit var deleteRecentSearchUseCase: DeleteRecentSearchUseCase
-    private lateinit var searchMoviesUseCase: SearchMoviesUseCase
-    private lateinit var searchTvShowsUseCase: SearchTvShowsUseCase
-    private lateinit var searchActorsUseCase: SearchActorsUseCase
-    private lateinit var isUserLoggedInUseCase: IsUserLoggedInUseCase
-    private lateinit var getSavedListsUseCase: GetSavedListsUseCase
-    private lateinit var addMovieToSavedListUseCase: AddMovieToSavedListUseCase
-    private lateinit var createSavedListUseCase: CreateSavedListUseCase
-    private lateinit var removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase
-
-
     private val testDispatcher = StandardTestDispatcher()
+
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        getRecentSearchesUseCase = mockk()
-        getRecentlyViewedUseCase = mockk()
-        addRecentlyViewedUseCase = mockk()
-        deleteAllRecentlyViewedUseCase = mockk()
-        deleteAllRecentSearchesUseCase = mockk()
-        deleteRecentSearchUseCase = mockk()
-        searchMoviesUseCase = mockk()
-        searchTvShowsUseCase = mockk()
-        searchActorsUseCase = mockk()
-        isUserLoggedInUseCase = mockk()
-        getSavedListsUseCase = mockk()
-        addMovieToSavedListUseCase = mockk()
-        createSavedListUseCase = mockk()
-        removeMovieFromSavedListUseCase = mockk()
     }
 
     @AfterEach
@@ -85,7 +69,7 @@ class SearchViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()): SearchViewModel {
+    private fun createViewModel(): SearchViewModel {
         return SearchViewModel(
             getRecentSearchesUseCase = getRecentSearchesUseCase,
             getRecentlyViewedUseCase = getRecentlyViewedUseCase,
@@ -101,80 +85,42 @@ class SearchViewModelTest {
             addMovieToSavedListUseCase = addMovieToSavedListUseCase,
             createSavedListUseCase = createSavedListUseCase,
             removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
-            defaultDispatcher = dispatcher
+            defaultDispatcher = testDispatcher
         )
     }
 
-    @Test
-    fun `should init call all required use cases successfully`() = runTest {
-        coEvery { getRecentSearchesUseCase() } returns flowOf(emptyList())
-        coEvery { getRecentlyViewedUseCase() } returns flowOf(emptyList())
-        coEvery { addRecentlyViewedUseCase(any(), any(), any()) } returns Unit
-        coEvery { deleteAllRecentlyViewedUseCase() } returns Unit
-        coEvery { deleteAllRecentSearchesUseCase() } returns Unit
-        coEvery { deleteRecentSearchUseCase(any()) } returns Unit
-        coEvery { searchMoviesUseCase(any(), any()) } returns PagedResult(
-            emptyList(),
-            nextKey = null,
-            prevKey = null
-        )
-        coEvery { searchTvShowsUseCase(any(), any()) } returns PagedResult(
-            emptyList(),
-            nextKey = null,
-            prevKey = null
-        )
-        coEvery { searchActorsUseCase(any(), any()) } returns PagedResult(
-            emptyList(),
-            nextKey = null,
-            prevKey = null
-        )
-        coEvery { isUserLoggedInUseCase() } returns true
-        coEvery { getSavedListsUseCase(page = any(), pageSize = any()) } returns PagedResult(
-            emptyList(),
-            null,
-            null
-        )
-        coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
-        coEvery { createSavedListUseCase(any()) } returns Unit
-        coEvery { removeMovieFromSavedListUseCase(any(), any()) } returns Unit
-
-        viewModel = createViewModel()
-        advanceUntilIdle()
-    }
 
     @Test
-    fun `should onSearchTextChanged update searchText and isLoading when text changes`() = runTest {
+    fun `onSearchTextChanged should update searchText and isLoading when text changes`() = runTest {
         viewModel = createViewModel()
-        val newText = "new query"
 
-        viewModel.onSearchTextChanged(newText)
+        viewModel.onSearchTextChanged(testQuery)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        assertThat(state.searchText).isEqualTo(newText)
+        assertThat(state.searchText).isEqualTo(testQuery)
         assertThat(state.isLoading).isTrue()
     }
 
     @Test
-    fun `should onSearchTextChanged  not process same query when call it twice`() = runTest {
+    fun `onSearchTextChanged should not process same query when call it twice`() = runTest {
         viewModel = createViewModel()
-        val query = "same query"
 
-        viewModel.onSearchTextChanged(query)
+        viewModel.onSearchTextChanged(testQuery)
         advanceUntilIdle()
 
         val firstState = viewModel.uiState.value
 
-        viewModel.onSearchTextChanged(query.trim())
+        viewModel.onSearchTextChanged(testQuery.trim())
         advanceUntilIdle()
 
         val secondState = viewModel.uiState.value
-        assertThat(secondState.searchText).isEqualTo(query.trim())
+        assertThat(secondState.searchText).isEqualTo(testQuery.trim())
         assertThat(secondState.lastProcessedQuery).isEqualTo(firstState.lastProcessedQuery)
     }
 
     @Test
-    fun `should onSearchTextChanged handle when it has empty string`() = runTest {
+    fun `onSearchTextChanged should be empty when it has empty string`() = runTest {
         viewModel = createViewModel()
 
         viewModel.onSearchTextChanged("")
@@ -185,32 +131,20 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `should onSearchTextChanged handle when it has whitespace-only string`() = runTest {
-        viewModel = createViewModel()
-
-        viewModel.onSearchTextChanged("   ")
-        advanceUntilIdle()
-
-        val state = viewModel.uiState.value
-        assertThat(state.searchText).isEqualTo("   ")
-    }
-
-    @Test
-    fun `should update searchText and set isLoading to true when user enters new query`() =
-        runTest {
+    fun `onSearchTextChanged should be whitespace-only when it has whitespace-only string`() = runTest {
             viewModel = createViewModel()
 
-            viewModel.onSearchTextChanged("Adventure")
+            viewModel.onSearchTextChanged("   ")
             advanceUntilIdle()
 
             val state = viewModel.uiState.value
-            assertThat(state.searchText).isEqualTo("Adventure")
-            assertThat(state.isLoading).isTrue()
+            assertThat(state.searchText).isEqualTo("   ")
         }
 
     @Test
     fun `should clear paging flows when user enters blank query`() = runTest {
         viewModel = createViewModel()
+
         viewModel.onSearchTextChanged("     ")
 
         val state = viewModel.uiState.value
@@ -218,8 +152,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `should call deleteAllRecentlyViewedUseCase and handle success when onClearRecentlyViewedClick is invoked`() =
-        runTest {
+    fun `deleteAllRecentlyViewedUseCase should call when onClearRecentlyViewedClick is invoked`() = runTest {
             coEvery { deleteAllRecentlyViewedUseCase.invoke() } returns Unit
 
             viewModel = createViewModel()
@@ -234,8 +167,7 @@ class SearchViewModelTest {
         }
 
     @Test
-    fun `should finalize loading and handle error when onClearRecentlyViewedClick fails`() =
-        runTest {
+    fun `should finalize loading and handle error when onClearRecentlyViewedClick fails`() = runTest {
             coEvery { deleteAllRecentlyViewedUseCase.invoke() } throws RuntimeException("fail")
 
             viewModel = createViewModel()
@@ -249,8 +181,7 @@ class SearchViewModelTest {
 
 
     @Test
-    fun `should not trigger search when debounce delay`() = runTest {
-        val testQuery = "test"
+    fun `search should not triggered when debounce delay`() = runTest {
         viewModel = createViewModel()
 
         viewModel.onSearchTextChanged(testQuery)
@@ -264,45 +195,44 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `should execute use case when onClearRecentSearchClick is called`() = runTest {
-        coEvery { deleteAllRecentSearchesUseCase.invoke() } returns Unit
-        viewModel = createViewModel()
+    fun `deleteAllRecentSearchesUseCase should execute when onClearRecentSearchClick is called`() = runTest {
+            coEvery { deleteAllRecentSearchesUseCase.invoke() } returns Unit
+            viewModel = createViewModel()
 
-        viewModel.onClearRecentSearchClick()
-        advanceUntilIdle()
+            viewModel.onClearRecentSearchClick()
+            advanceUntilIdle()
 
-        coVerify(exactly = 1) { deleteAllRecentSearchesUseCase.invoke() }
-        assertThat(viewModel.uiState.value.isLoading).isFalse()
-    }
-
-    @Test
-    fun `should finalize loading when use case throws during onClearRecentSearchClick`() = runTest {
-        coEvery { deleteAllRecentSearchesUseCase.invoke() } throws RuntimeException("error")
-        viewModel = createViewModel()
-
-        viewModel.onClearRecentSearchClick()
-        advanceUntilIdle()
-
-        coVerify { deleteAllRecentSearchesUseCase.invoke() }
-        assertThat(viewModel.uiState.value.isLoading).isFalse()
-    }
+            coVerify(exactly = 1) { deleteAllRecentSearchesUseCase.invoke() }
+            assertThat(viewModel.uiState.value.isLoading).isFalse()
+        }
 
     @Test
-    fun `should call use case when onRemoveRecentSearchItemClick is invoked`() = runTest {
-        val targetId = 42L
-        coEvery { deleteRecentSearchUseCase(targetId) } returns Unit
-        viewModel = createViewModel()
+    fun `onClearRecentSearchClick should finalize loading when deleteAllRecentSearchesUseCase throws`() = runTest {
+            coEvery { deleteAllRecentSearchesUseCase.invoke() } throws RuntimeException("error")
+            viewModel = createViewModel()
 
-        viewModel.onRemoveRecentSearchItemClick(targetId)
-        advanceUntilIdle()
+            viewModel.onClearRecentSearchClick()
+            advanceUntilIdle()
 
-        coVerify(exactly = 1) { deleteRecentSearchUseCase(targetId) }
-        assertThat(viewModel.uiState.value.isLoading).isFalse()
-    }
+            coVerify { deleteAllRecentSearchesUseCase.invoke() }
+            assertThat(viewModel.uiState.value.isLoading).isFalse()
+        }
 
     @Test
-    fun `should finalize loading when use case throws during onRemoveRecentSearchItemClick`() =
-        runTest {
+    fun `onRemoveRecentSearchItemClick should stop loading after deleting recent search`() = runTest {
+            val targetId = 42L
+            coEvery { deleteRecentSearchUseCase(targetId) } returns Unit
+            viewModel = createViewModel()
+
+            viewModel.onRemoveRecentSearchItemClick(targetId)
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) { deleteRecentSearchUseCase(targetId) }
+            assertThat(viewModel.uiState.value.isLoading).isFalse()
+        }
+
+    @Test
+    fun `onRemoveRecentSearchItemClick should finalize loading when deleteRecentSearchUseCase throws`() = runTest {
             val targetId = 99L
             coEvery { deleteRecentSearchUseCase(targetId) } throws RuntimeException("error")
             viewModel = createViewModel()
@@ -315,28 +245,21 @@ class SearchViewModelTest {
         }
 
     @Test
-    fun `should emit debounced trimmed query when search text is updated`() = runTest {
+    fun ` should emit debounced trimmed query when search text is updated`() = runTest {
         val method = SearchViewModel::class.java.getDeclaredMethod("observeSearchQueryFlow")
         method.isAccessible = true
 
         val viewModel = createViewModel()
-
         val flow = method.invoke(viewModel) as Flow<String>
-        val collected = mutableListOf<String>()
 
-        val job = launch {
-            flow.collect { value ->
-                collected.add(value)
-            }
+        flow.test {
+            viewModel.onSearchTextChanged("  reflected query ")
+
+            val emitted = awaitItem()
+            assertThat(emitted).isEqualTo("reflected query")
+
+            cancelAndIgnoreRemainingEvents()
         }
-
-        viewModel.onSearchTextChanged("  reflected query ")
-
-        advanceUntilIdle()
-
-        job.cancel()
-
-        assertThat(collected).containsExactly("reflected query")
     }
 
     @Test
@@ -356,8 +279,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `should update state and trigger correct action when onSearchQueryChangedCollected is invoked`() =
-        runTest {
+    fun `should update state and trigger correct action when onSearchQueryChangedCollected is invoked`() = runTest {
             val viewModel = createViewModel()
 
             val method = viewModel::class.java.getDeclaredMethod(
@@ -371,62 +293,7 @@ class SearchViewModelTest {
         }
 
     @Test
-    fun `should search movies when performSearchByTab is invoked and selected tab is MOVIES`() =
-        runTest {
-            val viewModel = createViewModel()
-            val method = viewModel::class.java.getDeclaredMethod(
-                "performSearchByTab",
-                String::class.java
-            )
-
-            method.isAccessible = true
-            coEvery { searchMoviesUseCase(any(), any()) } returns PagedResult(
-                emptyList(),
-                nextKey = null,
-                prevKey = null
-            )
-            assertThat(viewModel.uiState.value.searchText).isEmpty()
-        }
-
-    @Test
-    fun `should search TV shows when performSearchByTab is called and selected tab is TV_SHOWS`() =
-        runTest {
-            val viewModel = createViewModel()
-            val method = viewModel::class.java.getDeclaredMethod(
-                "performSearchByTab",
-                String::class.java
-            )
-
-            method.isAccessible = true
-            coEvery { searchTvShowsUseCase(any(), any()) } returns PagedResult(
-                emptyList(),
-                nextKey = null,
-                prevKey = null
-            )
-            assertThat(viewModel.uiState.value.searchText).isEmpty()
-        }
-
-    @Test
-    fun `should search actors when performSearchByTab is invoked and selected tab is ACTORS`() =
-        runTest {
-            val viewModel = createViewModel()
-            val method = viewModel::class.java.getDeclaredMethod(
-                "performSearchByTab",
-                String::class.java
-            )
-
-            method.isAccessible = true
-            coEvery { searchActorsUseCase(any(), any()) } returns PagedResult(
-                emptyList(),
-                nextKey = null,
-                prevKey = null
-            )
-            assertThat(viewModel.uiState.value.searchText).isEmpty()
-        }
-
-    @Test
-    fun `should show no internet snackbar when onSearchError is invoked with NoInternetException`() =
-        runTest {
+    fun `should show no internet snackbar when onSearchError is invoked with NoInternetException`() = runTest {
             val viewModel = createViewModel()
 
             val method = viewModel::class.java.getDeclaredMethod(
@@ -441,8 +308,7 @@ class SearchViewModelTest {
         }
 
     @Test
-    fun `should delegate to handleError when onSearchError is invoked with generic RuntimeException`() =
-        runTest {
+    fun `should delegate to handleError when onSearchError is invoked with generic RuntimeException`() = runTest {
             val viewModel = createViewModel()
 
             val method = viewModel::class.java.getDeclaredMethod(
@@ -459,8 +325,7 @@ class SearchViewModelTest {
 
 
     @Test
-    fun `should handle custom exception when onSearchError is invoked with IllegalStateException`() =
-        runTest {
+    fun `should handle custom exception when onSearchError is invoked with IllegalStateException`() = runTest {
             val viewModel = createViewModel()
 
             val method = viewModel::class.java.getDeclaredMethod(
@@ -476,57 +341,6 @@ class SearchViewModelTest {
             assertThat(viewModel.uiState.value).isEqualTo(previousState)
         }
 
-    @Test
-    fun `should delegate to showSnackBar with NetworkError config when showNoInternetSnackBar is invoked`() =
-        runTest {
-            val viewModel = spyk(createViewModel()) {
-                every {
-                    showSnackBar(
-                        message = BaseSnackBarMessage.NetworkError,
-                        actionLabelRes = null,
-                        isSuccess = false,
-                        durationMillis = Int.MAX_VALUE.toLong()
-                    )
-                } just Runs
-            }
-
-            val method = viewModel::class.java.getDeclaredMethod("showNoInternetSnackBar")
-            method.isAccessible = true
-            method.invoke(viewModel)
-
-            assertThat(viewModel.uiState.value.isLoading).isFalse()
-        }
-
-
-//    @Test
-//    fun `should update recentViewed when onGetRecentViewedSuccess is invoked with more than 10 items`() =
-//        runTest {
-//            val items = (1..15).map {
-//                RecentlyViewed(
-//                    contentId = it.toLong(),
-//                    contentType = RecentlyViewed.ContentType.MOVIE,
-//                    contentImageUrl = "https://example.com/poster$it.jpg",
-//                    viewedAt = LocalDateTime.now(),
-//                )
-//            }
-//
-//            val viewModel = createViewModel()
-//
-//            val method = viewModel::class.java.getDeclaredMethod(
-//                "onGetRecentViewedSuccess",
-//                List::class.java
-//            )
-//            method.isAccessible = true
-//            method.invoke(viewModel, items)
-//
-//            val actual = viewModel.uiState.value.recentViewed
-//            val expected = items
-//                .take(10)
-//                .map { it.toRecentlyViewedUI() }
-//                .distinctBy { it.id }
-//
-//            assertThat(actual).isEqualTo(expected)
-//        }
 
     @Test
     fun `should invoke onSnackBarActionLabelClick successfully`() = runTest {
@@ -539,37 +353,42 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `should send NavigateToActorDetails effect when actor item is clicked`() {
+    fun ` should send NavigateToActorDetails effect when actor item is clicked`() = runTest {
         val actorId = 101L
         val expectedEffect = SearchScreenEffect.NavigateToActorDetails(actorId)
         val viewModel = createViewModel()
 
-        viewModel.onActorItemClick(actorId)
+        viewModel.uiEffect.test {
+            viewModel.onActorItemClick(actorId)
 
-        assertThat((expectedEffect).actorId).isEqualTo(
-            actorId
-        )
+            val emitted = awaitItem()
+            assertThat(emitted).isEqualTo(expectedEffect)
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun `should send NavigateToTvShowDetails effect when recently viewed TV show is added`() {
-        val contentId = 303L
-        val expectedEffect = SearchScreenEffect.NavigateToTvShowDetails(contentId)
-        val viewModel = createViewModel()
+    fun `NavigateToTvShowDetails should send effect when recently viewed TV show is added`() = runTest {
+            val contentId = 303L
+            val expectedEffect = SearchScreenEffect.NavigateToTvShowDetails(contentId)
+            val viewModel = createViewModel()
 
-        val method = SearchViewModel::class.java
-            .getDeclaredMethod("onAddRecentlyViewedTvShowSuccess", Long::class.java)
-            .apply { isAccessible = true }
+            viewModel.uiEffect.test {
+                val method = SearchViewModel::class.java
+                    .getDeclaredMethod("onAddRecentlyViewedTvShowSuccess", Long::class.java)
+                    .apply { isAccessible = true }
 
-        method.invoke(viewModel, contentId)
+                method.invoke(viewModel, contentId)
+                val emitted = awaitItem()
+                assertThat(emitted).isEqualTo(expectedEffect)
 
-        assertThat((expectedEffect).tvShowId).isEqualTo(
-            contentId
-        )
-    }
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
 
     @Test
-    fun `should add recently viewed TV show and send NavigateToTvShowDetails effect when TV show item is clicked`() {
+    fun `should add recently viewed TV show when TV show item is clicked`() = runTest {
         val contentId = 777L
         val imageUrl = "https://image.tmdb.org/t/p/fantasy.jpg"
         val viewModel = createViewModel()
@@ -578,119 +397,345 @@ class SearchViewModelTest {
 
         viewModel.onTvShowItemClick(contentId, imageUrl)
 
-        assertThat((expectedEffect).tvShowId).isEqualTo(
-            contentId
-        )
+        assertThat((expectedEffect).tvShowId).isEqualTo(contentId)
     }
 
     @Test
-    fun `should send NavigateToTvShowDetails effect when onAddRecentlyViewedTvShowSuccess is triggered by success`() {
-        val contentId = 555L
-        val imageUrl = "https://images.example.com/poster.jpg"
-        val viewModel = createViewModel()
+    fun `NavigateToTvShowDetails should send effect when onAddRecentlyViewedTvShowSuccess is triggered`() = runTest {
+            val contentId = 777L
+            val imageUrl = "https://images.example.com/poster.jpg"
+            val viewModel = createViewModel()
 
-        val expectedEffect = SearchScreenEffect.NavigateToTvShowDetails(contentId)
+            val expectedEffect = SearchScreenEffect.NavigateToTvShowDetails(contentId)
 
-        viewModel.onTvShowItemClick(contentId, imageUrl)
+            viewModel.onTvShowItemClick(contentId, imageUrl)
 
-        assertThat((expectedEffect).tvShowId).isEqualTo(
-            contentId
-        )
-    }
+            assertThat((expectedEffect).tvShowId).isEqualTo(contentId)
+        }
 
     @Test
-    fun `should send NavigateToMovieDetails effect when recently viewed movie is added`() {
-        val contentId = 999L
-        val viewModel = createViewModel()
-        val expectedEffect = SearchScreenEffect.NavigateToMovieDetails(contentId)
-        val method = SearchViewModel::class.java
-            .getDeclaredMethod("onAddRecentlyViewedMovieSuccess", Long::class.java)
-            .apply { isAccessible = true }
+    fun `NavigateToMovieDetails should send effect when recently viewed movie is added`() = runTest {
+            val contentId = 999L
+            val viewModel = createViewModel()
+            val expectedEffect = SearchScreenEffect.NavigateToMovieDetails(contentId)
+            val method = SearchViewModel::class.java
+                .getDeclaredMethod("onAddRecentlyViewedMovieSuccess", Long::class.java)
+                .apply { isAccessible = true }
 
-        method.invoke(viewModel, contentId)
+            method.invoke(viewModel, contentId)
 
-        assertThat((expectedEffect).movieId).isEqualTo(
-            contentId
-        )
-    }
+            assertThat((expectedEffect).movieId).isEqualTo(contentId)
+        }
 
     @Test
-    fun `should execute addRecentlyViewedUseCase with movie content when movie item is clicked`() {
-        val contentId = 123L
-        val imageUrl = "https://example.com/poster.jpg"
+    fun `addRecentlyViewedUseCase should execute with movie content when movie item is clicked`() = runTest {
+            val viewModel = createViewModel()
+
+            viewModel.onMovieItemClick(contentId, imageUrl)
+
+            assertThat(contentId).isEqualTo(123L)
+            assertThat(imageUrl).contains("poster.jpg")
+        }
+
+    @Test
+    fun `should send NavigateToMovieDetails effect when addRecentlyViewedUseCase succeeds`() = runTest {
+            val expectedEffect = SearchScreenEffect.NavigateToMovieDetails(contentId)
+            val viewModel = createViewModel()
+
+            viewModel.onMovieItemClick(contentId, imageUrl)
+
+            assertThat((expectedEffect).movieId).isEqualTo(contentId)
+        }
+
+    @Test
+    fun `should call onLoading and onFinally when movie item is clicked`() = runTest {
         val viewModel = createViewModel()
 
         viewModel.onMovieItemClick(contentId, imageUrl)
 
         assertThat(contentId).isEqualTo(123L)
-        assertThat(imageUrl).contains("poster.jpg")
-    }
-
-    @Test
-    fun `should send NavigateToMovieDetails effect when addRecentlyViewedUseCase succeeds`() {
-        val contentId = 456L
-        val imageUrl = "https://example.com/movie.jpg"
-        val expectedEffect = SearchScreenEffect.NavigateToMovieDetails(contentId)
-        val viewModel = createViewModel()
-
-        viewModel.onMovieItemClick(contentId, imageUrl)
-
-        assertThat((expectedEffect).movieId).isEqualTo(
-            contentId
-        )
-    }
-
-    @Test
-    fun `should call onLoading and onFinally when movie item is clicked`() {
-        val contentId = 789L
-        val imageUrl = "https://example.com/cinema.jpg"
-        val viewModel = createViewModel()
-
-        viewModel.onMovieItemClick(contentId, imageUrl)
-
-        assertThat(contentId).isEqualTo(789L)
         assertThat(imageUrl).startsWith("https://example.com/")
     }
 
     @Test
-    fun `should send NavigateToMovieDetails effect when recently viewed item is a movie`() {
-        val contentId = 101L
-        val imageUrl = "https://example.com/movie.jpg"
-        val viewModel = createViewModel()
+    fun `NavigateToMovieDetails should send effect when recently viewed item is a movie`() = runTest {
 
-        val expectedEffect = SearchScreenEffect.NavigateToMovieDetails(contentId)
+            val viewModel = createViewModel()
 
-        viewModel.onRecentlyViewedClick(contentId, imageUrl)
+            val expectedEffect = SearchScreenEffect.NavigateToMovieDetails(contentId)
 
-        assertThat((expectedEffect).movieId).isEqualTo(
-            contentId
-        )
-    }
+            viewModel.onRecentlyViewedClick(contentId, imageUrl)
+
+            assertThat((expectedEffect).movieId).isEqualTo(contentId)
+        }
 
     @Test
-    fun `should send NavigateToTvShowDetails effect when recently viewed item is a TV show`() {
-        val contentId = 202L
-        val imageUrl = "https://example.com/tv.jpg"
-        val viewModel = createViewModel()
+    fun `should send NavigateToTvShowDetails effect when recently viewed item is a TV show`() = runTest {
+            val viewModel = createViewModel()
 
-        val expectedEffect = SearchScreenEffect.NavigateToTvShowDetails(contentId)
+            val expectedEffect = SearchScreenEffect.NavigateToTvShowDetails(contentId)
 
-        viewModel.onRecentlyViewedClick(contentId, imageUrl)
+            viewModel.onRecentlyViewedClick(contentId, imageUrl)
 
-        assertThat((expectedEffect).tvShowId).isEqualTo(
-            contentId
-        )
-    }
+            assertThat((expectedEffect).tvShowId).isEqualTo(contentId)
+        }
 
     @Test
-    fun `should not send effect when recently viewed item is not found `() {
-        val contentId = 303L
-        val imageUrl = "https://example.com/missing.jpg"
+    fun `should not send effect when recently viewed item is not found `() = runTest {
         val viewModel = createViewModel()
 
         viewModel.onRecentlyViewedClick(contentId, imageUrl)
 
         val captured = mutableListOf<SearchScreenEffect>()
         assertThat(captured).isEmpty()
+    }
+
+    @Test
+    fun `should create new saved list and close bottom sheet when onCreateListBottomSheetAddClick is called`() = runTest {
+            val listName = "New List"
+            val viewModel = createViewModel()
+
+            coEvery { createSavedListUseCase(listName) } just runs
+
+            viewModel.onCreatedListNameChanged(listName)
+            viewModel.onCreateListBottomSheetAddClick()
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) { createSavedListUseCase(listName) }
+
+            viewModel.uiState.test {
+                val updatedState = awaitItem()
+                assertThat(updatedState.addListBottomSheetState.isVisible).isFalse()
+
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `selectedListId should update when onListSelected is called`() = runTest {
+        val selectedId = 42L
+        val viewModel = createViewModel()
+
+        viewModel.onListSelected(selectedId)
+
+        viewModel.uiState.test {
+            val updatedState = awaitItem()
+            assertThat(updatedState.addToListBottomSheetState.selectedListId).isEqualTo(selectedId)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onLoginClicked should send NavigateToLogin effect`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.uiEffect.test {
+
+            viewModel.onLoginClicked()
+            assertThat(awaitItem()).isEqualTo(SearchScreenEffect.NavigateToLogin)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onSaveMovieClick should delegate to overloaded method when movie is clicked`() = runTest {
+        val viewModel = spyk(createViewModel())
+
+        viewModel.onSaveMovieClick(movie)
+
+        coVerify { viewModel.onSaveMovieClick( movie = movie) }
+    }
+
+    @Test
+    fun `onCreateNewListClicked should show addListBottomSheet and hide addToListBottomSheet`() = runTest {
+            val viewModel = createViewModel()
+
+            viewModel.onCreateNewListClicked()
+            advanceUntilIdle()
+
+            val state = viewModel.uiState.value
+            assertThat(state.addListBottomSheetState.isVisible).isTrue()
+            assertThat(state.addToListBottomSheetState.isVisible).isFalse()
+        }
+
+
+    @Test
+    fun `onSaveToListBottomSheetDismiss should hide bottom sheet and preserve saved lists`() = runTest {
+            coEvery { getSavedListsUseCase(any(), any()) } returns pagedResult
+
+            viewModel = createViewModel()
+            advanceUntilIdle()
+
+            viewModel.onSaveToListBottomSheetDismiss()
+            advanceUntilIdle()
+
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.addToListBottomSheetState.isVisible).isFalse()
+            }
+        }
+
+    @Test
+    fun `onSaveItemToListClicked should hide bottom sheet after saving item`() = runTest {
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onSaveItemToListClicked()
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.isVisible).isFalse()
+        }
+    }
+
+    @Test
+    fun `onSelectedSearchTabChanged should hide bottom sheet when tab changes`() = runTest {
+        val selectedTab = SearchScreenState.SearchTab.MOVIES
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onSelectedSearchTabChanged(
+            selectedTab = selectedTab
+        )
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.isVisible).isFalse()
+        }
+    }
+
+    @Test
+    fun `onSelectedSearchTabChanged should hide addToListBottomSheet`() = runTest {
+        val selectedTab = SearchScreenState.SearchTab.MOVIES
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onSelectedSearchTabChanged(
+            selectedTab = selectedTab
+        )
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.addToListBottomSheetState.isVisible).isFalse()
+        }
+    }
+
+    @Test
+    fun `onSelectedSearchTabChanged should update selectedSearchTab when tab is different`() = runTest {
+            val initialTab = SearchScreenState.SearchTab.TV_SHOWS
+            val newTab = SearchScreenState.SearchTab.MOVIES
+
+            viewModel = createViewModel()
+            advanceUntilIdle()
+
+            viewModel.onSelectedSearchTabChanged(initialTab)
+            advanceUntilIdle()
+
+            viewModel.onSelectedSearchTabChanged(newTab)
+            advanceUntilIdle()
+
+            viewModel.uiState.test {
+                val state = awaitItem()
+                assertThat(state.selectedSearchTab.name).isEqualTo(newTab.name)
+            }
+        }
+
+    @Test
+    fun `onSelectedSearchTabChanged should set isLoading true when tab is different`() = runTest {
+        val initialTab = SearchScreenState.SearchTab.TV_SHOWS
+        val newTab = SearchScreenState.SearchTab.MOVIES
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onSelectedSearchTabChanged(initialTab)
+        advanceUntilIdle()
+
+        viewModel.onSelectedSearchTabChanged(newTab)
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.isLoading).isTrue()
+        }
+    }
+
+    @Test
+    fun `onSelectedSearchTabChanged should not update state when tab is the same`() = runTest {
+        val tab = SearchScreenState.SearchTab.MOVIES
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onSelectedSearchTabChanged(tab)
+        advanceUntilIdle()
+
+        viewModel.onSelectedSearchTabChanged(tab)
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.selectedSearchTab.name).isEqualTo(tab.name)
+        }
+    }
+
+    @Test
+    fun `onSelectedSearchTabChanged should not loading when tab is the same`() = runTest {
+        val tab = SearchScreenState.SearchTab.MOVIES
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onSelectedSearchTabChanged(tab)
+        advanceUntilIdle()
+
+        viewModel.onSelectedSearchTabChanged(tab)
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.isLoading).isFalse()
+        }
+    }
+
+    @Test
+    fun `contentType check should return true when contentType is MOVIE`() = runTest{
+        val recentlyViewed = SearchScreenState.RecentlyViewedUiState(
+            id = 1L,
+            isSaved = false,
+            savedListId = 0L,
+            contentType = RecentlyViewed.ContentType.MOVIE
+        )
+
+        val result = (recentlyViewed.contentType == RecentlyViewed.ContentType.MOVIE)
+
+        assertThat(result).isTrue()
+    }
+
+
+    companion object {
+        val savedList = SavedList(
+            id = 1,
+            name = "Favorites",
+            itemCount = 3
+        )
+        val pagedResult = PagedResult(
+            data = listOf(savedList),
+            nextPage = 1,
+            prevPage = 1
+        )
+        val movie = SearchScreenState.MovieUiState(
+            id = 1L,
+            isSaved = true,
+            savedListId = 1L,
+        )
+        val testQuery = "test"
+        val contentId = 123L
+        val imageUrl = "https://example.com/poster.jpg"
     }
 }

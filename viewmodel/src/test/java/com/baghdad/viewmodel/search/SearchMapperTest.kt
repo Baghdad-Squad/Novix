@@ -1,6 +1,6 @@
 package com.baghdad.viewmodel.search
 
-import com.baghdad.domain.model.savedList.SavableMovie
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -15,10 +15,10 @@ import org.junit.jupiter.api.Test
 class SearchMapperTest {
     @Test
     fun `should map Movie to MovieUiState when toMovieUI is called`() {
-        val ui = SAVABLE_MOVIE.toMovieUI()
+        val ui = SAVE_MOVIE.toMovieUI()
 
-        assertThat(ui.id).isEqualTo(SAVABLE_MOVIE.movie.id)
-        assertThat(ui.posterPictureURL).isEqualTo(SAVABLE_MOVIE.movie.posterImageURL)
+        assertThat(ui.id).isEqualTo(SAVE_MOVIE.movie.id)
+        assertThat(ui.posterPictureURL).isEqualTo(SAVE_MOVIE.movie.posterImageURL)
     }
 
     @Test
@@ -71,7 +71,7 @@ class SearchMapperTest {
             trailerURL = "https://example.com/trailer.mp4",
             runtimeMinutes = 120
         )
-        val SAVABLE_MOVIE = SavableMovie(
+        val SAVE_MOVIE = SavedMovie(
             movie = MOVIE,
             isSaved = true,
             listId = 99L
