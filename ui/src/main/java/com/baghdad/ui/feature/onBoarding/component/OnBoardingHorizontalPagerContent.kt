@@ -84,6 +84,7 @@ private fun ImageAnimated(
             painter = painterResource(onBoardingInfo[currentPage].imageIndex),
             contentDescription = stringResource(onBoardingInfo[currentPage].title),
             modifier = Modifier
+                .padding(horizontal = 40.dp)
                 .graphicsLayer {
                     val scale = 1f - (0.9f * abs(pageOffset))
                     scaleX = scale
@@ -113,16 +114,14 @@ fun TextSlidingAnimationVisibility(
             text = stringResource(onBoardingInfo[currentPage].title),
             style = Theme.typography.title.large,
             color = Theme.color.title,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
-
+            textAlign = TextAlign.Center
             )
 
         Text(
             text = stringResource(onBoardingInfo[currentPage].description),
             style = Theme.typography.body.medium,
             color = Theme.color.body,
-            modifier = Modifier.padding(top = 4.dp, start = 8.dp, end = 8.dp),
+            modifier = Modifier.padding(top = 4.dp),
             textAlign = TextAlign.Center,
         )
     }
