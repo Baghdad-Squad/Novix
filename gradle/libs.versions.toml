@@ -13,7 +13,6 @@ datastorePreferences = "1.1.7"
 espressoCore = "3.6.1"
 firebaseBom = "33.16.0"
 foundation = "1.8.3"
-foundationVersion = "1.6.7"
 junit = "4.13.2"
 junitJupiter = "5.8.2"
 junitVersion = "1.2.1"
@@ -29,6 +28,9 @@ mockk = "1.14.2"
 mockwebserver = "4.12.0"
 okhttp = "4.10.0"
 pagingCompose = "3.4.0-alpha01"
+paging = "3.3.6"
+paging-testing = "3.3.0"
+protobuf = "0.9.4"
 protobufJavalite = "3.21.7"
 protobufKotlinLite = "3.21.11"
 readMoreVersion = "1.6.3"
@@ -53,6 +55,7 @@ hilt = "2.57"
 hilt-navigation-compose = "1.2.0"
 hilt-compiler = "1.2.0"
 dagger = "2.57"
+jetbrainsKotlinJvm = "2.1.0"
 
 
 [libraries]
@@ -61,7 +64,6 @@ accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
-androidx-foundation-v167 = { module = "androidx.compose.foundation:foundation", version.ref = "foundationVersion" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -138,7 +140,7 @@ junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.r
 turbine = { module = "app.cash.turbine:turbine", name = "turbine", version.ref = "turbine" }
 # MockK
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
-mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+#mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 
 # Truth
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
@@ -167,6 +169,10 @@ hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-co
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 
+#paging
+androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "paging-testing" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
@@ -179,6 +185,9 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "perf-plugin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt"}
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
+
 
 
 [bundles]
@@ -238,7 +247,6 @@ test-core = [
     "junit",
     "junit-jupiter",
     "mockk",
-    "mockk-android",
     "truth",
     "kotlinx-coroutines-test",
     "turbine"
