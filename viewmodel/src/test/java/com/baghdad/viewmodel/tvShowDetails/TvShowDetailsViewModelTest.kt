@@ -70,8 +70,6 @@ class TvShowDetailsViewModelTest {
         coEvery { isUserLoggedInUseCase() } returns true
     }
 
-    // region Initialization Tests
-
     @Test
     fun `when viewModel is initialized, should load all tv show data`() = runTest {
         viewModel = createViewModel()
@@ -113,10 +111,6 @@ class TvShowDetailsViewModelTest {
         }
         coVerify { getTvShowSeasonEpisodesUseCase.invoke(tvShowId, seasonIndex + 1) }
     }
-
-    // endregion
-
-    // region Rating Tests
 
     @Test
     fun `when star button is clicked and user is logged in, should show rating bottom sheet`() = runTest {
@@ -195,7 +189,6 @@ class TvShowDetailsViewModelTest {
         coVerify(exactly = 2) { getTvShowDetailsUseCase.invoke(tvShowId) }
     }
 
-    // endregion
 
     private fun createViewModel(): TvShowDetailsViewModel {
         val savedStateHandle = SavedStateHandle(mapOf("tvShowId" to tvShowId))
