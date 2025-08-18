@@ -239,13 +239,13 @@ class HomeViewModel @Inject constructor(
 
     private fun onGetMovieGenresStart() {
         updateState {
-            it.copy(isUpcomingMoviesLoading = true)
+            it.copy(isUpcomingMovieGenresLoading = true)
         }
     }
 
     private fun onGetMovieGenresFinished() {
         updateState {
-            it.copy(isUpcomingMoviesLoading = false)
+            it.copy(isUpcomingMovieGenresLoading = false)
         }
     }
 

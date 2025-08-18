@@ -158,7 +158,7 @@ object FakeHomeScreenData {
         topRatingItems = topRatingItems,
         isContinueWatchingLoading = false,
         continueWatchingItems = continueWatchingItemsUiState,
-        isUpcomingMoviesLoading = false,
+        isUpcomingMovieGenresLoading = false,
         upcomingGenres = upcomingGenres,
         selectedUpcomingGenreId = 8,
         upcomingItems = upcomingItems,

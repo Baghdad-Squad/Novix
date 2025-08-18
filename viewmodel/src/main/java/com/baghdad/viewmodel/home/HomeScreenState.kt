@@ -11,7 +11,7 @@ data class HomeScreenState(
     val topRatingItems: List<TopRatingItemUiState> = emptyList(),
     val isContinueWatchingLoading: Boolean = true,
     val continueWatchingItems: List<ContinueWatchingItemUiState> = emptyList(),
-    val isUpcomingMoviesLoading: Boolean = true,
+    val isUpcomingMovieGenresLoading: Boolean = true,
     val upcomingGenres: List<GenreUiState> = emptyList(),
     val selectedUpcomingGenreId: Long? = null,
     val upcomingItems: List<UpcomingItemUiState> = emptyList(),

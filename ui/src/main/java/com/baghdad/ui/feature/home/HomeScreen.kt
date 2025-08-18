@@ -19,13 +19,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.HomeAppBar
 import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
@@ -165,7 +163,7 @@ private fun HomeContent(
                 }
             }
 
-            if (state.isUpcomingMoviesLoading) {
+            if (state.isUpcomingMovieGenresLoading) {
                 upcomingSectionLoading(
                     modifier = Modifier.padding(top = 24.dp),
                     upcomingItems = state.upcomingItems,
