@@ -211,7 +211,6 @@ private fun MovieDetailsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .navigationBarsPadding()
-
         ) {
 
             LazyVerticalStaggeredGrid(
@@ -220,7 +219,7 @@ private fun MovieDetailsContent(
                 modifier = Modifier.fillMaxSize(),
                 verticalItemSpacing = 12.dp,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp)
             ) {
 
                 item(span = StaggeredGridItemSpan.FullLine) {
