@@ -18,7 +18,9 @@ import com.baghdad.domain.usecase.search.GetRecentSearchesUseCase
 import com.baghdad.domain.usecase.search.SearchActorsUseCase
 import com.baghdad.domain.usecase.search.SearchMoviesUseCase
 import com.baghdad.domain.usecase.search.SearchTvShowsUseCase
+import com.baghdad.domain.util.now
 import com.baghdad.entity.savedList.SavedList
+import com.baghdad.entity.search.RecentSearch
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -34,6 +36,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -293,6 +296,33 @@ class SearchViewModelTest {
         }
 
     @Test
+    fun `showNoInternetSnackBarWithoutRetry should update snackBarState when invoked`() = runTest {
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("showNoInternetSnackBarWithoutRetry")
+        method.isAccessible = true
+        method.invoke(viewModel)
+
+        val snackBarMessage = viewModel.snackBarState.value
+
+        assertThat(snackBarMessage.isSuccess).isFalse()
+    }
+
+    @Test
+    fun `onAddItemToListError should update snackBarState with failure when invoked`() = runTest {
+        val viewModel = createViewModel()
+
+        val method = viewModel::class.java.getDeclaredMethod("onAddItemToListError")
+        method.isAccessible = true
+        method.invoke(viewModel)
+
+        val snackBarMessage = viewModel.snackBarState.value
+
+        assertThat(snackBarMessage.isSuccess).isFalse()
+    }
+
+
+    @Test
     fun `should show no internet snackbar when onSearchError is invoked with NoInternetException`() = runTest {
             val viewModel = createViewModel()
 
@@ -340,6 +370,20 @@ class SearchViewModelTest {
 
             assertThat(viewModel.uiState.value).isEqualTo(previousState)
         }
+    @Test
+    fun `onGetRecentSearchesSuccess should update recentSearch with distinct queries when invoked`() = runTest {
+        val viewModel = createViewModel()
+        val method = viewModel::class.java.getDeclaredMethod(
+            "onGetRecentSearchesSuccess",
+            List::class.java
+        )
+        method.isAccessible = true
+        method.invoke(viewModel, recentSearches)
+
+        val result = viewModel.uiState.value.recentSearch
+
+        assertThat(result.map { it.query }).containsExactly("Matrix", "Inception")
+    }
 
 
     @Test
@@ -719,6 +763,11 @@ class SearchViewModelTest {
 
 
     companion object {
+        val recentSearches = listOf(
+            RecentSearch(id = 1L, query = "Matrix", searchedAt = LocalDateTime.now()),
+            RecentSearch(id = 2L, query = "Inception",  searchedAt = LocalDateTime.now()),
+            RecentSearch(id = 3L, query = "Matrix",  searchedAt = LocalDateTime.now()),
+        )
         val savedList = SavedList(
             id = 1,
             name = "Favorites",
