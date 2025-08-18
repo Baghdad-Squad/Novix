@@ -43,12 +43,14 @@ fun ForgotPasswordWebViewContent(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val screenUrl = remember { "https://www.themoviedb.org/reset-password?language=$languageTag" }
+
     val messages = remember {
-        mapOf(
-            "pageNotFound" to context.getString(R.string.oops_we_can_t_find_the_page),
-            "error" to context.getString(R.string.there_was_a_problem),
-            "success" to context.getString(R.string.password_reset_success_message),
-            "mainHeader" to context.getString(R.string.password_reset_main_page_header),
+        PasswordMessages(
+            pageNotFound = context.getString(R.string.oops_we_can_t_find_the_page),
+            error = context.getString(R.string.there_was_a_problem),
+            success = context.getString(R.string.password_reset_success_message),
+            successToast = context.getString(R.string.automatically_redirecting_to_login),
+            mainHeader = context.getString(R.string.password_reset_main_page_header)
         )
     }
 
@@ -58,7 +60,7 @@ fun ForgotPasswordWebViewContent(
                 Toast
                     .makeText(
                         context,
-                        context.getString(R.string.automatically_redirecting_to_login),
+                        messages.successToast,
                         Toast.LENGTH_LONG,
                     ).show()
             }
@@ -79,11 +81,11 @@ fun ForgotPasswordWebViewContent(
             allowedDomains = listOf("themoviedb.org"),
             onDetected = {
                 when (it.trim('"')) {
-                    messages["pageNotFound"],
-                    messages["error"] -> handleNavigation(AuthenticationNavEvent.NavigateBack)
+                    messages.pageNotFound,
+                    messages.error -> handleNavigation(AuthenticationNavEvent.NavigateBack)
 
-                    messages["success"] -> shouldNavigateBack.value = true
-                    messages["mainHeader"] -> Unit
+                    messages.success -> shouldNavigateBack.value = true
+                    messages.mainHeader -> Unit
                     else -> handleNavigation(AuthenticationNavEvent.NavigateBack)
                 }
             }

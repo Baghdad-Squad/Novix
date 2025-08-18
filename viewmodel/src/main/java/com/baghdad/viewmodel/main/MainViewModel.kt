@@ -74,24 +74,16 @@ class MainViewModel @Inject constructor(
     }
 
     private fun onSuccessFirstTimeLaunch(isFirstTime: Boolean) {
-        updateState {
-            it.copy(
-                isFirstTimeUser = isFirstTime,
-                isLoading = false
-            )
-        }
+        updateState { it.copy(isFirstTimeUser = isFirstTime, isLoading = false) }
     }
 
     private fun onSuccessLoggedIn(result: Boolean) {
-        updateState {
-            it.copy(
-                isLoggedIn = result,
-                isLoading = false
-            )
-        }
+        updateState { it.copy(isLoggedIn = result, isLoading = false) }
+
         if (result) {
             tryToExecute(
-                callee = syncSavedMoviesUseCase::invoke
+                callee = syncSavedMoviesUseCase::invoke,
+                dispatcher = defaultDispatcher
             )
         }
     }
@@ -101,16 +93,13 @@ class MainViewModel @Inject constructor(
             flowProvider = { getContentRestrictionUseCase() },
             onNewValue = { contentRestriction ->
                 updateState { it.copy(contentRestriction = contentRestriction.toUiState()) }
-            }
+            },
+            dispatcher = defaultDispatcher
         )
     }
 
     private fun onError(throwable: Throwable) {
-        updateState {
-            it.copy(
-                isLoading = false,
-            )
-        }
+        updateState { it.copy(isLoading = false) }
     }
 
     private fun onSuccessGetAppLanguage(appLanguage: String) {

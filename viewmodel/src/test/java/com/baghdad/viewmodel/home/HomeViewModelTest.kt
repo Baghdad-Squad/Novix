@@ -80,7 +80,7 @@ class HomeViewModelTest {
             observeUserWatchedMediaUseCase = observeContinueWatchingUseCase,
             getAppLanguageUseCase = getAppLanguageUseCase,
             getMovieGenresUseCase = getMovieGenresUseCase,
-            defaultDispatcher = testDispatcher
+            ioDispatcher = testDispatcher
         )
     }
 

@@ -16,7 +16,7 @@ class TrendingTvShowViewModel @Inject constructor(
     private val getTrendingTvShowUseCase: GetTrendingTvShowUseCase,
     private val getTvShowGenresUseCase: GetTvShowGenresUseCase,
     private val ioDispatcher: CoroutineDispatcher,
-) : BaseViewModel<TrendingTvShowScreenState, TrendingTvShowScreenEffect>(TrendingTvShowScreenState()),
+) : BaseViewModel<TrendingTvShowScreenState, TrendingTvShowEffect>(TrendingTvShowScreenState()),
     TrendingTvShowInteractionListener {
 
     init {
@@ -34,9 +34,7 @@ class TrendingTvShowViewModel @Inject constructor(
     }
 
     private fun handleGenreSuccess(genres: List<Genre>) {
-        val genreList =
-            genres.map(Genre::toUiState)
-
+        val genreList = genres.map(Genre::toUiState)
         updateState { it.copy(genres = genreList) }
     }
 
@@ -46,7 +44,7 @@ class TrendingTvShowViewModel @Inject constructor(
             loadData = { page ->
                 getTrendingTvShowUseCase.invoke(
                     genreId = currentState.selectedGenreId,
-                    page = page,
+                    page = page
                 )
             },
             onInitialLoadFinished = ::onFinally,
@@ -55,7 +53,7 @@ class TrendingTvShowViewModel @Inject constructor(
                 updateState { it.copy(trendingTvShows = tvShowFlow) }
                 hideSnackBar()
             },
-            onInitialLoadError = ::onLoadDataError,
+            onInitialLoadError = ::onLoadDataError
         )
     }
 
@@ -71,19 +69,20 @@ class TrendingTvShowViewModel @Inject constructor(
             message = BaseSnackBarMessage.NetworkError,
             actionLabelRes = R.string.retry,
             isSuccess = false,
-            durationMillis = Int.MAX_VALUE.toLong(),
+            durationMillis = Int.MAX_VALUE.toLong()
         )
     }
 
-    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage =
-        BaseSnackBarMessage.UnknownError
+    override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
+        return BaseSnackBarMessage.UnknownError
+    }
 
     override fun onTvShowClicked(tvShowId: Long) {
-        sendEffect(TrendingTvShowScreenEffect.NavigateToTvShowDetails(tvShowId))
+        sendEffect(TrendingTvShowEffect.NavigateToTvShowDetails(tvShowId))
     }
 
     override fun onBackIconClicked() {
-        sendEffect(TrendingTvShowScreenEffect.NavigateBack)
+        sendEffect(TrendingTvShowEffect.NavigateBack)
     }
 
     override fun onGenreClicked(genreId: Long?) {
@@ -92,10 +91,10 @@ class TrendingTvShowViewModel @Inject constructor(
         }
     }
 
-    override fun onSnackBarActionLabelClicked(genreId: Long?) {
+    override fun onSnackBarActionLabelClicked() {
         hideSnackBar()
         getTvShowGenres()
-        getTrendingTvShowsByGenre(genreId)
+        getTrendingTvShowsByGenre(currentState.selectedGenreId)
     }
 
     private fun onFinally() {

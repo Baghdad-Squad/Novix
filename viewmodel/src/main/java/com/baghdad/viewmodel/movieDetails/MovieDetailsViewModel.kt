@@ -52,15 +52,15 @@ class MovieDetailsViewModel @Inject constructor(
     private val movieId: Long = checkNotNull(savedStateHandle["movieId"])
 
     init {
-        loadInitData()
+        loadData()
     }
 
-    private fun loadInitData() {
-        checkIfUserIsLoggedIn()
-        getMovieGallery()
-        getMovieDetails()
-        getCastMembers()
-        getMoreLikeThisShow()
+    private fun loadData() {
+            checkIfUserIsLoggedIn()
+            getMovieGallery()
+            getMovieDetails()
+            getCastMembers()
+            getMoreLikeThisShow()
     }
 
     override fun onSaveCurrentMovieClick() {
@@ -73,6 +73,7 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun onAddItemToListSuccess() {
+        updateState { it.copy(isSaved = true) }
         refreshSavedItems()
         onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
@@ -211,7 +212,6 @@ class MovieDetailsViewModel @Inject constructor(
         isSaved: Boolean,
     ) {
         if (isSaved) {
-            updateState { it.copy(isSaved = false) }
             removeSavedItem(listId = listId, itemId = itemId)
         } else {
             updateState {
@@ -221,7 +221,7 @@ class MovieDetailsViewModel @Inject constructor(
                             isVisible = true,
                             selectedItemId = itemId,
                             selectedListId = null,
-                        ),
+                        )
                 )
             }
         }
@@ -240,6 +240,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onRemoveSavedItemSuccess() {
+        updateState { it.copy(isSaved = false) }
         refreshSavedItems()
         showItemRemovedSuccessfullySnackBar()
     }
@@ -308,7 +309,6 @@ class MovieDetailsViewModel @Inject constructor(
                             ?: return@tryToExecute,
                     movieId = currentState.addToListBottomSheetState.selectedItemId,
                 )
-                updateState { it.copy(isSaved = true) }
             },
             onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
@@ -442,7 +442,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
-        loadInitData()
+        loadData()
     }
 
     private fun getMovieGallery() {
@@ -561,7 +561,8 @@ class MovieDetailsViewModel @Inject constructor(
             },
             onStart = ::onGetCastMembersStarted,
             onFinally = ::onGetCastMembersFinally,
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 

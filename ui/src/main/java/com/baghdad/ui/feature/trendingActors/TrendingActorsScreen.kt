@@ -16,15 +16,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.base.toStringResource
 import com.baghdad.ui.feature.component.ActorCard
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.trendingActors.TrendingActorViewModel
@@ -39,11 +39,6 @@ fun TrendingActorsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    TrendingActorsContent(
-        uiState = uiState,
-        listener = viewModel,
-        snackBarState = snackBarState
-    )
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         when (effect) {
@@ -56,6 +51,12 @@ fun TrendingActorsScreen(
             }
         }
     }
+
+    TrendingActorsContent(
+        uiState = uiState,
+        listener = viewModel,
+        snackBarState = snackBarState,
+    )
 }
 
 
@@ -72,7 +73,7 @@ private fun TrendingActorsContent(
             .background(Theme.color.surface)
             .systemBarsPadding()
             .statusBarsPadding()
-            .padding(vertical = 12.dp),
+            .padding(top = 12.dp),
         isLoading = uiState.isLoading,
         topBar = {
             TopAppBar(
@@ -81,18 +82,9 @@ private fun TrendingActorsContent(
                 screenTitle = stringResource(R.string.trending_people),
             )
         },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position
-            )
-        },
-        backgroundBlur = { BackgroundBlur() },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
+        backgroundContent = { BackgroundBlur() },
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -117,7 +109,4 @@ private fun TrendingActorsContent(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
