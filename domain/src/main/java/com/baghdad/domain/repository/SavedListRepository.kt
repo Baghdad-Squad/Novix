@@ -30,5 +30,7 @@ interface SavedListRepository {
 
     suspend fun clearSavedMoviesCache()
 
+    fun getSavedMoviesCount(): Flow<Int>
+
     fun getSavedListCount(): Flow<Int>
 }

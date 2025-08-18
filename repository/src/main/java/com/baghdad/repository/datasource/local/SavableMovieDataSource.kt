@@ -21,5 +21,9 @@ interface SavableMovieDataSource {
         listId: Long,
         movieId: Long
     )
+    fun getSavedMoviesCount(): Flow<Int>
+
     fun getSavedListCount(): Flow<Int>
+
+    suspend fun addSavedListCount(count: Int)
 }

@@ -31,6 +31,6 @@ interface SavedListMovieDao {
     @Query("DELETE FROM saved_list_movies")
     suspend fun deleteAllSavedMovies()
 
-    @Query("SELECT count(distinct listId) FROM saved_list_movies")
-    fun getSavedListCount(): Flow<Int>
+    @Query("SELECT count(listId) FROM saved_list_movies") //movieId
+    fun getSavedMoviesCount(): Flow<Int>
 }

@@ -14,6 +14,7 @@ import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListCountUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedMoviesCountUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.domain.usecase.userWatchedMedia.ObserveUserWatchedMediaUseCase
@@ -47,38 +48,52 @@ constructor(
     private val createSavedListUseCase: CreateSavedListUseCase,
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
+    private val getSavedMoviesCountUseCase: GetSavedMoviesCountUseCase,
     private val getSavedListCountUseCase: GetSavedListCountUseCase,
     private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
     HomeInteractionListener {
     init {
         observeAppLanguage()
+        observeSavedMoviesCount()
+        observeSavedListsCount()
     }
 
     private fun observeAppLanguage() {
         tryToCollect(
             flowProvider = { getAppLanguageUseCase.invoke() },
-            onNewValue = ::onLanguageChanged,
+            onNewValue = { onLanguageChanged() },
             onError = ::onLoadDataError,
         )
     }
 
-    private fun observeSavedListCount() {
+    private fun observeSavedListsCount() {
         tryToCollect(
             flowProvider = { getSavedListCountUseCase.invoke() },
-            onNewValue = ::onSavedListCountChanged,
+            onNewValue = { onGetSavedListsCountSuccess() },
+        )
+    }
+
+    private fun onGetSavedListsCountSuccess() {
+        getUserSavedLists()
+    }
+
+    private fun observeSavedMoviesCount() {
+        tryToCollect(
+            flowProvider = { getSavedMoviesCountUseCase.invoke() },
+            onNewValue = { onSavedMoviesCountChanged() },
             onError = ::onLoadDataError,
         )
     }
 
-    private fun onSavedListCountChanged(count: Int) {
+    private fun onSavedMoviesCountChanged() {
         getUserSavedLists()
         getPopularItems()
         getTopRatingMovies()
         getUpcomingItems()
     }
 
-    private fun onLanguageChanged(language: String) {
+    private fun onLanguageChanged() {
         loadData()
     }
 
