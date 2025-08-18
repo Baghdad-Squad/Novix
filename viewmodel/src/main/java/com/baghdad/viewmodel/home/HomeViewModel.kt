@@ -580,10 +580,10 @@ class HomeViewModel @Inject constructor(
     }
 
     private companion object {
-         const val POPULAR_MOVIES_LIMIT = 5
-         const val POPULAR_TV_SHOWS_LIMIT = 5
-         const val DEFAULT_PAGE = 1
-         const val DEFAULT_PAGE_SIZE = 20
+          val POPULAR_MOVIES_LIMIT = 5
+          val POPULAR_TV_SHOWS_LIMIT = 5
+          val DEFAULT_PAGE = 1
+          val DEFAULT_PAGE_SIZE = 20
     }
 
     private data class PopularItems(
