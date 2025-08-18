@@ -3,6 +3,7 @@ import com.baghdad.domain.exception.NetworkException
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
+import com.baghdad.domain.usecase.appConfigurations.GetContentRestrictionUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
@@ -54,6 +55,7 @@ class HomeViewModelTest {
     val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase = mockk()
     val getAppLanguageUseCase: GetAppLanguageUseCase = mockk()
     val observeContinueWatchingUseCase: ObserveUserWatchedMediaUseCase = mockk()
+    val getContentRestrictionUseCase: GetContentRestrictionUseCase = mockk()
     val getMovieGenresUseCase: GetMovieGenresUseCase = mockk()
     private lateinit var viewModel: HomeViewModel
 
@@ -85,6 +87,7 @@ class HomeViewModelTest {
             observeUserWatchedMediaUseCase = observeContinueWatchingUseCase,
             getAppLanguageUseCase = getAppLanguageUseCase,
             getMovieGenresUseCase = getMovieGenresUseCase,
+            getContentRestrictionUseCase = getContentRestrictionUseCase,
             ioDispatcher = testDispatcher
         )
     }
