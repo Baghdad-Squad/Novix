@@ -55,6 +55,7 @@ class SearchViewModel @Inject constructor(
     private val defaultDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
+
     init {
         checkIfUserIsLoggedIn()
         getRecentSearches()
@@ -126,7 +127,8 @@ class SearchViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { observeSearchQueryFlow() },
             onNewValue = { query -> onSearchQueryChangedCollected(query) },
-            dispatcher = defaultDispatcher,
+            dispatcher = defaultDispatcher
+
         )
     }
 
@@ -402,6 +404,7 @@ class SearchViewModel @Inject constructor(
 
     override fun onRecentSearchItemClick(id: Long) {
         val searchText = currentState.recentSearch.find { it.id == id }?.query ?: ""
+
         updateState { it.copy(searchText = searchText) }
         currentState.lastProcessedQuery = ""
         onSearchTextChanged(searchText)
@@ -635,9 +638,9 @@ class SearchViewModel @Inject constructor(
                 )
             },
             onSuccess = { onCreateListSuccess() },
-            dispatcher = defaultDispatcher,
             onStart = ::onCreateListStart,
             onFinally = ::onCreateListFinished,
+            dispatcher = defaultDispatcher,
         )
     }
 

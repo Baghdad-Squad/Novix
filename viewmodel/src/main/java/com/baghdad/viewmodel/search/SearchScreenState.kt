@@ -42,10 +42,6 @@ data class SearchScreenState(
         val profilePictureURL: String = ""
     )
 
-    data class GenreUiState(
-        val id: Long = 0,
-        val name: String = ""
-    )
 
     data class RecentlyViewedUiState(
         val id: Long = 0,
