@@ -497,13 +497,14 @@ class HomeViewModelTest {
     @Test
     fun `should show no internet snackbar when getPopularMoviesUseCase throw NoInternetException`() =
         runTest {
-            coEvery { getPopularMoviesUseCase.invoke() } throws NoInternetException()
             coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
+            coEvery { getPopularMoviesUseCase.invoke() } throws NoInternetException()
+            coEvery { getPopularTvShowsUseCase.invoke() } throws NoInternetException()
 
             viewModel = createViewModel()
-            advanceUntilIdle()
 
             viewModel.snackBarState.test {
+                advanceUntilIdle()
                 val state = awaitItemWhere { it.message == BaseSnackBarMessage.NetworkError }
                 assertThat(state.message).isEqualTo(BaseSnackBarMessage.NetworkError)
                 assertThat(state.isSuccess).isFalse()
