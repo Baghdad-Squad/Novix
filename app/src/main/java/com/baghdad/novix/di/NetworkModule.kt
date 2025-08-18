@@ -39,17 +39,17 @@ abstract class NetworkModule {
 
 
         @Provides
-        @Named("AUTHORIZATION_TOKEN")
-        fun provideAuthorizationToken(): String {
-            return BuildConfig.AUTHORIZATION_TOKEN
+        @Named("ACCESS_TOKEN")
+        fun provideAccessToken(): String {
+            return BuildConfig.ACCESS_TOKEN
         }
 
         @Provides
         fun provideAuthenticationInterceptor(
             sessionDataSource: SessionDataSource,
-            @Named("AUTHORIZATION_TOKEN") authorizationToken: String,
+            @Named("ACCESS_TOKEN") accessToken: String,
         ): AuthenticationInterceptor =
-            AuthenticationInterceptor(authorizationToken, sessionDataSource)
+            AuthenticationInterceptor(accessToken, sessionDataSource)
 
         @Provides
         fun provideLanguageInterceptor(

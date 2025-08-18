@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
-    id("com.google.protobuf") version "0.9.4"
+    alias(libs.plugins.protobuf)
     alias(libs.plugins.kotlin.kapt)
     jacoco
 }
@@ -60,16 +60,16 @@ dependencies {
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.runner)
     implementation(libs.androidx.appcompat)
-    ksp(libs.androidx.room.compiler)
-    testImplementation(libs.bundles.test.core)
-    androidTestImplementation(libs.bundles.test.core)
-    androidTestImplementation(libs.androidx.room.testing)
-    androidTestImplementation(libs.androidx.junit)
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.protobuf.javalite)
     implementation(libs.protobuf.kotlin.lite)
     implementation(libs.bundles.hilt)
+    testImplementation(libs.bundles.test.core)
+    androidTestImplementation(libs.bundles.test.core)
+    androidTestImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.androidx.junit)
+    ksp(libs.androidx.room.compiler)
     kapt(libs.hilt.compiler)
 }
 protobuf {
@@ -80,7 +80,7 @@ protobuf {
     generateProtoTasks {
         all().forEach { task ->
             task.builtins {
-                id("java") { // id is imported above
+                id("java") {
                     option("lite")
                 }
                 id("kotlin") {
