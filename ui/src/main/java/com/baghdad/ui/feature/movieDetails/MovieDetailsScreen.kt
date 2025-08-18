@@ -46,6 +46,7 @@ import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.scaffold.Scaffold
+import com.baghdad.design_system.modifier.blockClickThrough
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -94,8 +95,7 @@ fun MovieDetailsScreen(
         listener = viewModel,
         state = state,
         snackBarState = snackBarState,
-
-        )
+    )
 }
 
 private fun handleEffect(
@@ -286,7 +286,8 @@ private fun MovieDetailsContent(
                     .fillMaxWidth()
                     .background(animatedColor)
                     .zIndex(1f)
-                    .padding(top = 56.dp, bottom = 8.dp),
+                    .padding(top = 56.dp, bottom = 8.dp)
+                    .blockClickThrough(),
                 onGoBackClick = listener::onBackClick,
                 content = {
                     SaveIcon(
