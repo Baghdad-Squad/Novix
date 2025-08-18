@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.dagger)
     testImplementation(libs.bundles.test.core)
     kapt (libs.dagger.compiler)
+    implementation(libs.bundles.coroutines)
 }
 
 kapt{
