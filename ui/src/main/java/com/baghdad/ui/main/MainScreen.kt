@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.baghdad.design_system.component.NovixBottomNavigationBar
-import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.islamic_image_loader.model.ContentRestrictionTypes
 import com.baghdad.ui.navigation.NovixNavHost
@@ -62,7 +62,8 @@ fun MainScreen(
             modifier = modifier
                 .background(Theme.color.surface)
                 .fillMaxSize()
-                .navigationBarsPadding(), bottomBar = {
+                .navigationBarsPadding(),
+            bottomBar = {
                 AnimatedVisibility(
                     visible = isMainGraphRoute,
                     enter = bottomSheetEnterAnimation,

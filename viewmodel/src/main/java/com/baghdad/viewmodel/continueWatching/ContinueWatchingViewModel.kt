@@ -102,7 +102,8 @@ class ContinueWatchingViewModel @Inject constructor(
         tryToCollect(
             flowProvider = ::onFetchGenres,
             onNewValue = ::onGenresFetched,
-            onError = ::onGetGenresError
+            onError = ::onGetGenresError,
+            dispatcher = defaultDispatcher
         )
     }
 

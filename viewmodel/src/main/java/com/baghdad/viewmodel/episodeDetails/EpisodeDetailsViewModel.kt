@@ -34,10 +34,10 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val tvShowId: Long = checkNotNull(savedStateHandle["tvShowId"])
 
     init {
-        loadInitData(tvShowId, seasonNumber, episodeNumber)
+        loadData(tvShowId, seasonNumber, episodeNumber)
     }
 
-    private fun loadInitData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
+    private fun loadData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
         getEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
         getEpisodeCastMembers(tvShowId, seasonNumber, episodeNumber)
         isUserLoggedIn()
@@ -267,7 +267,7 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
-        loadInitData(
+        loadData(
             tvShowId, seasonNumber, episodeNumber
         )
     }

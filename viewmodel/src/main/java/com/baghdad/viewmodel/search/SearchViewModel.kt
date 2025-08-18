@@ -227,7 +227,6 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-
     private fun showNoInternetSnackBar() {
         showSnackBar(
             message = BaseSnackBarMessage.NetworkError,
@@ -283,6 +282,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onClearRecentViewedSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
