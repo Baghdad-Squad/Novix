@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.movieDetails
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
@@ -73,7 +74,6 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun onAddItemToListSuccess() {
-        updateState { it.copy(isSaved = true) }
         refreshSavedItems()
         onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
@@ -240,7 +240,6 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onRemoveSavedItemSuccess() {
-        updateState { it.copy(isSaved = false) }
         refreshSavedItems()
         showItemRemovedSuccessfullySnackBar()
     }
@@ -548,6 +547,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onGetMovieDetailsSuccess(details: SavedMovie) {
+        Log.d("MovieDetailsViewModel", "Details: $details")
         updateState(details.toMovieDetailsStateUpdate())
     }
 
