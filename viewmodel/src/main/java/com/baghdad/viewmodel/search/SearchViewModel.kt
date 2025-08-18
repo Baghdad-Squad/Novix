@@ -55,6 +55,7 @@ class SearchViewModel @Inject constructor(
     private val defaultDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
+
     init {
         checkIfUserIsLoggedIn()
         getRecentSearches()
@@ -225,6 +226,7 @@ class SearchViewModel @Inject constructor(
             else -> handleError(throwable)
         }
     }
+
 
     private fun showNoInternetSnackBar() {
         showSnackBar(
@@ -402,6 +404,7 @@ class SearchViewModel @Inject constructor(
 
     override fun onRecentSearchItemClick(id: Long) {
         val searchText = currentState.recentSearch.find { it.id == id }?.query ?: ""
+
         updateState { it.copy(searchText = searchText) }
         currentState.lastProcessedQuery = ""
         onSearchTextChanged(searchText)
