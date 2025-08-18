@@ -37,6 +37,7 @@ import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.scaffold.Scaffold
+import com.baghdad.design_system.modifier.blockClickThrough
 import com.baghdad.design_system.modifier.noRippleClickable
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
@@ -290,26 +291,6 @@ private fun TvShowDetailsContent(
                     }
                 }
             }
-            RatingBottomSheet(
-                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType
-                        == BottomSheetType.ShowRating,
-                onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-                rate = uiState.tvShowInfo.userRating,
-                isButtonEnabled = uiState.tvShowInfo.userRating != 0,
-                onRateChanged = listener::onRatingChanged,
-                onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating) }
-            )
-
-            LoginRequiredSheet(
-                isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType
-                        == BottomSheetType.RequireLogin,
-                onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
-                onLoginClick = listener::onClickLoginButton,
-                title = stringResource(R.string.rate_it),
-                description = stringResource(R.string.please_login_to_rate)
-            )
-
-
         }
 
         TopAppBar(
@@ -317,10 +298,30 @@ private fun TvShowDetailsContent(
                 .fillMaxWidth()
                 .background(animatedColor)
                 .zIndex(1f)
-                .padding(top = 56.dp, bottom = 8.dp),
+                .padding(top = 56.dp, bottom = 8.dp)
+                .blockClickThrough(),
             onGoBackClick = listener::onClickBackIcon
         )
     }
+
+    RatingBottomSheet(
+        isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType
+                == BottomSheetType.ShowRating,
+        onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
+        rate = uiState.tvShowInfo.userRating,
+        isButtonEnabled = uiState.tvShowInfo.userRating != 0,
+        onRateChanged = listener::onRatingChanged,
+        onSubmitClick = { listener.onClickSubmitRating(uiState.tvShowInfo.userRating) }
+    )
+
+    LoginRequiredSheet(
+        isVisible = uiState.ratingStatus.isBottomSheetVisible && uiState.ratingStatus.bottomSheetType
+                == BottomSheetType.RequireLogin,
+        onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
+        onLoginClick = listener::onClickLoginButton,
+        title = stringResource(R.string.rate_it),
+        description = stringResource(R.string.please_login_to_rate)
+    )
 }
 
 private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
