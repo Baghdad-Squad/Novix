@@ -225,8 +225,6 @@ class HomeViewModel @Inject constructor(
             callee = getMovieGenresUseCase::getMovieGenres,
             dispatcher = ioDispatcher,
             onSuccess = ::onGetMovieGenresSuccess,
-            onStart = ::onGetMovieGenresStart,
-            onFinally = ::onGetMovieGenresFinished,
             onError = ::onLoadDataError,
         )
     }
@@ -237,25 +235,27 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onGetMovieGenresStart() {
-        updateState {
-            it.copy(isUpcomingMovieGenresLoading = true)
-        }
-    }
-
-    private fun onGetMovieGenresFinished() {
-        updateState {
-            it.copy(isUpcomingMovieGenresLoading = false)
-        }
-    }
-
     private fun getUpcomingItems() {
         tryToExecute(
             callee = { getUpcomingMoviesUseCase(currentState.selectedUpcomingGenreId) },
             dispatcher = ioDispatcher,
+            onStart = ::onGetUpcomingItemsStart,
             onSuccess = ::onGetUpcomingSuccess,
+            onFinally = ::onGetUpcomingItemsFinished,
             onError = ::onLoadDataError,
         )
+    }
+
+    private fun onGetUpcomingItemsStart() {
+        updateState {
+            it.copy(isUpcomingItemsLoading = true)
+        }
+    }
+
+    private fun onGetUpcomingItemsFinished() {
+        updateState {
+            it.copy(isUpcomingItemsLoading = false)
+        }
     }
 
     private fun onGetUpcomingSuccess(movies: List<SavedMovie>) {

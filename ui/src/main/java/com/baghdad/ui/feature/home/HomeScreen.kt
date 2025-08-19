@@ -163,10 +163,16 @@ private fun HomeContent(
                 }
             }
 
-            if (state.isUpcomingMovieGenresLoading) {
+            if (state.isUpcomingItemsLoading) {
                 upcomingSectionLoading(
                     modifier = Modifier.padding(top = 24.dp),
                     upcomingItems = state.upcomingItems,
+                    selectedGenreId = state.selectedUpcomingGenreId,
+                    genres = state.upcomingGenres,
+                    onGenreSelected = interactionListener::onUpcomingGenreSelected,
+                    onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
+                    onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
+                    isLoading = true,
                 )
             } else {
                 upcomingSection(
@@ -177,6 +183,7 @@ private fun HomeContent(
                     upcomingItems = state.upcomingItems,
                     onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
                     onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
+
                 )
             }
 
