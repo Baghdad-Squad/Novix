@@ -46,7 +46,7 @@ class SearchMapperTest {
         assertThat(ui.id).isEqualTo(RECENTLY_VIEWED.listId)
         assertThat(ui.posterPictureURL)
             .isEqualTo(RECENTLY_VIEWED.contentImageUrl)
-        assertThat(ui.contentType).isEqualTo(RecentlyViewed.ContentType.MOVIE)
+        assertThat(ui.contentType.name).isEqualTo(RECENTLY_VIEWED.contentType.name)
     }
 
     @Test
