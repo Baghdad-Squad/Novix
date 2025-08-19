@@ -52,16 +52,15 @@ class MovieDetailsViewModel @Inject constructor(
     private val movieId: Long = checkNotNull(savedStateHandle["movieId"])
 
     init {
-        loadInitData()
+        loadData()
     }
 
-    private fun loadInitData() {
+    private fun loadData() {
             checkIfUserIsLoggedIn()
             getMovieGallery()
             getMovieDetails()
             getCastMembers()
             getMoreLikeThisShow()
-            isUserLoggedIn()
     }
 
     override fun onSaveCurrentMovieClick() {
@@ -169,39 +168,12 @@ class MovieDetailsViewModel @Inject constructor(
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
                     isBottomSheetVisible = true,
-                )
-            )
-        }
-    }
-
-    private fun isUserLoggedIn() {
-        tryToExecute(
-            callee = { isUserLoggedInUseCase() },
-            dispatcher = ioDispatcher,
-            onSuccess = ::onIsUserLoggedInSuccess,
-            onError = ::onError
-        )
-    }
-
-    private fun onIsUserLoggedInSuccess(isLoggedIn: Boolean) {
-        val newBottomSheetType = if (isLoggedIn) {
-            BottomSheetType.ShowRating
-        } else {
-            BottomSheetType.RequireLogin
-        }
-        if (isLoggedIn) {
-            getMovieAccountStates()
-        }
-
-        updateState {
-            it.copy(
-                ratingStatus = it.ratingStatus.copy(
-                    bottomSheetType = newBottomSheetType,
                 ),
-                isRated = it.isRated && isLoggedIn,
+
             )
         }
     }
+
 
     override fun onRatingChanged(rating: Int) {
         updateState {
@@ -468,7 +440,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
-        loadInitData()
+        loadData()
     }
 
     private fun getMovieGallery() {
@@ -509,11 +481,23 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onCheckIfUserIsLoggedInSuccess(isLoggedIn: Boolean) {
-        updateState {
-            it.copy(isUserLoggedIn = isLoggedIn)
-        }
         if (isLoggedIn) {
+            getMovieAccountStates()
             getUserSavedLists()
+        }
+        val newBottomSheetType = if (isLoggedIn) {
+            BottomSheetType.ShowRating
+        } else {
+            BottomSheetType.RequireLogin
+        }
+        updateState {
+            it.copy(
+                isUserLoggedIn = isLoggedIn,
+                ratingStatus = it.ratingStatus.copy(
+                    bottomSheetType = newBottomSheetType,
+                ),
+                isRated = it.isRated && isLoggedIn,
+            )
         }
     }
 
@@ -575,7 +559,8 @@ class MovieDetailsViewModel @Inject constructor(
             },
             onStart = ::onGetCastMembersStarted,
             onFinally = ::onGetCastMembersFinally,
-            onError = ::onError
+            onError = ::onError,
+            dispatcher = ioDispatcher
         )
     }
 

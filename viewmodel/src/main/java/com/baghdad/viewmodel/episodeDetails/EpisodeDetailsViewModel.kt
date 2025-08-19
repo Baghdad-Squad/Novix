@@ -25,7 +25,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val addEpisodeRateUseCase: AddEpisodeRateUseCase,
     private val getEpisodeAccountStatesUseCase: GetEpisodeAccountStatesUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
-    private val ioDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<EpisodeDetailsScreenState, EpisodeDetailsScreenEffect>(EpisodeDetailsScreenState()),
     EpisodeDetailsInteractionListener {
 
@@ -34,10 +34,10 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val tvShowId: Long = checkNotNull(savedStateHandle["tvShowId"])
 
     init {
-        loadInitData(tvShowId, seasonNumber, episodeNumber)
+        loadData(tvShowId, seasonNumber, episodeNumber)
     }
 
-    private fun loadInitData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
+    private fun loadData(tvShowId: Long, seasonNumber: Int, episodeNumber: Int) {
         getEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
         getEpisodeCastMembers(tvShowId, seasonNumber, episodeNumber)
         isUserLoggedIn()
@@ -50,14 +50,12 @@ class EpisodeDetailsViewModel @Inject constructor(
             onSuccess = ::onGetEpisodeDetailsSuccess,
             onStart = ::onGetEpisodeDetailsStart,
             onFinally = ::onGetEpisodeDetailsFinally,
-            onError = ::onError,
+            onError = ::onError
         )
     }
 
     private fun onGetEpisodeDetailsSuccess(episode: Episode) {
-        updateState {
-            it.copy(episode = episode.toUiState())
-        }
+        updateState { it.copy(episode = episode.toUiState()) }
     }
 
     private fun onGetEpisodeDetailsStart() {
@@ -95,7 +93,6 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     override fun mapThrowableToErrorMessage(throwable: Throwable): BaseSnackBarMessage {
-//        TODO("Not yet implemented")
         return BaseSnackBarMessage.DefaultMessage
     }
 
@@ -104,9 +101,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     override fun onReadMoreOverviewClick() {
-        updateState {
-            it.copy(isOverviewExpanded = !it.isOverviewExpanded)
-        }
+        updateState { it.copy(isOverviewExpanded = !it.isOverviewExpanded) }
     }
 
     override fun onCategoryClick(categoryId: Long) {
@@ -115,12 +110,6 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     override fun onGuestOfHonorClick(guestOfHonorId: Long) {
         sendEffect(EpisodeDetailsScreenEffect.NavigateToActorDetails(guestOfHonorId))
-    }
-
-    override fun onSaveEpisodeClick() {
-        updateState {
-            it.copy(addToListBottomSheetState = it.addToListBottomSheetState.copy(isVisible = true))
-        }
     }
 
     override fun onDismissAddToListBottomSheetClick() {
@@ -139,11 +128,7 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     override fun onClickStarButton() {
         updateState {
-            it.copy(
-                ratingStatus = it.ratingStatus.copy(
-                    isBottomSheetVisible = true,
-                )
-            )
+            it.copy(ratingStatus = it.ratingStatus.copy(isBottomSheetVisible = true))
         }
     }
 
@@ -170,18 +155,16 @@ class EpisodeDetailsViewModel @Inject constructor(
         updateState {
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
-                    bottomSheetType = newBottomSheetType,
+                    bottomSheetType = newBottomSheetType
                 ),
-                isRated = it.isRated && isLoggedIn,
+                isRated = it.isRated && isLoggedIn
             )
         }
     }
 
     override fun onRatingChanged(rating: Int) {
         updateState {
-            it.copy(
-                episode = it.episode.copy(userRating = rating)
-            )
+            it.copy(episode = it.episode.copy(userRating = rating))
         }
     }
 
@@ -250,7 +233,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private fun onGetEpisodeStatesSuccess(isEpisodeRated: Boolean) {
         updateState {
             it.copy(
-                isRated = isEpisodeRated,
+                isRated = isEpisodeRated
             )
         }
     }
@@ -274,7 +257,7 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
-        loadInitData(
+        loadData(
             tvShowId, seasonNumber, episodeNumber
         )
     }

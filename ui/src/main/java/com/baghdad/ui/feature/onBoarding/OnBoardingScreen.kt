@@ -1,8 +1,8 @@
 package com.baghdad.ui.feature.onBoarding
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
@@ -12,17 +12,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.ui.base.ObserveAsEffect
 import com.baghdad.ui.feature.onBoarding.component.BottomSlidingSection
 import com.baghdad.ui.feature.onBoarding.component.OnBoardingHorizontalPagerContent
 import com.baghdad.ui.feature.onBoarding.component.SkipText
-import com.baghdad.ui.feature.onBoarding.component.isTablet
+import com.baghdad.ui.feature.onBoarding.component.TextSlidingAnimationVisibility
 import com.baghdad.ui.navigation.graph.onBoarding.OnBoardingNavEvent
 import com.baghdad.viewmodel.R
 import com.baghdad.viewmodel.onBoarding.OnBoardingEffect
@@ -99,7 +100,7 @@ private fun OnBoardingContent(
         }
     }
     Scaffold(
-        backgroundBlur = { BackgroundBlur() }
+        backgroundContent = { BackgroundBlur() }
     ) {
         LazyColumn(
             modifier = Modifier
@@ -115,11 +116,24 @@ private fun OnBoardingContent(
 
             item {
                 OnBoardingHorizontalPagerContent(
-                    modifier = if (isTablet()) Modifier.offset(y = (-64).dp) else Modifier,
                     pagerState = pagerState,
                     onBoardingInfo = onBoardingInfo,
                 )
+            }
 
+            item {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillParentMaxWidth()
+                        .padding(top = 32.dp, start = 32.dp, end = 32.dp, bottom = 32.dp)
+                ) {
+                    TextSlidingAnimationVisibility(
+                        onBoardingInfo = onBoardingInfo,
+                        currentPage = pagerState.currentPage,
+                        pageOffset = pagerState.currentPageOffsetFraction,
+                    )
+                }
             }
             item {
 

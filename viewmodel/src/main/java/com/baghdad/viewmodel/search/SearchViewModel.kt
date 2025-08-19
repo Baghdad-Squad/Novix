@@ -55,6 +55,7 @@ class SearchViewModel @Inject constructor(
     private val defaultDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<SearchScreenState, SearchScreenEffect>(SearchScreenState()),
     SearchInteractionListener {
+
     init {
         checkIfUserIsLoggedIn()
         getRecentSearches()
@@ -126,6 +127,8 @@ class SearchViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { observeSearchQueryFlow() },
             onNewValue = { query -> onSearchQueryChangedCollected(query) },
+            dispatcher = defaultDispatcher
+
         )
     }
 
@@ -247,6 +250,7 @@ class SearchViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { getRecentlyViewedUseCase() },
             onNewValue = ::onGetRecentViewedSuccess,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -261,6 +265,7 @@ class SearchViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { getRecentSearchesUseCase() },
             onNewValue = ::onGetRecentSearchesSuccess,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -277,6 +282,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onClearRecentViewedSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -368,6 +374,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onClearRecentSearchSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -384,6 +391,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onRemoveRecentSearchItemSuccess() },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -396,6 +404,7 @@ class SearchViewModel @Inject constructor(
 
     override fun onRecentSearchItemClick(id: Long) {
         val searchText = currentState.recentSearch.find { it.id == id }?.query ?: ""
+
         updateState { it.copy(searchText = searchText) }
         currentState.lastProcessedQuery = ""
         onSearchTextChanged(searchText)
@@ -440,6 +449,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onAddRecentlyViewedMovieSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -462,6 +472,7 @@ class SearchViewModel @Inject constructor(
             onSuccess = { onAddRecentlyViewedTvShowSuccess(contentId) },
             onStart = ::onLoading,
             onFinally = ::onFinally,
+            dispatcher = defaultDispatcher
         )
     }
 
@@ -627,9 +638,9 @@ class SearchViewModel @Inject constructor(
                 )
             },
             onSuccess = { onCreateListSuccess() },
-            dispatcher = defaultDispatcher,
             onStart = ::onCreateListStart,
             onFinally = ::onCreateListFinished,
+            dispatcher = defaultDispatcher,
         )
     }
 

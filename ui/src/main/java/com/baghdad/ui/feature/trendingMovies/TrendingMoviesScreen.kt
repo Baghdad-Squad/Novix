@@ -15,15 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -35,9 +32,9 @@ import com.baghdad.ui.feature.component.lazyPaging.LazyPagingVerticalGrid
 import com.baghdad.ui.feature.trendingMovies.component.GenresSection
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToMovieDetails
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
-import com.baghdad.viewmodel.shared.SavedListUiState
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesEffect
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesInteractionListener
 import com.baghdad.viewmodel.trendingMovie.TrendingMoviesScreenState
@@ -51,19 +48,15 @@ fun TrendingMoviesScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-    val movieItems = uiState.movies.collectAsLazyPagingItems()
-    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
     ObserveAsEffect(viewModel.uiEffect) { effect ->
         handleEffect(effect, handleNavigation)
     }
 
     TrendingMoviesContent(
-        movieItems = movieItems,
         uiState = uiState,
         listener = viewModel,
-        snackBarState = snackBarState,
-        savedLists = savedLists
+        snackBarState = snackBarState
     )
 }
 
@@ -88,12 +81,13 @@ private fun handleEffect(
 
 @Composable
 private fun TrendingMoviesContent(
-    movieItems: LazyPagingItems<TrendingMoviesScreenState.TrendingMovieUiState>,
     uiState: TrendingMoviesScreenState,
     listener: TrendingMoviesInteractionListener,
     snackBarState: SnackBarState,
-    savedLists: LazyPagingItems<SavedListUiState>
 ) {
+    val movieItems = uiState.movies.collectAsLazyPagingItems()
+    val savedLists = uiState.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
+
     Scaffold(
         modifier = Modifier
             .background(Theme.color.surface)
@@ -117,25 +111,13 @@ private fun TrendingMoviesContent(
                 )
             }
         },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = { listener.onSnackBarActionLabelClicked(uiState.selectedGenreId) },
-                position = position,
-            )
-        },
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClicked,
         isLoading = uiState.isLoading,
-        backgroundBlur = {
-            BackgroundBlur()
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
+        backgroundContent = { BackgroundBlur() },
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             LazyPagingVerticalGrid(
                 items = movieItems,
@@ -181,9 +163,5 @@ private fun TrendingMoviesContent(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int {
-    return type.toStringResource()
-
-}
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
 

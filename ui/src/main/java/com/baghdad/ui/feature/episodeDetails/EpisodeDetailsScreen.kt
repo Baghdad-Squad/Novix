@@ -30,10 +30,9 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
-import com.baghdad.design_system.component.SaveIcon
-import com.baghdad.design_system.component.Scaffold
-import com.baghdad.design_system.component.SnackBar
 import com.baghdad.design_system.component.appBar.TopAppBar
+import com.baghdad.design_system.component.scaffold.Scaffold
+import com.baghdad.design_system.modifier.blockClickThrough
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -43,8 +42,9 @@ import com.baghdad.ui.feature.component.bottomSheet.LoginRequiredSheet
 import com.baghdad.ui.feature.component.bottomSheet.RatingBottomSheet
 import com.baghdad.ui.feature.episodeDetails.component.EpisodeHeaderWithDetailsCard
 import com.baghdad.ui.feature.episodeDetails.component.guestsOfHonorItems
-import com.baghdad.ui.feature.movieDetails.component.OverviewSection
+import com.baghdad.ui.feature.tvShowDetails.component.TvShowOverviewSection
 import com.baghdad.ui.navigation.graph.tvShowDetails.TvShowDetailsNavEvent
+import com.baghdad.ui.util.toScaffoldSnackBarState
 import com.baghdad.viewmodel.base.SnackBarState
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsInteractionListener
 import com.baghdad.viewmodel.episodeDetails.EpisodeDetailsScreenEffect
@@ -72,7 +72,7 @@ fun EpisodeDetailsScreen(
 }
 
 @Composable
-fun EpisodeDetailsContent(
+private fun EpisodeDetailsContent(
     state: EpisodeDetailsScreenState,
     listener: EpisodeDetailsInteractionListener,
     snackBarState: SnackBarState,
@@ -130,42 +130,13 @@ fun EpisodeDetailsContent(
                 onRateClicked = listener::onClickStarButton,
                 hasTrailer = state.episode.trailerUrl.isNotBlank(),
                 isLoading = state.isEpisodeDetailsLoading,
-                onPlayTrailerClicked = listener::onPlayTrailerClick,
+                onPlayTrailerClicked = listener::onPlayTrailerClick
             )
         },
-        snackbar = { position ->
-            SnackBar(
-                message = stringResource(snackBarMessage(snackBarState.message)),
-                isSuccess = snackBarState.isSuccess,
-                isVisible = snackBarState.isVisible,
-                actionLabel = snackBarState.actionLabelRes?.let { stringResource(it) },
-                onActionClick = listener::onSnackBarActionLabelClick,
-                position = position,
-            )
-        },
-        backgroundBlur = {
-            BackgroundBlur()
-        },
-        isSnackBarWithActionLabel = snackBarState.actionLabelRes != null,
-        ) {
-
-        RatingBottomSheet(
-            isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.ShowRating,
-            onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-            rate = state.episode.userRating,
-            isButtonEnabled = state.episode.userRating != 0,
-            onRateChanged = { listener.onRatingChanged(it) },
-            onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating) }
-        )
-
-
-        LoginRequiredSheet(
-            isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
-            onBottomSheetCloseClick = { listener.onDismissRatingBottomSheet() },
-            onLoginClick = { listener.onClickLoginButton() },
-            title = stringResource(R.string.rate_it),
-            description = stringResource(R.string.please_login_to_rate)
-        )
+        snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
+        onSnackBarActionClick = listener::onSnackBarActionLabelClick,
+        backgroundContent = { BackgroundBlur() },
+    ) {
 
         LazyColumn(
             state = listState,
@@ -187,10 +158,10 @@ fun EpisodeDetailsContent(
 
             item {
                 AnimatedVisibility(state.episode.overview.isNotBlank()) {
-                    OverviewSection(
+                    TvShowOverviewSection(
                         overview = state.episode.overview,
-                        isExtended = state.isOverviewExpanded,
-                        onExtendClicked = listener::onReadMoreOverviewClick,
+                        isExpanded = state.isOverviewExpanded,
+                        onExpandedChange = listener::onReadMoreOverviewClick,
                         modifier = Modifier.padding(bottom = 16.dp),
                     )
                 }
@@ -208,22 +179,32 @@ fun EpisodeDetailsContent(
                     .background(animatedColor)
                     .zIndex(1f)
                     .align(Alignment.TopCenter)
-                    .padding(top = 56.dp, bottom = 8.dp),
-            onGoBackClick = listener::onBackClick,
-            content = {
-                SaveIcon(
-                    size = 40,
-                    backgroundColor = Theme.color.iconBackgroundLow,
-                    isSaved = state.isSavedToList,
-                    tint = Theme.color.title,
-                    onClick = listener::onSaveEpisodeClick,
-                )
-            },
+                    .padding(top = 56.dp, bottom = 8.dp)
+                    .blockClickThrough(),
+            onGoBackClick = listener::onBackClick
         )
     }
+
+    RatingBottomSheet(
+        isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType
+                == BottomSheetType.ShowRating,
+        onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
+        rate = state.episode.userRating,
+        isButtonEnabled = state.episode.userRating != 0,
+        onRateChanged = { listener.onRatingChanged(it) },
+        onSubmitClick = { listener.onClickSubmitRating(state.episode.userRating) }
+    )
+
+    LoginRequiredSheet(
+        isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType == BottomSheetType.RequireLogin,
+        onBottomSheetCloseClick = listener::onDismissRatingBottomSheet,
+        onLoginClick = listener::onClickLoginButton,
+        title = stringResource(R.string.rate_it),
+        description = stringResource(R.string.please_login_to_rate)
+    )
 }
 
-fun handleEffect(
+private fun handleEffect(
     effect: EpisodeDetailsScreenEffect,
     handleNavigation: (TvShowDetailsNavEvent) -> Unit,
 ) {
@@ -242,5 +223,4 @@ fun handleEffect(
     }
 }
 
-@Composable
-private fun snackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()
+private fun mapSnackBarMessage(type: BaseSnackBarMessage): Int = type.toStringResource()

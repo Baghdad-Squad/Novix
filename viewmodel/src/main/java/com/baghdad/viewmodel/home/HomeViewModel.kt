@@ -5,6 +5,7 @@ import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
+import com.baghdad.domain.usecase.appConfigurations.GetContentRestrictionUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
@@ -46,11 +47,28 @@ constructor(
     private val createSavedListUseCase: CreateSavedListUseCase,
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
-    private val defaultDispatcher: CoroutineDispatcher,
+    private val getContentRestrictionUseCase: GetContentRestrictionUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
     HomeInteractionListener {
     init {
         observeAppLanguage()
+        observeContentRestriction()
+    }
+
+    private fun observeContentRestriction() {
+        tryToCollect(
+            flowProvider = getContentRestrictionUseCase::invoke,
+            onNewValue = { refreshState() },
+            onError = ::onLoadDataError,
+            dispatcher = ioDispatcher,
+        )
+    }
+
+    private fun refreshState() {
+        val stateToRestore = currentState
+        updateState { HomeScreenState() }
+        updateState { stateToRestore }
     }
 
     private fun observeAppLanguage() {
@@ -58,6 +76,7 @@ constructor(
             flowProvider = { getAppLanguageUseCase.invoke() },
             onNewValue = ::onLanguageChanged,
             onError = ::onLoadDataError,
+            dispatcher = ioDispatcher
         )
     }
 
@@ -78,7 +97,7 @@ constructor(
         tryToExecute(
             callee = { isUserLoggedInUseCase() },
             onSuccess = ::onCheckIfUserIsLoggedInSuccess,
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
         )
     }
 
@@ -127,7 +146,7 @@ constructor(
                     tvShows = popularTvShows,
                 )
             },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetPopularItemsSuccess,
             onStart = ::onGetPopularItemsStart,
             onFinally = ::onGetPopularItemsFinished,
@@ -169,7 +188,7 @@ constructor(
     private fun getTopRatingMovies() {
         tryToExecute(
             callee = { getMovieTopRatingUseCase(DEFAULT_PAGE, null).data },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetTopRatingMoviesSuccess,
             onStart = ::onGetTopRatingMoviesStart,
             onFinally = ::onGetTopRatingMoviesFinished,
@@ -203,7 +222,7 @@ constructor(
     private fun observeContinueWatchingItems() {
         tryToCollect(
             flowProvider = observeUserWatchedMediaUseCase::invoke,
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onNewValue = ::onNewContinueWatchingItems,
             onError = ::onLoadDataError,
         )
@@ -224,7 +243,7 @@ constructor(
     private fun getMovieGenres() {
         tryToExecute(
             callee = getMovieGenresUseCase::getMovieGenres,
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetMovieGenresSuccess,
             onStart = ::onGetMovieGenresStart,
             onFinally = ::onGetMovieGenresFinished,
@@ -253,7 +272,7 @@ constructor(
     private fun getUpcomingItems() {
         tryToExecute(
             callee = { getUpcomingMoviesUseCase(currentState.selectedUpcomingGenreId) },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onSuccess = ::onGetUpcomingSuccess,
             onStart = ::onGetUpcomingStarted,
             onFinally = ::onGetUpcomingFinished,
@@ -322,7 +341,7 @@ constructor(
         tryToExecute(
             callee = { removeMovieFromSavedListUseCase(listId = listId, movieId = itemId) },
             onSuccess = { onRemoveSavedItemSuccess() },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onFinally = ::onRemoveSavedItemFinished,
         )
     }
@@ -420,7 +439,7 @@ constructor(
             },
             onError = { onAddItemToListError() },
             onSuccess = { onAddItemToListSuccess() },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onStart = ::onAddItemToListStart,
             onFinally = ::onAddItemToListFinished,
         )
@@ -552,7 +571,7 @@ constructor(
                 )
             },
             onSuccess = { onCreateListSuccess() },
-            dispatcher = defaultDispatcher,
+            dispatcher = ioDispatcher,
             onStart = ::onCreateListStart,
             onFinally = ::onCreateListFinished,
         )
