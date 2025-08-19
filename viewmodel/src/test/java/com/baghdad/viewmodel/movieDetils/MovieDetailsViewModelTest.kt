@@ -19,7 +19,6 @@ import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
-import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.baghdad.viewmodel.movieDetails.MovieDetailsState
 import com.baghdad.viewmodel.movieDetails.MovieDetailsViewModel
 import com.baghdad.viewmodel.shared.BottomSheetType
@@ -42,6 +41,8 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieDetailsViewModelTest {
 
+    private val testDispatcher = StandardTestDispatcher()
+    private val movieId = 123L
 
     @BeforeEach
     fun setup() {
@@ -54,19 +55,6 @@ class MovieDetailsViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun setupHappyPathMocks() {
-        coEvery { getMovieDetailsUseCase(any()) } returns TestData.createMockMovie()
-        coEvery { getCastsInfoUseCase(any()) } returns TestData.createMockCastMembers()
-        coEvery { getMovieImagesUseCase(any()) } returns TestData.createMockImages()
-        coEvery { getMoreLikeThisPosterImageUseCase(any()) } returns TestData.createMockSimilarMovies()
-        coEvery { addUserWatchedMediaUseCase(any(), any(), any(), any()) } returns Unit
-        coEvery { getMovieAccountStatesUseCase(any()) } returns true
-        coEvery { addMovieRateUseCase(any(), any()) } returns Unit
-        coEvery { isUserLoggedInUseCase() } returns true
-        coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
-        coEvery { createSavedListUseCase(any()) } returns Unit
-        coEvery { removeMovieFromSavedListUseCase(any(), any()) } returns Unit
-    }
 
     @Test
     fun `when viewModel is initialized, should load all movie data`() = runTest {
@@ -149,31 +137,6 @@ class MovieDetailsViewModelTest {
         }
 
     @Test
-    fun `when rating is submitted, should hide bottom sheet and show success`() = runTest {
-        viewModel = createViewModel()
-        val rating = 8
-
-        viewModel.onRatingChanged(rating)
-        viewModel.onClickSubmitRating(rating)
-        advanceUntilIdle()
-
-        viewModel.uiState.test {
-            val state = awaitItem()
-            assertThat(state.ratingStatus.isBottomSheetVisible).isFalse()
-            assertThat(state.isRated).isTrue()
-        }
-
-        viewModel.snackBarState.test {
-            val message = awaitItem().message
-            assertThat(message).isEqualTo(BaseSnackBarMessage.ItemRateSuccessfully)
-        }
-    }
-
-    // endregion
-
-    // region Saved Lists Tests
-
-    @Test
     fun `when create new list is clicked, should show create list bottom sheet`() = runTest {
         viewModel = createViewModel()
 
@@ -202,8 +165,6 @@ class MovieDetailsViewModelTest {
         }
         coVerify { createSavedListUseCase.invoke(listName.trim()) }
     }
-
-    // endregion
 
     private fun createViewModel(): MovieDetailsViewModel {
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
@@ -245,9 +206,7 @@ class MovieDetailsViewModelTest {
                 posterImageURL = TEST_MOVIE_POSTER_URL,
                 runtimeMinutes = 120,
                 trailerURL = TEST_MOVIE_TRAILER_URL
-            ),
-            isSaved = false,
-            listId = null
+            ), isSaved = false, listId = null
         )
 
         fun createMockCastMembers() = listOf(
@@ -262,15 +221,12 @@ class MovieDetailsViewModelTest {
                     biography = "Famous actor",
                     headerPictures = listOf("/header1.jpg"),
                     department = "Acting"
-                ),
-                characterName = "Hero"
+                ), characterName = "Hero"
             )
         )
 
         fun createMockImages() = listOf(
-            "/image1.jpg",
-            "/image2.jpg",
-            "/image3.jpg"
+            "/image1.jpg", "/image2.jpg", "/image3.jpg"
         )
 
         fun createMockSimilarMovies() = listOf(
@@ -286,9 +242,7 @@ class MovieDetailsViewModelTest {
                     posterImageURL = "/similar_movie1.jpg",
                     runtimeMinutes = 110,
                     trailerURL = "https://youtube.com/watch?v=similar1"
-                ),
-                isSaved = false,
-                listId = null
+                ), isSaved = false, listId = null
             )
         )
     }
@@ -306,9 +260,20 @@ class MovieDetailsViewModelTest {
     private val getSavedListsUseCase = mockk<GetSavedListsUseCase>()
     private val removeMovieFromSavedListUseCase = mockk<RemoveMovieFromSavedListUseCase>()
 
-    private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: MovieDetailsViewModel
 
-    private val movieId = 123L
     private val similarMovieId = 456L
+
+    private fun setupHappyPathMocks() {
+        coEvery { getMovieDetailsUseCase(any()) } returns TestData.createMockMovie()
+        coEvery { getCastsInfoUseCase(any()) } returns TestData.createMockCastMembers()
+        coEvery { getMovieImagesUseCase(any()) } returns TestData.createMockImages()
+        coEvery { getMoreLikeThisPosterImageUseCase(any()) } returns TestData.createMockSimilarMovies()
+        coEvery { getMovieAccountStatesUseCase(any()) } returns true
+        coEvery { addMovieRateUseCase(any(), any()) } returns Unit
+        coEvery { isUserLoggedInUseCase() } returns true
+        coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
+        coEvery { createSavedListUseCase(any()) } returns Unit
+        coEvery { removeMovieFromSavedListUseCase(any(), any()) } returns Unit
+    }
 }

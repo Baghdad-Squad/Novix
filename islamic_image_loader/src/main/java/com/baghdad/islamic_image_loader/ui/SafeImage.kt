@@ -42,6 +42,8 @@ fun SafeImage(
 
     val request = ImageRequest.Builder(context)
         .data(imageUrl)
+        .memoryCacheKey("$imageUrl-${contentRestrictionTypes.hashCode()}")
+        .diskCacheKey("$imageUrl-${contentRestrictionTypes.hashCode()}")
         .transformations(
             BlurHaramTransformation(
                 onBlur = { blurState ->

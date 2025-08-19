@@ -98,7 +98,7 @@
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 
 # keep wraper of prefrences data store
--keep class com.baghdad.localDatasource.LocalSessionDataSourceImpl { *; }
+-keep class com.baghdad.localDatasource.SessionDataSourceImpl { *; }
 
 # keep generated proto class
 -keep class com.example.application.proto.** { *; }

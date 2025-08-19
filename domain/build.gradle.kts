@@ -1,57 +1,29 @@
-plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
-    jacoco
-    alias(libs.plugins.kotlin.kapt)
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+plugins {
+    id("java-library")
+    alias(libs.plugins.jetbrains.kotlin.jvm)
+    alias(libs.plugins.kotlin.kapt)
+    jacoco
 }
 
-android {
-    namespace = "com.baghdad.domain"
-    compileSdk = 35
-
-    defaultConfig {
-        minSdk = 24
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-        debug {
-            enableUnitTestCoverage = true
-            enableAndroidTestCoverage = true
-        }
-    }
-    testOptions {
-        unitTests.all {
-            it.useJUnitPlatform()
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
     }
 }
 
 dependencies {
     api(project(":entity"))
-    implementation(libs.bundles.coroutines)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.dagger)
     testImplementation(libs.bundles.test.core)
-    implementation(libs.bundles.hilt)
-    implementation (libs.dagger)
     kapt (libs.dagger.compiler)
+    implementation(libs.bundles.coroutines)
 }
 
 kapt{

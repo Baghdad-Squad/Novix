@@ -33,9 +33,6 @@ fun SavedMovie.toMovieDetailsStateUpdate(): MovieDetailsState.() -> MovieDetails
         savedListId = this@toMovieDetailsStateUpdate.listId ?: -1L,
         categories = movie.genres.toCategoryUiStateList(),
         isHasTrailer = movie.trailerURL.isNotEmpty(),
-        userRating = userRating,
-        isRated = userRating != 0,
-        isUserLoggedIn = isUserLoggedIn,
         selectedMovieId = movie.id
     )
 }

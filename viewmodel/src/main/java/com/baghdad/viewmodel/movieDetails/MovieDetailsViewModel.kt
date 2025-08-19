@@ -62,7 +62,6 @@ class MovieDetailsViewModel @Inject constructor(
             getMovieDetails()
             getCastMembers()
             getMoreLikeThisShow()
-            isUserLoggedIn()
     }
 
     override fun onSaveCurrentMovieClick() {
@@ -170,39 +169,12 @@ class MovieDetailsViewModel @Inject constructor(
             it.copy(
                 ratingStatus = it.ratingStatus.copy(
                     isBottomSheetVisible = true,
-                )
-            )
-        }
-    }
-
-    private fun isUserLoggedIn() {
-        tryToExecute(
-            callee = { isUserLoggedInUseCase() },
-            dispatcher = ioDispatcher,
-            onSuccess = ::onIsUserLoggedInSuccess,
-            onError = ::onError
-        )
-    }
-
-    private fun onIsUserLoggedInSuccess(isLoggedIn: Boolean) {
-        val newBottomSheetType = if (isLoggedIn) {
-            BottomSheetType.ShowRating
-        } else {
-            BottomSheetType.RequireLogin
-        }
-        if (isLoggedIn) {
-            getMovieAccountStates()
-        }
-
-        updateState {
-            it.copy(
-                ratingStatus = it.ratingStatus.copy(
-                    bottomSheetType = newBottomSheetType,
                 ),
-                isRated = it.isRated && isLoggedIn,
+
             )
         }
     }
+
 
     override fun onRatingChanged(rating: Int) {
         updateState {
@@ -510,11 +482,23 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onCheckIfUserIsLoggedInSuccess(isLoggedIn: Boolean) {
-        updateState {
-            it.copy(isUserLoggedIn = isLoggedIn)
-        }
         if (isLoggedIn) {
+            getMovieAccountStates()
             getUserSavedLists()
+        }
+        val newBottomSheetType = if (isLoggedIn) {
+            BottomSheetType.ShowRating
+        } else {
+            BottomSheetType.RequireLogin
+        }
+        updateState {
+            it.copy(
+                isUserLoggedIn = isLoggedIn,
+                ratingStatus = it.ratingStatus.copy(
+                    bottomSheetType = newBottomSheetType,
+                ),
+                isRated = it.isRated && isLoggedIn,
+            )
         }
     }
 

@@ -5,6 +5,7 @@ import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.continueWatching.UserWatchedMedia
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
+import com.baghdad.domain.usecase.appConfigurations.GetContentRestrictionUseCase
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.movie.GetMovieGenresUseCase
 import com.baghdad.domain.usecase.movie.GetMovieTopRatingUseCase
@@ -48,6 +49,7 @@ constructor(
     private val createSavedListUseCase: CreateSavedListUseCase,
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
+    private val getContentRestrictionUseCase: GetContentRestrictionUseCase,
     private val getSavedMoviesCountUseCase: GetSavedMoviesCountUseCase,
     private val getSavedListCountUseCase: GetSavedListCountUseCase,
     private val ioDispatcher: CoroutineDispatcher,
@@ -57,6 +59,22 @@ constructor(
         observeAppLanguage()
         observeSavedMoviesCount()
         observeSavedListsCount()
+        observeContentRestriction()
+    }
+
+    private fun observeContentRestriction() {
+        tryToCollect(
+            flowProvider = getContentRestrictionUseCase::invoke,
+            onNewValue = { refreshState() },
+            onError = ::onLoadDataError,
+            dispatcher = ioDispatcher,
+        )
+    }
+
+    private fun refreshState() {
+        val stateToRestore = currentState
+        updateState { HomeScreenState() }
+        updateState { stateToRestore }
     }
 
     private fun observeAppLanguage() {
