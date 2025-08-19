@@ -32,7 +32,6 @@ class MyRatingViewModel @Inject constructor(
     }
 
     private fun fetchUserRatedMedia() {
-        hideSnackBar()
         when (currentState.selectedMediaTab) {
             MyRatingState.MediaTab.MOVIE -> fetchMovies()
             MyRatingState.MediaTab.TV_SHOW -> fetchTvShows()
@@ -50,7 +49,6 @@ class MyRatingViewModel @Inject constructor(
     }
 
     private fun fetchMovies() {
-        hideSnackBar()
         collectPagingFlow(
             loadData = { page -> getUserRatedMoviesUseCase(page, PAGE_SIZE) },
             onInitialLoadFinished = ::onFinally,
@@ -62,7 +60,6 @@ class MyRatingViewModel @Inject constructor(
     }
 
     private fun fetchTvShows() {
-        hideSnackBar()
         collectPagingFlow(
             loadData = { page -> getUserRatedTvShowsUseCase(page, PAGE_SIZE) },
             onInitialLoadFinished = ::onFinally,
@@ -90,11 +87,11 @@ class MyRatingViewModel @Inject constructor(
     }
 
     override fun onSnackBarActionLabelClick() {
+        hideSnackBar()
         refreshMediaList()
     }
 
     private fun refreshMediaList() {
-        hideSnackBar()
         fetchUserRatedMedia()
     }
 
