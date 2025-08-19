@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.movieDetails
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
@@ -547,9 +546,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onGetMovieDetailsSuccess(details: SavedMovie) {
-        Log.i("movieDetails", "onGetMovieDetailsSuccess: ${details.isSaved}")
         updateState(details.toMovieDetailsStateUpdate())
-        Log.i("movieDetails", "onGetMovieDetailsSuccess: ${uiState.value.isSaved}")
     }
 
     private fun getCastMembers() {
