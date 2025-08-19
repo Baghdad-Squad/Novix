@@ -1,51 +1,61 @@
 package com.baghdad.domain.usecase.movie
 
+import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.repository.MovieRepository
 import com.baghdad.entity.media.Movie
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
-import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-//class GetPopularMoviesUseCaseTest {
-//
-//    private lateinit var repository: MovieRepository
-//    private lateinit var useCase: GetPopularMoviesUseCase
-//
-//    @BeforeEach
-//    fun setUp() {
-//        repository = mockk()
-//        useCase = GetPopularMoviesUseCase(repository)
-//    }
-//
-//    @Test
-//    fun `invoke() should return popular movies from repository`() = runTest {
-//        // Given
-//        val expectedMovies = listOf(
-//            Movie(
-//                id = 1,
-//                title = "Inception",
-//                genres = emptyList(),
-//                averageRating = 8.8,
-//                userRating = null,
-//                releaseDate = LocalDate.parse("2010-07-16"),
-//                overview = "A mind-bending thriller...",
-//                posterImageURL = "https://image.tmdb.org/t/p/w500/inception.jpg",
-//                trailerURL = "https://youtube.com/inception",
-//                runtimeMinutes = 148
-//            )
-//        )
-//        coEvery { repository.getPopularMovies() } returns expectedMovies
-//
-//        // When
-//        val result = useCase()
-//
-//        // Then
-//        assertEquals(expectedMovies, result)
-//        coVerify(exactly = 1) { repository.getPopularMovies() }
-//    }
-//}
+class GetPopularMoviesUseCaseTest {
+
+    private lateinit var repository: MovieRepository
+    private lateinit var useCase: GetPopularMoviesUseCase
+
+    @BeforeEach
+    fun setUp() {
+        repository = mockk()
+        useCase = GetPopularMoviesUseCase(repository)
+    }
+
+    @Test
+    fun `getPopularMoviesUseCase should return movies when repository succeeds`() = runTest {
+        coEvery { repository.getPopularMovies() } returns savedMovies
+
+        val result = useCase.invoke()
+
+        assertThat(result).isEqualTo(savedMovies)
+    }
+
+    companion object {
+        val movie = Movie(
+            id = 1,
+            title = "Movie 1",
+            genres = emptyList(),
+            averageRating = 7.5,
+            userRating = null,
+            releaseDate = LocalDate(2020, 1, 1),
+            overview = "Overview of Movie 1",
+            posterImageURL = "http://example.com/poster1.jpg",
+            runtimeMinutes = 120,
+            trailerURL = "http://example.com/trailer1.mp4"
+        )
+
+
+        val savedMovie = SavedMovie(
+            movie = movie,
+            isSaved = true,
+            listId = 1
+        )
+
+        val savedMovies = listOf(
+            savedMovie,
+            savedMovie.copy(movie = movie.copy(id = 2), listId = 2)
+        )
+
+    }
+}
