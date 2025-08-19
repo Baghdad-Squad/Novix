@@ -1,5 +1,6 @@
 package com.baghdad.domain.testHelper
 
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.entity.media.Genre
 import com.baghdad.entity.media.Movie
@@ -75,3 +76,22 @@ fun getMinimalSavedMovie(
     listId = listId
 )
 
+fun getSavedMovies() = PagedResult(
+    listOf(
+        getSampleSavedMovie(),
+        getSampleSavedMovie(
+            movie = getSampleMovie(
+                id = 2L,
+                genres = listOf(Genre(22L, "Action"), Genre(2L, "Drama")),
+            )
+        ),
+        getSampleSavedMovie(
+            movie = getSampleMovie(
+                id = 3L,
+                genres = listOf(Genre(3L, "Adventure"), Genre(5L, "Drama")),
+            )
+        )
+    ),
+    nextPage = 2,
+    prevPage = null
+)
