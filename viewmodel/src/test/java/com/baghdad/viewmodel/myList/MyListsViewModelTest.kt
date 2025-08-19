@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.myList
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import app.cash.turbine.test
 import com.baghdad.domain.model.pagination.PagedResult
@@ -50,11 +51,18 @@ class MyListsViewModelTest {
         Dispatchers.resetMain()
     }
 
+    private val savedStateHandle = SavedStateHandle(
+        mapOf(
+            "isDeleteSuccess" to false
+        )
+    )
+
     private fun createViewModel(): MyListsViewModel {
         return MyListsViewModel(
             getSavedListsUseCase = getSavedListsUseCase,
             createSavedListUseCase = createSavedListUseCase,
             isUserLoggedInUseCase = isUserLoggedInUseCase,
+            savedStateHandle = savedStateHandle,
             defaultDispatcher = testDispatcher
         )
     }

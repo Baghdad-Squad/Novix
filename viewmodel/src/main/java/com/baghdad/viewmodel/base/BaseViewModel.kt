@@ -1,6 +1,5 @@
 package com.baghdad.viewmodel.base
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -62,7 +61,6 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
         actionLabelRes: Int? = null,
         durationMillis: Long = 3000L,
     ) {
-        Log.d("BaseViewModel", "showSnackBar called with message: $message, isSuccess: $isSuccess, actionLabelRes: $actionLabelRes")
         viewModelScope.launch(Dispatchers.Main) {
             if (snackBarState.value.isVisible) {
                 hideSnackBar()
@@ -87,7 +85,6 @@ abstract class BaseViewModel<UI_STATE : BaseUiState, UI_EFFECT : BaseUiEffect>(
     }
 
     protected fun hideSnackBar() {
-        Log.d("BaseViewModel", "hideSnackBar called")
         viewModelScope.launch(Dispatchers.Main) {
             _snackBarState.update {
                 it.copy(
