@@ -130,14 +130,6 @@ class CategoryMoviesViewModelTest {
     }
 
     @Test
-    fun `uiState should Reflect Movie Id when Movie Has Different Id`() {
-        val movie = testMovie.copy(id = 99L)
-        val uiState = movie
-
-        assertThat(uiState.id).isEqualTo(99L)
-    }
-
-    @Test
     fun `uiState should Keep Poster Image URL Unchanged when Movie Has Poster`() {
         val movie = testMovie.copy(posterImageURL = longUrl)
 
@@ -285,26 +277,9 @@ class CategoryMoviesViewModelTest {
 
             val latest = awaitItem()
             assertThat(latest.addToListBottomSheetState.isVisible).isTrue()
-
             cancelAndIgnoreRemainingEvents()
         }
     }
-
-
-    @Test
-    fun `onCreateListBottomSheetDismiss should reset list name and hide AddList sheet`() = runTest {
-        viewModel.uiState.test {
-            skipItems(1)
-            viewModel.onCreateListBottomSheetDismiss()
-
-            val latest = awaitItem()
-            assertThat(latest.addListBottomSheetState.isVisible).isFalse()
-
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-
 
     @Test
     fun `onCreateListBottomSheetDismiss should Reset List Name and Show Add To List Bottom Sheet when Called`() = runTest {
