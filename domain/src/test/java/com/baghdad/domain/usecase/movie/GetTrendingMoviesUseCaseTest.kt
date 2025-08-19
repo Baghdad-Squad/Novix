@@ -35,32 +35,34 @@ class GetTrendingMoviesUseCaseTest {
         coVerify { repository.getTrendingMovies(1) }
     }
 
-//    @Test
-//    fun `invoke() should filter trending movies by genreId`() = runTest {
-//        coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
-//
-//        val result = getTrendingMoviesUseCase(1, genreId = 1)
-//
-//        assertThat(result).isEqualTo(sampleSavedMovies)
-//        coVerify { repository.getTrendingMovies(1) }
-//    }
+    @Test
+    fun `invoke() should filter trending movies by genreId`() = runTest {
+        coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
 
-    companion object{
-        private val sampleSavedMovies = PagedResult(
-            listOf(
+        val result = getTrendingMoviesUseCase(page = 1, genreId = 1)
+
+        assertThat(result.data).containsExactly(
+            getSampleSavedMovie(movie = getSampleMovie(id = 2L, genres = genres))
+        )
+    }
+
+    @Test
+    fun `invoke() should return empty list when no movie matches genreId`() = runTest {
+        coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
+
+        val result = getTrendingMoviesUseCase(page = 1, genreId = 999L)
+
+        assertThat(result.data).isEmpty()
+    }
+
+    companion object {
+        val genre = Genre(1L, "Action")
+        val genres = listOf(genre, genre.copy(id = 2L, name = "Drama"))
+
+        val sampleSavedMovies = PagedResult(
+            data = listOf(
                 getSampleSavedMovie(),
-                getSampleSavedMovie(
-                    movie = getSampleMovie(
-                        id = 2L,
-                        genres = listOf(Genre(1L, "Action"), Genre(2L, "Drama")),
-                    )
-                ),
-                getSampleSavedMovie(
-                    movie = getSampleMovie(
-                        id = 3L,
-                        genres = listOf(Genre(3L, "Adventure"), Genre(5L, "Drama")),
-                    )
-                )
+                getSampleSavedMovie(movie = getSampleMovie(id = 2L, genres = genres)),
             ),
             nextPage = 2,
             prevPage = null

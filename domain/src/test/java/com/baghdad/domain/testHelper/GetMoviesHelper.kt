@@ -34,7 +34,7 @@ fun getSampleSavedMovie(
     isSaved: Boolean = true,
     listId: Long = 1L
 ) = SavedMovie(
-    movie = getSampleMovie(),
+    movie = movie,
     isSaved = isSaved,
     listId = listId
 )
