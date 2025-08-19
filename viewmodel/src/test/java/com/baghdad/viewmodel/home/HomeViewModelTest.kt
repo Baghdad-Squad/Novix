@@ -11,7 +11,9 @@ import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListCountUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedMoviesCountUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.domain.usecase.userWatchedMedia.ObserveUserWatchedMediaUseCase
@@ -57,6 +59,8 @@ class HomeViewModelTest {
     val observeContinueWatchingUseCase: ObserveUserWatchedMediaUseCase = mockk()
     val getContentRestrictionUseCase: GetContentRestrictionUseCase = mockk()
     val getMovieGenresUseCase: GetMovieGenresUseCase = mockk()
+    val getSavedMoviesCountUseCase: GetSavedMoviesCountUseCase = mockk()
+    val getSavedListCountUseCase: GetSavedListCountUseCase = mockk()
     private lateinit var viewModel: HomeViewModel
 
     private val testDispatcher = StandardTestDispatcher()
@@ -88,6 +92,8 @@ class HomeViewModelTest {
             getAppLanguageUseCase = getAppLanguageUseCase,
             getMovieGenresUseCase = getMovieGenresUseCase,
             getContentRestrictionUseCase = getContentRestrictionUseCase,
+            getSavedMoviesCountUseCase = getSavedMoviesCountUseCase,
+            getSavedListCountUseCase = getSavedListCountUseCase,
             ioDispatcher = testDispatcher
         )
     }
@@ -438,9 +444,11 @@ class HomeViewModelTest {
                 id = 3, contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE
             )
         )
+        advanceUntilIdle()
 
         viewModel.uiState.test {
-            val state = awaitItem()
+            val state =
+                awaitItemWhere { viewModel.uiState.value.addToListBottomSheetState.selectedItemId != 0L }
             assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(3)
         }
     }
