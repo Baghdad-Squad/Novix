@@ -22,7 +22,7 @@ class GetTvShowReviewsUseCaseTest {
                 id = "tv_rev1",
                 authorName = "TVFanatic",
                 authorAvatarUrl = "https://example.com/tv_avatar1.jpg",
-                contentTitle = "Bingeworthy!",
+                authorUsername = "Bingeworthy!",
                 reviewText = "Couldn't stop watching this amazing series.",
                 postedDate = LocalDate(2023, 9, 15),
                 rating = 9.5
@@ -31,7 +31,7 @@ class GetTvShowReviewsUseCaseTest {
                 id = "tv_rev2",
                 authorName = "SeriesCritic",
                 authorAvatarUrl = "https://example.com/tv_avatar2.jpg",
-                contentTitle = "Strong First Season",
+                authorUsername = "Strong First Season",
                 reviewText = "Excellent character development throughout the season.",
                 postedDate = LocalDate(2023, 9, 20),
                 rating = 8.5
@@ -42,7 +42,7 @@ class GetTvShowReviewsUseCaseTest {
             id = "tv_rev3",
             authorName = "Anonymous",
             authorAvatarUrl = "",
-            contentTitle = "",
+            authorUsername = "",
             reviewText = "It was okay",
             postedDate = LocalDate(2023, 9, 25),
             rating = 5.0
@@ -64,7 +64,7 @@ class GetTvShowReviewsUseCaseTest {
 
         assertThat(result).hasSize(2)
         assertThat(result[0].authorName).isEqualTo("TVFanatic")
-        assertThat(result[1].contentTitle).isEqualTo("Strong First Season")
+        assertThat(result[1].authorUsername).isEqualTo("Strong First Season")
     }
 
     @Test
@@ -101,7 +101,7 @@ class GetTvShowReviewsUseCaseTest {
 
         assertThat(result).hasSize(1)
         assertThat(result[0].authorAvatarUrl).isEmpty()
-        assertThat(result[0].contentTitle).isEmpty()
+        assertThat(result[0].authorUsername).isEmpty()
     }
 
     @Test
@@ -121,14 +121,14 @@ class GetTvShowReviewsUseCaseTest {
     fun `invoke() should return season-based reviews`() = runTest {
         val tvId = 7L
         val seasonReview = sampleReviews[0].copy(
-            contentTitle = "Season 2 Review",
+            authorUsername = "Season 2 Review",
             reviewText = "The second season improved upon the first in every way."
         )
         coEvery { tvShowRepository.getTvShowReviews(tvId) } returns listOf(seasonReview)
 
         val result = getTvShowReviewsUseCase(tvId)
 
-        assertThat(result[0].contentTitle).isEqualTo("Season 2 Review")
+        assertThat(result[0].authorUsername).isEqualTo("Season 2 Review")
     }
 
     @Test

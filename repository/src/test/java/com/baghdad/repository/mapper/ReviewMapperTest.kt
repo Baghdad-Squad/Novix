@@ -12,7 +12,7 @@ class ReviewMapperTest {
     fun `should map correctly to entity when ReviewDto contains valid data`() {
         val expected = Review(
             id = REVIEW_DTO.id,
-            contentTitle = REVIEW_DTO.contentTitle,
+            authorUsername = REVIEW_DTO.authorUsername,
             authorName = REVIEW_DTO.authorName,
             rating = REVIEW_DTO.rating,
             authorAvatarUrl = REVIEW_DTO.authorAvatarUrl,
@@ -36,7 +36,7 @@ class ReviewMapperTest {
     fun `should map ReviewDto contentTitle to entity contentTitle correctly`() {
         val result = REVIEW_DTO.toEntity()
 
-        assertThat(result.contentTitle).isEqualTo(REVIEW_DTO.contentTitle)
+        assertThat(result.authorUsername).isEqualTo(REVIEW_DTO.authorUsername)
     }
 
     @Test
@@ -84,10 +84,10 @@ class ReviewMapperTest {
 
     @Test
     fun `should map empty ReviewDto contentTitle to entity contentTitle correctly`() {
-        val dto = REVIEW_DTO.copy(contentTitle = "")
+        val dto = REVIEW_DTO.copy(authorUsername = "")
         val result = dto.toEntity()
 
-        assertThat(result.contentTitle).isEqualTo("")
+        assertThat(result.authorUsername).isEqualTo("")
     }
 
     @Test

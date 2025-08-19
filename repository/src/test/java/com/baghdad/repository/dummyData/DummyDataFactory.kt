@@ -127,7 +127,7 @@ object DummyDataFactory {
 
         val REVIEW_DTO = ReviewDto(
             id = "review123",
-            contentTitle = "Great movie! Highly recommended.",
+            authorUsername = "Great movie! Highly recommended.",
             authorName = "John Reviewer",
             rating = 9.0,
             authorAvatarUrl = "https://example.com/avatar.jpg",
@@ -337,7 +337,7 @@ object DummyDataFactory {
 
         fun createMockReviewDto() = ReviewDto(
             id = "review123",
-            contentTitle = "Great movie! Highly recommended.",
+            authorUsername = "Great movie! Highly recommended.",
             authorName = "John Reviewer",
             rating = 9.0,
             authorAvatarUrl = "https://example.com/avatar.jpg",
@@ -347,7 +347,7 @@ object DummyDataFactory {
 
         fun createMockReview() = Review(
             id = "review123",
-            contentTitle = "Great movie! Highly recommended.",
+            authorUsername = "Great movie! Highly recommended.",
             authorName = "John Reviewer",
             rating = 9.0,
             authorAvatarUrl = "https://example.com/avatar.jpg",

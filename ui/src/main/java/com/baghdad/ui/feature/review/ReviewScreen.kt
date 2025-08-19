@@ -105,7 +105,7 @@ private fun ReviewContent(
                             authorName = review.authorName,
                             reviewDate = review.postedDate,
                             authorAvatar = review.authorAvatarUrl,
-                            contentName = review.contentTitle,
+                            contentName = review.authorUsername,
                             isExpanded = review.isExpanded,
                             onExpandedChange = {listener.onExpandedTextChange(review.id) }
                         )

@@ -9,7 +9,7 @@ fun ReviewDto.toEntity(): Review {
         id = id,
         authorName = authorName,
         authorAvatarUrl = authorAvatarUrl,
-        contentTitle = contentTitle,
+        authorUsername = authorUsername,
         rating = rating,
         reviewText = reviewText,
         postedDate = LocalDate.parse(input = postedDate.substring(0, 10))

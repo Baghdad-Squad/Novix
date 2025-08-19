@@ -1028,7 +1028,7 @@ class RemoteTvShowDataSourceImplTest {
             id = REVIEW_STRING_ID,
             authorName = REVIEW_AUTHOR,
             authorAvatarUrl = "https://image.tmdb.org/t/p/w500$AVATAR_PATH",
-            contentTitle = REVIEW_USERNAME,
+            authorUsername = REVIEW_USERNAME,
             rating = REVIEW_RATING,
             reviewText = REVIEW_CONTENT,
             postedDate = REVIEW_CREATED_AT

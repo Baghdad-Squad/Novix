@@ -428,6 +428,7 @@ class RemoteMovieDataSourceImplTest {
         )
 
         val reviewResponse = ReviewsResponse.ReviewResponse(
+            author = AUTHOR_NAME,
             id = REVIEW_STRING_ID,
             authorDetails = reviewAuthorDetails,
             content = REVIEW_CONTENT,
@@ -435,6 +436,7 @@ class RemoteMovieDataSourceImplTest {
         )
 
         val reviewResponseWithNulls = ReviewsResponse.ReviewResponse(
+            author = null,
             id = null,
             authorDetails = null,
             content = null,
@@ -577,7 +579,7 @@ class RemoteMovieDataSourceImplTest {
             id = REVIEW_STRING_ID,
             authorName = AUTHOR_NAME,
             authorAvatarUrl = "https://image.tmdb.org/t/p/w500$AVATAR_PATH",
-            contentTitle = AUTHOR_USERNAME,
+            authorUsername = AUTHOR_USERNAME,
             rating = AUTHOR_RATING,
             reviewText = REVIEW_CONTENT,
             postedDate = CREATED_AT

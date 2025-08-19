@@ -17,7 +17,7 @@ private fun ReviewsResponse.ReviewResponse.toReviewDto(): ReviewDto {
         id = id.orEmpty(),
         authorName = author.takeIf { !it.isNullOrBlank() }.orEmpty(),
         authorAvatarUrl = getImageUrlFromPath(authorDetails?.avatarPath),
-        contentTitle = authorDetails?.username.orEmpty(),
+        authorUsername = authorDetails?.username.orEmpty(),
         rating = authorDetails?.rating ?: 0.0,
         reviewText = content.orEmpty(),
         postedDate = createdAt.takeUnless { it.isNullOrBlank() } ?: "0001-01-01",

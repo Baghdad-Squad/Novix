@@ -66,7 +66,7 @@ class GetMovieReviewsUseCaseTest {
 
         assertThat(result).hasSize(1)
         assertThat(result[0].authorAvatarUrl).isEmpty()
-        assertThat(result[0].contentTitle).isEmpty()
+        assertThat(result[0].authorUsername).isEmpty()
     }
 
     @Test
@@ -133,7 +133,7 @@ class GetMovieReviewsUseCaseTest {
                 id = "rev1",
                 authorName = "MovieFan123",
                 authorAvatarUrl = "https://example.com/avatar1.jpg",
-                contentTitle = "Great Movie!",
+                authorUsername = "Great Movie!",
                 reviewText = "Amazing plot and character development.",
                 postedDate = kotlinx.datetime.LocalDate(2023, 10, 1),
                 rating = 9.0
@@ -142,7 +142,7 @@ class GetMovieReviewsUseCaseTest {
                 id = "rev2",
                 authorName = "CriticExpert",
                 authorAvatarUrl = "https://example.com/avatar2.jpg",
-                contentTitle = "Solid Performance",
+                authorUsername = "Solid Performance",
                 reviewText = "Solid performance by the lead actor, but the story was a bit predictable.",
                 postedDate = kotlinx.datetime.LocalDate(2023, 10, 2),
                 rating = 8.0
@@ -153,7 +153,7 @@ class GetMovieReviewsUseCaseTest {
             id = "rev3",
             authorName = "Anon",
             authorAvatarUrl = "",
-            contentTitle = "",
+            authorUsername = "",
             reviewText = "Okay",
             postedDate = kotlinx.datetime.LocalDate(2023, 10, 3),
             rating = 5.0
