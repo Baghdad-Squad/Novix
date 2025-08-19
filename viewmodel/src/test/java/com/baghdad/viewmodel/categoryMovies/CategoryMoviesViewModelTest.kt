@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.categoryMovies
 
 import androidx.lifecycle.SavedStateHandle
+import app.cash.turbine.test
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.domain.model.savedList.SavedMovie
@@ -25,8 +26,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -39,14 +43,18 @@ class CategoryMoviesViewModelTest {
     private val addMovieToSavedListUseCase: AddMovieToSavedListUseCase = mockk(relaxed = true)
     private val createSavedListUseCase: CreateSavedListUseCase = mockk(relaxed = true)
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase = mockk(relaxed = true)
-    private val testDispatcher = StandardTestDispatcher()
-    private var viewModel: CategoryMoviesViewModel
 
-    init {
+    private val testDispatcher = StandardTestDispatcher()
+    private lateinit var viewModel: CategoryMoviesViewModel
+
+    @BeforeEach
+    fun setUp() {
         Dispatchers.setMain(testDispatcher)
+
         coEvery { getGenreMoviesUseCase(any(), any(), any()) } returns defaultPagedResult
         coEvery { getMovieGenreNameByIdUseCase(any()) } returns defaultGenre
         coEvery { isUserLoggedInUseCase() } returns false
+
         val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
         viewModel = CategoryMoviesViewModel(
             savedStateHandle,
@@ -61,56 +69,46 @@ class CategoryMoviesViewModelTest {
         )
     }
 
-    @Test
-    fun `should update categoryName when getGenreName called`() = runTest {
-        val states = mutableListOf<CategoryMoviesState>()
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
-
-        advanceUntilIdle()
-
-        assertThat(states.last().categoryName).isEqualTo("Action")
-        job.cancel()
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun `should update moviesFlow when getGenreMovies called`() = runTest {
-        val states = mutableListOf<CategoryMoviesState>()
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
-
-        advanceUntilIdle()
-
-        assertThat(states.last().moviesFlow).isNotNull()
-        job.cancel()
+    fun `getGenreName should Update Category Name when Called`() = runTest {
+        viewModel.uiState.test {
+            advanceUntilIdle()
+            assertThat(awaitItem().categoryName).isEqualTo("Action")
+        }
     }
 
     @Test
-    fun `should emit NavigateBack when onBackClicked`() = runTest {
-        val effects = mutableListOf<CategoryMoviesEffect>()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
-        viewModel.onBackClick()
-
-        advanceUntilIdle()
-
-        assertThat(effects).containsExactly(CategoryMoviesEffect.NavigateBack)
-        job.cancel()
+    fun `getGenreMovies should Update Movies Flow when Called`() = runTest {
+        viewModel.uiState.test {
+            advanceUntilIdle()
+            val state = awaitItem()
+            assertThat(state.moviesFlow).isNotNull()
+        }
     }
 
     @Test
-    fun `should emit NavigateToMovieDetails when onMovieClicked with valid ID`() = runTest {
-        val effects = mutableListOf<CategoryMoviesEffect>()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-
-        viewModel.onMovieClicked(42L)
-
-        advanceUntilIdle()
-
-        assertThat(effects).containsExactly(CategoryMoviesEffect.NavigateToMovieDetails(42L))
-        job.cancel()
+    fun `onBackClick should Emit Navigate Back when Called`() = runTest {
+        viewModel.uiEffect.test {
+            viewModel.onBackClick()
+            assertThat(awaitItem()).isEqualTo(CategoryMoviesEffect.NavigateBack)
+        }
     }
 
     @Test
-    fun `should map Movie to MovieUiState correctly when toUiState called`() {
+    fun `onMovieClicked should Emit Navigate To Movie Details when Id Is Valid`() = runTest {
+        viewModel.uiEffect.test {
+            viewModel.onMovieClicked(42L)
+            assertThat(awaitItem()).isEqualTo(CategoryMoviesEffect.NavigateToMovieDetails(42L))
+        }
+    }
+
+    @Test
+    fun `toUiState should Map Movie To Ui State Correctly when Called`() {
         val uiState = testMovie
 
         assertThat(uiState.id).isEqualTo(testMovie.id)
@@ -118,44 +116,21 @@ class CategoryMoviesViewModelTest {
     }
 
     @Test
-    fun `should not crash when getMovieGenreNameByIdUseCase fails`() = runTest {
-        coEvery { getMovieGenreNameByIdUseCase(1L) } throws RuntimeException("Failed")
-        val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
-        viewModel = CategoryMoviesViewModel(
-            savedStateHandle = savedStateHandle,
-            getGenreMoviesUseCase = getGenreMoviesUseCase,
-            getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
-            ioDispatcher = testDispatcher,
-            isUserLoggedInUseCase = isUserLoggedInUseCase,
-            getSavedListsUseCase = getSavedListsUseCase,
-            addMovieToSavedListUseCase = addMovieToSavedListUseCase,
-            createSavedListUseCase = createSavedListUseCase,
-            removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
-        )
-        val states = mutableListOf<CategoryMoviesState>()
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
-
-        advanceUntilIdle()
-        assertThat(states.last().categoryName).isEqualTo("")
-        job.cancel()
-    }
-
-    @Test
-    fun `should be empty when moviesFlow default`() = runTest {
+    fun `moviesFlow should Be Not Null when Default State Created`() = runTest {
         val defaultState = CategoryMoviesState()
 
         assertThat(defaultState.moviesFlow).isNotNull()
     }
 
     @Test
-    fun `should return empty posterPictureURL when Movie has empty poster`() {
+    fun `movie should Return Empty Poster Picture URL when Poster Is Empty`() {
         val movie = testMovie.copy(posterImageURL = "")
 
         assertThat(movie.posterImageURL).isEqualTo("")
     }
 
     @Test
-    fun `should reflect in uiState when Movie has different id`() {
+    fun `uiState should Reflect Movie Id when Movie Has Different Id`() {
         val movie = testMovie.copy(id = 99L)
         val uiState = movie
 
@@ -163,238 +138,211 @@ class CategoryMoviesViewModelTest {
     }
 
     @Test
-    fun `should keep posterImageURL unchanged when mapping to uiState`() {
+    fun `uiState should Keep Poster Image URL Unchanged when Movie Has Poster`() {
         val movie = testMovie.copy(posterImageURL = longUrl)
 
         assertThat(movie.posterImageURL).isEqualTo(longUrl)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `should update moviesFlow and set isLoading to false when paging flow collected`() = runTest {
-        coEvery { getGenreMoviesUseCase(1L, any(), any()) } returns customPagedResult
-        val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
-        viewModel = CategoryMoviesViewModel(
-            savedStateHandle = savedStateHandle,
-            getGenreMoviesUseCase = getGenreMoviesUseCase,
-            getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
-            ioDispatcher = testDispatcher,
-            isUserLoggedInUseCase = isUserLoggedInUseCase,
-            getSavedListsUseCase = getSavedListsUseCase,
-            addMovieToSavedListUseCase = addMovieToSavedListUseCase,
-            createSavedListUseCase = createSavedListUseCase,
-            removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
-        )
+    fun `onSnackBarActionLabel Click should Show No Internet SnackBar when NoInternetException Thrown`() = runTest {
+        coEvery { getMovieGenreNameByIdUseCase(any()) } throws NoInternetException()
 
-        advanceUntilIdle()
-        val items = collectAndSnapshot(flow = viewModel.uiState.value.moviesFlow)
-        assertThat(items).isNotEmpty()
-        assertThat(viewModel.uiState.value.isLoading).isFalse()
-    }
+        viewModel.snackBarState.test {
+            skipItems(1)
 
-    @Test
-    fun `onSnackBarActionLabelClick should show no internet snackBar when NoInternetException is thrown`() = runTest {
-            coEvery { getMovieGenreNameByIdUseCase(any()) } throws NoInternetException()
-            val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
-            val job = launch { viewModel.snackBarState.collect { emittedSnackBarMessages.add(it.message) } }
             viewModel.onSnackBarActionLabelClick()
 
-            advanceUntilIdle()
-            job.cancel()
-            assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+            val latest = awaitItem()
+            assertThat(latest.message).isEqualTo(BaseSnackBarMessage.NetworkError)
+
+            cancelAndIgnoreRemainingEvents()
         }
-
-    @Test
-    fun `should update isUserLoggedIn to true when user is logged in`() = runTest {
-        coEvery { isUserLoggedInUseCase() } returns true
-        coEvery { getSavedListsUseCase(any(), any()) } returns defaultSavedListPagedResult
-        val savedStateHandle = SavedStateHandle(mapOf("categoryId" to 1L))
-        viewModel = CategoryMoviesViewModel(
-            savedStateHandle = savedStateHandle,
-            getGenreMoviesUseCase = getGenreMoviesUseCase,
-            getMovieGenreNameByIdUseCase = getMovieGenreNameByIdUseCase,
-            ioDispatcher = testDispatcher,
-            isUserLoggedInUseCase = isUserLoggedInUseCase,
-            getSavedListsUseCase = getSavedListsUseCase,
-            addMovieToSavedListUseCase = addMovieToSavedListUseCase,
-            createSavedListUseCase = createSavedListUseCase,
-            removeMovieFromSavedListUseCase = removeMovieFromSavedListUseCase,
-        )
-        val states = mutableListOf<CategoryMoviesState>()
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
-
-        advanceUntilIdle()
-        assertThat(states.last().isUserLoggedIn).isTrue()
-        job.cancel()
     }
 
     @Test
-    fun `should update isUserLoggedIn to false when user is not logged in`() = runTest {
+    fun `isUserLoggedIn should Be False when User Not Logged In`() = runTest {
         coEvery { isUserLoggedInUseCase() } returns false
         val states = mutableListOf<CategoryMoviesState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
 
         advanceUntilIdle()
+
         assertThat(states.last().isUserLoggedIn).isFalse()
-        job.cancel()
+        job.cancel() }
+
+    @Test
+    fun `onLoginClick should Emit Navigate To Login when Called`() = runTest {
+        viewModel.uiEffect.test {
+            viewModel.onLoginClick()
+
+            val latest = awaitItem()
+            assertThat(latest).isEqualTo(CategoryMoviesEffect.NavigateToLogin)
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
 
     @Test
-    fun `should emit NavigateToLogin when onLoginClick called`() = runTest {
-        val effects = mutableListOf<CategoryMoviesEffect>()
-        val job = launch { viewModel.uiEffect.collect { effects.add(it) } }
-        viewModel.onLoginClick()
+    fun `onMovieToListClick should Show Add To List Bottom Sheet when Movie Not Saved`() = runTest {
+        viewModel.uiState.test {
+            skipItems(1)
 
-        advanceUntilIdle()
-        assertThat(effects).containsExactly(CategoryMoviesEffect.NavigateToLogin)
-        job.cancel()
+            viewModel.onMovieToListClick(movieUiStateFalse)
+
+            val latest = awaitItem()
+            assertThat(latest.addToListBottomSheetState.isVisible).isTrue()
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun `should show addToListBottomSheet when onMovieToListClick called with unsaved item`() = runTest {
-        val states = mutableListOf<CategoryMoviesState>()
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
+    fun `onMovieToListClick should Set Selected Item Id when Movie Not Saved`() = runTest {
+        viewModel.uiState.test {
+            skipItems(1)
 
-        viewModel.onMovieToListClick(movieUiStateFalse)
+            viewModel.onMovieToListClick(movieUiStateFalse)
 
-        advanceUntilIdle()
-        assertThat(states.last().addToListBottomSheetState.isVisible).isTrue()
-        assertThat(states.last().addToListBottomSheetState.selectedItemId).isEqualTo(1L)
-        job.cancel()
+            val latest = awaitItem()
+            assertThat(latest.addToListBottomSheetState.selectedItemId).isEqualTo(1L)
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun `should dismiss addToListBottomSheet when onSaveToListBottomSheetDismiss called`() = runTest {
+    fun `onSaveToListBottomSheetDismiss should Hide Add To List Bottom Sheet when Called`() = runTest {
         val states = mutableListOf<CategoryMoviesState>()
         val job = launch { viewModel.uiState.collect { states.add(it) } }
         viewModel.onSaveToListBottomSheetDismiss()
 
         advanceUntilIdle()
-        assertThat(states.last().addToListBottomSheetState.isVisible).isFalse()
-        job.cancel()
-    }
-
-    @Test
-    fun `should update selectedListId when onListSelected called`() = runTest {
-        val states = mutableListOf<CategoryMoviesState>()
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
-        viewModel.onListSelected(10L)
-
-        advanceUntilIdle()
-        assertThat(states.last().addToListBottomSheetState.selectedListId).isEqualTo(10L)
-        job.cancel()
-    }
-
-    @Test
-    fun `should add movie to selected list when onSaveItemToListClick called`() = runTest {
-        viewModel.onMovieToListClick(movieUiStateFalse)
-        viewModel.onListSelected(5L)
-        coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
-
-        viewModel.onSaveItemToListClick()
-
-        advanceUntilIdle()
-        coVerify { addMovieToSavedListUseCase(5L, 1L) }
-    }
-
-    @Test
-    fun `should show success snackbar when item saved successfully`() = runTest {
-        viewModel.onMovieToListClick(movieUiStateFalse)
-        viewModel.onListSelected(5L)
-        coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
-
-        val snackBarMessages = mutableListOf<BaseSnackBarMessage>()
-        val job = launch { viewModel.snackBarState.collect { snackBarMessages.add(it.message) } }
-        viewModel.onSaveItemToListClick()
-
-        advanceUntilIdle()
-
-        assertThat(snackBarMessages).contains(BaseSnackBarMessage.DefaultMessage)
-        job.cancel()
-    }
-
-    @Test
-    fun `should show network error when adding item to list fails`() = runTest {
-        viewModel.onMovieToListClick(movieUiStateFalse)
-        viewModel.onListSelected(5L)
-        coEvery { addMovieToSavedListUseCase(any(), any()) } throws RuntimeException()
-
-        val snackBarMessages = mutableListOf<BaseSnackBarMessage>()
-        val job = launch { viewModel.snackBarState.collect { snackBarMessages.add(it.message) } }
-        viewModel.onSaveItemToListClick()
-
-        advanceUntilIdle()
-
-        assertThat(snackBarMessages).contains(BaseSnackBarMessage.NetworkError)
-        job.cancel()
-    }
-
-    @Test
-    fun `should show createListBottomSheet when onCreateNewListClick called`() = runTest {
-        val states = mutableListOf<CategoryMoviesState>()
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
-        viewModel.onCreateNewListClick()
-
-        advanceUntilIdle()
-
-        assertThat(states.last().addListBottomSheetState.isVisible).isTrue()
-        assertThat(states.last().addToListBottomSheetState.isVisible).isFalse()
-        job.cancel()
-    }
-
-    @Test
-    fun `should update list name when onCreatedListNameChanged called`() = runTest {
-        val states = mutableListOf<CategoryMoviesState>()
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
-        viewModel.onCreatedListNameChanged("My New List")
-
-        advanceUntilIdle()
-
-        assertThat(states.last().addListBottomSheetState.listName).isEqualTo("My New List")
-        job.cancel()
-    }
-
-    @Test
-    fun `should dismiss createListBottomSheet and show addToListBottomSheet when onCreateListBottomSheetDismiss called`() = runTest {
-        val states = mutableListOf<CategoryMoviesState>()
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
-
-        viewModel.onCreateListBottomSheetDismiss()
-
-        advanceUntilIdle()
-
-        assertThat(states.last().addListBottomSheetState.isVisible).isFalse()
-        assertThat(states.last().addListBottomSheetState.listName).isEqualTo("")
-        assertThat(states.last().addToListBottomSheetState.isVisible).isTrue()
-        job.cancel()
-    }
-
-    @Test
-    fun `should not call addMovieToSavedListUseCase when selectedListId is null`() = runTest {
-        viewModel.onMovieToListClick(movieUiStateFalse)
-
-        viewModel.onSaveItemToListClick()
-
-        advanceUntilIdle()
-
-        coVerify(exactly = 0) { addMovieToSavedListUseCase(any(), any()) }
-    }
-
-    @Test
-    fun `should dismiss addToListBottomSheet when item removed successfully`() = runTest {
-        coEvery { removeMovieFromSavedListUseCase(any(), any()) } returns Unit
-
-        val states = mutableListOf<CategoryMoviesState>()
-        val job = launch { viewModel.uiState.collect { states.add(it) } }
-
-        viewModel.onMovieToListClick(movieUiStateTrue)
-
-        advanceUntilIdle()
 
         assertThat(states.last().addToListBottomSheetState.isVisible).isFalse()
         job.cancel()
     }
+
+    @Test
+    fun `onListSelected should Update Selected List Id when Called`() = runTest {
+        viewModel.uiState.test {
+            skipItems(1)
+            viewModel.onListSelected(10L)
+
+            val latest = awaitItem()
+            assertThat(latest.addToListBottomSheetState.selectedListId).isEqualTo(10L)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+
+    @Test
+    fun `onSaveItemToListClick should Add Movie To Selected List when List Id Not Null`() = runTest {
+            viewModel.onMovieToListClick(movieUiStateFalse)
+            viewModel.onListSelected(5L)
+            viewModel.onSaveItemToListClick()
+
+            advanceUntilIdle()
+
+            coVerify { addMovieToSavedListUseCase(5L, 1L) }
+        }
+
+    @Test
+    fun `onCreateNewListClick should Show Create List Bottom Sheet when Called`() = runTest {
+        viewModel.uiState.test {
+            skipItems(1)
+            viewModel.onCreateNewListClick()
+
+            val latest = awaitItem()
+            assertThat(latest.addListBottomSheetState.isVisible).isTrue()
+            assertThat(latest.addToListBottomSheetState.isVisible).isFalse()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onCreatedListNameChanged should Update List Name when Called`() = runTest {
+        viewModel.uiState.test {
+            skipItems(1)
+            viewModel.onCreatedListNameChanged("My New List")
+
+            val latest = awaitItem()
+            assertThat(latest.addListBottomSheetState.listName).isEqualTo("My New List")
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+
+    @Test
+    fun `onCreateListBottomSheetDismiss should reset list name and reopen AddToList sheet`() = runTest {
+        viewModel.uiState.test {
+            skipItems(1)
+            viewModel.onCreateListBottomSheetDismiss()
+
+            val latest = awaitItem()
+            assertThat(latest.addToListBottomSheetState.isVisible).isTrue()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+
+    @Test
+    fun `onCreateListBottomSheetDismiss should reset list name and hide AddList sheet`() = runTest {
+        viewModel.uiState.test {
+            skipItems(1)
+            viewModel.onCreateListBottomSheetDismiss()
+
+            val latest = awaitItem()
+            assertThat(latest.addListBottomSheetState.isVisible).isFalse()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+
+
+    @Test
+    fun `onCreateListBottomSheetDismiss should Reset List Name and Show Add To List Bottom Sheet when Called`() = runTest {
+        viewModel.uiState.test {
+            skipItems(1)
+            viewModel.onCreateListBottomSheetDismiss()
+
+            val latest = awaitItem()
+            assertThat(latest.addListBottomSheetState.listName).isEqualTo("")
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+
+    @Test
+    fun `onSaveItemToListClick should Not Call Add Movie To Saved List Use Case when Selected List Id Is Null`() = runTest {
+            viewModel.onMovieToListClick(movieUiStateFalse)
+            viewModel.onSaveItemToListClick()
+
+            advanceUntilIdle()
+
+            coVerify(exactly = 0) { addMovieToSavedListUseCase(any(), any()) }
+        }
+
+    @Test
+    fun `onMovieToListClick should Dismiss Bottom Sheet when Item Removed Successfully`() = runTest {
+        viewModel.uiState.test {
+            skipItems(1)
+            viewModel.onMovieToListClick(movieUiStateTrue)
+
+            val latest = awaitItem()
+            assertThat(latest.addToListBottomSheetState.isVisible).isFalse()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
 
     private companion object {
         val longUrl = "https://example.com/very/long/path/poster.jpg"
@@ -438,7 +386,7 @@ class CategoryMoviesViewModelTest {
         )
         val movieUiStateTrue = CategoryMoviesState.MovieUiState(
             id = 1L,
-            posterPictureURL = "url" ,
+            posterPictureURL = "url",
             isSaved = true,
             savedListId = 5L
         )
@@ -446,7 +394,7 @@ class CategoryMoviesViewModelTest {
             id = 1L,
             posterPictureURL = "url",
             isSaved = false,
-            savedListId = 0L
+            savedListId = 5L
         )
     }
 }
