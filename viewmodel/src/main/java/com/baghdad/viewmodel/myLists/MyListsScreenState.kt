@@ -10,6 +10,7 @@ data class MyListsScreenState(
     val isLoading: Boolean = true,
     val savedLists: Flow<PagingData<SavedListUiState>> = flowOf(),
     val isUsedLoggedIn: Boolean = true,
+    val shouldShowDeleteSuccessSnackBar: Boolean = false,
     val addListBottomSheetState: AddListBottomSheetState = AddListBottomSheetState(),
 ) : BaseUiState {
     data class SavedListUiState(
