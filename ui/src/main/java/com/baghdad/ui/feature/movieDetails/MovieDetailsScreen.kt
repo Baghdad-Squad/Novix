@@ -3,7 +3,6 @@ package com.baghdad.ui.feature.movieDetails
 import android.content.Context
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +46,7 @@ import com.baghdad.design_system.component.SaveIcon
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.scaffold.Scaffold
+import com.baghdad.design_system.modifier.blockClickThrough
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -95,8 +95,7 @@ fun MovieDetailsScreen(
         listener = viewModel,
         state = state,
         snackBarState = snackBarState,
-
-        )
+    )
 }
 
 private fun handleEffect(
@@ -155,16 +154,6 @@ private fun MovieDetailsContent(
     val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
     val lazyState = rememberLazyStaggeredGridState()
     var shouldShowBackground by remember { mutableStateOf(false) }
-
-    val backgroundAlpha by animateFloatAsState(
-        targetValue = if (shouldShowBackground) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 400,
-            easing = FastOutSlowInEasing
-        ),
-        label = stringResource(R.string.background_alpha)
-    )
-
     val animatedColor by animateColorAsState(
         targetValue = if (shouldShowBackground)
             Theme.color.surface
@@ -220,10 +209,8 @@ private fun MovieDetailsContent(
 
         Box(
             modifier = Modifier
-                .background(Theme.color.surface.copy(backgroundAlpha))
                 .fillMaxSize()
                 .navigationBarsPadding()
-
         ) {
 
             LazyVerticalStaggeredGrid(
@@ -232,7 +219,7 @@ private fun MovieDetailsContent(
                 modifier = Modifier.fillMaxSize(),
                 verticalItemSpacing = 12.dp,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp)
             ) {
 
                 item(span = StaggeredGridItemSpan.FullLine) {
@@ -299,7 +286,8 @@ private fun MovieDetailsContent(
                     .fillMaxWidth()
                     .background(animatedColor)
                     .zIndex(1f)
-                    .padding(top = 56.dp, bottom = 8.dp),
+                    .padding(top = 56.dp, bottom = 8.dp)
+                    .blockClickThrough(),
                 onGoBackClick = listener::onBackClick,
                 content = {
                     SaveIcon(

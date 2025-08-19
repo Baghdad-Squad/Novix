@@ -29,13 +29,10 @@ fun SavedMovie.toMovieDetailsStateUpdate(): MovieDetailsState.() -> MovieDetails
         duration = movie.runtimeMinutes,
         posterImageURL = movie.posterImageURL,
         date = movie.releaseDate.toDDMMYYYYFormat(),
-        isSaved = isSaved,
-        savedListId = listId ?: -1L,
+        isSaved = this@toMovieDetailsStateUpdate.isSaved,
+        savedListId = this@toMovieDetailsStateUpdate.listId ?: -1L,
         categories = movie.genres.toCategoryUiStateList(),
         isHasTrailer = movie.trailerURL.isNotEmpty(),
-        userRating = userRating,
-        isRated = userRating != 0,
-        isUserLoggedIn = isUserLoggedIn,
         selectedMovieId = movie.id
     )
 }

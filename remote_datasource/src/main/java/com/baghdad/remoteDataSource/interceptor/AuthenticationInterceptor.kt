@@ -11,7 +11,7 @@ import javax.inject.Inject
 class AuthenticationInterceptor
     @Inject
     constructor(
-        private val authorizationToken: String,
+        private val accessToken: String,
         private val sessionDataSource: SessionDataSource,
     ) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
@@ -43,7 +43,7 @@ class AuthenticationInterceptor
                         if (shouldAttachAuthHeader) {
                             addHeader(
                                 AUTHORIZATION_HEADER_KEY,
-                                "$AUTHORIZATION_HEADER_PREFIX$authorizationToken",
+                                "$AUTHORIZATION_HEADER_PREFIX$accessToken",
                             )
                         }
 

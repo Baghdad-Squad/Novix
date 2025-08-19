@@ -8,10 +8,13 @@ fun Genre.toContinueWatchingUiState() = ContinueWatchingState.GenreUiState(
     name = name,
 )
 
-fun UserWatchedMedia.toContinueWatchingUiState() = ContinueWatchingState.ContinueWatchingMovieUiState(
+fun UserWatchedMedia.toContinueWatchingUiState() =
+    ContinueWatchingState.ContinueWatchingItemUiState(
     id = contentId,
     posterPictureURL = contentImageUrl,
     isSaved = isSaved,
     savedListId = listId ?: -1L,
-    contentType = ContinueWatchingState.ContinueWatchingMovieUiState.ContentType.valueOf(contentType.name)
+        contentType = ContinueWatchingState.ContinueWatchingItemUiState.ContentType.valueOf(
+            contentType.name
+        )
 )

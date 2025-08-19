@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.component.BackgroundBlur
 import com.baghdad.design_system.component.appBar.TopAppBar
 import com.baghdad.design_system.component.scaffold.Scaffold
+import com.baghdad.design_system.modifier.blockClickThrough
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.R
 import com.baghdad.ui.base.ObserveAsEffect
@@ -178,7 +179,8 @@ private fun EpisodeDetailsContent(
                     .background(animatedColor)
                     .zIndex(1f)
                     .align(Alignment.TopCenter)
-                    .padding(top = 56.dp, bottom = 8.dp),
+                    .padding(top = 56.dp, bottom = 8.dp)
+                    .blockClickThrough(),
             onGoBackClick = listener::onBackClick
         )
     }
