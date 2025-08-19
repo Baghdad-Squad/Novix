@@ -231,7 +231,7 @@ private fun ActorDetailsContent(
                         title = stringResource(R.string.top_tv_shows_picks),
                         items = uiState.topTvShowsPicks,
                         imageUrl = { it.posterPictureURL },
-                        isSaveVisible = false,
+                        isSaveVisible = { false },
                         onCardClick = { listener.onTvShowCardClick(it.id) },
                         isSaved = { false },
                         isShowAllVisible = uiState.topTvShowsPicks.size >= 10,

@@ -79,7 +79,7 @@ class ContinueWatchingViewModel @Inject constructor(
                     pageSize = DEFAULT_PAGE_SIZE
                 )
             },
-            onInitialLoadError = ::onGetGenresError,
+            onInitialLoadError = ::onError,
             pageSize = DEFAULT_PAGE_SIZE,
             mapEntityToUiState = SavedList::toUiState,
             onFlowCreated = ::onGetSavedListFlowCreated,
@@ -101,7 +101,7 @@ class ContinueWatchingViewModel @Inject constructor(
         tryToCollect(
             flowProvider = ::onFetchGenres,
             onNewValue = ::onGenresFetched,
-            onError = ::onGetGenresError,
+            onError = ::onError,
             dispatcher = defaultDispatcher
         )
     }
@@ -113,7 +113,7 @@ class ContinueWatchingViewModel @Inject constructor(
             getContinueWatchingTvShowGenres.invoke()
     }
 
-    private fun onGetGenresError(throwable: Throwable) {
+    private fun onError(throwable: Throwable) {
         when (throwable) {
             is NoInternetException -> showNoInternetSnackBar()
             else -> handleError(throwable = throwable)
@@ -252,6 +252,7 @@ class ContinueWatchingViewModel @Inject constructor(
         }
         getGenres()
         getMedia(genreId)
+        getUserSavedLists()
     }
 
     override fun onMovieSaveClick(movie: ContinueWatchingState.ContinueWatchingItemUiState) {
@@ -314,6 +315,11 @@ class ContinueWatchingViewModel @Inject constructor(
     override fun onSnackBarActionClick() {
         hideSnackBar()
         getGenres()
+        getMedia(
+            if (currentState.selectedMediaTabIsMovie) currentState.selectedMovieGenreId
+            else currentState.selectedTvShowGenreId
+        )
+        getUserSavedLists()
     }
 
     override fun onSaveItemToListClicked() {
