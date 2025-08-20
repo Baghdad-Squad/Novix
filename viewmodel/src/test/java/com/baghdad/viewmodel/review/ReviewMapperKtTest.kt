@@ -12,9 +12,9 @@ class ReviewUiMapperTest {
         // Given
         val review = Review(
             id = "r1",
-            authorName = "Max Verstappen",
+            authorDisplayName = "Max Verstappen",
             authorAvatarUrl = "https://example.com/avatar.jpg",
-            contentTitle = "Inception",
+            authorUsername = "Inception",
             reviewText = "Amazing plot!",
             postedDate = LocalDate(2023, 7, 15),
             rating = 8.78
