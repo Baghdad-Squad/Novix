@@ -430,7 +430,6 @@ class RemoteMovieDataSourceImplTest {
         val reviewResponse = ReviewsResponse.ReviewResponse(
             author = AUTHOR_NAME,
             id = REVIEW_STRING_ID,
-            author = AUTHOR_NAME,
             authorDetails = reviewAuthorDetails,
             content = REVIEW_CONTENT,
             createdAt = CREATED_AT
