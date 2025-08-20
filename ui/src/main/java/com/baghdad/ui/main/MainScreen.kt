@@ -65,14 +65,14 @@ fun MainScreen(
 
     LaunchedEffect(currentRoute) {
         val transparentRoutes = setOf(
-            MovieDetailsRoute.MovieDetailsScreen,
-            TvShowDetailsRoute.TvShowDetailsScreen,
-            TvShowDetailsRoute.EpisodeDetailsScreen,
-            AuthenticationRoute.WelcomeScreen
-        ).map {
-                it::class.simpleName?.substringBeforeLast("/")
-        }
-        onStatusBarTransparencyChanged(currentRoute in transparentRoutes)
+            MovieDetailsRoute.MovieDetailsScreen::class.qualifiedName,
+            TvShowDetailsRoute.TvShowDetailsScreen::class.qualifiedName,
+            TvShowDetailsRoute.EpisodeDetailsScreen::class.qualifiedName,
+            AuthenticationRoute.WelcomeScreen::class.qualifiedName
+        )
+
+        val isTransparent = currentRoute in transparentRoutes
+        onStatusBarTransparencyChanged(isTransparent)
     }
 
     state.isLoggedIn?.let { isLoggedIn ->

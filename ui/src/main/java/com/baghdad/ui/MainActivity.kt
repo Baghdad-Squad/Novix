@@ -10,6 +10,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.theme.NovixTheme
 import com.baghdad.design_system.theme.Theme
@@ -34,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     private fun MainContent(mainViewModel: MainViewModel) {
         val state by mainViewModel.uiState.collectAsStateWithLifecycle()
         val isDarkTheme = state.isAppInDarkTheme
-        val isStatusBarTransparent by remember {
+        var isStatusBarTransparent by remember {
             mutableStateOf(false)
         }
 
@@ -43,7 +45,12 @@ class MainActivity : AppCompatActivity() {
                 isDarkTheme = isDarkTheme,
                 isStatusBarTransparent = isStatusBarTransparent
             )
-            MainScreen(state = state)
+            MainScreen(
+                state = state,
+                onStatusBarTransparencyChanged = { transparent ->
+                    isStatusBarTransparent = transparent
+                }
+            )
         }
     }
 
@@ -55,14 +62,16 @@ class MainActivity : AppCompatActivity() {
         val systemUiController = rememberSystemUiController()
         val surfaceColor = Theme.color.surface
 
-        LaunchedEffect(isDarkTheme) {
+        LaunchedEffect(isDarkTheme, isStatusBarTransparent) {
             isDarkTheme?.let { darkTheme ->
                 systemUiController.setSystemBarsColor(
-                    color = surfaceColor,
-                    darkIcons = !darkTheme || isStatusBarTransparent
+                    color = if (isStatusBarTransparent)
+                        Color.Transparent
+                    else
+                        surfaceColor,
+                    darkIcons = !darkTheme
                 )
             }
         }
     }
-
 }
