@@ -489,7 +489,6 @@ class HomeViewModel @Inject constructor(
 
 
     private fun onAddItemToListSuccess() {
-        loadData()
         onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
     }

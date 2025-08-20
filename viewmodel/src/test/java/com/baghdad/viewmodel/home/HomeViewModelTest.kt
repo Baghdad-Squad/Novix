@@ -417,10 +417,11 @@ class HomeViewModelTest {
             )
         )
         advanceUntilIdle()
-
         viewModel.uiState.test {
+
+
             val state =
-                awaitItemWhere { viewModel.uiState.value.addToListBottomSheetState.selectedItemId != 0L }
+                awaitItemWhere { viewModel.uiState.value.addToListBottomSheetState.selectedItemId == 3L }
             assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(3)
         }
     }
