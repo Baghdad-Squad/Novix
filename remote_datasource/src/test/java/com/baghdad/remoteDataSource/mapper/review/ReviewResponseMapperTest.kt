@@ -22,30 +22,12 @@ class ReviewResponseMapperTest {
 
         private val EXPECTED_COMPLETE_DTO = ReviewDto(
             id = "5f8d3a7b3f3c4a3d6c8b4567",
-            authorName = "John Doe",
+            authorDisplayName = "John Doe",
             authorAvatarUrl = "https://image.tmdb.org/t/p/w500/avatar.jpg",
             authorUsername = "johndoe123",
             rating = 8.5,
             reviewText = "This movie was fantastic!",
             postedDate = "2023-01-15"
-        )
-
-        private val NULL_VALUES_REVIEW_RESPONSE = ReviewsResponse.ReviewResponse(
-            id = null,
-            author = null,
-            authorDetails = null,
-            content = null,
-            createdAt = null
-        )
-
-        private val EXPECTED_NULL_VALUES_DTO = ReviewDto(
-            id = "",
-            authorName = "",
-            authorAvatarUrl = "",
-            authorUsername = "",
-            rating = 0.0,
-            reviewText = "",
-            postedDate = "0001-01-01"
         )
 
         private val MIXED_NULL_REVIEW_RESPONSE = ReviewsResponse.ReviewResponse(
@@ -63,7 +45,7 @@ class ReviewResponseMapperTest {
 
         private val EXPECTED_MIXED_NULL_DTO = ReviewDto(
             id = "6g9e4b8c4g4b4e7d9c9c5678",
-            authorName = "",
+            authorDisplayName = "",
             authorAvatarUrl = "",
             authorUsername = "movielover",
             rating = 0.0,

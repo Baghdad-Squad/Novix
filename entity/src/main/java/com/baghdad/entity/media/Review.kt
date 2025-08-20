@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDate
 
 data class Review(
     val id: String,
-    val authorName: String,
+    val authorDisplayName: String,
     val authorAvatarUrl: String,
     val authorUsername: String,
     val rating: Double,

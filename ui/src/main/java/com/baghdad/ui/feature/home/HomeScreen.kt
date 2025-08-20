@@ -92,18 +92,25 @@ private fun HomeContent(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(Theme.color.surface)
-            .statusBarsPadding(),
-        topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) },
+            .background(Theme.color.surface),
+        topBar = {
+            HomeAppBar(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(top = 12.dp, bottom = 8.dp)
+            )
+        },
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = interactionListener::onSnackBarActionLabelClicked,
-        backgroundContent = {AnimatedVisibility(
-            visible = !isScrolled,
-            enter = fadeIn(tween(500)),
-            exit = fadeOut(tween(500)),
-        ) {
-            BackgroundBlur()
-        } },
+        backgroundContent = {
+            AnimatedVisibility(
+                visible = !isScrolled,
+                enter = fadeIn(tween(500)),
+                exit = fadeOut(tween(500)),
+            ) {
+                BackgroundBlur()
+            }
+        },
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),

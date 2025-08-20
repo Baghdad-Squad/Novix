@@ -28,7 +28,7 @@ class GetMovieReviewsUseCaseTest {
         val result = getMovieReviewsUseCase(movieId)
 
         assertThat(result).hasSize(2)
-        assertThat(result[0].authorName).isEqualTo("MovieFan123")
+        assertThat(result[0].authorDisplayName).isEqualTo("MovieFan123")
         assertThat(result[1].reviewText).contains("Solid performance")
     }
 
@@ -46,14 +46,14 @@ class GetMovieReviewsUseCaseTest {
     fun `invoke() should return reviews with special characters`() = runTest {
         val movieId = 4L
         val specialReview = sampleReviews[0].copy(
-            authorName = "Critic_Élite",
+            authorDisplayName = "Critic_Élite",
             reviewText = "Fantástic performance! 10/10 would recommend."
         )
         coEvery { movieRepository.getMovieReviews(movieId) } returns listOf(specialReview)
 
         val result = getMovieReviewsUseCase(movieId)
 
-        assertThat(result[0].authorName).isEqualTo("Critic_Élite")
+        assertThat(result[0].authorDisplayName).isEqualTo("Critic_Élite")
         assertThat(result[0].reviewText).contains("Fantástic")
     }
 
@@ -99,7 +99,7 @@ class GetMovieReviewsUseCaseTest {
         val movieId1 = 8L
         val movieId2 = 9L
         val reviewsForMovie2 = listOf(
-            sampleReviews[0].copy(id = "rev4", authorName = "DifferentReviewer")
+            sampleReviews[0].copy(id = "rev4", authorDisplayName = "DifferentReviewer")
         )
         coEvery { movieRepository.getMovieReviews(movieId1) } returns sampleReviews
         coEvery { movieRepository.getMovieReviews(movieId2) } returns reviewsForMovie2
@@ -131,7 +131,7 @@ class GetMovieReviewsUseCaseTest {
         private val sampleReviews = listOf(
             Review(
                 id = "rev1",
-                authorName = "MovieFan123",
+                authorDisplayName = "MovieFan123",
                 authorAvatarUrl = "https://example.com/avatar1.jpg",
                 authorUsername = "Great Movie!",
                 reviewText = "Amazing plot and character development.",
@@ -140,7 +140,7 @@ class GetMovieReviewsUseCaseTest {
             ),
             Review(
                 id = "rev2",
-                authorName = "CriticExpert",
+                authorDisplayName = "CriticExpert",
                 authorAvatarUrl = "https://example.com/avatar2.jpg",
                 authorUsername = "Solid Performance",
                 reviewText = "Solid performance by the lead actor, but the story was a bit predictable.",
@@ -151,7 +151,7 @@ class GetMovieReviewsUseCaseTest {
 
         private val minimalReview = Review(
             id = "rev3",
-            authorName = "Anon",
+            authorDisplayName = "Anon",
             authorAvatarUrl = "",
             authorUsername = "",
             reviewText = "Okay",

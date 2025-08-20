@@ -1026,7 +1026,7 @@ class RemoteTvShowDataSourceImplTest {
 
         val expectedReviewDto = ReviewDto(
             id = REVIEW_STRING_ID,
-            authorName = REVIEW_AUTHOR,
+            authorDisplayName = REVIEW_AUTHOR,
             authorAvatarUrl = "https://image.tmdb.org/t/p/w500$AVATAR_PATH",
             authorUsername = REVIEW_USERNAME,
             rating = REVIEW_RATING,

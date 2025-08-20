@@ -15,7 +15,7 @@ private fun ReviewsResponse.ReviewResponse?.toReviewDtoIfValid(): ReviewDto? {
 private fun ReviewsResponse.ReviewResponse.toReviewDto(): ReviewDto {
     return ReviewDto(
         id = id.orEmpty(),
-        authorName = author.takeIf { !it.isNullOrBlank() }.orEmpty(),
+        authorDisplayName = author.takeIf { !it.isNullOrBlank() }.orEmpty(),
         authorAvatarUrl = getImageUrlFromPath(authorDetails?.avatarPath),
         authorUsername = authorDetails?.username.orEmpty(),
         rating = authorDetails?.rating ?: 0.0,

@@ -20,7 +20,7 @@ class GetTvShowReviewsUseCaseTest {
         private val sampleReviews = listOf(
             Review(
                 id = "tv_rev1",
-                authorName = "TVFanatic",
+                authorDisplayName = "TVFanatic",
                 authorAvatarUrl = "https://example.com/tv_avatar1.jpg",
                 authorUsername = "Bingeworthy!",
                 reviewText = "Couldn't stop watching this amazing series.",
@@ -29,7 +29,7 @@ class GetTvShowReviewsUseCaseTest {
             ),
             Review(
                 id = "tv_rev2",
-                authorName = "SeriesCritic",
+                authorDisplayName = "SeriesCritic",
                 authorAvatarUrl = "https://example.com/tv_avatar2.jpg",
                 authorUsername = "Strong First Season",
                 reviewText = "Excellent character development throughout the season.",
@@ -40,7 +40,7 @@ class GetTvShowReviewsUseCaseTest {
 
         private val minimalReview = Review(
             id = "tv_rev3",
-            authorName = "Anonymous",
+            authorDisplayName = "Anonymous",
             authorAvatarUrl = "",
             authorUsername = "",
             reviewText = "It was okay",
@@ -63,7 +63,7 @@ class GetTvShowReviewsUseCaseTest {
         val result = getTvShowReviewsUseCase(tvId)
 
         assertThat(result).hasSize(2)
-        assertThat(result[0].authorName).isEqualTo("TVFanatic")
+        assertThat(result[0].authorDisplayName).isEqualTo("TVFanatic")
         assertThat(result[1].authorUsername).isEqualTo("Strong First Season")
     }
 
@@ -81,14 +81,14 @@ class GetTvShowReviewsUseCaseTest {
     fun `invoke() should return reviews with special characters`() = runTest {
         val tvId = 4L
         val specialReview = sampleReviews[0].copy(
-            authorName = "Critic_Élite",
+            authorDisplayName = "Critic_Élite",
             reviewText = "Fantástic character arcs! 10/10 would recommend."
         )
         coEvery { tvShowRepository.getTvShowReviews(tvId) } returns listOf(specialReview)
 
         val result = getTvShowReviewsUseCase(tvId)
 
-        assertThat(result[0].authorName).isEqualTo("Critic_Élite")
+        assertThat(result[0].authorDisplayName).isEqualTo("Critic_Élite")
         assertThat(result[0].reviewText).contains("Fantástic")
     }
 
@@ -146,7 +146,7 @@ class GetTvShowReviewsUseCaseTest {
         val tvId1 = 9L
         val tvId2 = 10L
         val reviewsForShow2 = listOf(
-            sampleReviews[0].copy(id = "tv_rev4", authorName = "DifferentReviewer")
+            sampleReviews[0].copy(id = "tv_rev4", authorDisplayName = "DifferentReviewer")
         )
         coEvery { tvShowRepository.getTvShowReviews(tvId1) } returns sampleReviews
         coEvery { tvShowRepository.getTvShowReviews(tvId2) } returns reviewsForShow2

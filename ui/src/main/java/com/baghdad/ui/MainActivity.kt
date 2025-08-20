@@ -8,9 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.theme.NovixTheme
-import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.main.MainScreen
 import com.baghdad.viewmodel.main.MainViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -32,26 +35,38 @@ class MainActivity : AppCompatActivity() {
     private fun MainContent(mainViewModel: MainViewModel) {
         val state by mainViewModel.uiState.collectAsStateWithLifecycle()
         val isDarkTheme = state.isAppInDarkTheme
+        var isStatusBarTransparent by remember {
+            mutableStateOf(false)
+        }
 
         NovixTheme(isDarkTheme = isDarkTheme) {
-            ConfigureSystemBars(isDarkTheme = isDarkTheme)
-            MainScreen(state = state)
+            ConfigureSystemBars(
+                isDarkTheme = isDarkTheme,
+                isStatusBarTransparent = isStatusBarTransparent
+            )
+            MainScreen(
+                state = state,
+                onStatusBarTransparencyChanged = { transparent ->
+                    isStatusBarTransparent = transparent
+                }
+            )
         }
     }
 
     @Composable
-    private fun ConfigureSystemBars(isDarkTheme: Boolean?) {
+    private fun ConfigureSystemBars(
+        isDarkTheme: Boolean?,
+        isStatusBarTransparent: Boolean
+    ) {
         val systemUiController = rememberSystemUiController()
-        val surfaceColor = Theme.color.surface
 
-        LaunchedEffect(isDarkTheme) {
+        LaunchedEffect(isDarkTheme, isStatusBarTransparent) {
             isDarkTheme?.let { darkTheme ->
                 systemUiController.setSystemBarsColor(
-                    color = surfaceColor,
+                    color = Color.Transparent,
                     darkIcons = !darkTheme
                 )
             }
         }
     }
-
 }
