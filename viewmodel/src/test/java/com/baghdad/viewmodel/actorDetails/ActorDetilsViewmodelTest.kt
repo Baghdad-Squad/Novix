@@ -21,6 +21,7 @@ import com.baghdad.viewmodel.dummyData.DummyDataFactory.createMockGallery
 import com.baghdad.viewmodel.errorStates.BaseSnackBarMessage
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -150,7 +151,17 @@ class ActorDetailsViewModelTest {
             viewModel.uiEffect.test {
                 val effect = awaitItem()
                 assertThat(effect is ActorDetailsScreenEffect.NavigateToTvShowDetails).isTrue()
+            }
+        }
 
+    @Test
+    fun `onLoginClicked should Navigate To login screen when it is clicked`() =
+        runTest {
+            viewModel.onLoginClicked()
+
+            viewModel.uiEffect.test {
+                val effect = awaitItem()
+                assertThat(effect is ActorDetailsScreenEffect.NavigateToLogin).isTrue()
             }
         }
 
@@ -170,6 +181,126 @@ class ActorDetailsViewModelTest {
             job.cancel()
 
             assertThat(emittedSnackBarMessages).contains(BaseSnackBarMessage.NetworkError)
+        }
+
+    @Test
+    fun `onSaveMovieClicked should open bottom sheet when movie is not saved`() = runTest {
+        val movieId = 1L
+        val initialState = viewModel.uiState.value
+        val movie = initialState.topMoviesPicks.find { it.id == movieId }!!
+
+        viewModel.onSaveMovieClick(movie)
+        advanceUntilIdle()
+
+        val updatedState = viewModel.uiState.value
+        assertThat(movie.isSaved).isFalse()
+        assertThat(updatedState.addToListBottomSheetState.isVisible).isTrue()
+        assertThat(updatedState.addToListBottomSheetState.selectedItemId).isEqualTo(movieId)
+    }
+
+    @Test
+    fun `onSaveMovieClicked should remove movie from list when is saved`() = runTest {
+        val movieId = 1L
+        val initialState = viewModel.uiState.value
+        val movie = initialState.topMoviesPicks.find { it.id == movieId }!!.copy(isSaved = true)
+        coEvery { removeMovieFromSavedListUseCase(any(), any()) } returns Unit
+
+        viewModel.onSaveMovieClick(movie)
+        advanceUntilIdle()
+
+        coVerify { removeMovieFromSavedListUseCase(any(), any()) }
+    }
+
+    @Test
+    fun `onSaveItemToListClicked should add movie to saved list when list is selected`() = runTest {
+
+        viewModel.onListSelected(123L)
+        coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
+
+        viewModel.onSaveItemToListClicked()
+        advanceUntilIdle()
+
+        coVerify { addMovieToSavedListUseCase(any(), any()) }
+    }
+
+    @Test
+    fun `onCreateNewListClicked should show add list bottom sheet when it is clicked`() =
+        runTest {
+            viewModel.onCreateNewListClicked()
+            val state = viewModel.uiState.value
+            assertThat(state.addListBottomSheetState.isVisible).isTrue()
+            assertThat(state.addToListBottomSheetState.isVisible).isFalse()
+        }
+
+    @Test
+    fun `onSaveItemToListClicked should not add movie to saved list when list is not selected`() =
+        runTest {
+
+            coEvery { addMovieToSavedListUseCase(any(), any()) } returns Unit
+
+            viewModel.onSaveItemToListClicked()
+            advanceUntilIdle()
+
+            coVerify(inverse = true) { addMovieToSavedListUseCase(any(), any()) }
+        }
+
+    @Test
+    fun `onCreateListBottomSheetDismiss should hide bottom sheet and show addToListBottomSheet when it is clicked`() =
+        runTest {
+
+            viewModel.onCreateListBottomSheetDismiss()
+            advanceUntilIdle()
+
+            val addListBottomSheetState = viewModel.uiState.value.addListBottomSheetState
+            val addToListBottomSheetState = viewModel.uiState.value.addToListBottomSheetState
+            assertThat(addListBottomSheetState.isVisible).isFalse()
+            assertThat(addListBottomSheetState.listName == "").isTrue()
+            assertThat(addListBottomSheetState.isLoading).isFalse()
+            assertThat(addToListBottomSheetState.isVisible).isTrue()
+        }
+
+    @Test
+    fun `onCreatedListNameChanged should change list name when it is clicked`() = runTest {
+
+        val listName = "action"
+
+        viewModel.onCreatedListNameChanged(listName)
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.addListBottomSheetState.listName == listName).isTrue()
+    }
+
+    @Test
+    fun `onCreateListBottomSheetAddClick should create new list when it is clicked`() = runTest {
+
+        viewModel.onCreatedListNameChanged("action")
+        coEvery { createSavedListUseCase(any()) } returns Unit
+
+        viewModel.onCreateListBottomSheetAddClick()
+        advanceUntilIdle()
+
+        coVerify { createSavedListUseCase(any()) }
+    }
+
+    @Test
+    fun `onGalleryImageClick should change image url state when it is clicked`() = runTest {
+
+        val imageUrl = "/profile.jpg"
+
+        viewModel.onGalleryImageClick(imageUrl)
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.selectedImageUrl == imageUrl).isTrue()
+    }
+
+    @Test
+    fun `onImageDialogDismiss should change image url state to empty when it is clicked`() =
+        runTest {
+
+            viewModel.onImageDialogDismiss()
+            advanceUntilIdle()
+
+            assertThat(viewModel.uiState.value.selectedImageUrl == "").isTrue()
         }
 
     companion object {
