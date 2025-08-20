@@ -294,6 +294,7 @@ private fun MovieDetailsContent(
                         tint = Theme.color.title,
                         size = 40,
                         backgroundColor = Theme.color.iconBackgroundLow,
+                        cornerRadius = 12.dp,
                         isSaved = state.isSaved,
                         onClick = { listener.onSaveCurrentMovieClick() }
                     )

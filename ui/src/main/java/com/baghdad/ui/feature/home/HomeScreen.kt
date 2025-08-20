@@ -36,7 +36,6 @@ import com.baghdad.ui.feature.home.component.PopularSection
 import com.baghdad.ui.feature.home.component.TopRatingSection
 import com.baghdad.ui.feature.home.component.WhatToWatchSection
 import com.baghdad.ui.feature.home.component.upcomingSection
-import com.baghdad.ui.feature.home.component.upcomingSectionLoading
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToActors
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToContinueWatching
@@ -162,31 +161,17 @@ private fun HomeContent(
                     )
                 }
             }
-
-            if (state.isUpcomingItemsLoading) {
-                upcomingSectionLoading(
-                    modifier = Modifier.padding(top = 24.dp),
-                    upcomingItems = state.upcomingItems,
-                    selectedGenreId = state.selectedUpcomingGenreId,
-                    genres = state.upcomingGenres,
-                    onGenreSelected = interactionListener::onUpcomingGenreSelected,
-                    onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
-                    onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
-                    isLoading = true,
-                )
-            } else {
-                upcomingSection(
-                    modifier = Modifier.padding(top = 24.dp),
-                    selectedGenreId = state.selectedUpcomingGenreId,
-                    genres = state.upcomingGenres,
-                    onGenreSelected = interactionListener::onUpcomingGenreSelected,
-                    upcomingItems = state.upcomingItems,
-                    onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
-                    onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
-
-                )
-            }
-
+            upcomingSection(
+                modifier = Modifier.padding(top = 24.dp),
+                selectedGenreId = state.selectedUpcomingGenreId,
+                genres = state.upcomingGenres,
+                onGenreSelected = interactionListener::onUpcomingGenreSelected,
+                upcomingItems = state.upcomingItems,
+                isUpcomingItemsLoading = state.isUpcomingItemsLoading,
+                onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
+                onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
+                isGenresLoading = state.isUpcomingGenresLoading
+            )
         }
         SavedListBottomSheet(
             isVisible = state.addToListBottomSheetState.isVisible,

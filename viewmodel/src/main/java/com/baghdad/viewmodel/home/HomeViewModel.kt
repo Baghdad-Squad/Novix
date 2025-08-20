@@ -242,9 +242,23 @@ class HomeViewModel @Inject constructor(
         tryToExecute(
             callee = getMovieGenresUseCase::getMovieGenres,
             dispatcher = ioDispatcher,
+            onStart = ::onGetMovieGenresStart,
+            onFinally = ::onGetMovieGenresFinally,
             onSuccess = ::onGetMovieGenresSuccess,
             onError = ::onLoadDataError,
         )
+    }
+
+    private fun onGetMovieGenresStart() {
+        updateState {
+            it.copy(isUpcomingGenresLoading = true)
+        }
+    }
+
+    private fun onGetMovieGenresFinally() {
+        updateState {
+            it.copy(isUpcomingGenresLoading = false)
+        }
     }
 
     private fun onGetMovieGenresSuccess(genres: List<Genre>) {
