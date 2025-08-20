@@ -1,6 +1,7 @@
 package com.baghdad.viewmodel.actorDetails
 
 import androidx.lifecycle.SavedStateHandle
+import app.cash.turbine.test
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.actor.GetActorGalleryUseCase
@@ -74,115 +75,83 @@ class ActorDetailsViewModelTest {
 
     @Test
     fun `onBackIconClick should send NavigateBack when it is clicked`() = runTest {
-        var receivedEffect: ActorDetailsScreenEffect? = null
-        val job = launch {
-            viewModel.uiEffect.collect { effect ->
-                receivedEffect = effect
-            }
-        }
-
         viewModel.onBackIconClick()
-        advanceUntilIdle()
 
-        assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateBack).isTrue()
-        job.cancel()
+        viewModel.uiEffect.test {
+            val effect = awaitItem()
+            assertThat(effect is ActorDetailsScreenEffect.NavigateBack).isTrue()
+
+        }
     }
 
     @Test
     fun `onReadMoreBiographyClick should toggle isTextExpanded state when it is clicked`() =
         runTest {
             val initialState = viewModel.uiState.value.isTextExpanded
-            viewModel.onReadMoreBiographyClick()
-            val newState = viewModel.uiState.value.isTextExpanded
 
+            viewModel.onReadMoreBiographyClick()
+
+            val newState = viewModel.uiState.value.isTextExpanded
             assertThat(newState != initialState).isTrue()
         }
 
     @Test
     fun `onViewAllGalleryClick should Navigate To ActorGallery screen when it is clicked`() =
         runTest {
-            var receivedEffect: ActorDetailsScreenEffect? = null
-            val job = launch {
-                viewModel.uiEffect.collect { effect ->
-                    receivedEffect = effect
-                }
-            }
-
             viewModel.onViewAllGalleryClick()
-            advanceUntilIdle()
 
-            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToActorGallery).isTrue()
-            job.cancel()
+            viewModel.uiEffect.test {
+                val effect = awaitItem()
+                assertThat(effect is ActorDetailsScreenEffect.NavigateToActorGallery).isTrue()
+            }
         }
 
     @Test
     fun `onViewAllTopMoviesPicksClick should Navigate To ActorTopMoviePicks when it is clicked`() =
         runTest {
-            var receivedEffect: ActorDetailsScreenEffect? = null
-            val job = launch {
-                viewModel.uiEffect.collect { effect ->
-                    receivedEffect = effect
-                }
-            }
-
             viewModel.onViewAllTopMoviesPicksClick()
-            advanceUntilIdle()
 
-            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToActorTopMoviePicks).isTrue()
-            job.cancel()
+            viewModel.uiEffect.test {
+                val effect = awaitItem()
+                assertThat(effect is ActorDetailsScreenEffect.NavigateToActorTopMoviePicks).isTrue()
+            }
         }
 
     @Test
     fun `onViewAllTopTvShowsClick should Navigate To ActorTopTvShowPicks when it clicked`() =
         runTest {
-            var receivedEffect: ActorDetailsScreenEffect? = null
-            val job = launch {
-                viewModel.uiEffect.collect { effect ->
-                    receivedEffect = effect
-                }
-            }
-
             viewModel.onViewAllTopTvShowsClick()
-            advanceUntilIdle()
 
-            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks).isTrue()
-            job.cancel()
+            viewModel.uiEffect.test {
+                val effect = awaitItem()
+                assertThat(effect is ActorDetailsScreenEffect.NavigateToActorTopTvShowPicks).isTrue()
+            }
         }
 
     @Test
     fun `onMovieCardClick should Navigate To MovieDetails screen when clicked and it has the correct movieId`() =
         runTest {
-            var receivedEffect: ActorDetailsScreenEffect? = null
-            val job = launch {
-                viewModel.uiEffect.collect { effect ->
-                    receivedEffect = effect
-                }
-            }
 
             val movieId = 456L
             viewModel.onMovieCardClick(movieId)
-            advanceUntilIdle()
 
-            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToMovieDetails).isTrue()
-            job.cancel()
+            viewModel.uiEffect.test {
+                val effect = awaitItem()
+                assertThat(effect is ActorDetailsScreenEffect.NavigateToMovieDetails).isTrue()
+            }
         }
 
     @Test
     fun `onTvShowCardClick should Navigate To TvShow Details screen when clicked and it has the correct tvShowId`() =
         runTest {
-            var receivedEffect: ActorDetailsScreenEffect? = null
-            val job = launch {
-                viewModel.uiEffect.collect { effect ->
-                    receivedEffect = effect
-                }
-            }
-
             val tvShowId = 789L
             viewModel.onTvShowCardClick(tvShowId)
-            advanceUntilIdle()
 
-            assertThat(receivedEffect is ActorDetailsScreenEffect.NavigateToTvShowDetails).isTrue()
-            job.cancel()
+            viewModel.uiEffect.test {
+                val effect = awaitItem()
+                assertThat(effect is ActorDetailsScreenEffect.NavigateToTvShowDetails).isTrue()
+
+            }
         }
 
     @Test
@@ -190,7 +159,6 @@ class ActorDetailsViewModelTest {
         runTest {
             coEvery { getActorInfoUseCase(actorId) } throws NoInternetException()
             val emittedSnackBarMessages = mutableListOf<BaseSnackBarMessage>()
-
             val job = launch {
                 viewModel.snackBarState.collect {
                     emittedSnackBarMessages.add(it.message)
