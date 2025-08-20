@@ -28,7 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.preview.NovixPreviews
@@ -42,18 +42,19 @@ fun SaveIcon(
     modifier: Modifier = Modifier,
     isSaved: Boolean = false,
     backgroundColor: Color = Theme.color.iconBackground,
+    cornerRadius: Dp = 8.dp,
     tint: Color = Theme.color.onPrimary,
     size: Int = 32,
 ) {
     Box(
         modifier = modifier
             .size(size.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(cornerRadius))
             .background(color = backgroundColor)
             .border(
                 width = 1.dp,
                 color = Theme.color.stroke,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(cornerRadius)
             )
             .clickable { onClick() },
         contentAlignment = Alignment.Center,

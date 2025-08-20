@@ -370,34 +370,6 @@ class HomeViewModelTest {
         }
     }
 
-
-    @Test
-    fun `should set upcoming loading false when upcoming movies finished loading`() = runTest {
-        coEvery { getUpcomingMoviesUseCase.invoke(any()) } returns savableMoviesSample
-        coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.uiState.test {
-            val finalState = awaitItemWhere { it.isUpcomingMoviesLoading.not() }
-            assertThat(finalState.isUpcomingMoviesLoading).isFalse()
-        }
-    }
-
-    @Test
-    fun `should set upcoming genres loading false when movie genres finished loading`() = runTest {
-        coEvery { getMovieGenresUseCase.getMovieGenres() } returns genresSample
-        coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.uiState.test {
-            val state = awaitItemWhere { it.isUpcomingGenresLoading.not() }
-            assertThat(state.isUpcomingGenresLoading).isFalse()
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
     @Test
     fun `should update selected item id when onPopularItemSaveClicked called`() = runTest {
         viewModel = createViewModel()

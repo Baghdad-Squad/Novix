@@ -32,9 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel
-@Inject
-constructor(
+class HomeViewModel @Inject constructor(
     private val getMovieGenresUseCase: GetMovieGenresUseCase,
     private val observeUserWatchedMediaUseCase: ObserveUserWatchedMediaUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
@@ -74,13 +72,13 @@ constructor(
     private fun observeAppLanguage() {
         tryToCollect(
             flowProvider = { getAppLanguageUseCase.invoke() },
-            onNewValue = ::onLanguageChanged,
+            onNewValue = { onLanguageChanged() },
             onError = ::onLoadDataError,
             dispatcher = ioDispatcher
         )
     }
 
-    private fun onLanguageChanged(language: String) {
+    private fun onLanguageChanged() {
         loadData()
     }
 
@@ -244,17 +242,11 @@ constructor(
         tryToExecute(
             callee = getMovieGenresUseCase::getMovieGenres,
             dispatcher = ioDispatcher,
-            onSuccess = ::onGetMovieGenresSuccess,
             onStart = ::onGetMovieGenresStart,
-            onFinally = ::onGetMovieGenresFinished,
+            onFinally = ::onGetMovieGenresFinally,
+            onSuccess = ::onGetMovieGenresSuccess,
             onError = ::onLoadDataError,
         )
-    }
-
-    private fun onGetMovieGenresSuccess(genres: List<Genre>) {
-        updateState {
-            it.copy(upcomingGenres = genres.map(Genre::toUiState))
-        }
     }
 
     private fun onGetMovieGenresStart() {
@@ -263,9 +255,15 @@ constructor(
         }
     }
 
-    private fun onGetMovieGenresFinished() {
+    private fun onGetMovieGenresFinally() {
         updateState {
             it.copy(isUpcomingGenresLoading = false)
+        }
+    }
+
+    private fun onGetMovieGenresSuccess(genres: List<Genre>) {
+        updateState {
+            it.copy(upcomingGenres = genres.map(Genre::toUiState))
         }
     }
 
@@ -273,28 +271,28 @@ constructor(
         tryToExecute(
             callee = { getUpcomingMoviesUseCase(currentState.selectedUpcomingGenreId) },
             dispatcher = ioDispatcher,
+            onStart = ::onGetUpcomingItemsStart,
             onSuccess = ::onGetUpcomingSuccess,
-            onStart = ::onGetUpcomingStarted,
-            onFinally = ::onGetUpcomingFinished,
+            onFinally = ::onGetUpcomingItemsFinished,
             onError = ::onLoadDataError,
         )
+    }
+
+    private fun onGetUpcomingItemsStart() {
+        updateState {
+            it.copy(isUpcomingItemsLoading = true)
+        }
+    }
+
+    private fun onGetUpcomingItemsFinished() {
+        updateState {
+            it.copy(isUpcomingItemsLoading = false)
+        }
     }
 
     private fun onGetUpcomingSuccess(movies: List<SavedMovie>) {
         updateState {
             it.copy(upcomingItems = movies.map(SavedMovie::toUpcomingItemUiState))
-        }
-    }
-
-    private fun onGetUpcomingStarted() {
-        updateState {
-            it.copy(isUpcomingMoviesLoading = true)
-        }
-    }
-
-    private fun onGetUpcomingFinished() {
-        updateState {
-            it.copy(isUpcomingMoviesLoading = false)
         }
     }
 
@@ -613,11 +611,11 @@ constructor(
         )
     }
 
-    companion object {
-        private const val POPULAR_MOVIES_LIMIT = 5
-        private const val POPULAR_TV_SHOWS_LIMIT = 5
-        private const val DEFAULT_PAGE = 1
-        private const val DEFAULT_PAGE_SIZE = 20
+    private companion object {
+          val POPULAR_MOVIES_LIMIT = 5
+          val POPULAR_TV_SHOWS_LIMIT = 5
+          val DEFAULT_PAGE = 1
+          val DEFAULT_PAGE_SIZE = 20
     }
 
     private data class PopularItems(
