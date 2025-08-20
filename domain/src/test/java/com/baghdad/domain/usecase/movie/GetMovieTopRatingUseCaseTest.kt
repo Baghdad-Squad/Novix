@@ -8,36 +8,35 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
-
 class GetMovieTopRatingUseCaseTest {
 
     private val movieRepository = mockk<MovieRepository>()
-    private var getMovieTopRatingUseCase: GetMovieTopRatingUseCase =
-        GetMovieTopRatingUseCase(movieRepository)
+    private val getMovieTopRatingUseCase = GetMovieTopRatingUseCase(movieRepository)
 
     @Test
     fun `getTopRatedMovies should return all movies when genreId is null`() = runTest {
 
-        coEvery { movieRepository.getTopRatedMovies(PAGE) } returns getSavedMovies()
+        coEvery { movieRepository.getTopRatedMovies(page) } returns getSavedMovies()
 
-        val result = getMovieTopRatingUseCase(PAGE, genreId = null)
+        val result = getMovieTopRatingUseCase(page, genreId = null)
 
         assertThat(result.data).containsExactlyElementsIn(getSavedMovies().data)
     }
 
     @Test
     fun `getTopRatedMovies should return filtered movies when genreId is provided`() = runTest {
-        coEvery { movieRepository.getTopRatedMovies(PAGE) } returns getSavedMovies()
+        coEvery { movieRepository.getTopRatedMovies(page) } returns savedMoviesResult
 
-        val result = getMovieTopRatingUseCase(PAGE, genreId = GENRE_ID)
+        val result = getMovieTopRatingUseCase(page, genreId = genreId)
 
         assertThat(result.data).containsExactlyElementsIn(
-            getSavedMovies().data.filter { it.movie.genres.any { genre -> genre.id == GENRE_ID } }
+            savedMoviesResult.data.filter { it.movie.genres.any { genre -> genre.id == genreId } }
         )
     }
 
     private companion object {
-        const val PAGE = 2
-        const val GENRE_ID = 2L
+        val page = MovieMock.PAGE
+        val savedMoviesResult = MovieMock.SAVED_MOVIES_PAGED_RESULT
+        val genreId = MovieMock.GENRE_ID
     }
 }

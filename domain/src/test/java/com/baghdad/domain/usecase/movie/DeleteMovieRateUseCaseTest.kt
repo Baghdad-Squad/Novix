@@ -8,19 +8,20 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
 class DeleteMovieRateUseCaseTest {
+
     private val movieRepository = mockk<MovieRepository>()
     private val deleteMovieRateUseCase = DeleteMovieRateUseCase(movieRepository)
 
     @Test
     fun `deleteMovieRate should call repository with correct movieId`() = runTest {
-        coEvery { movieRepository.deleteMovieRate(MOVIE_ID) } returns Unit
+        coEvery { movieRepository.deleteMovieRate(movieId) } returns Unit
 
-        deleteMovieRateUseCase(MOVIE_ID)
+        deleteMovieRateUseCase(movieId)
 
-        coVerify(exactly = 1) { movieRepository.deleteMovieRate(MOVIE_ID) }
+        coVerify(exactly = 1) { movieRepository.deleteMovieRate(movieId) }
     }
 
-    companion object {
-        private const val MOVIE_ID = 123L
+    private companion object {
+        val movieId = MovieMock.MOVIE.id
     }
 }
