@@ -13,7 +13,7 @@ import com.baghdad.ui.navigation.route.MyListsRoute
 
 fun NavGraphBuilder.myListsNavGraph(navController: NavHostController) {
     navigation<Graph.MyListsGraph>(
-        startDestination = MyListsRoute.MyListsScreen
+        startDestination = MyListsRoute.MyListsScreen()
     ) {
         composable<MyListsRoute.MyListsScreen> {
             MyListsScreen {
@@ -45,8 +45,8 @@ private fun handleMyListsNavEvent(
             Graph.TvShowDetailsGraph(event.tvShowId)
         )
 
-        MyListsNavEvent.NavigateToMyLists -> navController.navigate(MyListsRoute.MyListsScreen){
-            popUpTo(MyListsRoute.MyListsScreen){
+        is MyListsNavEvent.NavigateToMyLists -> navController.navigate(MyListsRoute.MyListsScreen(event.isDeleteSuccess)) {
+            popUpTo(MyListsRoute.MyListsScreen()) {
                 inclusive = true
             }
         }

@@ -1,5 +1,6 @@
 package com.baghdad.viewmodel.myLists
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.pagination.PagedResult
@@ -22,14 +23,25 @@ import javax.inject.Inject
 class MyListsViewModel
     @Inject
     constructor(
+        savedStateHandle: SavedStateHandle,
         private val getSavedListsUseCase: GetSavedListsUseCase,
         private val createSavedListUseCase: CreateSavedListUseCase,
         private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
         private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) : BaseViewModel<MyListsScreenState, MyListsScreenEffect>(MyListsScreenState()),
         MyListsInteractionListener {
+
+        private val isDeleteSuccess: Boolean = checkNotNull(savedStateHandle["isDeleteSuccess"])
+
         init {
             checkIfUserIsLoggedIn()
+            handleDeleteSuccess()
+        }
+
+        private fun handleDeleteSuccess() {
+            if (isDeleteSuccess) {
+                updateState { it.copy(shouldShowDeleteSuccessSnackBar = true) }
+            }
         }
 
         private fun checkIfUserIsLoggedIn() {
@@ -82,7 +94,15 @@ class MyListsViewModel
             updateState {
                 it.copy(savedLists = flow)
             }
-            hideSnackBar()
+            if (currentState.shouldShowDeleteSuccessSnackBar) {
+               showSnackBar(
+                    message = MyListsSnackBarMessage.SavedListDeletedSuccessfully,
+                    isSuccess = true,
+               )
+                updateState { it.copy(shouldShowDeleteSuccessSnackBar = false) }
+            } else {
+                hideSnackBar()
+            }
         }
 
         private fun onGetSavedListsLoadingChanged(isLoading: Boolean) {

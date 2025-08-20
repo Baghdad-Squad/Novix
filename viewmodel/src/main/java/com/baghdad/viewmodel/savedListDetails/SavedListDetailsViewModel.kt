@@ -37,11 +37,10 @@ class SavedListDetailsViewModel @Inject constructor(
         BaseSnackBarMessage.UnknownError
 
     override fun onBackClick() {
-        sendEffect(SavedListDetailsEffect.NavigateBack)
+        sendEffect(SavedListDetailsEffect.NavigateBack(false))
     }
 
     private fun getListDetails() {
-        hideSnackBar()
         collectPagingFlow(
             loadData = { page ->
                 getSavedListDetailsUseCase.invoke(
@@ -129,18 +128,13 @@ class SavedListDetailsViewModel @Inject constructor(
             dispatcher = defaultDispatcher,
             callee = { deleteSavedListUseCase(currentListId) },
             onSuccess = { onSuccessDeleteListClick() },
-            onError = ::onError,
             onStart = ::startLoading,
             onFinally = ::stopLoading
         )
     }
 
     private fun onSuccessDeleteListClick() {
-        showSnackBar(
-            message = BaseSnackBarMessage.DeleteListSuccessfully,
-            isSuccess = true
-        )
-        sendEffect(SavedListDetailsEffect.NavigateBack)
+        sendEffect(SavedListDetailsEffect.NavigateBack(true))
     }
 
     private fun startLoading() {

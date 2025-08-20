@@ -28,8 +28,6 @@ data class CategoriesState(
     }
 }
 
-
-
 fun Genre.toGenreUiState() = CategoriesState.GenreUiState(
     id = id,
     name = name,
@@ -37,18 +35,3 @@ fun Genre.toGenreUiState() = CategoriesState.GenreUiState(
     tvShowCategory = TvShowCategory.entries.find { it.id == id }
 )
 
-fun MovieCategory.toGenreUiState(): CategoriesState.GenreUiState {
-    return CategoriesState.GenreUiState(
-        id = id,
-        name = name,
-        movieCategory = this
-    )
-}
-
-fun TvShowCategory.toGenreUiState(): CategoriesState.GenreUiState {
-    return CategoriesState.GenreUiState(
-        id = id,
-        name = name,
-        tvShowCategory = this
-    )
-}

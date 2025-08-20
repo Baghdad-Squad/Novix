@@ -18,7 +18,7 @@ fun <T> TopMediaPicksSection(
     modifier: Modifier = Modifier,
     onSavedClick: (T) -> Unit = {},
     onClickShowAll: () -> Unit,
-    isSaveVisible: Boolean = true,
+    isSaveVisible: (T) -> Boolean = { true },
 ) {
 
     Column(modifier = modifier) {
