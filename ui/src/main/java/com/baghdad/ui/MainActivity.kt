@@ -14,7 +14,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.baghdad.design_system.theme.NovixTheme
-import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.main.MainScreen
 import com.baghdad.viewmodel.main.MainViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -60,15 +59,11 @@ class MainActivity : AppCompatActivity() {
         isStatusBarTransparent: Boolean
     ) {
         val systemUiController = rememberSystemUiController()
-        val surfaceColor = Theme.color.surface
 
         LaunchedEffect(isDarkTheme, isStatusBarTransparent) {
             isDarkTheme?.let { darkTheme ->
                 systemUiController.setSystemBarsColor(
-                    color = if (isStatusBarTransparent)
-                        Color.Transparent
-                    else
-                        surfaceColor,
+                    color = Color.Transparent,
                     darkIcons = !darkTheme
                 )
             }
