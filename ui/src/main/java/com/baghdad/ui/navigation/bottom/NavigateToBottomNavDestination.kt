@@ -5,12 +5,13 @@ import com.baghdad.ui.navigation.route.Graph
 import com.baghdad.ui.navigation.route.HomeRoute
 
 fun NavController.navigateToBottomNavDestination(newGraph: Graph) {
+    val isNavigatingToHome = newGraph == Graph.HomeGraph
     navigate(newGraph) {
         popUpTo(HomeRoute.HomeScreen) {
-            saveState = false
+            saveState = true
             inclusive = false
         }
         launchSingleTop = true
-        restoreState = false
+        restoreState = isNavigatingToHome
     }
 }
