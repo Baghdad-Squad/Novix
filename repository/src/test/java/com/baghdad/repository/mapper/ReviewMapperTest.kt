@@ -12,8 +12,8 @@ class ReviewMapperTest {
     fun `should map correctly to entity when ReviewDto contains valid data`() {
         val expected = Review(
             id = REVIEW_DTO.id,
-            contentTitle = REVIEW_DTO.contentTitle,
-            authorName = REVIEW_DTO.authorName,
+            authorUsername = REVIEW_DTO.authorUsername,
+            authorDisplayName = REVIEW_DTO.authorDisplayName,
             rating = REVIEW_DTO.rating,
             authorAvatarUrl = REVIEW_DTO.authorAvatarUrl,
             reviewText = REVIEW_DTO.reviewText,
@@ -36,14 +36,14 @@ class ReviewMapperTest {
     fun `should map ReviewDto contentTitle to entity contentTitle correctly`() {
         val result = REVIEW_DTO.toEntity()
 
-        assertThat(result.contentTitle).isEqualTo(REVIEW_DTO.contentTitle)
+        assertThat(result.authorUsername).isEqualTo(REVIEW_DTO.authorUsername)
     }
 
     @Test
     fun `should map ReviewDto authorName to entity authorName correctly`() {
         val result = REVIEW_DTO.toEntity()
 
-        assertThat(result.authorName).isEqualTo(REVIEW_DTO.authorName)
+        assertThat(result.authorDisplayName).isEqualTo(REVIEW_DTO.authorDisplayName)
     }
 
     @Test
@@ -84,18 +84,18 @@ class ReviewMapperTest {
 
     @Test
     fun `should map empty ReviewDto contentTitle to entity contentTitle correctly`() {
-        val dto = REVIEW_DTO.copy(contentTitle = "")
+        val dto = REVIEW_DTO.copy(authorUsername = "")
         val result = dto.toEntity()
 
-        assertThat(result.contentTitle).isEqualTo("")
+        assertThat(result.authorUsername).isEqualTo("")
     }
 
     @Test
     fun `should map empty ReviewDto authorName to entity authorName correctly`() {
-        val dto = REVIEW_DTO.copy(authorName = "")
+        val dto = REVIEW_DTO.copy(authorDisplayName = "")
         val result = dto.toEntity()
 
-        assertThat(result.authorName).isEqualTo("")
+        assertThat(result.authorDisplayName).isEqualTo("")
     }
 
     @Test

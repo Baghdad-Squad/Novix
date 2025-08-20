@@ -6,9 +6,9 @@ import com.baghdad.viewmodel.util.toDDMMYYYYFormat
 
 fun Review.toUiState() = ReviewScreenState.ReviewUiState(
     id = id ,
-    authorName = authorName,
+    authorName = authorDisplayName,
     authorAvatarUrl = authorAvatarUrl,
-    contentTitle = contentTitle,
+    contentTitle = authorUsername,
     reviewText = reviewText,
     postedDate = postedDate.toDDMMYYYYFormat(),
     rating = rating.roundToFirstDecimal()
