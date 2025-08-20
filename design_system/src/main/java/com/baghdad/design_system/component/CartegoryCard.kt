@@ -43,6 +43,11 @@ fun CategoryCard(
     Box(
         modifier = modifier
             .height(height = 68.dp)
+            .border(
+                width = 1.dp,
+                color = Theme.color.stroke,
+                shape = RoundedCornerShape(12.dp)
+            )
             .clip(shape = RoundedCornerShape(12.dp))
             .noRippleClickable(onClick = onClick)
     ) {
@@ -60,17 +65,13 @@ fun CategoryCard(
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        listOf<Color>(
+                        listOf(
                             Color(0xFF0D0608),
                             Color(0xCC0D0608),
                             Color(0xB20D0608),
                             Color(0x000D0608),
                         )
                     )
-                )
-                .border(
-                    width = 1.dp,
-                    color = Theme.color.stroke
                 )
         )
 
@@ -85,7 +86,6 @@ fun CategoryCard(
         )
     }
 }
-
 
 @NovixPreviews
 @Composable
@@ -106,5 +106,4 @@ private fun CategoryCardPreview() {
             )
         }
     }
-
 }
