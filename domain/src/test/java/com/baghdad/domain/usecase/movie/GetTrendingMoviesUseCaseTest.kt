@@ -23,13 +23,13 @@ class GetTrendingMoviesUseCaseTest {
         }
 
     @Test
-    fun `getTrendingMoviesUseCase should return empty list when no movie matches genreId`() =
+    fun `getTrendingMoviesUseCase should return filtered trending movies when genreId is provided`() =
         runTest {
             coEvery { repository.getTrendingMovies(page = page) } returns savedMovie
 
             val result = getTrendingMoviesUseCase(page = page, genreId = genreId)
 
-            assertThat(result.data).isEmpty()
+            assertThat(result).isEqualTo(savedMovie)
         }
 
     private companion object {
