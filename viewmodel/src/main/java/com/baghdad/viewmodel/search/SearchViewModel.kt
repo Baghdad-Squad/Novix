@@ -312,7 +312,7 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onSaveRecentlyViewedClick(recentlyViewed: SearchScreenState.RecentlyViewedUiState) {
-        if (recentlyViewed.contentType == RecentlyViewed.ContentType.MOVIE) {
+        if (recentlyViewed.contentType == SearchScreenState.RecentlyViewedUiState.ContentType.MOVIE) {
             onSaveMovieClick(
                 isSaved = recentlyViewed.isSaved,
                 listId = recentlyViewed.savedListId,
@@ -426,7 +426,7 @@ class SearchViewModel @Inject constructor(
     ) {
         val recentlyViewed = currentState.recentViewed.find { it.id == id }
         recentlyViewed?.let {
-            if (it.contentType == RecentlyViewed.ContentType.MOVIE) {
+            if (it.contentType == SearchScreenState.RecentlyViewedUiState.ContentType.MOVIE) {
                 sendEffect(SearchScreenEffect.NavigateToMovieDetails(id))
             } else {
                 sendEffect(SearchScreenEffect.NavigateToTvShowDetails(id))
@@ -486,6 +486,7 @@ class SearchViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
+        getUserSavedLists()
         performSearchByTab(currentState.searchText)
     }
 

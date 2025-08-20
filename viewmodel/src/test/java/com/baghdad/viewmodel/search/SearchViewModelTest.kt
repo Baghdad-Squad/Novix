@@ -3,7 +3,6 @@ package com.baghdad.viewmodel.search
 import app.cash.turbine.test
 import com.baghdad.domain.exception.NoInternetException
 import com.baghdad.domain.model.pagination.PagedResult
-import com.baghdad.domain.model.search.RecentlyViewed
 import com.baghdad.domain.usecase.login.IsUserLoggedInUseCase
 import com.baghdad.domain.usecase.recentlyViewed.AddRecentlyViewedUseCase
 import com.baghdad.domain.usecase.recentlyViewed.DeleteAllRecentlyViewedUseCase
@@ -753,10 +752,11 @@ class SearchViewModelTest {
             id = 1L,
             isSaved = false,
             savedListId = 0L,
-            contentType = RecentlyViewed.ContentType.MOVIE
+            contentType = SearchScreenState.RecentlyViewedUiState.ContentType.MOVIE
         )
 
-        val result = (recentlyViewed.contentType == RecentlyViewed.ContentType.MOVIE)
+        val result =
+            (recentlyViewed.contentType == SearchScreenState.RecentlyViewedUiState.ContentType.MOVIE)
 
         assertThat(result).isTrue()
     }

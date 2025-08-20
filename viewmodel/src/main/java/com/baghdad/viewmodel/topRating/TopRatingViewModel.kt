@@ -317,6 +317,7 @@ class TopRatingViewModel @Inject constructor(
 
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
+        getUserSavedLists()
         if (currentState.selectedTab == TopRatingTab.MOVIES) {
             getMovieGenres()
             fetchMoviesByGenre(currentState.selectedMovieGenreId)

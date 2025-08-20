@@ -1,7 +1,6 @@
 package com.baghdad.viewmodel.search
 
 import androidx.paging.PagingData
-import com.baghdad.domain.model.search.RecentlyViewed.ContentType
 import com.baghdad.viewmodel.base.BaseUiState
 import com.baghdad.viewmodel.shared.AddListBottomSheetState
 import com.baghdad.viewmodel.shared.AddToListBottomSheetState
@@ -42,14 +41,18 @@ data class SearchScreenState(
         val profilePictureURL: String = ""
     )
 
-
     data class RecentlyViewedUiState(
         val id: Long = 0,
         val posterPictureURL: String = "",
         val contentType: ContentType = ContentType.MOVIE,
         val isSaved: Boolean = false,
         val savedListId: Long = -1L,
-    )
+    ) {
+        enum class ContentType {
+            MOVIE,
+            TV_SHOW
+        }
+    }
 
     data class RecentSearchUiState(
         val id: Long = 0,

@@ -19,7 +19,7 @@ fun <T> HorizontalMediaCardList(
     onCardClick: (T) -> Unit,
     isSaved: (T) -> Boolean,
     modifier: Modifier = Modifier,
-    isSaveVisible: Boolean = true,
+    isSaveVisible: (T) -> Boolean = { true },
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
 ) {
     LazyRow(
@@ -39,7 +39,7 @@ fun <T> HorizontalMediaCardList(
                 isSaved = isSaved(item),
                 onSavedClick = { onSavedClick(item) },
                 onClick = { onCardClick(item) },
-                isSaveToListVisible = isSaveVisible,
+                isSaveToListVisible = isSaveVisible(item),
             )
         }
     }
