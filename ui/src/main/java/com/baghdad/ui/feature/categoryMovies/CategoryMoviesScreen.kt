@@ -111,8 +111,7 @@ private fun CategoryMoviesContent(
                 Text(
                     text = uiState.categoryName,
                     style = Theme.typography.title.large,
-                    color = Theme.color.title,
-                    modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+                    color = Theme.color.title
                 )
             }
         },
