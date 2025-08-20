@@ -10,33 +10,26 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GetTrendingMoviesUseCaseTest {
 
-    private lateinit var repository: MovieRepository
-    private lateinit var getTrendingMoviesUseCase: GetTrendingMoviesUseCase
-
-
-    @BeforeEach
-    fun setUp() {
-        repository = mockk()
-        getTrendingMoviesUseCase = GetTrendingMoviesUseCase(repository)
-    }
+    private val repository = mockk<MovieRepository>()
+    private val getTrendingMoviesUseCase = GetTrendingMoviesUseCase(repository)
 
     @Test
-    fun `invoke() should return all trending movies when genreId is null`() = runTest {
-        coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
+    fun `getTrendingMoviesUseCase should return all trending movies when genreId is null`() =
+        runTest {
+            coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
 
-        val result = getTrendingMoviesUseCase(1, genreId = null)
+            val result = getTrendingMoviesUseCase(1, genreId = null)
 
-        assertThat(result).isEqualTo(sampleSavedMovies)
-        coVerify { repository.getTrendingMovies(1) }
-    }
+            assertThat(result).isEqualTo(sampleSavedMovies)
+            coVerify { repository.getTrendingMovies(1) }
+        }
 
     @Test
-    fun `invoke() should filter trending movies by genreId`() = runTest {
+    fun `getTrendingMoviesUseCase should filter trending movies by genreId`() = runTest {
         coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
 
         val result = getTrendingMoviesUseCase(page = 1, genreId = 1)
@@ -47,13 +40,14 @@ class GetTrendingMoviesUseCaseTest {
     }
 
     @Test
-    fun `invoke() should return empty list when no movie matches genreId`() = runTest {
-        coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
+    fun `getTrendingMoviesUseCase should return empty list when no movie matches genreId`() =
+        runTest {
+            coEvery { repository.getTrendingMovies(1) } returns sampleSavedMovies
 
-        val result = getTrendingMoviesUseCase(page = 1, genreId = 999L)
+            val result = getTrendingMoviesUseCase(page = 1, genreId = 999L)
 
-        assertThat(result.data).isEmpty()
-    }
+            assertThat(result.data).isEmpty()
+        }
 
     companion object {
         val genre = Genre(1L, "Action")
