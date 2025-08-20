@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
@@ -35,16 +36,21 @@ import com.baghdad.ui.navigation.bottom.TOP_LEVEL_ROUTES
 import com.baghdad.ui.navigation.bottom.navigateToBottomNavDestination
 import com.baghdad.ui.navigation.bottom.rememberBottomNavSelectedIndex
 import com.baghdad.ui.navigation.bottom.rememberIsTopLevelMainRoute
+import com.baghdad.ui.navigation.route.AuthenticationRoute
 import com.baghdad.ui.navigation.route.Graph
+import com.baghdad.ui.navigation.route.MovieDetailsRoute
+import com.baghdad.ui.navigation.route.TvShowDetailsRoute
 import com.baghdad.viewmodel.main.MainState
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
+    onStatusBarTransparencyChanged: (transparent: Boolean) -> Unit,
     state: MainState
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
     val isMainGraphRoute by rememberIsTopLevelMainRoute(
         navBackStackEntry,
         BOTTOM_NAV_ITEMS.keys,
@@ -56,6 +62,18 @@ fun MainScreen(
         targetValue = if (isMainGraphRoute) BOTTOM_BAR_HEIGHT.dp else 0.dp,
         animationSpec = BOTTOM_BAR_ANIMATION_SPEC
     )
+
+    LaunchedEffect(currentRoute) {
+        val transparentRoutes = setOf(
+            MovieDetailsRoute.MovieDetailsScreen,
+            TvShowDetailsRoute.TvShowDetailsScreen,
+            TvShowDetailsRoute.EpisodeDetailsScreen,
+            AuthenticationRoute.WelcomeScreen
+        ).map {
+                it::class.simpleName?.substringBeforeLast("/")
+        }
+        onStatusBarTransparencyChanged(currentRoute in transparentRoutes)
+    }
 
     state.isLoggedIn?.let { isLoggedIn ->
         Scaffold(
