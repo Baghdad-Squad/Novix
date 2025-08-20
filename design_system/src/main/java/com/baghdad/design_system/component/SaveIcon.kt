@@ -48,12 +48,12 @@ fun SaveIcon(
     Box(
         modifier = modifier
             .size(size.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(color = backgroundColor)
             .border(
                 width = 1.dp,
                 color = Theme.color.stroke,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(12.dp)
             )
             .clickable { onClick() },
         contentAlignment = Alignment.Center,
