@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.baghdad.design_system.R
 import com.baghdad.design_system.preview.NovixPreviews
@@ -25,6 +24,7 @@ fun LabeledIconRow(
     title: String,
     icon: Painter,
     modifier: Modifier = Modifier,
+    textColor: Color = Theme.color.body,
     tint: Color = Theme.color.body
 ) {
     Row(modifier = modifier) {
@@ -38,7 +38,7 @@ fun LabeledIconRow(
         )
         Text(
             text = title,
-            color = Theme.color.body,
+            color = textColor,
             style = Theme.typography.label.small,
             modifier = Modifier.padding(start = 4.dp)
         )

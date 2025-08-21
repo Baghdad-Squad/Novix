@@ -86,7 +86,8 @@ fun TvShowDetailsCard(
             LabeledIconRow(
                 title = rating.toString(),
                 icon = painterResource(R.drawable.ic_star_filled),
-                tint = Theme.color.yellowAccent
+                tint = Theme.color.yellowAccent,
+                textColor = Theme.color.title
             )
 
             if (date.isNotBlank()) {
