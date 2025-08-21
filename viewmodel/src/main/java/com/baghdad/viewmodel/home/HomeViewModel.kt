@@ -55,8 +55,6 @@ class HomeViewModel @Inject constructor(
     HomeInteractionListener {
     init {
         observeAppLanguage()
-        observeSavedMoviesCount()
-        observeSavedListsCount()
         observeContentRestriction()
     }
 
@@ -139,7 +137,8 @@ class HomeViewModel @Inject constructor(
             it.copy(isUserLoggedIn = isLoggedIn)
         }
         if (isLoggedIn) {
-            getUserSavedLists()
+            observeSavedMoviesCount()
+            observeSavedListsCount()
         }
     }
 
