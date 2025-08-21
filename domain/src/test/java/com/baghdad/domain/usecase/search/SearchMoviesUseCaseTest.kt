@@ -8,7 +8,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
-
 class SearchMoviesUseCaseTest {
 
     private val searchRepository = mockk<SearchRepository>()
@@ -23,7 +22,7 @@ class SearchMoviesUseCaseTest {
         coVerify(exactly = 1) { searchRepository.searchMoviesByTitle(query, 1) }
     }
 
-    companion object {
+    private companion object {
         val movieResult = MovieMock.SAVED_MOVIES_PAGED_RESULT
         val query = "action"
     }

@@ -1,5 +1,6 @@
 package com.baghdad.domain.usecase.actor
 
+import com.baghdad.domain.model.pagination.PagedResult
 import com.baghdad.entity.person.Actor
 import com.baghdad.entity.person.CastMember
 import kotlinx.datetime.LocalDate
@@ -27,6 +28,13 @@ object ActorMock {
         ACTOR.copy(id = 24, name = "Bob Johnson", department = "Director Test"),
         ACTOR.copy(id = 25, name = "Alice Brown", department = "Producer Test")
     )
+
+    val ACTOR_RESULT = PagedResult(
+        prevPage = null,
+        nextPage = null,
+        data = ACTORS
+    )
+
 
     val CAST_MEMBER = CastMember(
         actor = ACTOR,
