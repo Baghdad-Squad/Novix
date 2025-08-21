@@ -88,6 +88,7 @@ class HomeViewModel @Inject constructor(
         tryToCollect(
             flowProvider = { getSavedListCountUseCase.invoke() },
             onNewValue = { onGetSavedListsCountSuccess() },
+            dispatcher = ioDispatcher
         )
     }
 
@@ -100,6 +101,7 @@ class HomeViewModel @Inject constructor(
             flowProvider = { getSavedMoviesCountUseCase.invoke() },
             onNewValue = { onSavedMoviesCountChanged() },
             onError = ::onLoadDataError,
+            dispatcher = ioDispatcher
         )
     }
 
