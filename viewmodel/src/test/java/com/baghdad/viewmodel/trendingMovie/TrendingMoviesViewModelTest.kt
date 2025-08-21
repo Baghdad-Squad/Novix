@@ -15,6 +15,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -64,7 +65,7 @@ class TrendingMoviesViewModelTest {
     fun `onMovieClicked should emit NavigateToMovieDetails effect with correct movieId`() =
         runTest {
             viewModel = createViewModel()
-
+            advanceUntilIdle()
             viewModel.onMovieClicked(MOVIE_ID)
 
             viewModel.uiEffect.test {

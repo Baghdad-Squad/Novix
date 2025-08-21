@@ -13,7 +13,9 @@ import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListCountUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedMoviesCountUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.domain.usecase.userWatchedMedia.ObserveUserWatchedMediaUseCase
@@ -46,11 +48,15 @@ class HomeViewModel @Inject constructor(
     private val removeMovieFromSavedListUseCase: RemoveMovieFromSavedListUseCase,
     private val getAppLanguageUseCase: GetAppLanguageUseCase,
     private val getContentRestrictionUseCase: GetContentRestrictionUseCase,
+    private val getSavedMoviesCountUseCase: GetSavedMoviesCountUseCase,
+    private val getSavedListCountUseCase: GetSavedListCountUseCase,
     private val ioDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()),
     HomeInteractionListener {
     init {
         observeAppLanguage()
+        observeSavedMoviesCount()
+        observeSavedListsCount()
         observeContentRestriction()
     }
 
@@ -76,6 +82,35 @@ class HomeViewModel @Inject constructor(
             onError = ::onLoadDataError,
             dispatcher = ioDispatcher
         )
+    }
+
+    private fun observeSavedListsCount() {
+        tryToCollect(
+            flowProvider = { getSavedListCountUseCase.invoke() },
+            onNewValue = { onGetSavedListsCountSuccess() },
+            dispatcher = ioDispatcher
+        )
+    }
+
+    private fun onGetSavedListsCountSuccess() {
+        getUserSavedLists()
+    }
+
+    private fun observeSavedMoviesCount() {
+        tryToCollect(
+            flowProvider = { getSavedMoviesCountUseCase.invoke() },
+            onNewValue = { onSavedMoviesCountChanged() },
+            onError = ::onLoadDataError,
+            dispatcher = ioDispatcher
+        )
+    }
+
+
+    private fun onSavedMoviesCountChanged() {
+        getUserSavedLists()
+        getPopularItems()
+        getTopRatingMovies()
+        getUpcomingItems()
     }
 
     private fun onLanguageChanged() {
@@ -456,7 +491,6 @@ class HomeViewModel @Inject constructor(
 
 
     private fun onAddItemToListSuccess() {
-        loadData()
         onSaveToListBottomSheetDismiss()
         showItemSavedSuccessfullySnackBar()
     }

@@ -62,12 +62,12 @@ fun PrimaryButton(
             style = Theme.typography.label.large
         )
         AnimatedContent(
-            modifier = Modifier.padding(start = 8.dp),
             targetState = isLoading
         ) { loading ->
             if (loading) {
                 StripedCircularProgressIndicator(
-                    color = LocalContentColor.current
+                    color = LocalContentColor.current,
+                    modifier = Modifier.padding(start = 8.dp),
                 )
             } else {
                 painter?.let { painter ->
@@ -75,7 +75,9 @@ fun PrimaryButton(
                         painter = painter,
                         contentDescription = stringResource(R.string.primary_button_icon),
                         modifier = Modifier
-                            .size(20.dp)
+                            .padding(start = 8.dp)
+                            .size(20.dp),
+
                     )
                 }
             }

@@ -12,7 +12,7 @@ data class ReviewScreenState(
         val id: String = "",
         val authorName: String = "",
         val authorAvatarUrl: String = "",
-        val contentTitle: String = "",
+        val authorUsername: String = "",
         val reviewText: String = "",
         val postedDate: String = "",
         val rating: Double = 0.0,
