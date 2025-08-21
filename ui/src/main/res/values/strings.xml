@@ -125,7 +125,7 @@
     <string name="added_list_successfully">Added list successfully</string>
     <string name="deleted_list_successfully">Deleted list successfully</string>
     <string name="deleted_list">Delete list</string>
-    <string name="list_item_count_placeholder">%1$d items</string>
+    <string name="list_item_count_placeholder">items</string>
     <string name="delete">Delete</string>
     <string name="my_account">My account</string>
     <string name="profile_image">Profile Image</string>

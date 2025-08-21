@@ -45,7 +45,6 @@ fun MovieDetailsHeader(
         if (title.isNotBlank()) {
             Text(
                 text = title,
-                fontSize = 18.sp,
                 style = Theme.typography.title.medium,
                 color = Theme.color.title,
                 modifier = Modifier.padding(bottom = 32.dp)

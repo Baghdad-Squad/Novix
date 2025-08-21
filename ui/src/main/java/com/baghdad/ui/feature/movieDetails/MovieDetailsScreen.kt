@@ -194,7 +194,7 @@ private fun MovieDetailsContent(
         isLoading = state.isLoading,
         bottomBar = {
             DetailsScreenBottomBar(
-                hasTrailer = state.movieTrailerURL.isNotBlank(),
+                hasTrailer = state.movieDetails.movieTrailerURL.isNotBlank(),
                 onRateClicked = { listener.onClickStarButton() },
                 onPlayTrailerClicked = { listener.onClickPlayTrailer() },
                 isRated = state.isRated,
@@ -233,10 +233,10 @@ private fun MovieDetailsContent(
                     Spacer(Modifier.height(104.dp))
                 }
 
-                if (state.overView.isNotBlank()) {
+                if (state.movieDetails.overView.isNotBlank()) {
                     item(span = StaggeredGridItemSpan.FullLine) {
                         OverviewSection(
-                            overview = state.overView,
+                            overview = state.movieDetails.overView,
                             isExtended = state.isExtendText,
                             onExtendClicked = listener::onExtendOverviewClick
                         )
@@ -292,7 +292,7 @@ private fun MovieDetailsContent(
                         size = 40,
                         backgroundColor = Theme.color.iconBackgroundLow,
                         cornerRadius = 12.dp,
-                        isSaved = state.isSaved,
+                        isSaved = state.movieDetails.isSaved,
                         onClick = { listener.onSaveCurrentMovieClick() }
                     )
                 }
@@ -300,8 +300,6 @@ private fun MovieDetailsContent(
         }
 
     }
-
-
 
     RatingBottomSheet(
         isVisible = state.ratingStatus.isBottomSheetVisible && state.ratingStatus.bottomSheetType

@@ -127,7 +127,7 @@
     <string name="welcome_screen_background">خلفية شاشة الترحيب</string>
     <string name="there_was_a_problem">حدثت مشكلة ما</string>
     <string name="continue_as_guest">المتابعة كضيف</string>
-    <string name="list_item_count_placeholder">%1$d عنصر</string>
+    <string name="list_item_count_placeholder">عنصر</string>
 
     <string name="submit">إدخال</string>
     <string name="please_login_to_rate">سجل دخولك لتستطيع تقييم أعمالك المفضلة.</string>

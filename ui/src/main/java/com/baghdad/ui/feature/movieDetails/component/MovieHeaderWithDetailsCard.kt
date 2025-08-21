@@ -30,7 +30,8 @@ fun MovieHeaderWithDetailsCard(
     listener: MovieDetailsInteractionListener,
     modifier: Modifier = Modifier
 ) {
-    val images = if (uiState.movieImages.isEmpty()) listOf(uiState.posterImageURL) else  uiState.movieImages
+    val images =
+        if (uiState.movieImages.isEmpty()) listOf(uiState.movieDetails.posterImageURL) else uiState.movieImages
     val pagerState = rememberPagerState(pageCount = { images.size })
     val aspectRatio = if (uiState.movieImages.isNotEmpty()) 1.778f  else  1.2f
 
@@ -67,11 +68,11 @@ fun MovieHeaderWithDetailsCard(
             }
 
             MovieDetailsHeader(
-                title = uiState.movieName,
-                releaseDate = uiState.date,
-                rating = uiState.rating,
-                duration = if (isArabicSystemLocale()) arabicDuration(uiState.duration) else uiState.duration.formatDuration(),
-                categories = uiState.categories,
+                title = uiState.movieDetails.movieName,
+                releaseDate = uiState.movieDetails.date,
+                rating = uiState.movieDetails.rating,
+                duration = if (isArabicSystemLocale()) arabicDuration(uiState.movieDetails.duration) else uiState.movieDetails.duration.formatDuration(),
+                categories = uiState.movieDetails.categories,
                 onViewReviewClicked = {
                     listener.onReviewClick()
                 },
@@ -80,7 +81,7 @@ fun MovieHeaderWithDetailsCard(
                     .padding(bottom = 16.dp)
                     .padding(horizontal = 16.dp)
                     .align(Alignment.CenterHorizontally)
-                    .then(Modifier.padding(bottom = if (uiState.categories.isEmpty()) 24.dp else 0.dp))
+                    .then(Modifier.padding(bottom = if (uiState.movieDetails.categories.isEmpty()) 24.dp else 0.dp))
             )
         }
     }
