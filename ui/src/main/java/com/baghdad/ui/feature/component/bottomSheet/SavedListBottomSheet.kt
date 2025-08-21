@@ -118,9 +118,7 @@ private fun SavedListsBottomSheetContent(
             Selection(
                 option = list.toSelectable(selectedListId),
                 onClick = { onListSelected(list.id) },
-                description = stringResource(
-                    R.string.list_item_count_placeholder, list.itemsCount
-                ),
+                description = "${list.itemsCount} " + stringResource(R.string.list_item_count_placeholder),
             )
         }
 

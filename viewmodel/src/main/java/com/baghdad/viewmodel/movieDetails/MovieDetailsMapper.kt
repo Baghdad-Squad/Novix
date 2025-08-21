@@ -20,8 +20,8 @@ fun CastMember.toActorCardInfo(): MovieDetailsState.ActorCardInfo = MovieDetails
     id = actor.id.toInt()
 )
 
-fun SavedMovie.toMovieDetailsStateUpdate(): MovieDetailsState.() -> MovieDetailsState = {
-    copy(
+fun SavedMovie.toMovieDetailsStateUpdate(): MovieDetailsState.MovieDetails =
+    MovieDetailsState.MovieDetails(
         movieName = movie.title,
         movieTrailerURL = movie.trailerURL,
         overView = movie.overview,
@@ -35,7 +35,6 @@ fun SavedMovie.toMovieDetailsStateUpdate(): MovieDetailsState.() -> MovieDetails
         isHasTrailer = movie.trailerURL.isNotEmpty(),
         selectedMovieId = movie.id
     )
-}
 
 private fun List<Genre>.toCategoryUiStateList(): List<MovieDetailsState.CategoryUiState> {
     return map { genre ->

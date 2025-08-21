@@ -55,7 +55,12 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     private fun onGetEpisodeDetailsSuccess(episode: Episode) {
-        updateState { it.copy(episode = episode.toUiState()) }
+        updateState {
+            it.copy(
+                episode = episode.toUiState()
+                    .copy(headerPictures = episode.headerPictures.take(MAX_EPISODE_HEADER_PICTURES))
+            )
+        }
     }
 
     private fun onGetEpisodeDetailsStart() {
@@ -260,5 +265,9 @@ class EpisodeDetailsViewModel @Inject constructor(
         loadData(
             tvShowId, seasonNumber, episodeNumber
         )
+    }
+
+    companion object {
+        private const val MAX_EPISODE_HEADER_PICTURES = 10
     }
 }

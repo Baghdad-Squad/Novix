@@ -65,9 +65,9 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onSaveCurrentMovieClick() {
         onSaveButtonClicked(
-            listId = currentState.savedListId,
+            listId = currentState.movieDetails.savedListId,
             itemId = movieId,
-            isSaved = uiState.value.isSaved
+            isSaved = uiState.value.movieDetails.isSaved
         )
     }
 
@@ -144,7 +144,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onClickPlayTrailer() {
-        sendEffect(MovieDetailsEffect.OpenYoutubeLink(currentState.movieTrailerURL))
+        sendEffect(MovieDetailsEffect.OpenYoutubeLink(currentState.movieDetails.movieTrailerURL))
     }
 
     private fun onError(throwable: Throwable) {
@@ -467,7 +467,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onGetMovieGallerySuccess(images: List<String>) {
         updateState { state ->
             state.copy(
-                movieImages = images,
+                movieImages = images.take(MAX_MOVIE_IMAGES),
             )
         }
     }
@@ -546,7 +546,9 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onGetMovieDetailsSuccess(details: SavedMovie) {
-        updateState(details.toMovieDetailsStateUpdate())
+        updateState {
+            it.copy(movieDetails = details.toMovieDetailsStateUpdate())
+        }
     }
 
     private fun getCastMembers() {
@@ -615,8 +617,8 @@ class MovieDetailsViewModel @Inject constructor(
             dispatcher = ioDispatcher,
             callee = {
                 addUserWatchedMediaUseCase(
-                    movieId, currentState.categories.map { it.id },
-                    contentImageUrl = currentState.posterImageURL,
+                    movieId, currentState.movieDetails.categories.map { it.id },
+                    contentImageUrl = currentState.movieDetails.posterImageURL,
                     contentType = UserWatchedMedia.ContentType.MOVIE,
                 )
             },
@@ -625,5 +627,6 @@ class MovieDetailsViewModel @Inject constructor(
 
     companion object {
         private const val DEFAULT_PAGE_SIZE = 20
+        private const val MAX_MOVIE_IMAGES = 10
     }
 }

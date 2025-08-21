@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.baghdad.design_system.component.ExpandableText
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
@@ -22,10 +21,9 @@ fun OverviewSection(
     Column(modifier = modifier.padding(bottom = 4.dp)) {
         Text(
             text = stringResource(com.baghdad.ui.R.string.overview),
-            fontSize = 18.sp,
             style = Theme.typography.title.medium,
             color = Theme.color.title,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 4.dp)
         )
         ExpandableText(
             isExpanded = isExtended,

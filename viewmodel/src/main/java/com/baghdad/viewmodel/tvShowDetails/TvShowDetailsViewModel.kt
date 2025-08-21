@@ -68,6 +68,7 @@ class TvShowDetailsViewModel @Inject constructor(
         updateState { tvShowDetailsScreenState ->
             tvShowDetailsScreenState.copy(
                 tvShowInfo = tvShow.toUiState()
+                    .copy(headerImagesURLs = tvShow.headerImagesURLs.take(MAX_HEADER_IMAGES))
             )
         }
     }
@@ -289,6 +290,10 @@ class TvShowDetailsViewModel @Inject constructor(
             },
             dispatcher = ioDispatcher,
         )
+    }
+
+    companion object {
+        private const val MAX_HEADER_IMAGES = 10
     }
 
 }
