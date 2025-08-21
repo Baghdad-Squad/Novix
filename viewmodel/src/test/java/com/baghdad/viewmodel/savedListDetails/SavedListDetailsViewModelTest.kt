@@ -103,7 +103,7 @@ class SavedListDetailsViewModelTest {
         viewModel.onBackClick()
 
         val effect = viewModel.uiEffect.first()
-        assertThat(effect).isEqualTo(SavedListDetailsEffect.NavigateBack)
+        assertThat(effect).isEqualTo(SavedListDetailsEffect.NavigateBack(isDeleteSuccess = false))
     }
 
     @Test
@@ -168,7 +168,7 @@ class SavedListDetailsViewModelTest {
 
             viewModel.uiEffect.test {
                 val effect = awaitItem()
-                assertThat(effect).isEqualTo(SavedListDetailsEffect.NavigateBack)
+                assertThat(effect).isEqualTo(SavedListDetailsEffect.NavigateBack(isDeleteSuccess = true))
             }
         }
 

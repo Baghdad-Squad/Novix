@@ -1,6 +1,9 @@
 package com.baghdad.ui.feature.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,7 +15,9 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,7 +36,6 @@ import com.baghdad.ui.feature.home.component.PopularSection
 import com.baghdad.ui.feature.home.component.TopRatingSection
 import com.baghdad.ui.feature.home.component.WhatToWatchSection
 import com.baghdad.ui.feature.home.component.upcomingSection
-import com.baghdad.ui.feature.home.component.upcomingSectionLoading
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToActors
 import com.baghdad.ui.navigation.graph.home.HomeNavEvent.NavigateToContinueWatching
@@ -76,24 +80,45 @@ private fun HomeContent(
 ) {
     val savedLists = state.addToListBottomSheetState.savedLists.collectAsLazyPagingItems()
 
+    val lazyGridState = rememberLazyGridState()
+
+    val isScrolled by remember {
+        derivedStateOf {
+            lazyGridState.firstVisibleItemIndex > 0 ||
+                    lazyGridState.firstVisibleItemScrollOffset > 0
+        }
+    }
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(Theme.color.surface)
-            .statusBarsPadding(),
-        topBar = { HomeAppBar(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) },
+            .background(Theme.color.surface),
+        topBar = {
+            HomeAppBar(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(top = 12.dp, bottom = 8.dp)
+            )
+        },
         snackBarState = snackBarState.toScaffoldSnackBarState(::mapSnackBarMessage),
         onSnackBarActionClick = interactionListener::onSnackBarActionLabelClicked,
-        backgroundContent = { BackgroundBlur() },
+        backgroundContent = {
+            AnimatedVisibility(
+                visible = !isScrolled,
+                enter = fadeIn(tween(500)),
+                exit = fadeOut(tween(500)),
+            ) {
+                BackgroundBlur()
+            }
+        },
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 150.dp),
             contentPadding = PaddingValues(bottom = 16.dp, top = 8.dp),
-            state = rememberLazyGridState(),
+            state = lazyGridState,
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-
             item(key = "popular_section", span = { GridItemSpan(maxLineSpan) }) {
                 AnimatedVisibility(state.isPopularLoading || state.popularItems.isNotEmpty()) {
                     PopularSection(
@@ -143,24 +168,17 @@ private fun HomeContent(
                     )
                 }
             }
-
-            if (state.isUpcomingMoviesLoading || state.isUpcomingGenresLoading) {
-                upcomingSectionLoading(
-                    modifier = Modifier.padding(top = 24.dp),
-                    upcomingItems = state.upcomingItems,
-                )
-            } else {
-                upcomingSection(
-                    modifier = Modifier.padding(top = 24.dp),
-                    selectedGenreId = state.selectedUpcomingGenreId,
-                    genres = state.upcomingGenres,
-                    onGenreSelected = interactionListener::onUpcomingGenreSelected,
-                    upcomingItems = state.upcomingItems,
-                    onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
-                    onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
-                )
-            }
-
+            upcomingSection(
+                modifier = Modifier.padding(top = 24.dp),
+                selectedGenreId = state.selectedUpcomingGenreId,
+                genres = state.upcomingGenres,
+                onGenreSelected = interactionListener::onUpcomingGenreSelected,
+                upcomingItems = state.upcomingItems,
+                isUpcomingItemsLoading = state.isUpcomingItemsLoading,
+                onUpcomingItemClicked = interactionListener::onUpcomingItemClicked,
+                onUpcomingItemSaveClicked = interactionListener::onUpcomingItemSaveClicked,
+                isGenresLoading = state.isUpcomingGenresLoading
+            )
         }
         SavedListBottomSheet(
             isVisible = state.addToListBottomSheetState.isVisible,
@@ -171,7 +189,7 @@ private fun HomeContent(
             onBottomSheetCloseClick = interactionListener::onSaveToListBottomSheetDismiss,
             lists = savedLists,
             selectedListId = state.addToListBottomSheetState.selectedListId,
-            onListSelected = interactionListener::onListSelected
+            onListSelected = interactionListener::onListSelected,
         )
         AddListBottomSheet(
             isVisible = state.addListBottomSheetState.isVisible,
@@ -179,7 +197,7 @@ private fun HomeContent(
             listName = state.addListBottomSheetState.listName,
             onDismiss = interactionListener::onCreateListBottomSheetDismiss,
             onAddClick = interactionListener::onCreateListBottomSheetAddClick,
-            onListNameChange = interactionListener::onCreatedListNameChanged
+            onListNameChange = interactionListener::onCreatedListNameChanged,
         )
     }
 }

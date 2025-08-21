@@ -102,7 +102,6 @@ private fun CategoryTvShowsContent(
                     text = uiState.categoryName,
                     style = Theme.typography.title.large,
                     color = Theme.color.title,
-                    modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
                 )
             }
         },
@@ -119,8 +118,8 @@ private fun CategoryTvShowsContent(
                 horizontal = 16.dp,
                 vertical = 8.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             state = rememberSaveableLazyGridState()
         ) { tvShow ->
             HomeCard(

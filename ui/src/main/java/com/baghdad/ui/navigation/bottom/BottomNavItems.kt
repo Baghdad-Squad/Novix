@@ -43,6 +43,6 @@ val TOP_LEVEL_ROUTES =
         HomeRoute.HomeScreen,
         SearchRoute.SearchScreen,
         CategoriesRoute.CategoriesScreen,
-        MyListsRoute.MyListsScreen,
+        MyListsRoute.MyListsScreen(),
         MyAccountRoute.MyAccountScreen,
     )

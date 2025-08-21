@@ -39,7 +39,7 @@ fun ProfileScreenItemsList(
     ProfileScreenDivider()
     ProfileScreenItem(
         title = stringResource(R.string.change_password),
-        icon = painterResource(com.baghdad.design_system.R.drawable.ic_lock_key),
+        icon = painterResource(R.drawable.lock_key),
         onClick = { onclickChangePassword() }
     )
     ProfileScreenDivider()

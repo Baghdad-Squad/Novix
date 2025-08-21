@@ -446,8 +446,8 @@ class TvShowRepositoryImplTest {
 
         private fun createMockReviewDto() = ReviewDto(
             id = "review123",
-            contentTitle = "Great movie! Highly recommended.",
-            authorName = "John Reviewer",
+            authorUsername = "Great movie! Highly recommended.",
+            authorDisplayName = "John Reviewer",
             rating = 9.0,
             authorAvatarUrl = "https://example.com/avatar.jpg",
             reviewText = "This movie was fantastic! The plot was engaging and the acting was top-notch.",
@@ -456,8 +456,8 @@ class TvShowRepositoryImplTest {
 
         private fun createMockReview() = Review(
             id = "review123",
-            contentTitle = "Great movie! Highly recommended.",
-            authorName = "John Reviewer",
+            authorUsername = "Great movie! Highly recommended.",
+            authorDisplayName = "John Reviewer",
             rating = 9.0,
             authorAvatarUrl = "https://example.com/avatar.jpg",
             reviewText = "This movie was fantastic! The plot was engaging and the acting was top-notch.",

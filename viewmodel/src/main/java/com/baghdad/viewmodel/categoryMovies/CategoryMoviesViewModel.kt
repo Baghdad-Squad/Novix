@@ -39,8 +39,8 @@ class CategoryMoviesViewModel @Inject constructor(
     private val categoryId: Long = checkNotNull(savedStateHandle["categoryId"])
 
     init {
-        loadData()
         checkIfUserIsLoggedIn()
+        loadData()
     }
 
     private fun loadData() {
@@ -127,6 +127,7 @@ class CategoryMoviesViewModel @Inject constructor(
             isSuccess = false,
         )
     }
+
     private fun onSaveButtonClicked(
         listId: Long,
         itemId: Long,
@@ -190,6 +191,7 @@ class CategoryMoviesViewModel @Inject constructor(
     override fun onSnackBarActionLabelClick() {
         hideSnackBar()
         loadData()
+        if (currentState.isUserLoggedIn) getUserSavedLists()
     }
 
     override fun onMovieToListClick(item: CategoryMoviesState.MovieUiState) {

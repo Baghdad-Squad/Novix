@@ -117,7 +117,7 @@ private fun ActorGalleryScreenContent(
                             .size(104.dp)
                             .clip(RoundedCornerShape(12))
                             .border(1.dp, Theme.color.stroke)
-                            .clickable { listener::onGalleryImageClick }
+                            .clickable { listener.onGalleryImageClick(actorItem) }
                     )
                 }
             }

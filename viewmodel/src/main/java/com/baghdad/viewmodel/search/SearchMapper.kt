@@ -12,7 +12,7 @@ fun SavedMovie.toMovieUI() =
         posterPictureURL = movie.posterImageURL,
         isSaved = isSaved,
         savedListId = listId ?: -1L
-)
+    )
 
 fun TvShow.toTvShowUI() = SearchScreenState.TvShowUiState(
     id = id,
@@ -24,10 +24,11 @@ fun Actor.toActorUI() = SearchScreenState.ActorUiState(
     name = name,
     profilePictureURL = profilePictureURL
 )
+
 fun RecentlyViewed.toRecentlyViewedUI() = SearchScreenState.RecentlyViewedUiState(
     id = contentId,
     posterPictureURL = contentImageUrl,
-    contentType = contentType,
+    contentType = SearchScreenState.RecentlyViewedUiState.ContentType.valueOf(contentType.name),
     isSaved = isSaved,
     savedListId = listId ?: -1L
 

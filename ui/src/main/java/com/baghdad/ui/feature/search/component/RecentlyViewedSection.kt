@@ -31,6 +31,7 @@ fun RecentlyViewedSection(
         imageUrl = { it.posterPictureURL },
         onSavedClick = { onSavedClick(it) },
         onCardClick = { onRecentlyViewedClick(it.id, it.posterPictureURL) },
+        isSaveVisible = { it.contentType != SearchScreenState.RecentlyViewedUiState.ContentType.TV_SHOW },
         isSaved = { it.isSaved },
         modifier = Modifier
             .fillMaxWidth()

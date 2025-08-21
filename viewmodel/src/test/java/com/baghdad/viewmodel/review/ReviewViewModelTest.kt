@@ -137,9 +137,9 @@ class ReviewViewModelTest {
     companion object {
         val mockReview = Review(
             id = "1",
-            authorName = "Smith",
+            authorDisplayName = "Smith",
             authorAvatarUrl = "https://example.com/avatar.jpg",
-            contentTitle = "MovieBuff1967",
+            authorUsername = "MovieBuff1967",
             rating = 5.5,
             reviewText = "Amazing plot!",
             postedDate = LocalDate(2023, 7, 5)
@@ -147,9 +147,9 @@ class ReviewViewModelTest {
 
         val secondMockReview = Review(
             id = "2",
-            authorName = "max",
+            authorDisplayName = "max",
             authorAvatarUrl = "https://2example.com/avatar.jpg",
-            contentTitle = "MovieBuff1968",
+            authorUsername = "MovieBuff1968",
             rating = 5.5,
             reviewText = "Amazing plot!",
             postedDate = LocalDate(2023, 7, 5)
