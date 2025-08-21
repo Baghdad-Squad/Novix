@@ -2,6 +2,7 @@ package com.baghdad.ui.feature.home.component
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +36,7 @@ fun <T> HomeHorizontalCarouselSection(
     onViewAllClick: () -> Unit,
     modifier: Modifier = Modifier,
     carouselState: CarouselState = rememberCarouselState { items.size },
-    itemContent: @Composable (T) -> Unit,
+    itemContent: @Composable (item: T, modifier: Modifier) -> Unit,
 ) {
     Crossfade(modifier = modifier, targetState = isLoading) { isLoading ->
         if (isLoading) {
@@ -60,7 +61,18 @@ fun <T> HomeHorizontalCarouselSection(
                     contentPadding = PaddingValues(end = HomeCarouselDefaults.CONTENT_END_PADDING)
                 ) { index ->
                     val item = items[index]
-                    itemContent(item)
+                    itemContent(
+                        item,
+                        Modifier
+                            .maskClip(RoundedCornerShape(HomeCarouselDefaults.CARD_CORNER_RADIUS))
+                        .maskBorder(
+                            border = BorderStroke(
+                                width = HomeCarouselDefaults.BORDER_WIDTH,
+                                color = Theme.color.stroke
+                            ),
+                            shape = RoundedCornerShape(HomeCarouselDefaults.CARD_CORNER_RADIUS)
+                        )
+                    )
                 }
             }
         }
@@ -114,7 +126,14 @@ private fun HomeHorizontalCarouselLoadingPlaceHolder(modifier: Modifier = Modifi
                     Modifier
                         .size(width = HomeCarouselDefaults.HERO_ITEM_SIZE, height = HomeCarouselDefaults.CAROUSEL_HEIGHT)
                         .background(Theme.color.surface, RoundedCornerShape(HomeCarouselDefaults.CARD_CORNER_RADIUS))
-                        .clip(RoundedCornerShape(HomeCarouselDefaults.CARD_CORNER_RADIUS))
+                        .maskClip(RoundedCornerShape(HomeCarouselDefaults.CARD_CORNER_RADIUS))
+                        .maskBorder(
+                            border = BorderStroke(
+                                width = HomeCarouselDefaults.BORDER_WIDTH,
+                                color = Theme.color.stroke
+                            ),
+                            shape = RoundedCornerShape(HomeCarouselDefaults.CARD_CORNER_RADIUS)
+                        )
                         .shimmerEffect(),
             )
         }
@@ -129,6 +148,7 @@ private object HomeCarouselDefaults {
     val SMALL_ITEM_SIZE = 74.dp
     val ITEM_SPACING = 8.dp
     val CARD_CORNER_RADIUS = 12.dp
+    val BORDER_WIDTH = 1.dp
 }
 
 @Preview(showSystemUi = true, showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
