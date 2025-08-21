@@ -88,6 +88,7 @@ fun EpisodeDetailsHeader(
                 title = rating.toString(),
                 icon = painterResource(com.baghdad.design_system.R.drawable.ic_star_filled),
                 tint = Theme.color.yellowAccent,
+                textColor = Theme.color.title
             )
             if (releaseDate.isNotBlank()) {
                 CircleDot()

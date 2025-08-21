@@ -36,7 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -217,7 +216,7 @@ private fun MovieDetailsContent(
                 state = lazyState,
                 columns = StaggeredGridCells.Adaptive(150.dp),
                 modifier = Modifier.fillMaxSize(),
-                verticalItemSpacing = 12.dp,
+                verticalItemSpacing = 4.dp,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp)
             ) {
@@ -258,10 +257,8 @@ private fun MovieDetailsContent(
                     item(span = StaggeredGridItemSpan.FullLine) {
                         Text(
                             text = stringResource(R.string.more_like_this),
-                            fontSize = 18.sp,
                             style = Theme.typography.title.medium,
-                            color = Theme.color.title,
-                            modifier = Modifier.padding(bottom = 8.dp),
+                            color = Theme.color.title
                         )
                     }
 

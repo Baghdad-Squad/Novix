@@ -16,6 +16,6 @@ fun CircleDot(modifier: Modifier = Modifier) {
         modifier = modifier
             .padding(start = 8.dp, end = 10.dp)
             .size(3.dp)
-            .background(Theme.color.body, CircleShape)
+            .background(Theme.color.hint, CircleShape)
     )
 }
