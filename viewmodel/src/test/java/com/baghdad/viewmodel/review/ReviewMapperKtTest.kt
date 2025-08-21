@@ -27,7 +27,7 @@ class ReviewUiMapperTest {
         assertThat(uiReview.id).isEqualTo("r1")
         assertThat(uiReview.authorName).isEqualTo("Max Verstappen")
         assertThat(uiReview.authorAvatarUrl).isEqualTo("https://example.com/avatar.jpg")
-        assertThat(uiReview.contentTitle).isEqualTo("Inception")
+        assertThat(uiReview.authorUsername).isEqualTo("Inception")
         assertThat(uiReview.reviewText).isEqualTo("Amazing plot!")
         assertThat(uiReview.postedDate).isEqualTo("15-07-2023")
         assertThat(uiReview.rating).isWithin(0.01).of(8.8)

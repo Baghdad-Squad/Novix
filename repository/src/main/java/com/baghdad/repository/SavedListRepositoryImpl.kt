@@ -13,6 +13,9 @@ import com.baghdad.repository.model.PagedResultDto
 import com.baghdad.repository.model.SavedListDto
 import com.baghdad.repository.model.savedList.SavableMovieDto
 import com.baghdad.repository.util.executeSafely
+import com.baghdad.repository.util.getFlowSafely
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,6 +30,8 @@ constructor(
     override suspend fun createSavedList(title: String) {
         return executeSafely {
             remoteSavedListSource.createSavedList(title)
+            val count = savableMovieDataSource.getSavedListCount().first()
+            savableMovieDataSource.addSavedListCount(count + 1)
         }
     }
 
@@ -86,7 +91,7 @@ constructor(
             if (shouldPreformSync().not()) return@executeSafely
             val accountId = getUserAccountId()
             val savedLists = fetchAllSavedLists(accountId = accountId)
-
+            savableMovieDataSource.addSavedListCount(savedLists.size)
             savedLists.forEach { list ->
                 val movies = fetchAllMoviesForList(listId = list.id)
                 savableMovieDataSource.saveMovies(listId = list.id, movies)
@@ -102,6 +107,17 @@ constructor(
 
     private suspend fun shouldPreformSync(): Boolean {
         return savableMovieDataSource.getSavedMovies().isEmpty()
+    }
+    override fun getSavedMoviesCount(): Flow<Int> {
+        return getFlowSafely {
+            savableMovieDataSource.getSavedMoviesCount()
+        }
+    }
+
+    override fun getSavedListCount(): Flow<Int> {
+        return getFlowSafely {
+            savableMovieDataSource.getSavedListCount()
+        }
     }
 
     private suspend fun getUserAccountId(): Long = userDataSource.getUser()?.id ?: 0

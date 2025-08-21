@@ -18,6 +18,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -37,7 +38,7 @@ class SavedListRepositoryImplTest {
     fun `should createSavedList call remote source with correct session ID`() =
         runTest {
             coEvery { remoteSource.createSavedList(TITLE) } returns Unit
-
+            coEvery { savableMovieDataSource.getSavedListCount() } returns flowOf(1)
             repository.createSavedList(TITLE)
 
             coVerify(exactly = 1) { remoteSource.createSavedList(TITLE) }

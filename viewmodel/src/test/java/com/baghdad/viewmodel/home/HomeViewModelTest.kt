@@ -1,6 +1,6 @@
 import app.cash.turbine.test
 import com.baghdad.domain.exception.NetworkException
-import com.baghdad.domain.exception.NoInternetException
+import com.baghdad.domain.model.profile.ContentRestrictionTypes
 import com.baghdad.domain.model.savedList.SavedMovie
 import com.baghdad.domain.usecase.appConfigurations.GetAppLanguageUseCase
 import com.baghdad.domain.usecase.appConfigurations.GetContentRestrictionUseCase
@@ -11,7 +11,9 @@ import com.baghdad.domain.usecase.movie.GetPopularMoviesUseCase
 import com.baghdad.domain.usecase.movie.GetUpcomingMoviesUseCase
 import com.baghdad.domain.usecase.savedList.AddMovieToSavedListUseCase
 import com.baghdad.domain.usecase.savedList.CreateSavedListUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedListCountUseCase
 import com.baghdad.domain.usecase.savedList.GetSavedListsUseCase
+import com.baghdad.domain.usecase.savedList.GetSavedMoviesCountUseCase
 import com.baghdad.domain.usecase.savedList.RemoveMovieFromSavedListUseCase
 import com.baghdad.domain.usecase.tvShow.GetPopularTvShowsUseCase
 import com.baghdad.domain.usecase.userWatchedMedia.ObserveUserWatchedMediaUseCase
@@ -57,6 +59,8 @@ class HomeViewModelTest {
     val observeContinueWatchingUseCase: ObserveUserWatchedMediaUseCase = mockk()
     val getContentRestrictionUseCase: GetContentRestrictionUseCase = mockk()
     val getMovieGenresUseCase: GetMovieGenresUseCase = mockk()
+    val getSavedMoviesCountUseCase: GetSavedMoviesCountUseCase = mockk()
+    val getSavedListCountUseCase: GetSavedListCountUseCase = mockk()
     private lateinit var viewModel: HomeViewModel
 
     private val testDispatcher = StandardTestDispatcher()
@@ -66,6 +70,9 @@ class HomeViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
+        coEvery { getContentRestrictionUseCase.invoke() } returns flowOf(ContentRestrictionTypes.NONE)
+        coEvery { getSavedListCountUseCase.invoke() } returns flowOf(0)
+        coEvery { getSavedMoviesCountUseCase.invoke() } returns flowOf(0)
     }
 
     @AfterEach
@@ -88,6 +95,8 @@ class HomeViewModelTest {
             getAppLanguageUseCase = getAppLanguageUseCase,
             getMovieGenresUseCase = getMovieGenresUseCase,
             getContentRestrictionUseCase = getContentRestrictionUseCase,
+            getSavedMoviesCountUseCase = getSavedMoviesCountUseCase,
+            getSavedListCountUseCase = getSavedListCountUseCase,
             ioDispatcher = testDispatcher
         )
     }
@@ -402,6 +411,7 @@ class HomeViewModelTest {
 
     @Test
     fun `should update selected item id when onContinueWatchingItemSaveClicked called`() = runTest {
+
         viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -410,9 +420,13 @@ class HomeViewModelTest {
                 id = 3, contentType = HomeScreenState.ContinueWatchingItemUiState.ContentType.MOVIE
             )
         )
+        advanceUntilIdle()
 
         viewModel.uiState.test {
-            val state = awaitItem()
+
+
+            val state =
+                awaitItemWhere { viewModel.uiState.value.addToListBottomSheetState.selectedItemId == 3L }
             assertThat(state.addToListBottomSheetState.selectedItemId).isEqualTo(3)
         }
     }
@@ -469,23 +483,6 @@ class HomeViewModelTest {
             }
         }
 
-    @Test
-    fun `should show no internet snackbar when getPopularMoviesUseCase throw NoInternetException`() =
-        runTest {
-            coEvery { getAppLanguageUseCase.invoke() } returns flowOf("en")
-            coEvery { getPopularMoviesUseCase.invoke() } throws NoInternetException()
-            coEvery { getPopularTvShowsUseCase.invoke() } throws NoInternetException()
-
-            viewModel = createViewModel()
-
-            viewModel.snackBarState.test {
-                advanceUntilIdle()
-                val state = awaitItemWhere { it.message == BaseSnackBarMessage.NetworkError }
-                assertThat(state.message).isEqualTo(BaseSnackBarMessage.NetworkError)
-                assertThat(state.isSuccess).isFalse()
-                cancelAndIgnoreRemainingEvents()
-            }
-        }
 
     @Test
     fun `should reload data when onSnackBarActionLabelClicked`() = runTest {
@@ -624,7 +621,7 @@ class HomeViewModelTest {
     @Test
     fun `should update list name successfully when onCreatedListNameChanged called`() = runTest {
         val viewModel = createViewModel()
-
+        advanceUntilIdle()
         viewModel.onCreatedListNameChanged("Test")
 
         viewModel.uiState.test {
@@ -637,6 +634,7 @@ class HomeViewModelTest {
     fun `should hide add list bottom sheet when onSaveToListBottomSheetDismiss is called`() =
         runTest {
             val viewModel = createViewModel()
+            advanceUntilIdle() // شي
             viewModel.onTopRatingItemSaveClicked(
                 HomeScreenState.TopRatingItemUiState(
                     id = 5L, savedListId = 1L

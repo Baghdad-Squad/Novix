@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.baghdad.localDatasource.roomDB.entity.SavedListMovie
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SavedListMovieDao {
@@ -29,4 +30,7 @@ interface SavedListMovieDao {
 
     @Query("DELETE FROM saved_list_movies")
     suspend fun deleteAllSavedMovies()
+
+    @Query("SELECT count(listId) FROM saved_list_movies") //movieId
+    fun getSavedMoviesCount(): Flow<Int>
 }
