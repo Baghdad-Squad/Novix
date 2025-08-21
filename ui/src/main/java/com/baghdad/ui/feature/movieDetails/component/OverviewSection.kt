@@ -19,7 +19,7 @@ fun OverviewSection(
     readMoreMaxLines: Int = 4,
     onExtendClicked: () -> Unit,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(bottom = 4.dp)) {
         Text(
             text = stringResource(com.baghdad.ui.R.string.overview),
             fontSize = 18.sp,

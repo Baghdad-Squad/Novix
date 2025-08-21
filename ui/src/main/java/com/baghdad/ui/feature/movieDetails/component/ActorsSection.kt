@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.baghdad.design_system.component.Text
 import com.baghdad.design_system.theme.Theme
 import com.baghdad.ui.feature.component.ActorCard
@@ -27,7 +26,6 @@ fun ActorsSection(
     Column(modifier = modifier.padding(bottom = 16.dp)) {
         Text(
             text = stringResource(com.baghdad.ui.R.string.cast),
-            fontSize = 18.sp,
             style = Theme.typography.title.medium,
             color = Theme.color.title,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
