@@ -634,6 +634,7 @@ class HomeViewModelTest {
     fun `should hide add list bottom sheet when onSaveToListBottomSheetDismiss is called`() =
         runTest {
             val viewModel = createViewModel()
+            advanceUntilIdle() // شي
             viewModel.onTopRatingItemSaveClicked(
                 HomeScreenState.TopRatingItemUiState(
                     id = 5L, savedListId = 1L
