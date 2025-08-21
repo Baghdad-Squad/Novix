@@ -22,7 +22,6 @@ class GetPopularMoviesUseCaseTest {
     }
 
     private companion object {
-        val movie = MovieMock.MOVIE
         val savedMovies = MovieMock.SAVED_MOVIES
     }
 }

@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.tvShow
 
 import com.baghdad.domain.repository.TvShowRepository
+import com.baghdad.domain.usecase.genre.GenreMock
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -30,7 +31,7 @@ class GetTvShowsByGenreUseCaseTest {
 
     private companion object {
         val tvShowResult = TvShowMock.TV_SHOW_RESULT
-        val genreId = TvShowMock.GENRE_ID
+        val genreId = GenreMock.GENRE_ID
         val page = 1
         val pageSize = 20
     }

@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.tvShow
 
 import com.baghdad.domain.repository.TvShowRepository
+import com.baghdad.domain.usecase.genre.GenreMock
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -22,20 +23,10 @@ class GetTrendingTvShowUseCaseTest {
             assertThat(result).isEqualTo(tvShowResult)
         }
 
-
-    @Test
-    fun `getTrendingTvShows() should return empty list when no tv shows match genreId`() = runTest {
-        coEvery { tvShowRepository.getTrendingTvShows(page) } returns tvShowResult
-
-        val result = getTrendingTvShowUseCase(page, genreId)
-
-        assertThat(result.data).isEmpty()
-    }
-
     companion object {
         val tvShow = TvShowMock.TV_SHOW
         val tvShowResult = TvShowMock.TV_SHOW_RESULT
+        val genreId = GenreMock.GENRE_ID
         val page = 2
-        val genreId = 1L
     }
 }

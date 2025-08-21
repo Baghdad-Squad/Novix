@@ -33,7 +33,7 @@ class GetSimilarMoviesUseCaseTest {
         }
 
     private companion object {
-        val movieId = MovieMock.MOVIE.id
+        val movieId = MovieMock.MOVIE_ID
         val similarMovies = MovieMock.SAVED_MOVIES
     }
 }

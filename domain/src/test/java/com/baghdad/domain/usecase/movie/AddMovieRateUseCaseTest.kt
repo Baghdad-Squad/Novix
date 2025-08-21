@@ -22,7 +22,7 @@ class AddMovieRateUseCaseTest {
     }
 
     private companion object {
-        val movieId = 123L
+        val movieId = MovieMock.MOVIE_ID
         val ratting = 5
     }
 }

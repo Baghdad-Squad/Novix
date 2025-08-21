@@ -31,7 +31,7 @@ class GetMovieGalleryUseCaseTest {
     }
 
     private companion object {
-        val movieId = MovieMock.MOVIE.id
+        val movieId = MovieMock.MOVIE_ID
         val movieImageUrl = "https://example.com/shawshank.jpg"
     }
 }

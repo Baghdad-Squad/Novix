@@ -33,8 +33,8 @@ class GetActorMoviesUseCaseTest {
             assertThat(result).isEmpty()
         }
 
-    companion object {
-        private val actorId = ActorMock.ACTOR_ID
+    private companion object {
+        val actorId = ActorMock.ACTOR_ID
         val savedMovie = MovieMock.SAVED_MOVIES
     }
 }

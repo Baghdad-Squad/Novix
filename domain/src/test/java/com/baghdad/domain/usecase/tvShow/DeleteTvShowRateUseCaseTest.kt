@@ -25,6 +25,6 @@ class DeleteTvShowRateUseCaseTest {
         }
 
     private companion object {
-        val tvShowId = 1L
+        val tvShowId = TvShowMock.TV_SHOW_ID
     }
 }

@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.movie
 
 import com.baghdad.domain.repository.MovieRepository
+import com.baghdad.domain.usecase.genre.GenreMock
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -38,8 +39,8 @@ class GetMoviesByGenreUseCaseTest {
 
     private companion object {
         val pageSize = MovieMock.PAGE_SIZE
-        val genreId = MovieMock.GENRE_ID
         val page = MovieMock.PAGE
+        val genreId = GenreMock.GENRE_ID
         val savedMovieResult = MovieMock.SAVED_MOVIES_PAGED_RESULT
     }
 }

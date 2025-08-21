@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.movie
 
 import com.baghdad.domain.repository.MovieRepository
+import com.baghdad.domain.usecase.genre.GenreMock
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -22,6 +23,6 @@ class GetMovieGenresUseCaseTest {
     }
 
     private companion object {
-        val genres = MovieMock.GENRES
+        val genres = GenreMock.GENRES
     }
 }

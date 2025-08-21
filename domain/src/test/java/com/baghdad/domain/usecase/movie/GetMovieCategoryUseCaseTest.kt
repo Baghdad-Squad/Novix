@@ -23,6 +23,6 @@ class GetMovieCategoryUseCaseTest {
 
     private companion object {
         val savedMovie = MovieMock.SAVED_MOVIE
-        val movieId = MovieMock.MOVIE.id
+        val movieId = MovieMock.MOVIE_ID
     }
 }

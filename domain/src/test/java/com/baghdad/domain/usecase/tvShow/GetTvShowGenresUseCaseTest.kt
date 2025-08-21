@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.tvShow
 
 import com.baghdad.domain.repository.TvShowRepository
+import com.baghdad.domain.usecase.genre.GenreMock
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -23,6 +24,6 @@ class GetTvShowGenresUseCaseTest {
         }
 
     companion object {
-        val genres = TvShowMock.GENRES
+        val genres = GenreMock.GENRES
     }
 }

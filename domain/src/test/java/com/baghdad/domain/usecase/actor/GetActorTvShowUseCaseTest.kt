@@ -22,8 +22,8 @@ class GetActorTvShowUseCaseTest {
         assertThat(result).isEqualTo(listOf(tvShow))
     }
 
-    companion object {
-        private val tvShow = TvShowMock.TV_SHOW
-        private val actorId = ActorMock.ACTOR_ID
+    private companion object {
+        val tvShow = TvShowMock.TV_SHOW
+        val actorId = ActorMock.ACTOR_ID
     }
 }

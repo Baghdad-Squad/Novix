@@ -1,6 +1,7 @@
 package com.baghdad.domain.usecase.movie
 
 import com.baghdad.domain.repository.MovieRepository
+import com.baghdad.domain.usecase.genre.GenreMock
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -34,7 +35,7 @@ class GetTrendingMoviesUseCaseTest {
 
     private companion object {
         val page = MovieMock.PAGE
-        val genreId = MovieMock.GENRE_ID
         val savedMovie = MovieMock.SAVED_MOVIES_PAGED_RESULT
+        val genreId = GenreMock.GENRE_ID
     }
 }

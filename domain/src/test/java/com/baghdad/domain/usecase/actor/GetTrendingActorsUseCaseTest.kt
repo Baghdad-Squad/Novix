@@ -26,8 +26,6 @@ class GetTrendingActorsUseCaseTest {
 
     private companion object {
         val page = ActorMock.PAGE
-        val actor = ActorMock.ACTOR
-
         val expectedActorsResult = PagedResult(
             data = ActorMock.ACTORS,
             nextPage = 2,

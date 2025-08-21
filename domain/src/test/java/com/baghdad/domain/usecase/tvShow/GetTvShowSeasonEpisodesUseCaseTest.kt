@@ -41,8 +41,8 @@ class GetTvShowSeasonEpisodesUseCaseTest {
 
     private companion object {
         val episodes = EpisodeMock.EPISODES
-        val seasonNumber = 5
         val tvId = TvShowMock.TV_SHOW_ID
+        val seasonNumber = 5
 
     }
 }

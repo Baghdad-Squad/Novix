@@ -1,25 +1,21 @@
 package com.baghdad.domain.usecase.movie
 
 import com.baghdad.domain.model.pagination.PagedResult
-import com.baghdad.domain.testHelper.getSampleSavedMovie
-import com.baghdad.entity.media.Genre
+import com.baghdad.domain.model.savedList.SavedMovie
+import com.baghdad.domain.usecase.genre.GenreMock
 import com.baghdad.entity.media.Movie
 import kotlinx.datetime.LocalDate
 
 object MovieMock {
-
     val LIST_ID = 1L
     val PAGE = 1
     val PAGE_SIZE = 20
-    val GENRE_ID = 22L
-
-    val GENRE = Genre(id = 22, name = "Action")
-    val GENRES = listOf(GENRE, GENRE.copy(id = 23, name = "Drama"))
+    val MOVIE_ID = 1L
 
     val MOVIE = Movie(
-        id = 1L,
+        id = MOVIE_ID,
         title = "The Godfather",
-        genres = GENRES,
+        genres = GenreMock.GENRES,
         userRating = 8.5,
         averageRating = 10.0,
         releaseDate = LocalDate(2002, 2, 22),
@@ -29,7 +25,7 @@ object MovieMock {
         runtimeMinutes = 175
     )
 
-    val SAVED_MOVIE = getSampleSavedMovie(
+    val SAVED_MOVIE = SavedMovie(
         movie = MOVIE,
         isSaved = false,
         listId = LIST_ID
@@ -37,8 +33,8 @@ object MovieMock {
 
     val SAVED_MOVIES = listOf(
         SAVED_MOVIE,
-        SAVED_MOVIE.copy(movie = MOVIE.copy(id = 2, genres = GENRES)),
-        SAVED_MOVIE.copy(movie = MOVIE.copy(id = 3, genres = GENRES))
+        SAVED_MOVIE.copy(movie = MOVIE.copy(id = 2, genres = GenreMock.GENRES)),
+        SAVED_MOVIE.copy(movie = MOVIE.copy(id = 3, genres = GenreMock.GENRES))
     )
 
     val SAVED_MOVIES_PAGED_RESULT = PagedResult(

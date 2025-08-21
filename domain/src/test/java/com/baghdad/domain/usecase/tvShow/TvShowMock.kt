@@ -1,15 +1,11 @@
 package com.baghdad.domain.usecase.tvShow
 
 import com.baghdad.domain.model.pagination.PagedResult
-import com.baghdad.entity.media.Genre
+import com.baghdad.domain.usecase.genre.GenreMock
 import com.baghdad.entity.media.TvShow
 import kotlinx.datetime.LocalDate
 
 object TvShowMock {
-
-    const val GENRE_ID = 22L
-    val GENRE = Genre(id = GENRE_ID, name = "Sample Genre")
-    val GENRES = listOf(GENRE, GENRE.copy(id = 23, name = "Another Genre"))
 
     const val TV_SHOW_ID = 1L
     val TV_SHOW = TvShow(
@@ -17,7 +13,7 @@ object TvShowMock {
         title = "Sample TV Show",
         overview = "This is a sample TV show overview.",
         posterImageURL = "https://example.com/poster.jpg",
-        genres = GENRES,
+        genres = GenreMock.GENRES,
         averageRating = 8.5,
         userRating = 9,
         releaseDate = LocalDate(2002, 2, 22),

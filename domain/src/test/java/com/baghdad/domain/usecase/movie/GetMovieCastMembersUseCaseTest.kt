@@ -24,7 +24,7 @@ class GetMovieCastMembersUseCaseTest {
         }
 
     private companion object {
-        val movieId = MovieMock.MOVIE.id
+        val movieId = MovieMock.MOVIE_ID
         val CAST_MEMBERS = ActorMock.CAST_MEMBERS
     }
 }
