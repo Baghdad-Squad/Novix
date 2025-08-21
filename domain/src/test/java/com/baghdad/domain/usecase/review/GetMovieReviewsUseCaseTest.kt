@@ -7,22 +7,15 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GetMovieReviewsUseCaseTest {
-    private lateinit var movieRepository: MovieRepository
-    private lateinit var getMovieReviewsUseCase: GetMovieReviewsUseCase
 
-    @BeforeEach
-    fun setUp() {
-        movieRepository = mockk(relaxed = true)
-        getMovieReviewsUseCase = GetMovieReviewsUseCase(movieRepository)
-    }
+    private val movieRepository = mockk<MovieRepository>()
+    private val getMovieReviewsUseCase = GetMovieReviewsUseCase(movieRepository)
 
     @Test
-    fun `invoke() should return reviews when movie has reviews`() = runTest {
-        val movieId = 1L
+    fun `getMovieReviewsUseCase should return reviews when movie has reviews`() = runTest {
         coEvery { movieRepository.getMovieReviews(movieId) } returns sampleReviews
 
         val result = getMovieReviewsUseCase(movieId)
