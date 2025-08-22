@@ -1,39 +1,33 @@
 package com.baghdad.domain.usecase.episode
 
 import com.baghdad.domain.repository.EpisodeRepository
+import com.baghdad.domain.usecase.tvShow.TvShowMock
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GetEpisodeAccountStatesUseCaseTest {
 
-    private lateinit var episodeRepository: EpisodeRepository
-    private lateinit var getEpisodeAccountStatesUseCase: GetEpisodeAccountStatesUseCase
-
-    @BeforeEach
-    fun setUp() {
-        episodeRepository = mockk(relaxed = true)
-        getEpisodeAccountStatesUseCase = GetEpisodeAccountStatesUseCase(episodeRepository)
-    }
+    private val episodeRepository = mockk<EpisodeRepository>()
+    private val getEpisodeAccountStatesUseCase = GetEpisodeAccountStatesUseCase(episodeRepository)
 
     @Test
-    fun `should return true if user has rated an episode with valid parameters`() = runTest {
+    fun `getEpisodeAccountStatesUseCase should return true  when user has rated an episode`() =
+        runTest {
         coEvery {
-            episodeRepository.getEpisodeAccountStates(TV_SHOW_ID, SEASON_NUMBER, EPISODE_NUMBER)
+            episodeRepository.getEpisodeAccountStates(tvShowId, seasonNumber, episodeNumber)
         } returns true
 
-        val result = getEpisodeAccountStatesUseCase(TV_SHOW_ID, SEASON_NUMBER, EPISODE_NUMBER)
+            val result = getEpisodeAccountStatesUseCase(tvShowId, seasonNumber, episodeNumber)
 
         assertThat(result).isTrue()
     }
 
-    companion object {
-        private const val TV_SHOW_ID = 123L
-        private const val SEASON_NUMBER = 1
-        private const val EPISODE_NUMBER = 2
+    private companion object {
+        val tvShowId = TvShowMock.TV_SHOW_ID
+        val seasonNumber = TvShowMock.TV_SHOW.numberOfSeasons
+        val episodeNumber = EpisodeMock.EPISODE.episodeNumber
     }
 }

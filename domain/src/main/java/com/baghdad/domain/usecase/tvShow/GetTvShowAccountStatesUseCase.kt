@@ -1,8 +1,6 @@
 package com.baghdad.domain.usecase.tvShow
 
-import com.baghdad.domain.repository.EpisodeRepository
 import com.baghdad.domain.repository.TvShowRepository
-
 import javax.inject.Inject
 
 class GetTvShowAccountStatesUseCase @Inject constructor(
